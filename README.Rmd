@@ -1,36 +1,25 @@
 ---
-output: github_document
+title: "pqspr, Priority Queue Shortest Paths in R"
+output:
+  rmarkdown::html_vignette:
+    self_contained: no
+
+  md_document:
+    variant: markdown_github
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, echo = FALSE}
+```{r opts, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  warning = TRUE,
+  message = TRUE,
+  width = 120,
   comment = "#>",
+  fig.retina = 2,
   fig.path = "README-"
 )
-```
-
-# pqspr
-
-The goal of pqspr is to ...
-
-## Installation
-
-You can install pqspr from github with:
-
-```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("mpadge/pqspr")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-## basic example code
 ```
 
 [![Build Status](https://travis-ci.org/mpadge/pqspr.svg)](https://travis-ci.org/mpadge/pqspr) 
@@ -38,43 +27,72 @@ This is a basic example which shows you how to solve a common problem:
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/pqspr)](http://cran.r-project.org/web/packages/pqspr) 
 ![downloads](http://cranlogs.r-pkg.org/badges/grand-total/pqspr)
 
-pqspr is ...
+# pqspr
 
-The following functions are implemented:
+Priority Queue Shortest Paths in R. Simply because they are blindingly faster
+than anything else, yet do not seem to be implemented in any current package.
+Note that most of the source code which does the work here is only lightly
+adapted from original code of Shane Saunders obtained from
+[http://www.cosc.canterbury.ac.nz/tad.takaoka/alg/spalgs/spalgs.html](http://www.cosc.canterbury.ac.nz/tad.takaoka/alg/spalgs/spalgs.html)
 
-The following data sets are included:
+## Installation
 
-### News
+You can install `pqspr` from github with:
 
-- Version  released
-
-### Installation
-
-```{r, eval=FALSE}
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
 devtools::install_github("mpadge/pqspr")
 ```
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
-options(width=120)
+```{r load-pqsqpr, echo = FALSE}
+devtools::load_all (".", export_all = FALSE)
 ```
 
-### Usage
+## Timing Comparison
 
-```{r, eval=FALSE}
-library(pqspr)
-
-# current verison
-packageVersion("pqspr")
-
+Create a street network using `osmdata` and some code currently in the github
+repo [`osmprob`](https://github.com/osm-router/osmprob) which is installed
+first.
+```{r, eval = FALSE}
+devtools::install_github ("osm-router/osmprob")
 ```
-
-### Test Results
-
-```{r, eval=FALSE}
-library(pqspr)
-library(testthat)
-
-date()
-
-test_dir("tests/")
+```{r load-osmprob, echo = FALSE}
+devtools::load_all ("../osmprob", export_all = FALSE)
 ```
+Use `osmprob` to get a street network graph:
+```{r download-graph}
+start_pt <- c (-74.00150, 40.74178)
+end_pt <- c (-74.07889, 40.71113)
+graph <- download_graph (start_pt, end_pt)
+```
+The result has a `$original` graph containing all vertices and a `$compact`
+graph with redundant vertices removed. We'll perform routing on the latter which
+has this many edges:
+```{r}
+nrow (graph$compact)
+```
+Both of these graphs are simple data frames detailing all edges.  Some light
+wrangling is now necessary to prepare both the `igraph` and the simple structure
+submitted to the `pqspr` routine:
+```{r igraph-setup}
+edges <- cbind (graph$compact$from_id, graph$compact$to_id)
+nodes <- unique (as.vector (edges)) # used below in test comparison
+edges <- as.vector (t (edges))
+igr <- igraph::make_directed_graph (edges)
+igraph::E (igr)$weight <- graph$compact$d_weighted
+
+graph <- graph$compact
+indx <- which (names (graph) %in% c ("from_id", "to_id", "d", "d_weighted"))
+graph <- graph [, indx]
+graph$from_id <- paste0 (graph$from_id)
+graph$to_id <- paste0 (graph$to_id)
+```
+Then the final timing comparison between `igraph::distances()`, which returns a
+matrix of distances between all vertices, and the equivalent and only
+function of this package, `test()`:
+```{r, benchmark}
+rbenchmark::benchmark (test (graph),
+                   igraph::distances (igr, v = nodes, to = nodes, mode = "out"),
+                       replications = 10)
+```
+And these priority queue routines are over ten times faster than the `igraph`
+equivalent.
