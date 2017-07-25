@@ -6,14 +6,14 @@
 using namespace Rcpp;
 
 // rcpp_get_sp
-Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, bool quiet);
-RcppExport SEXP _pqspr_rcpp_get_sp(SEXP graphSEXP, SEXP quietSEXP) {
+Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, std::string heap_type);
+RcppExport SEXP _pqspr_rcpp_get_sp(SEXP graphSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp(graph, quiet));
+    Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp(graph, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }

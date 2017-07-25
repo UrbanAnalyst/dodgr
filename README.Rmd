@@ -48,16 +48,16 @@ devtools::load_all (".", export_all = FALSE)
 
 ## Timing Comparison
 
-Create a street network using `osmdata` and some code currently in the github
-repo [`osmprob`](https://github.com/osm-router/osmprob) which is installed
-first.
+Create a street network using the github repo
+[`osmprob`](https://github.com/osm-router/osmprob):
 ```{r, eval = FALSE}
 devtools::install_github ("osm-router/osmprob")
 ```
 ```{r load-osmprob, echo = FALSE, message = FALSE}
 devtools::load_all ("../osmprob", export_all = FALSE)
 ```
-Use `osmprob` to get a street network graph:
+The function `download_graph()` gets the street network within the bounding box
+defined by start and end points.
 ```{r download-graph}
 start_pt <- c (-74.00150, 40.74178)
 end_pt <- c (-74.07889, 40.71113)
@@ -94,4 +94,5 @@ rbenchmark::benchmark (test (graph),
                        replications = 10)
 ```
 And these priority queue routines are over ten times faster than the `igraph`
-equivalent.
+equivalent. The default priority queue is a Fibonacci heap (`FHeap`), with
+alternative options of `Radix`, `Tri`, and `Heap23`.

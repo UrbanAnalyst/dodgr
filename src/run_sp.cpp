@@ -11,7 +11,7 @@ const float INFINITE_DIST =  std::numeric_limits<float>::max ();
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, bool quiet)
+Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 {
     std::vector <std::string> from = graph ["from_id"];
     std::vector <std::string> to = graph ["to_id"];
@@ -38,16 +38,12 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, bool quiet)
         g->addNewEdge (fromi, toi, dist [i], wt [i]);
     }
 
-    // Create heap descriptor objects for specifying the kind of heap to be
-    // used by Dijkstra's algorithm.  The type of the heap descriptor is
-    // specified using the template HeapD<T> where T = BHeap, FHeap, RadixHeap,
-    // Heap23, or TriHeap.
-    //HeapD<RadixHeap> heapD;
     HeapD<FHeap> heapD;
     //HeapD<Heap23> heapD;
+    //HeapD<RadixHeap> heapD;
     //HeapD<TriHeap> heapD;
     //HeapD<TriHeapExt> heapD;
-    //
+
     Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
     float w [nverts], d [nverts];  // result array
     for(unsigned int v = 0; v < nverts; v++)
