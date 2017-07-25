@@ -6,7 +6,7 @@ Authors@R: c(
     person("Shane", "Saunders", role="cph",
         comment="Original author of most included src code"))
 Description: Priority queue shortest paths
-Depends: R (>= 3.4.1)
+Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
     Rcpp (>= 0.12.6)
