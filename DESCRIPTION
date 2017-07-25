@@ -8,12 +8,15 @@ Authors@R: c(
 Description: Priority queue shortest paths
 Depends: R (>= 3.4.1)
 License: GPL-3
+Imports:
+    Rcpp (>= 0.12.6)
+LinkingTo:
+    Rcpp
 SystemRequirements: C++11
 NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
-LinkingTo: Rcpp
 URL: https://github.com/mpadge/pqspr
 BugReports: https://github.com/mpadge/pqspr/issues
 RoxygenNote: 6.0.1
