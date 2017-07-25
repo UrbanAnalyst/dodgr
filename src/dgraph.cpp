@@ -5,6 +5,8 @@
 #include <cstdio>
 #include "dgraph.h"
 
+#include <Rcpp.h>
+
 /*--- DGraph ----------------------------------------------------------------*/
 
 /* --- Constructor ---
@@ -145,30 +147,16 @@ void DGraph::print() const
 {
     const DGraphEdge *edge;
 
-    /*
-    printf("Graph (vertex: edge list) = \n");
+    Rcpp::Rcout << "Graph (vertex: edge{dist} list) = " << std::endl;
 
     for(int i = 0; i < nVertices; i++) {
-        printf("%d: ", i);
+        Rcpp::Rcout << i << ": ";
         edge = vertices[i].outHead;
         while(edge) {
-            printf(" %d", edge->target);
+            Rcpp::Rcout << edge->target << "{" << edge->dist << "} ";
             edge = edge->nextOut;
         }
-        putchar('\n');
-    }
-    */
-
-    printf("Graph (vertex: edge{dist} list) = \n");
-
-    for(int i = 0; i < nVertices; i++) {
-        printf("%d: ", i);
-        edge = vertices[i].outHead;
-        while(edge) {
-            printf(" %d{%.0f}", edge->target, edge->dist);
-            edge = edge->nextOut;
-        }
-        putchar('\n');
+        Rcpp::Rcout << std::endl;
     }
 }
 

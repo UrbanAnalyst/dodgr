@@ -14,6 +14,8 @@
 #include <cmath>
 //#if SHOW_trih_ext
 #include <cstdio>
+#include <stdexcept>
+#include <Rcpp.h>
 //#endif
 
 
@@ -1345,65 +1347,53 @@ void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
          do {
              dumpNodes(childNode, level+1);
 	     if(childNode->dim != childCount) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(dim)\n");  exit(1);
-	     }
+                 throw std::runtime_error ("error(dim)");
+         }
 	     if(childNode->parent != node) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(parent)\n");
+                 throw std::runtime_error ("error(parent)");
 	     }
 	     if(childNode->activeEntry == NULL && childNode->key < node->key) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(key)\n");  exit(1);
+                 throw std::runtime_error ("error(key)");
 	     }
              childNode = childNode->right;
 	     childCount++;
          } while(childNode != node->child->right);
 
          if(childCount != node->dim) {
-	     for(i = 0; i < level; i++) printf("   ");
-             printf("error(childCount)\n");  exit(1);
+                 throw std::runtime_error ("error(childCount)");
          }
      }
      else { 
          if(node->dim != 0) {
-             for(i = 0; i < level; i++) printf("   ");
-	     printf("error(dim)\n"); exit(1);
+                 throw std::runtime_error ("error(dim)");
 	 }
      }
      
      if((partner=node->partner)) {
 	 if(node->extra==partner->extra) {
-            for(i = 0; i < level; i++) printf("   ");
-	    printf("%d - error(extra?)\n", partner->item);  exit(1);
+                 throw std::runtime_error ("error(extra?)");
 	 }
 	 if(partner->extra) {
              if(partner->dim != node->dim) {
-                 for(i = 0; i < level; i++) printf("   ");
-		 printf("%d - error(dim)\n", partner->item);  exit(1);
+                 throw std::runtime_error ("error(dim)");
 	     }
 	     if(partner->activeEntry && ! node->activeEntry) {
-		 for(i = 0; i < level; i++) printf("   ");
-		 printf("%d - error(active)\n", partner->item);  exit(1);
+                 throw std::runtime_error ("error(active)");
 	     }
 
 	     dumpNodes(partner, level);
 	     if(partner->key < node->key) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(key)\n");  exit(1);
+                 throw std::runtime_error ("error(key)");
 	     }
 	 }
      }
      else if(node->parent) {
-         for(i = 0; i < level; i++) printf("   ");
-	 printf("error(no partner)\n");  exit(1);
+                 throw std::runtime_error ("error(no partner)");
      }
 
      if(node->activeEntry) {
 	 if(node->activeEntry->node != node) {
-	     for(i = 0; i < level; i++) printf("   ");
-	     printf("-error(active entry wrong)\n");
-	     exit(1);
+                 throw std::runtime_error ("error(active entry wrong)");
 	 }
      }
 //#endif
@@ -1432,20 +1422,16 @@ void TriHeapExt::dump() const
             printf(" %d", node->item);
 	    firstChild = node->extra ? node->partner : node;
 	    if(!firstChild->parent) {
-		printf("-error(main trunk)\n");
-		exit(1);
+                 throw std::runtime_error ("error(main trunk)");
 	    }
 	    if(!node->activeEntry) {
-		printf("-error(inactive)\n");
-		exit(1);
+                 throw std::runtime_error ("error(inactive)");
 	    }
 	    if(node->activeEntry->node != node) {
-		printf("-error(active entry wrong)\n");
-		exit(1);
+                 throw std::runtime_error ("error(active entry wrong)");
 	    }
 	    if(activeNodes[node->activeEntry->position] != node) {
-                 printf("-error(active array index wrong)\n");
- 	         exit(1);
+                 throw std::runtime_error ("error(active entry index wrong)");
 	    }
 	    
 	    c = 0;
@@ -1453,24 +1439,21 @@ void TriHeapExt::dump() const
                 if(activeNodes[j] == node) c++;
 	    }
 	    if(c) {
-		printf("-error(repeated)\n");
-	        exit(1);
+                 throw std::runtime_error ("error(repeated)");
 	    }
 	}
 	else {
-	    printf(" -error(missing active node)\n");
-	    exit(1);
+                 throw std::runtime_error ("error(missing active mode)");
 	}
     }
-    printf("\n\n");
+    Rcpp::Rcout << std::endl << std::endl;
     for(i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
-            printf("tree %d\n\n", i);
+            Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);
-	    printf("\n");
+        Rcpp::Rcout << std::endl;
         }
     }
-    fflush(stdout);
 //#endif
 }
 

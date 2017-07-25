@@ -3,6 +3,8 @@
 #include <cmath>
 #include "radixheap.h"
 
+#include <Rcpp.h>
+
 RadixHeap::RadixHeap(int n)
 {
     itemCount = 0;
@@ -53,7 +55,7 @@ void RadixHeap::insert(int item, float k)
     placeNode(nBuckets,newNode);
     itemCount++;    
 #ifdef RADIXHEAP_DEBUG
-    std::cout << "performed insert " << item << "(" << k << ")" << std::endl;
+    Rcpp::Rcout << "performed insert " << item << "(" << k << ")" << std::endl;
     dump();
 #endif
 }
@@ -66,7 +68,7 @@ void RadixHeap::decreaseKey(int item, float k)
     node->key = k;
     placeNode(node->bucket, node);
 #ifdef RADIXHEAP_DEBUG
-    std::cout << "performed decrease-key (" << k << ") on item " << node->item << std::endl;
+    Rcpp::Rcout << "performed decrease-key (" << k << ") on item " << node->item << std::endl;
     dump();
 #endif    
 }
@@ -131,7 +133,7 @@ unsigned int RadixHeap::deleteMin()
 
     /* delete the minimum node and return the corresponding item */
 #ifdef RADIXHEAP_DEBUG
-    std::cout << "performed delete-min " << minNode->item << "("
+    Rcpp::Rcout << "performed delete-min " << minNode->item << "("
          << minNode->key << ")" << std::endl;
     dump();
 #endif    
@@ -179,18 +181,17 @@ void RadixHeap::dump() const {
     while(i > 0 && bucketHeaders[i].next == &bucketHeaders[i]) i--; 
 
     do {
-        std::cout << "bucket " << i << "[" << u[i] << "]:  ";
+        Rcpp::Rcout << "bucket " << i << "[" << u[i] << "]:  ";
         RadixHeapNode *header = &bucketHeaders[i];
         RadixHeapNode *node = header->next;
         while(node != header) {
-            std::cout << node->item << "(" << node->key << "), ";
+            Rcpp::Rcout << node->item << "(" << node->key << "), ";
             if(node->key > u[i] || node->key <= u[i-1]) {
-                std::cout << std::endl << " error: node in wrong bucket" << std::endl << " ";
-                exit(1);
+                throw std::runtime_error ("node in wrong bucket");
             }
             node = node->next;
         }
-        std::cout << std::endl;
+        Rcpp::Rcout << std::endl;
         i--;        
    } while(i >= 0);
 }
