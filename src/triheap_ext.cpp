@@ -1425,7 +1425,8 @@ void TriHeapExt::dump() const
     Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl <<
         "array entries 0..maxTrees =";
     for(i=0; i<maxTrees; i++) {
-        Rcpp::Rcout << " " << trees [i] ? 1 : 0;
+        bool is1or0 = trees [i] ? 1 : 0;
+        Rcpp::Rcout << " " << is1or0;
     }
     Rcpp::Rcout << std::endl << "active nodes =";
     for(i=0; i<activeCount; i++) {

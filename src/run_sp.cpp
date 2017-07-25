@@ -31,7 +31,7 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 
     // set up graph
     DGraph *g = new DGraph (nverts);
-    for (int i = 0; i < nedges; ++i)
+    for (unsigned int i = 0; i < nedges; ++i)
     {
         unsigned int fromi = vert_map [from [i]];
         unsigned int toi = vert_map [to [i]];
@@ -45,7 +45,9 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     //HeapD<TriHeapExt> heapD;
 
     Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    float w [nverts], d [nverts];  // result array
+    //float w [nverts], d [nverts];  // result array
+    float* w = new float [nverts];
+    float* d = new float [nverts];
     for(unsigned int v = 0; v < nverts; v++)
     {
         w [v] = INFINITE_DIST;
@@ -63,6 +65,9 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 
     delete dijkstra;
     delete g;
+
+    delete [] d;
+    delete [] w;
 
     return (dout);
 }
