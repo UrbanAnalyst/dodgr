@@ -1,7 +1,6 @@
 #' test
 #'
 #' @param graph \code{data.frame} object representing the network graph
-#' @param quiet If FALSE, display progress information
 #' @param pq Type of priority queue to use. Options include Fibonacci Heap
 #' (default; \code{FHeap}), \code{Radix}, \code{Tri}, and \code{Heap23}.
 #' @return square matrix of distances between nodes

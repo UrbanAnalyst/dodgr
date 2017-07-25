@@ -32,7 +32,8 @@ TriHeapExt::TriHeapExt(int n)
 {
     int i;
 #if SHOW_trih_ext
-printf("init, ");  fflush(stdout);
+Rcpp::Rcout << "init, ";
+Rcpp::Rcout.flush ();
 #endif
  
     /* The maximum number of nodes and the maximum number of trees allowed. */
@@ -91,7 +92,8 @@ TriHeapExt::~TriHeapExt()
     int i;
 
 #if SHOW_trih_ext
-printf("free, ");  fflush(stdout);
+Rcpp::Rcout << "free, ";
+Rcpp::Rcout.flush ();
 #endif
 
     for(i = 0; i < maxNodes; i++) {
@@ -113,7 +115,8 @@ void TriHeapExt::insert(int item, float k)
     TriHeapExtNode *newNode;
 
 #if SHOW_trih_ext
-printf("insert, ");  fflush(stdout);
+Rcpp::Rcout << "insert, ";
+Rcpp::Rcout.flush ();
 #endif
 
     /* Create an initialise the new node.  The parent pointer will be set to
@@ -159,7 +162,9 @@ unsigned int TriHeapExt::deleteMin()
     int wasExtra;
 
 #if SHOW_trih_ext
-dump();  printf("deleteMin, ");  fflush(stdout);
+dump();
+Rcpp::Rcout << "deleteMin, ";
+Rcpp::Rcout.flush ();
 #endif
 
     /* First we determine the maximum dimension tree in the heap. */
@@ -203,7 +208,8 @@ dump();  printf("deleteMin, ");  fflush(stdout);
     
 
 #if SHOW_trih_ext
-printf("on vertex no %d, ", minNode->item);  fflush(stdout);
+Rcpp::Rcout << "on vertex no " << minNode->item;
+Rcpp::Rcout.flush ();
 #endif
 
     /*
@@ -479,7 +485,9 @@ void TriHeapExt::decreaseKey(int item, float newValue)
     int d;
 
 #if SHOW_trih_ext
-dump();    printf("decreaseKey on vn = %d (%ld), ", item, newValue);  fflush(stdout);
+dump();
+Rcpp::Rcout << "decreaseKey on vn = " << item << " (" << newValue << ")";
+Rcpp::Rcout.flush ();
 #endif
 
     
@@ -919,7 +927,8 @@ void TriHeapExt::meld(TriHeapExtNode *treeList)
     int d;
 
 #if SHOW_trih_ext
-printf("meld - ");  fflush(stdout);
+Rcpp::Rcout << "meld - ";
+Rcpp::Rcout.flush ();
 #endif
 
     /* addTree points to the tree to be merged. */
@@ -952,7 +961,8 @@ printf("meld - ");  fflush(stdout);
         }
 
 #if SHOW_trih_ext
-printf("%d, ", addTree->item);  fflush(stdout);
+Rcpp::Rcout << addTree->item << ", ";
+Rcpp::Rcout.flush ();
 #endif
 
         /* First we merge addTree with carryTree, if there is one.  Note that
@@ -1333,11 +1343,13 @@ void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
      int i, childCount;
 
      /* Print leading whitespace for this level. */
-     for(i = 0; i < level; i++) printf("   ");
+     for(i = 0; i < level; i++)
+         Rcpp::Rcout << "   ";
 
-     printf("%d(%0.1f)", node->item, node->key);
+     Rcpp::Rcout << node->item << "(" << node->key << ")";
+     Rcpp::Rcout.flush ();
      if(node->activeEntry) putchar('*');
-     putchar('\n');
+     Rcpp::Rcout << std::endl;
      
      if((childNode = node->child)) {
 	 childNode = node->child->right;
@@ -1410,16 +1422,15 @@ void TriHeapExt::dump() const
     TriHeapExtNode *firstChild;
     int c;
 
-    printf("\n");
-    printf("value = %d\n", treeSum);
-    printf("array entries 0..maxTrees =");
+    Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl <<
+        "array entries 0..maxTrees =";
     for(i=0; i<maxTrees; i++) {
-        printf(" %d", trees[i] ? 1 : 0 );
+        Rcpp::Rcout << " " << trees [i] ? 1 : 0;
     }
-    printf("\nactive nodes =");
+    Rcpp::Rcout << std::endl << "active nodes =";
     for(i=0; i<activeCount; i++) {
 	if((node = activeNodes[i])) {
-            printf(" %d", node->item);
+        Rcpp::Rcout << " " << node->item;
 	    firstChild = node->extra ? node->partner : node;
 	    if(!firstChild->parent) {
                  throw std::runtime_error ("error(main trunk)");

@@ -11,8 +11,6 @@ test(graph, pq = "FHeap")
 
 \item{pq}{Type of priority queue to use. Options include Fibonacci Heap
 (default; \code{FHeap}), \code{Radix}, \code{Tri}, and \code{Heap23}.}
-
-\item{quiet}{If FALSE, display progress information}
 }
 \value{
 square matrix of distances between nodes
