@@ -1,11 +1,19 @@
 Package: pqspr
-Title: What the Package Does (one line, title case)
+Title: Priority Queue Shortest Paths
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c(
+    person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
+    person("Shane", "Saunders", role="cph",
+        comment="Original author of most included src code"))
+Description: Priority queue shortest paths
 Depends: R (>= 3.4.1)
-License: What license is it under?
+License: GPL-3
+SystemRequirements: C++11
+NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
+LinkingTo: Rcpp
+URL: https://github.com/mpadge/pqspr
+BugReports: https://github.com/mpadge/pqspr/issues
 RoxygenNote: 6.0.1
