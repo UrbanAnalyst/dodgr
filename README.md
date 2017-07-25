@@ -16,8 +16,6 @@ You can install `pqspr` from github with:
 devtools::install_github("mpadge/pqspr")
 ```
 
-    #> Loading pqspr
-
 Timing Comparison
 -----------------
 
@@ -26,8 +24,6 @@ Create a street network using `osmdata` and some code currently in the github re
 ``` r
 devtools::install_github ("osm-router/osmprob")
 ```
-
-    #> Loading osmprob
 
 Use `osmprob` to get a street network graph:
 

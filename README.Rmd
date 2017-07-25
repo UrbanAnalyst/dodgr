@@ -43,7 +43,7 @@ You can install `pqspr` from github with:
 # install.packages("devtools")
 devtools::install_github("mpadge/pqspr")
 ```
-```{r load-pqsqpr, echo = FALSE}
+```{r load-pqsqpr, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
 
@@ -55,7 +55,7 @@ first.
 ```{r, eval = FALSE}
 devtools::install_github ("osm-router/osmprob")
 ```
-```{r load-osmprob, echo = FALSE}
+```{r load-osmprob, echo = FALSE, message = FALSE}
 devtools::load_all ("../osmprob", export_all = FALSE)
 ```
 Use `osmprob` to get a street network graph:
