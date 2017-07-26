@@ -11,7 +11,8 @@ test(graph, heap = "FHeap")
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-\code{Radix}, Trinomial Heap (\code{Tri}), and 2-3 Heap (\code{Heap23}).}
+\code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
+(\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 }
 \value{
 square matrix of distances between nodes
