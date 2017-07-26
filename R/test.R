@@ -13,8 +13,18 @@ test <- function(graph, heap = 'FHeap') {
     heap <- match.arg (arg = heap, choices = heaps)
 
     if (heap == "Radix")
+    {
+        dfr <- min (abs (c (graph$d %% 1, graph$d %% 1 - 1)))
+        if (dfr > 1e-6)
+        {
+            message (paste0 ("RadixHeap can only be implemented for ",
+                             "integer weights;\nall weights will now be ",
+                             "rounded"))
+            graph$d <- round (graph$d)
+            graph$d_weighted <- round (graph$d_weighted)
+        }
         d <- rcpp_get_sp_radix (graph)
-    else
+    } else
         d <- rcpp_get_sp (graph, heap)
 
     if (max (d) > 1e30) # float max ~ 1e38
