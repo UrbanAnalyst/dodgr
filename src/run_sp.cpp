@@ -178,7 +178,7 @@ Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
     DGraphInt *g = new DGraphInt (nverts);
     inst_graph_int (g, nedges, vert_map, from, to, dist, wt);
 
-    IntHeapD<RadixHeap> heapD;
+    IntHeapD <RadixHeap> heapD;
     DijkstraInt *dijkstra = new DijkstraInt (nverts, &heapD);
     
     int* w = new int [nverts];
@@ -190,7 +190,6 @@ Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
     }
 
     Rcpp::NumericMatrix dout (nverts, nverts);
-    /*
     for(unsigned int v = 0; v < nverts; v++)
     {
         dijkstra->init (g); // specify the graph
@@ -198,11 +197,6 @@ Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
         for(unsigned int vi = 0; vi < nverts; vi++)
             dout (v, vi) = d [vi];
     }
-    */
-    dijkstra->init (g);
-    dijkstra->run (d, w, 0);
-    dijkstra->init (g);
-    dijkstra->run (d, w, 1);
 
     delete dijkstra;
     delete g;

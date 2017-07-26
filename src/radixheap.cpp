@@ -46,7 +46,7 @@ RadixHeap::~RadixHeap()
     delete [] u;
 }
 
-void RadixHeap::insert(int item, int k)
+void RadixHeap::insert(int item, long k)
 {
     RadixHeapNode *newNode = new RadixHeapNode;
     newNode->item = item;
@@ -60,7 +60,7 @@ void RadixHeap::insert(int item, int k)
 #endif
 }
 
-void RadixHeap::decreaseKey(int item, int k)
+void RadixHeap::decreaseKey(int item, long k)
 {
     RadixHeapNode *node;
     node = nodes[item];
@@ -153,7 +153,10 @@ void RadixHeap::placeNode(int startBucket, RadixHeapNode *node)
     int i = startBucket;
     do {
         i--;
-    } while(u[i] >= key);        
+    } while (u[i] >= key);        
+    // MP: RadixHeaps do not work without the following line:
+    if (i < 0)
+        i = 0;
     insertNode(i+1, node);
 }
 
