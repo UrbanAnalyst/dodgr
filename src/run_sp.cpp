@@ -7,6 +7,38 @@
 
 const float INFINITE_DIST =  std::numeric_limits<float>::max ();
 
+unsigned int inst_vert_map (unsigned int nedges,
+        std::map <std::string, unsigned int> &vert_map,
+        std::vector <std::string> &from,
+        std::vector <std::string> &to)
+{
+    unsigned int nverts = 0;
+    for (unsigned int i = 0; i < nedges; i++)
+    {
+        if (vert_map.find (from [i]) == vert_map.end ())
+            vert_map.emplace (from [i], nverts++);
+        if (vert_map.find (to [i]) == vert_map.end ())
+            vert_map.emplace (to [i], nverts++);
+    }
+
+    return nverts;
+}
+
+void inst_graph (DGraph *g, unsigned int nedges,
+        std::map <std::string, unsigned int> &vert_map,
+        std::vector <std::string> &from,
+        std::vector <std::string> &to,
+        std::vector <float> &dist,
+        std::vector <float> &wt)
+{
+    for (unsigned int i = 0; i < nedges; ++i)
+    {
+        unsigned int fromi = vert_map [from [i]];
+        unsigned int toi = vert_map [to [i]];
+        g->addNewEdge (fromi, toi, dist [i], wt [i]);
+    }
+}
+
 //' rcpp_get_sp
 //'
 //' @noRd
@@ -18,25 +50,13 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     std::vector <float> dist = graph ["d"];
     std::vector <float> wt = graph ["d_weighted"];
 
-    unsigned int nedges = from.size ();
+    unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
-    unsigned int nverts = 0;
-    for (unsigned int i = 0; i < nedges; i++)
-    {
-        if (vert_map.find (from [i]) == vert_map.end ())
-            vert_map.emplace (from [i], nverts++);
-        if (vert_map.find (to [i]) == vert_map.end ())
-            vert_map.emplace (to [i], nverts++);
-    }
+    unsigned int nverts = inst_vert_map (nedges, vert_map, from, to);
 
     // set up graph
     DGraph *g = new DGraph (nverts);
-    for (unsigned int i = 0; i < nedges; ++i)
-    {
-        unsigned int fromi = vert_map [from [i]];
-        unsigned int toi = vert_map [to [i]];
-        g->addNewEdge (fromi, toi, dist [i], wt [i]);
-    }
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     HeapD<FHeap> heapD;
     //HeapD<Heap23> heapD;
@@ -45,7 +65,6 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     //HeapD<TriHeapExt> heapD;
 
     Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    //float w [nverts], d [nverts];  // result array
     float* w = new float [nverts];
     float* d = new float [nverts];
     for(unsigned int v = 0; v < nverts; v++)
