@@ -1,7 +1,9 @@
 #include "dijkstra.h"
 #include "dgraph.h"
 #include "heap.h"
-#include <Rcpp.h> // TODO: Delete that!
+
+#include <algorithm> // std::fill
+
 /* Dijkstra's Algorithm
  * ----------------------------------------------------------------------------
  * Author:  Shane Saunders

@@ -1,7 +1,8 @@
-
 #include "dgraph.h"
 #include "dijkstra.h"
 #include "heap_lib.h"
+
+#include <algorithm> // std::fill
 
 #include <Rcpp.h>
 
@@ -122,27 +123,43 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     else if (heap_type == "Radix")
         dijkstra = dijkstra_radix (nverts);
 
+    dijkstra->init (g); // specify the graph
+
     float* w = new float [nverts];
     float* d = new float [nverts];
     int* prev = new int [nverts];
-    std::fill (w, w + nverts, INFINITE_FLOAT);
-
+    
     Rcpp::NumericMatrix dout (nverts, nverts);
     for(unsigned int v = 0; v < nverts; v++)
     {
         std::fill (w, w + nverts, INFINITE_FLOAT);
-        dijkstra->init (g); // specify the graph
+
         dijkstra->run (d, w, prev, v);
         for(unsigned int vi = 0; vi < nverts; vi++)
             dout (v, vi) = d [vi];
+
     }
 
-
-    delete dijkstra;
-    delete g;
+    // Tracing a path:
+    /*
+    std::fill (w, w + nverts, INFINITE_FLOAT);
+    dijkstra->run (d, w, prev, 2);
+    int target = 50;
+    while (target > 0)
+    {
+        float di = d [target];
+        Rcpp::Rcout << "[" << target << " -> ";
+        target = prev [target];
+        Rcpp::Rcout << target << "]: " << di << std::endl;
+    }
+    */
 
     delete [] d;
     delete [] w;
+    delete [] prev;
+
+    delete dijkstra;
+    delete g;
 
     return (dout);
 }

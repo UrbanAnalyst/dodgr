@@ -9,6 +9,8 @@ Description: Priority queue shortest paths
 Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
+    igraph,
+    rbenchmark,
     Rcpp (>= 0.12.6)
 LinkingTo:
     Rcpp
