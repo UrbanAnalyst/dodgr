@@ -50,8 +50,8 @@ class IntHeap {
   public:
     virtual ~IntHeap() { };
     virtual unsigned int deleteMin() = 0;
-    virtual void insert(int item, float key) = 0;
-    virtual void decreaseKey(int item, float newKey) = 0;
+    virtual void insert(int item, int key) = 0;
+    virtual void decreaseKey(int item, int newKey) = 0;
     virtual int nItems() const = 0;
     virtual long nComps() const = 0;
     virtual void dump() const = 0;

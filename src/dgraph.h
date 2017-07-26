@@ -75,7 +75,7 @@ class DGraph {
 class DGraphEdgeInt {
   public:
     int source, target;
-    float dist, wt;
+    int dist, wt;
     DGraphEdgeInt *nextOut, *nextIn;
 };
 

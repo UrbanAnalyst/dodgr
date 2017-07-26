@@ -22,7 +22,6 @@ class Dijkstra {
     ~Dijkstra();
 
     void init(const DGraph *g);
-    //void run(float *d, unsigned int s = 0);
     void run(float *d, float *w, unsigned int s = 0);
 
   private:
@@ -40,7 +39,6 @@ class DijkstraInt {
     ~DijkstraInt();
 
     void init(const DGraphInt *g);
-    //void run(float *d, unsigned int s = 0);
     void run(int *d, int *w, unsigned int s = 0);
 
   private:

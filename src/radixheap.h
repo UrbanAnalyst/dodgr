@@ -18,8 +18,8 @@ class RadixHeap: public IntHeap {
     ~RadixHeap();
     
     unsigned int deleteMin();
-    void insert(int item, float k);
-    void decreaseKey(int item, float newValue);
+    void insert(int item, int k);
+    void decreaseKey(int item, int newValue);
     int nItems() const { return itemCount; }
 
     long nComps() const { return compCount; }
