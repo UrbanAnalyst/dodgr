@@ -5,7 +5,8 @@
 
 #include <Rcpp.h>
 
-const float INFINITE_DIST =  std::numeric_limits<float>::max ();
+const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
+const float INFINITE_INT =  std::numeric_limits<int>::max ();
 
 unsigned int inst_vert_map (unsigned int nedges,
         std::map <std::string, unsigned int> &vert_map,
@@ -122,8 +123,8 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     float* d = new float [nverts];
     for(unsigned int v = 0; v < nverts; v++)
     {
-        w [v] = INFINITE_DIST;
-        d [v] = INFINITE_DIST;
+        w [v] = INFINITE_FLOAT;
+        d [v] = INFINITE_FLOAT;
     }
 
     Rcpp::NumericMatrix dout (nverts, nverts);
@@ -169,8 +170,8 @@ Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
     int* d = new int [nverts];
     for(unsigned int v = 0; v < nverts; v++)
     {
-        w [v] = INFINITE_DIST;
-        d [v] = INFINITE_DIST;
+        w [v] = INFINITE_INT;
+        d [v] = INFINITE_INT;
     }
 
     Rcpp::NumericMatrix dout (nverts, nverts);
