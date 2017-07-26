@@ -4,6 +4,7 @@
  * ----------------------------------------------------------------------------
  * Author:  Shane Saunders
  */
+#include "bheap.h"
 #include "fheap.h"
 #include "heap23.h"
 #include "triheap.h"

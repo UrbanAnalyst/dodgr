@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+inst/doc
+# History files
+.Rhistory
+.Rapp.history
+# Session Data files
+.RData
+# Output files from R CMD build
+/*.tar.gz
+# vim files
+.*.un~
+.*.swp

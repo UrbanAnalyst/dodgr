@@ -1,18 +1,18 @@
 #' test
 #'
 #' @param graph \code{data.frame} object representing the network graph
-#' @param pq Type of priority queue to use. Options include Fibonacci Heap
-#' (default; \code{FHeap}), \code{Radix}, \code{Tri}, and \code{Heap23}.
+#' @param heap Type of heap to use in priority queue. Options include
+#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
+#' \code{Radix}, Trinomial Heap (\code{Tri}), Extended Trinomial Heap
+#' (\code{TriExt}, and 2-3 Heap (\code{Heap23}).
 #' @return square matrix of distances between nodes
 #'
 #' @export
-test <- function(graph, pq = 'FHeap') {
-    pq <- tolower (pq)
-    if (!pq %in% c ("fheap", "head23", "radix", "tri", "triext"))
-        stop (paste0 ("priority queue type not recognised; ",
-                      "must be one of (fheap, head23, radix, tri, triext"))
+test <- function(graph, heap = 'FHeap') {
+    heaps <- c ("FHeap", "BHeap", "Radix", "Tri", "TriExt", "Heap23")
+    heap <- match.arg (arg = heap, choices = heaps)
 
-    d <- rcpp_get_sp (graph, tolower (pq))
+    d <- rcpp_get_sp (graph, heap)
     if (max (d) > 1e30) # float max ~ 1e38
         d [d == max (d)] <- NA
 

@@ -4,13 +4,14 @@
 \alias{test}
 \title{test}
 \usage{
-test(graph, pq = "FHeap")
+test(graph, heap = "FHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} object representing the network graph}
 
-\item{pq}{Type of priority queue to use. Options include Fibonacci Heap
-(default; \code{FHeap}), \code{Radix}, \code{Tri}, and \code{Heap23}.}
+\item{heap}{Type of heap to use in priority queue. Options include
+Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
+\code{Radix}, Trinomial Heap (\code{Tri}), and 2-3 Heap (\code{Heap23}).}
 }
 \value{
 square matrix of distances between nodes
