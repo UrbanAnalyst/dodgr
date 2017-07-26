@@ -121,7 +121,7 @@ DijkstraInt::~DijkstraInt() {
 /* - init() -
  * Initialise the algorithm for use with the graph pointed to by g.
  */
-void DijkstraInt::init(const DGraph *g) {
+void DijkstraInt::init(const DGraphInt *g) {
     graph = g;
 }
 
@@ -133,14 +133,14 @@ void DijkstraInt::init(const DGraph *g) {
 void DijkstraInt::run(int *d, int *w, unsigned int v0)
 {
     /* indexes, counters, pointers */
-    const DGraphEdge *edge;
+    const DGraphEdgeInt *edge;
 
     
   /*** initialisation ***/
 
     /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = graph->nVertices;
-    const DGraphVertex *vertices = graph->vertices;
+    const DGraphVertexInt *vertices = graph->vertices;
     
   /*** algorithm ***/
 

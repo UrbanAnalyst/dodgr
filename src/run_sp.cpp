@@ -53,6 +53,21 @@ template void inst_graph <int> (DGraph *g, unsigned int nedges,
         std::vector <int> &dist,
         std::vector <int> &wt);
 
+void inst_graph_int (DGraphInt *g, unsigned int nedges,
+        std::map <std::string, unsigned int> &vert_map,
+        std::vector <std::string> &from,
+        std::vector <std::string> &to,
+        std::vector <int> &dist,
+        std::vector <int> &wt)
+{
+    for (unsigned int i = 0; i < nedges; ++i)
+    {
+        unsigned int fromi = vert_map [from [i]];
+        unsigned int toi = vert_map [to [i]];
+        g->addNewEdge (fromi, toi, dist [i], wt [i]);
+    }
+}
+
 Dijkstra * dijkstra_bheap (unsigned int nverts)
 {
     HeapD<BHeap> heapD;
@@ -160,8 +175,8 @@ Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
     std::map <std::string, unsigned int> vert_map;
     unsigned int nverts = inst_vert_map (nedges, vert_map, from, to);
 
-    DGraph *g = new DGraph (nverts);
-    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+    DGraphInt *g = new DGraphInt (nverts);
+    inst_graph_int (g, nedges, vert_map, from, to, dist, wt);
 
     HeapD<RadixHeap> heapD;
     DijkstraInt *dijkstra = new DijkstraInt (nverts, &heapD);

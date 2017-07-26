@@ -8,6 +8,7 @@
 class Heap;      // Heap
 class HeapDesc;  // Heap descriptor
 class DGraph;    // Graph
+class DGraphInt; // Graph
 
 /* --- Dijkstra ---
  * Dijkstra's single-source algorithm.
@@ -35,7 +36,7 @@ class DijkstraInt {
     DijkstraInt(int n, HeapDesc *heapD);
     ~DijkstraInt();
 
-    void init(const DGraph *g);
+    void init(const DGraphInt *g);
     //void run(float *d, unsigned int s = 0);
     void run(int *d, int *w, unsigned int s = 0);
 
@@ -44,23 +45,7 @@ class DijkstraInt {
     bool *s;           // array: solution set state of vertices
     bool *f;           // array: frontier set state of vertices
 
-    const DGraph *graph;    // pointer: directed graph    
-};
-
-
-/* --- DijkstraDesc --
- * Dijkstra's algorithm descriptor class used for creating instances of
- * Dijkstra's algorithm.  The constructor parameter heapD points to a heap
- * descriptor which specifies the kind of heap to be used in the created
- * instances of Dijkstra's algorithm.
- */
-class DijkstraDesc {
-  public:
-    DijkstraDesc(HeapDesc *heapD) : heapDesc(heapD) { };
-    Dijkstra *newInstance(int n) const { return new Dijkstra(n, heapDesc); }
-    
-  private:
-    HeapDesc *heapDesc;    
+    const DGraphInt *graph;    // pointer: directed graph    
 };
 
 #endif

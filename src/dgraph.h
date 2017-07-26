@@ -72,4 +72,36 @@ class DGraph {
 };
 
 /*---------------------------------------------------------------------------*/
+class DGraphEdgeInt {
+  public:
+    int source, target;
+    float dist, wt;
+    DGraphEdgeInt *nextOut, *nextIn;
+};
+
+class DGraphVertexInt {
+  public:
+    DGraphEdgeInt *outHead, *outTail;
+    DGraphEdgeInt *inHead, *inTail;
+    int outSize, inSize;
+};
+
+class DGraphInt {
+  public:
+    int nVertices;
+    DGraphVertexInt *vertices;
+
+    DGraphInt(int n);
+    ~DGraphInt();
+    
+    void clear();
+    void addNewEdge(int srcVertexNo, int destVertexNo, int dist, int wt);
+    bool edgeExists(int v, int w) const;
+    bool reachable(int s) const;
+    void print() const;
+  private:
+    void initVertices();
+};
+
+/*---------------------------------------------------------------------------*/
 #endif
