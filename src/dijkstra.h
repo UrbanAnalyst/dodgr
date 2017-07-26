@@ -29,6 +29,24 @@ class Dijkstra {
     const DGraph *graph;    // pointer: directed graph    
 };
 
+// Implementation for Radix heaps with integer edge weights
+class DijkstraInt {
+  public:
+    DijkstraInt(int n, HeapDesc *heapD);
+    ~DijkstraInt();
+
+    void init(const DGraph *g);
+    //void run(float *d, unsigned int s = 0);
+    void run(int *d, int *w, unsigned int s = 0);
+
+  private:
+    Heap *heap;        // pointer: heap
+    bool *s;           // array: solution set state of vertices
+    bool *f;           // array: frontier set state of vertices
+
+    const DGraph *graph;    // pointer: directed graph    
+};
+
 
 /* --- DijkstraDesc --
  * Dijkstra's algorithm descriptor class used for creating instances of

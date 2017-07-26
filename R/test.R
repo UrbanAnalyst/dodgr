@@ -12,7 +12,11 @@ test <- function(graph, heap = 'FHeap') {
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
     heap <- match.arg (arg = heap, choices = heaps)
 
-    d <- rcpp_get_sp (graph, heap)
+    if (heap == "Radix")
+        d <- rcpp_get_sp_radix (graph)
+    else
+        d <- rcpp_get_sp (graph, heap)
+
     if (max (d) > 1e30) # float max ~ 1e38
         d [d == max (d)] <- NA
 

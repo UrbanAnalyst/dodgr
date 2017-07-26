@@ -17,3 +17,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_get_sp_radix
+Rcpp::NumericMatrix rcpp_get_sp_radix(Rcpp::DataFrame graph);
+RcppExport SEXP _pqspr_rcpp_get_sp_radix(SEXP graphSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_radix(graph));
+    return rcpp_result_gen;
+END_RCPP
+}

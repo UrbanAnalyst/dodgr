@@ -24,12 +24,13 @@ unsigned int inst_vert_map (unsigned int nedges,
     return nverts;
 }
 
+template <typename T>
 void inst_graph (DGraph *g, unsigned int nedges,
         std::map <std::string, unsigned int> &vert_map,
         std::vector <std::string> &from,
         std::vector <std::string> &to,
-        std::vector <float> &dist,
-        std::vector <float> &wt)
+        std::vector <T> &dist,
+        std::vector <T> &wt)
 {
     for (unsigned int i = 0; i < nedges; ++i)
     {
@@ -38,6 +39,18 @@ void inst_graph (DGraph *g, unsigned int nedges,
         g->addNewEdge (fromi, toi, dist [i], wt [i]);
     }
 }
+template void inst_graph <float> (DGraph *g, unsigned int nedges,
+        std::map <std::string, unsigned int> &vert_map,
+        std::vector <std::string> &from,
+        std::vector <std::string> &to,
+        std::vector <float> &dist,
+        std::vector <float> &wt);
+template void inst_graph <int> (DGraph *g, unsigned int nedges,
+        std::map <std::string, unsigned int> &vert_map,
+        std::vector <std::string> &from,
+        std::vector <std::string> &to,
+        std::vector <int> &dist,
+        std::vector <int> &wt);
 
 Dijkstra * dijkstra_bheap (unsigned int nverts)
 {
@@ -74,13 +87,6 @@ Dijkstra * dijkstra_triheapext (unsigned int nverts)
     return dijkstra;
 }
 
-Dijkstra * dijkstra_radix (unsigned int nverts)
-{
-    HeapD<RadixHeap> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
-
 //' rcpp_get_sp
 //'
 //' @noRd
@@ -111,11 +117,56 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
         dijkstra = dijkstra_triheap (nverts);
     else if (heap_type == "TriHeapExt")
         dijkstra = dijkstra_triheapext (nverts);
-    else if (heap_type == "Radix")
-        dijkstra = dijkstra_radix (nverts);
 
     float* w = new float [nverts];
     float* d = new float [nverts];
+    for(unsigned int v = 0; v < nverts; v++)
+    {
+        w [v] = INFINITE_DIST;
+        d [v] = INFINITE_DIST;
+    }
+
+    Rcpp::NumericMatrix dout (nverts, nverts);
+    for(unsigned int v = 0; v < nverts; v++)
+    {
+        dijkstra->init (g); // specify the graph
+        dijkstra->run (d, w, v);
+        for(unsigned int vi = 0; vi < nverts; vi++)
+            dout (v, vi) = d [vi];
+    }
+
+    delete dijkstra;
+    delete g;
+
+    delete [] d;
+    delete [] w;
+
+    return (dout);
+}
+
+//' rcpp_get_sp_radix
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericMatrix rcpp_get_sp_radix (Rcpp::DataFrame graph)
+{
+    std::vector <std::string> from = graph ["from_id"];
+    std::vector <std::string> to = graph ["to_id"];
+    std::vector <int> dist = graph ["d"];
+    std::vector <int> wt = graph ["d_weighted"];
+
+    unsigned int nedges = graph.nrow ();
+    std::map <std::string, unsigned int> vert_map;
+    unsigned int nverts = inst_vert_map (nedges, vert_map, from, to);
+
+    DGraph *g = new DGraph (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    HeapD<RadixHeap> heapD;
+    DijkstraInt *dijkstra = new DijkstraInt (nverts, &heapD);
+    
+    int* w = new int [nverts];
+    int* d = new int [nverts];
     for(unsigned int v = 0; v < nverts; v++)
     {
         w [v] = INFINITE_DIST;
