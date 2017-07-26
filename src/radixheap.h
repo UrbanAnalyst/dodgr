@@ -12,14 +12,14 @@ class RadixHeapNode {
     RadixHeapNode *next, *prev;
 };
 
-class RadixHeap: public IntHeap {
+class RadixHeap: public Heap {
   public:
     RadixHeap(int n);
     ~RadixHeap();
     
     unsigned int deleteMin();
-    void insert(int item, long k);
-    void decreaseKey(int item, long newValue);
+    void insert(int item, float k);
+    void decreaseKey(int item, float newValue);
     int nItems() const { return itemCount; }
 
     long nComps() const { return compCount; }

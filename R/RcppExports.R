@@ -8,10 +8,3 @@ rcpp_get_sp <- function(graph, heap_type) {
     .Call(`_pqspr_rcpp_get_sp`, graph, heap_type)
 }
 
-#' rcpp_get_sp_radix
-#'
-#' @noRd
-rcpp_get_sp_radix <- function(graph) {
-    .Call(`_pqspr_rcpp_get_sp_radix`, graph)
-}
-

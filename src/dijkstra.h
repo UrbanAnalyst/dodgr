@@ -9,10 +9,6 @@ class Heap;      // Heap
 class HeapDesc;  // Heap descriptor
 class DGraph;    // Graph
 
-class IntHeap;      // Heap
-class IntHeapDesc;  // Heap descriptor
-class DGraphInt; // Graph
-
 /* --- Dijkstra ---
  * Dijkstra's single-source algorithm.
  */
@@ -30,23 +26,6 @@ class Dijkstra {
     bool *f;           // array: frontier set state of vertices
 
     const DGraph *graph;    // pointer: directed graph    
-};
-
-// Implementation for Radix heaps with integer edge weights
-class DijkstraInt {
-  public:
-    DijkstraInt(int n, IntHeapDesc *heapD);
-    ~DijkstraInt();
-
-    void init(const DGraphInt *g);
-    void run(int *d, int *w, unsigned int s = 0);
-
-  private:
-    IntHeap *heap;        // pointer: heap
-    bool *s;           // array: solution set state of vertices
-    bool *f;           // array: frontier set state of vertices
-
-    const DGraphInt *graph;    // pointer: directed graph    
 };
 
 #endif

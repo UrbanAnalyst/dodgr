@@ -46,7 +46,7 @@ RadixHeap::~RadixHeap()
     delete [] u;
 }
 
-void RadixHeap::insert(int item, long k)
+void RadixHeap::insert(int item, float k)
 {
     RadixHeapNode *newNode = new RadixHeapNode;
     newNode->item = item;
@@ -60,7 +60,7 @@ void RadixHeap::insert(int item, long k)
 #endif
 }
 
-void RadixHeap::decreaseKey(int item, long k)
+void RadixHeap::decreaseKey(int item, float k)
 {
     RadixHeapNode *node;
     node = nodes[item];
