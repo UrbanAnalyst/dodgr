@@ -40,7 +40,7 @@ void Dijkstra::init(const DGraph *g) {
  * This assumes that the array d has been initialised with d[v] = INFINITE_DIST
  * for all vertices v != v0.
  */
-void Dijkstra::run(float *d, float *w, unsigned int v0)
+void Dijkstra::run(float *d, float *w, int *prev, unsigned int v0)
 {
     /* indexes, counters, pointers */
     const DGraphEdge *edge;
@@ -64,6 +64,7 @@ void Dijkstra::run(float *d, float *w, unsigned int v0)
     /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
+    prev [v0] = -1;
     heap->insert(v0, 0.0);
     f [v0] = true;
 
@@ -86,6 +87,7 @@ void Dijkstra::run(float *d, float *w, unsigned int v0)
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
                     w [et] = wt;
+                    prev [et] = (int) v;
                     if (f [et]) {
                         heap->decreaseKey(et, wt);
                     }

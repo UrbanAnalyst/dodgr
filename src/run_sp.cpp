@@ -124,20 +124,19 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 
     float* w = new float [nverts];
     float* d = new float [nverts];
-    for(unsigned int v = 0; v < nverts; v++)
-    {
-        w [v] = INFINITE_FLOAT;
-        d [v] = INFINITE_FLOAT;
-    }
+    int* prev = new int [nverts];
+    std::fill (w, w + nverts, INFINITE_FLOAT);
 
     Rcpp::NumericMatrix dout (nverts, nverts);
     for(unsigned int v = 0; v < nverts; v++)
     {
+        std::fill (w, w + nverts, INFINITE_FLOAT);
         dijkstra->init (g); // specify the graph
-        dijkstra->run (d, w, v);
+        dijkstra->run (d, w, prev, v);
         for(unsigned int vi = 0; vi < nverts; vi++)
             dout (v, vi) = d [vi];
     }
+
 
     delete dijkstra;
     delete g;
