@@ -12,7 +12,7 @@ class RadixHeapNode {
     RadixHeapNode *next, *prev;
 };
 
-class RadixHeap: public Heap {
+class RadixHeap: public IntHeap {
   public:
     RadixHeap(int n);
     ~RadixHeap();

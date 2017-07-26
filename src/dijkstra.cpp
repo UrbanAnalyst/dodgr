@@ -1,6 +1,7 @@
 #include "dijkstra.h"
 #include "dgraph.h"
 #include "heap.h"
+#include <Rcpp.h> // TODO: Delete that!
 /* Dijkstra's Algorithm
  * ----------------------------------------------------------------------------
  * Author:  Shane Saunders
@@ -104,7 +105,7 @@ void Dijkstra::run(float *d, float *w, unsigned int v0)
 /*--- Dijkstra Int -------------------------------------------------------*/
 // for integer edge weights with the Radix Heap
 
-DijkstraInt::DijkstraInt(int n, HeapDesc *heapD)
+DijkstraInt::DijkstraInt(int n, IntHeapDesc *heapD)
 {
     heap = heapD->newInstance(n);    
     s = new bool[n];
@@ -141,6 +142,9 @@ void DijkstraInt::run(int *d, int *w, unsigned int v0)
     /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = graph->nVertices;
     const DGraphVertexInt *vertices = graph->vertices;
+
+    Rcpp::Rcout << "graph has " << n << " vertices" << std::endl;
+
     
   /*** algorithm ***/
 
@@ -154,7 +158,10 @@ void DijkstraInt::run(int *d, int *w, unsigned int v0)
     /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
+    Rcpp::Rcout << "about to insert first vertex on the heap ...";
+    Rcpp::Rcout.flush ();
     heap->insert(v0, 0.0);
+    Rcpp::Rcout << "done" << std::endl;
     f [v0] = true;
 
     /* repeatedly update distances from the minimum remaining trigger vertex */

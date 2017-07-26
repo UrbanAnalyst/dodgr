@@ -46,4 +46,28 @@ class HeapD: public HeapDesc {
     Heap *newInstance(int n) const { return new T(n); };
 };
 
+class IntHeap {
+  public:
+    virtual ~IntHeap() { };
+    virtual unsigned int deleteMin() = 0;
+    virtual void insert(int item, float key) = 0;
+    virtual void decreaseKey(int item, float newKey) = 0;
+    virtual int nItems() const = 0;
+    virtual long nComps() const = 0;
+    virtual void dump() const = 0;
+};
+
+class IntHeapDesc {
+  public:
+    virtual ~IntHeapDesc() { };
+    virtual IntHeap *newInstance(int n) const = 0;
+};
+
+template <class T>
+class IntHeapD: public IntHeapDesc {
+  public:
+    IntHeap *newInstance(int n) const { return new T(n); };
+};
+
+
 #endif

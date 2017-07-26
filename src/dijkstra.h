@@ -8,6 +8,9 @@
 class Heap;      // Heap
 class HeapDesc;  // Heap descriptor
 class DGraph;    // Graph
+
+class IntHeap;      // Heap
+class IntHeapDesc;  // Heap descriptor
 class DGraphInt; // Graph
 
 /* --- Dijkstra ---
@@ -33,7 +36,7 @@ class Dijkstra {
 // Implementation for Radix heaps with integer edge weights
 class DijkstraInt {
   public:
-    DijkstraInt(int n, HeapDesc *heapD);
+    DijkstraInt(int n, IntHeapDesc *heapD);
     ~DijkstraInt();
 
     void init(const DGraphInt *g);
@@ -41,7 +44,7 @@ class DijkstraInt {
     void run(int *d, int *w, unsigned int s = 0);
 
   private:
-    Heap *heap;        // pointer: heap
+    IntHeap *heap;        // pointer: heap
     bool *s;           // array: solution set state of vertices
     bool *f;           // array: frontier set state of vertices
 
