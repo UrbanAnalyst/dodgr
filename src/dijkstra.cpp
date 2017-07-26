@@ -45,21 +45,16 @@ void Dijkstra::run(float *d, float *w, int *prev, unsigned int v0)
     /* indexes, counters, pointers */
     const DGraphEdge *edge;
 
-    
-  /*** initialisation ***/
+
+    /*** initialisation ***/
 
     /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = graph->nVertices;
     const DGraphVertex *vertices = graph->vertices;
-    
-  /*** algorithm ***/
 
     /* initialise all vertices as unexplored */
-    for (unsigned int v = 0; v < n; v++)
-    {
-        s [v] = false;
-        f [v] = false; 
-    }
+    std::fill (s, s + n, false);
+    std::fill (f, f + n, false);
 
     /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
@@ -100,6 +95,5 @@ void Dijkstra::run(float *d, float *w, int *prev, unsigned int v0)
 
             edge = edge->nextOut;
         } /* while */
-
     } /* while */
 }
