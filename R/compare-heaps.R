@@ -19,12 +19,12 @@ compare_heaps <- function(graph, replications = 10)
     igraph::E (igr)$weight <- graph$d_weighted
 
     rbenchmark::benchmark (
-                           d <- test (graph, heap = "BHeap"),
-                           d <- test (graph, heap = "FHeap"),
-                           d <- test (graph, heap = "TriHeap"),
-                           d <- test (graph, heap = "TriHeapExt"),
-                           d <- test (graph, heap = "Heap23"),
-                           igraph::distances (igr, v = nodes, to = nodes,
+                           d <- dodgr_dists (graph, heap = "BHeap"),
+                           d <- dodgr_dists (graph, heap = "FHeap"),
+                           d <- dodgr_dists (graph, heap = "TriHeap"),
+                           d <- dodgr_dists (graph, heap = "TriHeapExt"),
+                           d <- dodgr_dists (graph, heap = "Heap23"),
+                           d <- igraph::distances (igr, v = nodes, to = nodes,
                                               mode = "out"),
                            replications = 10, order = "relative")
 }
