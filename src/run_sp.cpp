@@ -26,7 +26,7 @@ unsigned int inst_vert_map (unsigned int nedges,
     return nverts;
 }
 
-template <typename T>
+    template <typename T>
 void inst_graph (DGraph *g, unsigned int nedges,
         std::map <std::string, unsigned int> &vert_map,
         std::vector <std::string> &from,
@@ -109,7 +109,7 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     Dijkstra *dijkstra;
-    
+
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
     else if (heap_type == "BHeap")
@@ -128,7 +128,7 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     float* w = new float [nverts];
     float* d = new float [nverts];
     int* prev = new int [nverts];
-    
+
     Rcpp::NumericMatrix dout (nverts, nverts);
     for(unsigned int v = 0; v < nverts; v++)
     {
@@ -142,17 +142,17 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 
     // Tracing a path:
     /*
-    std::fill (w, w + nverts, INFINITE_FLOAT);
-    dijkstra->run (d, w, prev, 2);
-    int target = 50;
-    while (target > 0)
-    {
-        float di = d [target];
-        Rcpp::Rcout << "[" << target << " -> ";
-        target = prev [target];
-        Rcpp::Rcout << target << "]: " << di << std::endl;
-    }
-    */
+       std::fill (w, w + nverts, INFINITE_FLOAT);
+       dijkstra->run (d, w, prev, 2);
+       int target = 50;
+       while (target > 0)
+       {
+       float di = d [target];
+       Rcpp::Rcout << "[" << target << " -> ";
+       target = prev [target];
+       Rcpp::Rcout << target << "]: " << di << std::endl;
+       }
+       */
 
     delete [] d;
     delete [] w;

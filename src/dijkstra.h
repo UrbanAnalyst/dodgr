@@ -13,19 +13,19 @@ class DGraph;    // Graph
  * Dijkstra's single-source algorithm.
  */
 class Dijkstra {
-  public:
-    Dijkstra(int n, HeapDesc *heapD);
-    ~Dijkstra();
+    public:
+        Dijkstra(int n, HeapDesc *heapD);
+        ~Dijkstra();
 
-    void init(const DGraph *g);
-    void run(float *d, float *w, int *prev, unsigned int s = 0);
+        void init(const DGraph *g);
+        void run(float *d, float *w, int *prev, unsigned int s = 0);
 
-  private:
-    Heap *heap;        // pointer: heap
-    bool *s;           // array: solution set state of vertices
-    bool *f;           // array: frontier set state of vertices
+    private:
+        Heap *heap;        // pointer: heap
+        bool *s;           // array: solution set state of vertices
+        bool *f;           // array: frontier set state of vertices
 
-    const DGraph *graph;    // pointer: directed graph    
+        const DGraph *graph;    // pointer: directed graph    
 };
 
 #endif

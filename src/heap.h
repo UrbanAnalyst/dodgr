@@ -24,26 +24,26 @@
  *                  output.
  */
 class Heap {
-  public:
-    virtual ~Heap() { };
-    virtual unsigned int deleteMin() = 0;
-    virtual void insert(int item, float key) = 0;
-    virtual void decreaseKey(int item, float newKey) = 0;
-    virtual int nItems() const = 0;
-    virtual long nComps() const = 0;
-    virtual void dump() const = 0;
+    public:
+        virtual ~Heap() { };
+        virtual unsigned int deleteMin() = 0;
+        virtual void insert(int item, float key) = 0;
+        virtual void decreaseKey(int item, float newKey) = 0;
+        virtual int nItems() const = 0;
+        virtual long nComps() const = 0;
+        virtual void dump() const = 0;
 };
 
 class HeapDesc {
-  public:
-    virtual ~HeapDesc() { };
-    virtual Heap *newInstance(int n) const = 0;
+    public:
+        virtual ~HeapDesc() { };
+        virtual Heap *newInstance(int n) const = 0;
 };
 
 template <class T>
 class HeapD: public HeapDesc {
-  public:
-    Heap *newInstance(int n) const { return new T(n); };
+    public:
+        Heap *newInstance(int n) const { return new T(n); };
 };
 
 

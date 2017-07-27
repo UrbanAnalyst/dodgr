@@ -28,14 +28,14 @@
  * item        - the number of the item that the node is associated with.
  */
 class FHeapNode {
-  public:
-    FHeapNode *parent;
-    FHeapNode *left, *right;
-    FHeapNode *child;
-    int rank;
-    int marked;
-    float key;
-    int item;
+    public:
+        FHeapNode *parent;
+        FHeapNode *left, *right;
+        FHeapNode *child;
+        int rank;
+        int marked;
+        float key;
+        int item;
 };
 
 /* --- FHeap ---
@@ -59,26 +59,26 @@ class FHeapNode {
  *             of key comparisons.
  */
 class FHeap: public Heap {
-  public:
-    FHeap(int n);
-    ~FHeap();
-    
-    unsigned int deleteMin();
-    void insert(int item, float k);
-    void decreaseKey(int item, float newValue);
-    int nItems() const { return itemCount; }
+    public:
+        FHeap(int n);
+        ~FHeap();
 
-    long nComps() const { return compCount; }
-    void dump() const;
+        unsigned int deleteMin();
+        void insert(int item, float k);
+        void decreaseKey(int item, float newValue);
+        int nItems() const { return itemCount; }
 
-  private:
-    FHeapNode **trees;
-    FHeapNode **nodes;
-    int maxNodes, maxTrees, itemCount, treeSum;
-    long compCount;
+        long nComps() const { return compCount; }
+        void dump() const;
 
-    void meld(FHeapNode *treeList);
-    static void dumpNodes(FHeapNode *node, int level);
+    private:
+        FHeapNode **trees;
+        FHeapNode **nodes;
+        int maxNodes, maxTrees, itemCount, treeSum;
+        long compCount;
+
+        void meld(FHeapNode *treeList);
+        static void dumpNodes(FHeapNode *node, int level);
 };
 
 /*---------------------------------------------------------------------------*/

@@ -134,7 +134,7 @@ unsigned int RadixHeap::deleteMin()
     /* delete the minimum node and return the corresponding item */
 #ifdef RADIXHEAP_DEBUG
     Rcpp::Rcout << "performed delete-min " << minNode->item << "("
-         << minNode->key << ")" << std::endl;
+        << minNode->key << ")" << std::endl;
     dump();
 #endif    
     int minItem = minNode->item;
@@ -196,5 +196,5 @@ void RadixHeap::dump() const {
         }
         Rcpp::Rcout << std::endl;
         i--;        
-   } while(i >= 0);
+    } while(i >= 0);
 }

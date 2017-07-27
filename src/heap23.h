@@ -39,13 +39,13 @@
  * dimension of a single node with no children is zero.
  */
 class Heap23Node {
-  public:
-    Heap23Node *parent;
-    Heap23Node *child;
-    Heap23Node *left, *right;
-    int dim;
-    float key;
-    int item;
+    public:
+        Heap23Node *parent;
+        Heap23Node *child;
+        Heap23Node *left, *right;
+        int dim;
+        float key;
+        int item;
 };
 
 /* The structure type for a 2-3 heap.
@@ -68,35 +68,35 @@ class Heap23Node {
  *             of key comparisons.
  */
 class Heap23 : public Heap {
-  public:
-    Heap23(int n);
-    ~Heap23();
+    public:
+        Heap23(int n);
+        ~Heap23();
 
-    void insert(int item, float k);
-    unsigned int deleteMin();
-    void decreaseKey(int item, float newValue);
-    int nItems() const { return itemCount; }
+        void insert(int item, float k);
+        unsigned int deleteMin();
+        void decreaseKey(int item, float newValue);
+        int nItems() const { return itemCount; }
 
-    long nComps() const { return compCount; }
+        long nComps() const { return compCount; }
 
-    void dump() const;
-    
-  private:
-    Heap23Node **trees;
-    Heap23Node **nodes;
-    int maxNodes, maxTrees, itemCount, treeSum;
-    long compCount;
+        void dump() const;
 
-    void meld(Heap23Node *tree_list);
-    void removeNode(Heap23Node *cutNode);
-    
-    static int merge(Heap23Node **a, Heap23Node **b);
-    static void trimExtraNode(Heap23Node *x);
-    static void addChild(Heap23Node *p, Heap23Node *c);
-    static void replaceNode(Heap23Node *oldNode, Heap23Node *newNode);
-    static void swapTrunks(Heap23Node *lowNode, Heap23Node *highNode);    
+    private:
+        Heap23Node **trees;
+        Heap23Node **nodes;
+        int maxNodes, maxTrees, itemCount, treeSum;
+        long compCount;
 
-    static void dumpNodes(Heap23Node *ptr, int level);
+        void meld(Heap23Node *tree_list);
+        void removeNode(Heap23Node *cutNode);
+
+        static int merge(Heap23Node **a, Heap23Node **b);
+        static void trimExtraNode(Heap23Node *x);
+        static void addChild(Heap23Node *p, Heap23Node *c);
+        static void replaceNode(Heap23Node *oldNode, Heap23Node *newNode);
+        static void swapTrunks(Heap23Node *lowNode, Heap23Node *highNode);    
+
+        static void dumpNodes(Heap23Node *ptr, int level);
 };
 
 /*---------------------------------------------------------------------------*/

@@ -39,17 +39,17 @@
  * dimension of a single node with no children is zero.
  */
 class TriHeapNode {
-  public:
-    TriHeapNode *parent;
-    TriHeapNode *left, *right;
-    TriHeapNode *child;
-    TriHeapNode *partner;
+    public:
+        TriHeapNode *parent;
+        TriHeapNode *left, *right;
+        TriHeapNode *child;
+        TriHeapNode *partner;
 
-    int extra;    
-    int dim;
+        int extra;    
+        int dim;
 
-    float key;
-    int item;
+        float key;
+        int item;
 };
 
 /* --- TriHeap ---
@@ -74,33 +74,33 @@ class TriHeapNode {
  *             of key comparisons.
  */
 class TriHeap : public Heap {
-public:
-    TriHeap(int maxNodes);
-    ~TriHeap();
-    
-    unsigned int deleteMin();
-    void insert(int item, float k);
-    void decreaseKey(int item, float newValue);
-    int nItems() const { return itemCount; }
+    public:
+        TriHeap(int maxNodes);
+        ~TriHeap();
 
-    long nComps() const { return compCount; }
+        unsigned int deleteMin();
+        void insert(int item, float k);
+        void decreaseKey(int item, float newValue);
+        int nItems() const { return itemCount; }
 
-    void dump() const;
+        long nComps() const { return compCount; }
 
-private:
-    TriHeapNode **trees;
-    TriHeapNode **active;
-    TriHeapNode **nodes;
-    int maxNodes, maxTrees, itemCount, treeSum;
-    long compCount;
+        void dump() const;
 
-    void meld(TriHeapNode *treeList);
+    private:
+        TriHeapNode **trees;
+        TriHeapNode **active;
+        TriHeapNode **nodes;
+        int maxNodes, maxTrees, itemCount, treeSum;
+        long compCount;
 
-    static int merge(TriHeapNode **a, TriHeapNode **b);
-    static void addChild(TriHeapNode *p, TriHeapNode *c);
-    static void replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode);
-    
-    static void dumpNodes(TriHeapNode *node, int level);
+        void meld(TriHeapNode *treeList);
+
+        static int merge(TriHeapNode **a, TriHeapNode **b);
+        static void addChild(TriHeapNode *p, TriHeapNode *c);
+        static void replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode);
+
+        static void dumpNodes(TriHeapNode *node, int level);
 };
 
 /*---------------------------------------------------------------------------*/

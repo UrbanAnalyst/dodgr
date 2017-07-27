@@ -19,9 +19,9 @@
  *          shortest path distance.
  */
 class BHeapNode {
-  public:
-    int item;
-    float key;
+    public:
+        int item;
+        float key;
 };
 
 /* --- BHeap ---
@@ -32,34 +32,34 @@ class BHeapNode {
  *   compCount - the number of key comparison operations
  */
 class BHeap : public Heap {
-  public:
-    BHeap(int n);
-    ~BHeap();
+    public:
+        BHeap(int n);
+        ~BHeap();
 
-    void deleteItem(int item);
-    unsigned int deleteMin() {
-        int v;
-        v = min();
-        deleteItem(v);
-        return v;
-    }
-    void insert(int item, float key);
-    void decreaseKey(int item, float newKey);
-    int nItems() const { return itemCount; }
-    
-    long nComps() const { return compCount; }
-    void dump() const;
+        void deleteItem(int item);
+        unsigned int deleteMin() {
+            int v;
+            v = min();
+            deleteItem(v);
+            return v;
+        }
+        void insert(int item, float key);
+        void decreaseKey(int item, float newKey);
+        int nItems() const { return itemCount; }
 
-    /* extra functions */
-    int min();
-    
-  private:
-    BHeapNode *a;
-    int *aPos;
-    int itemCount;    
-    long compCount;    
+        long nComps() const { return compCount; }
+        void dump() const;
 
-    void siftUp(int p, int q);
+        /* extra functions */
+        int min();
+
+    private:
+        BHeapNode *a;
+        int *aPos;
+        int itemCount;    
+        long compCount;    
+
+        void siftUp(int p, int q);
 };
 
 /*---------------------------------------------------------------------------*/

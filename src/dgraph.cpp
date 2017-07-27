@@ -15,13 +15,13 @@
 DGraph::DGraph(int n)
 {
     nVertices = n;
-    
+
     vertices = new DGraphVertex[n];
     initVertices();
 }
 
 /* --- Destructor ---
- */
+*/
 DGraph::~DGraph()
 {
     clear();
@@ -54,7 +54,7 @@ void DGraph::initVertices()
         vertices[i].outSize = vertices[i].inSize = 0;
     }
 }
-    
+
 /* --- addNewEdge() ---
  * Adds a new edge from vertex 'source' to vertex 'target' with
  * with a corresponding distance of dist.
@@ -68,7 +68,7 @@ void DGraph::addNewEdge(int source, int target, float dist, float wt)
     newEdge->wt = wt;
     newEdge->nextOut = NULL;
     newEdge->nextIn = NULL;
-    
+
     DGraphVertex *vertex = &vertices[source];
     if(vertex->outTail) {
         vertex->outTail->nextOut = newEdge;
@@ -93,7 +93,7 @@ void DGraph::addNewEdge(int source, int target, float dist, float wt)
 bool DGraph::edgeExists(int v, int w) const
 {
     /* Scan all existing edges from v to determine whether an edge to w exists.
-     */
+    */
     const DGraphEdge *edge = vertices[v].outHead;
     while(edge) {
         if(edge->target == w) return true;
@@ -109,7 +109,7 @@ bool DGraph::reachable (int s) const
 {
     int *stack = new int [nVertices];
     int tos = 0;
-    
+
     int *visited = new int [nVertices];
     for(int i = 0; i < nVertices; i++)
         visited [i] = 0;

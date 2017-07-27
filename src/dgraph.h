@@ -9,7 +9,7 @@
 
 
 /*--- Directed Graph Classes ------------------------------------------------*/
- 
+
 /* --- Directed graph edge class ---
  * Each edge object represents an outgoing edge of some vertex and is stored in
  * that vertexes linked list of edges.   The member 'target' is the edge's
@@ -20,10 +20,10 @@
  * pointer.
  */
 class DGraphEdge {
-  public:
-    int source, target;
-    float dist, wt;
-    DGraphEdge *nextOut, *nextIn;
+    public:
+        int source, target;
+        float dist, wt;
+        DGraphEdge *nextOut, *nextIn;
 };
 
 /* --- Directed graph vertex class ---
@@ -35,10 +35,10 @@ class DGraphEdge {
  * and incoming edges are stored in outSize and inSize respectively.
  */
 class DGraphVertex {
-  public:
-    DGraphEdge *outHead, *outTail;
-    DGraphEdge *inHead, *inTail;
-    int outSize, inSize;
+    public:
+        DGraphEdge *outHead, *outTail;
+        DGraphEdge *inHead, *inTail;
+        int outSize, inSize;
 };
 
 /* --- Directed graph class ---
@@ -55,20 +55,20 @@ class DGraphVertex {
  *                output.
  */
 class DGraph {
-  public:
-    int nVertices;
-    DGraphVertex *vertices;
+    public:
+        int nVertices;
+        DGraphVertex *vertices;
 
-    DGraph(int n);
-    ~DGraph();
-    
-    void clear();
-    void addNewEdge(int srcVertexNo, int destVertexNo, float dist, float wt);
-    bool edgeExists(int v, int w) const;
-    bool reachable(int s) const;
-    void print() const;
-  private:
-    void initVertices();
+        DGraph(int n);
+        ~DGraph();
+
+        void clear();
+        void addNewEdge(int srcVertexNo, int destVertexNo, float dist, float wt);
+        bool edgeExists(int v, int w) const;
+        bool reachable(int s) const;
+        void print() const;
+    private:
+        void initVertices();
 };
 
 

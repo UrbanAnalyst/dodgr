@@ -776,7 +776,7 @@ void Heap23::dump() const
             Rcpp::Rcout << std::endl;
         }
     }
-    fflush(stdout);
+    Rcpp::Rcout.flush ();
 #endif
 }
 

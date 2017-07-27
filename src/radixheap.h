@@ -6,40 +6,40 @@
 
 
 class RadixHeapNode {
-  public:    
-    int item, key;
-    int bucket;
-    RadixHeapNode *next, *prev;
+    public:    
+        int item, key;
+        int bucket;
+        RadixHeapNode *next, *prev;
 };
 
 class RadixHeap: public Heap {
-  public:
-    RadixHeap(int n);
-    ~RadixHeap();
-    
-    unsigned int deleteMin();
-    void insert(int item, float k);
-    void decreaseKey(int item, float newValue);
-    int nItems() const { return itemCount; }
+    public:
+        RadixHeap(int n);
+        ~RadixHeap();
 
-    long nComps() const { return compCount; }
-    void dump() const;
+        unsigned int deleteMin();
+        void insert(int item, float k);
+        void decreaseKey(int item, float newValue);
+        int nItems() const { return itemCount; }
 
-  private:
-    void placeNode(int startBucket, RadixHeapNode *node);
-    void insertNode(int i, RadixHeapNode *node);
-    void removeNode(RadixHeapNode *node);
+        long nComps() const { return compCount; }
+        void dump() const;
 
-    static const int MaxKey = 500000;
-    RadixHeapNode **nodes;
-    RadixHeapNode *bucketHeaders;
-    int *u;
+    private:
+        void placeNode(int startBucket, RadixHeapNode *node);
+        void insertNode(int i, RadixHeapNode *node);
+        void removeNode(RadixHeapNode *node);
 
-    int nBuckets;
-    int dMin;
+        static const int MaxKey = 500000;
+        RadixHeapNode **nodes;
+        RadixHeapNode *bucketHeaders;
+        int *u;
 
-    int itemCount;
-    int compCount;
+        int nBuckets;
+        int dMin;
+
+        int itemCount;
+        int compCount;
 };
 
 #endif

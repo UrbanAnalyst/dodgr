@@ -32,10 +32,10 @@ TriHeapExt::TriHeapExt(int n)
 {
     int i;
 #if SHOW_trih_ext
-Rcpp::Rcout << "init, ";
-Rcpp::Rcout.flush ();
+    Rcpp::Rcout << "init, ";
+    Rcpp::Rcout.flush ();
 #endif
- 
+
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
     maxTrees = 1 + (int)(log(n)/log(3.0));
@@ -51,10 +51,10 @@ Rcpp::Rcout.flush ();
      */
     trees = new TriHeapExtNode *[maxTrees];
     for(i = 0; i < maxTrees; i++) trees[i] = 0;
-    
+
     nodes = new TriHeapExtNode *[n];
     for(i = 0; i < n; i++) nodes[i] = 0;
-    
+
     /* Allocate space for:
      *  - an unordered array of pointers to active nodes.
      *  - an array of pointers to queues of active nodes.
@@ -65,10 +65,10 @@ Rcpp::Rcout.flush ();
 
     activeQueues = new ActiveItem *[activeLimit-1];
     for(i = 0; i < activeLimit-1; i++) activeQueues[i] = 0;
-    
+
     candidateItems = new CandidateItem *[activeLimit-1];
     for(i = 0; i < activeLimit-1; i++) candidateItems[i] = 0;
-    
+
     /* We begin with no nodes in the heap. */
     itemCount = 0;
     activeCount = 0;
@@ -86,14 +86,14 @@ Rcpp::Rcout.flush ();
 }
 
 /* --- Destructor ---
- */
+*/
 TriHeapExt::~TriHeapExt()
 {
     int i;
 
 #if SHOW_trih_ext
-Rcpp::Rcout << "free, ";
-Rcpp::Rcout.flush ();
+    Rcpp::Rcout << "free, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     for(i = 0; i < maxNodes; i++) {
@@ -115,8 +115,8 @@ void TriHeapExt::insert(int item, float k)
     TriHeapExtNode *newNode;
 
 #if SHOW_trih_ext
-Rcpp::Rcout << "insert, ";
-Rcpp::Rcout.flush ();
+    Rcpp::Rcout << "insert, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* Create an initialise the new node.  The parent pointer will be set to
@@ -127,7 +127,7 @@ Rcpp::Rcout.flush ();
     newNode->extra = FALSE;
     newNode->left = newNode->right = NULL;
     newNode->partner = NULL;
-    
+
     newNode->activeEntry = NULL;
 
     newNode->dim = 0;
@@ -150,7 +150,7 @@ Rcpp::Rcout.flush ();
 unsigned int TriHeapExt::deleteMin()
 {
     static TriHeapExtNode meldListHeader;
-    
+
     TriHeapExtNode *minNode, *child, *next, *partner;
     TriHeapExtNode *tail, *breakNode, *firstChild;
     TriHeapExtNode *l, *parent, *childZero, *childHigher;
@@ -162,9 +162,9 @@ unsigned int TriHeapExt::deleteMin()
     int wasExtra;
 
 #if SHOW_trih_ext
-dump();
-Rcpp::Rcout << "deleteMin, ";
-Rcpp::Rcout.flush ();
+    dump();
+    Rcpp::Rcout << "deleteMin, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* First we determine the maximum dimension tree in the heap. */
@@ -197,7 +197,7 @@ Rcpp::Rcout.flush ();
     }
     i = activeCount;
     while(i > 0) {
-	i--;
+        i--;
         next = activeNodes[i];
         compCount++;
         if((k2 = next->key) < k) {
@@ -205,11 +205,11 @@ Rcpp::Rcout.flush ();
             minNode = next;
         }
     }
-    
+
 
 #if SHOW_trih_ext
-Rcpp::Rcout << "on vertex no " << minNode->item;
-Rcpp::Rcout.flush ();
+    Rcpp::Rcout << "on vertex no " << minNode->item;
+    Rcpp::Rcout.flush ();
 #endif
 
     /*
@@ -232,22 +232,22 @@ Rcpp::Rcout.flush ();
     child = minNode->child;
     if(child) {
         tail->right = child->right;
-	node = tail = child;
+        node = tail = child;
 
-	/* Nodes in this break up may go from active to inactive. */
-	do {
-	    node = node->right;
-	    nodePartner = node->partner;
+        /* Nodes in this break up may go from active to inactive. */
+        do {
+            node = node->right;
+            nodePartner = node->partner;
 
-	    if(node->activeEntry) {
-		deactivate(node);
-	        if(nodePartner->activeEntry) deactivate(nodePartner);
-	    }
-	    /* Note that we do not need to check a second child for activeness
-	     * if the first child was not active.
-	     */
-	    
-	} while(node != tail);
+            if(node->activeEntry) {
+                deactivate(node);
+                if(nodePartner->activeEntry) deactivate(nodePartner);
+            }
+            /* Note that we do not need to check a second child for activeness
+             * if the first child was not active.
+             */
+
+        } while(node != tail);
     }
 
     /*
@@ -255,7 +255,7 @@ Rcpp::Rcout.flush ();
      * cases where a non-root (i.e. active) minimum node was removed.
      *
      */
-    
+
     /* During higher break-up breakNode points to the node that `appears' to
      * have been removed.  Initially this is minNode.
      */
@@ -264,7 +264,7 @@ Rcpp::Rcout.flush ();
     partner = breakNode->partner;
     firstChild = breakNode->extra ? partner : breakNode;
     parent = firstChild->parent;  /* parent pointer of the broken node. */
-        
+
     /* If the minimum node was active then deactivate it, and propagate
      * break-up through the tree until the main trunk is reached.
      * Nodes on the main trunk are treated like first child and second child
@@ -272,187 +272,187 @@ Rcpp::Rcout.flush ();
      */
     if(parent) {
 
-    deactivate(minNode);
-    
-    childZero = parent->child->right;
-    childHigher = firstChild->right;
-    
-    /* If `partner' is active then deactivate it and determine the order of
-     * `partner' and `parent' in the trunk resulting from break-up.  Otherwise
-     * parent is the first node on the trunk.
-     */
-    if(partner->activeEntry) {
-	deactivate(partner);
-        compCount++;
-	if(partner->key < parent->key) {
-            tail->right = partner;
-	    tail = partner;
-	}
-	else {
-            tail->right = parent;
-	    tail = parent;
-	}
-    }
-    else {
-        tail->right = parent;
-	tail = parent;
-    }
+        deactivate(minNode);
 
-    while(1) {
-	/* At the start of the loop links are not yet updated to account for
-	 * the node that appears to have been removed.
-	 * parent - points to the parent of the last broken node.
-	 * partner - points to the partner of the last broken node.
-	 * firstChild - is the first child on the trunk of the broken node.
-	 * The smaller of parent and partner is pointed to by the linked list,
-	 * Since the linked list is updated in advance.
-	 */
+        childZero = parent->child->right;
+        childHigher = firstChild->right;
 
-	
-	/* Make the partner of breakNode `parent's partner.  Remember the
-	 * old value of the parents partner pointer for the next dimension.
-	 * Also remember the value of parent->dim.  The code has been written
-         * this way because certain pointer updates overwrite pointers that
-         * are needed later on.
-         * Note, if we must deactivate parent, this must be done before
-         * changing its dimension.
-	 */
-        if(parent->activeEntry) deactivate(parent);
-	nextDim = parent->dim;
-	parent->dim = d;
-	nextPartner = parent->partner;
-        parent->partner = partner;
-        partner->partner = parent;
-
-       	/* For the last node pair added to the linked list
-	 * (i.e. (parent,partner) or (partner,parent)), we ensure that the
-	 * correct node is labelled as extra.
-	 */
-	wasExtra = parent->extra;
-	tail->extra = FALSE;
-	tail->partner->extra = TRUE;
-
-	/* Obtain future values of pointer variables now.  This is done because
-	 * constructing the linked list overwrites pointers that are followed.
-	 */
-	if(wasExtra) {
-	    nextFirstChild = nextPartner;
-	}
-	else {
-            nextFirstChild = parent;
-	}
-        nextParent = nextFirstChild->parent;
-	if(nextParent) {
-	    nextChildZero = nextParent->child->right;
-	    nextChildHigher = nextFirstChild->right;
-	}
-
-	
-        /* Add the child pairs of `parent' that have a greater dimension than
-	 * firstChild to the list of broken trunks.  Keep a pointer to
-	 * parent->child->right for use below.
-	 */
-	if(parent->child != firstChild) {
-	    node = tail;
-	    tail->right = childHigher;
-	    tail = parent->child;
-
-	    /* Nodes in this break up may go from active to inactive.
-	     */
-	    do {
-		node = node->right;
-		nodePartner = node->partner;
-		if(node->activeEntry) {
-		    deactivate(node);
-		    if(nodePartner->activeEntry) deactivate(nodePartner);
-		}
-	    } while(node != tail);
-	}
-
-	
-	/* Update the list of children of `parent' to only include those of
-	 * lower dimension than firstChild.
-	 */
-	if(d) {
-	    /* Lower dimension children exist.  Note that tail currently points
-	     * to the highest dimension child.
-	     */
-	    l = firstChild->left;
-	    l->right = childZero;
-	    childZero->left = l;
-	    parent->child = l;
-	}
-	else {
-	    /* No lower dimension children. */
-	    parent->child = NULL;
-	}
-
-	
-        /* Now continue break up at 1 dimension higher up by treating `parent'
-	 * as the node that has been broken.
-	 * Note that on ending, nextParent will be NULL, and we only require
-	 * `partner' and d to be updated before exiting.
-	 */
-	partner = nextPartner;
-	d = nextDim;
-	if(!nextParent) break;
-        breakNode = parent;
-	parent = nextParent;
-	firstChild = nextFirstChild;
-	
-
-	/* Pointers to the dimension zero child of parent, and the next highest
-	 * dimension child from firstChild.
-	 */
-	childZero = nextChildZero; 
-	childHigher = nextChildHigher;
-
-	
-	/* Update the linked list in advance to point to the next breakNode,
-	 * usually `parent', but possibly `partner' if `partner' is active.
-	 */
-
-        /* `partner' may be active, so we may need to swap the order of
-	 * `partner' and `parent' in the trunk resulting from break-up.
-	 */
-	if(partner->activeEntry) {
-	    deactivate(partner);
+        /* If `partner' is active then deactivate it and determine the order of
+         * `partner' and `parent' in the trunk resulting from break-up.  Otherwise
+         * parent is the first node on the trunk.
+         */
+        if(partner->activeEntry) {
+            deactivate(partner);
             compCount++;
-	    if(partner->key < parent->key) {
-                /* We make the linked list point to `partner' instead of
-		 * `parent', and make parent an extra node.
-		 */
-		tail->right = partner;
-		tail = partner;
-		continue;  /* Back to start of loop. */
-	    }
-	}
+            if(partner->key < parent->key) {
+                tail->right = partner;
+                tail = partner;
+            }
+            else {
+                tail->right = parent;
+                tail = parent;
+            }
+        }
+        else {
+            tail->right = parent;
+            tail = parent;
+        }
 
-	tail->right = parent;
-	tail = parent;
+        while(1) {
+            /* At the start of the loop links are not yet updated to account for
+             * the node that appears to have been removed.
+             * parent - points to the parent of the last broken node.
+             * partner - points to the partner of the last broken node.
+             * firstChild - is the first child on the trunk of the broken node.
+             * The smaller of parent and partner is pointed to by the linked list,
+             * Since the linked list is updated in advance.
+             */
 
-    }} /* if-while */
+
+            /* Make the partner of breakNode `parent's partner.  Remember the
+             * old value of the parents partner pointer for the next dimension.
+             * Also remember the value of parent->dim.  The code has been written
+             * this way because certain pointer updates overwrite pointers that
+             * are needed later on.
+             * Note, if we must deactivate parent, this must be done before
+             * changing its dimension.
+             */
+            if(parent->activeEntry) deactivate(parent);
+            nextDim = parent->dim;
+            parent->dim = d;
+            nextPartner = parent->partner;
+            parent->partner = partner;
+            partner->partner = parent;
+
+            /* For the last node pair added to the linked list
+             * (i.e. (parent,partner) or (partner,parent)), we ensure that the
+             * correct node is labelled as extra.
+             */
+            wasExtra = parent->extra;
+            tail->extra = FALSE;
+            tail->partner->extra = TRUE;
+
+            /* Obtain future values of pointer variables now.  This is done because
+             * constructing the linked list overwrites pointers that are followed.
+             */
+            if(wasExtra) {
+                nextFirstChild = nextPartner;
+            }
+            else {
+                nextFirstChild = parent;
+            }
+            nextParent = nextFirstChild->parent;
+            if(nextParent) {
+                nextChildZero = nextParent->child->right;
+                nextChildHigher = nextFirstChild->right;
+            }
+
+
+            /* Add the child pairs of `parent' that have a greater dimension than
+             * firstChild to the list of broken trunks.  Keep a pointer to
+             * parent->child->right for use below.
+             */
+            if(parent->child != firstChild) {
+                node = tail;
+                tail->right = childHigher;
+                tail = parent->child;
+
+                /* Nodes in this break up may go from active to inactive.
+                */
+                do {
+                    node = node->right;
+                    nodePartner = node->partner;
+                    if(node->activeEntry) {
+                        deactivate(node);
+                        if(nodePartner->activeEntry) deactivate(nodePartner);
+                    }
+                } while(node != tail);
+            }
+
+
+            /* Update the list of children of `parent' to only include those of
+             * lower dimension than firstChild.
+             */
+            if(d) {
+                /* Lower dimension children exist.  Note that tail currently points
+                 * to the highest dimension child.
+                 */
+                l = firstChild->left;
+                l->right = childZero;
+                childZero->left = l;
+                parent->child = l;
+            }
+            else {
+                /* No lower dimension children. */
+                parent->child = NULL;
+            }
+
+
+            /* Now continue break up at 1 dimension higher up by treating `parent'
+             * as the node that has been broken.
+             * Note that on ending, nextParent will be NULL, and we only require
+             * `partner' and d to be updated before exiting.
+             */
+            partner = nextPartner;
+            d = nextDim;
+            if(!nextParent) break;
+            breakNode = parent;
+            parent = nextParent;
+            firstChild = nextFirstChild;
+
+
+            /* Pointers to the dimension zero child of parent, and the next highest
+             * dimension child from firstChild.
+             */
+            childZero = nextChildZero; 
+            childHigher = nextChildHigher;
+
+
+            /* Update the linked list in advance to point to the next breakNode,
+             * usually `parent', but possibly `partner' if `partner' is active.
+             */
+
+            /* `partner' may be active, so we may need to swap the order of
+             * `partner' and `parent' in the trunk resulting from break-up.
+             */
+            if(partner->activeEntry) {
+                deactivate(partner);
+                compCount++;
+                if(partner->key < parent->key) {
+                    /* We make the linked list point to `partner' instead of
+                     * `parent', and make parent an extra node.
+                     */
+                    tail->right = partner;
+                    tail = partner;
+                    continue;  /* Back to start of loop. */
+                }
+            }
+
+            tail->right = parent;
+            tail = parent;
+
+        }} /* if-while */
 
     /* Terminate the list of trees to be melded. */
     tail->right = NULL;
-    
+
     /* Break up always propagates up to the main trunk level.  After break up
      * the length the main trunk decreases by one.  The current tree position
      * will become empty unless breakNode has a partner node.
      */
     if(partner) {
-	partner->partner = NULL;
+        partner->partner = NULL;
 
-	if(partner->extra) {
-	    partner->extra = FALSE;
-	    partner->parent = NULL;
-	    partner->left = partner->right = partner;
-	    trees[d] = partner;
-	}
+        if(partner->extra) {
+            partner->extra = FALSE;
+            partner->parent = NULL;
+            partner->left = partner->right = partner;
+            trees[d] = partner;
+        }
     }
     else {
-	trees[d] = NULL;
-	treeSum -= (1 << d);
+        trees[d] = NULL;
+        treeSum -= (1 << d);
     }
     itemCount--;
 
@@ -461,7 +461,7 @@ Rcpp::Rcout.flush ();
      */
     if(meldListHeader.right) meld(meldListHeader.right);
 
-    
+
     /* Record the vertex no to return. */
     item = minNode->item;
 
@@ -485,12 +485,12 @@ void TriHeapExt::decreaseKey(int item, float newValue)
     int d;
 
 #if SHOW_trih_ext
-dump();
-Rcpp::Rcout << "decreaseKey on vn = " << item << " (" << newValue << ")";
-Rcpp::Rcout.flush ();
+    dump();
+    Rcpp::Rcout << "decreaseKey on vn = " << item << " (" << newValue << ")";
+    Rcpp::Rcout.flush ();
 #endif
 
-    
+
     /* Pointer v points to the decreased node. */
     v = nodes[item];
     v->key = newValue;
@@ -498,14 +498,14 @@ Rcpp::Rcout.flush ();
 
     v2 = v->partner;  /* partner */
     if(v->extra) {
-	p = v2->parent;  /* parent */
-	above = v2;
+        p = v2->parent;  /* parent */
+        above = v2;
     }
     else {
-	above = p = v->parent; /* parent */
+        above = p = v->parent; /* parent */
     }
 
-	
+
     /* Determine if rearrangement is necessary */
 
     /* If v is a root node, then rearrangement is not necessary. */
@@ -514,55 +514,55 @@ Rcpp::Rcout.flush ();
     /* If v is already active then rearrangement is not necessary. */
     if(v->activeEntry) {
         /* If v is a second child and its key has became less than its partner,
-	 * which will also be active, then swap to maintain the correct
-	 * ordering.
-	 */
+         * which will also be active, then swap to maintain the correct
+         * ordering.
+         */
         if(v->extra && v->key < above->key) {
-	    v->extra = FALSE;
-	    v2->extra = TRUE;
-	    replaceChild(v2, v);
-	}
+            v->extra = FALSE;
+            v2->extra = TRUE;
+            replaceChild(v2, v);
+        }
         return;
     }
 
     if(p) {
-	/* Non-main trunk. */
-	    
-	if(v->extra) {
-	    /* v is a second child.  If necessary, we swap with the first
-	     * child to maintain the correct ordering.
-	     */
+        /* Non-main trunk. */
 
-	    compCount++;
-	    if(v->key < above->key) {
-		/* swap */		    
-		v->extra = FALSE;
-		v2->extra = TRUE;
-		replaceChild(v2, v);
-	    }
-	    else {
+        if(v->extra) {
+            /* v is a second child.  If necessary, we swap with the first
+             * child to maintain the correct ordering.
+             */
+
+            compCount++;
+            if(v->key < above->key) {
+                /* swap */		    
+                v->extra = FALSE;
+                v2->extra = TRUE;
+                replaceChild(v2, v);
+            }
+            else {
                 /* If v remains as a second child, then only activate it if
-		 * the first child is active.
-		 */
-		if(v2->activeEntry) activate(v);
+                 * the first child is active.
+                 */
+                if(v2->activeEntry) activate(v);
 
-		if(activeCount == activeLimit) goto rearrange;  /* see below */
+                if(activeCount == activeLimit) goto rearrange;  /* see below */
 
-		return;
-	    }
-	}
+                return;
+            }
+        }
 
-	/* At this point, v is a first child. */
+        /* At this point, v is a first child. */
 
-	activate(v);
+        activate(v);
 
-	/* If the number of active nodes is at tolerance level we must perform
-	 * some rearrangement.
+        /* If the number of active nodes is at tolerance level we must perform
+         * some rearrangement.
          */
-	if(activeCount == activeLimit) goto rearrange;  /* see below */
+        if(activeCount == activeLimit) goto rearrange;  /* see below */
 
-	/* Otherwise it is okay to exit. */
-	return;
+        /* Otherwise it is okay to exit. */
+        return;
 
     }
 
@@ -570,15 +570,15 @@ Rcpp::Rcout.flush ();
 
     compCount++;
     if(v->key < above->key) {
-	/* If v is smaller, we swap it with the first child (i.e. the root
-	 * node) to maintain the correct ordering.
-	 */
-	v->extra = FALSE;
-	v2->extra = TRUE;
-	v->parent = NULL;
-	v->left = v->right = v;
-	trees[d] = v;
-	return;
+        /* If v is smaller, we swap it with the first child (i.e. the root
+         * node) to maintain the correct ordering.
+         */
+        v->extra = FALSE;
+        v2->extra = TRUE;
+        v->parent = NULL;
+        v->left = v->right = v;
+        trees[d] = v;
+        return;
     }
 
     /* Otherwise, no rearrangement is required since heap order is still
@@ -586,8 +586,8 @@ Rcpp::Rcout.flush ();
      */
     return;
 
-  /*------------------------------*/
-  rearrange:
+    /*------------------------------*/
+rearrange:
 
     /* Get a candidate for rearrangement. */
     d = candQueueHead->dim;
@@ -595,158 +595,158 @@ Rcpp::Rcout.flush ();
 
     activeNode = activeEntry->node;
     if(activeNode->extra) {
-	v = activeNode->partner;
-	v2 = activeNode;
+        v = activeNode->partner;
+        v2 = activeNode;
     }
     else {
-	v = activeNode;
-	v2 = activeNode->partner;
+        v = activeNode;
+        v2 = activeNode->partner;
     }
     p = v->parent;
-	
+
     /* If we have two active nodes on the same trunk. */
     if(v2->activeEntry) {
-	deactivate(v2);
+        deactivate(v2);
 
-	/* If the 2nd child of these is less than the parent, then
-	 * do promotion.
-	 */
-	if(v2->key < v->parent->key) goto promote;
-	
-	return;
+        /* If the 2nd child of these is less than the parent, then
+         * do promotion.
+         */
+        if(v2->key < v->parent->key) goto promote;
+
+        return;
     }
-	
+
     /* Try the second trunk. */
     activeNode = activeEntry->next->node;
     if(activeNode->extra) {
-	w = activeNode->partner;
-	w2 = activeNode;
+        w = activeNode->partner;
+        w2 = activeNode;
     }
     else {
-	w = activeNode;
-	w2 = activeNode->partner;
+        w = activeNode;
+        w2 = activeNode->partner;
     }
 
     /* If we have two active nodes on the same trunk. */
     if(w2->activeEntry) {
-	deactivate(w2);
+        deactivate(w2);
 
-	/* If the 2nd child of these is less than the parent, then
-	 * do promotion.
-	 */
-	if(w2->key < w->parent->key) {
-	    v = w;  v2 = w2;
-	    p = w->parent;
-	    goto promote;
-	}
-	    
-	return;
+        /* If the 2nd child of these is less than the parent, then
+         * do promotion.
+         */
+        if(w2->key < w->parent->key) {
+            v = w;  v2 = w2;
+            p = w->parent;
+            goto promote;
+        }
+
+        return;
     }
 
     /* The final rearrangement always pairs v with w and v2 with w2. */
     v->partner = w;    w->partner = v;
     v2->partner = w2;  w2->partner = v2;
-	
+
     /* Determine the ordering in the rearrangement. */
     compCount++;
     if(v2->key < w2->key) {
-	/* Make the (1st child, 2nd child) pair (v2,w2), replacing (v,v2). */
-	v2->extra = FALSE;
-	replaceChild(v, v2);
+        /* Make the (1st child, 2nd child) pair (v2,w2), replacing (v,v2). */
+        v2->extra = FALSE;
+        replaceChild(v, v2);
 
-	compCount++;
-	if(v->key < w->key) {
-	    /* Make the pair (v,w), replacing (w,w2). */
-	    w->extra = TRUE;
-	    replaceChild(w,v);
-	    deactivate(w);
+        compCount++;
+        if(v->key < w->key) {
+            /* Make the pair (v,w), replacing (w,w2). */
+            w->extra = TRUE;
+            replaceChild(w,v);
+            deactivate(w);
 
-	    compCount++;
-	    if(w->key < v->parent->key) {
-		/* Both v and w are inconsistent, continue with promotion.
-		 * Update v2, and p;
-		 */
-		v2 = w;
-		p = v->parent;
-		goto promote;  /* see below */
-	    }
+            compCount++;
+            if(w->key < v->parent->key) {
+                /* Both v and w are inconsistent, continue with promotion.
+                 * Update v2, and p;
+                 */
+                v2 = w;
+                p = v->parent;
+                goto promote;  /* see below */
+            }
 
-	    /* Otherwise, although w was active, it is not inconsistent.  In
-	     * this case we do not do promotion.  Instead, only v remains an
-	     * active node, although v may not be inconsistent.
+            /* Otherwise, although w was active, it is not inconsistent.  In
+             * this case we do not do promotion.  Instead, only v remains an
+             * active node, although v may not be inconsistent.
              * (Avoids a key comparison to check if v is consistent)
-	     */
-	    return;
-	}
-	else {
-	    /* Make the pair (w,v), replacing (w,w2). */
-	    v->extra = TRUE;
-	    deactivate(v);
-
-	    compCount++;
-	    if(v->key < w->parent->key) {
-		/* Both v and w are inconsistent, so continue with promotion.
-		 * Update v, v2, and p.
-		 */
-		v2 = v;
-		v = w;
-		p = w->parent;
-		goto promote;  /* see below */
-	    }
-
-	    /* Only w is possibly inconsistent, so it remains an active node.
              */
-	    return;
-	}
+            return;
+        }
+        else {
+            /* Make the pair (w,v), replacing (w,w2). */
+            v->extra = TRUE;
+            deactivate(v);
+
+            compCount++;
+            if(v->key < w->parent->key) {
+                /* Both v and w are inconsistent, so continue with promotion.
+                 * Update v, v2, and p.
+                 */
+                v2 = v;
+                v = w;
+                p = w->parent;
+                goto promote;  /* see below */
+            }
+
+            /* Only w is possibly inconsistent, so it remains an active node.
+            */
+            return;
+        }
     }
     else {
-	/* Make the pair (w2,v2), replacing (w,w2). */
-	w2->extra = FALSE;
-	replaceChild(w, w2);
+        /* Make the pair (w2,v2), replacing (w,w2). */
+        w2->extra = FALSE;
+        replaceChild(w, w2);
 
-	compCount++;
-	if(v->key < w->key) {
-	    /* Make the pair (v,w), replacing (v,v2). */
-	    w->extra = TRUE;
-	    deactivate(w);
-	    
-	    compCount++;
-	    if(w->key < v->parent->key) {
-		/* Both v and w are inconsistent, so continue with promotion.
-		 * Update v2.
-		 */
-		v2 = w;
-		goto promote;  /* see below */
-	    }
+        compCount++;
+        if(v->key < w->key) {
+            /* Make the pair (v,w), replacing (v,v2). */
+            w->extra = TRUE;
+            deactivate(w);
 
-	    /* Only v is possibly inconsistent, so it remains an active node.
-	     */
-	    return;
-	}
-	else {
-	    /* Make the pair (w,v), replacing (v,v2). */
-	    v->extra = TRUE;
-	    replaceChild(v,w);
-	    deactivate(v);
-	    
-	    compCount++;
-	    if(v->key < w->parent->key) {
-		/* Both v and w are inconsistent, so continue with promotion.
-		 * Update v, v2.
-		 */
-		v2 = v;
-		v = w;
-		goto promote;
-	    }
+            compCount++;
+            if(w->key < v->parent->key) {
+                /* Both v and w are inconsistent, so continue with promotion.
+                 * Update v2.
+                 */
+                v2 = w;
+                goto promote;  /* see below */
+            }
 
-	    /* Only w is possibly inconsistent, so it remains an active node.
-             */
-	    return;
-	}
+            /* Only v is possibly inconsistent, so it remains an active node.
+            */
+            return;
+        }
+        else {
+            /* Make the pair (w,v), replacing (v,v2). */
+            v->extra = TRUE;
+            replaceChild(v,w);
+            deactivate(v);
+
+            compCount++;
+            if(v->key < w->parent->key) {
+                /* Both v and w are inconsistent, so continue with promotion.
+                 * Update v, v2.
+                 */
+                v2 = v;
+                v = w;
+                goto promote;
+            }
+
+            /* Only w is possibly inconsistent, so it remains an active node.
+            */
+            return;
+        }
     }
 
-  /*------------------------------*/
-  promote:	
+    /*------------------------------*/
+promote:	
     /* Promotion Code.  Reached if the loop has not exited.  Uses variables
      * p, v, v2, and d.  Must ensure that on the trunk (p,v,v2), both v and v2
      * are inconsistent nodes, so that (v,v2,p) will give heap ordering.
@@ -754,53 +754,53 @@ Rcpp::Rcout.flush ();
      * Node v will later become active at a higher dimension.
      */
     deactivate(v);
-    
+
     /* First we make v2 a child node of v. */
     v2->extra = FALSE;
     addChild(v, v2);
-		
+
 
     /* Then v replaces p.  Any child nodes of p that have a higher dimension
      * than v will become child nodes of v.  Only child nodes of lower
      * dimension than v will be left under p.
      */
-	
+
     v->dim = p->dim;
     partner = v->partner = p->partner;
     highChild = p->child;
 
     if(d) {
-	/* v has lower dimension siblings. */
-	l = p->child = v->left;
-	r = highChild->right;
-	l->right = r;
-	r->left = l;
+        /* v has lower dimension siblings. */
+        l = p->child = v->left;
+        r = highChild->right;
+        l->right = r;
+        r->left = l;
     }
     else {
-	/* v was an only child. */
-	p->child = NULL;
+        /* v was an only child. */
+        p->child = NULL;
     }
-	
+
     if(highChild != v) {
-	/* v has higher dimension siblings.  Add them to the list of v's
-	 * children, and update their parent pointer.  Note that v currently
-	 * has at least one child, since v2 was made a child of v.
-	 */
-	lowChild = v->right;
-	l = v->child;
-	r = v->child->right;
-	l->right = lowChild;
-	lowChild->left = l;
-	r->left = highChild;
-	highChild->right = r;
+        /* v has higher dimension siblings.  Add them to the list of v's
+         * children, and update their parent pointer.  Note that v currently
+         * has at least one child, since v2 was made a child of v.
+         */
+        lowChild = v->right;
+        l = v->child;
+        r = v->child->right;
+        l->right = lowChild;
+        lowChild->left = l;
+        r->left = highChild;
+        highChild->right = r;
 
-	v->child = highChild;
+        v->child = highChild;
 
-	node = v;
-	do {
-	    node = node->right;
-	    node->parent = v;
-	} while(node != highChild);
+        node = v;
+        do {
+            node = node->right;
+            node->parent = v;
+        } while(node != highChild);
     }
 
     /* partner may be NULL if p is a root node, so don't update
@@ -813,26 +813,26 @@ Rcpp::Rcout.flush ();
      * node.
      */
     if(!p->extra) {
-	if(p->parent) {
-	    /* p is non-root node and a first child. */
-	    partner->partner = v;
-	    replaceChild(p, v);
-	}
-	else {
-	    /* p is a root node, so update the tree pointer. */
-	    if(partner) partner->partner = v;
-	    trees[p->dim] = v;
-	    v->left = v->right = v;
-	    v->parent = NULL;
-	}
+        if(p->parent) {
+            /* p is non-root node and a first child. */
+            partner->partner = v;
+            replaceChild(p, v);
+        }
+        else {
+            /* p is a root node, so update the tree pointer. */
+            if(partner) partner->partner = v;
+            trees[p->dim] = v;
+            v->left = v->right = v;
+            v->parent = NULL;
+        }
 
-	/* p will become an extra node, see below. */
-	p->extra = TRUE;
+        /* p will become an extra node, see below. */
+        p->extra = TRUE;
     }
     else {
-	/* If p was an extra node then v becomes an extra node. */
-	partner->partner = v;
-	v->extra = TRUE;
+        /* If p was an extra node then v becomes an extra node. */
+        partner->partner = v;
+        v->extra = TRUE;
     }
 
     /* Finally, make p the partner of node v2 (i.e. the 2nd child of node v).
@@ -846,55 +846,55 @@ Rcpp::Rcout.flush ();
      * make it active, unless the first child is also active.
      */
     if(v->extra) {
-	v2 = v->partner;
-	
-	compCount++;
-	if(v->key < v2->key) {
-	    /* swap */
-	    v->extra = FALSE;
-	    v2->extra = TRUE;
+        v2 = v->partner;
 
-	    /* Note there is a special case, where a main trunk is reached. */
-	    if(v2->parent) {
-		/* Non-main trunk */
-	        replaceChild(v2, v);
-	    }
-	    else {
-		/* Main trunk:  v replaces v2 as the root node. */
-		v->extra = FALSE;
-	        v2->extra = TRUE;
-	        v->parent = NULL;
-	        v->left = v->right = v;
-	        trees[v->dim] = v;
-		
-	        /* Don't make v active.
-	         * If necessary, deactivate p (which v replaced).
-	         */
-	        if(p->activeEntry) deactivate(p);
-	        p->dim = d;
-	        return;
-	    }
-	}
-	else if(!v2->activeEntry) {
-	    /* Don't make v active.  This is always the case for main trunks.
-	     * If necessary, deactivate p (which v replaced).
-	     */
-	    if(p->activeEntry) deactivate(p);
-	    p->dim = d;
-	    return;
-	}
-    }
-    else {
-	/* Don't swap, and if at main trunk level, don't make v active either.
-	 */
-	if(!v->parent) {
-	    /* If necessary, deactivate p (which v replaced). */
-	    if(p->activeEntry) deactivate(p);
-	    p->dim = d;
-	    return;
+        compCount++;
+        if(v->key < v2->key) {
+            /* swap */
+            v->extra = FALSE;
+            v2->extra = TRUE;
+
+            /* Note there is a special case, where a main trunk is reached. */
+            if(v2->parent) {
+                /* Non-main trunk */
+                replaceChild(v2, v);
+            }
+            else {
+                /* Main trunk:  v replaces v2 as the root node. */
+                v->extra = FALSE;
+                v2->extra = TRUE;
+                v->parent = NULL;
+                v->left = v->right = v;
+                trees[v->dim] = v;
+
+                /* Don't make v active.
+                 * If necessary, deactivate p (which v replaced).
+                 */
+                if(p->activeEntry) deactivate(p);
+                p->dim = d;
+                return;
+            }
+        }
+        else if(!v2->activeEntry) {
+            /* Don't make v active.  This is always the case for main trunks.
+             * If necessary, deactivate p (which v replaced).
+             */
+            if(p->activeEntry) deactivate(p);
+            p->dim = d;
+            return;
         }
     }
-    
+    else {
+        /* Don't swap, and if at main trunk level, don't make v active either.
+        */
+        if(!v->parent) {
+            /* If necessary, deactivate p (which v replaced). */
+            if(p->activeEntry) deactivate(p);
+            p->dim = d;
+            return;
+        }
+    }
+
     /* The result of the above code never puts active nodes on a main trunk.
      * If at main trunk level, the function will have exited above.
      */
@@ -903,7 +903,7 @@ Rcpp::Rcout.flush ();
      * active node.
      */
     if(p->activeEntry) {
-	replaceActive(p, v);
+        replaceActive(p, v);
     }
     else {
         /* Otherwise make v active. */
@@ -927,8 +927,8 @@ void TriHeapExt::meld(TriHeapExtNode *treeList)
     int d;
 
 #if SHOW_trih_ext
-Rcpp::Rcout << "meld - ";
-Rcpp::Rcout.flush ();
+    Rcpp::Rcout << "meld - ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* addTree points to the tree to be merged. */
@@ -961,8 +961,8 @@ Rcpp::Rcout.flush ();
         }
 
 #if SHOW_trih_ext
-Rcpp::Rcout << addTree->item << ", ";
-Rcpp::Rcout.flush ();
+        Rcpp::Rcout << addTree->item << ", ";
+        Rcpp::Rcout.flush ();
 #endif
 
         /* First we merge addTree with carryTree, if there is one.  Note that
@@ -970,7 +970,7 @@ Rcpp::Rcout.flush ();
          * has at most two, so the result is at most one 3-node trunk, which is
          * treated as a 1-node main trunk one dimension higher up.
          */
-	if(carryTree) {
+        if(carryTree) {
             compCount += merge(&addTree, &carryTree);
         }
 
@@ -981,7 +981,7 @@ Rcpp::Rcout.flush ();
          */
         if(addTree) {
             d = addTree->dim;
-	    if(trees[d]) {
+            if(trees[d]) {
                 /* Nodes already in this main trunk position, so merge. */
                 compCount += merge(&trees[d], &addTree);
                 if(!trees[d]) treeSum -= (1 << d);
@@ -997,9 +997,9 @@ Rcpp::Rcout.flush ();
         /* Obtain a pointer to the next tree to add. */
         addTree = next;
 
-	/* We continue if there is still a node in the list to be merged, or
-	 * a carry tree remains to be merged.
-	 */
+        /* We continue if there is still a node in the list to be merged, or
+         * a carry tree remains to be merged.
+         */
     } while(addTree || carryTree);
 }
 
@@ -1017,7 +1017,7 @@ void TriHeapExt::activate(TriHeapExtNode *node)
      * and candidates to be removed in O(1) time.  The circular linking allows
      * us to access the last element in the list in O(1) time.
      */
-    
+
     /* Add n to the array of active nodes. */
     i = activeCount++;
     activeNodes[i] = node;
@@ -1027,45 +1027,45 @@ void TriHeapExt::activate(TriHeapExtNode *node)
     activeEntry->node = node;
     activeEntry->position = i;
     node->activeEntry = activeEntry;
-    
+
     /* Insertion depends on whether the list is empty or not. */
     d = node->dim;
-    
+
     if((first = activeQueues[d])) {
-	/* At least one item already. */
-	last = first->prev;
-	last->next = activeEntry;
-	activeEntry->prev = last;
-	activeEntry->next = first;
-	first->prev = activeEntry;
+        /* At least one item already. */
+        last = first->prev;
+        last->next = activeEntry;
+        activeEntry->prev = last;
+        activeEntry->next = first;
+        first->prev = activeEntry;
 
-	/* If there was originally one item, but now two, then insert a new
-	 * entry into the candidates queue.
-	 */
-	if(first == last) {
-	    candidate = new CandidateItem;
-	    candidate->dim = d;
-	    candidateItems[d] = candidate;
+        /* If there was originally one item, but now two, then insert a new
+         * entry into the candidates queue.
+         */
+        if(first == last) {
+            candidate = new CandidateItem;
+            candidate->dim = d;
+            candidateItems[d] = candidate;
 
-	    if(candQueueHead) {
-		/* At least one candidate is already in the queue. */
+            if(candQueueHead) {
+                /* At least one candidate is already in the queue. */
                 lastC = candQueueHead->prev;
-		lastC->next = candidate;
-		candidate->prev = lastC;
-		candidate->next = candQueueHead;
-		candQueueHead->prev = candidate;
-	    }
-	    else {
-		/* Inserting into empty queue. */
-		candQueueHead = candidate;
-		candidate->next = candidate->prev = candidate;
-	    }
-	}
+                lastC->next = candidate;
+                candidate->prev = lastC;
+                candidate->next = candQueueHead;
+                candQueueHead->prev = candidate;
+            }
+            else {
+                /* Inserting into empty queue. */
+                candQueueHead = candidate;
+                candidate->next = candidate->prev = candidate;
+            }
+        }
     }
     else {
-	/* empty */
+        /* empty */
         activeQueues[d] = activeEntry;
-	activeEntry->next = activeEntry->prev = activeEntry;
+        activeEntry->next = activeEntry->prev = activeEntry;
     }
 }
 
@@ -1078,19 +1078,19 @@ void TriHeapExt::deactivate(TriHeapExtNode *node)
     TriHeapExtNode *topActive;
     CandidateItem *candidate, *nextCandidate, *prevCandidate;
     int i, d;
-    
+
     /* Obtain pointers to the corresponding entry in the active node structure
      * and remove the node from the array of active nodes.
      */
-    
+
     activeEntry = node->activeEntry;
-    
+
     i = --activeCount;
     topActive = activeNodes[i];
     activeNodes[activeEntry->position] = topActive;
     topActive->activeEntry->position = activeEntry->position;
     activeNodes[i] = NULL;
-    
+
     node->activeEntry = NULL;
     d = node->dim;
     first = activeQueues[d];
@@ -1100,46 +1100,46 @@ void TriHeapExt::deactivate(TriHeapExtNode *node)
      * items.  This is a circular doubly linked list.
      */
     if(second != first) {
-	/* There are at least two items in the list. */
-	prev = activeEntry->prev;
-	next = activeEntry->next;
+        /* There are at least two items in the list. */
+        prev = activeEntry->prev;
+        next = activeEntry->next;
 
-	/* May need to change pointer to first item. */
-	if(activeEntry == first) {
-	    activeQueues[d] = second;
-	}
+        /* May need to change pointer to first item. */
+        if(activeEntry == first) {
+            activeQueues[d] = second;
+        }
 
-	/* If there were only two nodes, we need to remove the candidate entry
-	 * from the candidates queue.
-	 */
-	if(second->next == first) {
-	    /* remove candidate. */
-	    candidate = candidateItems[d];
-	    candidateItems[d] = NULL;
-	    nextCandidate = candidate->next;
-	    prevCandidate = candidate->prev;
+        /* If there were only two nodes, we need to remove the candidate entry
+         * from the candidates queue.
+         */
+        if(second->next == first) {
+            /* remove candidate. */
+            candidate = candidateItems[d];
+            candidateItems[d] = NULL;
+            nextCandidate = candidate->next;
+            prevCandidate = candidate->prev;
 
-	    /* May need to change pointer to the first item. */
-	    if(nextCandidate == candidate) {
-	        candQueueHead = NULL;
-	    }
-	    else {
-	        if(candQueueHead == candidate) {
-		    candQueueHead = nextCandidate;
-		}
-	        prevCandidate->next = nextCandidate;
-	        nextCandidate->prev = prevCandidate;
-	    }
+            /* May need to change pointer to the first item. */
+            if(nextCandidate == candidate) {
+                candQueueHead = NULL;
+            }
+            else {
+                if(candQueueHead == candidate) {
+                    candQueueHead = nextCandidate;
+                }
+                prevCandidate->next = nextCandidate;
+                nextCandidate->prev = prevCandidate;
+            }
 
-	    delete candidate;
-	}
-	    
-	prev->next = next;
-	next->prev = prev;
+            delete candidate;
+        }
+
+        prev->next = next;
+        next->prev = prev;
     }
     else {
-	/* There is only one item in the list. */
-	activeQueues[d] = NULL;
+        /* There is only one item in the list. */
+        activeQueues[d] = NULL;
     }
 
     delete activeEntry;
@@ -1151,7 +1151,7 @@ void TriHeapExt::deactivate(TriHeapExtNode *node)
  * activate().
  */
 void TriHeapExt::replaceActive(
-         TriHeapExtNode *oldNode, TriHeapExtNode *newNode)
+        TriHeapExtNode *oldNode, TriHeapExtNode *newNode)
 {
     ActiveItem *activeEntry;
 
@@ -1211,14 +1211,14 @@ int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
 
         if(nextOther) {
             addChild(tree, other);
-	    tree->dim++;
+            tree->dim++;
             *a = NULL;  *b = tree;
         }
         else {
-	    tree->partner = other;
-	    other->partner = tree;
-	    other->extra = TRUE;
-	    
+            tree->partner = other;
+            other->partner = tree;
+            other->extra = TRUE;
+
             *a = tree;  *b = NULL;
         }
     }
@@ -1228,21 +1228,21 @@ int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
          * values of keys.  The resulting 3-node trunk becomes a carry tree.
          */
 
-	tree->partner = NULL;
-	other->partner = nextTree;
-	nextTree->partner = other;
-	
+        tree->partner = NULL;
+        other->partner = nextTree;
+        nextTree->partner = other;
+
         if(other->key < nextTree->key) {    
             addChild(tree, other);
         }
         else {
-	    nextTree->extra = FALSE;
-	    other->extra = TRUE;	    
+            nextTree->extra = FALSE;
+            other->extra = TRUE;	    
             addChild(tree, nextTree);
         }
 
-	tree->dim++;
-	
+        tree->dim++;
+
         c++;
         *a = NULL;  *b = tree;
     }
@@ -1253,16 +1253,16 @@ int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
          * and (nextTree).  This uses no key comparisons.
          */
 
-	tree->partner=NULL;
-	nextTree->partner = NULL;
-	nextTree->extra = FALSE;
-	nextTree->left = nextTree->right = nextTree;
+        tree->partner=NULL;
+        nextTree->partner = NULL;
+        nextTree->extra = FALSE;
+        nextTree->left = nextTree->right = nextTree;
         nextTree->parent = NULL;
 
         addChild(tree, other);
-	
-	tree->dim++;
-	
+
+        tree->dim++;
+
         *a = nextTree;  *b = tree;
     }
 
@@ -1283,14 +1283,14 @@ void TriHeapExt::addChild(TriHeapExtNode *p, TriHeapExtNode *c)
      * child.
      */
     if((l = p->child)) {
-	r = l->right;
-	c->left = l;
-	c->right = r;
-	r->left = c;
-	l->right = c;
+        r = l->right;
+        c->left = l;
+        c->right = r;
+        r->left = c;
+        l->right = c;
     }
     else {
-	c->left = c->right = c;
+        c->left = c->right = c;
     }
 
     p->child = c;
@@ -1313,14 +1313,14 @@ void TriHeapExt::replaceChild(
      * child nodes.
      */
     if(r == oldNode) {
-	newNode->right = newNode->left = newNode;
+        newNode->right = newNode->left = newNode;
     }
     else {
         l = oldNode->left;
-	l->right = newNode;
-	r->left = newNode;
-	newNode->left = l;
-	newNode->right = r;
+        l->right = newNode;
+        r->left = newNode;
+        newNode->left = l;
+        newNode->right = r;
     }
 
     /* Update parent pointer of the new node and possibly the child pointer
@@ -1338,77 +1338,78 @@ void TriHeapExt::replaceChild(
  */
 void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
 {
-//#if SHOW_trih_ext
-     TriHeapExtNode *childNode, *partner;
-     int i, childCount;
+    //#if SHOW_trih_ext
+    TriHeapExtNode *childNode, *partner;
+    int i, childCount;
 
-     /* Print leading whitespace for this level. */
-     for(i = 0; i < level; i++)
-         Rcpp::Rcout << "   ";
+    /* Print leading whitespace for this level. */
+    for(i = 0; i < level; i++)
+        Rcpp::Rcout << "   ";
 
-     Rcpp::Rcout << node->item << "(" << node->key << ")";
-     Rcpp::Rcout.flush ();
-     if(node->activeEntry) putchar('*');
-     Rcpp::Rcout << std::endl;
-     
-     if((childNode = node->child)) {
-	 childNode = node->child->right;
-	 
-         childCount = 0;
+    Rcpp::Rcout << node->item << "(" << node->key << ")";
+    Rcpp::Rcout.flush ();
+    if(node->activeEntry)
+        Rcpp::Rcout << '*';
+    Rcpp::Rcout << std::endl;
 
-         do {
-             dumpNodes(childNode, level+1);
-	     if(childNode->dim != childCount) {
-                 throw std::runtime_error ("error(dim)");
-         }
-	     if(childNode->parent != node) {
-                 throw std::runtime_error ("error(parent)");
-	     }
-	     if(childNode->activeEntry == NULL && childNode->key < node->key) {
-                 throw std::runtime_error ("error(key)");
-	     }
-             childNode = childNode->right;
-	     childCount++;
-         } while(childNode != node->child->right);
+    if((childNode = node->child)) {
+        childNode = node->child->right;
 
-         if(childCount != node->dim) {
-                 throw std::runtime_error ("error(childCount)");
-         }
-     }
-     else { 
-         if(node->dim != 0) {
-                 throw std::runtime_error ("error(dim)");
-	 }
-     }
-     
-     if((partner=node->partner)) {
-	 if(node->extra==partner->extra) {
-                 throw std::runtime_error ("error(extra?)");
-	 }
-	 if(partner->extra) {
-             if(partner->dim != node->dim) {
-                 throw std::runtime_error ("error(dim)");
-	     }
-	     if(partner->activeEntry && ! node->activeEntry) {
-                 throw std::runtime_error ("error(active)");
-	     }
+        childCount = 0;
 
-	     dumpNodes(partner, level);
-	     if(partner->key < node->key) {
-                 throw std::runtime_error ("error(key)");
-	     }
-	 }
-     }
-     else if(node->parent) {
-                 throw std::runtime_error ("error(no partner)");
-     }
+        do {
+            dumpNodes(childNode, level+1);
+            if(childNode->dim != childCount) {
+                throw std::runtime_error ("error(dim)");
+            }
+            if(childNode->parent != node) {
+                throw std::runtime_error ("error(parent)");
+            }
+            if(childNode->activeEntry == NULL && childNode->key < node->key) {
+                throw std::runtime_error ("error(key)");
+            }
+            childNode = childNode->right;
+            childCount++;
+        } while(childNode != node->child->right);
 
-     if(node->activeEntry) {
-	 if(node->activeEntry->node != node) {
-                 throw std::runtime_error ("error(active entry wrong)");
-	 }
-     }
-//#endif
+        if(childCount != node->dim) {
+            throw std::runtime_error ("error(childCount)");
+        }
+    }
+    else { 
+        if(node->dim != 0) {
+            throw std::runtime_error ("error(dim)");
+        }
+    }
+
+    if((partner=node->partner)) {
+        if(node->extra==partner->extra) {
+            throw std::runtime_error ("error(extra?)");
+        }
+        if(partner->extra) {
+            if(partner->dim != node->dim) {
+                throw std::runtime_error ("error(dim)");
+            }
+            if(partner->activeEntry && ! node->activeEntry) {
+                throw std::runtime_error ("error(active)");
+            }
+
+            dumpNodes(partner, level);
+            if(partner->key < node->key) {
+                throw std::runtime_error ("error(key)");
+            }
+        }
+    }
+    else if(node->parent) {
+        throw std::runtime_error ("error(no partner)");
+    }
+
+    if(node->activeEntry) {
+        if(node->activeEntry->node != node) {
+            throw std::runtime_error ("error(active entry wrong)");
+        }
+    }
+    //#endif
 }
 
 /* --- dump() ---
@@ -1416,7 +1417,7 @@ void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
  */
 void TriHeapExt::dump() const
 {
-//#if SHOW_trih_ext
+    //#if SHOW_trih_ext
     int i, j;
     TriHeapExtNode *node;
     TriHeapExtNode *firstChild;
@@ -1430,43 +1431,43 @@ void TriHeapExt::dump() const
     }
     Rcpp::Rcout << std::endl << "active nodes =";
     for(i=0; i<activeCount; i++) {
-	if((node = activeNodes[i])) {
-        Rcpp::Rcout << " " << node->item;
-	    firstChild = node->extra ? node->partner : node;
-	    if(!firstChild->parent) {
-                 throw std::runtime_error ("error(main trunk)");
-	    }
-	    if(!node->activeEntry) {
-                 throw std::runtime_error ("error(inactive)");
-	    }
-	    if(node->activeEntry->node != node) {
-                 throw std::runtime_error ("error(active entry wrong)");
-	    }
-	    if(activeNodes[node->activeEntry->position] != node) {
-                 throw std::runtime_error ("error(active entry index wrong)");
-	    }
-	    
-	    c = 0;
-	    for(j = i+1; j < activeCount; j++) {
+        if((node = activeNodes[i])) {
+            Rcpp::Rcout << " " << node->item;
+            firstChild = node->extra ? node->partner : node;
+            if(!firstChild->parent) {
+                throw std::runtime_error ("error(main trunk)");
+            }
+            if(!node->activeEntry) {
+                throw std::runtime_error ("error(inactive)");
+            }
+            if(node->activeEntry->node != node) {
+                throw std::runtime_error ("error(active entry wrong)");
+            }
+            if(activeNodes[node->activeEntry->position] != node) {
+                throw std::runtime_error ("error(active entry index wrong)");
+            }
+
+            c = 0;
+            for(j = i+1; j < activeCount; j++) {
                 if(activeNodes[j] == node) c++;
-	    }
-	    if(c) {
-                 throw std::runtime_error ("error(repeated)");
-	    }
-	}
-	else {
-                 throw std::runtime_error ("error(missing active mode)");
-	}
+            }
+            if(c) {
+                throw std::runtime_error ("error(repeated)");
+            }
+        }
+        else {
+            throw std::runtime_error ("error(missing active mode)");
+        }
     }
     Rcpp::Rcout << std::endl << std::endl;
     for(i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
             Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);
-        Rcpp::Rcout << std::endl;
+            Rcpp::Rcout << std::endl;
         }
     }
-//#endif
+    //#endif
 }
 
 /*---------------------------------------------------------------------------*/

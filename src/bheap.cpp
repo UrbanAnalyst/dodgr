@@ -15,24 +15,24 @@
  */
 BHeap::BHeap(int n)
 {
-//    int i;
-    
+    //    int i;
+
     /* For the purpose of indexing the binary heap, we require n+1 elements in
      * a[] since the indexing method does not use a[0].
      */
     a = new BHeapNode[n+1];
     aPos = new int[n];
-//    for(i = 0; i <= n; i++) {
-//        a[i].item = 0;
-//	a[i].key = 0;
-//    }
-//    for(i = 0; i < n; i++) aPos[i] = 0;
+    //    for(i = 0; i <= n; i++) {
+    //        a[i].item = 0;
+    //	a[i].key = 0;
+    //    }
+    //    for(i = 0; i < n; i++) aPos[i] = 0;
     itemCount = 0;
     compCount = 0;
 }
 
 /* --- Destructor ---
- */
+*/
 BHeap::~BHeap()
 {
     delete [] a;
@@ -72,7 +72,7 @@ void BHeap::insert(int item, float key)
         /* We have the correct insertion point when the items key is >= parent
          * Otherwise we move the parent down and insertion point up.
          */
-	compCount++;
+        compCount++;
         if(key >= y.key) break;
 
         a[i] = y;
@@ -105,7 +105,7 @@ void BHeap::deleteItem(int item)
          * item and sift-up or sift-down to relocate it in the correct place in
          * the heap.
          */
-	compCount++;
+        compCount++;
         if(a[p].key <= a[n+1].key) {
             a[p] = a[n + 1];
             aPos[a[p].item] = p;
@@ -153,7 +153,7 @@ void BHeap::siftUp(int p, int q)
     BHeapNode y, z;
 
     /* Get the value of the root and initialise the insertion point and child.
-     */
+    */
     y = a[p];
     j = p;
     k = 2 * p;
@@ -164,7 +164,7 @@ void BHeap::siftUp(int p, int q)
         /* Choose the minimum child unless there is only one. */
         z = a[k];
         if(k < q) {
-	    compCount++;
+            compCount++;
             if(z.key > a[k + 1].key) z = a[++k];
         }
 

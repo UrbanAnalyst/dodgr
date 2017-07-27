@@ -49,18 +49,18 @@ class ActiveItem;
  * dimension of a single node with no children is zero.
  */
 class TriHeapExtNode {
-  public:
-    TriHeapExtNode *parent;
-    TriHeapExtNode *left, *right;
-    TriHeapExtNode *child;
-    TriHeapExtNode *partner;
+    public:
+        TriHeapExtNode *parent;
+        TriHeapExtNode *left, *right;
+        TriHeapExtNode *child;
+        TriHeapExtNode *partner;
 
-    int extra;
-    ActiveItem *activeEntry;
-    int dim;
+        int extra;
+        ActiveItem *activeEntry;
+        int dim;
 
-    float key;
-    int item;
+        float key;
+        int item;
 };
 
 /* --- CandidateItem ---
@@ -68,20 +68,20 @@ class TriHeapExtNode {
  * nodes are available.
  */
 class CandidateItem {
-  public:
-    int dim;
-    CandidateItem *next, *prev;
+    public:
+        int dim;
+        CandidateItem *next, *prev;
 };
 
 /* --- ActivePtr ---
  * Class for linked list objects identifying active nodes.
  */
 class ActiveItem {
-  public:
-    TriHeapExtNode *node;
-    int position;
-    
-    ActiveItem *next, *prev;
+    public:
+        TriHeapExtNode *node;
+        int position;
+
+        ActiveItem *next, *prev;
 };
 
 /* --- TriHeapExt ---
@@ -118,41 +118,41 @@ class ActiveItem {
  * circularly doubly linked lists.
  */
 class TriHeapExt : public Heap {
-public:
-    TriHeapExt(int n);
-    ~TriHeapExt();
+    public:
+        TriHeapExt(int n);
+        ~TriHeapExt();
 
-    void insert(int item, float k);
-    unsigned int deleteMin();
-    void decreaseKey(int item, float newValue);
-    int nItems() const { return itemCount; }
+        void insert(int item, float k);
+        unsigned int deleteMin();
+        void decreaseKey(int item, float newValue);
+        int nItems() const { return itemCount; }
 
-    long nComps() const { return compCount; }    
+        long nComps() const { return compCount; }    
 
-    void dump() const;
+        void dump() const;
 
-private:
-    TriHeapExtNode **trees;
-    TriHeapExtNode **activeNodes;
-    TriHeapExtNode **nodes;
+    private:
+        TriHeapExtNode **trees;
+        TriHeapExtNode **activeNodes;
+        TriHeapExtNode **nodes;
 
-    ActiveItem **activeQueues;
-    CandidateItem **candidateItems;
-    CandidateItem *candQueueHead;
-    
-    int maxNodes, maxTrees, activeLimit, itemCount, activeCount, treeSum;
-    long compCount;
+        ActiveItem **activeQueues;
+        CandidateItem **candidateItems;
+        CandidateItem *candQueueHead;
 
-    void meld(TriHeapExtNode *treeList);
-    void activate(TriHeapExtNode *n);
-    void deactivate(TriHeapExtNode *n);
-    void replaceActive(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
+        int maxNodes, maxTrees, activeLimit, itemCount, activeCount, treeSum;
+        long compCount;
 
-    static void dumpNodes(TriHeapExtNode *node, int level);
+        void meld(TriHeapExtNode *treeList);
+        void activate(TriHeapExtNode *n);
+        void deactivate(TriHeapExtNode *n);
+        void replaceActive(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
 
-    static int merge(TriHeapExtNode **a, TriHeapExtNode **b);
-    static void addChild(TriHeapExtNode *p, TriHeapExtNode *c);
-    static void replaceChild(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
+        static void dumpNodes(TriHeapExtNode *node, int level);
+
+        static int merge(TriHeapExtNode **a, TriHeapExtNode **b);
+        static void addChild(TriHeapExtNode *p, TriHeapExtNode *c);
+        static void replaceChild(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
 };
 
 /*---------------------------------------------------------------------------*/
