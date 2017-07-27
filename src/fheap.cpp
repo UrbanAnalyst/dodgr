@@ -18,7 +18,7 @@ FHeap::FHeap(int n)
 {
     int i;
 #if FHEAP_DUMP
-printf("new, ");
+    Rcpp::Rcout << "new, ";
 #endif
     maxTrees = 1 + (int)(1.44 * log(n)/log(2.0));
     maxNodes = n;
@@ -42,26 +42,26 @@ printf("new, ");
     compCount = 0;
 
 #if FHEAP_DUMP
-printf("new-exited, ");
+    Rcpp::Rcout << "new-exited, ";
 #endif
 }
 
 /* --- Destructor ---
- */
+*/
 FHeap::~FHeap()
 {
     int i;
-    
+
 #if FHEAP_DUMP
-printf("delete, ");
+    Rcpp::Rcout << "delete, ";
 #endif
 
     for(i = 0; i < maxNodes; i++) delete nodes[i];
     delete [] nodes;
     delete [] trees;
-    
+
 #if FHEAP_DUMP
-printf("delete-exited, ");
+    Rcpp::Rcout << "delete-exited, ";
 #endif
 }
 
@@ -73,7 +73,7 @@ void FHeap::insert(int item, float k)
     FHeapNode *newNode;
 
 #if FHEAP_DUMP
-printf("insert, ");
+    Rcpp::Rcout << "insert, ";
 #endif
 
     /* create an initialise the new node */
@@ -94,7 +94,7 @@ printf("insert, ");
     itemCount++;
 
 #if FHEAP_DUMP
-printf("insert-exited, ");
+    Rcpp::Rcout << "insert-exited, ";
 #endif
 }
 
@@ -108,7 +108,7 @@ unsigned int FHeap::deleteMin()
     unsigned int r, v, item;
 
 #if FHEAP_DUMP
-printf("deleteMin, ");
+    Rcpp::Rcout << "deleteMin, ";
 #endif
 
     /* First we determine the maximum rank in the heap. */
@@ -149,7 +149,7 @@ printf("deleteMin, ");
     itemCount--;
 
 #if FHEAP_DUMP
-printf("deleteMin-exited, ");
+    Rcpp::Rcout << "deleteMin-exited, ";
 #endif
 
     return item;
@@ -165,7 +165,7 @@ void FHeap::decreaseKey(int item, float newValue)
     int prevRank;
 
 #if FHEAP_DUMP
-printf("decreaseKey on vn = %d, ", item);
+    Rcpp::Rcout << "decreaseKey on vn = " << item << ", ";
 #endif
 
     /* Obtain a pointer to the decreased node and its parent then decrease the
@@ -178,7 +178,7 @@ printf("decreaseKey on vn = %d, ", item);
     /* No reinsertion occurs if the node changed was a root. */
     if(!parent) {
 #if FHEAP_DUMP
-printf("decreaseKey-exited, ");
+        Rcpp::Rcout << "decreaseKey-exited, ";
 #endif
         return;
     }
@@ -199,7 +199,7 @@ printf("decreaseKey-exited, ");
     while(parent && parent->marked) {
 
         /* Decrease the rank of cutNode's parent and update its child pointer.
-         */
+        */
         parent->rank--;
         if(parent->rank) {
             if(parent->child == cutNode) parent->child = r;
@@ -238,7 +238,7 @@ printf("decreaseKey-exited, ");
     }
     else {
         /* Decrease the rank of cutNode's parent an update its child pointer.
-         */
+        */
         parent->rank--;
         if(parent->rank) {
             if(parent->child == cutNode) parent->child = r;
@@ -254,7 +254,7 @@ printf("decreaseKey-exited, ");
     meld(newRoots);
 
 #if FHEAP_DUMP
-printf("decreaseKey-exited, ");
+    Rcpp::Rcout << "decreaseKey-exited, ";
 #endif
 }
 
@@ -269,7 +269,7 @@ void FHeap::meld(FHeapNode *treeList)
     int r;
 
 #if FHEAP_DUMP
-printf("meld: ");
+    Rcpp::Rcout << "meld: ";
 #endif
 
     /* We meld each tree in the circularly linked list back into the root level
@@ -282,7 +282,7 @@ printf("meld: ");
     do {
 
 #if FHEAP_DUMP
-printf("%d, ", nodePtr->item);
+        Rcpp::Rcout << nodePtr->item << ", ";
 #endif
 
         /* Keep a pointer to the next node and remove sibling and parent links
@@ -309,17 +309,17 @@ printf("%d, ", nodePtr->item);
              */
             if((temp = trees[r])) {
 
-	        /* temp will be linked to newRoot and relocated so we no
+                /* temp will be linked to newRoot and relocated so we no
                  * longer will have a tree of degree r.
                  */
                 trees[r] = NULL;
                 treeSum -= (1 << r);
 
-	        /* Swap temp and newRoot if necessary so that newRoot always
+                /* Swap temp and newRoot if necessary so that newRoot always
                  * points to the root node which has the smaller key of the
                  * two.
                  */
-	        if(temp->key < newRoot->key) {
+                if(temp->key < newRoot->key) {
                     temp2 = newRoot;
                     newRoot = temp;
                     temp = temp2;
@@ -331,7 +331,7 @@ printf("%d, ", nodePtr->item);
                  * the next pass through the loop since the rank of new has
                  * increased.
                  */
-	        if(r++ > 0) {
+                if(r++ > 0) {
                     rc = newRoot->child;
                     lc = rc->left;
                     temp->left = lc;
@@ -356,7 +356,7 @@ printf("%d, ", nodePtr->item);
                  *        marked.
                  */
                 newRoot->marked = 1;
-	    }
+            }
 
             /* Note that temp will be NULL if and only if there was not a tree
              * of degree r.
@@ -368,7 +368,7 @@ printf("%d, ", nodePtr->item);
     } while(nodePtr != first);
 
 #if FHEAP_DUMP
-printf("meld-exited, ");
+    Rcpp::Rcout << "meld-exited, ";
 #endif
 }
 
@@ -381,44 +381,46 @@ printf("meld-exited, ");
 void FHeap::dumpNodes(FHeapNode *node, int level)
 {
 #if FHEAP_DUMP
-     FHeapNode *childNode, *partner;
-     int i, childCount;
+    FHeapNode *childNode, *partner;
+    int i, childCount;
 
-     /* Print leading whitespace for this level. */
-     for(i = 0; i < level; i++) printf("   ");
+    /* Print leading whitespace for this level. */
+    for(i = 0; i < level; i++)
+        Rcpp::Rcout << "   ";
 
-     printf("%d(%ld)[%d]\n", node->item, node->key, node->rank);
-     
-     if((childNode = node->child)) {
-	 childNode = node->child->right;
-	 
-         childCount = 0;
+    Rcpp::Rcout << node->item << "(" << node->key << ")[" << node->rank <<
+        "]" << std::endl;
 
-         do {
-             dumpNodes(childNode, level+1);
-	     if(childNode->dim > node->dim) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(dim)\n");  exit(1);
-	     }
-	     if(childNode->parent != node) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(parent)\n");
-	     }
-             childNode = childNode->right;
-	     childCount++;
-         } while(childNode != node->child->right);
+    if((childNode = node->child)) {
+        childNode = node->child->right;
 
-         if(childCount != node->dim) {
-	     for(i = 0; i < level; i++) printf("   ");
-             printf("error(childCount)\n");  exit(1);
-         }
-     }
-     else { 
-         if(node->dim != 0) {
-             for(i = 0; i < level; i++) printf("   ");
-	     printf("error(dim)\n"); exit(1);
-	 }
-     }
+        childCount = 0;
+
+        do {
+            dumpNodes(childNode, level+1);
+            if(childNode->dim > node->dim) {
+                for(i = 0; i < level+1; i++) Rcpp::Rcout << "   ";
+                throw std::runtime_error ("error(dim)");
+            }
+            if(childNode->parent != node) {
+                for(i = 0; i < level+1; i++) Rcpp::Rcout << "   ";
+                throw std::runtime_error ("error(parent)");
+            }
+            childNode = childNode->right;
+            childCount++;
+        } while(childNode != node->child->right);
+
+        if(childCount != node->dim) {
+            for(i = 0; i < level; i++) Rcpp::Rcout << "   ";
+            throw std::runtime_error ("error(childCount)");
+        }
+    }
+    else { 
+        if(node->dim != 0) {
+            for(i = 0; i < level; i++) Rcpp::Rcout << "   ";
+            throw std::runtime_error ("error(dim)");
+        }
+    }
 #endif
 }
 
@@ -431,21 +433,22 @@ void FHeap::dump() const
     int i;
     FHeapNode *node;
 
-    printf("\n");
-    printf("treeSum = %d\n", treeSum);
-    printf("array entries 0..maxTrees =");
+    Rcpp::Rcout << std::endl;
+    Rcpp::Rcout << "treeSum = " << treeSum << std::endl;
+    Rcpp::Rcout << "array entries 0..maxTrees =";
     for(i = 0; i < maxTrees; i++) {
-        printf(" %d", trees[i] ? 1 : 0 );
+        bool tempval = trees [i] ? 1 : 0;
+        Rcpp::Rcout << " " << tempval;
     }
-    printf("\n\n");
+    Rcpp::Rcout << std::endl << std::endl;
     for(i = 0; i < maxTrees; i++) {
         if((node = trees[i])) {
-            printf("tree %d\n\n", i);
+            Rcpp::Rcout << "tree " << i;
             dumpNodes(node, 0);
-	    printf("\n");
+            Rcpp::Rcout << std::endl;
         }
     }
-    fflush(stdout);
+    Rcpp::Rcout.flush ();
 #endif    
 }
 

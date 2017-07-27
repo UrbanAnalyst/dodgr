@@ -2,7 +2,7 @@
  * ----------------------------------------------------------------------------
  *  Shane Saunders
  */
- 
+
 /* This version is implemented using the same pointer structure as a Fibonacci
  * heap; that is, nodes have a parent pointer, and a child pointer which points
  * to a linked list of children constructed from the left and right pointers of
@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdio>
 #if TTHEAP_DUMP
+#include <Rcpp.h>
 #endif
 #include "heap23.h"
 
@@ -25,11 +26,12 @@ Heap23::Heap23(int n)
 {
     int i;
 #if TTHEAP_DUMP
-printf("init, "); fflush(stdout);
+    Rcpp::Rcout << "init, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* The maximum number of nodes and the maximum number of trees allowed.
-     */
+    */
     maxNodes = n; 
     maxTrees = (int)(0.5 + log(n+1)/log(2.0));
 
@@ -38,10 +40,10 @@ printf("init, "); fflush(stdout);
      */
     trees = new Heap23Node *[maxTrees];
     for(i = 0; i < maxTrees; i++) trees[i] = 0;
-    
+
     nodes = new Heap23Node *[n];
     for(i = 0; i < n; i++) nodes[i] = 0;
-    
+
     /* We begin with no nodes in the heap. */
     itemCount = 0;
 
@@ -57,13 +59,14 @@ printf("init, "); fflush(stdout);
 }
 
 /* --- Destructor ---
- */
+*/
 Heap23::~Heap23()
 {
     int i;
 
 #if TTHEAP_DUMP
-printf("free, ");  fflush(stdout);
+    Rcpp::Rcout << "free, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     for(i = 0; i < maxNodes; i++) delete nodes[i];
@@ -71,7 +74,8 @@ printf("free, ");  fflush(stdout);
     delete [] nodes;
     delete [] trees;    
 #if TTHEAP_DUMP
-printf("free-exited, ");  fflush(stdout);
+    Rcpp::Rcout << "free-exited, ";
+    Rcpp::Rcout.flush ();
 #endif
 }
 
@@ -83,9 +87,9 @@ void Heap23::insert(int item, float k)
     Heap23Node *newNode;
 
 #if TTHEAP_DUMP
-printf("insert, ");
- dump();
- fflush(stdout);
+    Rcpp::Rcout << "insert, ";
+    dump();
+    Rcpp::Rcout.flush ();
 #endif
 
     /* Create an initialise the new node.  The parent pointer will be set to
@@ -108,10 +112,9 @@ printf("insert, ");
     itemCount++;
 
 #if TTHEAP_DUMP
-/* printf("insert-exited, ");  fflush(stdout); */
-printf("insert-exited, ");
- dump(); 
-fflush(stdout); 
+    Rcpp::Rcout << "insert-exited, ";
+    dump(); 
+    Rcpp::Rcout.flush ();
 #endif
 }
 
@@ -125,7 +128,8 @@ unsigned int Heap23::deleteMin()
     unsigned int r, v, item;
 
 #if TTHEAP_DUMP
-printf("deleteMin, ");  fflush(stdout);
+    Rcpp::Rcout << "deleteMin, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* First we determine the maximum rank tree in the heap. */
@@ -165,7 +169,7 @@ printf("deleteMin, ");  fflush(stdout);
      * pointer.
      */
     child = minNode->child;
-        if(child) {
+    if(child) {
         next = child->right;
         next->left = child->right = NULL;
         meld(next);
@@ -179,7 +183,8 @@ printf("deleteMin, ");  fflush(stdout);
     delete minNode;
 
 #if TTHEAP_DUMP
-printf("deleteMin-exited, ");  fflush(stdout);
+    Rcpp::Rcout << "deleteMin-exited, ";
+    Rcpp::Rcout.flush ();
 #endif
 
     return item;
@@ -195,7 +200,8 @@ void Heap23::decreaseKey(int item, float newValue)
     Heap23Node *cutNode, *parent;
 
 #if TTHEAP_DUMP
-printf("decreaseKey on vn = %d, ", item);  fflush(stdout);
+    Rcpp::Rcout << "decreaseKey on vn = " << item;
+    Rcpp::Rcout.flush ();
 #endif
 
     /* Obtain a pointer to the decreased node and its parent and child.*/
@@ -206,7 +212,8 @@ printf("decreaseKey on vn = %d, ", item);  fflush(stdout);
     /* No reinsertion occurs if the node changed was a root. */
     if(!parent) {
 #if TTHEAP_DUMP
-printf("decreaseKey-exited, ");  fflush(stdout);
+        Rcpp::Rcout << "decreaseKey-exited, ";
+        Rcpp::Rcout.flush ();
 #endif
         return;
     }
@@ -217,7 +224,8 @@ printf("decreaseKey-exited, ");  fflush(stdout);
     meld(cutNode);
 
 #if TTHEAP_DUMP
-printf("decreaseKey-exited, ");  fflush(stdout);
+    Rcpp::Rcout << "decreaseKey-exited, ";
+    Rcpp::Rcout.flush ();
 #endif
 
 }
@@ -237,7 +245,8 @@ void Heap23::meld(Heap23Node *treeList)
     int d;
 
 #if TTHEAP_DUMP
-printf("meld - ");  fflush(stdout);
+    Rcpp::Rcout << "meld - ";
+    Rcpp::Rcout.flush ();
 #endif
 
     /* addTree points to the current tree to be merged. */
@@ -270,9 +279,10 @@ printf("meld - ");  fflush(stdout);
         }
 
 #if TTHEAP_DUMP
-printf("%d, ", addTree->item);  fflush(stdout);
+        Rcpp::Rcout << addTree->item << " ";
+        Rcpp::Rcout.flush ();
 #endif
- 
+
         /* First we merge addTree with carryTree, if there is one.  Note that
          * carryTree contains only one node in its main trunk, and addTree
          * has at most two, so the result is at most one 3-node trunk, which is
@@ -312,7 +322,8 @@ printf("%d, ", addTree->item);  fflush(stdout);
 
 
 #if TTHEAP_DUMP
-printf("meld-exited, ");  fflush(stdout);
+    Rcpp::Rcout << "meld-exited, ";
+    Rcpp::Rcout.flush ();
 #endif
 
 }
@@ -348,7 +359,7 @@ void Heap23::removeNode(Heap23Node *rNode)
     }
     /* Otherwise we need some rearrangement of the workspace. */
     else {
-        
+
         /* Look at up to two similar nodes in the work space and determine if
          * they have an extra node under them.  Nodes relative to the node
          * being removed are pointed to by the pointers ax, ap, bx, and bp.
@@ -394,7 +405,7 @@ void Heap23::removeNode(Heap23Node *rNode)
         else {
             bx = bp = NULL;
         }
-        
+
 
         if(bx) {
 
@@ -566,12 +577,12 @@ void Heap23::trimExtraNode(Heap23Node *x)
         /* A dimension 0 node is an only child, so cutting it leaves no
          * children.
          */
-        
+
         x->parent->child = NULL;
     }
     else {
         /* Otherwise, sibling pointers of other child nodes must be updated. */
-        
+
         l = x->left;
         r = x->right;
         l->right = r;
@@ -691,48 +702,54 @@ void Heap23::replaceNode(Heap23Node *oldNode, Heap23Node *newNode)
 void Heap23::dumpNodes(Heap23Node *node, int level)
 {
 #if TTHEAP_DUMP
-     Heap23Node *childNode, *partner;
-     int i, childCount;
+    Heap23Node *childNode, *partner;
+    int i, childCount;
 
-     /* Print leading whitespace for this level. */
-     for(i = 0; i < level; i++) printf("   ");
+    /* Print leading whitespace for this level. */
+    for(i = 0; i < level; i++)
+        Rcpp::Rcout << "   ";
 
-     printf("%d(%ld)\n", node->item, node->key);
-     
-     if((childNode = node->child)) {
-	 childNode = node->child->right;
-	 
-         childCount = 0;
+    Rcpp::Rcout << node->item << "(" << node->key << ")" << std::endl;
 
-         do {
-             dumpNodes(childNode, level+1);
-	     if(childNode->dim != childCount) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(dim)\n");  exit(1);
-	     }
-	     if(childNode->parent != node) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(parent)\n");
-	     }
-	     if(childNode->key < node->key) {
-                 for(i = 0; i < level+1; i++) printf("   ");
-		 printf("error(key)\n");  exit(1);
-	     }
-             childNode = childNode->right;
-	     childCount++;
-         } while(childNode != node->child->right);
+    if((childNode = node->child)) {
+        childNode = node->child->right;
 
-         if(childCount != node->dim && childCount != node->dim + 1) {
-	     for(i = 0; i < level; i++) printf("   ");
-             printf("error(childCount)\n");  exit(1);
-         }
-     }
-     else { 
-         if(node->dim != 0) {
-             for(i = 0; i < level; i++) printf("   ");
-	     printf("error(dim)\n"); exit(1);
-	 }
-     }
+        childCount = 0;
+
+        do {
+            dumpNodes(childNode, level+1);
+            if(childNode->dim != childCount) {
+                for(i = 0; i < level+1; i++)
+                    Rcpp::Rcout << "   ";
+                throw std::error ("error(dim)");
+            }
+            if(childNode->parent != node) {
+                for(i = 0; i < level+1; i++)
+                    Rcpp::Rcout << "   ";
+                throw std::error ("error(parent)");
+            }
+            if(childNode->key < node->key) {
+                for(i = 0; i < level+1; i++)
+                    Rcpp::Rcout << "   ";
+                throw std::error ("error(key)");
+            }
+            childNode = childNode->right;
+            childCount++;
+        } while(childNode != node->child->right);
+
+        if(childCount != node->dim && childCount != node->dim + 1) {
+            for(i = 0; i < level; i++)
+                Rcpp::Rcout << "   ";
+            throw std::error ("error(childCount)");
+        }
+    }
+    else { 
+        if(node->dim != 0) {
+            for(i = 0; i < level; i++)
+                Rcpp::Rcout << "   ";
+            throw std::error ("error(dim)");
+        }
+    }
 #endif
 }
 
@@ -745,18 +762,18 @@ void Heap23::dump() const
     int i;
     Heap23Node *node;
 
-    printf("\n");
-    printf("value = %d\n", treeSum);
-    printf("array entries 0..maxTrees =");
+    Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl;
+    Rcpp::Rcout << "array entries 0..maxTrees =";
     for(i=0; i<maxTrees; i++) {
-        printf(" %d", trees[i] ? 1 : 0 );
+        bool tempval = trees [i] ? 1 : 0;
+        Rcpp::Rcout << " " << tempval;
     }
-    printf("\n\n");
+    Rcpp::Rcout << std::endl << std::endl;
     for(i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
-            printf("tree %d\n\n", i);
+            Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);
-	    printf("\n");
+            Rcpp::Rcout << std::endl;
         }
     }
     fflush(stdout);
