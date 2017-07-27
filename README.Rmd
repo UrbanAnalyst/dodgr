@@ -26,9 +26,9 @@ knitr::opts_chunk$set(
 [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/pqspr)](http://cran.r-project.org/web/packages/pqspr) 
 
-# didg
+# didg: Distances on Directed Graphs.
 
-Calculated pairwise distances on dual-weighted directed graphs using Priority
+Calculates pairwise distances on dual-weighted directed graphs using Priority
 Queue Shortest Paths. Dual-weighted graphs are ones where shortest paths are
 evaluated according to one weight, while distances along paths are calculating
 using a different weight. A canonical example is routing along a street network

@@ -1,10 +1,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/mpadge/pqspr.svg)](https://travis-ci.org/mpadge/pqspr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/pqspr)](http://cran.r-project.org/web/packages/pqspr)
 
-didg
-====
+didg: Distances on Directed Graphs.
+===================================
 
-Calculated pairwise distances on dual-weighted directed graphs using Priority Queue Shortest Paths. Dual-weighted graphs are ones where shortest paths are evaluated according to one weight, while distances along paths are calculating using a different weight. A canonical example is routing along a street network according to some kind of priority weighting for a particular mode of transport. The weights determine the route, while the desired output is a simple distance.
+Calculates pairwise distances on dual-weighted directed graphs using Priority Queue Shortest Paths. Dual-weighted graphs are ones where shortest paths are evaluated according to one weight, while distances along paths are calculating using a different weight. A canonical example is routing along a street network according to some kind of priority weighting for a particular mode of transport. The weights determine the route, while the desired output is a simple distance.
 
 The shortest path algorithm relies on priority queue code adapted from original code by Shane Saunders available here <http://www.cosc.canterbury.ac.nz/tad.takaoka/alg/spalgs/spalgs.html>
 
