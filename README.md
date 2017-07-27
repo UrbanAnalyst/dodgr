@@ -1,8 +1,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/mpadge/pqspr.svg)](https://travis-ci.org/mpadge/pqspr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/pqspr)](http://cran.r-project.org/web/packages/pqspr)
 
-didg: Distances on Directed Graphs.
-===================================
+didg: Distances on Directed Graphs in R
+=======================================
 
 Calculates pairwise distances on dual-weighted directed graphs using Priority Queue Shortest Paths. Dual-weighted directed graphs are directed graphs with two sets of weights so that `weight1(A->B) != weight1(B->A)`---the directed property---and `weight2(A->B) != weight1(A->B)`---the dual property. `didg` calculates shortest paths according to one weight, while distances along paths are calculating using the other weight. A canonical example of a dual-weighted directed graph is a street network to be used for routing. Routes are usually calculated by weighting different kinds of streets or ways according to a particular mode of transport, while the desired output is a direct distance which has to be calculated using a different set of weights.
 
