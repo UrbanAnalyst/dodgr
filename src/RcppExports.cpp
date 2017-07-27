@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // rcpp_get_sp
 Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, std::string heap_type);
-RcppExport SEXP _pqspr_rcpp_get_sp(SEXP graphSEXP, SEXP heap_typeSEXP) {
+RcppExport SEXP _dodgr_rcpp_get_sp(SEXP graphSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

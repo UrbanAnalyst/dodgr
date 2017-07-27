@@ -1,11 +1,17 @@
-Package: pqspr
-Title: Priority Queue Shortest Paths
+Package: dodgr
+Title: Distances on Directed Graphs in R
 Version: 0.0.0.9000
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Shane", "Saunders", role="cph",
-        comment="Original author of most included src code"))
-Description: Priority queue shortest paths
+        comment="Original author of included code for priority heaps"))
+Description: Distances on dual-weighted directed graphs using priority-queue
+    shortest paths. Weighted directed graphs have weights from A to B which may
+    differ from those from B to A. Dual-weighted directed graphs have two sets
+    of such weights. A canonical example is a street network to be used for
+    routing in which routes are calculated by weighting distances according to
+    the type of way and mode of transport, yet lengths of routes must be
+    calculated from direct distances.
 Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
@@ -19,6 +25,6 @@ NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
-URL: https://github.com/mpadge/pqspr
-BugReports: https://github.com/mpadge/pqspr/issues
+URL: https://github.com/mpadge/dodgr
+BugReports: https://github.com/mpadge/dodgr/issues
 RoxygenNote: 6.0.1

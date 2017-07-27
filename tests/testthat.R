@@ -1,4 +1,4 @@
 library(testthat)
-library(pqspr)
+library(dodgr)
 
-test_check("pqspr")
+test_check("dodgr")

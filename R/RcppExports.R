@@ -5,6 +5,6 @@
 #'
 #' @noRd
 rcpp_get_sp <- function(graph, heap_type) {
-    .Call(`_pqspr_rcpp_get_sp`, graph, heap_type)
+    .Call(`_dodgr_rcpp_get_sp`, graph, heap_type)
 }
 
