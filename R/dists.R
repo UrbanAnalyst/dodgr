@@ -90,12 +90,7 @@ dodgr_dists <- function(graph, from, to, heap = 'BHeap')
         }
     }
 
-    d <- rcpp_get_sp (graph, heap)
-
-    if (max (d) > 1e30) # float max ~ 1e38
-        d [d == max (d)] <- NA
-
-    return (d)
+    rcpp_get_sp (graph, heap)
 }
 
 #' convert_graph

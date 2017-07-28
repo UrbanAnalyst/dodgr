@@ -129,14 +129,18 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
     float* d = new float [nverts];
     int* prev = new int [nverts];
 
-    Rcpp::NumericMatrix dout (nverts, nverts);
+    // initialise dout matrix to NA
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nverts * nverts,
+            Rcpp::NumericVector::get_na ());
+    Rcpp::NumericMatrix dout (nverts, nverts, na_vec.begin ());
     for(unsigned int v = 0; v < nverts; v++)
     {
         std::fill (w, w + nverts, INFINITE_FLOAT);
 
         dijkstra->run (d, w, prev, v);
         for(unsigned int vi = 0; vi < nverts; vi++)
-            dout (v, vi) = d [vi];
+            if (d [vi] < INFINITE_FLOAT)
+                dout (v, vi) = d [vi];
 
     }
 
