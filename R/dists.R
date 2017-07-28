@@ -90,7 +90,7 @@ dodgr_dists <- function(graph, from, to, heap = 'BHeap')
         }
     }
 
-    rcpp_get_sp (graph, heap)
+    rcpp_get_sp (graph, vert_map, heap)
 }
 
 #' convert_graph
@@ -218,5 +218,5 @@ find_xy_col <- function (graph, indx, x = TRUE)
 make_vert_map <- function (graph)
 {
     verts <- unique (c (graph$from, graph$to))
-    data.frame (vert = verts, id = seq (verts), stringsAsFactors = FALSE)
+    data.frame (vert = verts, id = seq (verts) - 1, stringsAsFactors = FALSE)
 }

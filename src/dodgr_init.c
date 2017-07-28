@@ -4,10 +4,10 @@
 #include <R_ext/Rdynload.h>
 
 /* .Call calls */
-extern SEXP _dodgr_rcpp_get_sp(SEXP, SEXP);
+extern SEXP _dodgr_rcpp_get_sp(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_dodgr_rcpp_get_sp", (DL_FUNC) &_dodgr_rcpp_get_sp, 2},
+    {"_dodgr_rcpp_get_sp", (DL_FUNC) &_dodgr_rcpp_get_sp, 3},
     {NULL, NULL, 0}
 };
 

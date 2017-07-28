@@ -9,24 +9,7 @@
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const float INFINITE_INT =  std::numeric_limits<int>::max ();
 
-unsigned int inst_vert_map (unsigned int nedges,
-        std::map <std::string, unsigned int> &vert_map,
-        std::vector <std::string> &from,
-        std::vector <std::string> &to)
-{
-    unsigned int nverts = 0;
-    for (unsigned int i = 0; i < nedges; i++)
-    {
-        if (vert_map.find (from [i]) == vert_map.end ())
-            vert_map.emplace (from [i], nverts++);
-        if (vert_map.find (to [i]) == vert_map.end ())
-            vert_map.emplace (to [i], nverts++);
-    }
-
-    return nverts;
-}
-
-    template <typename T>
+template <typename T>
 void inst_graph (DGraph *g, unsigned int nedges,
         std::map <std::string, unsigned int> &vert_map,
         std::vector <std::string> &from,
@@ -94,7 +77,8 @@ Dijkstra * dijkstra_radix (unsigned int nverts)
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
+Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in, std::string heap_type)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -103,7 +87,13 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
-    unsigned int nverts = inst_vert_map (nedges, vert_map, from, to);
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    for (unsigned int i = 0; i < vert_map_in.nrow (); ++i)
+    {
+        vert_map.emplace (vert_map_id [i], vert_map_n [i]);
+    }
+    unsigned int nverts = vert_map.size ();
 
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);

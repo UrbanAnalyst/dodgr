@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // rcpp_get_sp
-Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_get_sp(SEXP graphSEXP, SEXP heap_typeSEXP) {
+Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_get_sp(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp(graph, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp(graph, vert_map_in, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
