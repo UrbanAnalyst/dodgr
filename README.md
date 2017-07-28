@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/pqspr.svg)](https://travis-ci.org/mpadge/pqspr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/pqspr)](http://cran.r-project.org/web/packages/pqspr)
+[![Build Status](https://travis-ci.org/mpadge/dodgr.svg)](https://travis-ci.org/mpadge/dodgr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr)
 
 dodgr: Distances on Directed Graphs in R
 ========================================
@@ -15,7 +15,7 @@ You can install `dodgr` from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mpadge/pqspr")
+devtools::install_github("mpadge/dodgr")
 ```
 
 Simple Usage
@@ -27,7 +27,23 @@ The primary function,
 d <- dodgr_dists (graph = graph, from = from)
 ```
 
-produces a square matrix of distances between all points listed in `from` and routed along the dual-weighted directed network given in `graph`.
+produces a square matrix of distances between all points listed in `from` and routed along the dual-weighted directed network given in `graph`. An even simpler usage allows calculation of pair-wise distances between a set of geographical coordinates (here, for a sizey chunk of New York City):
+
+``` r
+xlim <- c (-74.12931, -73.99214)
+ylim <- c (40.70347, 40.75354)
+npts <- 1000
+pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
+                   y = ylim [1] + runif (npts) * diff (ylim))
+st <- Sys.time ()
+d <- dodgr_dists (from = pts)
+Sys.time () - st
+#> Time difference of 9.514754 secs
+range (d, na.rm = TRUE)
+#> [1]  0.00000 19.44195
+```
+
+This will automatically download the street network (using [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then calculating distances between 1,000 points can be done in around 10 seconds.
 
 Detailed Usage
 --------------
