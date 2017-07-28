@@ -38,7 +38,7 @@
 #' in \code{graph}.
 #'
 #' @export
-dodgr_dists <- function(graph, from, to, heap = 'BHeap')
+dodgr_dists <- function (graph, from, to, heap = 'BHeap')
 {
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
     heap <- match.arg (arg = heap, choices = heaps)
@@ -64,7 +64,7 @@ dodgr_dists <- function(graph, from, to, heap = 'BHeap')
         from <- -1
     else
     {
-        from <- get_pts_index (graph, vert_map, from)
+        from <- get_pts_index (graph, vert_map, xy, from)
     }
 
     rcpp_get_sp (graph, vert_map, from, heap)
@@ -213,7 +213,7 @@ make_vert_map <- function (graph)
 #' Convert \code{from} or \code{to} args of \code{dodgr_dists} to indices into
 #' \code{vert_map}
 #' @noRd
-get_pts_index <- function (graph, vert_map, pts, ft_txt = "from")
+get_pts_index <- function (graph, vert_map, xy, pts, ft_txt = "from")
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
         pts <- matrix (pts, ncol = 1)
