@@ -60,37 +60,36 @@ dodgr_dists <- function(graph, from, to, heap = 'BHeap')
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
 
-    if (!missing (from))
-    {
-        if (ncol (from) >= 2)
-        {
-            ix <- which (grepl ("x", names (from), ignore.case = TRUE) |
-                         grepl ("lon", names (from), ignore.case = TRUE))
-            iy <- which (grepl ("y", names (from), ignore.case = TRUE) |
-                         grepl ("lat", names (from), ignore.case = TRUE))
-            if (length (ix) != 1 | length (iy) != 1)
-                stop (paste0 ("Unable to determine geographical ",
-                              "coordinates in from"))
+    if (missing (from))
+        from <- -1
+    #if (!missing (from))
+    #{
+    #    if (ncol (from) >= 2)
+    #    {
+    #        ix <- which (grepl ("x", names (from), ignore.case = TRUE) |
+    #                     grepl ("lon", names (from), ignore.case = TRUE))
+    #        iy <- which (grepl ("y", names (from), ignore.case = TRUE) |
+    #                     grepl ("lat", names (from), ignore.case = TRUE))
+    #        if (length (ix) != 1 | length (iy) != 1)
+    #            stop (paste0 ("Unable to determine geographical ",
+    #                          "coordinates in from"))
+    #        if (is.null (xy))
+    #            stop (paste0 ("graph has no geographical coordinates ",
+    #                          "against which to match from"))
+    #        # Then match from to graph using shorest Euclidean distances
+    #        # TODO: Implement full Haversine?
+    #        ngr <- nrow (graph)
+    #        nfr <- nrow (from)
+    #        frx_mat <- matrix (from [, ix], nrow = nfr, ncol = ngr)
+    #        fry_mat <- matrix (from [, iy], nrow = nfr, ncol = ngr)
+    #        grx_mat <- t (matrix (xy$x, nrow = ngr, ncol = nfr))
+    #        gry_mat <- t (matrix (xy$y, nrow = ngr, ncol = nfr))
+    #        dxy_mat <- (frx_mat - grx_mat) ^ 2 + (fry_mat - gry_mat) ^ 2
+    #        indx <- apply (dxy_mat, 1, which.min)
+    #    }
+    #}
 
-            if (is.null (xy))
-                stop (paste0 ("graph has no geographical coordinates ",
-                              "against which to match from"))
-
-            # Then match from to graph using shorest Euclidean distances
-            # TODO: Implement full Haversine?
-            ngr <- nrow (graph)
-            nfr <- nrow (from)
-            frx_mat <- matrix (from [, ix], nrow = nfr, ncol = ngr)
-            fry_mat <- matrix (from [, iy], nrow = nfr, ncol = ngr)
-            grx_mat <- t (matrix (xy$x, nrow = ngr, ncol = nfr))
-            gry_mat <- t (matrix (xy$y, nrow = ngr, ncol = nfr))
-            dxy_mat <- (frx_mat - grx_mat) ^ 2 + (fry_mat - gry_mat) ^ 2
-
-            indx <- apply (dxy_mat, 1, which.min)
-        }
-    }
-
-    rcpp_get_sp (graph, vert_map, heap)
+    rcpp_get_sp (graph, vert_map, from, heap)
 }
 
 #' convert_graph

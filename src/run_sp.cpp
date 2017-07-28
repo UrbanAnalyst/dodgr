@@ -78,8 +78,16 @@ Dijkstra * dijkstra_radix (unsigned int nverts)
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in, std::string heap_type)
+        Rcpp::DataFrame vert_map_in,
+        std::vector <int> fromi, std::string heap_type)
 {
+    if (fromi [0] < 0) // use all vertices
+    {
+        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        fromi = Rcpp::as <std::vector <int>> (id_vec);
+    }
+    unsigned int ndists = fromi.size ();
+
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <float> dist = graph ["d"];
@@ -120,17 +128,21 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
     dijkstra->init (g); // specify the graph
 
     // initialise dout matrix to NA
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nverts * nverts,
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (ndists * ndists,
             Rcpp::NumericVector::get_na ());
-    Rcpp::NumericMatrix dout (nverts, nverts, na_vec.begin ());
-    for(unsigned int v = 0; v < nverts; v++)
+    Rcpp::NumericMatrix dout (ndists, ndists, na_vec.begin ());
+    for (unsigned int v = 0; v < ndists; v++)
     {
         std::fill (w, w + nverts, INFINITE_FLOAT);
 
-        dijkstra->run (d, w, prev, v);
-        for(unsigned int vi = 0; vi < nverts; vi++)
-            if (w [vi] < INFINITE_FLOAT)
-                dout (v, vi) = d [vi];
+        dijkstra->run (d, w, prev, fromi [v]);
+        for (unsigned int vi = 0; vi < ndists; vi++)
+            if (w [fromi [vi]] < INFINITE_FLOAT)
+                dout (v, vi) = d [fromi [vi]];
+
+        //for(unsigned int vi = 0; vi < nverts; vi++)
+        //    if (w [vi] < INFINITE_FLOAT)
+        //        dout (v, vi) = d [vi];
     }
 
     // Tracing a path:
