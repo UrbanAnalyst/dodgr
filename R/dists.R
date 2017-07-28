@@ -62,32 +62,51 @@ dodgr_dists <- function(graph, from, to, heap = 'BHeap')
 
     if (missing (from))
         from <- -1
-    #if (!missing (from))
-    #{
-    #    if (ncol (from) >= 2)
-    #    {
-    #        ix <- which (grepl ("x", names (from), ignore.case = TRUE) |
-    #                     grepl ("lon", names (from), ignore.case = TRUE))
-    #        iy <- which (grepl ("y", names (from), ignore.case = TRUE) |
-    #                     grepl ("lat", names (from), ignore.case = TRUE))
-    #        if (length (ix) != 1 | length (iy) != 1)
-    #            stop (paste0 ("Unable to determine geographical ",
-    #                          "coordinates in from"))
-    #        if (is.null (xy))
-    #            stop (paste0 ("graph has no geographical coordinates ",
-    #                          "against which to match from"))
-    #        # Then match from to graph using shorest Euclidean distances
-    #        # TODO: Implement full Haversine?
-    #        ngr <- nrow (graph)
-    #        nfr <- nrow (from)
-    #        frx_mat <- matrix (from [, ix], nrow = nfr, ncol = ngr)
-    #        fry_mat <- matrix (from [, iy], nrow = nfr, ncol = ngr)
-    #        grx_mat <- t (matrix (xy$x, nrow = ngr, ncol = nfr))
-    #        gry_mat <- t (matrix (xy$y, nrow = ngr, ncol = nfr))
-    #        dxy_mat <- (frx_mat - grx_mat) ^ 2 + (fry_mat - gry_mat) ^ 2
-    #        indx <- apply (dxy_mat, 1, which.min)
-    #    }
-    #}
+    else
+    {
+        if (!(is.matrix (from) | is.data.frame (from)))
+            from <- matrix (from, ncol = 1)
+
+        if (ncol (from) == 1)
+        {
+            from <- from [, 1]
+            if (!is.numeric (from))
+            {
+                indx <- match (from, vert_map$vert)
+                if (any (is.na (indx)))
+                    stop (paste0 ("from is not numeric yet can not be",
+                                  "matched onto graph vertices"))
+                from <- indx
+            }
+            if (any (from < 1 | from > nrow (vert_map)))
+                stop ("from exceeds numbers of vertices")
+        } else
+        {
+            ix <- which (grepl ("x", names (from), ignore.case = TRUE) |
+                         grepl ("lon", names (from), ignore.case = TRUE))
+            iy <- which (grepl ("y", names (from), ignore.case = TRUE) |
+                         grepl ("lat", names (from), ignore.case = TRUE))
+            if (length (ix) != 1 | length (iy) != 1)
+                stop (paste0 ("Unable to determine geographical ",
+                              "coordinates in from"))
+            if (is.null (xy))
+                stop (paste0 ("graph has no geographical coordinates ",
+                              "against which to match from"))
+
+            # Then match from to graph using shorest Euclidean distances
+            # TODO: Implement full Haversine?
+            nxy <- nrow (xy)
+            nfr <- nrow (from)
+            frx_mat <- matrix (from [, ix], nrow = nfr, ncol = nxy)
+            fry_mat <- matrix (from [, iy], nrow = nfr, ncol = nxy)
+            xyx_mat <- t (matrix (xy$x, nrow = nxy, ncol = nfr))
+            xyy_mat <- t (matrix (xy$y, nrow = nxy, ncol = nfr))
+            dxy_mat <- (frx_mat - xyx_mat) ^ 2 + (fry_mat - xyy_mat) ^ 2
+            from <- apply (dxy_mat, 1, which.min)
+            # xy has same order as vertex_map
+        }
+        from <- from - 1 # 0-indexed for C++
+    }
 
     rcpp_get_sp (graph, vert_map, from, heap)
 }
@@ -158,7 +177,14 @@ convert_graph <- function (graph)
                       all (apply (xy_to, 2, is.numeric))))
                     stop (paste0 ("graph appears to have non-numeric ",
                                   "longitudes and latitudes"))
-                xy <- cbind (graph [, fr_col], graph [, to_col])
+
+                # This same indx is created in vertex_map to ensure it follows
+                # same order as xy
+                indx <- which (!duplicated (c (xy_fr_id, xy_to_id)))
+                xy <- data.frame ("x" = c (graph [, fr_col [1]],
+                                           graph [, to_col [1]]),
+                                  "y" = c (graph [, fr_col [2]],
+                                           graph [, to_col [2]])) [indx, ]
 
                 # then replace 4 xy from/to cols with 2 from/to cols
                 graph <- data.frame ("from" = xy_fr_id,
@@ -216,7 +242,8 @@ find_xy_col <- function (graph, indx, x = TRUE)
 #' @noRd
 make_vert_map <- function (graph)
 {
-    verts <- unique (c (graph$from, graph$to))
+    verts <- c (graph$from, graph$to)
+    indx <- which (!duplicated (verts))
     # Note id has to be 0-indexed:
-    data.frame (vert = verts, id = seq (verts) - 1, stringsAsFactors = FALSE)
+    data.frame (vert = verts [indx], id = seq (indx) - 1, stringsAsFactors = FALSE)
 }
