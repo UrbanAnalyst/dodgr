@@ -218,5 +218,6 @@ find_xy_col <- function (graph, indx, x = TRUE)
 make_vert_map <- function (graph)
 {
     verts <- unique (c (graph$from, graph$to))
+    # Note id has to be 0-indexed:
     data.frame (vert = verts, id = seq (verts) - 1, stringsAsFactors = FALSE)
 }

@@ -113,11 +113,11 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
     else if (heap_type == "Radix")
         dijkstra = dijkstra_radix (nverts);
 
-    dijkstra->init (g); // specify the graph
-
     float* w = new float [nverts];
     float* d = new float [nverts];
     int* prev = new int [nverts];
+
+    dijkstra->init (g); // specify the graph
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nverts * nverts,
@@ -129,9 +129,8 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
 
         dijkstra->run (d, w, prev, v);
         for(unsigned int vi = 0; vi < nverts; vi++)
-            if (d [vi] < INFINITE_FLOAT)
+            if (w [vi] < INFINITE_FLOAT)
                 dout (v, vi) = d [vi];
-
     }
 
     // Tracing a path:
