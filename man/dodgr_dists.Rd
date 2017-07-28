@@ -4,7 +4,7 @@
 \alias{dodgr_dists}
 \title{dodgr_dists}
 \usage{
-dodgr_dists(graph, from, to, heap = "FHeap")
+dodgr_dists(graph, from, to, heap = "BHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

@@ -38,7 +38,8 @@
 #' in \code{graph}.
 #'
 #' @export
-dodgr_dists <- function(graph, from, to, heap = 'FHeap') {
+dodgr_dists <- function(graph, from, to, heap = 'BHeap')
+{
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
     heap <- match.arg (arg = heap, choices = heaps)
     if (heap == "Radix")
@@ -53,10 +54,174 @@ dodgr_dists <- function(graph, from, to, heap = 'FHeap') {
             graph$d_weighted <- round (graph$d_weighted)
         }
     }
+
+    graph <- convert_graph (graph)
+    xy <- graph$xy
+    graph <- graph$graph
+    vert_map <- make_vert_map (graph)
+
+    if (!missing (from))
+    {
+        if (ncol (from) >= 2)
+        {
+            ix <- which (grepl ("x", names (from), ignore.case = TRUE) |
+                         grepl ("lon", names (from), ignore.case = TRUE))
+            iy <- which (grepl ("y", names (from), ignore.case = TRUE) |
+                         grepl ("lat", names (from), ignore.case = TRUE))
+            if (length (ix) != 1 | length (iy) != 1)
+                stop (paste0 ("Unable to determine geographical ",
+                              "coordinates in from"))
+
+            if (is.null (xy))
+                stop (paste0 ("graph has no geographical coordinates ",
+                              "against which to match from"))
+
+            # Then match from to graph using shorest Euclidean distances
+            # TODO: Implement full Haversine?
+            ngr <- nrow (graph)
+            nfr <- nrow (from)
+            frx_mat <- matrix (from [, ix], nrow = nfr, ncol = ngr)
+            fry_mat <- matrix (from [, iy], nrow = nfr, ncol = ngr)
+            grx_mat <- t (matrix (xy$x, nrow = ngr, ncol = nfr))
+            gry_mat <- t (matrix (xy$y, nrow = ngr, ncol = nfr))
+            dxy_mat <- (frx_mat - grx_mat) ^ 2 + (fry_mat - gry_mat) ^ 2
+
+            indx <- apply (dxy_mat, 1, which.min)
+        }
+    }
+
     d <- rcpp_get_sp (graph, heap)
 
     if (max (d) > 1e30) # float max ~ 1e38
         d [d == max (d)] <- NA
 
     return (d)
+}
+
+#' convert_graph
+#'
+#' Convert graph to standard 4-column format for submission to C++ routines
+#' @noRd
+convert_graph <- function (graph)
+{
+    d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
+                    tolower (substring (names (graph), 2, 2)) != "w" &
+                    tolower (substring (names (graph), 2, 2)) != "_")
+    w_col <- which (tolower (substring (names (graph), 1, 1)) == "w" |
+                    tolower (substring (names (graph), 1, 2)) == "dw" |
+                    tolower (substring (names (graph), 1, 3)) == "d_w")
+    if (length (d_col) > 1 | length (w_col) > 1)
+        stop ("Unable to determine distance and/or weight columns in graph")
+    else if (length (d_col) != 1)
+        stop ("Unable to determine distance column in graph")
+
+    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE))
+    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE))
+
+    xy <- NULL
+    if (ncol (graph) > 4)
+    {
+        if (any (grepl ("x", names (graph), ignore.case = TRUE)) |
+            any (grepl ("y", names (graph), ignore.case = TRUE)) |
+            any (grepl ("lon", names (graph), ignore.case = TRUE)) |
+            any (grepl ("lat", names (graph), ignore.case = TRUE)))
+        {
+            if (length (fr_col) != length (to_col))
+                stop (paste0 ("from and to columns in graph appear ",
+                              "to have different strutures"))
+            else if (length (fr_col) >= 2 & length (to_col) >= 2)
+            {
+                if (length (fr_col) == 3)
+                {
+                    frx_col <- find_xy_col (graph, fr_col, x = TRUE)
+                    fry_col <- find_xy_col (graph, fr_col, x = FALSE)
+                    frid_col <- fr_col [which (!fr_col %in%
+                                               c (frx_col, fry_col))]
+                    fr_col <- c (frx_col, fry_col)
+                    xy_fr_id <- graph [, frid_col]
+                    if (!is.character (xy_fr_id))
+                        xy_fr_id <- paste0 (xy_fr_id)
+
+                    tox_col <- find_xy_col (graph, to_col, x = TRUE)
+                    toy_col <- find_xy_col (graph, to_col, x = FALSE)
+                    toid_col <- to_col [which (!to_col %in%
+                                               c (tox_col, toy_col))]
+                    to_col <- c (tox_col, toy_col)
+                    xy_to_id <- graph [, toid_col]
+                    if (!is.character (xy_to_id))
+                        xy_to_id <- paste0 (xy_to_id)
+                } else # len == 2, so must be only x-y
+                {
+                    xy_fr_id <- paste0 (xy_fr [, fr_col [1]],
+                                        xy_fr [, fr_col [2]])
+                    xy_to_id <- paste0 (xy_to [, to_col [1]],
+                                        xy_to [, to_col [2]])
+                }
+
+                xy_fr <- graph [, fr_col]
+                xy_to <- graph [, to_col]
+                if (!(all (apply (xy_fr, 2, is.numeric)) |
+                      all (apply (xy_to, 2, is.numeric))))
+                    stop (paste0 ("graph appears to have non-numeric ",
+                                  "longitudes and latitudes"))
+                xy <- cbind (graph [, fr_col], graph [, to_col])
+
+                # then replace 4 xy from/to cols with 2 from/to cols
+                graph <- data.frame ("from" = xy_fr_id,
+                                     "to" = xy_to_id,
+                                     "d" = graph [, d_col],
+                                     "w" = graph [, w_col],
+                                     stringsAsFactors = FALSE)
+            }
+        } else
+        {
+            if (length (fr_col) != 1 & length (to_col) != 1)
+                stop ("Unable to determine from and to columns in graph")
+            
+            graph <- data.frame ("from" = graph [, fr_col],
+                                 "to" = graph [, to_col],
+                                 "d" = graph [, d_col],
+                                 "w" = graph [, w_col],
+                                 stringsAsFactors = FALSE)
+        }
+    } else if (ncol (graph == 4))
+    {
+        graph <- data.frame ("from" = graph [, fr_col],
+                             "to" = graph [, to_col],
+                             "d" = graph [, d_col],
+                             "w" = graph [, w_col],
+                             stringsAsFactors = FALSE)
+
+    }
+
+    if (!is.character (graph$from))
+        graph$from <- paste0 (graph$from)
+    if (!is.character (graph$to))
+        graph$to <- paste0 (graph$to)
+
+    return (list (graph = graph, xy = xy))
+}
+
+#' find_xy_col
+#' @noRd
+find_xy_col <- function (graph, indx, x = TRUE)
+{
+    if (x)
+        coli <- which (grepl ("x", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lon", names (graph) [indx], ignore.case = TRUE))
+    else
+        coli <- which (grepl ("y", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lat", names (graph) [indx], ignore.case = TRUE))
+
+    indx [coli]
+}
+
+#' make_vert_map
+#'
+#' Map unique vertex names to sequential numbers in matrix
+#' @noRd
+make_vert_map <- function (graph)
+{
+    verts <- unique (c (graph$from, graph$to))
+    data.frame (vert = verts, id = seq (verts), stringsAsFactors = FALSE)
 }

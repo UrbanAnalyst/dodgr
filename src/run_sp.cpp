@@ -96,10 +96,10 @@ Dijkstra * dijkstra_radix (unsigned int nverts)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph, std::string heap_type)
 {
-    std::vector <std::string> from = graph ["from_id"];
-    std::vector <std::string> to = graph ["to_id"];
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
     std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["d_weighted"];
+    std::vector <float> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
