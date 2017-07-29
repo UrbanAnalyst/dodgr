@@ -79,7 +79,9 @@ Dijkstra * dijkstra_radix (unsigned int nverts)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi, std::string heap_type)
+        std::vector <int> fromi,
+        std::vector <int> toi,
+        std::string heap_type)
 {
     if (fromi [0] < 0) // use all vertices
     {
@@ -97,7 +99,7 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    for (unsigned int i = 0; i < vert_map_in.nrow (); ++i)
+    for (int i = 0; i < vert_map_in.nrow (); ++i)
     {
         vert_map.emplace (vert_map_id [i], vert_map_n [i]);
     }

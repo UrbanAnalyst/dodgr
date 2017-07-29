@@ -66,11 +66,14 @@ dodgr_dists <- function (graph, from, to, heap = 'BHeap')
     if (missing (from))
         from <- -1
     else
-    {
         from <- get_pts_index (graph, vert_map, xy, from)
-    }
 
-    rcpp_get_sp (graph, vert_map, from, heap)
+    if (missing (to))
+        to <- -1
+    else
+        to <- get_pts_index (graph, vert_map, xy, to)
+
+    rcpp_get_sp (graph, vert_map, from, to, heap)
 }
 
 #' convert_graph

@@ -18,8 +18,8 @@ rcpp_lines_as_network <- function(sf_lines, pr) {
 #' rcpp_get_sp
 #'
 #' @noRd
-rcpp_get_sp <- function(graph, vert_map_in, fromi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp`, graph, vert_map_in, fromi, heap_type)
+rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_make_compact_graph
