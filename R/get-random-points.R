@@ -10,8 +10,7 @@
 #' @export
 generate_random_points <- function (city, n)
 {
-    poly_city <- osmdata::getbb (city, display_name_contains,
-                                 format_out = "polygon", limit = 1)
+    poly_city <- osmdata::getbb (city, format_out = "polygon", limit = 1)
     outline_pts <- dim (poly_city) [1]
     bbx <- sp::bbox (poly_city)
     xmin <- bbx [1, 1]
