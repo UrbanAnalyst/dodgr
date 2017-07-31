@@ -1,0 +1,62 @@
+#' generate_random_points
+#'
+#' Generate a numeric \code{matrix} of coordinates that lie within a given city.
+#' The city can be specified by name.
+#'
+#' @param city Name of the city to be analysed
+#' @param n Number of coordinates to be generated
+#' @return \code{matrix} with two columns of length n with random coordinates
+#'
+#' @export
+generate_random_points <- function (city, n)
+{
+    poly_city <- osmdata::getbb (city, display_name_contains,
+                                 format_out = "polygon", limit = 1)
+    outline_pts <- dim (poly_city) [1]
+    bbx <- sp::bbox (poly_city)
+    xmin <- bbx [1, 1]
+    ymin <- bbx [2, 1]
+    xmax <- bbx [1, 2]
+    ymax <- bbx [2, 2]
+    xpoly <- poly_city [, 1]
+    ypoly <- poly_city [, 2]
+
+    n_in <- 0
+    pts_out <- matrix (ncol = 2, nrow = n)
+    while (n_in < n)
+    {
+        rnd <- random_points_in_polygon (xmin, ymin, xmax, ymax, n)
+        keep <- sp::point.in.polygon (rnd [, 1], rnd [, 2], xpoly, ypoly) != 0
+        i1 <- max (n_in, 0) + 1
+        nkeep <- length (which (keep))
+        n_in <- n_in + nkeep
+        i2 <- min (n_in, 100)
+        rem_space <- i2 - i1 + 1
+        if (nkeep > rem_space)
+            nkeep <- rem_space
+        pts_out [i1:i2, ] <- rnd [keep, ] [1:nkeep, ]
+    }
+    pts_out
+}
+
+#' random_points_in_polygon
+#'
+#' Generate a numeric \code{matrix} containing random coordinates within a given
+#' boundary.
+#'
+#' @param xmin Minimum x coordinate
+#' @param ymin Minimum y coordinate
+#' @param xmax Maximum x coordinate
+#' @param ymax Maximum y coordinate
+#' @param n Number of coordinates to be generated
+#' @return \code{matrix} with two columns of length n with random coordinates
+#'
+#' @noRd
+random_points_in_polygon <- function (xmin, ymin, xdiff, ydiff, n)
+{
+    xdiff <- abs (xmax - xmin)
+    ydiff <- abs (ymax - ymin)
+    xrand <- xmin + (xdiff * runif (n))
+    yrand <- ymin + (ydiff * runif (n))
+    matrix (c (xrand, yrand), ncol = 2)
+}
