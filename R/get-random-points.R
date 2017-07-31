@@ -29,8 +29,8 @@ generate_random_points <- function (city, n)
         i1 <- max (n_in, 0) + 1
         nkeep <- length (which (keep))
         n_in <- n_in + nkeep
-        i2 <- min (n_in, 100)
-        rem_space <- i2 - i1 + 1
+        i2 <- min (n_in, n)
+        rem_space <- abs (i2 - i1 + 1)
         if (nkeep > rem_space)
             nkeep <- rem_space
         pts_out [i1:i2, ] <- rnd [keep, ] [1:nkeep, ]
