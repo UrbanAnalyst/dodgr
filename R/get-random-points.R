@@ -10,7 +10,17 @@
 #' @export
 generate_random_points <- function (city, n)
 {
+    if (missing (city))
+        stop ("city is missing with no default.")
+    if (missing (n))
+        stop ("n is missing with no default.")
+    if (n < 1)
+        stop ("n must be >= 1")
+
     poly_city <- osmdata::getbb (city, format_out = "polygon", limit = 1)
+    if (any (is.na (poly_city)))
+        stop (paste0 ("Could not find geometry for city '", city, "'."))
+
     outline_pts <- dim (poly_city) [1]
     bbx <- sp::bbox (poly_city)
     xmin <- bbx [1, 1]
