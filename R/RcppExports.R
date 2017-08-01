@@ -27,6 +27,8 @@ rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' Removes nodes and edges from a graph that are not needed for routing
 #'
 #' @param graph graph to be processed
+#' @param pts_to_keep Index into graph of those points closest to desired
+#' routing points. These are to be kept in the compact graph.
 #' @param quiet If TRUE, display progress
 #' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
 #' graph, one \code{data.frame} with the original graph and one
@@ -34,7 +36,7 @@ rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' original and compact graph.
 #'
 #' @noRd
-rcpp_make_compact_graph <- function(graph, quiet) {
-    .Call(`_dodgr_rcpp_make_compact_graph`, graph, quiet)
+rcpp_make_compact_graph <- function(graph, pts_to_keep, quiet) {
+    .Call(`_dodgr_rcpp_make_compact_graph`, graph, pts_to_keep, quiet)
 }
 

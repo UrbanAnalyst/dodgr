@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <limits>
+
+const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 
 typedef std::string osm_id_t;
 typedef int osm_edge_id_t;
@@ -91,9 +94,23 @@ struct osm_edge_t
         }
 };
 
+struct edge_remap_t
+{
+    unsigned int id [2];
+    float d [2], w [2];
+};
+
+struct new_edge_remap_t
+{
+    std::vector <unsigned int> id;
+    std::vector <float> d, w;
+};
+
 typedef std::unordered_map <osm_id_t, osm_vertex_t> vertex_map_t;
 typedef std::unordered_map <int, osm_edge_t> edge_map_t;
 typedef std::unordered_map <osm_id_t, std::set <int>> vert2edge_map_t;
+typedef std::map <int, edge_remap_t> edges_old2new_t;
+typedef std::map <int, new_edge_remap_t> edges_new2old_t;
 
 void add_to_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid, int eid)
 {
@@ -220,7 +237,8 @@ void get_largest_graph_component (vertex_map_t &v,
 
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map)
+        vert2edge_map_t &vert2edge_map, edges_old2new_t &edges_old2new,
+        edges_new2old_t &edges_new2old)
 {
     std::unordered_set <osm_id_t> verts;
     for (auto v: vertex_map)
@@ -261,10 +279,12 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map.erase (vtx_id);
 
             // construct new edge and remove old ones
-            float d_to = 0.0, d_from = 0.0, wt_to = 0.0, wt_from = 0.0;
+            float d_to = 0.0, d_fr = 0.0, w_to = 0.0, w_fr = 0.0;
             std::set <int> replacement_edges;
             replacement_edges.clear ();
             std::string hw;
+            edge_remap_t edge_remap_to, edge_remap_fr;
+            int count_to = 0, count_fr = 0;
             for (int e: edges)
             {
                 replacement_edges.insert (e);
@@ -275,12 +295,18 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         ei.get_to_vertex () == two_nbs [1])
                 {
                     d_to += ei.dist;
-                    wt_to += ei.weight;
+                    w_to += ei.weight;
+                    edge_remap_to.d [count_to] = d_to;
+                    edge_remap_to.w [count_to] = w_to;
+                    edge_remap_to.id [count_to++] = e;
                 } else if (ei.get_from_vertex () == two_nbs [1] ||
                         ei.get_to_vertex () == two_nbs [0])
                 {
-                    d_from += ei.dist;
-                    wt_from += ei.weight;
+                    d_fr += ei.dist;
+                    w_fr += ei.weight;
+                    edge_remap_fr.d [count_fr] = d_fr;
+                    edge_remap_fr.w [count_fr] = w_fr;
+                    edge_remap_fr.id [count_fr++] = e;
                 }
                 edges_to_erase.insert (e);
                 erase_from_edge_map (vert2edge_map, two_nbs [0], e);
@@ -290,17 +316,21 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             if (d_to > 0.0)
             {
                 osm_edge_t new_edge = osm_edge_t (two_nbs [0], two_nbs [1],
-                        d_to, wt_to, hw, max_edge_id, replacement_edges);
+                        d_to, w_to, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
+                for (int e: edges)
+                    edges_old2new.emplace (e, edge_remap_to);
                 edge_map.emplace (max_edge_id++, new_edge);
             }
-            if (d_from > 0.0)
+            if (d_fr > 0.0)
             {
                 osm_edge_t new_edge = osm_edge_t (two_nbs [1], two_nbs [0],
-                        d_from, wt_from, hw, max_edge_id, replacement_edges);
+                        d_fr, w_fr, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
+                for (int e: edges)
+                    edges_old2new.emplace (e, edge_remap_fr);
                 edge_map.emplace (max_edge_id++, new_edge);
             }
             vert2edge_map.erase (vtx_id);
@@ -317,6 +347,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
 //' @param graph graph to be processed
+//' @param pts_to_keep Index into graph of those points closest to desired
+//' routing points. These are to be kept in the compact graph.
 //' @param quiet If TRUE, display progress
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
 //' graph, one \code{data.frame} with the original graph and one
@@ -325,7 +357,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
+Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
+        std::vector <int> pts_to_keep, bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -353,7 +386,13 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
     }
     vertex_map_t vertices2 = vertices;
     edge_map_t edge_map2 = edge_map;
-    contract_graph (vertices2, edge_map2, vert2edge_map);
+
+    edges_old2new_t edges_old2new;
+    edges_new2old_t edges_new2old;
+    contract_graph (vertices2, edge_map2, vert2edge_map,
+            edges_old2new, edges_new2old);
+    //for (auto ei: edges_old2new)
+    //    Rcpp::Rcout << "[" << ei.first << " -> " << ei.second << "]" << std::endl;
 
     if (!quiet)
     {
@@ -370,6 +409,7 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
         weight_vec (nedges), edgeid_vec (nedges);
 
     int map_size = 0; // size of edge map contracted -> original
+    int edge_count = 0;
     for (auto e = edge_map2.begin (); e != edge_map2.end (); ++e)
     {
         osm_id_t from = e->second.get_from_vertex ();
@@ -377,18 +417,18 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
         osm_vertex_t from_vtx = vertices2.at (from);
         osm_vertex_t to_vtx = vertices2.at (to);
 
-        int en = std::distance (edge_map2.begin (), e);
+        from_vec (edge_count) = from;
+        to_vec (edge_count) = to;
+        highway_vec (edge_count) = e->second.highway;
+        dist_vec (edge_count) = e->second.dist;
+        weight_vec (edge_count) = e->second.weight;
+        from_lat_vec (edge_count) = from_vtx.getLat ();
+        from_lon_vec (edge_count) = from_vtx.getLon ();
+        to_lat_vec (edge_count) = to_vtx.getLat ();
+        to_lon_vec (edge_count) = to_vtx.getLon ();
+        edgeid_vec (edge_count) = e->second.getID ();
 
-        from_vec (en) = from;
-        to_vec (en) = to;
-        highway_vec (en) = e->second.highway;
-        dist_vec (en) = e->second.dist;
-        weight_vec (en) = e->second.weight;
-        from_lat_vec (en) = from_vtx.getLat ();
-        from_lon_vec (en) = from_vtx.getLon ();
-        to_lat_vec (en) = to_vtx.getLat ();
-        to_lon_vec (en) = to_vtx.getLon ();
-        edgeid_vec (en) = e->second.getID ();
+        edge_count++;
 
         map_size += e->second.is_replacement_for ().size ();
     }

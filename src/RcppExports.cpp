@@ -33,14 +33,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_make_compact_graph
-Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, bool quiet);
-RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP quietSEXP) {
+Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, std::vector <int> pts_to_keep, bool quiet);
+RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP pts_to_keepSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_keep(pts_to_keepSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, quiet));
+    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, pts_to_keep, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
