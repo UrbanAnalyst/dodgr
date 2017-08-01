@@ -21,14 +21,12 @@ generate_random_points <- function (city, n)
     if (any (is.na (poly_city)))
         stop (paste0 ("Could not find geometry for city '", city, "'."))
 
-    outline_pts <- dim (poly_city) [1]
-    bbx <- sp::bbox (poly_city)
-    xmin <- bbx [1, 1]
-    ymin <- bbx [2, 1]
-    xmax <- bbx [1, 2]
-    ymax <- bbx [2, 2]
     xpoly <- poly_city [, 1]
     ypoly <- poly_city [, 2]
+    xmin <- xpoly %>% min
+    ymin <- ypoly %>% min
+    xmax <- xpoly %>% max
+    ymax <- ypoly %>% max
 
     n_in <- 0
     pts_out <- matrix (ncol = 2, nrow = n)
