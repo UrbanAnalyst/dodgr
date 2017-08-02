@@ -59,7 +59,7 @@ generate_random_points <- function (city, n)
 #' @return \code{matrix} with two columns of length n with random coordinates
 #'
 #' @noRd
-random_points_in_polygon <- function (xmin, ymin, xdiff, ydiff, n)
+random_points_in_polygon <- function (xmin, ymin, xmax, ymax, n)
 {
     xdiff <- abs (xmax - xmin)
     ydiff <- abs (ymax - ymin)
