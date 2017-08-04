@@ -19,6 +19,7 @@ Imports:
     magrittr,
     osmdata,
     rbenchmark,
+    sp,
     Rcpp (>= 0.12.6)
 LinkingTo:
     Rcpp
