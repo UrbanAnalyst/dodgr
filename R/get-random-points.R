@@ -32,23 +32,28 @@ generate_random_points <- function (city, n)
     xmax <- max (poly_city [, 1])
     ymax <- max (poly_city [, 2])
 
-    n_in <- 0
-    pts_out <- matrix (ncol = 2, nrow = n)
-    while (n_in < n)
+    if (nrow (poly_city) > 2)
     {
-        rnd <- random_points_in_polygon (xmin, ymin, xmax, ymax, n)
-        keep <- sp::point.in.polygon (rnd [, 1], rnd [, 2],
-                                      poly_city [, 1], poly_city [, 2]) != 0
-        i1 <- max (n_in, 0) + 1
-        nkeep <- length (which (keep))
-        n_in <- n_in + nkeep
-        i2 <- min (n_in, n)
-        rem_space <- abs (i2 - i1 + 1)
-        if (nkeep > rem_space)
-            nkeep <- rem_space
-        pts_out [i1:i2, ] <- rnd [keep, ] [1:nkeep, ]
-    }
-    pts_out
+        n_in <- 0
+        pts_out <- matrix (ncol = 2, nrow = n)
+        while (n_in < n)
+        {
+            rnd <- random_points_in_polygon (xmin, ymin, xmax, ymax, n)
+            keep <- sp::point.in.polygon (rnd [, 1], rnd [, 2],
+                                          poly_city [, 1], poly_city [, 2]) != 0
+            i1 <- max (n_in, 0) + 1
+            nkeep <- length (which (keep))
+            n_in <- n_in + nkeep
+            i2 <- min (n_in, n)
+            rem_space <- abs (i2 - i1 + 1)
+            if (nkeep > rem_space)
+                nkeep <- rem_space
+            pts_out [i1:i2, ] <- rnd [keep, ] [1:nkeep, ]
+        }
+    } else
+        pts_out <- random_points_in_polygon (xmin, ymin, xmax, ymax, n)
+
+    return (pts_out)
 }
 
 #' random_points_in_polygon
