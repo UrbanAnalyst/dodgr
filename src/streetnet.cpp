@@ -459,8 +459,6 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
     vert2newedge_map_t vert2newedge_map;
     contract_graph (vertices2, edge_map2, vert2edge_map, vert2newedge_map,
             edges_old2new, edges_new2old);
-    //for (auto ei: edges_old2new)
-    //    Rcpp::Rcout << "[" << ei.first << " -> " << ei.second << "]" << std::endl;
 
     if (!quiet)
     {

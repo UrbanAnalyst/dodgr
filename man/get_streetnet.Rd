@@ -4,15 +4,13 @@
 \alias{get_streetnet}
 \title{get_streetnet}
 \usage{
-get_streetnet(pts, expand = 0.05, txt = "from")
+get_streetnet(pts, profile = "bicycle", expand = 0.05)
 }
 \arguments{
 \item{pts}{List of points presumably containing spatial coordinates}
 
 \item{expand}{Relative factor by which street network should extend beyond
 limits defined by pts}
-
-\item{txt}{Used for warning messages ("from" or "to")}
 }
 \value{
 square matrix of distances between nodes
