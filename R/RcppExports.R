@@ -15,6 +15,20 @@ rcpp_lines_as_network <- function(sf_lines, pr) {
     .Call(`_dodgr_rcpp_lines_as_network`, sf_lines, pr)
 }
 
+#' rcpp_points_index
+#'
+#' Get index of nearest vertices to list of points
+#'
+#' @param graph Rcpp::DataFrame containing the graph
+#' @param pts Rcpp::DataFrame containing the routing points
+#'
+#' @return Rcpp::NumericVector index into graph of nearest points
+#'
+#' @noRd
+rcpp_points_index <- function(xy, pts) {
+    .Call(`_dodgr_rcpp_points_index`, xy, pts)
+}
+
 #' rcpp_get_sp
 #'
 #' @noRd

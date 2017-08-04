@@ -34,6 +34,9 @@
 
 #include <Rcpp.h>
 
+const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
+const float INFINITE_INT =  std::numeric_limits<int>::max ();
+
 // Haversine great circle distance between two points
 float haversine (float x1, float y1, float x2, float y2)
 {
@@ -189,4 +192,48 @@ Rcpp::List rcpp_lines_as_network (const Rcpp::List &sf_lines,
     res [1] = idmat;
 
     return res;
+}
+
+//' rcpp_points_index
+//'
+//' Get index of nearest vertices to list of points
+//'
+//' @param graph Rcpp::DataFrame containing the graph
+//' @param pts Rcpp::DataFrame containing the routing points
+//'
+//' @return Rcpp::NumericVector index into graph of nearest points
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_points_index (const Rcpp::DataFrame &xy,
+        Rcpp::DataFrame pts)
+{
+    Rcpp::NumericVector ptx = pts ["x"];
+    Rcpp::NumericVector pty = pts ["y"];
+
+    Rcpp::NumericVector vtx = xy ["x"];
+    Rcpp::NumericVector vty = xy ["y"];
+
+    Rcpp::NumericVector index (pts.nrow ());
+
+    for (unsigned int i = 0; i < ptx.size (); i++)
+    {
+        float dmin = INFINITE_FLOAT;
+        int jmin = INFINITE_INT;
+        for (unsigned int j = 0; j < xy.nrow (); j++)
+        {
+            float dij = (vtx [j] - ptx [i]) * (vtx [j] - ptx [i]) +
+                (vty [j] - pty [i]) * (vty [j] - pty [i]);
+            if (dij < dmin)
+            {
+                dmin = dij;
+                jmin = j;
+            }
+        }
+        if (jmin == INFINITE_INT)
+            Rcpp::Rcout << "---ERROR---" << std::endl;
+        index (i) = jmin;
+    }
+
+    return index;
 }

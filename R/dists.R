@@ -250,16 +250,7 @@ get_pts_index <- function (graph, vert_map, xy, pts, ft_txt = "from")
             stop (paste0 ("graph has no geographical coordinates ",
                           "against which to match ", ft_txt))
 
-        # Then match pts to graph using shorest Euclidean distances
-        # TODO: Implement full Haversine?
-        nxy <- nrow (xy)
-        nfr <- nrow (pts)
-        frx_mat <- matrix (pts [, ix], nrow = nfr, ncol = nxy)
-        fry_mat <- matrix (pts [, iy], nrow = nfr, ncol = nxy)
-        xyx_mat <- t (matrix (xy$x, nrow = nxy, ncol = nfr))
-        xyy_mat <- t (matrix (xy$y, nrow = nxy, ncol = nfr))
-        dxy_mat <- (frx_mat - xyx_mat) ^ 2 + (fry_mat - xyy_mat) ^ 2
-        pts <- apply (dxy_mat, 1, which.min)
+        pts <- rcpp_points_index (xy, pts)
         # xy has same order as vert_map
     }
 
