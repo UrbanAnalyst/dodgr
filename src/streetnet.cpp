@@ -94,23 +94,23 @@ struct osm_edge_t
         }
 };
 
-struct edge_remap_t
-{
-    unsigned int id [2];
-    float d [2], w [2];
-};
 
+// See contract_graph routine below for explanation of all these types
 struct new_edge_remap_t
 {
-    std::vector <unsigned int> id;
-    std::vector <float> d, w;
+    std::set <osm_id_t> verts;
+    std::set <unsigned int> edges;
+    std::set <float> d, w;
 };
 
 typedef std::unordered_map <osm_id_t, osm_vertex_t> vertex_map_t;
 typedef std::unordered_map <int, osm_edge_t> edge_map_t;
 typedef std::unordered_map <osm_id_t, std::set <int>> vert2edge_map_t;
-typedef std::map <int, edge_remap_t> edges_old2new_t;
-typedef std::map <int, new_edge_remap_t> edges_new2old_t;
+typedef std::unordered_map <unsigned int, unsigned int> edges_old2new_t;
+typedef std::unordered_map <unsigned int, new_edge_remap_t> edges_new2old_t;
+typedef std::unordered_map <osm_id_t, unsigned int> vert2newedge_map_t;
+
+
 
 void add_to_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid, int eid)
 {
@@ -236,9 +236,68 @@ void get_largest_graph_component (vertex_map_t &v,
 }
 
 
+/* These old2new and new2old edge remaps are the trickiest bit here, best
+ * illustrated with an example. Consider four edges, from which vertex B is to
+ * be removed:
+ * 1. A -> (2) -> B -> (4) -> C -> (7) -> D
+ *      Remove B:   old2new (2) = 8 # new edge ID
+ *                  old2new (4) = 8
+ *                  vert2edge (B) = 8 # new edge ID
+ *                  new2old (8).verts = [A, B, C]
+ *                  new2old (8).edges = [2, 4]
+ *                  new2old (8).d = [d.AB, d.AB+BC]
+ * 
+ * 2. A -> (8) -> C -> (7) -> D
+ *      Remove C:   old2new (8) = 9 # new edge ID
+ *                  old2new (7) = 9
+ *                  vert2edge (C) = 9
+ *                  new2old (9).verts = [A, B, C, D]
+ *                  new2old (9).edges = [2, 4, 7]
+ *                  new2old (9).d = [d.AB, d.AB+BC, d.AB+BC+CD]
+ *
+ * 3. A -> (9) -> D = done!
+ *
+ * The new2old map then only has edge IDs inserted if they are **not** found in
+ * the map, so at step#2, new2old(9).edges has 7 inserted but not 8, because
+ * new2old.find(8) != new2old.end(). The new edge is assembled by
+ *
+ * 1. new2old.find(8) != new2old.end() # so copy existing values
+ *      new2old(9).verts.insert (new2old(8).verts) # [A,B,C]
+ *      new2old(9).edges.insert (new2old(8).id) # [2,4]
+ *      new2old(9).d.insert (new2old(8).d)
+ * 2. new2old.find(7) == new2old.end() # so insert those values
+ *      new2old(9).verts.insert (D) # [A,B,C,D]
+ *      new2old(9).edges.insert (7) # [2,4,7]
+ *      new2old(9).d.insert (dCD)
+ *
+ * Vertices can then easily be re-inserted into the graph using these maps.
+ * Consider re-insertion of vertex B:
+ * 1. vert2edge (B) = 8
+ * 2. old2new (8) = 9 -> old2new (9) = old2new.end()
+ * 3. new2old (9).verts = [A, B, C, D], with B second, so
+ * 4. Re-insert vertex and insert new edges:
+ *      edges: A -> B -> D
+ *      d: d.AB, (d.AB+BC+CD - d.AB)
+ *
+ * Or re-insertion of node C:
+ * 1. vert2edge (C) = 9
+ * 2. old2new (9) = new2new.end()
+ * 3. new2old (9).verts = [A, B, C, D], with C third, so
+ * 4. Re-insert vertex and insert new edges:
+ *      edges: A -> C -> D
+ *      d: d.AB+BC, (d.AB+BC+CD - d.AB+BC)
+ *
+ * --------------------------------------------
+ *
+ * Variables in the following code are:
+ * 1. <osm_id_t> vtx_id = The vertex ID (A,B,C above)
+ * 2. <unsigned int> e = The edge ID to be replaced (2, 4, 7, 8)
+ * 3. <unsigned int> max_edge_id = The ID of the new edge (8, 9)
+ */
+
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map, edges_old2new_t &edges_old2new,
-        edges_new2old_t &edges_new2old)
+        vert2edge_map_t &vert2edge_map, vert2newedge_map_t &vert2newedge_map,
+        edges_old2new_t &edges_old2new, edges_new2old_t &edges_new2old)
 {
     std::unordered_set <osm_id_t> verts;
     for (auto v: vertex_map)
@@ -266,7 +325,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             auto nbs = vtx.get_all_neighbours (); // unordered_set <osm_id_t>
             std::vector <osm_id_t> two_nbs;
             for (osm_id_t nb: nbs)
-                two_nbs.push_back (nb);
+                two_nbs.push_back (nb); // size is always 2
 
             osm_vertex_t vt_from = vertex_map [two_nbs [0]],
                 vt_to = vertex_map [two_nbs [1]];
@@ -276,42 +335,54 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map [two_nbs [0]] = vt_from;
             vertex_map [two_nbs [1]] = vt_to;
 
-            vertex_map.erase (vtx_id);
-
             // construct new edge and remove old ones
             float d_to = 0.0, d_fr = 0.0, w_to = 0.0, w_fr = 0.0;
             std::set <int> replacement_edges;
             replacement_edges.clear ();
             std::string hw;
-            edge_remap_t edge_remap_to, edge_remap_fr;
-            int count_to = 0, count_fr = 0;
-            for (int e: edges)
+            new_edge_remap_t new_edge_remap;
+            for (unsigned int e: edges)
             {
                 replacement_edges.insert (e);
                 osm_edge_t ei = edge_map.find (e)->second;
                 // NOTE: There is no check that types of highways are consistent!
                 hw = ei.highway;
+
+                if (edges_new2old.find (max_edge_id) != edges_new2old.end ())
+                    new_edge_remap = edges_new2old [max_edge_id];
+
+                // One of the following two conditions MUST be met
                 if (ei.get_from_vertex () == two_nbs [0] ||
                         ei.get_to_vertex () == two_nbs [1])
                 {
                     d_to += ei.dist;
                     w_to += ei.weight;
-                    edge_remap_to.d [count_to] = d_to;
-                    edge_remap_to.w [count_to] = w_to;
-                    edge_remap_to.id [count_to++] = e;
+                    new_edge_remap.verts.insert (two_nbs [0]);
+                    new_edge_remap.verts.insert (vtx_id);
+                    new_edge_remap.verts.insert (two_nbs [1]);
                 } else if (ei.get_from_vertex () == two_nbs [1] ||
                         ei.get_to_vertex () == two_nbs [0])
                 {
                     d_fr += ei.dist;
                     w_fr += ei.weight;
-                    edge_remap_fr.d [count_fr] = d_fr;
-                    edge_remap_fr.w [count_fr] = w_fr;
-                    edge_remap_fr.id [count_fr++] = e;
+                    new_edge_remap.verts.insert (two_nbs [1]);
+                    new_edge_remap.verts.insert (vtx_id);
+                    new_edge_remap.verts.insert (two_nbs [0]);
                 }
+                new_edge_remap.edges.insert (e);
+                new_edge_remap.d.insert (*new_edge_remap.d.end() + ei.dist);
+                new_edge_remap.w.insert (*new_edge_remap.w.end() + ei.weight);
+
+                edges_old2new.emplace (e, max_edge_id);
+
                 edges_to_erase.insert (e);
                 erase_from_edge_map (vert2edge_map, two_nbs [0], e);
                 erase_from_edge_map (vert2edge_map, two_nbs [1], e);
             }
+            vert2newedge_map.emplace (vtx_id, max_edge_id);
+            vertex_map.erase (vtx_id);
+
+            // one or both of d_to and d_fr must be > 0.0
 
             if (d_to > 0.0)
             {
@@ -319,8 +390,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         d_to, w_to, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
-                for (int e: edges)
-                    edges_old2new.emplace (e, edge_remap_to);
                 edge_map.emplace (max_edge_id++, new_edge);
             }
             if (d_fr > 0.0)
@@ -329,8 +398,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         d_fr, w_fr, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
-                for (int e: edges)
-                    edges_old2new.emplace (e, edge_remap_fr);
                 edge_map.emplace (max_edge_id++, new_edge);
             }
             vert2edge_map.erase (vtx_id);
@@ -389,7 +456,8 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
 
     edges_old2new_t edges_old2new;
     edges_new2old_t edges_new2old;
-    contract_graph (vertices2, edge_map2, vert2edge_map,
+    vert2newedge_map_t vert2newedge_map;
+    contract_graph (vertices2, edge_map2, vert2edge_map, vert2newedge_map,
             edges_old2new, edges_new2old);
     //for (auto ei: edges_old2new)
     //    Rcpp::Rcout << "[" << ei.first << " -> " << ei.second << "]" << std::endl;
