@@ -390,7 +390,9 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         d_to, w_to, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
-                edge_map.emplace (max_edge_id++, new_edge);
+                edge_map.emplace (max_edge_id, new_edge);
+                edges_new2old.emplace (max_edge_id, new_edge_remap);
+                max_edge_id++;
             }
             if (d_fr > 0.0)
             {
@@ -398,7 +400,9 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         d_fr, w_fr, hw, max_edge_id, replacement_edges);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
-                edge_map.emplace (max_edge_id++, new_edge);
+                edges_new2old.emplace (max_edge_id, new_edge_remap);
+                edge_map.emplace (max_edge_id, new_edge);
+                max_edge_id++;
             }
             vert2edge_map.erase (vtx_id);
         }

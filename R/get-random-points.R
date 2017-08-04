@@ -17,23 +17,28 @@ generate_random_points <- function (city, n)
     if (n < 1)
         stop ("n must be >= 1")
 
-    poly_city <- osmdata::getbb (city, format_out = "polygon", limit = 1)
+    poly_city <- osmdata::getbb (city, format_out = "polygon")
+    if (is.list (poly_city))
+        poly_city <- poly_city [[1]]
     if (any (is.na (poly_city)))
         stop (paste0 ("Could not find geometry for city '", city, "'."))
+    if (nrow (poly_city) > 2)
+        poly_city <- data.frame (x = poly_city [, 1], y = poly_city [, 2])
+    else
+        poly_city <- data.frame (x = poly_city [1, ], y = poly_city [2, ])
 
-    xpoly <- poly_city [, 1]
-    ypoly <- poly_city [, 2]
-    xmin <- xpoly %>% min
-    ymin <- ypoly %>% min
-    xmax <- xpoly %>% max
-    ymax <- ypoly %>% max
+    xmin <- min (poly_city [, 1])
+    ymin <- min (poly_city [, 2])
+    xmax <- max (poly_city [, 1])
+    ymax <- max (poly_city [, 2])
 
     n_in <- 0
     pts_out <- matrix (ncol = 2, nrow = n)
     while (n_in < n)
     {
         rnd <- random_points_in_polygon (xmin, ymin, xmax, ymax, n)
-        keep <- sp::point.in.polygon (rnd [, 1], rnd [, 2], xpoly, ypoly) != 0
+        keep <- sp::point.in.polygon (rnd [, 1], rnd [, 2],
+                                      poly_city [, 1], poly_city [, 2]) != 0
         i1 <- max (n_in, 0) + 1
         nkeep <- length (which (keep))
         n_in <- n_in + nkeep
