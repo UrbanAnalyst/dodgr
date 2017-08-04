@@ -6,7 +6,7 @@
 #' @return square matrix of distances between nodes
 #'
 #' @export
-get_streetnet <- function (pts, profile = "bicycle", expand = 0.05)
+get_streetnet <- function (pts, expand = 0.05)
 {
     colx <- which (grepl ("x", names (pts), ignore.case = TRUE) |
                    grepl ("lon", names (pts), ignore.case = TRUE))
