@@ -20,16 +20,34 @@ get_streetnet <- function (pts, profile = "bicycle", expand = 0.05)
     y <- range (pts [, coly])
     y <- y + c (-expand, expand) * diff (y)
 
+    dat <- osmdata::opq (c (x [1], y [1], x [2], y [2])) %>%
+        osmdata::add_feature (key = "highway") %>%
+        osmdata::osmdata_sf ()
+
+    return (dat$osm_lines)
+}
+
+#' weight_streetnet
+#'
+#' Weight an OSM street network according to a named routino profile, selected
+#' from (foot, horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods,
+#' hgv, psv).
+#'
+#' @param net Street network extracted with \code{get_stretnet}
+#' @param profile Name of weighting profile
+#'
+#' @return A \code{data.frame} of edges representing the street network.
+#'
+#' @export
+weight_streetnet <- function (net, profile = "bicycle")
+{
     prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                     "motorcycle", "motorcar", "goods", "hgv", "psv")
     profile = match.arg (tolower (profile), prf_names)
     profiles <- dodgr::weighting_profiles
     pr <- profiles [profiles$name == profile, ]
 
-    dat <- osmdata::opq (c (x [1], y [1], x [2], y [2])) %>%
-        osmdata::add_feature (key = "highway") %>%
-        osmdata::osmdata_sf ()
-    dat <- rcpp_lines_as_network (dat$osm_lines, pr = pr)
+    dat <- rcpp_lines_as_network (net, pr = pr)
     data.frame (edge_id = seq (nrow (dat [[1]])),
                 from_id = as.character (dat [[2]] [, 1]),
                 from_lon = dat [[1]] [, 1],
