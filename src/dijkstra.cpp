@@ -1,6 +1,6 @@
 #include "dijkstra.h"
 #include "dgraph.h"
-#include "heap.h"
+#include "heaps/heap.h"
 
 #include <algorithm> // std::fill
 

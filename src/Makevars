@@ -1,0 +1,6 @@
+PKG_CPPFLAGS=-I.
+
+PKG_LIBS = heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
+    heaps/triheap.o heaps/triheap_ext.o
+
+$(SHLIB): $(PKG_LIBS)
