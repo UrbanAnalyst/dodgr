@@ -2,7 +2,6 @@
 
 export(compare_heaps)
 export(dodgr_dists)
-export(generate_random_points)
 export(get_streetnet)
 export(weight_streetnet)
 importFrom(Rcpp,evalCpp)
