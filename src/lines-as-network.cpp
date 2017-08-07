@@ -35,7 +35,7 @@
 #include <Rcpp.h>
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-const float INFINITE_INT =  std::numeric_limits<int>::max ();
+const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 // Haversine great circle distance between two points
 float haversine (float x1, float y1, float x2, float y2)
