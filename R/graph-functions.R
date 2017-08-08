@@ -125,3 +125,26 @@ match_pts_to_graph <- function (verts, xy)
 
     rcpp_points_index (verts, xy)
 }
+
+#' make_compact_graph
+#'
+#' Removes redundant (straight-line) vertices from graph, leaving only junction
+#' vertices.
+#'
+#' @param graph A flat table of graph edges. Must contain columns labelled
+#' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
+#' similarly labelled columns of spatial coordinates (for example
+#' \code{from_x}) or \code{stop_lon}).
+#' @param quiet If \code{FALSE}, display progress on screen
+#'
+#' @return A complex object with both the original graph and its compact verion
+#' (\code{$original} and \code{$compact}, respectively), along with several
+#' indexes used to map vertices and edges between the two.
+#' @export
+make_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
+{
+    if (is.null (verts))
+        verts <- get_vertices (graph)
+
+    rcpp_make_compact_graph (graph, quiet = quiet)
+}
