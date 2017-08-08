@@ -206,7 +206,7 @@ Rcpp::List rcpp_lines_as_network (const Rcpp::List &sf_lines,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_points_index (const Rcpp::DataFrame &xy,
-        Rcpp::DataFrame pts)
+        Rcpp::DataFrame &pts)
 {
     Rcpp::NumericVector ptx = pts ["x"];
     Rcpp::NumericVector pty = pts ["y"];
@@ -216,7 +216,7 @@ Rcpp::NumericVector rcpp_points_index (const Rcpp::DataFrame &xy,
 
     Rcpp::NumericVector index (pts.nrow ());
 
-    for (unsigned int i = 0; i < ptx.size (); i++)
+    for (unsigned int i = 0; i < pts.nrow (); i++)
     {
         float dmin = INFINITE_FLOAT;
         int jmin = INFINITE_INT;

@@ -33,6 +33,16 @@ struct osm_vertex_t
             return all_neighbours;
         }
 
+        std::unordered_set <osm_id_t> get_in_neighbours ()
+        {
+            return in;
+        }
+
+        std::unordered_set <osm_id_t> get_out_neighbours ()
+        {
+            return out;
+        }
+
         void replace_neighbour (osm_id_t n_old, osm_id_t n_new)
         {
             if (in.find (n_old) != in.end ())
@@ -236,69 +246,24 @@ void get_largest_graph_component (vertex_map_t &v,
 }
 
 
-/* These old2new and new2old edge remaps are the trickiest bit here, best
- * illustrated with an example. Consider four edges, from which vertex B is to
- * be removed:
- * 1. A -> (2) -> B -> (4) -> C -> (7) -> D
- *      Remove B:   old2new (2) = 8 # new edge ID
- *                  old2new (4) = 8
- *                  vert2edge (B) = 8 # new edge ID
- *                  new2old (8).verts = [A, B, C]
- *                  new2old (8).edges = [2, 4]
- *                  new2old (8).d = [d.AB, d.AB+BC]
- * 
- * 2. A -> (8) -> C -> (7) -> D
- *      Remove C:   old2new (8) = 9 # new edge ID
- *                  old2new (7) = 9
- *                  vert2edge (C) = 9
- *                  new2old (9).verts = [A, B, C, D]
- *                  new2old (9).edges = [2, 4, 7]
- *                  new2old (9).d = [d.AB, d.AB+BC, d.AB+BC+CD]
- *
- * 3. A -> (9) -> D = done!
- *
- * The new2old map then only has edge IDs inserted if they are **not** found in
- * the map, so at step#2, new2old(9).edges has 7 inserted but not 8, because
- * new2old.find(8) != new2old.end(). The new edge is assembled by
- *
- * 1. new2old.find(8) != new2old.end() # so copy existing values
- *      new2old(9).verts.insert (new2old(8).verts) # [A,B,C]
- *      new2old(9).edges.insert (new2old(8).id) # [2,4]
- *      new2old(9).d.insert (new2old(8).d)
- * 2. new2old.find(7) == new2old.end() # so insert those values
- *      new2old(9).verts.insert (D) # [A,B,C,D]
- *      new2old(9).edges.insert (7) # [2,4,7]
- *      new2old(9).d.insert (dCD)
- *
- * Vertices can then easily be re-inserted into the graph using these maps.
- * Consider re-insertion of vertex B:
- * 1. vert2edge (B) = 8
- * 2. old2new (8) = 9 -> old2new (9) = old2new.end()
- * 3. new2old (9).verts = [A, B, C, D], with B second, so
- * 4. Re-insert vertex and insert new edges:
- *      edges: A -> B -> D
- *      d: d.AB, (d.AB+BC+CD - d.AB)
- *
- * Or re-insertion of node C:
- * 1. vert2edge (C) = 9
- * 2. old2new (9) = new2new.end()
- * 3. new2old (9).verts = [A, B, C, D], with C third, so
- * 4. Re-insert vertex and insert new edges:
- *      edges: A -> C -> D
- *      d: d.AB+BC, (d.AB+BC+CD - d.AB+BC)
- *
- * --------------------------------------------
- *
- * Variables in the following code are:
- * 1. <osm_id_t> vtx_id = The vertex ID (A,B,C above)
- * 2. <unsigned int> e = The edge ID to be replaced (2, 4, 7, 8)
- * 3. <unsigned int> max_edge_id = The ID of the new edge (8, 9)
- */
-
+// See docs/graph-contraction for explanation of the following code and
+// associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map, vert2newedge_map_t &vert2newedge_map,
         edges_old2new_t &edges_old2new, edges_new2old_t &edges_new2old)
 {
+    std::unordered_set <int> junkset;
+    junkset.insert (4);
+    junkset.insert (8);
+    junkset.insert (1);
+    junkset.insert (5);
+    junkset.insert (5);
+    junkset.insert (junkset.begin(), 7);
+
+    for (auto j: junkset)
+        Rcpp::Rcout << "[" << j << "]" << std::endl;
+
+
     std::unordered_set <osm_id_t> verts;
     for (auto v: vertex_map)
         verts.insert (v.first);
@@ -327,13 +292,14 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             for (osm_id_t nb: nbs)
                 two_nbs.push_back (nb); // size is always 2
 
-            osm_vertex_t vt_from = vertex_map [two_nbs [0]],
-                vt_to = vertex_map [two_nbs [1]];
-
-            vt_from.replace_neighbour (vtx_id, two_nbs [1]);
-            vt_to.replace_neighbour (vtx_id, two_nbs [0]);
-            vertex_map [two_nbs [0]] = vt_from;
-            vertex_map [two_nbs [1]] = vt_to;
+            osm_vertex_t vt0 = vertex_map [two_nbs [0]];
+            osm_vertex_t vt1 = vertex_map [two_nbs [1]];
+            // Note that replace neighbour includes bi-directional replacement,
+            // so this works for intermediate_double() too
+            vt0.replace_neighbour (vtx_id, two_nbs [1]);
+            vt1.replace_neighbour (vtx_id, two_nbs [0]);
+            vertex_map [two_nbs [0]] = vt0;
+            vertex_map [two_nbs [1]] = vt1;
 
             // construct new edge and remove old ones
             float d_to = 0.0, d_fr = 0.0, w_to = 0.0, w_fr = 0.0;
@@ -341,7 +307,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             replacement_edges.clear ();
             std::string hw;
             new_edge_remap_t new_edge_remap;
-            for (unsigned int e: edges)
+            for (unsigned int e: edges) // either 2 or 4 of them
             {
                 replacement_edges.insert (e);
                 osm_edge_t ei = edge_map.find (e)->second;
@@ -383,14 +349,13 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map.erase (vtx_id);
 
             // one or both of d_to and d_fr must be > 0.0
-
             if (d_to > 0.0)
             {
                 osm_edge_t new_edge = osm_edge_t (two_nbs [0], two_nbs [1],
                         d_to, w_to, hw, max_edge_id, replacement_edges);
+                edge_map.emplace (max_edge_id, new_edge);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
-                edge_map.emplace (max_edge_id, new_edge);
                 edges_new2old.emplace (max_edge_id, new_edge_remap);
                 max_edge_id++;
             }
@@ -398,10 +363,10 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             {
                 osm_edge_t new_edge = osm_edge_t (two_nbs [1], two_nbs [0],
                         d_fr, w_fr, hw, max_edge_id, replacement_edges);
+                edge_map.emplace (max_edge_id, new_edge);
                 add_to_edge_map (vert2edge_map, two_nbs [0], max_edge_id);
                 add_to_edge_map (vert2edge_map, two_nbs [1], max_edge_id);
                 edges_new2old.emplace (max_edge_id, new_edge_remap);
-                edge_map.emplace (max_edge_id, new_edge);
                 max_edge_id++;
             }
             vert2edge_map.erase (vtx_id);
@@ -413,14 +378,33 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         edge_map.erase (e);
 }
 
+
+// reshape edges_new2old to four flat vectors
+void reshape_new2old_map (edges_new2old_t &edges_new2old,
+        std::vector <int> &new_edge_id, std::vector <osm_id_t> &verts,
+        std::vector <unsigned int> &old_edge_id,
+        std::vector <float> &d, std::vector <float> &w)
+{
+    unsigned int n = 0;
+    for (auto e: edges_new2old)
+    {
+        n += e.second.d.size ();
+        /*
+        if ((e.second.verts.size () - e.second.w.size ()) != 1)
+            Rcpp::Rcout << "[" << e.second.verts.size () << ", " <<
+                e.second.w.size () << "]" << std::endl;
+         */
+    }
+}
+
+
 //' rcpp_make_compact_graph
 //'
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
 //' @param graph graph to be processed
-//' @param pts_to_keep Index into graph of those points closest to desired
-//' routing points. These are to be kept in the compact graph.
 //' @param quiet If TRUE, display progress
+//'
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
 //' graph, one \code{data.frame} with the original graph and one
 //' \code{data.frame} containing information about the relating edge ids of the
@@ -428,8 +412,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
-        std::vector <int> pts_to_keep, bool quiet)
+Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -515,6 +498,12 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
             edge_id_orig (pos++) = ei;
         }
     }
+
+    std::vector <int> new_edge_id;
+    std::vector <osm_id_t> verts;
+    std::vector <unsigned int> old_edge_id;
+    std::vector <float> d, w;
+    reshape_new2old_map (edges_new2old, new_edge_id, verts, old_edge_id, d, w);
     
     Rcpp::DataFrame compact = Rcpp::DataFrame::create (
             Rcpp::Named ("from_id") = from_vec,
@@ -539,4 +528,38 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
             Rcpp::Named ("compact") = compact,
             Rcpp::Named ("original") = graph,
             Rcpp::Named ("map") = rel);
+}
+
+
+//' rcpp_insert_vertices
+//'
+//' Insert routing vertices in compact graph
+//'
+//' @param fullgraph graph to be processed
+//' @param compactgraph graph to be processed
+//' @param pts_to_insert Index into graph of those points closest to desired
+//' routing points. These are to be kept in the compact graph.
+//' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
+//' graph, one \code{data.frame} with the original graph and one
+//' \code{data.frame} containing information about the relating edge ids of the
+//' original and compact graph.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
+        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert)
+{
+    vertex_map_t vertices;
+    edge_map_t edge_map;
+    std::unordered_map <osm_id_t, int> components;
+    int largest_component;
+    vert2edge_map_t vert2edge_map;
+
+    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
+
+    edges_old2new_t edges_old2new;
+    edges_new2old_t edges_new2old;
+    vert2newedge_map_t vert2newedge_map;
+
+    return Rcpp::List::create ();
 }

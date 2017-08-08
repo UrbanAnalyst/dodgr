@@ -18,13 +18,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_points_index
-Rcpp::NumericVector rcpp_points_index(const Rcpp::DataFrame& xy, Rcpp::DataFrame pts);
+Rcpp::NumericVector rcpp_points_index(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
 RcppExport SEXP _dodgr_rcpp_points_index(SEXP xySEXP, SEXP ptsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_points_index(xy, pts));
     return rcpp_result_gen;
 END_RCPP
@@ -45,15 +45,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_make_compact_graph
-Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, std::vector <int> pts_to_keep, bool quiet);
-RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP pts_to_keepSEXP, SEXP quietSEXP) {
+Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, bool quiet);
+RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_keep(pts_to_keepSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, pts_to_keep, quiet));
+    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_insert_vertices
+Rcpp::List rcpp_insert_vertices(Rcpp::DataFrame fullgraph, Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert);
+RcppExport SEXP _dodgr_rcpp_insert_vertices(SEXP fullgraphSEXP, SEXP compactgraphSEXP, SEXP pts_to_insertSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type fullgraph(fullgraphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type compactgraph(compactgraphSEXP);
+    Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_insert(pts_to_insertSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, compactgraph, pts_to_insert));
     return rcpp_result_gen;
 END_RCPP
 }
