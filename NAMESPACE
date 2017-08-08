@@ -3,6 +3,8 @@
 export(compare_heaps)
 export(dodgr_dists)
 export(get_streetnet)
+export(get_vertices)
+export(match_pts_to_graph)
 export(weight_streetnet)
 importFrom(Rcpp,evalCpp)
 importFrom(igraph,E)

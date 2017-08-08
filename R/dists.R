@@ -63,6 +63,8 @@ dodgr_dists <- function (graph, from, to, heap = 'BHeap')
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
 
+    graphc <- rcpp_make_compact_graph (graph, quiet = FALSE)
+
     if (missing (from))
         from <- -1
     else
@@ -130,10 +132,10 @@ convert_graph <- function (graph)
                         xy_to_id <- paste0 (xy_to_id)
                 } else # len == 2, so must be only x-y
                 {
-                    xy_fr_id <- paste0 (xy_fr [, fr_col [1]],
-                                        xy_fr [, fr_col [2]])
-                    xy_to_id <- paste0 (xy_to [, to_col [1]],
-                                        xy_to [, to_col [2]])
+                    xy_fr_id <- paste0 (graph [, fr_col [1]],
+                                        graph [, fr_col [2]])
+                    xy_to_id <- paste0 (graph [, to_col [1]],
+                                        graph [, to_col [2]])
                 }
 
                 xy_fr <- graph [, fr_col]
@@ -218,8 +220,10 @@ make_vert_map <- function (graph)
 #'
 #' Convert \code{from} or \code{to} args of \code{dodgr_dists} to indices into
 #' \code{vert_map}
+#'
+#' @param graph full graph
 #' @noRd
-get_pts_index <- function (graph, vert_map, xy, pts, ft_txt = "from")
+get_pts_index <- function (graph, vert_map, xy, pts)
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
         pts <- matrix (pts, ncol = 1)
