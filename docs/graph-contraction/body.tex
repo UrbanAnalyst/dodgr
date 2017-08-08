@@ -26,7 +26,8 @@
         new2old(8).edges = [2, 3]
         new2old(8).d     = [d.AB, d.BC]
     \end{lstlisting}
-    Note that distances are stored cumulatively. Removal of vertex B also requires replacing the edges 5 \& 6, giving the following mappings:
+    Removal of vertex B also requires replacing the edges 5 \& 6.  Note that the {\tt new2old} maps have to be constructed such that the {\tt
+    in} edge is first inserted, followed by the {\tt out} edge, so in this case, edge\#6 comes before \#5, giving the following mappings:
     \begin{lstlisting}
         vert2edge(B)     = [8, 9]
         old2new(5)       = 9
