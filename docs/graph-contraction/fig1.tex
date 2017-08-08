@@ -1,0 +1,38 @@
+\begin{figure}[ht!]
+    \psset{unit=8mm}
+    \begin{center}
+        \psset{griddots=0,gridlabels=7pt,subgriddiv=1}
+        \begin{pspicture} (0,-0.5) (18,6)
+            \cnodeput[fillstyle=solid,fillcolor=orange,linecolor=gray,linewidth=2pt] (0,3){A}{A}
+            \cnodeput[fillstyle=solid,fillcolor=orange,linecolor=gray,linewidth=2pt] (6,3){B}{B}
+            \cnodeput[fillstyle=solid,fillcolor=orange,linecolor=gray,linewidth=2pt] (12,3){C}{C}
+            \cnodeput[fillstyle=solid,fillcolor=orange,linecolor=gray,linewidth=2pt] (18,3){D}{D}
+
+            \rput(3,5){\rnode{n2}{2}}
+            \rput(9,5){\rnode{n3}{3}}
+            \rput(15,5){\rnode{n4}{4}}
+            \rput(3,1){\rnode{n5}{5}}
+            \rput(9,1){\rnode{n6}{6}}
+            \rput(15,1){\rnode{n7}{7}}
+
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=60,angleB=180,arrowsize=1.5pt 4]{->}{A}{n2}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=120,arrowsize=1.5pt 4]{->}{n2}{B}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=60,angleB=180,arrowsize=1.5pt 4]{->}{B}{n3}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=120,arrowsize=1.5pt 4]{->}{n3}{C}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=60,angleB=180,arrowsize=1.5pt 4]{->}{C}{n4}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=120,arrowsize=1.5pt 4]{->}{n4}{D}
+
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=-60,angleB=180,arrowsize=1.5pt 4]{<-}{A}{n5}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=240,arrowsize=1.5pt 4]{<-}{n5}{B}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=-60,angleB=180,arrowsize=1.5pt 4]{<-}{B}{n6}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=240,arrowsize=1.5pt 4]{<-}{n6}{C}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=-60,angleB=180,arrowsize=1.5pt 4]{<-}{C}{n7}
+            \nccurve[linewidth=2pt,nodesep=5pt,angleA=0,angleB=240,arrowsize=1.5pt 4]{<-}{n7}{D}
+
+        \end{pspicture}
+    \end{center}
+
+    \captionsetup{format=hang}
+    \caption{Sample network to be condensed through removal of redundant nodes.}
+\label{fig:1}
+\end{figure}
