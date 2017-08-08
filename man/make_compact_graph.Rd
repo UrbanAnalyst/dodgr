@@ -12,6 +12,10 @@ make_compact_graph(graph, verts = NULL, quiet = TRUE)
 similarly labelled columns of spatial coordinates (for example
 \code{from_x}) or \code{stop_lon}).}
 
+\item{verts}{Option \code{data.frame} of vertices obtained from
+\code{get_vertices} (submitting this will simply speed up conversion to
+compact graph).}
+
 \item{quiet}{If \code{FALSE}, display progress on screen}
 }
 \value{

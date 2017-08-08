@@ -135,6 +135,9 @@ match_pts_to_graph <- function (verts, xy)
 #' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
 #' similarly labelled columns of spatial coordinates (for example
 #' \code{from_x}) or \code{stop_lon}).
+#' @param verts Option \code{data.frame} of vertices obtained from
+#' \code{get_vertices} (submitting this will simply speed up conversion to
+#' compact graph).
 #' @param quiet If \code{FALSE}, display progress on screen
 #'
 #' @return A complex object with both the original graph and its compact verion
