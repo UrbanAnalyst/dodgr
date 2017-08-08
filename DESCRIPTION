@@ -21,6 +21,8 @@ Imports:
     rbenchmark,
     sp,
     Rcpp (>= 0.12.6)
+Remotes:
+    ropensci/osmdata
 LinkingTo:
     Rcpp
 SystemRequirements: C++11

@@ -235,12 +235,12 @@ get_pts_index <- function (graph, vert_map, xy, pts)
         {
             indx <- match (pts, vert_map$vert)
             if (any (is.na (indx)))
-                stop (paste0 (ft_txt, " are not numeric yet can not be",
+                stop (paste0 ("from/to are not numeric yet can not be",
                               "matched onto graph vertices"))
             pts <- indx
         }
         if (any (pts < 1 | pts > nrow (vert_map)))
-            stop (paste0 (ft_txt, " exceeds numbers of vertices"))
+            stop (paste0 ("points exceed numbers of vertices"))
     } else
     {
         ix <- which (grepl ("x", names (pts), ignore.case = TRUE) |
@@ -249,10 +249,10 @@ get_pts_index <- function (graph, vert_map, xy, pts)
                      grepl ("lat", names (pts), ignore.case = TRUE))
         if (length (ix) != 1 | length (iy) != 1)
             stop (paste0 ("Unable to determine geographical ",
-                          "coordinates in ", ft_txt))
+                          "coordinates in pts"))
         if (is.null (xy))
             stop (paste0 ("graph has no geographical coordinates ",
-                          "against which to match ", ft_txt))
+                          "against which to match pts"))
 
         pts <- rcpp_points_index (xy, pts)
         # xy has same order as vert_map

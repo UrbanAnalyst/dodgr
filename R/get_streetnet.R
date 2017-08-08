@@ -21,7 +21,7 @@ get_streetnet <- function (pts, expand = 0.05)
     y <- y + c (-expand, expand) * diff (y)
 
     dat <- osmdata::opq (c (x [1], y [1], x [2], y [2])) %>%
-        osmdata::add_osm_feature (key = "highway") %>%
+        osmdata::add_feature (key = "highway") %>%
         osmdata::osmdata_sf ()
 
     return (dat$osm_lines)
