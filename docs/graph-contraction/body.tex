@@ -1,5 +1,4 @@
-\begin{spacing}{1.5}
-    \section{Graph Contraction}\\
+\section{Graph Contraction}\\
 
     \noindent Graph contraction itself is trivial, but what is needed is a method of contracting the graph while retaining all information about
     the original graph to enable routing points to be re-inserted.
@@ -9,280 +8,238 @@
 
     \input{fig1.tex}
 
-    Contraction requires the following maps:
-
-    \begin{enumerate}
-        \item{\tt vert2edge}
-        \item{\tt old2new} --- A simple map of old-to-new edge numbers
-        \item{\tt new2old} --- A map of new edge numbers to structures detailed below
-    \end{enumerate}
-
-    Replacing edges 2 \& 3 with a single edge\#8 then gives the following mappings:
+    \noindent Contraction requires a `vert2edge` map, and a list in each edge of mappings on to original edges in the full graph. The former of
+    these is an unsorted set, initiated as,
     \begin{lstlisting}
-        vert2edge(B)     = 8
-        old2new(2)       = 8
-        old2new(3)       = 8
-        new2old(8).verts = [A, B, C]
-        new2old(8).edges = [2, 3]
-        new2old(8).d     = [d.AB, d.BC]
+        vert2edge(A) = [2, 5]
+        vert2edge(B) = [2, 5, 3, 6]
+        vert2edge(C) = [3, 6, 7, 4]
+        vert2edge(D) = [7, 4]
     \end{lstlisting}
-    Removal of vertex B also requires replacing the edges 5 \& 6.  Note that the {\tt new2old} maps have to be constructed such that the {\tt
-    in} edge is first inserted, followed by the {\tt out} edge, so in this case, edge\#6 comes before \#5, giving the following mappings:
+    Consider the removal of vertex {\tt B}, with new edges {\tt(2, 3) -> 8} and {\tt(6, 5) -> 9}. These new edges then hold
     \begin{lstlisting}
-        vert2edge(B)     = [8, 9]
-        old2new(5)       = 9
-        old2new(6)       = 9
-        new2old(9).verts = [C, B, A]
-        new2old(9).edges = [6, 5]
-        new2old(9).d     = [d.CB, d.BA]
+        edge(8).old = [2, 3]
+        edge(9).old = [6, 5]
     \end{lstlisting}
-
-    That reduces the graph to:
+    And the `vert2edge` maps for {\tt A}, {\tt B}, and {\tt C} need to be updated to,
+    \begin{lstlisting}
+        vert2edge(A) = [8, 9]
+        vert2edge(B) = [8, 9]
+        vert2edge(C) = [8, 9, 7, 4]
+    \end{lstlisting}
+    where {\tt vert2edge(B)} is retained in updated form to allow subsequent re-insertion.  This reduces the graph to:
+    \pagebreak
 
     \input{fig2.tex}
 
-    The vertex C can then be removed by first replacing the edges 8 \& 4 through the mappings:
+    The {\tt edge(.).old} sets are *ordered* and so must be constructed with the following pseudo-code:
     \begin{lstlisting}
-        vert2edge(C)      = 10
-        old2new(8)        = 10
-        old2new(4)        = 10
-        new2old(10).verts = [A, B, C, D]
-        new2old(10).edges = [2, 3, 4]
-        new2old(10).d     = [d.AB, d.BC, d.CD]
-    \end{lstlisting}
-    Note that {\tt new2old().edges} contains only those edge numbers present in the original graph. Thus {\tt new2old(10).edges} does *not* have
-    edge\#8. This is ensured simply by only inserting in these {\tt new2old().edges} lists those edges not actually found in the map itself.
-    Because {\tt new2old.find(8) != new2old.end()}, that edge is not inserted.
+        vert2rm = B
+        # replace vertex:
+        nbs = vert2rm.get_all_neighbours()
+        vtx0 = vertex_map (nbs [0]) # = vertex A
+        vtx1 = vertex_map (nbs [1]) # = vertex B
+        vtx0.replace_neighbour (vert2rm, nbs [1])
+        vtx1.replace_neighbour (vert2rm, nbs [0])
 
-    Replacing edges 7 \& 9 with edge\#11 requires first identifying that vertex D connects to C, and that C is the {\it first} item of the {\tt
-    new2old(9).verts}. New values are therefore pushed onto the front to give,
+        edges2rm = vert2edge(b) = [2, 5, 3, 6]
+        newe = 8
+        if (vert2rm.is_double)
+            newe = c (newe, newe++) # [8, 9]
+        for ne in newedgenum:
+            # insert in edge first
+            for e in edges2rm:
+                if e.from == nbs [0]:
+                    if edge(e).old.size () > 0:
+                        edge(newe).old = edge(e).old
+                    else
+                        edge(newe).old = e
+                    edges2rm.erase (e)
+                    vert2edge(vert2rm).erase (e)
+                    stop
+            # ne = 8: e = 2; edge2rm = [5, 3, 6]; edges(8).old = 2
+            # ne = 9: e = 6; edge2rm = [5]; edges(9).old = 6
+
+            # then out edge:
+            for e in edges2rm:
+                if e in vert2rm.out:
+                    if edge(e).old.size() > 0:
+                        edge(newe).old = c (edge(newe).old, edge(e).old)
+                    else:
+                        edge(newe).old = c (edge(newe).old, e)
+                    edges2rm.erase (e)
+                    vert2edge(vert2rm).erase (e)
+                    stop
+            # ne = 8: e = 3; edge2rm = [5, 6]; edges(8).old = [2, 3]
+            # ne = 9: e = 5; edge2rm = []; edges(9).old = [6, 5]
+            # update vert2edge map:
+            vert2edge(vert2rm).insert(ne)
+    \end{lstlisting}
+    So replacing vertex {\tt B} gives the following maps:
     \begin{lstlisting}
-        vert2edge(C)      = [10, 11]
-        old2new(9)        = 11
-        old2new(7)        = 11
-        new2old(11).verts = [D, C, B, A]
-        new2old(11).edges = [7, 6, 5]
-        new2old(11).d     = [d.DC, d.BC, d.BA]
+        vert2edge(A) = [8, 9]
+        vert2edge(B) = [8, 9]
+        vert2edge(C) = [8, 9, 7, 4]
+        vert2edge(D) = [7, 4]
+        edge(8).old  = [2, 3]
+        edge(9).old  = [6, 5]
+    \end{lstlisting}
+    Then consider removal of vertex {\tt C} according to the same pseudo-code, with {\tt vert2rm = C}, {\tt vtx0 = A}, {\tt vtx1 = D}, and {\tt
+    newedgenum = [10, 11]}. The code then iterates through the following values:
+    \begin{lstlisting}
+        ne = 10
+        # in-edge:
+        e = 8
+        edge(e).old = [2, 3]
+        edge(10).old = edge(8).old = [2, 3]
+        # out-edge:
+        e = 4
+        edge(10).old = c(edge(10).old, 4) = [2, 3, 4]
+
+        ne = 11
+        # in-edge:
+        e = 7
+        edge(11).old = 7
+        # out-edge:
+        e = 9
+        edge(11).old = c(edge(11).old, edge(e).old) = [7, 6, 5]
+    \end{lstlisting}
+    This finally gives the desired contraction with the following mappings:
+    \begin{lstlisting}
+        vert2edge(A, B, C, D) = [10, 11] # all the same
+        edge(10).old = [2, 3, 4]
+        edge(11).old = [7, 6, 5]
     \end{lstlisting}
 
-    \pagebreak
-    This finally gives the desired contraction.
 
     \input{fig3.tex}
 
-    The resultant maps are:
-    \begin{lstlisting}
-        vert2edge(B)      = [8, 9]
-        vert2edge(C)      = [10, 11],
-
-        old2new(2)        = 8
-        old2new(3)        = 8
-        old2new(5)        = 9
-        old2new(6)        = 9
-        old2new(8)        = 10
-        old2new(4)        = 10
-        old2new(9)        = 11
-        old2new(7)        = 11,
-
-        new2old(8).verts  = [A, B, C]
-        new2old(8).edges  = [2, 3]
-        new2old(8).d      = [d.AB, d.BC]
-        new2old(9).verts  = [C, B, A]
-        new2old(9).edges  = [6, 5]
-        new2old(9).d      = [d.CB, d.BA]
-        new2old(10).verts = [A, B, C, D]
-        new2old(10).edges = [2, 3, 4]
-        new2old(10).d     = [d.AB, d.BC, d.CD]
-        new2old(11).verts = [D, C, B, A]
-        new2old(11).edges = [7, 6, 5]
-        new2old(11).d     = [d.DC, d.BC, d.BA]
-    \end{lstlisting}
-
-    \pagebreak
     \vspace{12pt}\subsection{Graph reconstruction}
 
-    \noindent The maps can then be used to reconstruct a graph. Consider the re-insertion of Vertex {\tt B}. First
-    \begin{lstlisting}
-        vert2edge(B) = [8, 9]
-    \end{lstlisting}
-    Then trace new edges for both of those vertices:
-    \begin{lstlisting}
-        old2new(8)   = 10
-        old2new(10) = old2new.end()
-        old2new(9)   = 11
-        old2new(11) = old2new.end()
-    \end{lstlisting}
-    so the information we need to re-insert {\tt B} is in the new edges {\tt 10} and {\tt 11}:
-    \begin{lstlisting}
-        new2old(10).verts = [A, B, C, D]
-        new2old(10).edges = [2, 3, 4]
-        new2old(10).d     = [d.AB, d.BC, d.CD]
-        new2old(11).verts = [D, C, B, A]
-        new2old(11).edges = [7, 6, 5]
-        new2old(11).d     = [d.DC, d.BC, d.BA]
-    \end{lstlisting}
-    All that is needed is to trace each {\tt .verts} list until {\tt B} appears, and break the edge to insert a new one. In pseudo-code for
-    edge\#10:
-    \begin{lstlisting}
-        newedge1.from = new2old(10).verts(0) # = A
-        newedge1.to   = B
-        newedge2.from = B
-        newedge2.to   = new2old(10).verts.end() # = D
-        d = 0
-        for (v in new2old(10).verts):
-            if (v == B):
-                newedge1.d = d
-                d = 0
-        newedge2.d = d
-        edges_to_remove.push_back (10)
-        edges.emplace (12, newedge1) # 12 is number of new edge
-        edges.emplace (13, newedge2)
-    \end{lstlisting}
-    And same for edge\#11.  Consider then the slightly different case of re-inserting Vertex {\tt C}.
-    \begin{lstlisting}
-        vert2edge(C) = [10, 11]
-        old2new(10)  = old2new.end()
-        old2new(11)  = old2new.end()
-    \end{lstlisting}
-    leading this time straight to edges 10 and 11 as the ones to break. For edge\#11:
-    \pagebreak
-    \begin{lstlisting}
-        newedge1.from = new2old(11).verts(0) # = C
-        newedge1.to   = C
-        newedge2.from = C
-        newedge2.to   = new2old(11).verts.end() # = A
-        d = 0
-        for (v in new2old(10).verts):
-            if (v == C):
-                newedge1.d = d
-                d = 0
-        newedge2.d = d
-        edges_to_remove.push_back (10)
-    \end{lstlisting}
-    That works for single insertions, but it will fail if two vertices need to be re-inserted on the same edge. For that to work, the maps need
-    to be updated to reflect vertex re-insertions.
+    \noindent The maps can then be used to reconstruct a graph. Consider the re-insertion of Vertex {\tt B} to give the graph of
+    Fig.~\ref{fig:4}.
+    
+    \input{fig4.tex}
 
-    \vspace{12pt}\subsection{Updating Maps}
-
-    \noindent Updating maps requires extending the pseudo-code above. Consider again the re-insertion of Vertex {\tt B}
+    Vertex B only exists in the {\tt vert2edge} map as,
     \begin{lstlisting}
-        newedge1.from = new2old(10).verts(0) # = A
-        newedge1.to   = B
-        newedge2.from = B
-        newedge2.to   = new2old(10).verts.end() # = D
-        new2old(12).verts[0] = newedge1.from
-        new2old(13).verts[0] = newedge2.from
-        d = 0
-        for (v in new2old(10).verts):
-            vert2edge(v).remove(10) # will remove vert2edge(C) = 10
-            if (v <= B)
-                vert2edge(v).insert(12) # vert2edge(B)=12
-                new2old(12).verts.push_back(v)
-                new2old(12).edges.push_back(e)
-                new2old(12).d.push_back(d)
-            if (v >= B)
-                vert2edge(v).insert(13) # vert2edge(C)=13
-                new2old(13).verts.push_back(v)
-                new2old(13).edges.push_back(e)
-                new2old(13).d.push_back(d)
-            if (v == B):
-                newedge1.d = d
-                d = 0
-        newedge2.d = d
-        edges_to_remove.push_back (10)
-        edges.emplace (12, newedge1)
-        edges.emplace (13, newedge2)
-        vert2edge(B) = [12, 13]
+        vert2edge(B) = [10, 11]
     \end{lstlisting}
-    This will yield the following maps
+    Then trace both of those edges, extracting the relevant info from the original graph:
     \begin{lstlisting}
-        vert2edge(B)      = [12, 13]
-        vert2edge(C)      = [13, 11]
-
-        new2old(8).verts  = [A, B, C]
-        new2old(8).edges  = [2, 3]
-        new2old(8).d      = [d.AB, d.BC]
-        new2old(9).verts  = [C, B, A]
-        new2old(9).edges  = [6, 5]
-        new2old(9).d      = [d.CB, d.BA]
-        new2old(10).verts = [A, B, C, D]
-        new2old(10).edges = [2, 3, 4]
-        new2old(10).d     = [d.AB, d.BC, d.CD]
-        new2old(11).verts = [D, C, B, A]
-        new2old(11).edges = [7, 6, 5]
-        new2old(11).d     = [d.DC, d.CB, d.BA]
-        new2old(12).verts = [A, B]
-        new2old(12).edges = [2]
-        new2old(12).d     = [d.AB]
-        new2old(13).verts = [B, C, D]
-        new2old(13).edges = [3, 4]
-        new2old(13).d     = [d.BC, d.CD]
+        olde = 10
+        newe = 12
+        v2insert = B
+        e = edge(olde).old = [2, 3, 4]
+        vlist = e[1].from # = A
+        vert2edge(vlist[1]).erase(olde)
+        vert2edge(vlist[1]).insert(newe)
+        elist = []
+        d = w = 0
+        for i in e:
+            vlist.push_back(e.to)
+            vert2edge(e.to).erase(olde)
+            vert2edge(e.to).insert(newe)
+            elist.push_back(e)
+            d += graph(e).d
+            w += graph(e).w
+            if (e.to == v2insert)
+                vlist1 = vlist
+                elist1 = elist
+                vlist = e.to
+                d1 = d
+                w1 = w
+                d = w = 0
+                edge(newe).old = elist
+                elist = []
+                newe++
+                vert2edge(v2inert).insert(newe)
+        edge(newe).old = elist
+        edge(olde).erase
     \end{lstlisting}
-    Repeating the same procedure for edge\#11, replacing with new edges \#14-15, will then give,
+    A first pass for edge\#10 will give the following values
     \begin{lstlisting}
-        vert2edge(B)      = [12, 13, 14, 15]
-        vert2edge(C)      = [13, 14]
+        newe = 12
+        vert2edge(A) = [10, 11] -> [12, 11]
+        vlist = [A]
+        e = edge(10).old = [2, 3, 4]
+        (for i in e:)
 
-        new2old(8).verts  = [A, B, C]
-        new2old(8).edges  = [2, 3]
-        new2old(8).d      = [d.AB, d.BC]
-        new2old(9).verts  = [C, B, A]
-        new2old(9).edges  = [6, 5]
-        new2old(9).d      = [d.CB, d.BA]
-        new2old(10).verts = [A, B, C, D]
-        new2old(10).edges = [2, 3, 4]
-        new2old(10).d     = [d.AB, d.BC, d.CD]
-        new2old(11).verts = [D, C, B, A]
-        new2old(11).edges = [7, 6, 5]
-        new2old(11).d     = [d.DC, d.BC, d.BA]
-        new2old(12).verts = [A, B]
-        new2old(12).edges = [2]
-        new2old(12).d     = [d.AB]
-        new2old(13).verts = [B, C, D]
-        new2old(13).edges = [3, 4]
-        new2old(13).d     = [d.BC, d.CD]
-        new2old(14).verts = [D, C, B]
-        new2old(14).edges = [7, 6]
-        new2old(14).d     = [d.DC, d.CB]
-        new2old(15).verts = [B, A]
-        new2old(15).edges = [5]
-        new2old(15).d     = [d.BA]
+        # e = 2
+        vlist = [A, B]
+        vert2edge(B) = [10, 11] -> [12, 11]
+        elist = 2
+        edge(12).old = 2
+        vlist1 = vlist # = [A, B]
+        elist1 = elist # = 2
+        vlist = [B]
+        elist = []
+        newe = 13
+        vert2edge(B) = [12, 11, 13]
+
+        # e = 3
+        vlist = [B, C]
+        vert2edge(C) = [10, 11] -> [13, 11]
+        elist = 3
+
+        # e = 4
+        vlist = [B, C, D]
+        vert2edge(D) = [10, 11] -> [13, 11]
+        elist = [3, 4]
+
+        # out of loop so
+        edge(13).old = [3, 4]
     \end{lstlisting}
-    Note that the {\tt old2new} maps don't need to be updated here because the {\tt vert2edge} maps are directed straight to the new edges which
-    have no entries in {\tt vert2edge}. This allows for subsequent re-insertion of vertex\#C through simply tracing,
+    This gives the following:
     \begin{lstlisting}
-        vert2edge(C)      = [13, 14]
-        new2old(13).verts = [B, C, D]
-        new2old(13).edges = [3, 4]
-        new2old(13).d     = [d.BC, d.CD]
-        new2old(14).verts = [D, C, B]
-        new2old(14).edges = [7, 6]
-        new2old(14).d     = [d.DC, d.CB]
+        vert2edge(A) = [12, 11]
+        vert2edge(B) = [12, 11, 13]
+        vert2edge(C, D) = [13, 11]
+        edge(12).old = [2]
+        edge(13).old = [3, 4]
     \end{lstlisting}
-    And re-inserting accordingly.  Note that edge re-construction could theoretically just replace edges with original numbers in cases where
-    {\tt newold().edges} only had one component, but the pseudo-code above requires the {\tt vert2edge} maps to be dynamically updated during
-    the loop over {\tt v}, before it would be known whether or not this is the case. It'll thus be easier to simply re-number all new edges
-    regardless of whether they duplicated pre-existing ones.
-
-
-    \pagebreak
-    \vspace{12pt}\subsection{Updating Maps}
-
-    \noindent Finally, the maps have to be returned as {\tt RCpp} objects. This is straightforward for {\tt old2new}, which only ever contains
-    single values, and also for {\tt vert2edge}, which can simply be flattened out to map each vertex onto corresponding one or more new edges.
-    The only non-trivial map is {\tt new2old}, which has {\tt .verts}, {\tt .edges}, and {\tt .d} (and in the full implementation, {\tt .w} as
-    well). The {\tt .verts} always have one more entry than all other components, and so can be mapped pair-wise to individual elements of the
-    others. These flattened versions thus contain five columns of [{\tt new edge number, vert from, vert to, old edge number, dist}].  The
-    flatted version of the preceding final {\tt new2old(13)}, restated here for reference as,
+    Subsequently tracing the second edge\#11 with {\tt edge(11).old = [7, 6, 5]} gives,
     \begin{lstlisting}
-        new2old(13).verts = [B, C, D]
-        new2old(13).edges = [3, 4]
-        new2old(13).d     = [d.BC, d.CD]
+        newe = 14
+        vert2edge(D) = [13, 11] -> [13, 14]
+        e = [7, 6, 5]
+        vlist = [D]
+        (for i in e:)
+
+        # e = 7
+        vlist = [D, C]
+        vert2edge(C) = [13, 11] -> [13, 14]
+        elist = 7
+
+        # e = 6
+        vlist = [D, C, B]
+        elist = [7, 6]
+        vert2edge(B) = [12, 11, 13] -> [12, 13, 14]
+        edge(14).old = [7, 6]
+        vlist1 = vlist # = [D, C, B]
+        elist1 = elist # = [7, 6]
+        vlist = [B]
+        elist = []
+        newe = 15
+        vert2edge(B) = [12, 13, 14, 15]
+
+        # e = 5
+        vlist = [B, A]
+        elist = 5
+        vert2edge(A) = [12, 11] -> [12, 15]
+
+        # out of loop so
+        edge(15).old = [5]
     \end{lstlisting}
-    would be,
+    This gives the following final mappings:
     \begin{lstlisting}
-        new2oldf(0) = [13, B, C, 3, d.BC]
-        new2oldf(1) = [13, C, D, 4, d.CD]
+        vert2edge(A)    = [12, 15]
+        vert2edge(B)    = [12, 13, 14, 15]
+        vert2edge(C, D) = [13, 14]
+        edge(12).old = [2]
+        edge(13).old = [3, 4]
+        edge(14).old = [7, 6]
+        edge(15).old = [5]
     \end{lstlisting}
-\end{spacing}
+    And that's it!
 
