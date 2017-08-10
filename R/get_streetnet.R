@@ -66,6 +66,7 @@ weight_streetnet <- function (graph, wt_profile = "bicycle")
     wt_profile = match.arg (tolower (wt_profile), prf_names)
     profiles <- dodgr::weighting_profiles
     wt_profile <- profiles [profiles$name == wt_profile, ]
+    wt_profile$value <- wt_profile$value / 100
 
     dat <- rcpp_lines_as_network (graph, pr = wt_profile)
     data.frame (edge_id = seq (nrow (dat [[1]])),

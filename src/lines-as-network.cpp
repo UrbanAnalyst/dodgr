@@ -140,8 +140,8 @@ Rcpp::List rcpp_lines_as_network (const Rcpp::List &sf_lines,
         Rcpp::NumericMatrix gi = (*g);
         std::string hway = std::string (highway [ngeoms]);
         float hw_factor = profile [hway];
-        if (hw_factor == 0) hw_factor = 1e-5;
-        hw_factor /= 1;
+        if (hw_factor == 0.0) hw_factor = 1e-5;
+        hw_factor = 1.0 / hw_factor;
 
         Rcpp::List ginames = gi.attr ("dimnames");
         Rcpp::CharacterVector rnms;
