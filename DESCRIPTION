@@ -21,15 +21,18 @@ Imports:
     rbenchmark,
     sp,
     Rcpp (>= 0.12.6)
+Suggests:
+    knitr,
+    testthat
 Remotes:
     ropensci/osmdata
 LinkingTo:
     Rcpp
 SystemRequirements: C++11
+VignetteBuilder: knitr
 NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat
 URL: https://github.com/mpadge/dodgr
 BugReports: https://github.com/mpadge/dodgr/issues
 RoxygenNote: 6.0.1

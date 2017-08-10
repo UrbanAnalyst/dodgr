@@ -33,12 +33,9 @@ the entire graph in an anti-clockwise direction.
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
 
-If the edge weights corresponded to distances, and if thicker lines represented
-shorter distances, such that the distance `D`$\to$`C` was shorter than `C`$\to$`D`,
-then it would be much shorter to go from `D` to `A` than the other way around.
-
 Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
-graph of Fig. 1, presuming the edge weights to take values of 1 and 2, would be,
+graph of Fig. 1, presuming the edge weights to take values of 1, 2, and 3, would
+be,
 ```{r, echo = FALSE}
 graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
                      to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
@@ -65,20 +62,20 @@ illustrated in Fig. 2.
 ```
 These are common in many areas, with a foremost example arising in routing
 through street networks. The route one takes through a street network depends on
-how one gets there: the route a pedestrian might taken will generally differ
+the mode of transport: the route a pedestrian might taken will generally differ
 markedly from the route the same person might take if behind the wheel of an
 automobile. Routing through street networks thus generally requires each edge to
-specified with two weights or distances: one quantifying the physical distance,
-and a second weighted version reflecting the mode of transport. Walking one
-kilometre along a busy highway is more arduous than one kilometre walked through
-a park, and so the two are weighted differently.
+be specified with two weights or distances: one quantifying the physical
+distance, and a second weighted version reflecting the mode of transport (or
+some other preferential weighting).
 
 `dodgr` calculates shortest paths using one set of weights (called "weights" or
-anything else starting with "w"), but subsequently calculates the actual lengths
-of them using a second set of weights (called "distances", or anything else
-starting with "d"). Consider that the weights and distances of Fig. 2 are the
-black and grey lines, respectively, with the latter all equal to one. In this
-case, the graph and associated shortest distances are,
+anything else starting with "w"), but returns the actual lengths of them using a
+second set of weights (called "distances", or anything else starting with "d").
+If no weights are specified, distances alone are used both for routing and final
+distance calculations.  Consider that the weights and distances of Fig. 2 are
+the black and grey lines, respectively, with the latter all equal to one. In
+this case, the graph and associated shortest distances are,
 ```{r, echo = FALSE}
 graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
                      to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
@@ -89,16 +86,18 @@ dodgr_dists (graph)
 ```
 Note that even though the shortest "distance" from A to D is actually
 A$\to$B$\to$D with a distance of only 2, that path has a weighted distance of
-1 + 3 = 4. The shortest *weighted* path is A$\to$B$\to$C$\to$D, with a weighted
-distance of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
+1 + 3 = 4. The shortest *weighted* path is A$\to$B$\to$C$\to$D, with a distance
+both weighted and unweighted of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
 
 # Introduction to the package
 
-Although the package was intentionally developed to be adaptible to any kinds of
+Although the package was intentionally developed to be adaptable to any kinds of
 networks, the primary motivation was routing through street networks.
 Accordingly, most of the applications illustrated here concern street networks,
 and also illustrate several helper functions the package offers for working with
-street networks.
+street networks. The basic `graph` object of `dodgr` is nevertheless arbitrary,
+and need only minimally contain three or four columns as demonstrated in the
+simple examples at the outset.
 
 The package may be used to calculate a matrix of distances between a given set
 of geographic coordinates. We can start by simply generating some random
@@ -138,5 +137,5 @@ c (0.00000, 46.60609)
 ```
 The result is a matrix of 1000-by-1000 distances of up to 47km long, measured
 along routes weighted for optimal pedestrian travel. In this case, the single
-call to `dodgr_dists` automatically downloaded the entire street network of York
-1and calculated one million shortest-path distances, all in under 30 seconds.
+call to `dodgr_dists()` automatically downloaded the entire street network of York
+and calculated one million shortest-path distances, all in under 30 seconds.
