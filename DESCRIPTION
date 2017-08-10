@@ -23,6 +23,8 @@ Imports:
     Rcpp (>= 0.12.6)
 Suggests:
     knitr,
+    rmarkdown,
+    roxygen2,
     testthat
 Remotes:
     ropensci/osmdata
