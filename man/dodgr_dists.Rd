@@ -4,7 +4,8 @@
 \alias{dodgr_dists}
 \title{dodgr_dists}
 \usage{
-dodgr_dists(graph, from, to, heap = "BHeap")
+dodgr_dists(graph, from, to, wt_profile = "bicycle", heap = "BHeap",
+  quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -16,10 +17,15 @@ be calculated (see Details)}
 \item{to}{Vector or matrix of points **to** which route distances are to be
 calculated (see Details)}
 
+\item{wt_profile}{Name of weighting profile for street networks (one of foot,
+horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
+
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+
+\item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
 square matrix of distances between nodes

@@ -188,6 +188,8 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         add_to_edge_map (vert2edge_map, from_id, edge_id [i]);
         add_to_edge_map (vert2edge_map, to_id, edge_id [i]);
     }
+    Rcpp::Rcout << "sizes of (vm, vert2edge_map) = (" <<
+        vm.size () << ", " << vert2edge_map.size () << ")" << std::endl;
 }
 
 void get_largest_graph_component (vertex_map_t &v,

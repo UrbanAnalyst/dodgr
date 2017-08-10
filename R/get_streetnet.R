@@ -18,13 +18,16 @@
 dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 {
     if (!missing (bbox))
-        bb <- osmdata::getbb (bbox)
+        bbox <- osmdata::getbb (bbox)
     else if (!missing (pts))
     {
-        colx <- which (grepl ("x", names (pts), ignore.case = TRUE) |
-                       grepl ("lon", names (pts), ignore.case = TRUE))
-        coly <- which (grepl ("y", names (pts), ignore.case = TRUE) |
-                       grepl ("lat", names (pts), ignore.case = TRUE))
+        nms <- names (pts)
+        if (is.null (nms))
+            nms <- colnames (pts)
+        colx <- which (grepl ("x", nms, ignore.case = TRUE) |
+                       grepl ("lon", nms, ignore.case = TRUE))
+        coly <- which (grepl ("y", nms, ignore.case = TRUE) |
+                       grepl ("lat", nms, ignore.case = TRUE))
         if (! (length (colx) == 1 | length (coly) == 1))
             stop ("Can not unambiguous determine coordinates in graph")
 
@@ -33,7 +36,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
         y <- range (pts [, coly])
         y <- y + c (-expand, expand) * diff (y)
 
-        bb <- c (x [1], y [1], x [2], y [2])
+        bbox <- c (x [1], y [1], x [2], y [2])
     } else
         stop ('Either bbox or pts must be specified.')
 
@@ -50,21 +53,21 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 #' profile, selected from (foot, horse, wheelchair, bicycle, moped, motorcycle,
 #' motorcar, goods, hgv, psv).
 #'
-#' @param net Street network extracted with \code{get_stretnet}
-#' @param profile Name of weighting profile
+#' @param graph Street network extracted with \code{get_stretnet}
+#' @param wt_profile Name of weighting profile
 #'
 #' @return A \code{data.frame} of edges representing the street network.
 #'
 #' @export
-weight_streetnet <- function (net, profile = "bicycle")
+weight_streetnet <- function (graph, wt_profile = "bicycle")
 {
     prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                     "motorcycle", "motorcar", "goods", "hgv", "psv")
-    profile = match.arg (tolower (profile), prf_names)
+    wt_profile = match.arg (tolower (wt_profile), prf_names)
     profiles <- dodgr::weighting_profiles
-    pr <- profiles [profiles$name == profile, ]
+    wt_profile <- profiles [profiles$name == wt_profile, ]
 
-    dat <- rcpp_lines_as_network (net, pr = pr)
+    dat <- rcpp_lines_as_network (graph, pr = wt_profile)
     data.frame (edge_id = seq (nrow (dat [[1]])),
                 from_id = as.character (dat [[2]] [, 1]),
                 from_lon = dat [[1]] [, 1],

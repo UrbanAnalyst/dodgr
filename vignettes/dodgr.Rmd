@@ -1,0 +1,142 @@
+---
+title: "dodgr"
+author: "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: true
+        theme: flatly
+header-includes: 
+    - \usepackage{tikz}
+    - \usetikzlibrary{arrows}
+vignette: >
+  %\VignetteIndexEntry{dodgr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+devtools::load_all (".")
+```
+
+# Background
+
+`dodgr` is an R package for calculating **D**istances **O**n **D**irected
+**G**raphs.  Directed graphs are ones in which the "distance" (or some
+equivalent measure) from A to B is not necessarily equal to that from B to A. In
+Fig. 1, for example, the weights between the graph vertices (A, B, C, and D)
+differ depending on the direction of travel, and it is only possible to traverse
+the entire graph in an anti-clockwise direction.
+
+```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
+```
+
+If the edge weights corresponded to distances, and if thicker lines represented
+shorter distances, such that the distance `D`$\to$`C` was shorter than `C`$\to$`D`,
+then it would be much shorter to go from `D` to `A` than the other way around.
+
+Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
+graph of Fig. 1, presuming the edge weights to take values of 1 and 2, would be,
+```{r, echo = FALSE}
+graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
+                     to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
+                     d = c (1, 2, 1, 3, 2, 1, 2, 1))
+graph
+```
+The primary function of `dodgr` is `dodgr_dists`, which calculates pair-wise
+shortest distances between all vertices of a graph.
+```{r}
+dodgr_dists (graph)
+```
+
+
+## Dual-weighted directed graphs
+
+Shortest-path distances on weighted graphs can be calculated using a number of
+other **R** packages, such as
+[`igraph`](https://cran.r-project.org/package=igraph) or
+[`e1071`](https://cran.r-project.org/package=e1071). `dodgr` comes into its own
+through its ability to trace paths through *dual-weighted* directed graphs,
+illustrated in Fig. 2.
+
+```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
+```
+These are common in many areas, with a foremost example arising in routing
+through street networks. The route one takes through a street network depends on
+how one gets there: the route a pedestrian might taken will generally differ
+markedly from the route the same person might take if behind the wheel of an
+automobile. Routing through street networks thus generally requires each edge to
+specified with two weights or distances: one quantifying the physical distance,
+and a second weighted version reflecting the mode of transport. Walking one
+kilometre along a busy highway is more arduous than one kilometre walked through
+a park, and so the two are weighted differently.
+
+`dodgr` calculates shortest paths using one set of weights (called "weights" or
+anything else starting with "w"), but subsequently calculates the actual lengths
+of them using a second set of weights (called "distances", or anything else
+starting with "d"). Consider that the weights and distances of Fig. 2 are the
+black and grey lines, respectively, with the latter all equal to one. In this
+case, the graph and associated shortest distances are,
+```{r, echo = FALSE}
+graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
+                     to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
+                     w = c (1, 2, 1, 3, 2, 1, 2, 1),
+                     d = c (1, 1, 1, 1, 1, 1, 1, 1))
+graph
+dodgr_dists (graph)
+```
+Note that even though the shortest "distance" from A to D is actually
+A$\to$B$\to$D with a distance of only 2, that path has a weighted distance of
+1 + 3 = 4. The shortest *weighted* path is A$\to$B$\to$C$\to$D, with a weighted
+distance of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
+
+# Introduction to the package
+
+Although the package was intentionally developed to be adaptible to any kinds of
+networks, the primary motivation was routing through street networks.
+Accordingly, most of the applications illustrated here concern street networks,
+and also illustrate several helper functions the package offers for working with
+street networks.
+
+The package may be used to calculate a matrix of distances between a given set
+of geographic coordinates. We can start by simply generating some random
+coordinates, in this case within the bounding box defining the city of York in
+the U.K.
+```{r get-york-data}
+bb <- osmdata::getbb ("york uk")
+npts <- 1000
+xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
+bb; head (xy)
+```
+Those points can simply be passed to `dodgr_dists()`:
+```{r dodgr-dists-in-york, eval = FALSE}
+system.time(
+            d <- dodgr_dists (from = xy, wt_profile = "foot", quiet = FALSE)
+            )
+```
+```{r, echo = FALSE}
+message (paste0 ("No graph submitted to dodgr_dists; ",
+                 "downloading street network ... done\n",
+                 "Converting network to dodgr graph ... done\n",
+                 "Calculating shortest paths ... done"))
+```
+```{r, echo = FALSE}
+st <- system.time (Sys.sleep (0.1))
+st [1] <- 26.620
+st [2] <- 0.132
+st [3] <- 28.567
+st
+```
+```{r, eval = FALSE}
+dim (d); range (d, na.rm = TRUE)
+```
+```{r, echo = FALSE}
+c (1000, 1000)
+c (0.00000, 46.60609)
+```
+The result is a matrix of 1000-by-1000 distances of up to 47km long, measured
+along routes weighted for optimal pedestrian travel. In this case, the single
+call to `dodgr_dists` automatically downloaded the entire street network of York
+1and calculated one million shortest-path distances, all in under 30 seconds.

@@ -6,10 +6,13 @@
 #' be calculated (see Details)
 #' @param to Vector or matrix of points **to** which route distances are to be
 #' calculated (see Details)
+#' @param wt_profile Name of weighting profile for street networks (one of foot,
+#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
+#' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
 #' @note \code{graph} must minimially contain four columns of \code{from},
@@ -38,10 +41,18 @@
 #' in \code{graph}.
 #'
 #' @export
-dodgr_dists <- function (graph, from, to, heap = 'BHeap')
+dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap',
+                         quiet = TRUE)
 {
     if (missing (graph) & !missing (from))
-        graph <- dodgr_streetnet (from)
+    {
+        if (!quiet)
+            message (paste0 ("No graph submitted to dodgr_dists; ",
+                             "downloading street network ... "),
+                     appendLF = FALSE)
+        graph <- dodgr_streetnet (pts = from) %>%
+            weight_streetnet (wt_profile = wt_profile)
+    }
 
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
     heap <- match.arg (arg = heap, choices = heaps)
@@ -58,24 +69,40 @@ dodgr_dists <- function (graph, from, to, heap = 'BHeap')
         }
     }
 
+    if (!quiet)
+        message ("done\nConverting network to dodgr graph ... ",
+                 appendLF = FALSE)
     graph <- convert_graph (graph)
     xy <- graph$xy
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
 
-    graphc <- rcpp_make_compact_graph (graph, quiet = FALSE)
+    #graphc <- rcpp_make_compact_graph (graph, quiet = FALSE)
 
     if (missing (from))
         from <- -1
     else
-        from <- get_pts_index (graph, vert_map, xy, from)
+        from <- get_pts_index (vert_map, xy, from)
 
     if (missing (to))
         to <- -1
     else
-        to <- get_pts_index (graph, vert_map, xy, to)
+        to <- get_pts_index (vert_map, xy, to)
 
-    rcpp_get_sp (graph, vert_map, from, to, heap)
+    if (!quiet)
+        message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
+    d <- rcpp_get_sp (graph, vert_map, from, to, heap)
+    if (any (from < 0))
+        from <- seq (nrow (vert_map))
+    rownames (d) <- vert_map$vert [from]
+    if (any (to < 0))
+        colnames (d) <- vert_map$vert [from]
+    else
+        colnames (d) <- vert_map$vert [to]
+    if (!quiet)
+        message ("done.")
+
+    return (d)
 }
 
 #' convert_graph
@@ -94,6 +121,9 @@ convert_graph <- function (graph)
         stop ("Unable to determine distance and/or weight columns in graph")
     else if (length (d_col) != 1)
         stop ("Unable to determine distance column in graph")
+
+    if (length (w_col) == 0)
+        w_col <- d_col
 
     fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE))
     to_col <- which (grepl ("to", names (graph), ignore.case = TRUE))
@@ -221,9 +251,15 @@ make_vert_map <- function (graph)
 #' Convert \code{from} or \code{to} args of \code{dodgr_dists} to indices into
 #' \code{vert_map}
 #'
-#' @param graph full graph
+#' @param vert_map Two-column \code{data.frame} of unique vertices and
+#' corresponding IDs, obtained from \code{make_vert_map}
+#' @param xy List of x (longitude) and y (latitude) coordinates of all vertices
+#' in \code{vert_map}
+#' @param pts Matrix or \code{data.frame} of arbitrary geographical coordinates
+#' for which to get index into vertices of graph.
+#'
 #' @noRd
-get_pts_index <- function (graph, vert_map, xy, pts)
+get_pts_index <- function (vert_map, xy, pts)
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
         pts <- matrix (pts, ncol = 1)
@@ -243,15 +279,18 @@ get_pts_index <- function (graph, vert_map, xy, pts)
             stop (paste0 ("points exceed numbers of vertices"))
     } else
     {
-        ix <- which (grepl ("x", names (pts), ignore.case = TRUE) |
-                     grepl ("lon", names (pts), ignore.case = TRUE))
-        iy <- which (grepl ("y", names (pts), ignore.case = TRUE) |
-                     grepl ("lat", names (pts), ignore.case = TRUE))
+        nms <- names (pts)
+        if (is.null (nms))
+            nms <- colnames (pts)
+        ix <- which (grepl ("x", nms, ignore.case = TRUE) |
+                     grepl ("lon", nms, ignore.case = TRUE))
+        iy <- which (grepl ("y", nms, ignore.case = TRUE) |
+                     grepl ("lat", nms, ignore.case = TRUE))
         if (length (ix) != 1 | length (iy) != 1)
             stop (paste0 ("Unable to determine geographical ",
                           "coordinates in pts"))
         if (is.null (xy))
-            stop (paste0 ("graph has no geographical coordinates ",
+            stop (paste0 ("xy has no geographical coordinates ",
                           "against which to match pts"))
 
         pts <- rcpp_points_index (xy, pts)
