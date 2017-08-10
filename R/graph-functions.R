@@ -97,7 +97,7 @@ dodgr_vertices <- function (graph)
 #' @param xy coordinates of points to be matched to the vertices
 #'
 #' @return A vector index into verts
-#' @export
+#' @noRd
 match_pts_to_graph <- function (verts, xy)
 {
     if (!(is.matrix (xy) | is.data.frame (xy)))
