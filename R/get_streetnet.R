@@ -1,26 +1,43 @@
 #' dodgr_streetnet
 #'
+#' Use the \code{osmdata} package to extract the street network for a given
+#' location. For routing between a given set of points (passed as \code{pts}),
+#' the \code{bbox} argument may be ommitted, in which case a bounding box will
+#' be constructed by expanding the range of \code{pts} by the relative amount of
+#' \code{expand}.
+#'
+#' @param bbox Bounding box as vector or matrix of coordinates, or location
+#' name. Passed to \code{osmdata::getbb}.
 #' @param pts List of points presumably containing spatial coordinates
 #' @param expand Relative factor by which street network should extend beyond
-#' limits defined by pts
-#' @return square matrix of distances between nodes
+#' limits defined by pts (only if \code{bbox} not given).
+#' @return A Simple Features (\code{sf}) object with coordinates of all lines in
+#' the street network.
 #'
 #' @export
-dodgr_streetnet <- function (pts, expand = 0.05)
+dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 {
-    colx <- which (grepl ("x", names (pts), ignore.case = TRUE) |
-                   grepl ("lon", names (pts), ignore.case = TRUE))
-    coly <- which (grepl ("y", names (pts), ignore.case = TRUE) |
-                   grepl ("lat", names (pts), ignore.case = TRUE))
-    if (! (length (colx) == 1 | length (coly) == 1))
-        stop ("Can not unambiguous determine coordinates in graph")
+    if (!missing (bbox))
+        bb <- osmdata::getbb (bbox)
+    else if (!missing (pts))
+    {
+        colx <- which (grepl ("x", names (pts), ignore.case = TRUE) |
+                       grepl ("lon", names (pts), ignore.case = TRUE))
+        coly <- which (grepl ("y", names (pts), ignore.case = TRUE) |
+                       grepl ("lat", names (pts), ignore.case = TRUE))
+        if (! (length (colx) == 1 | length (coly) == 1))
+            stop ("Can not unambiguous determine coordinates in graph")
 
-    x <- range (pts [, colx])
-    x <- x + c (-expand, expand) * diff (x)
-    y <- range (pts [, coly])
-    y <- y + c (-expand, expand) * diff (y)
+        x <- range (pts [, colx])
+        x <- x + c (-expand, expand) * diff (x)
+        y <- range (pts [, coly])
+        y <- y + c (-expand, expand) * diff (y)
 
-    dat <- osmdata::opq (c (x [1], y [1], x [2], y [2])) %>%
+        bb <- c (x [1], y [1], x [2], y [2])
+    } else
+        stop ('Either bbox or pts must be specified.')
+
+    dat <- osmdata::opq (bbox) %>%
         osmdata::add_osm_feature (key = "highway") %>%
         osmdata::osmdata_sf ()
 
@@ -29,9 +46,9 @@ dodgr_streetnet <- function (pts, expand = 0.05)
 
 #' weight_streetnet
 #'
-#' Weight an OSM street network according to a named routino profile, selected
-#' from (foot, horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods,
-#' hgv, psv).
+#' Weight (or re-weight) an OSM street network according to a named routino
+#' profile, selected from (foot, horse, wheelchair, bicycle, moped, motorcycle,
+#' motorcar, goods, hgv, psv).
 #'
 #' @param net Street network extracted with \code{get_stretnet}
 #' @param profile Name of weighting profile

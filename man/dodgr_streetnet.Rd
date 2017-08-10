@@ -4,17 +4,25 @@
 \alias{dodgr_streetnet}
 \title{dodgr_streetnet}
 \usage{
-dodgr_streetnet(pts, expand = 0.05)
+dodgr_streetnet(bbox, pts, expand = 0.05)
 }
 \arguments{
+\item{bbox}{Bounding box as vector or matrix of coordinates, or location
+name. Passed to \code{osmdata::getbb}.}
+
 \item{pts}{List of points presumably containing spatial coordinates}
 
 \item{expand}{Relative factor by which street network should extend beyond
-limits defined by pts}
+limits defined by pts (only if \code{bbox} not given).}
 }
 \value{
-square matrix of distances between nodes
+A Simple Features (\code{sf}) object with coordinates of all lines in
+the street network.
 }
 \description{
-dodgr_streetnet
+Use the \code{osmdata} package to extract the street network for a given
+location. For routing between a given set of points (passed as \code{pts}),
+the \code{bbox} argument may be ommitted, in which case a bounding box will
+be constructed by expanding the range of \code{pts} by the relative amount of
+\code{expand}.
 }

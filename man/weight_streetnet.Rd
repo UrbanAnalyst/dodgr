@@ -15,7 +15,7 @@ weight_streetnet(net, profile = "bicycle")
 A \code{data.frame} of edges representing the street network.
 }
 \description{
-Weight an OSM street network according to a named routino profile, selected
-from (foot, horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods,
-hgv, psv).
+Weight (or re-weight) an OSM street network according to a named routino
+profile, selected from (foot, horse, wheelchair, bicycle, moped, motorcycle,
+motorcar, goods, hgv, psv).
 }
