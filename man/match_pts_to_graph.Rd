@@ -8,7 +8,7 @@ match_pts_to_graph(verts, xy)
 }
 \arguments{
 \item{verts}{A \code{data.frame} of vertices obtained from
-\code{get_vertices(graph)}.}
+\code{dodgr_vertices(graph)}.}
 
 \item{xy}{coordinates of points to be matched to the vertices}
 }

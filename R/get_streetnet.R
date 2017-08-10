@@ -1,4 +1,4 @@
-#' get_streetnet
+#' dodgr_streetnet
 #'
 #' @param pts List of points presumably containing spatial coordinates
 #' @param expand Relative factor by which street network should extend beyond
@@ -6,7 +6,7 @@
 #' @return square matrix of distances between nodes
 #'
 #' @export
-get_streetnet <- function (pts, expand = 0.05)
+dodgr_streetnet <- function (pts, expand = 0.05)
 {
     colx <- which (grepl ("x", names (pts), ignore.case = TRUE) |
                    grepl ("lon", names (pts), ignore.case = TRUE))

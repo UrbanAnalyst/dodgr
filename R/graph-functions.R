@@ -1,4 +1,4 @@
-#' get_vertices
+#' dodgr_vertices
 #'
 #' Extract vertices of graph, including spatial coordinates if included
 #'
@@ -11,7 +11,7 @@
 #' @note Values of \code{n} are 0-indexed
 #'
 #' @export
-get_vertices <- function (graph)
+dodgr_vertices <- function (graph)
 {
     fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE) |
                      grepl ("sta", names (graph), ignore.case = TRUE))
@@ -93,7 +93,7 @@ get_vertices <- function (graph)
 #' Match spatial points to a spatial graph which contains vertex coordindates
 #'
 #' @param verts A \code{data.frame} of vertices obtained from
-#' \code{get_vertices(graph)}.
+#' \code{dodgr_vertices(graph)}.
 #' @param xy coordinates of points to be matched to the vertices
 #'
 #' @return A vector index into verts
@@ -126,7 +126,7 @@ match_pts_to_graph <- function (verts, xy)
     rcpp_points_index (verts, xy)
 }
 
-#' make_compact_graph
+#' dodgr_compact_graph
 #'
 #' Removes redundant (straight-line) vertices from graph, leaving only junction
 #' vertices.
@@ -136,7 +136,7 @@ match_pts_to_graph <- function (verts, xy)
 #' similarly labelled columns of spatial coordinates (for example
 #' \code{from_x}) or \code{stop_lon}).
 #' @param verts Option \code{data.frame} of vertices obtained from
-#' \code{get_vertices} (submitting this will simply speed up conversion to
+#' \code{dodgr_vertices} (submitting this will simply speed up conversion to
 #' compact graph).
 #' @param quiet If \code{FALSE}, display progress on screen
 #'
@@ -144,10 +144,10 @@ match_pts_to_graph <- function (verts, xy)
 #' (\code{$original} and \code{$compact}, respectively), along with several
 #' indexes used to map vertices and edges between the two.
 #' @export
-make_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
+dodgr_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
     if (is.null (verts))
-        verts <- get_vertices (graph)
+        verts <- dodgr_vertices (graph)
 
     rcpp_make_compact_graph (graph, quiet = quiet)
 }

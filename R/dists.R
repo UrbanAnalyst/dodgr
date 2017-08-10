@@ -41,7 +41,7 @@
 dodgr_dists <- function (graph, from, to, heap = 'BHeap')
 {
     if (missing (graph) & !missing (from))
-        graph <- get_streetnet (from)
+        graph <- dodgr_streetnet (from)
 
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
     heap <- match.arg (arg = heap, choices = heaps)
