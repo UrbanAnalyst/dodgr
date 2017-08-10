@@ -24,11 +24,13 @@ devtools::load_all (".")
 # Background
 
 `dodgr` is an R package for calculating **D**istances **O**n **D**irected
-**G**raphs.  Directed graphs are ones in which the "distance" (or some
-equivalent measure) from A to B is not necessarily equal to that from B to A. In
-Fig. 1, for example, the weights between the graph vertices (A, B, C, and D)
-differ depending on the direction of travel, and it is only possible to traverse
-the entire graph in an anti-clockwise direction.
+**G**raphs. Skip straight to the Intro if you know what those are (but maybe
+make a brief stop-in to Dual-weighted directed graphs below.) Directed graphs
+are ones in which the "distance" (or some equivalent measure) from A to B is not
+necessarily equal to that from B to A. In Fig. 1, for example, the weights
+between the graph vertices (A, B, C, and D) differ depending on the direction of
+travel, and it is only possible to traverse the entire graph in an
+anti-clockwise direction.
 
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
@@ -139,3 +141,99 @@ The result is a matrix of 1000-by-1000 distances of up to 47km long, measured
 along routes weighted for optimal pedestrian travel. In this case, the single
 call to `dodgr_dists()` automatically downloaded the entire street network of York
 and calculated one million shortest-path distances, all in under 30 seconds.
+
+# Street networks and graphs
+
+Although the above code is short and fast, most users will probably want more
+control over their graphs and routing possibilities. Each of the steps indicated
+above (through the `quiet = FALSE` option) can be implemented separately. To
+begin, let's download a street network:
+```{r, york-streetnet, eval = FALSE}
+streetnet <- dodgr_streetnet ("york uk")
+class (streetnet)
+```
+```{r, echo = FALSE}
+c ("sf", "data.frame")
+```
+```{r, eval = FALSE}
+class (streetnet$geometry)
+```
+```{r, echo = FALSE}
+c ("sfc_LINESTRING", "sfc")
+```
+```{r, eval = FALSE}
+dim (streetnet)
+```
+```{r, echo = FALSE}
+c (18284, 181)
+```
+The `streetnet` is an [`sf`](https://cran.r-project.org/package=sf) (Simple
+Features) object containing 18,284 `LINESTRING` geometries. In other words, it's
+got an `sf` representation of 18,284 streets.
+
+That `sf` representation can then be converted into a flat `data.frame` object
+by
+```{r, eval = FALSE}
+graph <- weight_streetnet (streetnet, wt_profile = "bicycle")
+class (graph)
+```
+```{r, echo = FALSE}
+"data.frame"
+```
+```{r, eval = FALSE}
+dim (graph)
+```
+```{r, echo = FALSE}
+c (187300, 10)
+```
+```{r, eval = FALSE}
+head (graph)
+```
+```{r, echo = FALSE}
+from_id <- c (13060397, 13060402, 13060402, 13060405, 13060405, 13060413)
+from_id <- as.character (from_id)
+from_lon <- c ( -1.001714, -1.001607, -1.001607, -1.001372, -1.001372, -1.001113)
+from_lat <- c ( 53.95737, 53.95746, 53.95746, 53.95763, 53.95763, 53.95776)
+to_id <- c (13060402, 13060397, 13060405, 13060402, 13060413, 13060405)
+to_id <- as.character (to_id)
+to_lon <- c (-1.001607, -1.001714, -1.001372, -1.001607, -1.001113, -1.001372)
+to_lat <- c (53.95746, 53.95737, 53.95763, 53.95746, 53.95776, 53.95763)
+d <- c (0.006909587, 0.006909587, 0.013732955, 0.013732955, 0.013148026,
+        0.013148026)
+d_weighted <- c (0.007677319, 0.007677319, 0.015258839, 0.015258839,
+                 0.014608918, 0.014608918)
+highway <- rep ("unclassified", length (from_id))
+data.frame (from_id = as.character (from_id),
+                     from_lon = from_lon, from_lat = from_lat,
+                     to_id = as.character (to_id),
+                     to_lon = to_lon, to_lat = to_lat,
+                     d = d, d_weighted = d_weighted, highway = highway,
+                     stringsAsFactors = FALSE)
+```
+And the actual graph contains around 10 times as many edges as there are
+streets. That indicates that each street contains on average around 11 vertices
+or nodes, between which there are 10 edges. This `data.frame` graph structure is
+what `dodgr` uses to calculate shortest path routes. Note that the
+weighted---here referred to as `d_weighted`---are all considerably greater than
+the actual distances. There are many different `highway` types:
+```{r, eval = FALSE}
+table (graph$highway)
+```
+```{r, echo = FALSE}
+tb <- c (3122, 222, 11079, 35518, 106, 5856, 381, 2815, 23, 60, 41369, 308,
+         4016, 8, 32077, 734, 15006, 26, 16452, 3144, 371, 14607)
+names (tb) <- c ("bridleway", "construction", "cycleway", "footway",
+                 "living_street", "path", "pedestrian", "primary",
+                 "primary_link", "raceway", "residential", "road", "secondary",
+                 "secondary_link", "service", "steps", "tertiary",
+                 "tertiary_link", "track", "trunk", "trunk_link",
+                 "unclassified")
+tb
+```
+Each of these types has its own weight defined by the named weighting profile.
+These are included with the `dodgr` package:
+```{r}
+names (weighting_profiles)
+class (weighting_profiles)
+weighting_profiles [weighting_profiles$name == "foot", ]
+```
