@@ -105,7 +105,7 @@ The package may be used to calculate a matrix of distances between a given set
 of geographic coordinates. We can start by simply generating some random
 coordinates, in this case within the bounding box defining the city of York in
 the U.K.
-```{r get-york-data}
+```{r get-york-data, eval = FALSE}
 bb <- osmdata::getbb ("york uk")
 npts <- 1000
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
@@ -175,12 +175,6 @@ That `sf` representation can then be converted into a flat `data.frame` object
 by
 ```{r, eval = FALSE}
 graph <- weight_streetnet (streetnet, wt_profile = "bicycle")
-class (graph)
-```
-```{r, echo = FALSE}
-"data.frame"
-```
-```{r, eval = FALSE}
 dim (graph)
 ```
 ```{r, echo = FALSE}
@@ -212,10 +206,57 @@ data.frame (from_id = as.character (from_id),
 ```
 And the actual graph contains around 10 times as many edges as there are
 streets. That indicates that each street contains on average around 11 vertices
-or nodes, between which there are 10 edges. This `data.frame` graph structure is
-what `dodgr` uses to calculate shortest path routes. Note that the
-weighted---here referred to as `d_weighted`---are all considerably greater than
-the actual distances. There are many different `highway` types:
+or nodes, between which there are 10 edges. These points or vertices can be
+extracted with,
+```{r, eval = FALSE}
+vt <- dodgr_vertices (graph)
+head(vt)
+```
+```{r, echo = FALSE}
+id <- c (13060397, 13060402, 13060405, 13060413, 13060417, 13060648)
+x <- c (-1.0017135, -1.0016069, -1.0013725, -1.0011133, -1.0005339, -0.9763021)
+y <- c (53.95737, 53.95746, 53.95763, 53.95776, 53.95808, 53.96698)
+n <- 0:5
+vt <- data.frame (id = as.character (id), x = x, y = y, n = n)
+rownames (vt) <- c (1, 2, 4, 6, 8, 9)
+vt
+```
+```{r, eval = FALSE}
+dim (vt)
+```
+```{r, echo = FALSE}
+c (90015, 4)
+```
+From which we see that the OpenStreetMap representation of the streets of York
+has 18,284 line segements with 90,015 unique points and 187,300 edges between
+those points. The number of edges per vertex in the entire network is thus,
+```{r, eval = FALSE}
+nrow (graph) / nrow (vt)
+```
+```{r, echo = FALSE}
+187300 / 90015
+```
+A simple straight line has two edges between all intermediate nodes, and this
+thus indicates that the network in it's entirety is quite simple. Is is
+nevertheless also very large, as will be demonstrated below, extending for
+considerable distances beyond the relatively complex inner city, and so this low
+edge-to-vertex ratio is not surprising.
+
+The `data.frame` resulting from `weight_streetnet()` is what `dodgr` uses to
+calculate shortest path routes, as will be described below, following a brief
+description of weighting street networks.
+
+## Weighting Profiles
+
+Each type of highway has its own weight defined by the named weighting profiles
+included with the `dodgr` package:
+```{r}
+names (weighting_profiles)
+class (weighting_profiles)
+weighting_profiles [weighting_profiles$name == "foot", ]
+```
+The types of highways within the York graph obtained above can be tabulated
+with:
 ```{r, eval = FALSE}
 table (graph$highway)
 ```
@@ -230,10 +271,99 @@ names (tb) <- c ("bridleway", "construction", "cycleway", "footway",
                  "unclassified")
 tb
 ```
-Each of these types has its own weight defined by the named weighting profile.
-These are included with the `dodgr` package:
-```{r}
-names (weighting_profiles)
-class (weighting_profiles)
-weighting_profiles [weighting_profiles$name == "foot", ]
+
+# Distance Matrices: `dodgr_dists()`
+
+As demonstrated at the outset, an entire network can simply be submitted to
+`dodgr_dists()`, in which case a square matrix will be returned containing
+pair-wise distances between all vertices. Doing that for the `graph` of York
+will return a square matrix 90,015-times-90,015 distances (around 8 billion
+distances). It might be possible to do that on some computers, but is possibly
+neither recommended nor desirable.
+
+The `dodgr_dists()` function accepts additional arguments of `from` and `to`
+defining points from and to which distances are to be calculated. If only `from`
+is provided, a square matrix is returned of pair-wise distances between all
+listed points.
+
+## Aligning routing points to graphs
+
+For spatial graphs---that is, those containing columns of latitudes and
+longitudes (or "x" and "y")---routing points can be represnted by a simple
+matrix of arbitrary latitudes and longitudes (or, again, "x" and "y").
+`dodgr_dists()` will map these points to the closest network points, and return
+corresponding shortest-path distances. This may be illustrated by repeating the
+above example which generated `xy` as a two-column matrix of 1,000 coordinates,
+```{r, eval = FALSE}
+d <- dodgr_dists (graph, from = xy)
+dim (d); range (d, na.rm = TRUE)
+```
+```{r, echo = FALSE}
+c (1000, 1000)
+c (0.00000, 35.51991)
+```
+Some of the resultant distances are `NA` because the points were sampled from
+the entire bounding box, and the street network near the boundaries may be cut
+off from the rest. Distances from or to points lying close to the boundaries may
+thus not be able to be calculated.
+
+If the `to` argument is also specified, the matrix returned will have rows
+matching `from` and columns matching `to`
+```{r, eval = FALSE}
+d <- dodgr_dists (graph, from = xy, to = xy [1:10])
+dim (d)
+```
+```{r, echo = FALSE}
+c (1000, 10)
+```
+
+When `dodgr_dists()` is used to automatically extract a street network, by
+passing only `from` (and potentially `to`) arguments, an extra parameter
+`expand` can be used to expand the street network beyond the range of given
+routing points alone.
+
+For non-spatial graphs, `from` and `to` must match precisely on to vertices
+named in the graph itself. In the graph considered above, these vertex names
+were contained in the columns, `from_id` and `to_id`. The minimum that a `dodgr`
+graph requires is,
+```{r, eval = FALSE}
+head (graph [names (graph) %in% c ("edge_id", "from_id", "to_id", "d")])
+```
+```{r, echo = FALSE}
+edge_id <- 1:6
+from_id <- c (13060397, 13060402, 13060402, 13060405, 13060405, 13060413)
+to_id <- c (13060402, 13060397, 13060405, 13060402, 13060413, 13060405)
+d <- c (0.006909587, 0.006909587, 0.013732955, 0.013732955, 0.013148026,
+        0.013148026)
+data.frame (edge_id = 1:6, from_id = as.character (from_id),
+            to_id = as.character (to_id), d = d)
+```
+in which case `from` (and `to`, if given) must directly name the vertices in
+`from_id` and `to_id`.
+
+## Shortest Path Calculations: Priority Queues
+
+`dodgr` uses an internal library for the calculation of shortest paths using a
+variety of priority queues. These determine the order in which a graph is
+traversed, and the choice of priority queue can have a considerable effect on
+computational efficiency for different kinds of graphs. In contrast to `dodgr`,
+most other **R** packages for shortest path calcualtions do not use priority
+queues, and so will generally be less efficient. The difference
+that priority queues can make may be demonstrated through comparison with
+equivalent routines from the `igraph` package. To do so, we first need to
+convert the preceding `graph` into an equivalent `igraph` structure:
+```{r, eval = FALSE}
+edges <- cbind (graph$from_id, graph$to_id)
+nodes <- unique (as.vector (edges)) # used below in test comparison
+edges <- as.vector (t (edges))
+igr <- igraph::make_directed_graph (edges)
+igraph::E (igr)$weight <- graph$d_weighted
+```
+The `igraph::distances()` routine can then be compared with `dodgr_dists()`:
+```{r, eval = FALSE}
+rbenchmark::benchmark (
+                       d1 <- dodgr_dists (graph, from = xy),
+                       d2 <- igraph::distances (igr, v = nodes, to = nodes,
+                                                mode = "out"),
+                       replications = 2)
 ```
