@@ -51,7 +51,7 @@ dodgr_dists (graph)
 ```
 
 
-## Dual-weighted directed graphs
+## Dual-Weighted Directed Graphs
 
 Shortest-path distances on weighted graphs can be calculated using a number of
 other **R** packages, such as
@@ -91,7 +91,7 @@ A$\to$B$\to$D with a distance of only 2, that path has a weighted distance of
 1 + 3 = 4. The shortest *weighted* path is A$\to$B$\to$C$\to$D, with a distance
 both weighted and unweighted of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
 
-# Introduction to the package
+# Introduction to `dodgr` 
 
 Although the package was intentionally developed to be adaptable to any kinds of
 networks, the primary motivation was routing through street networks.
@@ -142,7 +142,7 @@ along routes weighted for optimal pedestrian travel. In this case, the single
 call to `dodgr_dists()` automatically downloaded the entire street network of York
 and calculated one million shortest-path distances, all in under 30 seconds.
 
-# Street networks and graphs
+# Street Networks and Graphs
 
 Although the above code is short and fast, most users will probably want more
 control over their graphs and routing possibilities. Each of the steps indicated
@@ -228,7 +228,7 @@ dim (vt)
 c (90015, 4)
 ```
 From which we see that the OpenStreetMap representation of the streets of York
-has 18,284 line segements with 90,015 unique points and 187,300 edges between
+has 18,284 line segments with 90,015 unique points and 187,300 edges between
 those points. The number of edges per vertex in the entire network is thus,
 ```{r, eval = FALSE}
 nrow (graph) / nrow (vt)
@@ -286,10 +286,10 @@ defining points from and to which distances are to be calculated. If only `from`
 is provided, a square matrix is returned of pair-wise distances between all
 listed points.
 
-## Aligning routing points to graphs
+## Aligning Routing Points to Graphs
 
 For spatial graphs---that is, those containing columns of latitudes and
-longitudes (or "x" and "y")---routing points can be represnted by a simple
+longitudes (or "x" and "y")---routing points can be represented by a simple
 matrix of arbitrary latitudes and longitudes (or, again, "x" and "y").
 `dodgr_dists()` will map these points to the closest network points, and return
 corresponding shortest-path distances. This may be illustrated by repeating the
@@ -347,7 +347,7 @@ in which case `from` (and `to`, if given) must directly name the vertices in
 variety of priority queues. These determine the order in which a graph is
 traversed, and the choice of priority queue can have a considerable effect on
 computational efficiency for different kinds of graphs. In contrast to `dodgr`,
-most other **R** packages for shortest path calcualtions do not use priority
+most other **R** packages for shortest path calculations do not use priority
 queues, and so will generally be less efficient. The difference
 that priority queues can make may be demonstrated through comparison with
 equivalent routines from the `igraph` package. To do so, we first need to
@@ -400,7 +400,7 @@ performance of each test in relation to the best which is given a score of 1.
 `dodgr` using the default `heap = "BHeap"`, which is a binary heap priority
 queue, performs faster than `igraph` for these graphs. Different kind of graphs
 will perform differently with different priority queue structures, and this
-function enables users to emprically discern the optimal heap for their kind of
+function enables users to empirically discern the optimal heap for their kind of
 graph.
 
 Note, however, that this is not an entirely fair comparison, because `dodgr`
@@ -409,3 +409,17 @@ calculates dual-weighted distances, whereas `igraph`---and indeed all other
 weights. Implementing dual-weighted routing in these cases requires explicitly
 re-tracing all paths and summing the second set of weights along each path. A
 time comparison in that case would be very strongly in favour of `dodgr`.
+
+# Graph Contraction
+
+A further unique feature of `dodgr` is the ability to remove redundant vertices
+from graphs, thereby speeding up routing calculations.
+
+```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: The vertex B is redundant for routing calculations from anywhere other than that point itself"}
+```
+
+In Fig. 3, the only way to get from vertex A to D or E is through C. The
+intermediate vertex B is redundant for routing purposes and may simply be
+removed, with directional edges inserted directly between A and C. Note that if
+one of the edges between, say, B and C were removed, vertex B would no longer be
+redundant.
