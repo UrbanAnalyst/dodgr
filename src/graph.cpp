@@ -29,18 +29,27 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
 }
 
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
+        bool is_spatial)
 {
     Rcpp::StringVector from = gr ["from_id"];
     Rcpp::StringVector to = gr ["to_id"];
-    Rcpp::NumericVector from_lon = gr ["from_lon"];
-    Rcpp::NumericVector from_lat = gr ["from_lat"];
-    Rcpp::NumericVector to_lon = gr ["to_lon"];
-    Rcpp::NumericVector to_lat = gr ["to_lat"];
+    Rcpp::StringVector hw;
+    Rcpp::NumericVector from_lon, from_lat, to_lon, to_lat;
+    if (is_spatial)
+    {
+        from_lon = gr ["from_lon"];
+        from_lat = gr ["from_lat"];
+        to_lon = gr ["to_lon"];
+        to_lat = gr ["to_lat"];
+        hw = gr ["highway"];
+    } else
+    {
+        hw = Rcpp::StringVector (from.size (), "");
+    }
     Rcpp::NumericVector edge_id = gr ["edge_id"];
     Rcpp::NumericVector dist = gr ["d"];
     Rcpp::NumericVector weight = gr ["d_weighted"];
-    Rcpp::StringVector hw = gr ["highway"];
 
     for (int i = 0; i < to.length (); i ++)
     {
@@ -50,8 +59,11 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         if (vm.find (from_id) == vm.end ())
         {
             osm_vertex_t fromV = osm_vertex_t ();
-            fromV.set_lat (from_lat [i]);
-            fromV.set_lon (from_lon [i]);
+            if (is_spatial)
+            {
+                fromV.set_lat (from_lat [i]);
+                fromV.set_lon (from_lon [i]);
+            }
             vm.emplace (from_id, fromV);
         }
         osm_vertex_t from_vtx = vm.at (from_id);
@@ -61,8 +73,11 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         if (vm.find (to_id) == vm.end ())
         {
             osm_vertex_t toV = osm_vertex_t ();
-            toV.set_lat (to_lat [i]);
-            toV.set_lon (to_lon [i]);
+            if (is_spatial)
+            {
+                toV.set_lat (to_lat [i]);
+                toV.set_lon (to_lon [i]);
+            }
             vm.emplace (to_id, toV);
         }
         osm_vertex_t to_vtx = vm.at (to_id);
@@ -76,14 +91,13 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         add_to_edge_map (vert2edge_map, from_id, edge_id [i]);
         add_to_edge_map (vert2edge_map, to_id, edge_id [i]);
     }
-    Rcpp::Rcout << "sizes of (vm, vert2edge_map) = (" <<
-        vm.size () << ", " << vert2edge_map.size () << ")" << std::endl;
 }
 
-void get_largest_graph_component (vertex_map_t &v,
-        std::unordered_map <osm_id_t, int> &com,
-        int &largest_id)
+int get_largest_graph_component (vertex_map_t &v,
+        std::unordered_map <osm_id_t, int> &com)
 {
+    int largest_id = -1;
+
     // initialize components map
     for (auto it = v.begin (); it != v.end (); ++ it)
         com.insert (std::make_pair (it -> first, -1));
@@ -124,8 +138,10 @@ void get_largest_graph_component (vertex_map_t &v,
     for (auto c: com)
         comp_sizes [c.second]++;
     auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
+
     largest_id = std::distance (comp_sizes.begin (), maxi);
-    //int maxsize = comp_sizes [largest_id];
+
+    return largest_id;
 }
 
 
@@ -272,11 +288,106 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 }
 
 
+//' rcpp_sample_graph
+//'
+//' Randomly sample one connected componnent of a graph
+//'
+//' @param graph graph to be processed
+//' @param nverts_to_sample Number of vertices to sample
+//' @param e0 Random edge of graph from which to get first vertex to include in
+//' sample
+//' @param is_spatial Is the graph spatial or not?
+//' @param quiet If TRUE, display progress
+//'
+//' @return Smaller sub-set of \code{graph}
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
+        unsigned int nverts_to_sample, unsigned int e0, bool is_spatial)
+{
+    std::random_device rd;
+    std::mt19937 rng (rd()); // mersenne twister
+
+    vertex_map_t vertices;
+    edge_map_t edge_map;
+    std::unordered_map <osm_id_t, int> components;
+    vert2edge_map_t vert2edge_map;
+
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    int largest_component = get_largest_graph_component (vertices, components);
+
+    if (edge_map.find (e0) == edge_map.end ())
+        throw std::runtime_error ("edge number not in range of graph");
+
+    Rcpp::NumericVector index;
+    if (vertices.size () <= nverts_to_sample)
+        return index;
+
+    osm_id_t this_vert;
+    bool in_largest = false;
+    while (!in_largest)
+    {
+        osm_edge_t this_edge = edge_map.find (e0++)->second;
+        this_vert = this_edge.get_from_vertex ();
+        if (components [this_vert] == largest_component)
+            in_largest = true;
+        if (e0 >= edge_map.size ())
+            e0 = 0;
+    }
+
+    // Samples are built by randomly tranwing a vertex list, and inspecting
+    // edges that extend from it. The only effective way to randomly sample a
+    // C++ container is with a std::vector, even though that requires a
+    // std::find each time prior to insertion. It's also useful to know the
+    // size, so this vector is **NOT** reserved, even though it easily could be.
+    // Maybe not the best solution?
+    std::vector <osm_id_t> vertlist;
+    std::unordered_set <unsigned int> edgelist;
+    vertlist.push_back (this_vert);
+
+    while (vertlist.size () < nverts_to_sample)
+    {
+        // initialise random int generator:
+        // TODO: Is this quicker to use a single unif and round each time?
+        std::uniform_int_distribution <int> uni (0, vertlist.size () - 1);
+        unsigned int randv = uni (rng);
+        this_vert = vertlist [randv];
+
+        std::set <unsigned int> edges = vert2edge_map [this_vert];
+        for (auto e: edges)
+        {
+            edgelist.insert (e);
+            osm_edge_t this_edge = edge_map.find (e)->second;
+            osm_id_t vt = this_edge.get_from_vertex ();
+            if (std::find (vertlist.begin(), vertlist.end(), vt) ==
+                    vertlist.end())
+                vertlist.push_back (vt);
+            vt = this_edge.get_to_vertex ();
+            if (std::find (vertlist.begin(), vertlist.end(), vt) ==
+                    vertlist.end())
+                vertlist.push_back (vt);
+        }
+    }
+
+    int nedges = edgelist.size ();
+
+    // edgelist is an unordered set, so has to be iteratively inserted
+    index = Rcpp::NumericVector (nedges);
+    unsigned int i = 0;
+    for (auto e: edgelist)
+        index (i++) = e;
+
+    return index;
+}
+
+
 //' rcpp_make_compact_graph
 //'
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
 //' @param graph graph to be processed
+//' @param is_spatial Is the graph spatial or not?
 //' @param quiet If TRUE, display progress
 //'
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
@@ -286,12 +397,12 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
+Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, 
+        bool is_spatial, bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <osm_id_t, int> components;
-    int largest_component;
     vert2edge_map_t vert2edge_map;
 
     if (!quiet)
@@ -299,13 +410,13 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
         Rcpp::Rcout << "Constructing graph ... ";
         Rcpp::Rcout.flush ();
     }
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
     if (!quiet)
     {
         Rcpp::Rcout << std::endl << "Determining connected components ... ";
         Rcpp::Rcout.flush ();
     }
-    get_largest_graph_component (vertices, components, largest_component);
+    int largest_component = get_largest_graph_component (vertices, components);
 
     if (!quiet)
     {
@@ -411,7 +522,8 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, bool quiet)
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert)
+        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert,
+        bool is_spatial)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -419,7 +531,7 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
     int largest_component;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
+    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map, is_spatial);
 
     return Rcpp::List::create ();
 }

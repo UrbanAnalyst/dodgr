@@ -5,28 +5,44 @@
 
 using namespace Rcpp;
 
-// rcpp_make_compact_graph
-Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, bool quiet);
-RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP quietSEXP) {
+// rcpp_sample_graph
+Rcpp::NumericVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample, unsigned int e0, bool is_spatial);
+RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP, SEXP e0SEXP, SEXP is_spatialSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type nverts_to_sample(nverts_to_sampleSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type e0(e0SEXP);
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, nverts_to_sample, e0, is_spatial));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_make_compact_graph
+Rcpp::List rcpp_make_compact_graph(Rcpp::DataFrame graph, bool is_spatial, bool quiet);
+RcppExport SEXP _dodgr_rcpp_make_compact_graph(SEXP graphSEXP, SEXP is_spatialSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, quiet));
+    rcpp_result_gen = Rcpp::wrap(rcpp_make_compact_graph(graph, is_spatial, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // rcpp_insert_vertices
-Rcpp::List rcpp_insert_vertices(Rcpp::DataFrame fullgraph, Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert);
-RcppExport SEXP _dodgr_rcpp_insert_vertices(SEXP fullgraphSEXP, SEXP compactgraphSEXP, SEXP pts_to_insertSEXP) {
+Rcpp::List rcpp_insert_vertices(Rcpp::DataFrame fullgraph, Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert, bool is_spatial);
+RcppExport SEXP _dodgr_rcpp_insert_vertices(SEXP fullgraphSEXP, SEXP compactgraphSEXP, SEXP pts_to_insertSEXP, SEXP is_spatialSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type fullgraph(fullgraphSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type compactgraph(compactgraphSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_insert(pts_to_insertSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, compactgraph, pts_to_insert));
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, compactgraph, pts_to_insert, is_spatial));
     return rcpp_result_gen;
 END_RCPP
 }

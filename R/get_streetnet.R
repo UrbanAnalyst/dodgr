@@ -61,6 +61,11 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 #' @export
 weight_streetnet <- function (graph, wt_profile = "bicycle")
 {
+    if (!is (graph, "sf"))
+        stop ('graph must be class "sf"')
+    if (!all (c ("geometry", "highway", "osm_id") %in% names (graph)))
+        stop ('graph must be class "sf" and have highway and geometry columns')
+
     prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                     "motorcycle", "motorcar", "goods", "hgv", "psv")
     wt_profile = match.arg (tolower (wt_profile), prf_names)

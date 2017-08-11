@@ -1,10 +1,11 @@
 #pragma once
 
 #include <Rcpp.h>
-#include <algorithm>
+#include <algorithm> // std::find
 #include <vector>
 #include <map>
 #include <limits>
+#include <random>
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 
@@ -112,3 +113,32 @@ struct osm_edge_t
 typedef std::unordered_map <osm_id_t, osm_vertex_t> vertex_map_t;
 typedef std::unordered_map <unsigned int, osm_edge_t> edge_map_t;
 typedef std::unordered_map <osm_id_t, std::set <unsigned int>> vert2edge_map_t;
+
+//----------------------------
+//----- functions in graph.cpp
+//----------------------------
+void add_to_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
+        unsigned int eid);
+
+void erase_from_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
+        unsigned int eid);
+
+void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
+        bool is_spatial);
+
+int get_largest_graph_component (vertex_map_t &v,
+        std::unordered_map <osm_id_t, int> &com);
+
+void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
+        vert2edge_map_t &vert2edge_map);
+
+Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
+        unsigned int nverts_to_sample, unsigned int e0, bool is_spatial);
+
+Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
+        bool is_spatial, bool quiet);
+
+Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
+        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert,
+        bool is_spatial);

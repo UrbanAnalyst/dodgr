@@ -151,3 +151,23 @@ dodgr_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
 
     rcpp_make_compact_graph (graph, quiet = quiet)
 }
+
+#' dodgr_sample_graph
+#'
+#' Sample a random but connected sub-component of a graph
+#'
+#' @param graph A flat table of graph edges. Must contain columns labelled
+#' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
+#' similarly labelled columns of spatial coordinates (for example
+#' \code{from_x}) or \code{stop_lon}).
+#' @param nv Number of vertices to sample
+#'
+#' @return A connected sub-component of \code{graph}
+#' @export
+dodgr_sample <- function (graph, nv = 1000)
+{
+    e0 <- sample (nrow (graph), 1)
+    indx <- rcpp_sample_graph (graph, nv, e0, is_spatial = TRUE)
+
+    graph [indx, ]
+}
