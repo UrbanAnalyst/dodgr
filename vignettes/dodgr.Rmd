@@ -359,11 +359,53 @@ edges <- as.vector (t (edges))
 igr <- igraph::make_directed_graph (edges)
 igraph::E (igr)$weight <- graph$d_weighted
 ```
-The `igraph::distances()` routine can then be compared with `dodgr_dists()`:
+Even then, trying to calculating routing distances with `igraph` is likely to
+fail
 ```{r, eval = FALSE}
-rbenchmark::benchmark (
-                       d1 <- dodgr_dists (graph, from = xy),
-                       d2 <- igraph::distances (igr, v = nodes, to = nodes,
-                                                mode = "out"),
-                       replications = 2)
+d <- igraph::distances (igr, v = nodes, to = nodes, mode = "out")
 ```
+```{r, echo = FALSE}
+message (paste0 ('Error in igraph::distances(igr, v = nodes, to = nodes, ',
+                 'mode = "out") :\n   At vector.pmt:442 : cannot reserve space ',
+                 'for vector, Out of memory'))
+```
+`dodgr` will perform this calculation, even though `igraph` will not. However,
+an even more useful `dodgr` function is the ability to directly compare the
+performance of different kinds of priority queue structures, and to compare
+these `dodgr` implementations directly with `igraph` performance. This is
+achieved with the `compare_heaps` function.
+
+The comparisons are actually made on a randomly selected sub-component of the
+graph containing a defined number of vertices.
+```{r, eval = FALSE}
+compare_heaps (graph)
+```
+```{r, echo = FALSE}
+test <- c ('d <- dodgr_dists(graph, heap = "BHeap")',
+           'd <- igraph::distances(igr, v = nodes, to = nodes, mode = "out")',
+           'd <- dodgr_dists(graph, heap = "FHeap")',
+           'd <- dodgr_dists(graph, heap = "TriHeap")',
+           'd <- dodgr_dists(graph, heap = "TriHeapExt")',
+           'd <- dodgr_dists(graph, heap = "Heap23")')
+replications <- rep (10, length (test))
+elapsed <- c (0.234, 0.261, 0.330, 0.360, 0.370, 0.417)
+relative <- c (1.000, 1.115, 1.410, 1.538, 1.581, 1.782)
+user.self <- c (0.236, 0.260, 0.328, 0.360, 0.368, 0.420)
+sys.self <- user.child <- sys.child <- rep (0, length (test))
+data.frame (test = test, replications = replications, elapsed = elapsed,
+            relative = relative, user.self = user.self, sys.self = sys.self)
+```
+The key column of that `data.frame` is `relative`, which quantifies the relative
+performance of each test in relation to the best which is given a score of 1.
+`dodgr` using the default `heap = "BHeap"`, which is a binary heap priority
+queue, performs faster than `igraph` for these graphs. Different kind of graphs
+will perform differently with different priority queue structures, and this
+function enables users to emprically discern the optimal heap for their kind of
+graph.
+
+Note, however, that this is not an entirely fair comparison, because `dodgr`
+calculates dual-weighted distances, whereas `igraph`---and indeed all other
+**R** packages---only directly calculate distances based on a single set of
+weights. Implementing dual-weighted routing in these cases requires explicitly
+re-tracing all paths and summing the second set of weights along each path. A
+time comparison in that case would be very strongly in favour of `dodgr`.

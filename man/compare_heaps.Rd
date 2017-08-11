@@ -4,10 +4,13 @@
 \alias{compare_heaps}
 \title{compare_heaps}
 \usage{
-compare_heaps(graph, replications = 10)
+compare_heaps(graph, nverts = 1000, replications = 10)
 }
 \arguments{
-\item{graph}{\code{data.frame} object representing the network graph}
+\item{graph}{\code{data.frame} object representing the network graph (or a
+sub-sample selected with code{dodgr_sample})}
+
+\item{nverts}{Number of vertices used to generate random sub-graph}
 
 \item{replications}{Number of replications to be used in comparison}
 }
@@ -17,5 +20,8 @@ Result of \code{rbenachmar::benchmark} comparison in
 }
 \description{
 Perform timing comparison between different kinds of heaps as well as with
-equivalent \code{igraph} routine \code{distances}.
+equivalent \code{igraph} routine \code{distances}. To do this, a random
+sub-graph containing a defined number of vertices is first selected.
+Alternatively, this random sub-graph can be pre-generated with the
+\code{dodgr_sample} function and passed directly.
 }

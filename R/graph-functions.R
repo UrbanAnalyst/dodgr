@@ -160,14 +160,19 @@ dodgr_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
 #' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
 #' similarly labelled columns of spatial coordinates (for example
 #' \code{from_x}) or \code{stop_lon}).
-#' @param nv Number of vertices to sample
+#' @param nverts Number of vertices to sample
 #'
 #' @return A connected sub-component of \code{graph}
 #' @export
-dodgr_sample <- function (graph, nv = 1000)
+dodgr_sample <- function (graph, nverts = 1000)
 {
-    e0 <- sample (nrow (graph), 1)
-    indx <- rcpp_sample_graph (graph, nv, e0, is_spatial = TRUE)
+    verts <- unique (c (graph$from_id, graph$to_id))
+    if (length (verts) > nverts)
+    {
+        e0 <- sample (nrow (graph), 1)
+        indx <- rcpp_sample_graph (graph, nverts, e0, is_spatial = TRUE)
+        graph <- graph [sort (indx), ]
+    }
 
-    graph [indx, ]
+    return (graph)
 }
