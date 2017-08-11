@@ -216,11 +216,11 @@ Rcpp::NumericVector rcpp_points_index (const Rcpp::DataFrame &xy,
 
     Rcpp::NumericVector index (pts.nrow ());
 
-    for (unsigned int i = 0; i < pts.nrow (); i++)
+    for (int i = 0; i < pts.nrow (); i++) // Rcpp::nrow is int!
     {
         float dmin = INFINITE_FLOAT;
         int jmin = INFINITE_INT;
-        for (unsigned int j = 0; j < xy.nrow (); j++)
+        for (int j = 0; j < xy.nrow (); j++)
         {
             float dij = (vtx [j] - ptx [i]) * (vtx [j] - ptx [i]) +
                 (vty [j] - pty [i]) * (vty [j] - pty [i]);
