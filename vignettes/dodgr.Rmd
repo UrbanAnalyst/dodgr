@@ -469,7 +469,7 @@ And reducing numbers of graph edges by only 40% enables pairwise routing between
 algorithms scale non-linearly with size, and relative improvements in efficiency
 will be even greater for larger graphs. Note that these graphs of just a couple
 of hundred thousand edges will generally not be able to be processed in
-`igraph`, yet are relatively small in `dodgr` times. Although maximal graph
+`igraph`, yet are relatively small in `dodgr` terms. Although maximal graph
 sizes capable of being processed in `dodgr` will of course be machine dependent,
-typical values will be at least a few million edges.
+typical values will be at least a few million edges, and possibly much larger.
 
