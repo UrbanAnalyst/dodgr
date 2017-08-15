@@ -23,14 +23,15 @@ devtools::load_all (".")
 
 # Background
 
-`dodgr` is an R package for calculating **D**istances **O**n **D**irected
-**G**raphs. Skip straight to the Intro if you know what those are (but maybe
-make a brief stop-in to Dual-weighted directed graphs below.) Directed graphs
-are ones in which the "distance" (or some equivalent measure) from A to B is not
-necessarily equal to that from B to A. In Fig. 1, for example, the weights
-between the graph vertices (A, B, C, and D) differ depending on the direction of
-travel, and it is only possible to traverse the entire graph in an
-anti-clockwise direction.
+`dodgr` is an **R** package for calculating **D**istances **O**n **D**irected
+**G**raphs. It does so very efficiently, and is able to process much larger
+graphs than most other comparable **R** packages. Skip straight to the Intro if
+you know what directed graphs are (but maybe make a brief stop-in to
+Dual-Weighted Directed Graphs below.) Directed graphs are ones in which the
+"distance" (or some equivalent measure) from A to B is not necessarily equal to
+that from B to A. In Fig. 1, for example, the weights between the graph vertices
+(A, B, C, and D) differ depending on the direction of travel, and it is only
+possible to traverse the entire graph in an anti-clockwise direction.
 
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
@@ -186,7 +187,8 @@ head (graph)
 ```{r, echo = FALSE}
 from_id <- c (13060397, 13060402, 13060402, 13060405, 13060405, 13060413)
 from_id <- as.character (from_id)
-from_lon <- c ( -1.001714, -1.001607, -1.001607, -1.001372, -1.001372, -1.001113)
+from_lon <- c ( -1.001714, -1.001607, -1.001607, -1.001372, -1.001372,
+               -1.001113)
 from_lat <- c ( 53.95737, 53.95746, 53.95746, 53.95763, 53.95763, 53.95776)
 to_id <- c (13060402, 13060397, 13060405, 13060402, 13060413, 13060405)
 to_id <- as.character (to_id)
@@ -366,8 +368,8 @@ d <- igraph::distances (igr, v = nodes, to = nodes, mode = "out")
 ```
 ```{r, echo = FALSE}
 message (paste0 ('Error in igraph::distances(igr, v = nodes, to = nodes, ',
-                 'mode = "out") :\n   At vector.pmt:442 : cannot reserve space ',
-                 'for vector, Out of memory'))
+                 'mode = "out") :\n   At vector.pmt:442 : cannot reserve ',
+                 'space for vector, Out of memory'))
 ```
 `dodgr` will perform this calculation, even though `igraph` will not. However,
 an even more useful `dodgr` function is the ability to directly compare the
@@ -413,13 +415,61 @@ time comparison in that case would be very strongly in favour of `dodgr`.
 # Graph Contraction
 
 A further unique feature of `dodgr` is the ability to remove redundant vertices
-from graphs, thereby speeding up routing calculations.
+from graphs, thereby speeding up routing calculations (see Fig. 3).
 
-```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: The vertex B is redundant for routing calculations from anywhere other than that point itself"}
+```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant."}
 ```
 
-In Fig. 3, the only way to get from vertex A to D or E is through C. The
+In Fig. 3(A), the only way to get from vertex 1 to 3, 4 or 5 is through C. The
 intermediate vertex B is redundant for routing purposes and may simply be
-removed, with directional edges inserted directly between A and C. Note that if
-one of the edges between, say, B and C were removed, vertex B would no longer be
-redundant.
+removed, with directional edges inserted directly between vertices 1 and 3. This
+yields the equivalent contracted graph of Fig. 3(B), in which, for example, the
+distance (or weight) between 1 and 3 is the sum of previous distances (or
+weights) between 1 $\to$ 2 and 2 $\to$ 3. Note that if one of the two edges
+between, say, 3 and 2 were removed, vertex 2 would no longer be redundant (Fig.
+3(C)).
+
+Different kinds of graphs have different degrees of redundancy, and even street
+networks differ, through for example dense inner-urban networks generally being
+less redundant than less dense extra-urban or rural networks. The contracted
+version of a graph can be obtained with the function `dodgr_compact_graph()`,
+illustrated here with the York example from above.
+```{r, eval = FALSE}
+graph_compact <- dodgr_compact_graph (graph)
+```
+The function `dodgr_compact_graph()` returns a list with both the original and
+compact graphs. Relative sizes are
+```{r, eval = FALSE}
+nrow (graph_compact$original); nrow (graph_compact$compact)
+```
+```{r, echo = FALSE}
+c (187274, 112190)
+```
+equivalent to the removal of just over 40% of all edges. The difference in
+routing efficiency can be seen with the following code
+```{r, eval = FALSE}
+rbenchmark::benchmark (
+                       d1 <- dodgr_dists (graph_compact$compact, from = xy),
+                       d2 <- dodgr_dists (graph, from = xy),
+                       replications = 2)
+```
+```{r, echo = FALSE}
+test <- c ('d1 <- dodgr_dists(graph_compact$compact, from = xy)',
+           'd2 <- dodgr_dists(graph, from = xy)')
+replications <- c (2, 2)
+elapsed <- c (3.574, 47.824)
+relative <- c (1.000, 13.381)
+user.self <- c (3.576, 47.769)
+sys.self <- user.child <- sys.child <- rep (0, length (test))
+data.frame (test = test, replications = replications, elapsed = elapsed,
+            relative = relative, user.self = user.self, sys.self = sys.self)
+```
+And reducing numbers of graph edges by only 40% enables pairwise routing between
+1,000 points through 1-200,000 vertices to be conducted 13 times faster. All routing
+algorithms scale non-linearly with size, and relative improvements in efficiency
+will be even greater for larger graphs. Note that these graphs of just a couple
+of hundred thousand edges will generally not be able to be processed in
+`igraph`, yet are relatively small in `dodgr` times. Although maximal graph
+sizes capable of being processed in `dodgr` will of course be machine dependent,
+typical values will be at least a few million edges.
+

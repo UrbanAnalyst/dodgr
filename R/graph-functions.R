@@ -149,7 +149,7 @@ dodgr_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
     if (is.null (verts))
         verts <- dodgr_vertices (graph)
 
-    rcpp_make_compact_graph (graph, quiet = quiet)
+    rcpp_make_compact_graph (graph, is_spatial = TRUE, quiet = quiet)
 }
 
 #' dodgr_sample_graph
