@@ -131,6 +131,8 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
 int get_largest_graph_component (vertex_map_t &v,
         std::unordered_map <osm_id_t, int> &com);
 
+Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph);
+
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
 

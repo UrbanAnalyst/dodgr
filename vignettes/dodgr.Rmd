@@ -94,13 +94,13 @@ both weighted and unweighted of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
 
 # Introduction to `dodgr` 
 
-Although the package was intentionally developed to be adaptable to any kinds of
-networks, the primary motivation was routing through street networks.
-Accordingly, most of the applications illustrated here concern street networks,
-and also illustrate several helper functions the package offers for working with
-street networks. The basic `graph` object of `dodgr` is nevertheless arbitrary,
-and need only minimally contain three or four columns as demonstrated in the
-simple examples at the outset.
+Although the package has been intentionally developed to be adaptable to any
+kinds of networks, one of the primary motivation is routing through street
+networks.  Accordingly, most of the applications illustrated here concern street
+networks, and also illustrate several helper functions the package offers for
+working with street networks. The basic `graph` object of `dodgr` is
+nevertheless arbitrary, and need only minimally contain three or four columns as
+demonstrated in the simple examples at the outset.
 
 The package may be used to calculate a matrix of distances between a given set
 of geographic coordinates. We can start by simply generating some random

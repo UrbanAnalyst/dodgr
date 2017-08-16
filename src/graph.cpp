@@ -147,6 +147,48 @@ int get_largest_graph_component (vertex_map_t &v,
 }
 
 
+//' rcpp_get_components
+//'
+//' Get component numbers for each edge of graph
+//'
+//' @param graph graph to be processed
+//' @param is_spatial Is the graph spatial or not?
+//'
+//' @return Vector of component numbers, one for each edge.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph)
+{
+    vertex_map_t vertices;
+    edge_map_t edge_map;
+    std::unordered_map <osm_id_t, int> components;
+    vert2edge_map_t vert2edge_map;
+
+    bool is_spatial = true;
+
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    int largest_component = get_largest_graph_component (vertices, components);
+
+    // Then map component numbers of vertices onto edges
+    Rcpp::NumericVector ret (edge_map.size (), -1);
+    for (auto v: vertices)
+    {
+        osm_id_t vi = v.first;
+        std::set <unsigned int> edges = vert2edge_map [vi];
+        for (unsigned int e: edges)
+        {
+            if (e >= edge_map.size ())
+                throw std::runtime_error ("edge number exceeds graph size");
+            else
+                ret (e) = components [vi] + 1; // 1-indexed!
+        }
+    }
+
+    return ret;
+}
+
+
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
@@ -381,48 +423,6 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         index (i++) = e;
 
     return index;
-}
-
-//' rcpp_get_components
-//'
-//' Get component numbers for each edge of graph
-//'
-//' @param graph graph to be processed
-//' @param is_spatial Is the graph spatial or not?
-//'
-//' @return Vector of component numbers, one for each edge.
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph)
-{
-    vertex_map_t vertices;
-    edge_map_t edge_map;
-    std::unordered_map <osm_id_t, int> components;
-    vert2edge_map_t vert2edge_map;
-
-    bool is_spatial = true;
-
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
-    int largest_component = get_largest_graph_component (vertices, components);
-
-    // Then map component numbers of vertices onto edges
-    Rcpp::NumericVector ret (edge_map.size (), -1);
-    for (auto v: vertices)
-    {
-        osm_id_t vi = v.first;
-        std::set <unsigned int> edges = vert2edge_map [vi];
-        for (unsigned int e: edges)
-        {
-            //if (e >= edge_map.size ())
-            //    throw std::runtime_error ("edge number exceeds graph size");
-            //else
-            if (e < edge_map.size ())
-                ret (e) = components [vi] + 1; // 1-indexed!
-        }
-    }
-
-    return ret;
 }
 
 //' rcpp_make_compact_graph
