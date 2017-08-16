@@ -4,10 +4,11 @@
 \alias{weight_streetnet}
 \title{weight_streetnet}
 \usage{
-weight_streetnet(graph, wt_profile = "bicycle")
+weight_streetnet(sf_lines, wt_profile = "bicycle")
 }
 \arguments{
-\item{graph}{Street network extracted with \code{get_stretnet}}
+\item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
+objects, typically extracted with \code{get_stretnet}}
 
 \item{wt_profile}{Name of weighting profile}
 }

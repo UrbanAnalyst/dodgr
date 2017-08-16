@@ -53,19 +53,21 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 #' a named routino profile, selected from (foot, horse, wheelchair, bicycle,
 #' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
-#' @param graph Street network extracted with \code{get_stretnet}
+#' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
+#' objects, typically extracted with \code{get_stretnet}
 #' @param wt_profile Name of weighting profile
 #'
 #' @return A \code{data.frame} of edges representing the street network, along
 #' with a column of graph component numbers.
 #'
 #' @export
-weight_streetnet <- function (graph, wt_profile = "bicycle")
+weight_streetnet <- function (sf_lines, wt_profile = "bicycle")
 {
-    if (!is (graph, "sf"))
-        stop ('graph must be class "sf"')
-    if (!all (c ("geometry", "highway", "osm_id") %in% names (graph)))
-        stop ('graph must be class "sf" and have highway and geometry columns')
+    if (!is (sf_lines, "sf"))
+        stop ('sf_lines must be class "sf"')
+    if (!all (c ("geometry", "highway", "osm_id") %in% names (sf_lines)))
+        stop (paste0 ('sf_lines must be class "sf" and ',
+                      'have highway and geometry columns'))
 
     prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                     "motorcycle", "motorcar", "goods", "hgv", "psv")
@@ -74,17 +76,24 @@ weight_streetnet <- function (graph, wt_profile = "bicycle")
     wt_profile <- profiles [profiles$name == wt_profile, ]
     wt_profile$value <- wt_profile$value / 100
 
-    dat <- rcpp_sf_as_network (graph, pr = wt_profile)
-    data.frame (edge_id = seq (nrow (dat [[1]])),
-                from_id = as.character (dat [[2]] [, 1]),
-                from_lon = dat [[1]] [, 1],
-                from_lat = dat [[1]] [, 2],
-                to_id = as.character (dat [[2]] [, 2]),
-                to_lon = dat [[1]] [, 3],
-                to_lat = dat [[1]] [, 4],
-                d = dat [[1]] [, 5],
-                d_weighted = dat [[1]] [, 6],
-                highway = as.character (dat [[2]] [, 3]),
-                stringsAsFactors = FALSE
-                )
+    dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
+    graph <- data.frame (edge_id = seq (nrow (dat [[1]])),
+                         from_id = as.character (dat [[2]] [, 1]),
+                         from_lon = dat [[1]] [, 1],
+                         from_lat = dat [[1]] [, 2],
+                         to_id = as.character (dat [[2]] [, 2]),
+                         to_lon = dat [[1]] [, 3],
+                         to_lat = dat [[1]] [, 4],
+                         d = dat [[1]] [, 5],
+                         d_weighted = dat [[1]] [, 6],
+                         highway = as.character (dat [[2]] [, 3]),
+                         stringsAsFactors = FALSE
+                         )
+    # Then get component numbers for each edge
+    cn <- rcpp_get_components (graph)
+    # Then re-number in order to decreasing component size:
+    cn <- match (cn, order (table (cn), decreasing = TRUE))
+    graph$component <- cn
+
+    return (graph)
 }

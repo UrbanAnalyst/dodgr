@@ -8,6 +8,7 @@
 #include <random>
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
+const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 typedef std::string osm_id_t;
 typedef int osm_edge_id_t;

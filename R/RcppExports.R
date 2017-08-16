@@ -19,6 +19,20 @@ rcpp_sample_graph <- function(graph, nverts_to_sample, e0, is_spatial) {
     .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample, e0, is_spatial)
 }
 
+#' rcpp_get_components
+#'
+#' Get component numbers for each edge of graph
+#'
+#' @param graph graph to be processed
+#' @param is_spatial Is the graph spatial or not?
+#'
+#' @return Vector of component numbers, one for each edge.
+#'
+#' @noRd
+rcpp_get_components <- function(graph) {
+    .Call(`_dodgr_rcpp_get_components`, graph)
+}
+
 #' rcpp_make_compact_graph
 #'
 #' Removes nodes and edges from a graph that are not needed for routing
