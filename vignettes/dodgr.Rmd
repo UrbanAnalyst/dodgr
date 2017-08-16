@@ -199,15 +199,32 @@ d <- c (0.006909587, 0.006909587, 0.013732955, 0.013732955, 0.013148026,
 d_weighted <- c (0.007677319, 0.007677319, 0.015258839, 0.015258839,
                  0.014608918, 0.014608918)
 highway <- rep ("unclassified", length (from_id))
+component <- rep (1, length (from_id))
 data.frame (from_id = as.character (from_id),
                      from_lon = from_lon, from_lat = from_lat,
                      to_id = as.character (to_id),
                      to_lon = to_lon, to_lat = to_lat,
                      d = d, d_weighted = d_weighted, highway = highway,
-                     stringsAsFactors = FALSE)
+                     component = component, stringsAsFactors = FALSE)
 ```
-And the actual graph contains around 10 times as many edges as there are
-streets. That indicates that each street contains on average around 11 vertices
+This `graph` object returned from `weight_streetnet()` also includes a
+`component` column enumerating all of the distinct inter-connected components of
+the graph.
+```{r, eval = FALSE}
+head (table (graph$component))
+```
+```{r, echo = FALSE}
+cn <- c (182420, 1484, 416, 306, 148, 132)
+names (cn) <- 1:6
+cn
+```
+Components are numbered in order of decreasing size, with the largest in this
+case containing 182,420 edges, representing 97.4% of the graph. These component
+numbers can also be used to ensure routing calculations consider only connected
+vertices, as described below (under Distance Matrices).
+
+Note also that the actual graph contains around 10 times as many edges as there are
+streets, indicating that each street contains on average around 11 vertices
 or nodes, between which there are 10 edges. These points or vertices can be
 extracted with,
 ```{r, eval = FALSE}
@@ -304,11 +321,6 @@ dim (d); range (d, na.rm = TRUE)
 c (1000, 1000)
 c (0.00000, 35.51991)
 ```
-Some of the resultant distances are `NA` because the points were sampled from
-the entire bounding box, and the street network near the boundaries may be cut
-off from the rest. Distances from or to points lying close to the boundaries may
-thus not be able to be calculated.
-
 If the `to` argument is also specified, the matrix returned will have rows
 matching `from` and columns matching `to`
 ```{r, eval = FALSE}
@@ -318,11 +330,28 @@ dim (d)
 ```{r, echo = FALSE}
 c (1000, 10)
 ```
-
-When `dodgr_dists()` is used to automatically extract a street network, by
-passing only `from` (and potentially `to`) arguments, an extra parameter
-`expand` can be used to expand the street network beyond the range of given
-routing points alone.
+Some of the resultant distances in the above cases are `NA` because the points
+were sampled from the entire bounding box, and the street network near the
+boundaries may be cut off from the rest. As demonstrated above, the
+`weight_streetnet()` function returns a `component` vector, and such
+disconnected edges will have `graph$component > 1`, because `graph$component ==
+1` always denotes the largest connected component.  This means that the graph
+can always be reduced to the single largest component with the following single
+line:
+```{r, eval = FALSE}
+graph_connected <- graph [graph$component == 1, ]
+```
+A distance matrix obtained from running `dodgr_dists` on `graph_connected` will
+then contain no NA values. Note, however, that spatial routing points (expressed
+as `from` and/or `to` arguments) will in this case be mapped to the nearest
+vertices of `graph_connected`, rather than the potentially closer nearest points
+of the full `graph`. This may make the spatial mapping of routing points less
+accurate that results obtained by repeating extraction of the street network
+using an expanded bounding box. For automatic extraction of street networks with
+`dodgr_dists()`, the extent by which the bounding box exceeds the range of
+routing points (`from` and `to` arguments) is determined by an extra parameter
+`expand`, quantifying the relative extent to which the bounding box should
+exceed the spatial range of the routing points.
 
 For non-spatial graphs, `from` and `to` must match precisely on to vertices
 named in the graph itself. In the graph considered above, these vertex names
