@@ -74,7 +74,7 @@ weight_streetnet <- function (graph, wt_profile = "bicycle")
     wt_profile <- profiles [profiles$name == wt_profile, ]
     wt_profile$value <- wt_profile$value / 100
 
-    dat <- rcpp_lines_as_network (graph, pr = wt_profile)
+    dat <- rcpp_sf_as_network (graph, pr = wt_profile)
     data.frame (edge_id = seq (nrow (dat [[1]])),
                 from_id = as.character (dat [[2]] [, 1]),
                 from_lon = dat [[1]] [, 1],
