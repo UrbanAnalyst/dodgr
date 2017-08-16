@@ -48,7 +48,7 @@ float haversine (float x1, float y1, float x2, float y2)
     return (d);
 }
 
-//' rcpp_lines_as_network
+//' rcpp_sf_as_network
 //'
 //' Return OSM data in Simple Features format
 //'
@@ -59,7 +59,7 @@ float haversine (float x1, float y1, float x2, float y2)
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_lines_as_network (const Rcpp::List &sf_lines,
+Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         Rcpp::DataFrame pr)
 {
     std::map <std::string, float> profile;

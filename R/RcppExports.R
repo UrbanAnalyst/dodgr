@@ -55,7 +55,14 @@ rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert, is_spat
     .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert, is_spatial)
 }
 
-#' rcpp_lines_as_network
+#' rcpp_get_sp
+#'
+#' @noRd
+rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp`, graph, vert_map_in, fromi, toi, heap_type)
+}
+
+#' rcpp_sf_as_network
 #'
 #' Return OSM data in Simple Features format
 #'
@@ -65,8 +72,8 @@ rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert, is_spat
 #' @return Rcpp::List objects of OSM data
 #'
 #' @noRd
-rcpp_lines_as_network <- function(sf_lines, pr) {
-    .Call(`_dodgr_rcpp_lines_as_network`, sf_lines, pr)
+rcpp_sf_as_network <- function(sf_lines, pr) {
+    .Call(`_dodgr_rcpp_sf_as_network`, sf_lines, pr)
 }
 
 #' rcpp_points_index
@@ -81,12 +88,5 @@ rcpp_lines_as_network <- function(sf_lines, pr) {
 #' @noRd
 rcpp_points_index <- function(xy, pts) {
     .Call(`_dodgr_rcpp_points_index`, xy, pts)
-}
-
-#' rcpp_get_sp
-#'
-#' @noRd
-rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp`, graph, vert_map_in, fromi, toi, heap_type)
 }
 

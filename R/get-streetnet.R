@@ -49,14 +49,15 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 
 #' weight_streetnet
 #'
-#' Weight (or re-weight) an OSM street network according to a named routino
-#' profile, selected from (foot, horse, wheelchair, bicycle, moped, motorcycle,
-#' motorcar, goods, hgv, psv).
+#' Weight (or re-weight) an \code{sf}-formatted OSM street network according to
+#' a named routino profile, selected from (foot, horse, wheelchair, bicycle,
+#' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
 #' @param graph Street network extracted with \code{get_stretnet}
 #' @param wt_profile Name of weighting profile
 #'
-#' @return A \code{data.frame} of edges representing the street network.
+#' @return A \code{data.frame} of edges representing the street network, along
+#' with a column of graph component numbers.
 #'
 #' @export
 weight_streetnet <- function (graph, wt_profile = "bicycle")
@@ -68,7 +69,7 @@ weight_streetnet <- function (graph, wt_profile = "bicycle")
 
     prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                     "motorcycle", "motorcar", "goods", "hgv", "psv")
-    wt_profile = match.arg (tolower (wt_profile), prf_names)
+    wt_profile <- match.arg (tolower (wt_profile), prf_names)
     profiles <- dodgr::weighting_profiles
     wt_profile <- profiles [profiles$name == wt_profile, ]
     wt_profile$value <- wt_profile$value / 100
