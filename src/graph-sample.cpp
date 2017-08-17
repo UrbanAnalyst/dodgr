@@ -6,7 +6,7 @@
 //' Sample one edge for graph that has no pre-calculated components. Only used
 //' in \code{sample_one_vertex}
 //'
-//' @param edge_map
+//' @param edge_map edge_map
 //' @return Random index to one edge that is part of the largest connected
 //' component.
 //' @noRd
@@ -45,7 +45,7 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 //' Sample one edge for graph that has pre-calculated components. Only used in
 //' \code{sample_one_vertex}
 //'
-//' @param edge_map
+//' @param edge_map edge_map
 //' @return Random index to one edge that is part of the largest connected
 //' component.
 //' @noRd

@@ -126,6 +126,25 @@ match_pts_to_graph <- function (verts, xy)
     rcpp_points_index (verts, xy)
 }
 
+#' dodgr_graph_components
+#'
+#' Identify connected components of graph and add corresponding \code{component}
+#' column to \code{data.frame}.
+#'
+#' @param graph A \code{data.frame} of edges
+#' @return Equivalent graph with additional \code{component} column,
+#' sequentially numbered from 1 = largest component.
+#' @export
+dodgr_graph_components <- function (graph)
+{
+    cn <- rcpp_get_component_vector (graph)
+    # Then re-number in order to decreasing component size:
+    cn <- match (cn, order (table (cn), decreasing = TRUE))
+    graph$component <- cn
+
+    return (graph)
+}
+
 #' dodgr_contract_graph
 #'
 #' Removes redundant (straight-line) vertices from graph, leaving only junction
