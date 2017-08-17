@@ -95,7 +95,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
     }
 }
 
-int get_largest_graph_component (vertex_map_t &v,
+int identify_graph_components (vertex_map_t &v,
         std::unordered_map <osm_id_t, int> &com)
 {
     int largest_id = -1;
@@ -147,7 +147,7 @@ int get_largest_graph_component (vertex_map_t &v,
 }
 
 
-//' rcpp_get_components
+//' rcpp_get_component_vector
 //'
 //' Get component numbers for each edge of graph
 //'
@@ -158,7 +158,7 @@ int get_largest_graph_component (vertex_map_t &v,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph)
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -168,7 +168,7 @@ Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph)
     bool is_spatial = true;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
-    int largest_component = get_largest_graph_component (vertices, components);
+    int largest_component = identify_graph_components (vertices, components);
 
     // Then map component numbers of vertices onto edges
     Rcpp::NumericVector ret (edge_map.size (), -1);
@@ -186,6 +186,21 @@ Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph)
     }
 
     return ret;
+}
+
+//' add_components_to_graph
+//'
+//' Components are initially returned to R with `rcpp_get_component_vector`.
+//' This function avoids re-tracting components by mapping the component vector
+//' of the resultant graph onto each vertex and edge.
+//'
+//' @param components Vector enumerating component numbers for each edge as
+//' extracted from the R data.frame.
+//'
+//' @noRd
+void add_components_to_graph (Rcpp::NumericVector &components, vertex_map_t &vm,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
+{
 }
 
 
@@ -359,7 +374,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
-    int largest_component = get_largest_graph_component (vertices, components);
+    int largest_component = identify_graph_components (vertices, components);
 
     if (edge_map.find (e0) == edge_map.end ())
         throw std::runtime_error ("edge number not in range of graph");
@@ -425,7 +440,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     return index;
 }
 
-//' rcpp_make_compact_graph
+//' rcpp_contract_graph
 //'
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
@@ -440,8 +455,8 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph, 
-        bool is_spatial, bool quiet)
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
+        bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -459,7 +474,7 @@ Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
         Rcpp::Rcout << std::endl << "Determining connected components ... ";
         Rcpp::Rcout.flush ();
     }
-    int largest_component = get_largest_graph_component (vertices, components);
+    int largest_component = identify_graph_components (vertices, components);
 
     if (!quiet)
     {

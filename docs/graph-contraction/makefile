@@ -20,5 +20,8 @@ dvi:
 	dvips -P pdf -q $(FILE).dvi
 	ps2pdf $(FILE).ps
 
+open:
+	xdg-open $(FILE).pdf &
+
 clean:
 	rm -f *.aux *.dvi *.log *.out *.ps

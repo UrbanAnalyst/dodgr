@@ -126,7 +126,7 @@ match_pts_to_graph <- function (verts, xy)
     rcpp_points_index (verts, xy)
 }
 
-#' dodgr_compact_graph
+#' dodgr_contract_graph
 #'
 #' Removes redundant (straight-line) vertices from graph, leaving only junction
 #' vertices.
@@ -144,12 +144,12 @@ match_pts_to_graph <- function (verts, xy)
 #' (\code{$original} and \code{$compact}, respectively), along with several
 #' indexes used to map vertices and edges between the two.
 #' @export
-dodgr_compact_graph <- function (graph, verts = NULL, quiet = TRUE)
+dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
     if (is.null (verts))
         verts <- dodgr_vertices (graph)
 
-    rcpp_make_compact_graph (graph, is_spatial = TRUE, quiet = quiet)
+    rcpp_contract_graph (graph, is_spatial = TRUE, quiet = quiet)
 }
 
 #' dodgr_sample_graph

@@ -90,7 +90,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle")
                          stringsAsFactors = FALSE
                          )
     # Then get component numbers for each edge
-    cn <- rcpp_get_components (graph)
+    cn <- rcpp_get_component_vector (graph)
     # Then re-number in order to decreasing component size:
     cn <- match (cn, order (table (cn), decreasing = TRUE))
     graph$component <- cn

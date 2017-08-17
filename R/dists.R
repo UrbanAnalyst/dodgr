@@ -77,7 +77,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
 
-    #graphc <- rcpp_make_compact_graph (graph, quiet = FALSE)
+    #graphc <- rcpp_contract_graph (graph, quiet = FALSE)
 
     if (missing (from))
         from <- -1

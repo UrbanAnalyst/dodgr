@@ -17,6 +17,7 @@ struct osm_vertex_t
 {
     private:
         std::unordered_set <osm_id_t> in, out;
+        unsigned int component;
         double lat, lon;
 
     public:
@@ -24,6 +25,8 @@ struct osm_vertex_t
         void add_neighbour_out (osm_id_t osm_id) { out.insert (osm_id); }
         int get_degree_in () { return in.size (); }
         int get_degree_out () { return out.size (); }
+
+        void set_component (unsigned int) { this -> component = component;  }
 
         void set_lat (double lat) { this -> lat = lat; }
         void set_lon (double lon) { this -> lon = lon; }
@@ -86,6 +89,7 @@ struct osm_edge_t
     public:
         float dist;
         float weight;
+        unsigned int component;
         bool replaced_by_compact = false;
         std::string highway;
 
@@ -128,10 +132,13 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
         bool is_spatial);
 
-int get_largest_graph_component (vertex_map_t &v,
+int identify_graph_components (vertex_map_t &v,
         std::unordered_map <osm_id_t, int> &com);
 
-Rcpp::NumericVector rcpp_get_components (Rcpp::DataFrame graph);
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
+
+void add_components_to_graph (Rcpp::NumericVector &components, vertex_map_t &vm,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
@@ -139,8 +146,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample, unsigned int e0, bool is_spatial);
 
-Rcpp::List rcpp_make_compact_graph (Rcpp::DataFrame graph,
-        bool is_spatial, bool quiet);
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
+        bool quiet);
 
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
         Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert,
