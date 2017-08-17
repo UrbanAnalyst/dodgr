@@ -137,11 +137,13 @@ int identify_graph_components (vertex_map_t &v,
 
 Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
 
-void add_components_to_graph (Rcpp::NumericVector &components, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
-
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
+
+std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
+        edge_map_t &edge_map);
+
+bool graph_has_components (Rcpp::DataFrame graph);
 
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample, bool is_spatial);

@@ -189,21 +189,6 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
     return ret;
 }
 
-//' add_components_to_graph
-//'
-//' Components are initially returned to R with `rcpp_get_component_vector`.
-//' This function avoids re-tracting components by mapping the component vector
-//' of the resultant graph onto each vertex and edge.
-//'
-//' @param components Vector enumerating component numbers for each edge as
-//' extracted from the R data.frame.
-//'
-//' @noRd
-void add_components_to_graph (Rcpp::NumericVector &components, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
-{
-}
-
 
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
@@ -347,6 +332,80 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     }
 }
 
+//' sample_one_edge_no_comps
+//'
+//' Sample one edge for graph that has no pre-calculated components
+//'
+//' @param edge_map
+//' @return Random index to one edge that is part of the largest connected
+//' component.
+//' @noRd
+std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
+        edge_map_t &edge_map)
+{
+    std::unordered_map <osm_id_t, int> components;
+    std::random_device rd;
+    std::mt19937 rng (rd()); // mersenne twister
+
+    int largest_component = identify_graph_components (vertices, components);
+
+    bool in_largest = false;
+    std::uniform_int_distribution <int> uni0 (0, edge_map.size () - 1);
+    unsigned int e0 = uni0 (rng);
+    while (!in_largest)
+    {
+        osm_edge_t this_edge = edge_map.find (e0++)->second;
+        osm_id_t this_vert = this_edge.get_from_vertex ();
+        if (components [this_vert] == largest_component)
+            in_largest = true;
+        if (e0 >= edge_map.size ())
+            e0 = 0;
+    }
+
+    std::vector <unsigned int> res;
+    res.reserve (2);
+    res [0] = largest_component;
+    res [1] = e0;
+
+    return res;
+}
+
+//' sample_one_edge_with_comps
+//'
+//' Sample one edge for graph that has pre-calculated components
+//'
+//' @param edge_map
+//' @return Random index to one edge that is part of the largest connected
+//' component.
+//' @noRd
+unsigned int sample_one_edge_with_comps (Rcpp::DataFrame graph)
+{
+    std::random_device rd;
+    std::mt19937 rng (rd()); // mersenne twister
+
+    Rcpp::NumericVector component = graph ["component"];
+    std::uniform_int_distribution <int> uni (0, graph.nrow () - 1);
+    unsigned int e0 = uni (rng);
+    while (component (e0) > 1)
+        e0 = uni (rng);
+
+    return e0;
+}
+
+//' graph_has_components
+//'
+//' Does a graph have a vector of connected component IDs?
+//' @noRd
+bool graph_has_components (Rcpp::DataFrame graph)
+{
+    Rcpp::CharacterVector graph_names = graph.attr ("names");
+    bool has_comps = false;
+    for (auto n: graph_names)
+        if (n == "component")
+            has_comps = true;
+
+    return has_comps;
+}
 
 //' rcpp_sample_graph
 //'
@@ -373,26 +432,22 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
-    // graph does not necessarily have component numbers here, so they need to
-    // be explicity (re-)calculated:
-    int largest_component = identify_graph_components (vertices, components);
 
     Rcpp::NumericVector index;
     if (vertices.size () <= nverts_to_sample)
         return index;
 
     osm_id_t this_vert;
-    bool in_largest = false;
-    std::uniform_int_distribution <int> uni0 (0, edge_map.size () - 1);
-    unsigned int e0 = uni0 (rng);
-    while (!in_largest)
+    if (graph_has_components (graph))
     {
-        osm_edge_t this_edge = edge_map.find (e0++)->second;
+        unsigned int e0 = sample_one_edge_with_comps (graph);
+        osm_edge_t this_edge = edge_map.find (e0)->second;
         this_vert = this_edge.get_from_vertex ();
-        if (components [this_vert] == largest_component)
-            in_largest = true;
-        if (e0 >= edge_map.size ())
-            e0 = 0;
+    } else
+    {
+        std::vector <unsigned int> es = sample_one_edge_no_comps (vertices, edge_map);
+        osm_edge_t this_edge = edge_map.find (es [1])->second; // random edge
+        this_vert = this_edge.get_from_vertex ();
     }
 
     // Samples are built by randomly tranwing a vertex list, and inspecting
