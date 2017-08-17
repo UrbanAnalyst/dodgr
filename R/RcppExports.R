@@ -3,7 +3,8 @@
 
 #' sample_one_edge_no_comps
 #'
-#' Sample one edge for graph that has no pre-calculated components
+#' Sample one edge for graph that has no pre-calculated components. Only used
+#' in \code{sample_one_vertex}
 #'
 #' @param edge_map
 #' @return Random index to one edge that is part of the largest connected
@@ -13,7 +14,8 @@ NULL
 
 #' sample_one_edge_with_comps
 #'
-#' Sample one edge for graph that has pre-calculated components
+#' Sample one edge for graph that has pre-calculated components. Only used in
+#' \code{sample_one_vertex}
 #'
 #' @param edge_map
 #' @return Random index to one edge that is part of the largest connected
@@ -23,7 +25,14 @@ NULL
 
 #' graph_has_components
 #'
-#' Does a graph have a vector of connected component IDs?
+#' Does a graph have a vector of connected component IDs? Only used in
+#' \code{sample_one_vertex}
+#' @noRd
+NULL
+
+#' sample_one_vertex
+#' 
+#' Get a random vertex in graph that is part of the largest connected component
 #' @noRd
 NULL
 

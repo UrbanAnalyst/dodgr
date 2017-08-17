@@ -1,7 +1,7 @@
 #include "graph.h"
 
 
-void add_to_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
+void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         unsigned int eid)
 {
     std::set <unsigned int> edge_ids;
@@ -17,7 +17,7 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
     }
 }
 
-void erase_from_edge_map (vert2edge_map_t &vert2edge_map, osm_id_t vid,
+void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         unsigned int eid)
 {
     std::set <unsigned int> edge_ids = vert2edge_map [vid];
@@ -55,12 +55,12 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
     {
         edge_id (i) -= 1; // now 0-indexed!
 
-        osm_id_t from_id = std::string (from [i]);
-        osm_id_t to_id = std::string (to [i]);
+        vertex_id_t from_id = std::string (from [i]);
+        vertex_id_t to_id = std::string (to [i]);
 
         if (vm.find (from_id) == vm.end ())
         {
-            osm_vertex_t fromV = osm_vertex_t ();
+            vertex_t fromV = vertex_t ();
             if (is_spatial)
             {
                 fromV.set_lat (from_lat [i]);
@@ -68,13 +68,13 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
             }
             vm.emplace (from_id, fromV);
         }
-        osm_vertex_t from_vtx = vm.at (from_id);
+        vertex_t from_vtx = vm.at (from_id);
         from_vtx.add_neighbour_out (to_id);
         vm [from_id] = from_vtx;
 
         if (vm.find (to_id) == vm.end ())
         {
-            osm_vertex_t toV = osm_vertex_t ();
+            vertex_t toV = vertex_t ();
             if (is_spatial)
             {
                 toV.set_lat (to_lat [i]);
@@ -82,12 +82,12 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
             }
             vm.emplace (to_id, toV);
         }
-        osm_vertex_t to_vtx = vm.at (to_id);
+        vertex_t to_vtx = vm.at (to_id);
         to_vtx.add_neighbour_in (from_id);
         vm [to_id] = to_vtx;
 
         std::set <unsigned int> replacement_edges;
-        osm_edge_t edge = osm_edge_t (from_id, to_id, dist [i], weight [i],
+        edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
                 std::string (hw [i]), edge_id [i], replacement_edges);
         edge_map.emplace (edge_id [i], edge);
         add_to_edge_map (vert2edge_map, from_id, edge_id [i]);
@@ -96,7 +96,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
 }
 
 int identify_graph_components (vertex_map_t &v,
-        std::unordered_map <osm_id_t, int> &com)
+        std::unordered_map <vertex_id_t, int> &com)
 {
     int largest_id = -1;
 
@@ -104,10 +104,10 @@ int identify_graph_components (vertex_map_t &v,
     for (auto it = v.begin (); it != v.end (); ++ it)
         com.insert (std::make_pair (it -> first, -1));
 
-    std::unordered_set <osm_id_t> all_verts, component, nbs_todo, nbs_done;
+    std::unordered_set <vertex_id_t> all_verts, component, nbs_todo, nbs_done;
     for (auto it = v.begin (); it != v.end (); ++ it)
         all_verts.insert (it -> first);
-    osm_id_t vt = (*all_verts.begin ());
+    vertex_id_t vt = (*all_verts.begin ());
     nbs_todo.insert (vt);
     int compnum = 0;
     while (all_verts.size () > 0)
@@ -117,8 +117,8 @@ int identify_graph_components (vertex_map_t &v,
         com.at (vt) = compnum;
         all_verts.erase (vt);
 
-        osm_vertex_t vtx = v.find (vt)->second;
-        std::unordered_set <osm_id_t> nbs = vtx.get_all_neighbours ();
+        vertex_t vtx = v.find (vt)->second;
+        std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
         for (auto n: nbs)
         {
             component.insert (n);
@@ -162,7 +162,7 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <osm_id_t, int> components;
+    std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     bool is_spatial = true;
@@ -175,7 +175,7 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
     Rcpp::NumericVector ret (edge_map.size (), -1);
     for (auto v: vertices)
     {
-        osm_id_t vi = v.first;
+        vertex_id_t vi = v.first;
         std::set <unsigned int> edges = vert2edge_map [vi];
         for (unsigned int e: edges)
         {
@@ -195,7 +195,7 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map)
 {
-    std::unordered_set <osm_id_t> verts;
+    std::unordered_set <vertex_id_t> verts;
     for (auto v: vertex_map)
         verts.insert (v.first);
 
@@ -209,9 +209,9 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 
     while (verts.size () > 0)
     {
-        std::unordered_set <osm_id_t>::iterator vid = verts.begin ();
-        osm_id_t vtx_id = vertex_map.find (*vid)->first;
-        osm_vertex_t vtx = vertex_map.find (*vid)->second;
+        std::unordered_set <vertex_id_t>::iterator vid = verts.begin ();
+        vertex_id_t vtx_id = vertex_map.find (*vid)->first;
+        vertex_t vtx = vertex_map.find (*vid)->second;
         std::set <unsigned int> edges = vert2edge_map [vtx_id];
         std::map <unsigned int, bool> edges_done;
         for (auto e: edges)
@@ -227,13 +227,13 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 newe.push_back (max_edge_id++);
 
             // remove intervening vertex:
-            auto nbs = vtx.get_all_neighbours (); // unordered_set <osm_id_t>
-            std::vector <osm_id_t> two_nbs;
-            for (osm_id_t nb: nbs)
+            auto nbs = vtx.get_all_neighbours (); // unordered_set <vertex_id_t>
+            std::vector <vertex_id_t> two_nbs;
+            for (vertex_id_t nb: nbs)
                 two_nbs.push_back (nb); // size is always 2
 
-            osm_vertex_t vt0 = vertex_map [two_nbs [0]];
-            osm_vertex_t vt1 = vertex_map [two_nbs [1]];
+            vertex_t vt0 = vertex_map [two_nbs [0]];
+            vertex_t vt1 = vertex_map [two_nbs [1]];
             // Note that replace neighbour includes bi-directional replacement,
             // so this works for intermediate_double() too
             vt0.replace_neighbour (vtx_id, two_nbs [1]);
@@ -247,7 +247,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 float d = 0.0, w = 0.0;
                 // NOTE: There is no check that types of highways are consistent!
                 std::string hw;
-                osm_id_t vt_from, vt_to;
+                vertex_id_t vt_from, vt_to;
 
                 // insert "in" edge first
                 std::set <unsigned int> old_edges;
@@ -256,7 +256,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 {
                     if (!edges_done [e])
                     {
-                        osm_edge_t ei = edge_map.find (e)->second;
+                        edge_t ei = edge_map.find (e)->second;
                         vt_from = ei.get_from_vertex ();
                         if (vt_from == two_nbs [0] || vt_from == two_nbs [1])
                         {
@@ -273,7 +273,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                             erase_from_edge_map (vert2edge_map, vt_from, e);
                             add_to_edge_map (vert2edge_map, vt_from, ne);
 
-                            osm_vertex_t vt = vertex_map [vt_from];
+                            vertex_t vt = vertex_map [vt_from];
                             vt.replace_neighbour (vtx_id, vt_to);
                             vertex_map [vt_from] = vt;
 
@@ -288,7 +288,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 {
                     if (!edges_done [e])
                     {
-                        osm_edge_t ei = edge_map.find (e)->second;
+                        edge_t ei = edge_map.find (e)->second;
                         vt_to = ei.get_to_vertex ();
                         if (vt_to == two_nbs [0] || vt_to == two_nbs [1])
                         {
@@ -308,7 +308,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                             erase_from_edge_map (vert2edge_map, vt_to, e);
                             add_to_edge_map (vert2edge_map, vt_to, ne);
 
-                            osm_vertex_t vt = vertex_map [vt_to];
+                            vertex_t vt = vertex_map [vt_to];
                             vt.replace_neighbour (vtx_id, vt_from);
                             vertex_map [vt_to] = vt;
 
@@ -318,7 +318,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                     }
                 }
                 vert2edge_map[vtx_id].insert(ne);
-                osm_edge_t new_edge = osm_edge_t (vt_from, vt_to,
+                edge_t new_edge = edge_t (vt_from, vt_to,
                         d, w, hw, ne, old_edges);
                 edge_map.emplace (ne, new_edge);
             }
@@ -334,7 +334,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 
 //' sample_one_edge_no_comps
 //'
-//' Sample one edge for graph that has no pre-calculated components
+//' Sample one edge for graph that has no pre-calculated components. Only used
+//' in \code{sample_one_vertex}
 //'
 //' @param edge_map
 //' @return Random index to one edge that is part of the largest connected
@@ -343,7 +344,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
-    std::unordered_map <osm_id_t, int> components;
+    std::unordered_map <vertex_id_t, int> components;
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
@@ -354,8 +355,8 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
     unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
-        osm_edge_t this_edge = edge_map.find (e0++)->second;
-        osm_id_t this_vert = this_edge.get_from_vertex ();
+        edge_t this_edge = edge_map.find (e0++)->second;
+        vertex_id_t this_vert = this_edge.get_from_vertex ();
         if (components [this_vert] == largest_component)
             in_largest = true;
         if (e0 >= edge_map.size ())
@@ -372,7 +373,8 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 
 //' sample_one_edge_with_comps
 //'
-//' Sample one edge for graph that has pre-calculated components
+//' Sample one edge for graph that has pre-calculated components. Only used in
+//' \code{sample_one_vertex}
 //'
 //' @param edge_map
 //' @return Random index to one edge that is part of the largest connected
@@ -394,7 +396,8 @@ unsigned int sample_one_edge_with_comps (Rcpp::DataFrame graph)
 
 //' graph_has_components
 //'
-//' Does a graph have a vector of connected component IDs?
+//' Does a graph have a vector of connected component IDs? Only used in
+//' \code{sample_one_vertex}
 //' @noRd
 bool graph_has_components (Rcpp::DataFrame graph)
 {
@@ -405,6 +408,31 @@ bool graph_has_components (Rcpp::DataFrame graph)
             has_comps = true;
 
     return has_comps;
+}
+
+//' sample_one_vertex
+//' 
+//' Get a random vertex in graph that is part of the largest connected component
+//' @noRd
+vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
+        edge_map_t &edge_map)
+{
+    vertex_id_t this_vert;
+
+    if (graph_has_components (graph))
+    {
+        unsigned int e0 = sample_one_edge_with_comps (graph);
+        edge_t this_edge = edge_map.find (e0)->second;
+        this_vert = this_edge.get_from_vertex ();
+    } else
+    {
+        std::vector <unsigned int> es;
+        es = sample_one_edge_no_comps (vertices, edge_map);
+        edge_t this_edge = edge_map.find (es [1])->second; // random edge
+        this_vert = this_edge.get_from_vertex ();
+    }
+
+    return this_vert;
 }
 
 //' rcpp_sample_graph
@@ -428,7 +456,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
 
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <osm_id_t, int> components;
+    std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
@@ -437,16 +465,16 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     if (vertices.size () <= nverts_to_sample)
         return index;
 
-    osm_id_t this_vert;
+    vertex_id_t this_vert;
     if (graph_has_components (graph))
     {
         unsigned int e0 = sample_one_edge_with_comps (graph);
-        osm_edge_t this_edge = edge_map.find (e0)->second;
+        edge_t this_edge = edge_map.find (e0)->second;
         this_vert = this_edge.get_from_vertex ();
     } else
     {
         std::vector <unsigned int> es = sample_one_edge_no_comps (vertices, edge_map);
-        osm_edge_t this_edge = edge_map.find (es [1])->second; // random edge
+        edge_t this_edge = edge_map.find (es [1])->second; // random edge
         this_vert = this_edge.get_from_vertex ();
     }
 
@@ -456,7 +484,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     // std::find each time prior to insertion. It's also useful to know the
     // size, so this vector is **NOT** reserved, even though it easily could be.
     // Maybe not the best solution?
-    std::vector <osm_id_t> vertlist;
+    std::vector <vertex_id_t> vertlist;
     std::unordered_set <unsigned int> edgelist;
     vertlist.push_back (this_vert);
 
@@ -472,8 +500,8 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         for (auto e: edges)
         {
             edgelist.insert (e);
-            osm_edge_t this_edge = edge_map.find (e)->second;
-            osm_id_t vt = this_edge.get_from_vertex ();
+            edge_t this_edge = edge_map.find (e)->second;
+            vertex_id_t vt = this_edge.get_from_vertex ();
             if (std::find (vertlist.begin(), vertlist.end(), vt) ==
                     vertlist.end())
                 vertlist.push_back (vt);
@@ -515,7 +543,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <osm_id_t, int> components;
+    std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     if (!quiet)
@@ -560,10 +588,10 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
     int edge_count = 0;
     for (auto e = edge_map2.begin (); e != edge_map2.end (); ++e)
     {
-        osm_id_t from = e->second.get_from_vertex ();
-        osm_id_t to = e->second.get_to_vertex ();
-        osm_vertex_t from_vtx = vertices2.at (from);
-        osm_vertex_t to_vtx = vertices2.at (to);
+        vertex_id_t from = e->second.get_from_vertex ();
+        vertex_id_t to = e->second.get_to_vertex ();
+        vertex_t from_vtx = vertices2.at (from);
+        vertex_t to_vtx = vertices2.at (to);
 
         from_vec (edge_count) = from;
         to_vec (edge_count) = to;
@@ -641,7 +669,7 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <osm_id_t, int> components;
+    std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (fullgraph, vertices, edge_map, vert2edge_map, is_spatial);
