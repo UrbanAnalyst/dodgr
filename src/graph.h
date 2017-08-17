@@ -144,7 +144,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
 
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        unsigned int nverts_to_sample, unsigned int e0, bool is_spatial);
+        unsigned int nverts_to_sample, bool is_spatial);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
         bool quiet);

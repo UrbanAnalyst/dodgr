@@ -169,6 +169,7 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
     int largest_component = identify_graph_components (vertices, components);
+    largest_component++; // suppress unused variable warning
 
     // Then map component numbers of vertices onto edges
     Rcpp::NumericVector ret (edge_map.size (), -1);
@@ -353,8 +354,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @param graph graph to be processed
 //' @param nverts_to_sample Number of vertices to sample
-//' @param e0 Random edge of graph from which to get first vertex to include in
-//' sample
 //' @param is_spatial Is the graph spatial or not?
 //' @param quiet If TRUE, display progress
 //'
@@ -363,7 +362,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        unsigned int nverts_to_sample, unsigned int e0, bool is_spatial)
+        unsigned int nverts_to_sample, bool is_spatial)
 {
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
@@ -374,10 +373,9 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    // graph does not necessarily have component numbers here, so they need to
+    // be explicity (re-)calculated:
     int largest_component = identify_graph_components (vertices, components);
-
-    if (edge_map.find (e0) == edge_map.end ())
-        throw std::runtime_error ("edge number not in range of graph");
 
     Rcpp::NumericVector index;
     if (vertices.size () <= nverts_to_sample)
@@ -385,6 +383,8 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
 
     osm_id_t this_vert;
     bool in_largest = false;
+    std::uniform_int_distribution <int> uni0 (0, edge_map.size () - 1);
+    unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
         osm_edge_t this_edge = edge_map.find (e0++)->second;
@@ -475,6 +475,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
         Rcpp::Rcout.flush ();
     }
     int largest_component = identify_graph_components (vertices, components);
+    largest_component++; // suppress unused variable warning
 
     if (!quiet)
     {
@@ -586,7 +587,6 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <osm_id_t, int> components;
-    int largest_component;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (fullgraph, vertices, edge_map, vert2edge_map, is_spatial);

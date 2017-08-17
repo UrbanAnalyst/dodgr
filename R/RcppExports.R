@@ -33,16 +33,14 @@ rcpp_get_component_vector <- function(graph) {
 #'
 #' @param graph graph to be processed
 #' @param nverts_to_sample Number of vertices to sample
-#' @param e0 Random edge of graph from which to get first vertex to include in
-#' sample
 #' @param is_spatial Is the graph spatial or not?
 #' @param quiet If TRUE, display progress
 #'
 #' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
-rcpp_sample_graph <- function(graph, nverts_to_sample, e0, is_spatial) {
-    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample, e0, is_spatial)
+rcpp_sample_graph <- function(graph, nverts_to_sample, is_spatial) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample, is_spatial)
 }
 
 #' rcpp_contract_graph

@@ -169,8 +169,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     verts <- unique (c (graph$from_id, graph$to_id))
     if (length (verts) > nverts)
     {
-        e0 <- sample (nrow (graph), 1)
-        indx <- rcpp_sample_graph (graph, nverts, e0, is_spatial = TRUE)
+        indx <- rcpp_sample_graph (graph, nverts, is_spatial = TRUE)
         graph <- graph [sort (indx), ]
     }
 
