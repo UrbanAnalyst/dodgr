@@ -5,30 +5,6 @@
 
 using namespace Rcpp;
 
-// rcpp_get_component_vector
-Rcpp::NumericVector rcpp_get_component_vector(Rcpp::DataFrame graph);
-RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpp_sample_graph
-Rcpp::NumericVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample, bool is_spatial);
-RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP, SEXP is_spatialSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nverts_to_sample(nverts_to_sampleSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, nverts_to_sample, is_spatial));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_contract_graph
 Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, bool is_spatial, bool quiet);
 RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP is_spatialSEXP, SEXP quietSEXP) {
@@ -53,6 +29,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_insert(pts_to_insertSEXP);
     Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, compactgraph, pts_to_insert, is_spatial));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_get_component_vector
+Rcpp::NumericVector rcpp_get_component_vector(Rcpp::DataFrame graph);
+RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_sample_graph
+Rcpp::NumericVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample, bool is_spatial);
+RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP, SEXP is_spatialSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type nverts_to_sample(nverts_to_sampleSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, nverts_to_sample, is_spatial));
     return rcpp_result_gen;
 END_RCPP
 }

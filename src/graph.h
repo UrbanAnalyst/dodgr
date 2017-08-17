@@ -137,9 +137,9 @@ int identify_graph_components (vertex_map_t &v,
 
 Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
 
-void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map);
-
+//----------------------------
+//----- functions in graph-sample.cpp
+//----------------------------
 std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map);
 
@@ -152,6 +152,12 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
 
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample, bool is_spatial);
+
+//----------------------------
+//----- functions in graph-contract.cpp
+//----------------------------
+void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
+        vert2edge_map_t &vert2edge_map);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
         bool quiet);
