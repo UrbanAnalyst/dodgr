@@ -293,7 +293,7 @@ dodgr_components <- function (graph)
         graphc <- convert_graph (graph)$graph
         if (!(any (grepl ("wt", names (graph))) |
               any (grepl ("weight", names (graph)))))
-        cn <- rcpp_get_component_vector (graphc, is_graph_spatial (graphc))
+        cn <- rcpp_get_component_vector (graphc)
         # Then re-number in order to decreasing component size:
         cn <- match (cn, order (table (cn), decreasing = TRUE))
         graph$component <- cn
@@ -325,7 +325,7 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
     if (is.null (verts))
         verts <- dodgr_vertices (graph)
 
-    rcpp_contract_graph (graph, is_spatial = TRUE, quiet = quiet)
+    rcpp_contract_graph (graph, quiet = quiet)
 }
 
 #' dodgr_sample_graph
@@ -345,7 +345,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     verts <- unique (c (graph$from_id, graph$to_id))
     if (length (verts) > nverts)
     {
-        indx <- rcpp_sample_graph (graph, nverts, is_spatial = TRUE)
+        indx <- rcpp_sample_graph (convert_graph (graph)$graph, nverts)
         graph <- graph [sort (indx), ]
     }
 

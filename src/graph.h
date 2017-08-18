@@ -116,14 +116,12 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         unsigned int eid);
 
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
-        bool is_spatial);
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
 int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, int> &com);
 
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph,
-        bool is_spatial);
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
 
 //----------------------------
 //----- functions in graph-sample.cpp
@@ -139,7 +137,7 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
         edge_map_t &edge_map);
 
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        unsigned int nverts_to_sample, bool is_spatial);
+        unsigned int nverts_to_sample);
 
 //----------------------------
 //----- functions in graph-contract.cpp
@@ -147,9 +145,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
 
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
-        bool quiet);
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet);
 
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert,
-        bool is_spatial);
+        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert);

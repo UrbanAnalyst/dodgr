@@ -6,7 +6,6 @@
 #' Removes nodes and edges from a graph that are not needed for routing
 #'
 #' @param graph graph to be processed
-#' @param is_spatial Is the graph spatial or not?
 #' @param quiet If TRUE, display progress
 #'
 #' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
@@ -15,8 +14,8 @@
 #' original and compact graph.
 #'
 #' @noRd
-rcpp_contract_graph <- function(graph, is_spatial, quiet) {
-    .Call(`_dodgr_rcpp_contract_graph`, graph, is_spatial, quiet)
+rcpp_contract_graph <- function(graph, quiet) {
+    .Call(`_dodgr_rcpp_contract_graph`, graph, quiet)
 }
 
 #' rcpp_insert_vertices
@@ -33,8 +32,8 @@ rcpp_contract_graph <- function(graph, is_spatial, quiet) {
 #' original and compact graph.
 #'
 #' @noRd
-rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert, is_spatial) {
-    .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert, is_spatial)
+rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert) {
+    .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert)
 }
 
 #' graph_from_df
@@ -50,13 +49,12 @@ NULL
 #' Get component numbers for each edge of graph
 #'
 #' @param graph graph to be processed
-#' @param is_spatial Is the graph spatial or not?
 #'
 #' @return Vector of component numbers, one for each edge.
 #'
 #' @noRd
-rcpp_get_component_vector <- function(graph, is_spatial) {
-    .Call(`_dodgr_rcpp_get_component_vector`, graph, is_spatial)
+rcpp_get_component_vector <- function(graph) {
+    .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
 #' sample_one_edge_no_comps
@@ -100,14 +98,13 @@ NULL
 #'
 #' @param graph graph to be processed
 #' @param nverts_to_sample Number of vertices to sample
-#' @param is_spatial Is the graph spatial or not?
 #' @param quiet If TRUE, display progress
 #'
 #' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
-rcpp_sample_graph <- function(graph, nverts_to_sample, is_spatial) {
-    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample, is_spatial)
+rcpp_sample_graph <- function(graph, nverts_to_sample) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
 #' rcpp_get_sp

@@ -318,6 +318,26 @@ names (tb) <- c ("bridleway", "construction", "cycleway", "footway",
 tb
 ```
 
+## Random Sub-Graphs
+
+The `dodgr` packages includes a function to select a random connected portion of
+graph including a specified number of vertices. This function is used in the
+`compare_heaps()` function described below, but is also useful for general
+statistical analyses of large graphs which may otherwise take too long to
+compute.
+```{r, eval = FALSE}
+graph_sub <- dodgr_sample (graph, nverts = 1000)
+nrow (graph_sub)
+```
+```{r, echo = FALSE}
+2071
+```
+The random sample has around twice as many edges as vertices, in accordance with
+the statistics calculated above.
+```{r, eval = FALSE}
+nrow (dodgr_vertices (graph_sub))
+```
+
 # Distance Matrices: `dodgr_dists()`
 
 As demonstrated at the outset, an entire network can simply be submitted to

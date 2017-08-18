@@ -110,7 +110,6 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
 //'
 //' @param graph graph to be processed
 //' @param nverts_to_sample Number of vertices to sample
-//' @param is_spatial Is the graph spatial or not?
 //' @param quiet If TRUE, display progress
 //'
 //' @return Smaller sub-set of \code{graph}
@@ -118,7 +117,7 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        unsigned int nverts_to_sample, bool is_spatial)
+        unsigned int nverts_to_sample)
 {
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
@@ -128,7 +127,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     Rcpp::NumericVector index;
     if (vertices.size () <= nverts_to_sample)

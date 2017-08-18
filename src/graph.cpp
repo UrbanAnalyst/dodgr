@@ -34,10 +34,9 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 //' only the four columns [from, to, d, w]
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
-        bool is_spatial)
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
-    if (!gr.ncol () == 5)
+    if (gr.ncol () != 5)
         throw std::runtime_error ("graph must have 5 columns: run convert_graph() first");
 
     Rcpp::NumericVector edge_id = gr ["edge_id"];
@@ -137,21 +136,19 @@ int identify_graph_components (vertex_map_t &v,
 //' Get component numbers for each edge of graph
 //'
 //' @param graph graph to be processed
-//' @param is_spatial Is the graph spatial or not?
 //'
 //' @return Vector of component numbers, one for each edge.
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph,
-        bool is_spatial)
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
     int largest_component = identify_graph_components (vertices, components);
     largest_component++; // suppress unused variable warning
 

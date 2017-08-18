@@ -143,7 +143,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
 //' @param graph graph to be processed
-//' @param is_spatial Is the graph spatial or not?
 //' @param quiet If TRUE, display progress
 //'
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
@@ -153,8 +152,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
-        bool quiet)
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -166,7 +164,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
         Rcpp::Rcout << "Constructing graph ... ";
         Rcpp::Rcout.flush ();
     }
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
     if (!quiet)
     {
         Rcpp::Rcout << std::endl << "Determining connected components ... ";
@@ -268,15 +266,14 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert,
-        bool is_spatial)
+        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map, is_spatial);
+    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
 
     return Rcpp::List::create ();
 }
