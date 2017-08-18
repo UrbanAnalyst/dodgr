@@ -173,10 +173,13 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
             if (std::find (vertlist.begin(), vertlist.end(), vt) ==
                     vertlist.end())
                 vertlist.push_back (vt);
-            vt = this_edge.get_to_vertex ();
-            if (std::find (vertlist.begin(), vertlist.end(), vt) ==
-                    vertlist.end())
-                vertlist.push_back (vt);
+            if (vertlist.size () < nverts_to_sample)
+            {
+                vt = this_edge.get_to_vertex ();
+                if (std::find (vertlist.begin(), vertlist.end(), vt) ==
+                        vertlist.end())
+                    vertlist.push_back (vt);
+            }
         }
     }
 
