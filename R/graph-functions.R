@@ -1,3 +1,155 @@
+#' is_graph_spatial
+#'
+#' Is the graph spatial or not?
+#' @param graph A \code{data.frame} of edges
+#' @return \code{TRUE} is \code{graph} is spatial, otherwise \code{FALSE}
+#' @noRd
+is_graph_spatial <- function (graph)
+{
+    ncol (graph) > 4 &
+        (any (grepl ("x", names (graph), ignore.case = TRUE)) |
+         any (grepl ("y", names (graph), ignore.case = TRUE)) |
+         any (grepl ("lon", names (graph), ignore.case = TRUE)) |
+         any (grepl ("lat", names (graph), ignore.case = TRUE)))
+}
+
+
+#' convert_graph
+#'
+#' Convert graph to standard 4-column format for submission to C++ routines
+#' @noRd
+convert_graph <- function (graph)
+{
+    if (any (grepl ("edge", names (graph))))
+        edge_id <- graph [, which (grepl ("edge", names (graph)))]
+    else
+        edge_id <- seq (nrow (graph))
+
+    graph$edge_id <- seq (nrow (graph))
+
+    d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
+                    tolower (substring (names (graph), 2, 2)) != "w" &
+                    tolower (substring (names (graph), 2, 2)) != "_")
+    w_col <- which (tolower (substring (names (graph), 1, 1)) == "w" |
+                    tolower (substring (names (graph), 1, 2)) == "dw" |
+                    tolower (substring (names (graph), 1, 3)) == "d_w")
+    if (length (d_col) > 1 | length (w_col) > 1)
+        stop ("Unable to determine distance and/or weight columns in graph")
+    else if (length (d_col) != 1)
+        stop ("Unable to determine distance column in graph")
+
+    if (length (w_col) == 0)
+        w_col <- d_col
+
+    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE))
+    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE))
+
+    xy <- NULL
+    if (ncol (graph) > 4)
+    {
+        if (is_graph_spatial (graph))
+        {
+            if (length (fr_col) != length (to_col))
+                stop (paste0 ("from and to columns in graph appear ",
+                              "to have different strutures"))
+            else if (length (fr_col) >= 2 & length (to_col) >= 2)
+            {
+                if (length (fr_col) == 3)
+                {
+                    frx_col <- find_xy_col (graph, fr_col, x = TRUE)
+                    fry_col <- find_xy_col (graph, fr_col, x = FALSE)
+                    frid_col <- fr_col [which (!fr_col %in%
+                                               c (frx_col, fry_col))]
+                    fr_col <- c (frx_col, fry_col)
+                    xy_fr_id <- graph [, frid_col]
+                    if (!is.character (xy_fr_id))
+                        xy_fr_id <- paste0 (xy_fr_id)
+
+                    tox_col <- find_xy_col (graph, to_col, x = TRUE)
+                    toy_col <- find_xy_col (graph, to_col, x = FALSE)
+                    toid_col <- to_col [which (!to_col %in%
+                                               c (tox_col, toy_col))]
+                    to_col <- c (tox_col, toy_col)
+                    xy_to_id <- graph [, toid_col]
+                    if (!is.character (xy_to_id))
+                        xy_to_id <- paste0 (xy_to_id)
+                } else # len == 2, so must be only x-y
+                {
+                    xy_fr_id <- paste0 (graph [, fr_col [1]],
+                                        graph [, fr_col [2]])
+                    xy_to_id <- paste0 (graph [, to_col [1]],
+                                        graph [, to_col [2]])
+                }
+
+                xy_fr <- graph [, fr_col]
+                xy_to <- graph [, to_col]
+                if (!(all (apply (xy_fr, 2, is.numeric)) |
+                      all (apply (xy_to, 2, is.numeric))))
+                    stop (paste0 ("graph appears to have non-numeric ",
+                                  "longitudes and latitudes"))
+
+                # This same indx is created in vert_map to ensure it follows
+                # same order as xy
+                indx <- which (!duplicated (c (xy_fr_id, xy_to_id)))
+                xy <- data.frame ("x" = c (graph [, fr_col [1]],
+                                           graph [, to_col [1]]),
+                                  "y" = c (graph [, fr_col [2]],
+                                           graph [, to_col [2]])) [indx, ]
+
+                # then replace 4 xy from/to cols with 2 from/to cols
+                graph <- data.frame ("edge_id" = edge_id,
+                                     "from" = xy_fr_id,
+                                     "to" = xy_to_id,
+                                     "d" = graph [, d_col],
+                                     "w" = graph [, w_col],
+                                     stringsAsFactors = FALSE)
+            }
+        } else
+        {
+            if (length (fr_col) != 1 & length (to_col) != 1)
+                stop ("Unable to determine from and to columns in graph")
+
+            graph <- data.frame ("edge_id" = edge_id,
+                                 "from" = graph [, fr_col],
+                                 "to" = graph [, to_col],
+                                 "d" = graph [, d_col],
+                                 "w" = graph [, w_col],
+                                 stringsAsFactors = FALSE)
+        }
+    } else if (ncol (graph == 4))
+    {
+        graph <- data.frame ("edge_id" = edge_id,
+                             "from" = graph [, fr_col],
+                             "to" = graph [, to_col],
+                             "d" = graph [, d_col],
+                             "w" = graph [, w_col],
+                             stringsAsFactors = FALSE)
+
+    }
+
+    if (!is.character (graph$from))
+        graph$from <- paste0 (graph$from)
+    if (!is.character (graph$to))
+        graph$to <- paste0 (graph$to)
+
+    return (list (graph = graph, xy = xy))
+}
+
+#' find_xy_col
+#' @noRd
+find_xy_col <- function (graph, indx, x = TRUE)
+{
+    if (x)
+        coli <- which (grepl ("x", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lon", names (graph) [indx], ignore.case = TRUE))
+    else
+        coli <- which (grepl ("y", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lat", names (graph) [indx], ignore.case = TRUE))
+
+    indx [coli]
+}
+
+
 #' dodgr_vertices
 #'
 #' Extract vertices of graph, including spatial coordinates if included
@@ -18,11 +170,7 @@ dodgr_vertices <- function (graph)
     to_col <- which (grepl ("to", names (graph), ignore.case = TRUE) |
                      grepl ("sto", names (graph), ignore.case = TRUE))
 
-    if (ncol (graph) > 4 &
-        (any (grepl ("x", names (graph), ignore.case = TRUE)) |
-         any (grepl ("y", names (graph), ignore.case = TRUE)) |
-         any (grepl ("lon", names (graph), ignore.case = TRUE)) |
-         any (grepl ("lat", names (graph), ignore.case = TRUE))))
+    if (is_graph_spatial (graph))
     {
         # graph is spatial
         if (length (fr_col) != length (to_col))
@@ -126,7 +274,8 @@ match_pts_to_graph <- function (verts, xy)
     rcpp_points_index (verts, xy)
 }
 
-#' dodgr_graph_components
+
+#' dodgr_components
 #'
 #' Identify connected components of graph and add corresponding \code{component}
 #' column to \code{data.frame}.
@@ -135,12 +284,20 @@ match_pts_to_graph <- function (verts, xy)
 #' @return Equivalent graph with additional \code{component} column,
 #' sequentially numbered from 1 = largest component.
 #' @export
-dodgr_graph_components <- function (graph)
+dodgr_components <- function (graph)
 {
-    cn <- rcpp_get_component_vector (graph)
-    # Then re-number in order to decreasing component size:
-    cn <- match (cn, order (table (cn), decreasing = TRUE))
-    graph$component <- cn
+    if ("component" %in% names (graph))
+        message ("graph already has a component column")
+    else
+    {
+        graphc <- convert_graph (graph)$graph
+        if (!(any (grepl ("wt", names (graph))) |
+              any (grepl ("weight", names (graph)))))
+        cn <- rcpp_get_component_vector (graphc, is_graph_spatial (graphc))
+        # Then re-number in order to decreasing component size:
+        cn <- match (cn, order (table (cn), decreasing = TRUE))
+        graph$component <- cn
+    }
 
     return (graph)
 }

@@ -56,8 +56,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             for (unsigned int ne: newe)
             {
                 float d = 0.0, w = 0.0;
-                // NOTE: There is no check that types of highways are consistent!
-                std::string hw;
                 vertex_id_t vt_from, vt_to;
 
                 // insert "in" edge first
@@ -73,7 +71,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         {
                             d += ei.dist;
                             w += ei.weight;
-                            hw = ei.highway;
                             if (ei.get_old_edges().size() > 0)
                                 old_edges = ei.get_old_edges();
                             else
@@ -105,7 +102,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                         {
                             d += ei.dist;
                             w += ei.weight;
-                            hw = ei.highway;
                             if (ei.get_old_edges().size() > 0)
                             {
                                 std::set <unsigned int> tempe = ei.get_old_edges();
@@ -129,8 +125,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                     }
                 }
                 vert2edge_map[vtx_id].insert(ne);
-                edge_t new_edge = edge_t (vt_from, vt_to,
-                        d, w, hw, ne, old_edges);
+                edge_t new_edge = edge_t (vt_from, vt_to, d, w, ne, old_edges);
                 edge_map.emplace (ne, new_edge);
             }
             for (unsigned int e: edges)
@@ -200,9 +195,8 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
     // These vectors are all for the contracted graph:
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
         highway_vec (nedges);
-    Rcpp::NumericVector from_lat_vec (nedges), from_lon_vec (nedges),
-        to_lat_vec (nedges), to_lon_vec (nedges), dist_vec (nedges),
-        weight_vec (nedges), edgeid_vec (nedges);
+    Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges),
+        edgeid_vec (nedges);
 
     int map_size = 0; // size of edge map contracted -> original
     int edge_count = 0;
@@ -215,13 +209,8 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
 
         from_vec (edge_count) = from;
         to_vec (edge_count) = to;
-        highway_vec (edge_count) = e->second.highway;
         dist_vec (edge_count) = e->second.dist;
         weight_vec (edge_count) = e->second.weight;
-        from_lat_vec (edge_count) = from_vtx.getLat ();
-        from_lon_vec (edge_count) = from_vtx.getLon ();
-        to_lat_vec (edge_count) = to_vtx.getLat ();
-        to_lon_vec (edge_count) = to_vtx.getLon ();
         edgeid_vec (edge_count) = e->second.getID ();
 
         edge_count++;
@@ -247,12 +236,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool is_spatial,
             Rcpp::Named ("to_id") = to_vec,
             Rcpp::Named ("edge_id") = edgeid_vec,
             Rcpp::Named ("d") = dist_vec,
-            Rcpp::Named ("d_weighted") = weight_vec,
-            Rcpp::Named ("from_lat") = from_lat_vec,
-            Rcpp::Named ("from_lon") = from_lon_vec,
-            Rcpp::Named ("to_lat") = to_lat_vec,
-            Rcpp::Named ("to_lon") = to_lon_vec,
-            Rcpp::Named ("highway") = highway_vec);
+            Rcpp::Named ("d_weighted") = weight_vec);
 
     Rcpp::DataFrame rel = Rcpp::DataFrame::create (
             Rcpp::Named ("id_compact") = edge_id_comp,

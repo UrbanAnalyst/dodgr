@@ -37,6 +37,14 @@ rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert, is_spat
     .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert, is_spatial)
 }
 
+#' graph_from_df
+#'
+#' Convert a standard graph data.frame into an object of class graph. Graphs
+#' are standardised with the function \code{convert_graph()$graph}, and contain
+#' only the four columns [from, to, d, w]
+#' @noRd
+NULL
+
 #' rcpp_get_component_vector
 #'
 #' Get component numbers for each edge of graph
@@ -47,8 +55,8 @@ rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert, is_spat
 #' @return Vector of component numbers, one for each edge.
 #'
 #' @noRd
-rcpp_get_component_vector <- function(graph) {
-    .Call(`_dodgr_rcpp_get_component_vector`, graph)
+rcpp_get_component_vector <- function(graph, is_spatial) {
+    .Call(`_dodgr_rcpp_get_component_vector`, graph, is_spatial)
 }
 
 #' sample_one_edge_no_comps

@@ -131,10 +131,7 @@ convert_graph <- function (graph)
     xy <- NULL
     if (ncol (graph) > 4)
     {
-        if (any (grepl ("x", names (graph), ignore.case = TRUE)) |
-            any (grepl ("y", names (graph), ignore.case = TRUE)) |
-            any (grepl ("lon", names (graph), ignore.case = TRUE)) |
-            any (grepl ("lat", names (graph), ignore.case = TRUE)))
+        if (is_graph_spatial (graph))
         {
             if (length (fr_col) != length (to_col))
                 stop (paste0 ("from and to columns in graph appear ",

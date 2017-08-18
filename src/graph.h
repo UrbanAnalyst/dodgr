@@ -17,21 +17,12 @@ struct vertex_t
 {
     private:
         std::unordered_set <vertex_id_t> in, out;
-        unsigned int component;
-        double lat, lon;
 
     public:
         void add_neighbour_in (vertex_id_t vert_id) { in.insert (vert_id); }
         void add_neighbour_out (vertex_id_t vert_id) { out.insert (vert_id); }
         int get_degree_in () { return in.size (); }
         int get_degree_out () { return out.size (); }
-
-        void set_component (unsigned int) { this -> component = component;  }
-
-        void set_lat (double lat) { this -> lat = lat; }
-        void set_lon (double lon) { this -> lon = lon; }
-        double getLat () { return lat; }
-        double getLon () { return lon; }
 
         std::unordered_set <vertex_id_t> get_all_neighbours ()
         {
@@ -89,9 +80,7 @@ struct edge_t
     public:
         float dist;
         float weight;
-        unsigned int component;
         bool replaced_by_compact = false;
-        std::string highway;
 
         vertex_id_t get_from_vertex () { return from; }
         vertex_id_t get_to_vertex () { return to; }
@@ -100,14 +89,12 @@ struct edge_t
         bool in_original () { return in_original_graph; }
 
         edge_t (vertex_id_t from_id, vertex_id_t to_id, float dist, float weight,
-                   std::string highway, unsigned int id,
-                   std::set <unsigned int> replacement_edges)
+                   unsigned int id, std::set <unsigned int> replacement_edges)
         {
             this -> to = to_id;
             this -> from = from_id;
             this -> dist = dist;
             this -> weight = weight;
-            this -> highway = highway;
             this -> id = id;
             this -> old_edges.insert (replacement_edges.begin (),
                     replacement_edges.end ());
@@ -135,7 +122,8 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
 int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, int> &com);
 
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph,
+        bool is_spatial);
 
 //----------------------------
 //----- functions in graph-sample.cpp

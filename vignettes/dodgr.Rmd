@@ -18,7 +18,7 @@ vignette: >
 ---
 
 ```{r, echo = FALSE, message = FALSE}
-devtools::load_all (".")
+devtools::load_all (".", export_all = FALSE)
 ```
 
 # Background
@@ -143,7 +143,7 @@ along routes weighted for optimal pedestrian travel. In this case, the single
 call to `dodgr_dists()` automatically downloaded the entire street network of York
 and calculated one million shortest-path distances, all in under 30 seconds.
 
-# Street Networks and Graphs
+# Graphs and Street Networks
 
 Although the above code is short and fast, most users will probably want more
 control over their graphs and routing possibilities. Each of the steps indicated
@@ -179,7 +179,7 @@ graph <- weight_streetnet (streetnet, wt_profile = "bicycle")
 dim (graph)
 ```
 ```{r, echo = FALSE}
-c (187300, 10)
+c (187300, 11)
 ```
 ```{r, eval = FALSE}
 head (graph)
@@ -207,23 +207,7 @@ data.frame (from_id = as.character (from_id),
                      d = d, d_weighted = d_weighted, highway = highway,
                      component = component, stringsAsFactors = FALSE)
 ```
-This `graph` object returned from `weight_streetnet()` also includes a
-`component` column enumerating all of the distinct inter-connected components of
-the graph.
-```{r, eval = FALSE}
-head (table (graph$component))
-```
-```{r, echo = FALSE}
-cn <- c (182420, 1484, 416, 306, 148, 132)
-names (cn) <- 1:6
-cn
-```
-Components are numbered in order of decreasing size, with the largest in this
-case containing 182,420 edges, representing 97.4% of the graph. These component
-numbers can also be used to ensure routing calculations consider only connected
-vertices, as described below (under Distance Matrices).
-
-Note also that the actual graph contains around 10 times as many edges as there are
+Note that the actual graph contains around 10 times as many edges as there are
 streets, indicating that each street contains on average around 11 vertices
 or nodes, between which there are 10 edges. These points or vertices can be
 extracted with,
@@ -265,10 +249,53 @@ The `data.frame` resulting from `weight_streetnet()` is what `dodgr` uses to
 calculate shortest path routes, as will be described below, following a brief
 description of weighting street networks.
 
+
+## Graph Components
+
+The foregoing `graph` object returned from `weight_streetnet()` also includes a
+`component` column enumerating all of the distinct inter-connected components of
+the graph.
+```{r, eval = FALSE}
+head (table (graph$component))
+```
+```{r, echo = FALSE}
+cn <- c (182420, 1484, 416, 306, 148, 132)
+names (cn) <- 1:6
+cn
+```
+Components are numbered in order of decreasing size, with the largest in this
+case containing 182,420 edges, representing 97.4% of the graph.
+
+Component numbers can be determined for any types of graph with the
+`dodgr_components()` function. For example, the previous graph can be reduced to
+a minmial (non-spatial) structure:
+```{r, eval = FALSE}
+cols <- c ("edge_id", "from_id", "to_id", "d")
+graph_min <- graph [, which (names (graph) %in% cols)]
+graph_min <- dodgr_components (graph_min)
+head (graph_min)
+```
+```{r, echo = FALSE}
+from_id <- c (13060397, 13060402, 13060402, 13060405, 13060405, 13060413)
+to_id <- c (13060402, 13060397, 13060405, 13060402, 13060413, 13060405)
+d <- c (0.006909587, 0.006909587, 0.013732955, 0.013732955, 0.013148026,
+        0.013148026)
+data.frame (edge_id = 1:6,
+            from_id = from_id,
+            to_id = to_id,
+            d = d,
+            component = rep (1, 6))
+```
+The `component` column column can be used to select any component from a graph.
+It is particularly useful to ensure routing calculations consider only connected
+vertices, as described below (under Distance Matrices).
+
 ## Weighting Profiles
 
-Each type of highway has its own weight defined by the named weighting profiles
-included with the `dodgr` package:
+The dual-weights for street networks are obtained by multiplying the distance of
+each segment by a weighting factor reflecting the type of highway.  Each type of
+highway has its own weight defined by the named weighting profiles included with
+the `dodgr` package:
 ```{r}
 names (weighting_profiles)
 class (weighting_profiles)

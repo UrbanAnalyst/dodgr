@@ -27,29 +27,24 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         vert2edge_map [vid] = edge_ids;
     }
 }
-
+//' graph_from_df
+//'
+//' Convert a standard graph data.frame into an object of class graph. Graphs
+//' are standardised with the function \code{convert_graph()$graph}, and contain
+//' only the four columns [from, to, d, w]
+//' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
         bool is_spatial)
 {
-    Rcpp::StringVector from = gr ["from_id"];
-    Rcpp::StringVector to = gr ["to_id"];
-    Rcpp::StringVector hw;
-    Rcpp::NumericVector from_lon, from_lat, to_lon, to_lat;
-    if (is_spatial)
-    {
-        from_lon = gr ["from_lon"];
-        from_lat = gr ["from_lat"];
-        to_lon = gr ["to_lon"];
-        to_lat = gr ["to_lat"];
-        hw = gr ["highway"];
-    } else
-    {
-        hw = Rcpp::StringVector (from.size (), "");
-    }
+    if (!gr.ncol () == 5)
+        throw std::runtime_error ("graph must have 5 columns: run convert_graph() first");
+
     Rcpp::NumericVector edge_id = gr ["edge_id"];
+    Rcpp::StringVector from = gr ["from"];
+    Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];
-    Rcpp::NumericVector weight = gr ["d_weighted"];
+    Rcpp::NumericVector weight = gr ["w"];
 
     for (int i = 0; i < to.length (); i ++)
     {
@@ -61,11 +56,6 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         if (vm.find (from_id) == vm.end ())
         {
             vertex_t fromV = vertex_t ();
-            if (is_spatial)
-            {
-                fromV.set_lat (from_lat [i]);
-                fromV.set_lon (from_lon [i]);
-            }
             vm.emplace (from_id, fromV);
         }
         vertex_t from_vtx = vm.at (from_id);
@@ -75,11 +65,6 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         if (vm.find (to_id) == vm.end ())
         {
             vertex_t toV = vertex_t ();
-            if (is_spatial)
-            {
-                toV.set_lat (to_lat [i]);
-                toV.set_lon (to_lon [i]);
-            }
             vm.emplace (to_id, toV);
         }
         vertex_t to_vtx = vm.at (to_id);
@@ -88,7 +73,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
 
         std::set <unsigned int> replacement_edges;
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                std::string (hw [i]), edge_id [i], replacement_edges);
+                edge_id [i], replacement_edges);
         edge_map.emplace (edge_id [i], edge);
         add_to_edge_map (vert2edge_map, from_id, edge_id [i]);
         add_to_edge_map (vert2edge_map, to_id, edge_id [i]);
@@ -158,14 +143,13 @@ int identify_graph_components (vertex_map_t &v,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
+Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph,
+        bool is_spatial)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
-
-    bool is_spatial = true;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map, is_spatial);
     int largest_component = identify_graph_components (vertices, components);

@@ -33,13 +33,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_component_vector
-Rcpp::NumericVector rcpp_get_component_vector(Rcpp::DataFrame graph);
-RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
+Rcpp::NumericVector rcpp_get_component_vector(Rcpp::DataFrame graph, bool is_spatial);
+RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP, SEXP is_spatialSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph, is_spatial));
     return rcpp_result_gen;
 END_RCPP
 }
