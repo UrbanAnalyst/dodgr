@@ -10,8 +10,7 @@
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
-typedef std::string vertex_id_t;
-typedef unsigned int edge_id_t;
+typedef std::string vertex_id_t, edge_id_t;
 
 struct vertex_t
 {
@@ -118,15 +117,15 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
-int identify_graph_components (vertex_map_t &v,
-        std::unordered_map <vertex_id_t, int> &com);
+unsigned int identify_graph_components (vertex_map_t &v,
+        std::unordered_map <vertex_id_t, unsigned int> &com);
 
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph);
+Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph);
 
 //----------------------------
 //----- functions in graph-sample.cpp
 //----------------------------
-std::vector <edge_id_t>  sample_one_edge_no_comps (vertex_map_t &vertices,
+std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map);
 
 edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph);
@@ -136,7 +135,7 @@ bool graph_has_components (Rcpp::DataFrame graph);
 vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
         edge_map_t &edge_map);
 
-Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
+Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample);
 
 //----------------------------

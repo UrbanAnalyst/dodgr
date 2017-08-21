@@ -11,9 +11,11 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         verts.insert (v.first);
 
     unsigned int max_edge_id = 0;
+    /* TODO: Fix this with edge_id_t
     for (auto e: edge_map)
         if (e.second.getID () > max_edge_id)
             max_edge_id = e.second.getID ();
+    */
     max_edge_id++;
 
     std::vector<edge_id_t> newe;
@@ -29,13 +31,16 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             edges_done.emplace (e, false);
 
         newe.clear ();
-        newe.push_back (max_edge_id++);
+        //newe.push_back (max_edge_id++);
+        // TODO: Following line does not yet work!
+        newe.push_back (std::to_string (max_edge_id++));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
                 (edges.size () == 2 || edges.size () == 4))
         {
             if (edges.size () == 4) // is_intermediate_double as well!
-                newe.push_back (max_edge_id++);
+                newe.push_back (std::to_string (max_edge_id++));
+            // TODO: previous line does not yet work!
 
             // remove intervening vertex:
             auto nbs = vtx.get_all_neighbours (); // unordered_set <vertex_id_t>
@@ -156,7 +161,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <vertex_id_t, int> components;
+    std::unordered_map <vertex_id_t, unsigned int> components;
     vert2edge_map_t vert2edge_map;
 
     if (!quiet)
@@ -192,9 +197,8 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 
     // These vectors are all for the contracted graph:
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
-        highway_vec (nedges);
-    Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges),
-        edgeid_vec (nedges);
+        edgeid_vec (nedges), highway_vec (nedges);
+    Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges);
 
     int map_size = 0; // size of edge map contracted -> original
     int edge_count = 0;
@@ -216,11 +220,11 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
         map_size += e->second.get_old_edges ().size ();
     }
 
-    Rcpp::NumericVector edge_id_orig (map_size), edge_id_comp (map_size);
+    Rcpp::StringVector edge_id_orig (map_size), edge_id_comp (map_size);
     int pos = 0;
     for (auto e = edge_map2.begin (); e != edge_map2.end (); ++e)
     {
-        int eid = e->second.getID ();
+        edge_id_t eid = e->second.getID ();
         std::set <edge_id_t> edges = e->second.get_old_edges ();
         for (auto ei: edges)
         {

@@ -14,18 +14,19 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
     // TDOD: FIX edge_id_t type defs here!
-    std::unordered_map <vertex_id_t, int> components;
+    std::unordered_map <vertex_id_t, unsigned int> components;
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
-    int largest_component = identify_graph_components (vertices, components);
+    unsigned int largest_component = identify_graph_components (vertices, components);
 
     bool in_largest = false;
     std::uniform_int_distribution <unsigned int> uni0 (0, edge_map.size () - 1);
     unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
-        edge_t this_edge = edge_map.find (e0++)->second;
+        // TODO: The following line does not yet work:
+        edge_t this_edge = edge_map.find (std::to_string (e0++))->second;
         vertex_id_t this_vert = this_edge.get_from_vertex ();
         if (components [this_vert] == largest_component)
             in_largest = true;
@@ -35,7 +36,7 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 
     std::vector <unsigned int> res;
     res.reserve (2);
-    res [0] = (unsigned int) largest_component;
+    res [0] = largest_component;
     res [1] = e0;
 
     return res;
@@ -52,6 +53,7 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 //' @noRd
 edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
 {
+    // TODO: This does not yet work with edge_id_t = std::string
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
@@ -61,7 +63,7 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
     while (component (e0) > 1)
         e0 = uni (rng);
 
-    return e0;
+    return std::to_string (e0);
 }
 
 //' graph_has_components
@@ -87,18 +89,19 @@ bool graph_has_components (Rcpp::DataFrame graph)
 vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
+    // TODO: This does not yet work with edge_id_t = std::string
     vertex_id_t this_vert;
 
     if (graph_has_components (graph))
     {
-        unsigned int e0 = sample_one_edge_with_comps (graph);
+        edge_id_t e0 = sample_one_edge_with_comps (graph);
         edge_t this_edge = edge_map.find (e0)->second;
         this_vert = this_edge.get_from_vertex ();
     } else
     {
         std::vector <unsigned int> es;
         es = sample_one_edge_no_comps (vertices, edge_map);
-        edge_t this_edge = edge_map.find (es [1])->second; // random edge
+        edge_t this_edge = edge_map.find (std::to_string (es [1]))->second; // random edge
         this_vert = this_edge.get_from_vertex ();
     }
 
@@ -117,7 +120,7 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
+Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample)
 {
     std::random_device rd;
@@ -130,20 +133,21 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
-    Rcpp::NumericVector index;
+    Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)
-        return index;
+        return edges_out;
 
     vertex_id_t this_vert;
     if (graph_has_components (graph))
     {
-        unsigned int e0 = sample_one_edge_with_comps (graph);
+        edge_id_t e0 = sample_one_edge_with_comps (graph);
         edge_t this_edge = edge_map.find (e0)->second;
         this_vert = this_edge.get_from_vertex ();
     } else
     {
         std::vector <unsigned int> es = sample_one_edge_no_comps (vertices, edge_map);
-        edge_t this_edge = edge_map.find (es [1])->second; // random edge
+        // TODO: Following line does not yet work:
+        edge_t this_edge = edge_map.find (std::to_string (es [1]))->second; // random edge
         this_vert = this_edge.get_from_vertex ();
     }
 
@@ -187,10 +191,10 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     unsigned int nedges = edgelist.size ();
 
     // edgelist is an unordered set, so has to be iteratively inserted
-    index = Rcpp::NumericVector (nedges);
+    edges_out = Rcpp::StringVector (nedges);
     unsigned int i = 0;
     for (auto e: edgelist)
-        index (i++) = e;
+        edges_out (i++) = e;
 
-    return index;
+    return edges_out;
 }

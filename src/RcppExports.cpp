@@ -31,7 +31,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_component_vector
-Rcpp::NumericVector rcpp_get_component_vector(Rcpp::DataFrame graph);
+Rcpp::List rcpp_get_component_vector(Rcpp::DataFrame graph);
 RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -42,7 +42,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_sample_graph
-Rcpp::NumericVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample);
+Rcpp::StringVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample);
 RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

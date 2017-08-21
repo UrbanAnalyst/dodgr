@@ -39,7 +39,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
     if (gr.ncol () != 5)
         throw std::runtime_error ("graph must have 5 columns: run convert_graph() first");
 
-    Rcpp::NumericVector edge_id = gr ["edge_id"];
+    Rcpp::StringVector edge_id = gr ["edge_id"];
     Rcpp::StringVector from = gr ["from"];
     Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];
@@ -47,8 +47,6 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
 
     for (int i = 0; i < to.length (); i ++)
     {
-        edge_id (i) -= 1; // now 0-indexed!
-
         vertex_id_t from_id = std::string (from [i]);
         vertex_id_t to_id = std::string (to [i]);
 
@@ -71,19 +69,18 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         vm [to_id] = to_vtx;
 
         std::set <edge_id_t> replacement_edges;
+        std::string edge_id_str = Rcpp::as <std::string> (edge_id [i]);
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                edge_id [i], replacement_edges);
-        edge_map.emplace (edge_id [i], edge);
-        add_to_edge_map (vert2edge_map, from_id, edge_id [i]);
-        add_to_edge_map (vert2edge_map, to_id, edge_id [i]);
+                edge_id_str, replacement_edges);
+        edge_map.emplace (edge_id_str, edge);
+        add_to_edge_map (vert2edge_map, from_id, edge_id_str);
+        add_to_edge_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 
-int identify_graph_components (vertex_map_t &v,
-        std::unordered_map <vertex_id_t, int> &com)
+unsigned int identify_graph_components (vertex_map_t &v,
+        std::unordered_map <vertex_id_t, unsigned int> &com)
 {
-    int largest_id = -1;
-
     // initialize components map
     for (auto it = v.begin (); it != v.end (); ++ it)
         com.insert (std::make_pair (it -> first, -1));
@@ -93,7 +90,7 @@ int identify_graph_components (vertex_map_t &v,
         all_verts.insert (it -> first);
     vertex_id_t vt = (*all_verts.begin ());
     nbs_todo.insert (vt);
-    int compnum = 0;
+    unsigned int compnum = 0;
     while (all_verts.size () > 0)
     {
         vt = (*nbs_todo.begin ());
@@ -125,7 +122,7 @@ int identify_graph_components (vertex_map_t &v,
         comp_sizes [c.second]++;
     auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
 
-    largest_id = std::distance (comp_sizes.begin (), maxi);
+    unsigned int largest_id = std::distance (comp_sizes.begin (), maxi);
 
     return largest_id;
 }
@@ -137,15 +134,15 @@ int identify_graph_components (vertex_map_t &v,
 //'
 //' @param graph graph to be processed
 //'
-//' @return Vector of component numbers, one for each edge.
-//'
+//' @return Two vectors: one of edge IDs and one of corresponding component
+//' numbers
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
+Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <vertex_id_t, int> components;
+    std::unordered_map <vertex_id_t, unsigned int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
@@ -153,19 +150,26 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
     largest_component++; // suppress unused variable warning
 
     // Then map component numbers of vertices onto edges
-    Rcpp::NumericVector ret (edge_map.size (), -1);
+    std::unordered_map <std::string, unsigned int> comp_nums;
     for (auto v: vertices)
     {
         vertex_id_t vi = v.first;
         std::set <edge_id_t> edges = vert2edge_map [vi];
         for (edge_id_t e: edges)
         {
-            if (e >= edge_map.size ())
-                throw std::runtime_error ("edge number exceeds graph size");
-            else
-                ret (e) = components [vi] + 1; // 1-indexed!
+            comp_nums.emplace (e, components [vi] + 1); // 1-indexed
         }
     }
 
-    return ret;
+    Rcpp::StringVector edge_id (comp_nums.size ());
+    Rcpp::NumericVector comp_num (comp_nums.size ());
+    unsigned int i = 0;
+    for (auto cn: comp_nums)
+    {
+        edge_id (i) = cn.first;
+        comp_num (i++) = cn.second;
+    }
+    return Rcpp::List::create (
+            Rcpp::Named ("edge_id") = edge_id,
+            Rcpp::Named ("edge_component") = comp_num);
 }

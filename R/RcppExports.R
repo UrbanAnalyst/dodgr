@@ -50,8 +50,8 @@ NULL
 #'
 #' @param graph graph to be processed
 #'
-#' @return Vector of component numbers, one for each edge.
-#'
+#' @return Two vectors: one of edge IDs and one of corresponding component
+#' numbers
 #' @noRd
 rcpp_get_component_vector <- function(graph) {
     .Call(`_dodgr_rcpp_get_component_vector`, graph)

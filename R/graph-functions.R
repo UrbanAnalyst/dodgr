@@ -131,6 +131,8 @@ convert_graph <- function (graph)
         graph$from <- paste0 (graph$from)
     if (!is.character (graph$to))
         graph$to <- paste0 (graph$to)
+    if (!is.character (graph$edge_it))
+        graph$edge_id <- paste0 (graph$edge_id)
 
     return (list (graph = graph, xy = xy))
 }
@@ -293,7 +295,9 @@ dodgr_components <- function (graph)
         graphc <- convert_graph (graph)$graph
         if (!(any (grepl ("wt", names (graph))) |
               any (grepl ("weight", names (graph)))))
-        cn <- rcpp_get_component_vector (graphc)
+        cns <- rcpp_get_component_vector (graphc)
+        # cns has [[1]] = edge_id; [[2]] = component number
+        cn <- cns [[2]] [match (cns [[1]], graphc$edge_id)]
         # Then re-number in order to decreasing component size:
         cn <- match (cn, order (table (cn), decreasing = TRUE))
         graph$component <- cn
