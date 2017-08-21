@@ -2,9 +2,9 @@
 
 
 void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        unsigned int eid)
+        edge_id_t eid)
 {
-    std::set <unsigned int> edge_ids;
+    std::set <edge_id_t> edge_ids;
     if (vert2edge_map.find (vid) == vert2edge_map.end ())
     {
         edge_ids.emplace (eid);
@@ -18,9 +18,9 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 }
 
 void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        unsigned int eid)
+        edge_id_t eid)
 {
-    std::set <unsigned int> edge_ids = vert2edge_map [vid];
+    std::set <edge_id_t> edge_ids = vert2edge_map [vid];
     if (edge_ids.find (eid) != edge_ids.end ())
     {
         edge_ids.erase (eid);
@@ -70,7 +70,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         to_vtx.add_neighbour_in (from_id);
         vm [to_id] = to_vtx;
 
-        std::set <unsigned int> replacement_edges;
+        std::set <edge_id_t> replacement_edges;
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
                 edge_id [i], replacement_edges);
         edge_map.emplace (edge_id [i], edge);
@@ -120,7 +120,7 @@ int identify_graph_components (vertex_map_t &v,
         }
     }
 
-    std::vector <int> comp_sizes (compnum, 0);
+    std::vector <unsigned int> comp_sizes (compnum, 0);
     for (auto c: com)
         comp_sizes [c.second]++;
     auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
@@ -157,8 +157,8 @@ Rcpp::NumericVector rcpp_get_component_vector (Rcpp::DataFrame graph)
     for (auto v: vertices)
     {
         vertex_id_t vi = v.first;
-        std::set <unsigned int> edges = vert2edge_map [vi];
-        for (unsigned int e: edges)
+        std::set <edge_id_t> edges = vert2edge_map [vi];
+        for (edge_id_t e: edges)
         {
             if (e >= edge_map.size ())
                 throw std::runtime_error ("edge number exceeds graph size");

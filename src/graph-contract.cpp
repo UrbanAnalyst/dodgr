@@ -10,21 +10,21 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto v: vertex_map)
         verts.insert (v.first);
 
-    int max_edge_id = 0;
+    unsigned int max_edge_id = 0;
     for (auto e: edge_map)
         if (e.second.getID () > max_edge_id)
             max_edge_id = e.second.getID ();
     max_edge_id++;
 
-    std::vector<unsigned int> newe;
+    std::vector<edge_id_t> newe;
 
     while (verts.size () > 0)
     {
         std::unordered_set <vertex_id_t>::iterator vid = verts.begin ();
         vertex_id_t vtx_id = vertex_map.find (*vid)->first;
         vertex_t vtx = vertex_map.find (*vid)->second;
-        std::set <unsigned int> edges = vert2edge_map [vtx_id];
-        std::map <unsigned int, bool> edges_done;
+        std::set <edge_id_t> edges = vert2edge_map [vtx_id];
+        std::map <edge_id_t, bool> edges_done;
         for (auto e: edges)
             edges_done.emplace (e, false);
 
@@ -53,15 +53,15 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map [two_nbs [1]] = vt1;
 
             // construct new edge and remove old ones
-            for (unsigned int ne: newe)
+            for (edge_id_t ne: newe)
             {
                 float d = 0.0, w = 0.0;
                 vertex_id_t vt_from, vt_to;
 
                 // insert "in" edge first
-                std::set <unsigned int> old_edges;
+                std::set <edge_id_t> old_edges;
 
-                for (unsigned int e: edges)
+                for (edge_id_t e: edges)
                 {
                     if (!edges_done [e])
                     {
@@ -92,7 +92,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 }
 
                 // then "out" edge
-                for (unsigned int e: edges)
+                for (edge_id_t e: edges)
                 {
                     if (!edges_done [e])
                     {
@@ -104,7 +104,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                             w += ei.weight;
                             if (ei.get_old_edges().size() > 0)
                             {
-                                std::set <unsigned int> tempe = ei.get_old_edges();
+                                std::set <edge_id_t> tempe = ei.get_old_edges();
                                 for (auto et: tempe)
                                     old_edges.insert (et);
                             } else
@@ -128,7 +128,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 edge_t new_edge = edge_t (vt_from, vt_to, d, w, ne, old_edges);
                 edge_map.emplace (ne, new_edge);
             }
-            for (unsigned int e: edges)
+            for (edge_id_t e: edges)
             {
                 if (edge_map.find (e) != edge_map.end ())
                     edge_map.erase (e);
@@ -221,7 +221,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
     for (auto e = edge_map2.begin (); e != edge_map2.end (); ++e)
     {
         int eid = e->second.getID ();
-        std::set <unsigned int> edges = e->second.get_old_edges ();
+        std::set <edge_id_t> edges = e->second.get_old_edges ();
         for (auto ei: edges)
         {
             edge_id_comp (pos) = eid;

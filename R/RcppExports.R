@@ -63,8 +63,8 @@ rcpp_get_component_vector <- function(graph) {
 #' in \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
-#' @return Random index to one edge that is part of the largest connected
-#' component.
+#' @return std::vector of 2 elements: [0] with value of largest connected 
+#' component; [1] with random index to one edge that is part of that component.
 #' @noRd
 NULL
 

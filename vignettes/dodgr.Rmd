@@ -63,9 +63,9 @@ illustrated in Fig. 2.
 
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
 ```
-These are common in many areas, with a foremost example arising in routing
-through street networks. The route one takes through a street network depends on
-the mode of transport: the route a pedestrian might taken will generally differ
+Dual-weighted directed graphs are common in many areas, a foremost example
+being routing through street networks. Routes through street networks depends on
+mode of transport: the route a pedestrian might take will generally differ
 markedly from the route the same person might take if behind the wheel of an
 automobile. Routing through street networks thus generally requires each edge to
 be specified with two weights or distances: one quantifying the physical
@@ -95,8 +95,7 @@ both weighted and unweighted of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
 # Introduction to `dodgr` 
 
 Although the package has been intentionally developed to be adaptable to any
-kinds of networks, one of the primary motivation is routing through street
-networks.  Accordingly, most of the applications illustrated here concern street
+kinds of networks, most of the applications illustrated here concern street
 networks, and also illustrate several helper functions the package offers for
 working with street networks. The basic `graph` object of `dodgr` is
 nevertheless arbitrary, and need only minimally contain three or four columns as
@@ -111,6 +110,15 @@ bb <- osmdata::getbb ("york uk")
 npts <- 1000
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
 bb; head (xy)
+```
+```{r, echo = FALSE}
+bb <- rbind (c (-1.241536, -0.9215361), c (53.799056, 54.1190555))
+rownames (bb) <- c ("x", "y")
+colnames (bb) <- c ("min", "max")
+bb
+x <- c (-1.1713502, -1.2216108, -1.0457199, -0.9384666, -0.9445541, -1.1207099)
+y <- c (53.89409, 54.01065, 53.83613, 53.93545, 53.89436, 54.01262)
+cbind (x, y)
 ```
 Those points can simply be passed to `dodgr_dists()`:
 ```{r dodgr-dists-in-york, eval = FALSE}
@@ -170,10 +178,8 @@ c (18284, 181)
 ```
 The `streetnet` is an [`sf`](https://cran.r-project.org/package=sf) (Simple
 Features) object containing 18,284 `LINESTRING` geometries. In other words, it's
-got an `sf` representation of 18,284 streets.
-
-That `sf` representation can then be converted into a flat `data.frame` object
-by
+got an `sf` representation of 18,284 street segments.  That `sf` representation
+can then be converted into a flat `data.frame` object by
 ```{r, eval = FALSE}
 graph <- weight_streetnet (streetnet, wt_profile = "bicycle")
 dim (graph)
@@ -243,17 +249,16 @@ A simple straight line has two edges between all intermediate nodes, and this
 thus indicates that the network in it's entirety is quite simple. Is is
 nevertheless also very large, as will be demonstrated below, extending for
 considerable distances beyond the relatively complex inner city, and so this low
-edge-to-vertex ratio is not surprising.
-
-The `data.frame` resulting from `weight_streetnet()` is what `dodgr` uses to
-calculate shortest path routes, as will be described below, following a brief
-description of weighting street networks.
+edge-to-vertex ratio is not surprising.  The `data.frame` resulting from
+`weight_streetnet()` is what `dodgr` uses to calculate shortest path routes, as
+will be described below, following a brief description of weighting street
+networks.
 
 
 ## Graph Components
 
 The foregoing `graph` object returned from `weight_streetnet()` also includes a
-`component` column enumerating all of the distinct inter-connected components of
+`$component` column enumerating all of the distinct inter-connected components of
 the graph.
 ```{r, eval = FALSE}
 head (table (graph$component))
@@ -263,12 +268,13 @@ cn <- c (182420, 1484, 416, 306, 148, 132)
 names (cn) <- 1:6
 cn
 ```
-Components are numbered in order of decreasing size, with the largest in this
-case containing 182,420 edges, representing 97.4% of the graph.
-
-Component numbers can be determined for any types of graph with the
-`dodgr_components()` function. For example, the previous graph can be reduced to
-a minmial (non-spatial) structure:
+Components are numbered in order of decreasing size, with `$component = 1`
+always denoting the largest component. In this case, that component contains
+182,420 edges, representing 97.4% of the graph, with the remainder divided
+between five additional components.  Component numbers can be determined for any
+types of graph with the `dodgr_components()` function. For example, the
+following lines reduce the previous graph to a minmial (non-spatial) structure
+of four columns, and then (re-)calculate a fifth column of `$component`s:
 ```{r, eval = FALSE}
 cols <- c ("edge_id", "from_id", "to_id", "d")
 graph_min <- graph [, which (names (graph) %in% cols)]
@@ -286,23 +292,31 @@ data.frame (edge_id = 1:6,
             d = d,
             component = rep (1, 6))
 ```
-The `component` column column can be used to select any component from a graph.
-It is particularly useful to ensure routing calculations consider only connected
-vertices, as described below (under Distance Matrices).
+The `component` column column can be used to select or filter any component in
+a graph.  It is particularly useful to ensure routing calculations consider only
+connected vertices through simply removing all minor components:
+```{r}
+graph_connected <- graph [graph$component == 1, ]
+```
+This is explored further below (under Distance Matrices).
 
 ## Weighting Profiles
 
-The dual-weights for street networks are obtained by multiplying the distance of
-each segment by a weighting factor reflecting the type of highway.  Each type of
-highway has its own weight defined by the named weighting profiles included with
-the `dodgr` package:
+Dual-weights for street networks are generally obtained by multiplying the
+distance of each segment by a weighting factor reflecting the type of highway.
+As demonstrated above, this can be done easily within `dodgr` with the
+`weight_streetnet()` function, which using the named weighting profiles included
+with the `dodgr` package. Each profile assigns weights to each distinct type of
+highway.
 ```{r}
 names (weighting_profiles)
 class (weighting_profiles)
+unique (weighting_profiles$name)
 weighting_profiles [weighting_profiles$name == "foot", ]
 ```
-The types of highways within the York graph obtained above can be tabulated
-with:
+Each profile is defined by a series of percentage weights quantifying
+highway-type preferences for a particular mode of travel.  The distinct types of
+highways within the York graph obtained above can be tabulated with:
 ```{r, eval = FALSE}
 table (graph$highway)
 ```

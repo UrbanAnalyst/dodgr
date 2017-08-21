@@ -7,12 +7,13 @@
 //' in \code{sample_one_vertex}
 //'
 //' @param edge_map edge_map
-//' @return Random index to one edge that is part of the largest connected
-//' component.
+//' @return std::vector of 2 elements: [0] with value of largest connected 
+//' component; [1] with random index to one edge that is part of that component.
 //' @noRd
 std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
+    // TDOD: FIX edge_id_t type defs here!
     std::unordered_map <vertex_id_t, int> components;
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
@@ -20,7 +21,7 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
     int largest_component = identify_graph_components (vertices, components);
 
     bool in_largest = false;
-    std::uniform_int_distribution <int> uni0 (0, edge_map.size () - 1);
+    std::uniform_int_distribution <unsigned int> uni0 (0, edge_map.size () - 1);
     unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
@@ -34,7 +35,7 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 
     std::vector <unsigned int> res;
     res.reserve (2);
-    res [0] = largest_component;
+    res [0] = (unsigned int) largest_component;
     res [1] = e0;
 
     return res;
@@ -49,13 +50,13 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
 //' @return Random index to one edge that is part of the largest connected
 //' component.
 //' @noRd
-unsigned int sample_one_edge_with_comps (Rcpp::DataFrame graph)
+edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
 {
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
     Rcpp::NumericVector component = graph ["component"];
-    std::uniform_int_distribution <int> uni (0, graph.nrow () - 1);
+    std::uniform_int_distribution <unsigned int> uni (0, graph.nrow () - 1);
     unsigned int e0 = uni (rng);
     while (component (e0) > 1)
         e0 = uni (rng);
@@ -153,18 +154,18 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
     // size, so this vector is **NOT** reserved, even though it easily could be.
     // Maybe not the best solution?
     std::vector <vertex_id_t> vertlist;
-    std::unordered_set <unsigned int> edgelist;
+    std::unordered_set <edge_id_t> edgelist;
     vertlist.push_back (this_vert);
 
     while (vertlist.size () < nverts_to_sample)
     {
         // initialise random int generator:
         // TODO: Is this quicker to use a single unif and round each time?
-        std::uniform_int_distribution <int> uni (0, vertlist.size () - 1);
+        std::uniform_int_distribution <unsigned int> uni (0, vertlist.size () - 1);
         unsigned int randv = uni (rng);
         this_vert = vertlist [randv];
 
-        std::set <unsigned int> edges = vert2edge_map [this_vert];
+        std::set <edge_id_t> edges = vert2edge_map [this_vert];
         for (auto e: edges)
         {
             edgelist.insert (e);
@@ -183,7 +184,7 @@ Rcpp::NumericVector rcpp_sample_graph (Rcpp::DataFrame graph,
         }
     }
 
-    int nedges = edgelist.size ();
+    unsigned int nedges = edgelist.size ();
 
     // edgelist is an unordered set, so has to be iteratively inserted
     index = Rcpp::NumericVector (nedges);
