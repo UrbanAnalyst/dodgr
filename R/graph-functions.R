@@ -27,6 +27,10 @@ convert_graph <- function (graph)
 
     graph$edge_id <- seq (nrow (graph))
 
+    component <- NULL
+    if (any (grepl ("comp", names (graph))))
+        component <- graph [, which (grepl ("comp", names (graph)))]
+
     d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
                     tolower (substring (names (graph), 2, 2)) != "w" &
                     tolower (substring (names (graph), 2, 2)) != "_")
@@ -133,6 +137,9 @@ convert_graph <- function (graph)
         graph$to <- paste0 (graph$to)
     if (!is.character (graph$edge_it))
         graph$edge_id <- paste0 (graph$edge_id)
+
+    if (!is.null (component))
+        graph$component <- component
 
     return (list (graph = graph, xy = xy))
 }

@@ -82,31 +82,6 @@ bool graph_has_components (Rcpp::DataFrame graph)
     return has_comps;
 }
 
-//' sample_one_vertex
-//' 
-//' Get a random vertex in graph that is part of the largest connected component
-//' @noRd
-vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
-        edge_map_t &edge_map)
-{
-    // TODO: This does not yet work with edge_id_t = std::string
-    vertex_id_t this_vert;
-
-    if (graph_has_components (graph))
-    {
-        edge_id_t e0 = sample_one_edge_with_comps (graph);
-        edge_t this_edge = edge_map.find (e0)->second;
-        this_vert = this_edge.get_from_vertex ();
-    } else
-    {
-        std::vector <unsigned int> es;
-        es = sample_one_edge_no_comps (vertices, edge_map);
-        edge_t this_edge = edge_map.find (std::to_string (es [1]))->second; // random edge
-        this_vert = this_edge.get_from_vertex ();
-    }
-
-    return this_vert;
-}
 
 //' rcpp_sample_graph
 //'

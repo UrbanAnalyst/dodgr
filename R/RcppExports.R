@@ -86,12 +86,6 @@ NULL
 #' @noRd
 NULL
 
-#' sample_one_vertex
-#' 
-#' Get a random vertex in graph that is part of the largest connected component
-#' @noRd
-NULL
-
 #' rcpp_sample_graph
 #'
 #' Randomly sample one connected componnent of a graph
