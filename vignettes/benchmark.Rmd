@@ -1,0 +1,32 @@
+---
+title: "dodgr benchmark"
+author: "Andreas Petutschnig"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: true
+        theme: flatly
+vignette: >
+  %\VignetteIndexEntry{benchmark}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+devtools::load_all (".", export_all = FALSE)
+```
+
+# Introduction
+
+This vignette contains runtime comparisons for a number of routing
+operations between random vertices using distance calculation functions from the
+`dodgr` and [`igraph`](https://cran.r-project.org/package=igraph) packages. The
+experiments are run using the `compare_heaps()` function, which successively
+calls functions `igraph::distances()` and then `dodgr_dists()` with all
+implemented options for the `heap` parameter and measures their respecive
+runtimes.
+
+The graph data on which the tests are performed are taken from the
+[`igraphdata`](https://cran.r-project.org/package=igraphdata) package.
