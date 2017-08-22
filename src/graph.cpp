@@ -4,7 +4,7 @@
 void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid)
 {
-    std::set <edge_id_t> edge_ids;
+    std::unordered_set <edge_id_t> edge_ids;
     if (vert2edge_map.find (vid) == vert2edge_map.end ())
     {
         edge_ids.emplace (eid);
@@ -12,7 +12,7 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
     } else
     {
         edge_ids = vert2edge_map [vid];
-        edge_ids.emplace (eid);
+        edge_ids.insert (eid);
         vert2edge_map [vid] = edge_ids;
     }
 }
@@ -20,13 +20,30 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid)
 {
-    std::set <edge_id_t> edge_ids = vert2edge_map [vid];
+    std::unordered_set <edge_id_t> edge_ids = vert2edge_map [vid];
     if (edge_ids.find (eid) != edge_ids.end ())
     {
         edge_ids.erase (eid);
         vert2edge_map [vid] = edge_ids;
     }
 }
+
+//' graph_has_components
+//'
+//' Does a graph have a vector of connected component IDs? Only used in
+//' \code{sample_one_vertex}
+//' @noRd
+bool graph_has_components (Rcpp::DataFrame graph)
+{
+    Rcpp::CharacterVector graph_names = graph.attr ("names");
+    bool has_comps = false;
+    for (auto n: graph_names)
+        if (n == "component")
+            has_comps = true;
+
+    return has_comps;
+}
+
 //' graph_from_df
 //'
 //' Convert a standard graph data.frame into an object of class graph. Graphs
@@ -36,8 +53,8 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
-    if (gr.ncol () != 5)
-        throw std::runtime_error ("graph must have 5 columns: run convert_graph() first");
+    if (!(gr.ncol () == 4 || gr.ncol () == 5 || gr.ncol () == 6))
+        throw std::runtime_error ("graph must have 4--6 columns: run convert_graph() first");
 
     Rcpp::StringVector edge_id = gr ["edge_id"];
     Rcpp::StringVector from = gr ["from"];
@@ -69,46 +86,54 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         vm [to_id] = to_vtx;
 
         std::set <edge_id_t> replacement_edges;
-        std::string edge_id_str = Rcpp::as <std::string> (edge_id [i]);
+        edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
+
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
                 edge_id_str, replacement_edges);
+
         edge_map.emplace (edge_id_str, edge);
         add_to_edge_map (vert2edge_map, from_id, edge_id_str);
         add_to_edge_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 
+//' identify_graph_components
+//'
+//' Identify initial graph components for each **vertex**
+//' Identification for edges is subsequently perrformed with 
+//' \code{rcpp_get_component_vector}.
+//'
+//' @param v unordered_map <vertex_id_t, vertex_t>
+//' @param com component map from each vertex to component numbers
+//' @noRd
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com)
 {
     // initialize components map
-    for (auto it = v.begin (); it != v.end (); ++ it)
-        com.insert (std::make_pair (it -> first, -1));
+    std::unordered_set <vertex_id_t> all_verts;
+    for (auto it: v)
+        all_verts.emplace (it.first);
+    com.clear ();
 
-    std::unordered_set <vertex_id_t> all_verts, component, nbs_todo, nbs_done;
-    for (auto it = v.begin (); it != v.end (); ++ it)
-        all_verts.insert (it -> first);
-    vertex_id_t vt = (*all_verts.begin ());
-    nbs_todo.insert (vt);
+    std::unordered_set <vertex_id_t> nbs_todo, nbs_done;
+    nbs_todo.insert (*all_verts.begin ());
     unsigned int compnum = 0;
     while (all_verts.size () > 0)
     {
-        vt = (*nbs_todo.begin ());
-        component.insert (vt);
-        com.at (vt) = compnum;
+        vertex_id_t vt = (*nbs_todo.begin ());
         all_verts.erase (vt);
 
         vertex_t vtx = v.find (vt)->second;
         std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
-        for (auto n: nbs)
+        for (auto nvtx: nbs)
         {
-            component.insert (n);
-            com.at (vt) = compnum;
-            if (nbs_done.find (n) == nbs_done.end ())
-                nbs_todo.insert (n);
+            com.emplace (nvtx, compnum);
+            if (nbs_done.find (nvtx) == nbs_done.end ())
+                nbs_todo.emplace (nvtx);
         }
+        nbs_done.emplace (vt);
+        com.emplace (vt, compnum);
         nbs_todo.erase (vt);
-        nbs_done.insert (vt);
 
         if (nbs_todo.size () == 0 && all_verts.size () > 0)
         {
@@ -117,12 +142,18 @@ unsigned int identify_graph_components (vertex_map_t &v,
         }
     }
 
-    std::vector <unsigned int> comp_sizes (compnum, 0);
-    for (auto c: com)
-        comp_sizes [c.second]++;
-    auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
+    unsigned int largest_id;
+    if (compnum == 0)
+        largest_id = 0;
+    else
+    {
+        std::vector <unsigned int> comp_sizes (compnum, 0);
+        for (auto c: com)
+            comp_sizes [c.second]++;
+        auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
 
-    unsigned int largest_id = std::distance (comp_sizes.begin (), maxi);
+        largest_id = std::distance (comp_sizes.begin (), maxi);
+    }
 
     return largest_id;
 }
@@ -142,23 +173,23 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <vertex_id_t, unsigned int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
+
+    std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);
     largest_component++; // suppress unused variable warning
 
     // Then map component numbers of vertices onto edges
-    std::unordered_map <std::string, unsigned int> comp_nums;
-    for (auto v: vertices)
+    std::unordered_map <edge_id_t, unsigned int> comp_nums;
+    for (auto ve: vert2edge_map)
     {
-        vertex_id_t vi = v.first;
-        std::set <edge_id_t> edges = vert2edge_map [vi];
+        vertex_id_t vi = ve.first;
+        std::unordered_set <edge_id_t> edges = ve.second;
         for (edge_id_t e: edges)
-        {
-            comp_nums.emplace (e, components [vi] + 1); // 1-indexed
-        }
+            comp_nums.emplace (e, components.find (vi)->second);
+            //comp_nums.emplace (e, components [vi]);
     }
 
     Rcpp::StringVector edge_id (comp_nums.size ());
@@ -167,8 +198,10 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
     for (auto cn: comp_nums)
     {
         edge_id (i) = cn.first;
-        comp_num (i++) = cn.second;
+        comp_num (i) = cn.second + 1; // 1-indexed for R
+        i++;
     }
+
     return Rcpp::List::create (
             Rcpp::Named ("edge_id") = edge_id,
             Rcpp::Named ("edge_component") = comp_num);

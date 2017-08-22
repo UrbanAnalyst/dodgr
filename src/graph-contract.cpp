@@ -25,8 +25,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         std::unordered_set <vertex_id_t>::iterator vid = verts.begin ();
         vertex_id_t vtx_id = vertex_map.find (*vid)->first;
         vertex_t vtx = vertex_map.find (*vid)->second;
-        std::set <edge_id_t> edges = vert2edge_map [vtx_id];
-        std::map <edge_id_t, bool> edges_done;
+        std::unordered_set <edge_id_t> edges = vert2edge_map [vtx_id];
+        std::map <edge_id_t, bool> edges_done; // TODO: unordered?
         for (auto e: edges)
             edges_done.emplace (e, false);
 

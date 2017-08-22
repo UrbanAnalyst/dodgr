@@ -91,7 +91,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle")
                          )
 
     # get component numbers for each edge
-    graph$component <- dodgr_components (convert_graph (graph)$graph)$component
+    graph$component <- dodgr_components (graph)$component
 
     return (graph)
 }

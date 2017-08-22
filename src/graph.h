@@ -11,6 +11,12 @@ const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 typedef std::string vertex_id_t, edge_id_t;
+struct edge_component
+{
+    // used only for edge sampling on graphs without component numbers
+    edge_id_t edge;
+    unsigned int component;
+};
 
 struct vertex_t
 {
@@ -74,7 +80,6 @@ struct edge_t
         vertex_id_t from, to;
         edge_id_t id;
         std::set <edge_id_t> old_edges;
-        bool in_original_graph;
 
     public:
         float dist;
@@ -85,7 +90,6 @@ struct edge_t
         vertex_id_t get_to_vertex () { return to; }
         edge_id_t getID () { return id; }
         std::set <edge_id_t> get_old_edges () { return old_edges; }
-        bool in_original () { return in_original_graph; }
 
         edge_t (vertex_id_t from_id, vertex_id_t to_id, float dist, float weight,
                    edge_id_t id, std::set <edge_id_t> replacement_edges)
@@ -103,7 +107,7 @@ struct edge_t
 
 typedef std::unordered_map <vertex_id_t, vertex_t> vertex_map_t;
 typedef std::unordered_map <edge_id_t, edge_t> edge_map_t;
-typedef std::unordered_map <vertex_id_t, std::set <edge_id_t>> vert2edge_map_t;
+typedef std::unordered_map <vertex_id_t, std::unordered_set <edge_id_t>> vert2edge_map_t;
 
 //----------------------------
 //----- functions in graph.cpp
@@ -125,7 +129,7 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph);
 //----------------------------
 //----- functions in graph-sample.cpp
 //----------------------------
-std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
+edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map);
 
 edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph);

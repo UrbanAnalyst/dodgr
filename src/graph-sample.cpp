@@ -10,7 +10,7 @@
 //' @return std::vector of 2 elements: [0] with value of largest connected 
 //' component; [1] with random index to one edge that is part of that component.
 //' @noRd
-std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
+edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
     // TDOD: FIX edge_id_t type defs here!
@@ -34,12 +34,11 @@ std::vector <unsigned int>  sample_one_edge_no_comps (vertex_map_t &vertices,
             e0 = 0;
     }
 
-    std::vector <unsigned int> res;
-    res.reserve (2);
-    res [0] = largest_component;
-    res [1] = e0;
+    edge_component edge_comp;
+    edge_comp.component = largest_component;
+    edge_comp.edge = e0;
 
-    return res;
+    return edge_comp;
 }
 
 //' sample_one_edge_with_comps
@@ -66,22 +65,6 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
     return std::to_string (e0);
 }
 
-//' graph_has_components
-//'
-//' Does a graph have a vector of connected component IDs? Only used in
-//' \code{sample_one_vertex}
-//' @noRd
-bool graph_has_components (Rcpp::DataFrame graph)
-{
-    Rcpp::CharacterVector graph_names = graph.attr ("names");
-    bool has_comps = false;
-    for (auto n: graph_names)
-        if (n == "component")
-            has_comps = true;
-
-    return has_comps;
-}
-
 
 //' rcpp_sample_graph
 //'
@@ -103,14 +86,20 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)
-        return edges_out;
+        return edges_out; // return empty vector
+
+    std::unordered_map <vertex_id_t, unsigned int> components;
+    unsigned int largest_component = identify_graph_components (vertices, components);
+    // simple vert_ids set for quicker random selection:
+    std::unordered_set <vertex_id_t> vert_ids;
+    for (auto v: vertices)
+        vert_ids.emplace (v.first);
 
     vertex_id_t this_vert;
     if (graph_has_components (graph))
@@ -120,9 +109,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         this_vert = this_edge.get_from_vertex ();
     } else
     {
-        std::vector <unsigned int> es = sample_one_edge_no_comps (vertices, edge_map);
-        // TODO: Following line does not yet work:
-        edge_t this_edge = edge_map.find (std::to_string (es [1]))->second; // random edge
+        edge_component edge_comp = sample_one_edge_no_comps (vertices, edge_map);
+        edge_t this_edge = edge_map.find (edge_comp.edge)->second; // random edge
         this_vert = this_edge.get_from_vertex ();
     }
 
@@ -144,7 +132,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int randv = uni (rng);
         this_vert = vertlist [randv];
 
-        std::set <edge_id_t> edges = vert2edge_map [this_vert];
+        std::unordered_set <edge_id_t> edges = vert2edge_map [this_vert];
         for (auto e: edges)
         {
             edgelist.insert (e);

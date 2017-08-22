@@ -36,11 +36,29 @@ rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert) {
     .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert)
 }
 
+#' graph_has_components
+#'
+#' Does a graph have a vector of connected component IDs? Only used in
+#' \code{sample_one_vertex}
+#' @noRd
+NULL
+
 #' graph_from_df
 #'
 #' Convert a standard graph data.frame into an object of class graph. Graphs
 #' are standardised with the function \code{convert_graph()$graph}, and contain
 #' only the four columns [from, to, d, w]
+#' @noRd
+NULL
+
+#' identify_graph_components
+#'
+#' Identify initial graph components for each **vertex**
+#' Identification for edges is subsequently perrformed with 
+#' \code{rcpp_get_component_vector}.
+#'
+#' @param v unordered_map <vertex_id_t, vertex_t>
+#' @param com component map from each vertex to component numbers
 #' @noRd
 NULL
 
@@ -76,13 +94,6 @@ NULL
 #' @param edge_map edge_map
 #' @return Random index to one edge that is part of the largest connected
 #' component.
-#' @noRd
-NULL
-
-#' graph_has_components
-#'
-#' Does a graph have a vector of connected component IDs? Only used in
-#' \code{sample_one_vertex}
 #' @noRd
 NULL
 
