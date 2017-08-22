@@ -30,3 +30,105 @@ runtimes.
 
 The graph data on which the tests are performed are taken from the
 [`igraphdata`](https://cran.r-project.org/package=igraphdata) package.
+
+# Get Graph Data
+
+To be able to run `compare_heaps()`, we need to create `data.frame` objects from
+the `igraphdata` data. As we need at least columns for each graph edges' origin,
+destination and weight, not all `igraphdata` are fit for our purposes, because
+they lack a weight column. In these cases, all their edge weights are assumed to
+be 1 so they can be brought into a valid format.
+
+The following code compiles all `igraph` objects into a list of usable
+`data.frame` objects.
+
+```{r}
+make_graph <- function (from, to, weight)
+{
+    graph <- data.frame (from_id = from, to_id = to, d = weight)
+    graph$d_weighted <- graph$d
+    graph$from_lat <- 0
+    graph$from_lon <- 0
+    graph$to_lat <- 0
+    graph$to_lon <- 0
+    graph
+    all_graphs [[gr_el]] <<- graph
+    gr_el <<- gr_el + 1
+}
+
+datasets <- data (package = "igraphdata")
+datasets <- datasets$results [, "Item"]
+
+all_graphs <- list ()
+gr_el <- 1
+
+for (i in seq_along (datasets))
+{
+    dat <- datasets [i]
+    data (package = "igraphdata", list = dat)
+    dat_graph <- get (dat)
+    if (class (dat_graph) == "igraph")
+        dat_graph <- list (dat_graph)
+    for (j in seq_along (dat_graph))
+    {
+        graph <- dat_graph [[j]]
+        graph <- igraph::get.data.frame (graph)
+        from_id <- graph$from
+        to_id <- graph$to
+        if ("weight" %in% names (graph))
+        {
+            weight <- graph$weight
+            make_graph (from_id, to_id, weight)
+        }
+        else
+        {
+            graph [c ("from", "to")] <- NULL
+            edge_cols <- which (sapply (graph, class) == "numeric")
+            len <- length (edge_cols)
+            if (len > 0)
+            {
+                for (k in seq_len (len))
+                {
+                    weight <- graph [, k]
+                    make_graph (from_id, to_id, weight)
+                }
+            } else
+            {
+                weight <- rep (1, length (from_id))
+                make_graph (from_id, to_id, weight)
+            }
+        }
+    }
+}
+```
+
+Now, `compare_heaps()` can be run for all graphs.
+
+```{r}
+benchmarks <- lapply (all_graphs, compare_heaps)
+r1 <- vector (mode = "numeric", length = length (benchmarks))
+r2 <- vector (mode = "numeric", length = length (benchmarks))
+r3 <- vector (mode = "numeric", length = length (benchmarks))
+r4 <- vector (mode = "numeric", length = length (benchmarks))
+r5 <- vector (mode = "numeric", length = length (benchmarks))
+r6 <- vector (mode = "numeric", length = length (benchmarks))
+
+for (i in seq_along (benchmarks))
+{
+    bm <- benchmarks [[i]]
+    r1 [i] <- bm$elapsed [1]
+    r2 [i] <- bm$elapsed [2]
+    r3 [i] <- bm$elapsed [3]
+    r4 [i] <- bm$elapsed [4]
+    r5 [i] <- bm$elapsed [5]
+    r6 [i] <- bm$elapsed [6]
+}
+mx <- max (r1, r2, r3, r4, r5, r6)
+
+plot (r1, type = "l", ylim = c (0, mx))
+lines (r2)
+lines (r3)
+lines (r4)
+lines (r5)
+lines (r6)
+```
