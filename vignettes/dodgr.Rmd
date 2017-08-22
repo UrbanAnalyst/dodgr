@@ -2,6 +2,7 @@
 title: "dodgr"
 author: "Mark Padgham"
 date: "`r Sys.Date()`"
+bibliography: dodgr.bib
 output: 
     html_document:
         toc: true
@@ -270,11 +271,18 @@ cn
 ```
 Components are numbered in order of decreasing size, with `$component = 1`
 always denoting the largest component. In this case, that component contains
-182,420 edges, representing 97.4% of the graph, with the remainder divided
-between five additional components.  Component numbers can be determined for any
-types of graph with the `dodgr_components()` function. For example, the
-following lines reduce the previous graph to a minmial (non-spatial) structure
-of four columns, and then (re-)calculate a fifth column of `$component`s:
+182,420 edges, representing 97.4% of the graph. The total number of distinct
+components is
+```{r, eval = FALSE}
+length (unique (graph$component))
+```
+```{r, echo = FALSE}
+152
+```
+Component numbers can be determined for any types of graph with the
+`dodgr_components()` function. For example, the following lines reduce the
+previous graph to a minmial (non-spatial) structure of four columns, and then
+(re-)calculate a fifth column of `$component`s:
 ```{r, eval = FALSE}
 cols <- c ("edge_id", "from_id", "to_id", "d")
 graph_min <- graph [, which (names (graph) %in% cols)]
@@ -351,20 +359,21 @@ the statistics calculated above.
 ```{r, eval = FALSE}
 nrow (dodgr_vertices (graph_sub))
 ```
+```{r, echo = FALSE}
+1000
+```
 
 # Distance Matrices: `dodgr_dists()`
 
 As demonstrated at the outset, an entire network can simply be submitted to
 `dodgr_dists()`, in which case a square matrix will be returned containing
 pair-wise distances between all vertices. Doing that for the `graph` of York
-will return a square matrix 90,015-times-90,015 distances (around 8 billion
-distances). It might be possible to do that on some computers, but is possibly
-neither recommended nor desirable.
-
-The `dodgr_dists()` function accepts additional arguments of `from` and `to`
-defining points from and to which distances are to be calculated. If only `from`
-is provided, a square matrix is returned of pair-wise distances between all
-listed points.
+will return a square matrix of around 90,000-times-90,000 (or 8
+billion) distances. It might be possible to do that on some computers, but is
+possibly neither recommended nor desirable.  The `dodgr_dists()` function
+accepts additional arguments of `from` and `to` defining points from and to
+which distances are to be calculated. If only `from` is provided, a square
+matrix is returned of pair-wise distances between all listed points.
 
 ## Aligning Routing Points to Graphs
 
@@ -402,75 +411,107 @@ line:
 ```{r, eval = FALSE}
 graph_connected <- graph [graph$component == 1, ]
 ```
-A distance matrix obtained from running `dodgr_dists` on `graph_connected` will
-then contain no NA values. Note, however, that spatial routing points (expressed
-as `from` and/or `to` arguments) will in this case be mapped to the nearest
-vertices of `graph_connected`, rather than the potentially closer nearest points
-of the full `graph`. This may make the spatial mapping of routing points less
-accurate that results obtained by repeating extraction of the street network
-using an expanded bounding box. For automatic extraction of street networks with
-`dodgr_dists()`, the extent by which the bounding box exceeds the range of
-routing points (`from` and `to` arguments) is determined by an extra parameter
-`expand`, quantifying the relative extent to which the bounding box should
-exceed the spatial range of the routing points.
+A distance matrix obtained from running `dodgr_dists` on `graph_connected`
+should generally contain no `NA` values, although some points may still be
+effectively unreachable due to one-way connections (or streets). Thus, routing
+on the largest connected component of a directed graph ought to be expected to
+yield the *minimal* number of `NA` values, which may sometimes be more than
+zero. Note further that spatial routing points (expressed as `from` and/or `to`
+arguments) will in this case be mapped to the nearest vertices of
+`graph_connected`, rather than the potentially closer nearest points of the full
+`graph`. This may make the spatial mapping of routing points less accurate that
+results obtained by repeating extraction of the street network using an expanded
+bounding box. For automatic extraction of street networks with `dodgr_dists()`,
+the extent by which the bounding box exceeds the range of routing points (`from`
+and `to` arguments) is determined by an extra parameter `expand`, quantifying
+the relative extent to which the bounding box should exceed the spatial range of
+the routing points. This is illustrated in the following code which calculates
+distances between 100 random points (and which uses the `magrittr` pipe
+operator, `%>%`):
+```{r, eval = FALSE}
+require (magrittr)
+bb <- osmdata::getbb ("york uk")
+npts <- 100
+xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
+routed_points <- function (expand = 0, pts)
+{
+    gr0 <- dodgr_streetnet (pts = pts, expand = expand) %>%
+        weight_streetnet ()
+    d0 <- dodgr_dists (gr0, from = xy)
+    length (which (is.na (d0))) / length (d0)
+}
+```
+```{r, eval = FALSE}
+vapply (c (0, 0.05, 0.1), function (i) routed_points (i, pts = xy),
+        numeric (1))
+```
+```{r, echo = FALSE}
+c (0.078, 0.0586, 0)
+```
+With a street network that precisely encompasses the submitted routing points
+(`expand = 0`), 7.8% of pairwise distances are unable to be calculated; with a
+bounding box expanded to 5% larger than the submitted points, this is reduced to
+5.9%, and with expansion to 10%, all points can be connected.
 
 For non-spatial graphs, `from` and `to` must match precisely on to vertices
 named in the graph itself. In the graph considered above, these vertex names
 were contained in the columns, `from_id` and `to_id`. The minimum that a `dodgr`
 graph requires is,
 ```{r, eval = FALSE}
-head (graph [names (graph) %in% c ("edge_id", "from_id", "to_id", "d")])
+head (graph [, names (graph) %in% c ("from_id", "to_id", "d")])
 ```
 ```{r, echo = FALSE}
-edge_id <- 1:6
 from_id <- c (13060397, 13060402, 13060402, 13060405, 13060405, 13060413)
 to_id <- c (13060402, 13060397, 13060405, 13060402, 13060413, 13060405)
 d <- c (0.006909587, 0.006909587, 0.013732955, 0.013732955, 0.013148026,
         0.013148026)
-data.frame (edge_id = 1:6, from_id = as.character (from_id),
-            to_id = as.character (to_id), d = d)
+data.frame (from_id = as.character (from_id),
+            to_id = as.character (to_id),
+            d = d)
 ```
-in which case `from` (and `to`, if given) must directly name the vertices in
-`from_id` and `to_id`.
+in which case the `from` values submitted to `dodgr_dists()` (and `to`, if
+given) must directly name the vertices in the `from_id` and `to_id` columns of
+the graph. This is illustrated in the following code:
+```{r, eval = FALSE}
+graph_min <- graph [, names (graph) %in% c ("from_id", "to_id", "d")]
+fr <- sample (graph_min$from_id, size = 10) # 10 random points
+to <- sample (graph_min$to_id, size = 20)
+d <- dodgr_dists (graph_min, from = fr, to = to)
+dim (d)
+```
+```{r, echo = FALSE}
+c (10, 20)
+```
+The result is a 10-by-20 matrix of distances between these named graph vertices.
 
 ## Shortest Path Calculations: Priority Queues
 
-`dodgr` uses an internal library for the calculation of shortest paths using a
-variety of priority queues. These determine the order in which a graph is
-traversed, and the choice of priority queue can have a considerable effect on
-computational efficiency for different kinds of graphs. In contrast to `dodgr`,
-most other **R** packages for shortest path calculations do not use priority
-queues, and so will generally be less efficient. The difference
-that priority queues can make may be demonstrated through comparison with
-equivalent routines from the `igraph` package. To do so, we first need to
-convert the preceding `graph` into an equivalent `igraph` structure:
-```{r, eval = FALSE}
-edges <- cbind (graph$from_id, graph$to_id)
-nodes <- unique (as.vector (edges)) # used below in test comparison
-edges <- as.vector (t (edges))
-igr <- igraph::make_directed_graph (edges)
-igraph::E (igr)$weight <- graph$d_weighted
-```
-Even then, trying to calculating routing distances with `igraph` is likely to
-fail
-```{r, eval = FALSE}
-d <- igraph::distances (igr, v = nodes, to = nodes, mode = "out")
-```
-```{r, echo = FALSE}
-message (paste0 ('Error in igraph::distances(igr, v = nodes, to = nodes, ',
-                 'mode = "out") :\n   At vector.pmt:442 : cannot reserve ',
-                 'space for vector, Out of memory'))
-```
-`dodgr` will perform this calculation, even though `igraph` will not. However,
-an even more useful `dodgr` function is the ability to directly compare the
-performance of different kinds of priority queue structures, and to compare
-these `dodgr` implementations directly with `igraph` performance. This is
-achieved with the `compare_heaps` function.
+`dodgr` uses an internal library [@Saunders2003, @Saunders2004] for the calculation of shortest paths using a
+variety of priority queues [see @Miller1960 for an overview].  In the context of
+shortest paths, priority queues determine the order in which a graph is
+traversed [@Tarjan1983], and the choice of priority queue can have a
+considerable effect on computational efficiency for different kinds of graphs
+[@Johnson1977].  In contrast to `dodgr`, most other **R** packages for shortest
+path calculations do not use priority queues, and so may often be less
+efficient. Shortest path distances can be calculated in `dodgr` with priority
+queues that use the following heaps:
+
+1. binary heaps;
+2. Fibonacci heaps [@Fredman1987];
+3. trinomial and trinomial heaps [@Takaoka2000]; and
+4. 2-3 heaps [@Takaoka1999].
+
+Differences in how these heaps operate are often largely extraneous to direct
+application of routing algorithms, even though heap choice may strongly affect
+performance. To avoid users needing to know anything about algorithmic details,
+`dodgr` provides a function `compare_heaps` to which a particular graph may be
+submitted in order to determine the optimal kind of heap. 
 
 The comparisons are actually made on a randomly selected sub-component of the
-graph containing a defined number of vertices.
+graph containing a defined number of vertices (with a default of 1,000, or the
+entire graph if it contains fewer than 1,000 vertices).
 ```{r, eval = FALSE}
-compare_heaps (graph)
+compare_heaps (graph, nverts = 1000)
 ```
 ```{r, echo = FALSE}
 test <- c ('d <- dodgr_dists(graph, heap = "BHeap")',
@@ -490,10 +531,10 @@ data.frame (test = test, replications = replications, elapsed = elapsed,
 The key column of that `data.frame` is `relative`, which quantifies the relative
 performance of each test in relation to the best which is given a score of 1.
 `dodgr` using the default `heap = "BHeap"`, which is a binary heap priority
-queue, performs faster than `igraph` for these graphs. Different kind of graphs
-will perform differently with different priority queue structures, and this
-function enables users to empirically discern the optimal heap for their kind of
-graph.
+queue, performs faster than `igraph` [@Csardi2006] for these graphs. Different
+kind of graphs will perform differently with different priority queue
+structures, and this function enables users to empirically discern the optimal
+heap for their kind of graph.
 
 Note, however, that this is not an entirely fair comparison, because `dodgr`
 calculates dual-weighted distances, whereas `igraph`---and indeed all other
@@ -501,23 +542,39 @@ calculates dual-weighted distances, whereas `igraph`---and indeed all other
 weights. Implementing dual-weighted routing in these cases requires explicitly
 re-tracing all paths and summing the second set of weights along each path. A
 time comparison in that case would be very strongly in favour of `dodgr`.
+Moreover, `dodgr` can convert graphs to contracted form through removing
+redundant vertices, as detailed in the following section. Doing so greatly
+improves performance with respect to `igraph`.
+
+For those wishing to do explicit comparisons themselves, the following code
+generates the `igraph` equivalent of `dodgr_dists()`, although of course for
+single-weighted graphs only:
+```{r, eval = FALSE}
+edges <- cbind (graph$from_id, graph$to_id)
+pts <- sample (unique (as.vector (edges)), 100) # set of random routing points
+edges <- as.vector (t (edges))
+igr <- igraph::make_directed_graph (edges)
+igraph::E (igr)$weight <- graph$d
+d <- igraph::distances (igr, v = pts, to = pts, mode = "out")
+```
+
 
 # Graph Contraction
 
 A further unique feature of `dodgr` is the ability to remove redundant vertices
-from graphs, thereby speeding up routing calculations (see Fig. 3).
+from graphs (see Fig. 3), thereby speeding up routing calculations.
 
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant."}
 ```
 
 In Fig. 3(A), the only way to get from vertex 1 to 3, 4 or 5 is through C. The
-intermediate vertex B is redundant for routing purposes and may simply be
-removed, with directional edges inserted directly between vertices 1 and 3. This
-yields the equivalent contracted graph of Fig. 3(B), in which, for example, the
-distance (or weight) between 1 and 3 is the sum of previous distances (or
-weights) between 1 $\to$ 2 and 2 $\to$ 3. Note that if one of the two edges
-between, say, 3 and 2 were removed, vertex 2 would no longer be redundant (Fig.
-3(C)).
+intermediate vertex B is redundant for routing purposes (and than to or from
+that precise point) and may simply be removed, with directional edges inserted
+directly between vertices 1 and 3. This yields the equivalent contracted graph
+of Fig. 3(B), in which, for example, the distance (or weight) between 1 and 3 is
+the sum of previous distances (or weights) between 1 $\to$ 2 and 2 $\to$ 3. Note
+that if one of the two edges between, say, 3 and 2 were removed, vertex 2 would
+no longer be redundant (Fig.  3(C)).
 
 Different kinds of graphs have different degrees of redundancy, and even street
 networks differ, through for example dense inner-urban networks generally being
@@ -563,3 +620,4 @@ of hundred thousand edges will generally not be able to be processed in
 sizes capable of being processed in `dodgr` will of course be machine dependent,
 typical values will be at least a few million edges, and possibly much larger.
 
+# Bibliography
