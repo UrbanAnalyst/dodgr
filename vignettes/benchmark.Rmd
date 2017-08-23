@@ -105,7 +105,8 @@ for (i in seq_along (datasets))
 Now, `compare_heaps()` can be run for all graphs.
 
 ```{r}
-benchmarks <- lapply (all_graphs, compare_heaps)
+#benchmarks <- lapply (all_graphs, compare_heaps)
+benchmarks <- readRDS ("benchmark_data.rds")
 r1 <- vector (mode = "numeric", length = length (benchmarks))
 r2 <- vector (mode = "numeric", length = length (benchmarks))
 r3 <- vector (mode = "numeric", length = length (benchmarks))
