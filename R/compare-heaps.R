@@ -23,7 +23,7 @@ compare_heaps <- function(graph, nverts = 1000, replications = 10)
     nodes <- unique (as.vector (edges)) # used below in test comparison
     edges <- as.vector (t (edges))
     igr <- igraph::make_directed_graph (edges)
-    igraph::E (igr)$weight <- graph$d_weighted
+    igraph::E (igr)$weight <- graph$d
 
     rbenchmark::benchmark (
                            d <- dodgr_dists (graph, heap = "BHeap"),
