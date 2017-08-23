@@ -13,6 +13,21 @@ is_graph_spatial <- function (graph)
          any (grepl ("lat", names (graph), ignore.case = TRUE)))
 }
 
+#' Get graph columns containing the from vertex
+#' @noRd
+get_fr_col <- function (graph)
+{
+    which (grepl ("fr", names (graph), ignore.case = TRUE) |
+           grepl ("sta", names (graph), ignore.case = TRUE))
+}
+
+#' Get graph columns containing the to vertex
+#' @noRd
+get_to_col <- function (graph)
+{
+    which (grepl ("to", names (graph), ignore.case = TRUE) |
+           grepl ("sto", names (graph), ignore.case = TRUE))
+}
 
 #' convert_graph
 #'
@@ -45,8 +60,8 @@ convert_graph <- function (graph)
     if (length (w_col) == 0)
         w_col <- d_col
 
-    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE))
-    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE))
+    fr_col <- get_fr_col (graph)
+    to_col <- get_to_col (graph)
 
     xy <- NULL
     if (ncol (graph) > 4)
@@ -182,10 +197,8 @@ find_xy_col <- function (graph, indx, x = TRUE)
 #' @export
 dodgr_vertices <- function (graph)
 {
-    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE) |
-                     grepl ("sta", names (graph), ignore.case = TRUE))
-    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE) |
-                     grepl ("sto", names (graph), ignore.case = TRUE))
+    fr_col <- get_fr_col (graph)
+    to_col <- get_to_col (graph)
 
     if (is_graph_spatial (graph))
     {
@@ -243,11 +256,11 @@ dodgr_vertices <- function (graph)
             stop ("Graph appears to be non-spatial, yet unable to ",
                   "determine vertex columns")
 
-        verts <- data.frame (from = graph [, fr_col],
-                             to = graph [, to_col])
+        verts <- data.frame (id = c (graph [, fr_col], graph [, to_col]),
+                             stringsAsFactors = FALSE)
     }
     indx <- which (!duplicated (verts))
-    verts <- verts [indx, ]
+    verts <- verts [indx, , drop = FALSE] #nolint
     verts$n <- seq (nrow (verts)) - 1
 
     return (verts)
