@@ -20,9 +20,12 @@ vg_check <- function ()
         stop ("valgrind error")
 }
 
-# TODO: Re-instate this test once valgrind = 3.12, not current 3.11; see
+# The valgrind test doesn't work with current (3.11) version because of this:
 # https://www.mail-archive.com/kde-bugs-dist@kde.org/msg115932.html
 if (identical (Sys.getenv ("TRAVIS"), "true"))
 {
-    #vg_check ()
+    vv <- system2 (command = "valgrind", args = "--version", stdout = TRUE)
+    vv <- strsplit (vv, "valgrind-") [[1]] [2]
+    if (vv >= "3.12.0")
+        vg_check ()
 }
