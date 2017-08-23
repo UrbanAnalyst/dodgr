@@ -6,6 +6,7 @@
 #include <map>
 #include <limits>
 #include <random>
+#include <string> // stoi
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
@@ -118,6 +119,8 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid);
 
+bool graph_has_components (Rcpp::DataFrame graph);
+
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
@@ -132,9 +135,8 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph);
 edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map);
 
-edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph);
-
-bool graph_has_components (Rcpp::DataFrame graph);
+edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
+        edge_map_t &edge_map);
 
 vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
         edge_map_t &edge_map);
@@ -145,6 +147,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 //----------------------------
 //----- functions in graph-contract.cpp
 //----------------------------
+unsigned int get_max_edge_id (edge_map_t &edge_map);
+
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
 

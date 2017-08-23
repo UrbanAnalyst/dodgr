@@ -1,6 +1,21 @@
 #include "graph.h"
 
 
+unsigned int get_max_edge_id (edge_map_t &edge_map)
+{
+    unsigned int max_edge_id = 0;
+    for (auto e: edge_map)
+    {
+        unsigned int id = std::stoi (e.second.getID ());
+        if (id > max_edge_id)
+            max_edge_id = id;
+    }
+    max_edge_id++;
+
+    return max_edge_id;
+}
+
+
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
@@ -10,13 +25,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto v: vertex_map)
         verts.insert (v.first);
 
-    unsigned int max_edge_id = 0;
-    /* TODO: Fix this with edge_id_t
-    for (auto e: edge_map)
-        if (e.second.getID () > max_edge_id)
-            max_edge_id = e.second.getID ();
-    */
-    max_edge_id++;
+    unsigned int max_edge_id = get_max_edge_id (edge_map);
 
     std::vector<edge_id_t> newe;
 
