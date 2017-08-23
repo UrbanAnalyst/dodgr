@@ -22,17 +22,17 @@ vignette: >
 devtools::load_all (".", export_all = FALSE)
 ```
 
-# Background
+# Background: Directed Graphs
 
 `dodgr` is an **R** package for calculating **D**istances **O**n **D**irected
-**G**raphs. It does so very efficiently, and is able to process much larger
-graphs than most other comparable **R** packages. Skip straight to the Intro if
-you know what directed graphs are (but maybe make a brief stop-in to
-Dual-Weighted Directed Graphs below.) Directed graphs are ones in which the
-"distance" (or some equivalent measure) from A to B is not necessarily equal to
-that from B to A. In Fig. 1, for example, the weights between the graph vertices
-(A, B, C, and D) differ depending on the direction of travel, and it is only
-possible to traverse the entire graph in an anti-clockwise direction.
+**G**raphs. It does so very efficiently, and is able to process larger graphs
+than many other comparable **R** packages. Skip straight to the Intro if you
+know what directed graphs are (but maybe make a brief stop-in to Dual-Weighted
+Directed Graphs below.) Directed graphs are ones in which the "distance" (or
+some equivalent measure) from A to B is not necessarily equal to that from B to
+A. In Fig. 1, for example, the weights between the graph vertices (A, B, C, and
+D) differ depending on the direction of travel, and it is only possible to
+traverse the entire graph in an anti-clockwise direction.
 
 ```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
@@ -419,7 +419,7 @@ yield the *minimal* number of `NA` values, which may sometimes be more than
 zero. Note further that spatial routing points (expressed as `from` and/or `to`
 arguments) will in this case be mapped to the nearest vertices of
 `graph_connected`, rather than the potentially closer nearest points of the full
-`graph`. This may make the spatial mapping of routing points less accurate that
+`graph`. This may make the spatial mapping of routing points less accurate than
 results obtained by repeating extraction of the street network using an expanded
 bounding box. For automatic extraction of street networks with `dodgr_dists()`,
 the extent by which the bounding box exceeds the range of routing points (`from`
@@ -496,9 +496,9 @@ path calculations do not use priority queues, and so may often be less
 efficient. Shortest path distances can be calculated in `dodgr` with priority
 queues that use the following heaps:
 
-1. binary heaps;
+1. Binary heaps;
 2. Fibonacci heaps [@Fredman1987];
-3. trinomial and trinomial heaps [@Takaoka2000]; and
+3. Trinomial and extended trinomial heaps [@Takaoka2000]; and
 4. 2-3 heaps [@Takaoka1999].
 
 Differences in how these heaps operate are often largely extraneous to direct
@@ -511,7 +511,7 @@ The comparisons are actually made on a randomly selected sub-component of the
 graph containing a defined number of vertices (with a default of 1,000, or the
 entire graph if it contains fewer than 1,000 vertices).
 ```{r, eval = FALSE}
-compare_heaps (graph, nverts = 1000)
+compare_heaps (graph, nverts = 1000, replications = 10)
 ```
 ```{r, echo = FALSE}
 test <- c ('d <- dodgr_dists(graph, heap = "BHeap")',

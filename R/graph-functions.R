@@ -174,56 +174,45 @@ convert_graph <- function (graph, components = TRUE)
                       "to have different strutures"))
 
     xy <- NULL
-    if (ncol (graph) > 4)
+    # TODO: Modify for other complex but non-spatial types of graph
+    if (is_graph_spatial (graph))
     {
-        if (is_graph_spatial (graph))
-        {
-            spcols <- find_spatial_cols (graph)
+        spcols <- find_spatial_cols (graph)
 
-            xy_fr <- graph [, spcols$fr_col]
-            xy_to <- graph [, spcols$to_col]
-            if (!(all (apply (xy_fr, 2, is.numeric)) |
-                  all (apply (xy_to, 2, is.numeric))))
-                stop (paste0 ("graph appears to have non-numeric ",
-                              "longitudes and latitudes"))
+        xy_fr <- graph [, spcols$fr_col]
+        xy_to <- graph [, spcols$to_col]
+        if (!(all (apply (xy_fr, 2, is.numeric)) |
+              all (apply (xy_to, 2, is.numeric))))
+            stop (paste0 ("graph appears to have non-numeric ",
+                          "longitudes and latitudes"))
 
-            # This same indx is created in vert_map to ensure it follows
-            # same order as xy
-            indx <- which (!duplicated (c (spcols$xy_id$xy_fr_id,
-                                           spcols$xy_id$xy_to_id)))
-            xy <- data.frame ("x" = c (graph [, spcols$fr_col [1]],
-                                       graph [, spcols$to_col [1]]),
-                              "y" = c (graph [, spcols$fr_col [2]],
-                                       graph [, spcols$to_col [2]])) [indx, ]
+        # This same indx is created in vert_map to ensure it follows
+        # same order as xy
+        indx <- which (!duplicated (c (spcols$xy_id$xy_fr_id,
+                                       spcols$xy_id$xy_to_id)))
+        xy <- data.frame ("x" = c (graph [, spcols$fr_col [1]],
+                                   graph [, spcols$to_col [1]]),
+                          "y" = c (graph [, spcols$fr_col [2]],
+                                   graph [, spcols$to_col [2]])) [indx, ]
 
-            # then replace 4 xy from/to cols with 2 from/to cols
-            graph <- data.frame ("edge_id" = edge_id,
-                                 "from" = spcols$xy_id$xy_fr_id,
-                                 "to" = spcols$xy_id$xy_to_id,
-                                 "d" = graph [, d_col],
-                                 "w" = graph [, w_col],
-                                 stringsAsFactors = FALSE)
-        } else
-        {
-            if (length (fr_col) != 1 & length (to_col) != 1)
-                stop ("Unable to determine from and to columns in graph")
-
-            graph <- data.frame ("edge_id" = edge_id,
-                                 "from" = graph [, fr_col],
-                                 "to" = graph [, to_col],
-                                 "d" = graph [, d_col],
-                                 "w" = graph [, w_col],
-                                 stringsAsFactors = FALSE)
-        }
-    } else if (ncol (graph == 4))
+        # then replace 4 xy from/to cols with 2 from/to cols
+        graph <- data.frame ("edge_id" = edge_id,
+                             "from" = spcols$xy_id$xy_fr_id,
+                             "to" = spcols$xy_id$xy_to_id,
+                             "d" = graph [, d_col],
+                             "w" = graph [, w_col],
+                             stringsAsFactors = FALSE)
+    } else
     {
+        if (length (fr_col) != 1 & length (to_col) != 1)
+            stop ("Unable to determine from and to columns in graph")
+
         graph <- data.frame ("edge_id" = edge_id,
                              "from" = graph [, fr_col],
                              "to" = graph [, to_col],
                              "d" = graph [, d_col],
                              "w" = graph [, w_col],
                              stringsAsFactors = FALSE)
-
     }
 
     if (!is.character (graph$from))
@@ -381,9 +370,24 @@ dodgr_components <- function (graph)
 #' @export
 dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
-    grc <- convert_graph (graph)$graph
+    graph_converted <- convert_graph (graph)$graph
+    graph_contracted <- rcpp_contract_graph (graph_converted, quiet = quiet)
 
-    rcpp_contract_graph (grc, quiet = quiet)
+    # re-insert spatial coordinates:
+    if (is_graph_spatial (graph))
+    {
+        spcols <- find_spatial_cols (graph)
+        fr_col <- find_fr_id_col (graph)
+        indx <- match (graph_contracted$contracted$from, graph [, fr_col])
+        fr_xy <- graph [indx, spcols$fr_col]
+        to_col <- find_to_id_col (graph)
+        indx <- match (graph_contracted$contracted$to, graph [, to_col])
+        to_xy <- graph [indx, spcols$to_col]
+        graph_contracted$contracted <- cbind (graph_contracted$contracted,
+                                              fr_xy, to_xy)
+    }
+
+    return (graph_contracted)
 }
 
 #' dodgr_sample_graph

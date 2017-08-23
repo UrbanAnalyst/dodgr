@@ -18,15 +18,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_insert_vertices
-Rcpp::List rcpp_insert_vertices(Rcpp::DataFrame fullgraph, Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert);
-RcppExport SEXP _dodgr_rcpp_insert_vertices(SEXP fullgraphSEXP, SEXP compactgraphSEXP, SEXP pts_to_insertSEXP) {
+Rcpp::List rcpp_insert_vertices(Rcpp::DataFrame fullgraph, Rcpp::DataFrame contracted, std::vector <int> pts_to_insert);
+RcppExport SEXP _dodgr_rcpp_insert_vertices(SEXP fullgraphSEXP, SEXP contractedSEXP, SEXP pts_to_insertSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type fullgraph(fullgraphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type compactgraph(compactgraphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type contracted(contractedSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type pts_to_insert(pts_to_insertSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, compactgraph, pts_to_insert));
+    rcpp_result_gen = Rcpp::wrap(rcpp_insert_vertices(fullgraph, contracted, pts_to_insert));
     return rcpp_result_gen;
 END_RCPP
 }
