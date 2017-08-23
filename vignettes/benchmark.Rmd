@@ -43,19 +43,6 @@ The following code compiles all `igraph` objects into a list of usable
 `data.frame` objects.
 
 ```{r}
-make_graph <- function (from, to, weight)
-{
-    graph <- data.frame (from_id = from, to_id = to, d = weight)
-    graph$d_weighted <- graph$d
-    graph$from_lat <- 0
-    graph$from_lon <- 0
-    graph$to_lat <- 0
-    graph$to_lon <- 0
-    graph
-    all_graphs [[gr_el]] <<- graph
-    gr_el <<- gr_el + 1
-}
-
 datasets <- data (package = "igraphdata")
 datasets <- datasets$results [, "Item"]
 
@@ -77,10 +64,11 @@ for (i in seq_along (datasets))
         to_id <- graph$to
         if ("weight" %in% names (graph))
         {
-            weight <- graph$weight
-            make_graph (from_id, to_id, weight)
-        }
-        else
+            d <- graph$weight
+            graph_out <- data.frame (from_id, to_id, d)
+            all_graphs [[gr_el]] <- graph_out
+            gr_el <- gr_el + 1
+        } else
         {
             graph [c ("from", "to")] <- NULL
             edge_cols <- which (sapply (graph, class) == "numeric")
@@ -89,13 +77,17 @@ for (i in seq_along (datasets))
             {
                 for (k in seq_len (len))
                 {
-                    weight <- graph [, k]
-                    make_graph (from_id, to_id, weight)
+                    d <- graph [, k]
+                    graph_out <- data.frame (from_id, to_id, d)
+                    all_graphs [[gr_el]] <- graph_out
+                    gr_el <- gr_el + 1
                 }
             } else
             {
-                weight <- rep (1, length (from_id))
-                make_graph (from_id, to_id, weight)
+                d <- rep (1, length (from_id))
+                graph_out <- data.frame (from_id, to_id, d)
+                all_graphs [[gr_el]] <- graph_out
+                gr_el <- gr_el + 1
             }
         }
     }
@@ -124,12 +116,17 @@ for (i in seq_along (benchmarks))
     r5 [i] <- bm$elapsed [5]
     r6 [i] <- bm$elapsed [6]
 }
-mx <- max (r1, r2, r3, r4, r5, r6)
 
-plot (r1, type = "l", ylim = c (0, mx))
-lines (r2)
-lines (r3)
-lines (r4)
-lines (r5)
-lines (r6)
+max_y <- max (r1, r2, r3, r4, r5, r6)
+cl <- c ("black", "blue", "green", "red", "Plum", "Orange")
+```
+
+```{r fig.width=14, fig.height=10}
+plot (r1, type = "l", ylim = c (1e-6, max_y), log = "y")
+lines (r2, col = cl [2])
+lines (r3, col = cl [3])
+lines (r4, col = cl [4])
+lines (r5, col = cl [5])
+lines (r6, col = cl [6])
+legend (10, 5e-4, bm$test, lty=c(1,1), lwd=c(2.5,2.5), col = cl)
 ```
