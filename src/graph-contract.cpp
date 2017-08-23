@@ -247,7 +247,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
             Rcpp::Named ("w") = weight_vec,
             Rcpp::_["stringsAsFactors"] = false);
 
-    Rcpp::DataFrame rel = Rcpp::DataFrame::create (
+    Rcpp::DataFrame map = Rcpp::DataFrame::create (
             Rcpp::Named ("id_contracted") = edge_id_comp,
             Rcpp::Named ("id_original") = edge_id_orig);
 
@@ -256,7 +256,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 
     return Rcpp::List::create (
             Rcpp::Named ("contracted") = contracted,
-            Rcpp::Named ("map") = rel);
+            Rcpp::Named ("map") = map);
 }
 
 
@@ -266,8 +266,9 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 //'
 //' @param fullgraph graph to be processed
 //' @param contracted graph to be processed
+//' @param map Map of old-to-new vertices returned from rcpp_contract_graph
 //' @param pts_to_insert Index into graph of those points closest to desired
-//' routing points. These are to be kept in the contracted graph.
+//' routing points. These are to be re-inserted in the contracted graph.
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the
 //' contracted graph, one \code{data.frame} with the original graph and one
 //' \code{data.frame} containing information about the relating edge ids of the
@@ -276,8 +277,10 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame contracted, std::vector <int> pts_to_insert)
+        Rcpp::DataFrame contracted, Rcpp::DataFrame map,
+        std::vector <std::string> verts_to_insert)
 {
+    // verts_to_insert is actually vert_id_t, but that can't be exported to Rcpp
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, int> components;

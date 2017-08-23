@@ -84,7 +84,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample)
 {
     std::random_device rd;
-    std::mt19937 rng (rd()); // mersenne twister
+    std::default_random_engine rng (rd()); // safest to use here
 
     vertex_map_t vertices;
     edge_map_t edge_map;
