@@ -4,7 +4,7 @@
 \alias{compare_heaps}
 \title{compare_heaps}
 \usage{
-compare_heaps(graph, nverts = 1000, replications = 10)
+compare_heaps(graph, nverts = 100, replications = 2)
 }
 \arguments{
 \item{graph}{\code{data.frame} object representing the network graph (or a
