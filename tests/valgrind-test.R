@@ -19,6 +19,9 @@ vg_check <- function ()
     if (attr (vg, "status") != 0)
         stop ("valgrind error")
 }
+
+# TODO: Re-instate this test once valgrind = 3.12, not current 3.11; see
+# https://www.mail-archive.com/kde-bugs-dist@kde.org/msg115932.html
 if (identical (Sys.getenv ("TRAVIS"), "true"))
 {
     #vg_check ()
