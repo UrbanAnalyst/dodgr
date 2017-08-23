@@ -13,6 +13,8 @@ vg_check <- function ()
         n <- regmatches(vg [lost_type], gregexpr("[[:digit:]]+", vg [lost_type]))
         lost <- c (lost, as.numeric (n [[1]] [2:3]))
     }
+    if (any (lost > 0))
+        stop ("valgrind memory leaks detected!")
 
     if (attr (vg, "status") != 0)
         stop ("valgrind error")
