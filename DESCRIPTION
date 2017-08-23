@@ -23,12 +23,11 @@ Imports:
     sp,
     Rcpp (>= 0.12.6)
 Suggests:
+    devtools,
     knitr,
     rmarkdown,
     roxygen2,
     testthat
-Remotes:
-    ropensci/osmdata
 LinkingTo:
     Rcpp
 SystemRequirements: C++11

@@ -1,0 +1,5 @@
+library(dodgr)
+streetnet <- dodgr_streetnet ("hampi india")
+graph <- weight_streetnet (streetnet)
+graph <- dodgr_sample (graph, nverts = 100)
+d <- dodgr_dists (graph)
