@@ -25,7 +25,6 @@ vg_check <- function ()
 if (identical (Sys.getenv ("TRAVIS"), "true"))
 {
     vv <- system2 (command = "valgrind", args = "--version", stdout = TRUE)
-    vv <- strsplit (vv, "valgrind-") [[1]] [2]
-    if (vv >= "3.12.0")
+    if (strsplit (vv, "valgrind-") [[1]] [2] >= "3.12.0")
         vg_check ()
 }

@@ -1,4 +1,3 @@
-#devtools::load_all ("../dodgr")
 library (dodgr)
 #streetnet <- dodgr_streetnet ("hampi india")
 #nms <- c ("osm_id", "highway", "oneway", "geometry")
