@@ -141,6 +141,9 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
 vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
         edge_map_t &edge_map);
 
+vertex_id_t select_random_vert (Rcpp::DataFrame graph,
+        edge_map_t &edge_map, vertex_map_t &vertices);
+
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample);
 

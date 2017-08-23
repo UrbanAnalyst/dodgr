@@ -393,7 +393,7 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
     return (graph_contracted)
 }
 
-#' dodgr_sample_graph
+#' dodgr_sample
 #'
 #' Sample a random but connected sub-component of a graph
 #'
@@ -407,7 +407,9 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 #' @export
 dodgr_sample <- function (graph, nverts = 1000)
 {
-    verts <- unique (c (graph$from_id, graph$to_id))
+    fr <- find_fr_id_col (graph)
+    to <- find_to_id_col (graph)
+    verts <- unique (c (graph [, fr], graph [, to]))
     if (length (verts) > nverts)
     {
         indx <- rcpp_sample_graph (convert_graph (graph)$graph, nverts)

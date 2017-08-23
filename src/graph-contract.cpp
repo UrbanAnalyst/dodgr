@@ -288,5 +288,8 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
 
     graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
 
+    Rcpp::Rcout << "There are " << verts_to_insert.size () <<
+        " vertices to insert" << std::endl;
+
     return Rcpp::List::create ();
 }
