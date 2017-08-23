@@ -29,6 +29,40 @@ find_to_col <- function (graph)
            grepl ("sto", names (graph), ignore.case = TRUE))
 }
 
+#' Get single graph column containing the ID of the from vertex
+#' @noRd
+find_fr_id_col <- function (graph)
+{
+    fr_col <- find_fr_col (graph)
+    if (is_graph_spatial (graph))
+    {
+        frx_col <- find_xy_col (graph, fr_col, x = TRUE)
+        fry_col <- find_xy_col (graph, fr_col, x = FALSE)
+        fr_col <- fr_col [which (!fr_col %in%
+                                 c (frx_col, fry_col))]
+    }
+    if (length (fr_col) != 1)
+        stop ("Unable to determine column with ID of from vertices")
+    return (fr_col)
+}
+
+#' Get single graph column containing the ID of the to vertex
+#' @noRd
+find_to_id_col <- function (graph)
+{
+    to_col <- find_to_col (graph)
+    if (is_graph_spatial (graph))
+    {
+        tox_col <- find_xy_col (graph, to_col, x = TRUE)
+        toy_col <- find_xy_col (graph, to_col, x = FALSE)
+        to_col <- to_col [which (!to_col %in%
+                                 c (tox_col, toy_col))]
+    }
+    if (length (to_col) != 1)
+        stop ("Unable to determine column with ID of from vertices")
+    return (to_col)
+}
+
 #' find_xy_col
 #'
 #' Find columns in graph containing lon and lat coordinates
