@@ -2,12 +2,22 @@ vg_check <- function ()
 {
     vg <- system2 (command = 'R',
                    args = c ('-d "valgrind --tool=memcheck --leak-check=full"',
-                             '-f test.R'),
+                             '-f valgrind-script.R'),
                    stdout = TRUE, stderr = TRUE)
+
+    lost <- NULL
+    types <- c ("definitely lost", "indirectly lost", "possibly lost")
+    for (ty in types)
+    {
+        lost_type <- which (grepl (ty, vg))
+        n <- regmatches(vg [lost_type], gregexpr("[[:digit:]]+", vg [lost_type]))
+        lost <- c (lost, as.numeric (n [[1]] [2:3]))
+    }
+
     if (attr (vg, "status") != 0)
         stop ("valgrind error")
 }
 if (identical (Sys.getenv ("TRAVIS"), "true"))
 {
-    vg_check ()
+    #vg_check ()
 }
