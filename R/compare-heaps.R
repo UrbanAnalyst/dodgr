@@ -14,27 +14,46 @@
 #' \code{data.frame} form.
 #'
 #' @export
-compare_heaps <- function(graph, nverts = 1000, replications = 10)
+compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
     graph <- dodgr_sample (graph, nverts = nverts)
     graph <- convert_graph (graph)$graph
+    graph_contracted <- dodgr_contract_graph (graph)$contracted
+
+    # route only between points on the compact graph:
+    from_id <- unique (c (graph_contracted$from, graph_contracted$to))
+    to_id <- from_id
 
     # set up igraph:
     fr_col <- find_fr_id_col (graph)
     to_col <- find_to_id_col (graph)
     edges <- cbind (graph [, fr_col], graph [, to_col])
-    nodes <- unique (as.vector (edges)) # used below in test comparison
     edges <- as.vector (t (edges))
     igr <- igraph::make_directed_graph (edges)
     igraph::E (igr)$weight <- graph [, find_d_col (graph)]
 
     rbenchmark::benchmark (
-                           d <- dodgr_dists (graph, heap = "BHeap"),
-                           d <- dodgr_dists (graph, heap = "FHeap"),
-                           d <- dodgr_dists (graph, heap = "TriHeap"),
-                           d <- dodgr_dists (graph, heap = "TriHeapExt"),
-                           d <- dodgr_dists (graph, heap = "Heap23"),
-                           d <- igraph::distances (igr, v = nodes, to = nodes,
+                           d <- dodgr_dists (graph, from = from_id, to = to_id,
+                                             heap = "BHeap"),
+                           d <- dodgr_dists (graph, from = from_id, to = to_id,
+                                             heap = "FHeap"),
+                           d <- dodgr_dists (graph, from = from_id, to = to_id,
+                                             heap = "TriHeap"),
+                           d <- dodgr_dists (graph, from = from_id, to = to_id,
+                                             heap = "TriHeapExt"),
+                           d <- dodgr_dists (graph, from = from_id, to = to_id,
+                                             heap = "Heap23"),
+                           d <- dodgr_dists (graph_contracted, from = from_id,
+                                             to = to_id, heap = "BHeap"),
+                           d <- dodgr_dists (graph_contracted, from = from_id,
+                                             to = to_id, heap = "FHeap"),
+                           d <- dodgr_dists (graph_contracted, from = from_id,
+                                             to = to_id, heap = "TriHeap"),
+                           d <- dodgr_dists (graph_contracted, from = from_id,
+                                             to = to_id, heap = "TriHeapExt"),
+                           d <- dodgr_dists (graph_contracted, from = from_id,
+                                             to = to_id, heap = "Heap23"),
+                           d <- igraph::distances (igr, v = from_id, to = to_id,
                                               mode = "out"),
                            replications = 10, order = "relative")
 }
