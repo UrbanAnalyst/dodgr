@@ -123,7 +123,8 @@ find_spatial_cols <- function (graph)
     list (fr_col = fr_col,
           to_col = to_col,
           xy_id = data.frame (xy_fr_id = xy_fr_id,
-                              xy_to_id = xy_to_id))
+                              xy_to_id = xy_to_id,
+                              stringsAsFactors = FALSE))
 }
 
 find_d_col <- function (graph)
@@ -148,9 +149,9 @@ find_w_col <- function (graph)
 
 #' convert_graph
 #'
-#' Convert graph to standard 4-column format for submission to C++ routines
+#' Convert graph to standard 4 or 5-column format for submission to C++ routines
 #' @noRd
-convert_graph <- function (graph)
+convert_graph <- function (graph, components = TRUE)
 {
     if (any (grepl ("edge", names (graph))))
         edge_id <- graph [, which (grepl ("edge", names (graph)))]
@@ -232,16 +233,19 @@ convert_graph <- function (graph)
     if (!is.character (graph$edge_id))
         graph$edge_id <- paste0 (graph$edge_id)
 
-    if (is.null (component))
+    if (components)
     {
-        cns <- rcpp_get_component_vector (graph)
-        component <- cns$edge_component [match (paste0 (graph$edge_id),
-                                                cns$edge_id)]
-        # Then re-number in order to decreasing component size:
-        component <- match (component, order (table (component),
-                                              decreasing = TRUE))
+        if (is.null (component))
+        {
+            cns <- rcpp_get_component_vector (graph)
+            component <- cns$edge_component [match (paste0 (graph$edge_id),
+                                                    cns$edge_id)]
+            # Then re-number in order to decreasing component size:
+            component <- match (component, order (table (component),
+                                                  decreasing = TRUE))
+        }
+        graph$component <- component
     }
-    graph$component <- component
 
     return (list (graph = graph, xy = xy))
 }
@@ -377,10 +381,9 @@ dodgr_components <- function (graph)
 #' @export
 dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
-    if (is.null (verts))
-        verts <- dodgr_vertices (graph)
+    grc <- convert_graph (graph)$graph
 
-    rcpp_contract_graph (graph, quiet = quiet)
+    rcpp_contract_graph (grc, quiet = quiet)
 }
 
 #' dodgr_sample_graph
