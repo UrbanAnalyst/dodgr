@@ -276,10 +276,8 @@ dodgr_vertices <- function (graph)
 
         verts <- data.frame (id = c (spcols$xy_id$xy_fr_id,
                                      spcols$xy_id$xy_to_id),
-                             x = c (graph [, fr_col [1]],
-                                    graph [, to_col [1]]),
-                             y = c (graph [, fr_col [2]],
-                                    graph [, to_col [2]]),
+                             x = c (xy_fr [, 1], xy_to [, 1]),
+                             y = c (xy_fr [, 2], xy_to [, 2]),
                              stringsAsFactors = FALSE)
     } else # non-spatial graph
     {
@@ -383,13 +381,13 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
     {
         spcols <- find_spatial_cols (graph)
         fr_col <- find_fr_id_col (graph)
-        indx <- match (graph_contracted$contracted$from, graph [, fr_col])
+        indx <- match (graph_contracted$graph$from, graph [, fr_col])
         fr_xy <- graph [indx, spcols$fr_col]
         to_col <- find_to_id_col (graph)
-        indx <- match (graph_contracted$contracted$to, graph [, to_col])
+        indx <- match (graph_contracted$graph$to, graph [, to_col])
         to_xy <- graph [indx, spcols$to_col]
-        graph_contracted$contracted <- cbind (graph_contracted$contracted,
-                                              fr_xy, to_xy)
+        graph_contracted$graph <- cbind (graph_contracted$graph,
+                                         fr_xy, to_xy)
     }
 
     return (graph_contracted)

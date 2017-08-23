@@ -255,7 +255,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
         Rcpp::Rcout << std::endl;
 
     return Rcpp::List::create (
-            Rcpp::Named ("contracted") = contracted,
+            Rcpp::Named ("graph") = contracted,
             Rcpp::Named ("map") = map);
 }
 
