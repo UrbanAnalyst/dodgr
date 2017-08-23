@@ -13,6 +13,138 @@ is_graph_spatial <- function (graph)
          any (grepl ("lat", names (graph), ignore.case = TRUE)))
 }
 
+#' Get graph columns containing the from vertex
+#' @noRd
+find_fr_col <- function (graph)
+{
+    which (grepl ("fr", names (graph), ignore.case = TRUE) |
+           grepl ("sta", names (graph), ignore.case = TRUE))
+}
+
+#' Get graph columns containing the to vertex
+#' @noRd
+find_to_col <- function (graph)
+{
+    which (grepl ("to", names (graph), ignore.case = TRUE) |
+           grepl ("sto", names (graph), ignore.case = TRUE))
+}
+
+#' Get single graph column containing the ID of the from vertex
+#' @noRd
+find_fr_id_col <- function (graph)
+{
+    fr_col <- find_fr_col (graph)
+    if (is_graph_spatial (graph))
+    {
+        frx_col <- find_xy_col (graph, fr_col, x = TRUE)
+        fry_col <- find_xy_col (graph, fr_col, x = FALSE)
+        fr_col <- fr_col [which (!fr_col %in%
+                                 c (frx_col, fry_col))]
+    }
+    if (length (fr_col) != 1)
+        stop ("Unable to determine column with ID of from vertices")
+    return (fr_col)
+}
+
+#' Get single graph column containing the ID of the to vertex
+#' @noRd
+find_to_id_col <- function (graph)
+{
+    to_col <- find_to_col (graph)
+    if (is_graph_spatial (graph))
+    {
+        tox_col <- find_xy_col (graph, to_col, x = TRUE)
+        toy_col <- find_xy_col (graph, to_col, x = FALSE)
+        to_col <- to_col [which (!to_col %in%
+                                 c (tox_col, toy_col))]
+    }
+    if (length (to_col) != 1)
+        stop ("Unable to determine column with ID of from vertices")
+    return (to_col)
+}
+
+#' find_xy_col
+#'
+#' Find columns in graph containing lon and lat coordinates
+#' @param indx columns of graph containing either to or from values, so xy
+#' columns can be returned separately for each case
+#' @noRd
+find_xy_col <- function (graph, indx, x = TRUE)
+{
+    if (x)
+        coli <- which (grepl ("x", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lon", names (graph) [indx], ignore.case = TRUE))
+    else
+        coli <- which (grepl ("y", names (graph) [indx], ignore.case = TRUE) |
+                       grepl ("lat", names (graph) [indx], ignore.case = TRUE))
+
+    indx [coli]
+}
+
+#' find_spatial_cols
+#' @noRd
+find_spatial_cols <- function (graph)
+{
+
+    fr_col <- find_fr_col (graph)
+    to_col <- find_to_col (graph)
+
+    if (length (fr_col) < 2 | length (to_col) < 2)
+        stop (paste0 ("Graph appears to be spatial yet unable to ",
+                      "extract coordinates."))
+
+    if (length (fr_col) == 3)
+    {
+        frx_col <- find_xy_col (graph, fr_col, x = TRUE)
+        fry_col <- find_xy_col (graph, fr_col, x = FALSE)
+        frid_col <- fr_col [which (!fr_col %in%
+                                   c (frx_col, fry_col))]
+        fr_col <- c (frx_col, fry_col)
+        xy_fr_id <- graph [, frid_col]
+        if (!is.character (xy_fr_id))
+            xy_fr_id <- paste0 (xy_fr_id)
+
+        tox_col <- find_xy_col (graph, to_col, x = TRUE)
+        toy_col <- find_xy_col (graph, to_col, x = FALSE)
+        toid_col <- to_col [which (!to_col %in%
+                                   c (tox_col, toy_col))]
+        to_col <- c (tox_col, toy_col)
+        xy_to_id <- graph [, toid_col]
+        if (!is.character (xy_to_id))
+            xy_to_id <- paste0 (xy_to_id)
+    } else # len == 2, so must be only x-y
+    {
+        xy_fr_id <- paste0 (graph [, fr_col [1]],
+                            graph [, fr_col [2]])
+        xy_to_id <- paste0 (graph [, to_col [1]],
+                            graph [, to_col [2]])
+    }
+
+    list (fr_col = fr_col,
+          to_col = to_col,
+          xy_id = data.frame (xy_fr_id = xy_fr_id,
+                              xy_to_id = xy_to_id))
+}
+
+find_d_col <- function (graph)
+{
+    d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
+                    tolower (substring (names (graph), 2, 2)) != "w" &
+                    tolower (substring (names (graph), 2, 2)) != "_")
+    if (length (d_col) != 1)
+        stop ("Unable to determine distance column in graph")
+    return (d_col)
+}
+
+find_w_col <- function (graph)
+{
+    w_col <- which (tolower (substring (names (graph), 1, 1)) == "w" |
+                    tolower (substring (names (graph), 1, 2)) == "dw" |
+                    tolower (substring (names (graph), 1, 3)) == "d_w")
+    if (length (w_col) > 1)
+        stop ("Unable to determine weight column in graph")
+    return (w_col)
+}
 
 #' convert_graph
 #'
@@ -25,89 +157,51 @@ convert_graph <- function (graph)
     else
         edge_id <- seq (nrow (graph))
 
-    graph$edge_id <- seq (nrow (graph))
-
     component <- NULL
     if (any (grepl ("comp", names (graph))))
         component <- graph [, which (grepl ("comp", names (graph)))]
 
-    d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
-                    tolower (substring (names (graph), 2, 2)) != "w" &
-                    tolower (substring (names (graph), 2, 2)) != "_")
-    w_col <- which (tolower (substring (names (graph), 1, 1)) == "w" |
-                    tolower (substring (names (graph), 1, 2)) == "dw" |
-                    tolower (substring (names (graph), 1, 3)) == "d_w")
-    if (length (d_col) > 1 | length (w_col) > 1)
-        stop ("Unable to determine distance and/or weight columns in graph")
-    else if (length (d_col) != 1)
-        stop ("Unable to determine distance column in graph")
-
+    d_col <- find_d_col (graph)
+    w_col <- find_w_col (graph)
     if (length (w_col) == 0)
         w_col <- d_col
 
-    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE))
-    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE))
+    fr_col <- find_fr_col (graph)
+    to_col <- find_to_col (graph)
+    if (length (fr_col) != length (to_col))
+        stop (paste0 ("from and to columns in graph appear ",
+                      "to have different strutures"))
 
     xy <- NULL
     if (ncol (graph) > 4)
     {
         if (is_graph_spatial (graph))
         {
-            if (length (fr_col) != length (to_col))
-                stop (paste0 ("from and to columns in graph appear ",
-                              "to have different strutures"))
-            else if (length (fr_col) >= 2 & length (to_col) >= 2)
-            {
-                if (length (fr_col) == 3)
-                {
-                    frx_col <- find_xy_col (graph, fr_col, x = TRUE)
-                    fry_col <- find_xy_col (graph, fr_col, x = FALSE)
-                    frid_col <- fr_col [which (!fr_col %in%
-                                               c (frx_col, fry_col))]
-                    fr_col <- c (frx_col, fry_col)
-                    xy_fr_id <- graph [, frid_col]
-                    if (!is.character (xy_fr_id))
-                        xy_fr_id <- paste0 (xy_fr_id)
+            spcols <- find_spatial_cols (graph)
 
-                    tox_col <- find_xy_col (graph, to_col, x = TRUE)
-                    toy_col <- find_xy_col (graph, to_col, x = FALSE)
-                    toid_col <- to_col [which (!to_col %in%
-                                               c (tox_col, toy_col))]
-                    to_col <- c (tox_col, toy_col)
-                    xy_to_id <- graph [, toid_col]
-                    if (!is.character (xy_to_id))
-                        xy_to_id <- paste0 (xy_to_id)
-                } else # len == 2, so must be only x-y
-                {
-                    xy_fr_id <- paste0 (graph [, fr_col [1]],
-                                        graph [, fr_col [2]])
-                    xy_to_id <- paste0 (graph [, to_col [1]],
-                                        graph [, to_col [2]])
-                }
+            xy_fr <- graph [, spcols$fr_col]
+            xy_to <- graph [, spcols$to_col]
+            if (!(all (apply (xy_fr, 2, is.numeric)) |
+                  all (apply (xy_to, 2, is.numeric))))
+                stop (paste0 ("graph appears to have non-numeric ",
+                              "longitudes and latitudes"))
 
-                xy_fr <- graph [, fr_col]
-                xy_to <- graph [, to_col]
-                if (!(all (apply (xy_fr, 2, is.numeric)) |
-                      all (apply (xy_to, 2, is.numeric))))
-                    stop (paste0 ("graph appears to have non-numeric ",
-                                  "longitudes and latitudes"))
+            # This same indx is created in vert_map to ensure it follows
+            # same order as xy
+            indx <- which (!duplicated (c (spcols$xy_id$xy_fr_id,
+                                           spcols$xy_id$xy_to_id)))
+            xy <- data.frame ("x" = c (graph [, spcols$fr_col [1]],
+                                       graph [, spcols$to_col [1]]),
+                              "y" = c (graph [, spcols$fr_col [2]],
+                                       graph [, spcols$to_col [2]])) [indx, ]
 
-                # This same indx is created in vert_map to ensure it follows
-                # same order as xy
-                indx <- which (!duplicated (c (xy_fr_id, xy_to_id)))
-                xy <- data.frame ("x" = c (graph [, fr_col [1]],
-                                           graph [, to_col [1]]),
-                                  "y" = c (graph [, fr_col [2]],
-                                           graph [, to_col [2]])) [indx, ]
-
-                # then replace 4 xy from/to cols with 2 from/to cols
-                graph <- data.frame ("edge_id" = edge_id,
-                                     "from" = xy_fr_id,
-                                     "to" = xy_to_id,
-                                     "d" = graph [, d_col],
-                                     "w" = graph [, w_col],
-                                     stringsAsFactors = FALSE)
-            }
+            # then replace 4 xy from/to cols with 2 from/to cols
+            graph <- data.frame ("edge_id" = edge_id,
+                                 "from" = spcols$xy_id$xy_fr_id,
+                                 "to" = spcols$xy_id$xy_to_id,
+                                 "d" = graph [, d_col],
+                                 "w" = graph [, w_col],
+                                 stringsAsFactors = FALSE)
         } else
         {
             if (length (fr_col) != 1 & length (to_col) != 1)
@@ -135,7 +229,7 @@ convert_graph <- function (graph)
         graph$from <- paste0 (graph$from)
     if (!is.character (graph$to))
         graph$to <- paste0 (graph$to)
-    if (!is.character (graph$edge_it))
+    if (!is.character (graph$edge_id))
         graph$edge_id <- paste0 (graph$edge_id)
 
     if (is.null (component))
@@ -150,20 +244,6 @@ convert_graph <- function (graph)
     graph$component <- component
 
     return (list (graph = graph, xy = xy))
-}
-
-#' find_xy_col
-#' @noRd
-find_xy_col <- function (graph, indx, x = TRUE)
-{
-    if (x)
-        coli <- which (grepl ("x", names (graph) [indx], ignore.case = TRUE) |
-                       grepl ("lon", names (graph) [indx], ignore.case = TRUE))
-    else
-        coli <- which (grepl ("y", names (graph) [indx], ignore.case = TRUE) |
-                       grepl ("lat", names (graph) [indx], ignore.case = TRUE))
-
-    indx [coli]
 }
 
 
@@ -182,56 +262,22 @@ find_xy_col <- function (graph, indx, x = TRUE)
 #' @export
 dodgr_vertices <- function (graph)
 {
-    fr_col <- which (grepl ("fr", names (graph), ignore.case = TRUE) |
-                     grepl ("sta", names (graph), ignore.case = TRUE))
-    to_col <- which (grepl ("to", names (graph), ignore.case = TRUE) |
-                     grepl ("sto", names (graph), ignore.case = TRUE))
+    fr_col <- find_fr_col (graph)
+    to_col <- find_to_col (graph)
 
     if (is_graph_spatial (graph))
     {
-        # graph is spatial
-        if (length (fr_col) != length (to_col))
-            stop (paste0 ("from and to columns in graph appear ",
-                          "to have different strutures"))
-        if (length (fr_col) < 2 | length (to_col) < 2)
-            stop (paste0 ("Graph appears to be spatial yet unable to ",
-                          "extract coordinates."))
+        spcols <- find_spatial_cols (graph)
 
-        if (length (fr_col) == 3)
-        {
-            frx_col <- find_xy_col (graph, fr_col, x = TRUE)
-            fry_col <- find_xy_col (graph, fr_col, x = FALSE)
-            frid_col <- fr_col [which (!fr_col %in%
-                                       c (frx_col, fry_col))]
-            fr_col <- c (frx_col, fry_col)
-            xy_fr_id <- graph [, frid_col]
-            if (!is.character (xy_fr_id))
-                xy_fr_id <- paste0 (xy_fr_id)
-
-            tox_col <- find_xy_col (graph, to_col, x = TRUE)
-            toy_col <- find_xy_col (graph, to_col, x = FALSE)
-            toid_col <- to_col [which (!to_col %in%
-                                       c (tox_col, toy_col))]
-            to_col <- c (tox_col, toy_col)
-            xy_to_id <- graph [, toid_col]
-            if (!is.character (xy_to_id))
-                xy_to_id <- paste0 (xy_to_id)
-        } else # len == 2, so must be only x-y
-        {
-            xy_fr_id <- paste0 (graph [, fr_col [1]],
-                                graph [, fr_col [2]])
-            xy_to_id <- paste0 (graph [, to_col [1]],
-                                graph [, to_col [2]])
-        }
-
-        xy_fr <- graph [, fr_col]
-        xy_to <- graph [, to_col]
+        xy_fr <- graph [, spcols$fr_col]
+        xy_to <- graph [, spcols$to_col]
         if (!(all (apply (xy_fr, 2, is.numeric)) |
               all (apply (xy_to, 2, is.numeric))))
             stop (paste0 ("graph appears to have non-numeric ",
                           "longitudes and latitudes"))
 
-        verts <- data.frame (id = c (xy_fr_id, xy_to_id),
+        verts <- data.frame (id = c (spcols$xy_id$xy_fr_id,
+                                     spcols$xy_id$xy_to_id),
                              x = c (graph [, fr_col [1]],
                                     graph [, to_col [1]]),
                              y = c (graph [, fr_col [2]],
@@ -243,11 +289,11 @@ dodgr_vertices <- function (graph)
             stop ("Graph appears to be non-spatial, yet unable to ",
                   "determine vertex columns")
 
-        verts <- data.frame (from = graph [, fr_col],
-                             to = graph [, to_col])
+        verts <- data.frame (id = c (graph [, fr_col], graph [, to_col]),
+                             stringsAsFactors = FALSE)
     }
     indx <- which (!duplicated (verts))
-    verts <- verts [indx, ]
+    verts <- verts [indx, , drop = FALSE] #nolint
     verts$n <- seq (nrow (verts)) - 1
 
     return (verts)

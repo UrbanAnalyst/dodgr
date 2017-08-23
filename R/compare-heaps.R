@@ -19,11 +19,13 @@ compare_heaps <- function(graph, nverts = 1000, replications = 10)
     graph <- dodgr_sample (graph, nverts = nverts)
 
     # set up igraph:
-    edges <- cbind (graph$from_id, graph$to_id)
+    fr_col <- find_fr_id_col (graph)
+    to_col <- find_to_id_col (graph)
+    edges <- cbind (graph [, fr_col], graph [, to_col])
     nodes <- unique (as.vector (edges)) # used below in test comparison
     edges <- as.vector (t (edges))
     igr <- igraph::make_directed_graph (edges)
-    igraph::E (igr)$weight <- graph$d
+    igraph::E (igr)$weight <- graph [, find_d_col (graph)]
 
     rbenchmark::benchmark (
                            d <- dodgr_dists (graph, heap = "BHeap"),
