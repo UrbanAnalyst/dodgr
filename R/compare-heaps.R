@@ -17,6 +17,7 @@
 compare_heaps <- function(graph, nverts = 1000, replications = 10)
 {
     graph <- dodgr_sample (graph, nverts = nverts)
+    graph <- convert_graph (graph)$graph
 
     # set up igraph:
     fr_col <- find_fr_id_col (graph)

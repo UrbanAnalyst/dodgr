@@ -153,6 +153,9 @@ find_w_col <- function (graph)
 #' @noRd
 convert_graph <- function (graph, components = TRUE)
 {
+    if (is (graph, "graph_converted"))
+        return (list (graph = graph))
+
     if (any (grepl ("edge", names (graph))))
         edge_id <- graph [, which (grepl ("edge", names (graph)))]
     else
@@ -235,6 +238,8 @@ convert_graph <- function (graph, components = TRUE)
         }
         graph$component <- component
     }
+
+    class (graph) <- c (class (graph), "graph_converted")
 
     return (list (graph = graph, xy = xy))
 }
