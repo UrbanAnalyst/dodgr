@@ -8,7 +8,8 @@
 #'
 #' @param graph \code{data.frame} object representing the network graph (or a
 #' sub-sample selected with code{dodgr_sample})
-#' @param nverts Number of vertices used to generate random sub-graph
+#' @param nverts Number of vertices used to generate random sub-graph. If a
+#' non-numeric value is given, the whole graph will be used.
 #' @param replications Number of replications to be used in comparison
 #' @return Result of \code{rbenachmar::benchmark} comparison in
 #' \code{data.frame} form.
@@ -16,7 +17,8 @@
 #' @export
 compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
-    graph <- dodgr_sample (graph, nverts = nverts)
+    if (is.numeric (nverts))
+        graph <- dodgr_sample (graph, nverts = nverts)
     graph <- convert_graph (graph)$graph
     graph_contracted <- dodgr_contract_graph (graph)$contracted
 
