@@ -3,6 +3,7 @@ Title: Distances on Directed Graphs in R
 Version: 0.0.0.9000
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
+    person("Andreas", "Peutschnig", role="aut"),
     person("Shane", "Saunders", role="cph",
         comment="Original author of included code for priority heaps"))
 Description: Distances on dual-weighted directed graphs using priority-queue
