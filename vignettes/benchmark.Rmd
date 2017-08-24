@@ -94,39 +94,45 @@ for (i in seq_along (datasets))
 }
 ```
 
-Now, `compare_heaps()` can be run for all graphs.
+Now, `compare_heaps()` can be run for all graphs. First, show the number of
+vertices of all graphs in the list.
 
 ```{r}
-#benchmarks <- lapply (all_graphs, compare_heaps)
-benchmarks <- readRDS ("benchmark_data.rds")
-r1 <- vector (mode = "numeric", length = length (benchmarks))
-r2 <- vector (mode = "numeric", length = length (benchmarks))
-r3 <- vector (mode = "numeric", length = length (benchmarks))
-r4 <- vector (mode = "numeric", length = length (benchmarks))
-r5 <- vector (mode = "numeric", length = length (benchmarks))
-r6 <- vector (mode = "numeric", length = length (benchmarks))
-
-for (i in seq_along (benchmarks))
-{
-    bm <- benchmarks [[i]]
-    r1 [i] <- bm$elapsed [1]
-    r2 [i] <- bm$elapsed [2]
-    r3 [i] <- bm$elapsed [3]
-    r4 [i] <- bm$elapsed [4]
-    r5 [i] <- bm$elapsed [5]
-    r6 [i] <- bm$elapsed [6]
-}
-
-max_y <- max (r1, r2, r3, r4, r5, r6)
-cl <- c ("black", "blue", "green", "red", "Plum", "Orange")
+num_vertices <- sapply (all_graphs, nrow)
+num_vertices
 ```
 
-```{r fig.width=14, fig.height=10}
-plot (r1, type = "l", ylim = c (1e-6, max_y), log = "y")
-lines (r2, col = cl [2])
-lines (r3, col = cl [3])
-lines (r4, col = cl [4])
-lines (r5, col = cl [5])
-lines (r6, col = cl [6])
-legend (10, 5e-4, bm$test, lty=c(1,1), lwd=c(2.5,2.5), col = cl)
+```{r fig.width = 12, fig.height = 8}
+# benchmarks <- lapply (all_graphs, compare_heaps)
+benchmarks <- readRDS ("benchmark_data.rds")
+elapsed <- unlist (purrr::map (benchmarks, "elapsed"))
+tests <- unlist (purrr::map (benchmarks, "test"))
+tests <- as.character (tests)
+tests <- sub ("d <- dodgr_dists\\(graph, from = from_id, to = to_id, heap =",
+     "Contracted", tests)
+p <- "d <- dodgr_dists\\(graph_contracted, from = from_id, to = to_id, heap = "
+tests <- sub (p, "", tests)
+tests [grepl ("igraph", tests)] <- "igraph"
+tests <- gsub ("\"", "", tests)
+tests <- gsub ("\\)", "", tests)
+tests <- as.factor (tests)
+n_tests <- dim (benchmarks [[1]]) [1]
+num_vertices <- rep (num_vertices, each = n_tests)
+bm <- data.frame (num_vertices, Test = tests, elapsed)
+
+library (ggplot2)
+library (scales)
+
+ggplot (bm) +
+    geom_line (aes (x = num_vertices, y = elapsed, colour = Test)) +
+    geom_point (aes (x = num_vertices, y = elapsed, colour = Test)) +
+    scale_x_log10 (breaks = trans_breaks ("log10", function (x) 10^x),
+                   labels = trans_format ("log10", math_format (10^.x))) +
+    scale_y_log10 (breaks = trans_breaks ("log10", function (x) 10^x),
+                   labels = trans_format ("log10", math_format (10^.x))) +
+    labs (title = "dodgr benchmark results",
+          x = "Number of vertices (log scale)", y = "Runtime [s] (log scale)") +
+    theme_bw (base_family = "TeX Gyre Bonum") +
+    theme (plot.title = element_text(hjust = 0.5),
+                    legend.box.background = element_rect ())
 ```
