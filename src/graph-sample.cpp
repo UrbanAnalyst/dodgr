@@ -25,8 +25,10 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
     unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
-        // TODO: The following line does not yet work:
-        edge_t this_edge = edge_map.find (std::to_string (e0++))->second;
+        // TODO: The following is an O(N) lookup; maybe just use
+        // edge_map.find (std::to_string (e0)) and handle not found; that'd be
+        // constant time.
+        edge_t this_edge = std::next (edge_map.begin (), e0++)->second;
         vertex_id_t this_vert = this_edge.get_from_vertex ();
         if (components [this_vert] == largest_component)
             in_largest = true;
@@ -36,7 +38,7 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
 
     edge_component edge_comp;
     edge_comp.component = largest_component;
-    edge_comp.edge = e0;
+    edge_comp.edge = std::next (edge_map.begin (), e0)->first;
 
     return edge_comp;
 }
@@ -50,9 +52,9 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
 //' @return Random index to one edge that is part of the largest connected
 //' component.
 //' @noRd
-edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
+edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
+        edge_map_t &edge_map)
 {
-    // TODO: This does not yet work with edge_id_t = std::string
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
@@ -62,7 +64,26 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph)
     while (component (e0) > 1)
         e0 = uni (rng);
 
-    return std::to_string (e0);
+    return std::next (edge_map.begin (), e0)->first;
+}
+
+vertex_id_t select_random_vert (Rcpp::DataFrame graph,
+        edge_map_t &edge_map, vertex_map_t &vertices)
+{
+    vertex_id_t this_vert;
+    if (graph_has_components (graph))
+    {
+        edge_id_t e0 = sample_one_edge_with_comps (graph, edge_map);
+        edge_t this_edge = edge_map.find (e0)->second;
+        this_vert = this_edge.get_from_vertex ();
+    } else
+    {
+        edge_component edge_comp = sample_one_edge_no_comps (vertices, edge_map);
+        edge_t this_edge = edge_map.find (edge_comp.edge)->second; // random edge
+        this_vert = this_edge.get_from_vertex ();
+    }
+
+    return this_vert;
 }
 
 
@@ -82,7 +103,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample)
 {
     std::random_device rd;
-    std::mt19937 rng (rd()); // mersenne twister
+    std::default_random_engine rng (rd()); // safest to use here
 
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -99,20 +120,16 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     // simple vert_ids set for quicker random selection:
     std::unordered_set <vertex_id_t> vert_ids;
     for (auto v: vertices)
-        vert_ids.emplace (v.first);
-
-    vertex_id_t this_vert;
-    if (graph_has_components (graph))
+        if (components [v.first] == largest_component)
+            vert_ids.emplace (v.first);
+    if (vert_ids.size () < nverts_to_sample)
     {
-        edge_id_t e0 = sample_one_edge_with_comps (graph);
-        edge_t this_edge = edge_map.find (e0)->second;
-        this_vert = this_edge.get_from_vertex ();
-    } else
-    {
-        edge_component edge_comp = sample_one_edge_no_comps (vertices, edge_map);
-        edge_t this_edge = edge_map.find (edge_comp.edge)->second; // random edge
-        this_vert = this_edge.get_from_vertex ();
+        Rcpp::Rcout << "Largest connected component only has " <<
+            vert_ids.size () << " vertices" << std::endl;
+        nverts_to_sample = vert_ids.size ();
     }
+
+    vertex_id_t this_vert = select_random_vert (graph, edge_map, vertices);
 
     // Samples are built by randomly tranwing a vertex list, and inspecting
     // edges that extend from it. The only effective way to randomly sample a
@@ -124,6 +141,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     std::unordered_set <edge_id_t> edgelist;
     vertlist.push_back (this_vert);
 
+
+    unsigned int count = 0;
     while (vertlist.size () < nverts_to_sample)
     {
         // initialise random int generator:
@@ -148,6 +167,16 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
                         vertlist.end())
                     vertlist.push_back (vt);
             }
+        }
+        count++;
+        if (count > (100 * nverts_to_sample))
+        {
+            // likely stuck in some one-way part of graph that can't connect, so
+            // reset to another start node
+            this_vert = select_random_vert (graph, edge_map, vertices);
+            vertlist.clear ();
+            vertlist.push_back (this_vert);
+            count = 0;
         }
     }
 

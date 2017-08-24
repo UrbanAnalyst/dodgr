@@ -8,10 +8,10 @@
 #' @param graph graph to be processed
 #' @param quiet If TRUE, display progress
 #'
-#' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
-#' graph, one \code{data.frame} with the original graph and one
+#' @return \code{Rcpp::List} containing one \code{data.frame} with the
+#' contracted graph, one \code{data.frame} with the original graph and one
 #' \code{data.frame} containing information about the relating edge ids of the
-#' original and compact graph.
+#' original and contracted graph.
 #'
 #' @noRd
 rcpp_contract_graph <- function(graph, quiet) {
@@ -20,20 +20,21 @@ rcpp_contract_graph <- function(graph, quiet) {
 
 #' rcpp_insert_vertices
 #'
-#' Insert routing vertices in compact graph
+#' Insert routing vertices in contracted graph
 #'
 #' @param fullgraph graph to be processed
-#' @param compactgraph graph to be processed
+#' @param contracted graph to be processed
+#' @param map Map of old-to-new vertices returned from rcpp_contract_graph
 #' @param pts_to_insert Index into graph of those points closest to desired
-#' routing points. These are to be kept in the compact graph.
-#' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
-#' graph, one \code{data.frame} with the original graph and one
+#' routing points. These are to be re-inserted in the contracted graph.
+#' @return \code{Rcpp::List} containing one \code{data.frame} with the
+#' contracted graph, one \code{data.frame} with the original graph and one
 #' \code{data.frame} containing information about the relating edge ids of the
-#' original and compact graph.
+#' original and contracted graph.
 #'
 #' @noRd
-rcpp_insert_vertices <- function(fullgraph, compactgraph, pts_to_insert) {
-    .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, compactgraph, pts_to_insert)
+rcpp_insert_vertices <- function(fullgraph, contracted, map, verts_to_insert) {
+    .Call(`_dodgr_rcpp_insert_vertices`, fullgraph, contracted, map, verts_to_insert)
 }
 
 #' graph_has_components

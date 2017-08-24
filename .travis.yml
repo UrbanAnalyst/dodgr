@@ -4,8 +4,7 @@ language: R
 sudo: false
 cache: packages
 
-apt-packages:
-    - ghostscript
-
-before_install:
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ghostscript; fi;
+addons:
+    apt:
+        packages:
+            - valgrind

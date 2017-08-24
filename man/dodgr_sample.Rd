@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-functions.R
 \name{dodgr_sample}
 \alias{dodgr_sample}
-\title{dodgr_sample_graph}
+\title{dodgr_sample}
 \usage{
 dodgr_sample(graph, nverts = 1000)
 }

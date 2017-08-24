@@ -77,8 +77,6 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
 
-    #graphc <- rcpp_contract_graph (graph, quiet = FALSE)
-
     if (missing (from))
         from <- -1
     else
@@ -94,11 +92,11 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
     d <- rcpp_get_sp (graph, vert_map, from, to, heap)
     if (any (from < 0))
         from <- seq (nrow (vert_map))
-    rownames (d) <- vert_map$vert [from]
+    rownames (d) <- vert_map$vert [from + 1] # coz from is 0-indexed
     if (any (to < 0))
-        colnames (d) <- vert_map$vert [from]
+        colnames (d) <- vert_map$vert [from + 1] # ditto
     else
-        colnames (d) <- vert_map$vert [to]
+        colnames (d) <- vert_map$vert [to + 1] # ditto
     if (!quiet)
         message ("done.")
 
@@ -144,7 +142,7 @@ get_pts_index <- function (vert_map, xy, pts)
             indx <- match (pts, vert_map$vert)
             if (any (is.na (indx)))
                 stop (paste0 ("from/to are not numeric yet can not be",
-                              "matched onto graph vertices"))
+                              " matched onto graph vertices"))
             pts <- indx
         }
         if (any (pts < 1 | pts > nrow (vert_map)))

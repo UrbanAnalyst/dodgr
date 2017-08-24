@@ -1,6 +1,21 @@
 #include "graph.h"
 
 
+unsigned int get_max_edge_id (edge_map_t &edge_map)
+{
+    unsigned int max_edge_id = 0;
+    for (auto e: edge_map)
+    {
+        unsigned int id = std::stoi (e.second.getID ());
+        if (id > max_edge_id)
+            max_edge_id = id;
+    }
+    max_edge_id++;
+
+    return max_edge_id;
+}
+
+
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
@@ -10,13 +25,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto v: vertex_map)
         verts.insert (v.first);
 
-    unsigned int max_edge_id = 0;
-    /* TODO: Fix this with edge_id_t
-    for (auto e: edge_map)
-        if (e.second.getID () > max_edge_id)
-            max_edge_id = e.second.getID ();
-    */
-    max_edge_id++;
+    unsigned int max_edge_id = get_max_edge_id (edge_map);
 
     std::vector<edge_id_t> newe;
 
@@ -26,13 +35,11 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vertex_id_t vtx_id = vertex_map.find (*vid)->first;
         vertex_t vtx = vertex_map.find (*vid)->second;
         std::unordered_set <edge_id_t> edges = vert2edge_map [vtx_id];
-        std::map <edge_id_t, bool> edges_done; // TODO: unordered?
+        std::unordered_map <edge_id_t, bool> edges_done;
         for (auto e: edges)
             edges_done.emplace (e, false);
 
         newe.clear ();
-        //newe.push_back (max_edge_id++);
-        // TODO: Following line does not yet work!
         newe.push_back (std::to_string (max_edge_id++));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
@@ -40,7 +47,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         {
             if (edges.size () == 4) // is_intermediate_double as well!
                 newe.push_back (std::to_string (max_edge_id++));
-            // TODO: previous line does not yet work!
 
             // remove intervening vertex:
             auto nbs = vtx.get_all_neighbours (); // unordered_set <vertex_id_t>
@@ -150,10 +156,10 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' @param graph graph to be processed
 //' @param quiet If TRUE, display progress
 //'
-//' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
-//' graph, one \code{data.frame} with the original graph and one
+//' @return \code{Rcpp::List} containing one \code{data.frame} with the
+//' contracted graph, one \code{data.frame} with the original graph and one
 //' \code{data.frame} containing information about the relating edge ids of the
-//' original and compact graph.
+//' original and contracted graph.
 //'
 //' @noRd
 // [[Rcpp::export]]
@@ -190,7 +196,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
 
     if (!quiet)
     {
-        Rcpp::Rcout << std::endl << "Mapping compact to original graph ... ";
+        Rcpp::Rcout << std::endl << "Mapping contracted to original graph ... ";
         Rcpp::Rcout.flush ();
     }
     int nedges = edge_map2.size ();
@@ -233,51 +239,57 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
         }
     }
 
-    Rcpp::DataFrame compact = Rcpp::DataFrame::create (
-            Rcpp::Named ("from_id") = from_vec,
-            Rcpp::Named ("to_id") = to_vec,
+    Rcpp::DataFrame contracted = Rcpp::DataFrame::create (
             Rcpp::Named ("edge_id") = edgeid_vec,
+            Rcpp::Named ("from") = from_vec,
+            Rcpp::Named ("to") = to_vec,
             Rcpp::Named ("d") = dist_vec,
-            Rcpp::Named ("d_weighted") = weight_vec);
+            Rcpp::Named ("w") = weight_vec,
+            Rcpp::_["stringsAsFactors"] = false);
 
-    Rcpp::DataFrame rel = Rcpp::DataFrame::create (
-            Rcpp::Named ("id_compact") = edge_id_comp,
+    Rcpp::DataFrame map = Rcpp::DataFrame::create (
+            Rcpp::Named ("id_contracted") = edge_id_comp,
             Rcpp::Named ("id_original") = edge_id_orig);
 
     if (!quiet)
         Rcpp::Rcout << std::endl;
 
     return Rcpp::List::create (
-            Rcpp::Named ("compact") = compact,
-            Rcpp::Named ("original") = graph,
-            Rcpp::Named ("map") = rel);
+            Rcpp::Named ("graph") = contracted,
+            Rcpp::Named ("map") = map);
 }
 
 
 //' rcpp_insert_vertices
 //'
-//' Insert routing vertices in compact graph
+//' Insert routing vertices in contracted graph
 //'
 //' @param fullgraph graph to be processed
-//' @param compactgraph graph to be processed
+//' @param contracted graph to be processed
+//' @param map Map of old-to-new vertices returned from rcpp_contract_graph
 //' @param pts_to_insert Index into graph of those points closest to desired
-//' routing points. These are to be kept in the compact graph.
-//' @return \code{Rcpp::List} containing one \code{data.frame} with the compact
-//' graph, one \code{data.frame} with the original graph and one
+//' routing points. These are to be re-inserted in the contracted graph.
+//' @return \code{Rcpp::List} containing one \code{data.frame} with the
+//' contracted graph, one \code{data.frame} with the original graph and one
 //' \code{data.frame} containing information about the relating edge ids of the
-//' original and compact graph.
+//' original and contracted graph.
 //'
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame compactgraph, std::vector <int> pts_to_insert)
+        Rcpp::DataFrame contracted, Rcpp::DataFrame map,
+        std::vector <std::string> verts_to_insert)
 {
+    // verts_to_insert is actually vert_id_t, but that can't be exported to Rcpp
     vertex_map_t vertices;
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, int> components;
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
+
+    Rcpp::Rcout << "There are " << verts_to_insert.size () <<
+        " vertices to insert" << std::endl;
 
     return Rcpp::List::create ();
 }

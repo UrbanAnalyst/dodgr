@@ -142,12 +142,10 @@ unsigned int identify_graph_components (vertex_map_t &v,
         }
     }
 
-    unsigned int largest_id;
-    if (compnum == 0)
-        largest_id = 0;
-    else
+    unsigned int largest_id = 0;
+    if (compnum > 0)
     {
-        std::vector <unsigned int> comp_sizes (compnum, 0);
+        std::vector <unsigned int> comp_sizes (compnum + 1, 0);
         for (auto c: com)
             comp_sizes [c.second]++;
         auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
