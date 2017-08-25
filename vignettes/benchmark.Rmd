@@ -40,7 +40,8 @@ they lack a weight column. In these cases, all their edge weights are assumed to
 be 1 so they can be brought into a valid format.
 
 The following code compiles all `igraph` objects into a list of usable
-`data.frame` objects.
+`data.frame` objects. If the data features a column `weight`, it will be used
+for the edge weights, otherwise all edge weights are assumed to be 1.
 
 ```{r}
 datasets <- data (package = "igraphdata")
@@ -63,33 +64,13 @@ for (i in seq_along (datasets))
         from_id <- graph$from
         to_id <- graph$to
         if ("weight" %in% names (graph))
-        {
             d <- graph$weight
-            graph_out <- data.frame (from_id, to_id, d)
-            all_graphs [[gr_el]] <- graph_out
-            gr_el <- gr_el + 1
-        } else
-        {
-            graph [c ("from", "to")] <- NULL
-            edge_cols <- which (sapply (graph, class) == "numeric")
-            len <- length (edge_cols)
-            if (len > 0)
-            {
-                for (k in seq_len (len))
-                {
-                    d <- graph [, k]
-                    graph_out <- data.frame (from_id, to_id, d)
-                    all_graphs [[gr_el]] <- graph_out
-                    gr_el <- gr_el + 1
-                }
-            } else
-            {
-                d <- rep (1, length (from_id))
-                graph_out <- data.frame (from_id, to_id, d)
-                all_graphs [[gr_el]] <- graph_out
-                gr_el <- gr_el + 1
-            }
-        }
+        else
+            d <- 1
+
+        graph_out <- data.frame (from_id, to_id, d)
+        all_graphs [[gr_el]] <- graph_out
+        gr_el <- gr_el + 1
     }
 }
 ```
