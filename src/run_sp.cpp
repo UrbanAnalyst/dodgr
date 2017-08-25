@@ -88,8 +88,11 @@ Rcpp::NumericMatrix rcpp_get_sp (Rcpp::DataFrame graph,
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
         fromi = Rcpp::as <std::vector <int>> (id_vec);
     }
-    if (toi [0] < 0)
-        toi = fromi;
+    if (toi [0] < 0) // use all vertices
+    {
+        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        toi = Rcpp::as <std::vector <int>> (id_vec);
+    }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];

@@ -80,7 +80,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
     if (missing (from))
         from <- -1
     else
-        from <- get_pts_index (vert_map, xy, from)
+        from <- get_pts_index (vert_map, xy, from) # 0-indexed
 
     if (missing (to))
         to <- -1
@@ -91,12 +91,11 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
     d <- rcpp_get_sp (graph, vert_map, from, to, heap)
     if (any (from < 0))
-        from <- seq (nrow (vert_map))
-    rownames (d) <- vert_map$vert [from + 1] # coz from is 0-indexed
+        from <- seq (nrow (vert_map)) - 1
     if (any (to < 0))
-        colnames (d) <- vert_map$vert [from + 1] # ditto
-    else
-        colnames (d) <- vert_map$vert [to + 1] # ditto
+        to <- seq (nrow (vert_map)) - 1
+    rownames (d) <- vert_map$vert [from + 1] # coz from is 0-indexed
+    colnames (d) <- vert_map$vert [to + 1] # ditto
     if (!quiet)
         message ("done.")
 
