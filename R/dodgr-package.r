@@ -24,3 +24,16 @@ NULL
 #' weights.
 #' @references \url{https://www.routino.org/xml/routino-profiles.xml}
 NULL
+
+#' hampi
+#'
+#' A sample street network from the township of Hampi, Karnataka, India.
+#'
+#' @name hampi
+#' @docType data
+#' @keywords datasets
+#' @format A Simple Features \code{sf} \code{data.frame} containing the street
+#' network of Hampi.
+#'
+#' @note Can be re-created with \code{get_streetnet("hampi india")}
+NULL
