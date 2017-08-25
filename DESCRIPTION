@@ -25,9 +25,13 @@ Imports:
     Rcpp (>= 0.12.6)
 Suggests:
     devtools,
+    ggplot2,
+    igraphdata,
     knitr,
+    purrr,
     rmarkdown,
     roxygen2,
+    scales,
     testthat
 LinkingTo:
     Rcpp
