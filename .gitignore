@@ -12,3 +12,6 @@ inst/doc
 # vim files
 .*.un~
 .*.swp
+# compiled object files
+*.o
+*.so

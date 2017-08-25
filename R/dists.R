@@ -41,8 +41,8 @@
 #' in \code{graph}.
 #'
 #' @export
-dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap',
-                         quiet = TRUE)
+dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
+                         heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & !missing (from))
     {
@@ -72,7 +72,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", heap = 'BHeap'
     if (!quiet)
         message ("done\nConverting network to dodgr graph ... ",
                  appendLF = FALSE)
-    graph <- convert_graph (graph)
+    graph <- convert_graph (graph, components = FALSE)
     xy <- graph$xy
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
