@@ -149,8 +149,17 @@ find_w_col <- function (graph)
 
 #' convert_graph
 #'
-#' Convert graph to standard 4 or 5-column format for submission to C++ routines
-#' @noRd
+#' Convert a graph represented as an arbitarily-structured \code{data.frame} to
+#' standard 4 or 5-column format for submission to C++ routines
+#'
+#' @param graph A \code{data.frame} containing the edges of the graph
+#' @param components If FALSE, components are not calculated (will generally
+#' result in faster processing).
+#' @return A \code{data.frame} with the same number of rows but with columns of
+#' \code{edge_id}, \code{from}, \code{to}, \code{d}, \code{w}, and
+#' \code{component}, not all of which may be included.
+#'
+#' @export
 convert_graph <- function (graph, components = TRUE)
 {
     if (is (graph, "graph_converted"))
@@ -163,7 +172,10 @@ convert_graph <- function (graph, components = TRUE)
 
     component <- NULL
     if (any (grepl ("comp", names (graph))))
+    {
         component <- graph [, which (grepl ("comp", names (graph)))]
+        components <- TRUE
+    }
 
     d_col <- find_d_col (graph)
     w_col <- find_w_col (graph)
