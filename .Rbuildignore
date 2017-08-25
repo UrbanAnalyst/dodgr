@@ -4,4 +4,6 @@
 ^README\.md$
 ^makefile$
 ^vignettes/makefile$
+^vignettes/bencharm_data.rds$
+^vignettes/bencharm.Rmd$
 docs/
