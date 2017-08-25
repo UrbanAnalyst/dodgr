@@ -1,7 +1,7 @@
 LFILE = dodgr
 BMFILE = benchmark
 
-all: knith benchmark
+all: knith
 #all: knith open 
 
 knith: $(LFILE).Rmd
