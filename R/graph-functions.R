@@ -412,7 +412,8 @@ dodgr_sample <- function (graph, nverts = 1000)
     verts <- unique (c (graph [, fr], graph [, to]))
     if (length (verts) > nverts)
     {
-        indx <- rcpp_sample_graph (convert_graph (graph)$graph, nverts)
+        grc <- convert_graph (graph)$graph
+        indx <- match (rcpp_sample_graph (grc, nverts), grc$edge_id)
         graph <- graph [sort (indx), ]
     }
 

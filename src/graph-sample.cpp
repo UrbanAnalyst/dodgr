@@ -173,6 +173,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         {
             // likely stuck in some one-way part of graph that can't connect, so
             // reset to another start node
+            edgelist.clear ();
             this_vert = select_random_vert (graph, edge_map, vertices);
             vertlist.clear ();
             vertlist.push_back (this_vert);
