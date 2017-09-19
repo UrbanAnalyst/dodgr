@@ -7,4 +7,5 @@
 ^vignettes/bencharm_data.rds$
 ^vignettes/bencharm.Rmd$
 docs/
+^tests/valgrind*.R$
 ^_pkgdown\.yml$
