@@ -89,9 +89,9 @@ pts &lt;-<span class="st"> </span><span class="kw">data.frame</span> (<span clas
 st &lt;-<span class="st"> </span><span class="kw">Sys.time</span> ()
 d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.html">dodgr_dists</a></span> (<span class="dt">from =</span> pts)
 <span class="kw">Sys.time</span> () <span class="op">-</span><span class="st"> </span>st
-<span class="co">#&gt; Time difference of 9.636027 secs</span>
+<span class="co">#&gt; Time difference of 9.834156 secs</span>
 <span class="kw">range</span> (d, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt; [1]  0.000 16.625</span></code></pre></div>
+<span class="co">#&gt; [1]  0.00000 16.76629</span></code></pre></div>
 <p>This will automatically download the street network (using <a href="https://cran.r-project.org/package=osmdata"><code>osmdata</code></a>), and even then calculating distances between 1,000 points can be done in around 10 seconds.</p>
 </div>
 <div id="detailed-usage" class="section level2">

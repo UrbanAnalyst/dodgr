@@ -34,6 +34,7 @@ articles:
   - title: The dodgr package
     contents:
     - dodgr
+    - benchmark
 
 navbar:
   title: dodgr

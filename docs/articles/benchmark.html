@@ -106,14 +106,46 @@ gr_el &lt;-<span class="st"> </span><span class="dv">1</span>
         gr_el &lt;-<span class="st"> </span>gr_el <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
     }
 }</code></pre></div>
-<p>Now, <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> can be run for all graphs. First, show the number of vertices of all graphs in the list.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">num_vertices &lt;-<span class="st"> </span><span class="kw">sapply</span> (all_graphs, nrow)
-num_vertices</code></pre></div>
-<pre><code>##  [1]      7    817  23473 125409    178    209    215    177    125    100
-## [11]     82    221    400    220     53    356   2137   2106    640    631
-## [21]    915    916   1491   1492   6300     78     18    463  32424  11855</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># benchmarks &lt;- lapply (all_graphs, compare_heaps)</span>
-benchmarks &lt;-<span class="st"> </span><span class="kw">readRDS</span> (<span class="st">"benchmark_data.rds"</span>)
+<p>Now, <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> can be run for all graphs. First, show the number of vertices and edges of all graphs in the list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">num_edges &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span class="kw">lapply</span> (all_graphs, nrow))
+num_vertices &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span class="kw">lapply</span> (all_graphs, <span class="cf">function</span> (i)
+                                <span class="kw">nrow</span> (<span class="kw"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> (i))))
+<span class="kw">data.frame</span> (num_edges, num_vertices, <span class="dt">ratio =</span> num_edges <span class="op">/</span><span class="st"> </span>num_vertices)</code></pre></div>
+<pre><code>##    num_edges num_vertices      ratio
+## 1          7            3   2.333333
+## 2        817           81  10.086420
+## 3      23473          748  31.381016
+## 4     125409          184 681.570652
+## 5        178           36   4.944444
+## 6        209           36   5.805556
+## 7        215           36   5.972222
+## 8        177           38   4.657895
+## 9        125           22   5.681818
+## 10       100           22   4.545455
+## 11        82           23   3.565217
+## 12       221           38   5.815789
+## 13       400           45   8.888889
+## 14       220           34   6.470588
+## 15        53           18   2.944444
+## 16       356           53   6.716981
+## 17      2137          127  16.826772
+## 18      2106          127  16.582677
+## 19       640           70   9.142857
+## 20       631           70   9.014286
+## 21       915           68  13.455882
+## 22       916           68  13.470588
+## 23      1491           96  15.531250
+## 24      1492           96  15.541667
+## 25      6300         1316   4.787234
+## 26        78           26   3.000000
+## 27        18            9   2.000000
+## 28       463           45  10.288889
+## 29     32424           75 432.320000
+## 30     11855         2230   5.316143</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">lapply</span> (all_graphs, <span class="cf">function</span> (i)
+                      <span class="kw"><a href="../reference/compare_heaps.html">compare_heaps</a></span> (i, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">10</span>))
+<span class="kw">saveRDS</span> (benchmarks, <span class="dt">file =</span> <span class="st">"benchmark_data.rds"</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">readRDS</span> (<span class="st">"benchmark_data.rds"</span>)
 elapsed &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span> (benchmarks, <span class="st">"elapsed"</span>))
 tests &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span> (benchmarks, <span class="st">"test"</span>))
 tests &lt;-<span class="st"> </span><span class="kw">as.character</span> (tests)
@@ -126,13 +158,15 @@ tests &lt;-<span class="st"> </span><span class="kw">gsub</span> (<span class="s
 tests &lt;-<span class="st"> </span><span class="kw">gsub</span> (<span class="st">"</span><span class="ch">\\</span><span class="st">)"</span>, <span class="st">""</span>, tests)
 tests &lt;-<span class="st"> </span><span class="kw">as.factor</span> (tests)
 n_tests &lt;-<span class="st"> </span><span class="kw">dim</span> (benchmarks [[<span class="dv">1</span>]]) [<span class="dv">1</span>]
+ratio &lt;-<span class="st"> </span><span class="kw">rep</span> (num_edges <span class="op">/</span><span class="st"> </span>num_vertices, <span class="dt">each =</span> n_tests)
 num_vertices &lt;-<span class="st"> </span><span class="kw">rep</span> (num_vertices, <span class="dt">each =</span> n_tests)
-bm &lt;-<span class="st"> </span><span class="kw">data.frame</span> (num_vertices, <span class="dt">Test =</span> tests, elapsed)
+num_edges &lt;-<span class="st"> </span><span class="kw">rep</span> (num_edges, <span class="dt">each =</span> n_tests)
+bm &lt;-<span class="st"> </span><span class="kw">data.frame</span> (num_vertices, num_edges, ratio, <span class="dt">Test =</span> tests, elapsed)
 
 <span class="kw">library</span> (ggplot2)
-<span class="kw">library</span> (scales)
-
-<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span> (bm) <span class="op">+</span>
+<span class="kw">library</span> (scales)</code></pre></div>
+<p>Plot runtime versus numbers of vertices:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span> (bm) <span class="op">+</span>
 <span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> num_vertices, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
 <span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> num_vertices, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
 <span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_x_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
@@ -144,7 +178,34 @@ bm &lt;-<span class="st"> </span><span class="kw">data.frame</span> (num_vertice
 <span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_bw</a></span> (<span class="dt">base_family =</span> <span class="st">"TeX Gyre Bonum"</span>) <span class="op">+</span>
 <span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span> (<span class="dt">plot.title =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_text</a></span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>),
                     <span class="dt">legend.box.background =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_rect</a></span> ())</code></pre></div>
-<p><img src="benchmark_files/figure-html/unnamed-chunk-4-1.png" width="1152"></p>
+<p><img src="benchmark_files/figure-html/unnamed-chunk-6-1.png" width="672"> Versus numbers of edges:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span> (bm) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> num_edges, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> num_edges, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_x_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_y_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/labs">labs</a></span> (<span class="dt">title =</span> <span class="st">"dodgr benchmark results"</span>,
+          <span class="dt">x =</span> <span class="st">"Number of edges (log scale)"</span>, <span class="dt">y =</span> <span class="st">"Runtime [s] (log scale)"</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_bw</a></span> (<span class="dt">base_family =</span> <span class="st">"TeX Gyre Bonum"</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span> (<span class="dt">plot.title =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_text</a></span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>),
+                    <span class="dt">legend.box.background =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_rect</a></span> ())</code></pre></div>
+<p><img src="benchmark_files/figure-html/unnamed-chunk-7-1.png" width="672"> And versus the ratio of the two:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span> (bm) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span> (<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_x_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_y_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/labs">labs</a></span> (<span class="dt">title =</span> <span class="st">"dodgr benchmark results"</span>,
+          <span class="dt">x =</span> <span class="st">"Ratio of edges to vertices (log scale)"</span>,
+          <span class="dt">y =</span> <span class="st">"Runtime [s] (log scale)"</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_bw</a></span> (<span class="dt">base_family =</span> <span class="st">"TeX Gyre Bonum"</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span> (<span class="dt">plot.title =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_text</a></span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>),
+                    <span class="dt">legend.box.background =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_rect</a></span> ())</code></pre></div>
+<p><img src="benchmark_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
 </div>
 </div>
   </div>

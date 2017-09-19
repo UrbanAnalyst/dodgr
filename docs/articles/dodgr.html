@@ -286,7 +286,7 @@ graph_min &lt;-<span class="st"> </span><span class="kw"><a href="../reference/d
 <p>The <code>dodgr</code> packages includes a function to select a random connected portion of graph including a specified number of vertices. This function is used in the <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> function described below, but is also useful for general statistical analyses of large graphs which may otherwise take too long to compute.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph_sub &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_sample.html">dodgr_sample</a></span> (graph, <span class="dt">nverts =</span> <span class="dv">100</span>)
 <span class="kw">nrow</span> (graph_sub)</code></pre></div>
-<pre><code>## [1] 198</code></pre>
+<pre><code>## [1] 200</code></pre>
 <p>The random sample has around twice as many edges as vertices, in accordance with the statistics calculated above.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span> (<span class="kw"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> (graph_sub))</code></pre></div>
 <pre><code>## [1] 100</code></pre>
@@ -309,7 +309,7 @@ xy &lt;-<span class="st"> </span><span class="kw">data.frame</span> (<span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (graph, <span class="dt">from =</span> xy)
 <span class="kw">dim</span> (d); <span class="kw">range</span> (d, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## [1]  100 2814</code></pre>
-<pre><code>## [1]  0.00000 16.37151</code></pre>
+<pre><code>## [1]  0.00000 16.37421</code></pre>
 <p>If the <code>to</code> argument is also specified, the matrix returned will have rows matching <code>from</code> and columns matching <code>to</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (graph, <span class="dt">from =</span> xy, <span class="dt">to =</span> xy [<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ])
 <span class="kw">dim</span> (d)</code></pre></div>
@@ -370,22 +370,22 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dis
 ## 10     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "Heap23")
 ## 1                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "BHeap")
 ## 2                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "FHeap")
-## 3                d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeap")
 ## 5                 d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "Heap23")
+## 3                d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeap")
 ## 4             d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeapExt")
 ## 11                  d &lt;- igraph::distances(igr, v = from_id, to = to_id, mode = "out")
 ##    replications elapsed relative user.self sys.self user.child sys.child
-## 6            10   0.005      1.0     0.004        0          0         0
+## 6            10   0.005      1.0     0.008        0          0         0
 ## 7            10   0.005      1.0     0.004        0          0         0
 ## 8            10   0.005      1.0     0.008        0          0         0
-## 9            10   0.005      1.0     0.004        0          0         0
+## 9            10   0.005      1.0     0.008        0          0         0
 ## 10           10   0.005      1.0     0.004        0          0         0
 ## 1            10   0.006      1.2     0.004        0          0         0
 ## 2            10   0.008      1.6     0.008        0          0         0
-## 3            10   0.008      1.6     0.008        0          0         0
 ## 5            10   0.008      1.6     0.008        0          0         0
-## 4            10   0.009      1.8     0.012        0          0         0
-## 11           10   0.030      6.0     0.032        0          0         0</code></pre>
+## 3            10   0.009      1.8     0.008        0          0         0
+## 4            10   0.009      1.8     0.008        0          0         0
+## 11           10   0.032      6.4     0.032        0          0         0</code></pre>
 <p>The key column of that <code>data.frame</code> is <code>relative</code>, which quantifies the relative performance of each test in relation to the best which is given a score of 1. <code>dodgr</code> using the default <code>heap = "BHeap"</code>, which is a binary heap priority queue, performs faster than <code>igraph</code> <span class="citation">(Csardi and Nepusz 2006)</span> for these graphs. Different kind of graphs will perform differently with different priority queue structures, and this function enables users to empirically discern the optimal heap for their kind of graph.</p>
 <p>Note, however, that this is not an entirely fair comparison, because <code>dodgr</code> calculates dual-weighted distances, whereas <code>igraph</code>—and indeed all other <strong>R</strong> packages—only directly calculate distances based on a single set of weights. Implementing dual-weighted routing in these cases requires explicitly re-tracing all paths and summing the second set of weights along each path. A time comparison in that case would be very strongly in favour of <code>dodgr</code>. Moreover, <code>dodgr</code> can convert graphs to contracted form through removing redundant vertices, as detailed in the following section. Doing so greatly improves performance with respect to <code>igraph</code>.</p>
 <p>For those wishing to do explicit comparisons themselves, the following code generates the <code>igraph</code> equivalent of <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code>, although of course for single-weighted graphs only:</p>
@@ -412,8 +412,8 @@ Figure 3: <strong>(A)</strong> Vertex#2 is redundant for routing calculations fr
 <p>The function <code>dodgr_compact_graph()</code> returns a list with both the original and compact graphs. Relative sizes are</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span> (graph); <span class="kw">nrow</span> (grc<span class="op">$</span>graph); <span class="kw">nrow</span> (grc<span class="op">$</span>graph) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span> (graph)</code></pre></div>
 <pre><code>## [1] 5742</code></pre>
-<pre><code>## [1] 2878</code></pre>
-<pre><code>## [1] 0.5012191</code></pre>
+<pre><code>## [1] 2876</code></pre>
+<pre><code>## [1] 0.5008708</code></pre>
 <p>equivalent to the removal of just under half of all edges. In order to fairly compre differences in routing efficiency, these graphs can first be converted to a standardised minimal form used for routing with the <code><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph()</a></code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph</a></span> (graph)<span class="op">$</span>graph
 grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph</a></span> (grc<span class="op">$</span>graph)<span class="op">$</span>graph
@@ -428,10 +428,10 @@ rbenchmark<span class="op">::</span><span class="kw"><a href="http://www.rdocume
                        <span class="dt">replications =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##                                             test replications elapsed
 ## 2 d2 &lt;- dodgr_dists(graph, from = from, to = to)            2   0.024
-## 1   d2 &lt;- dodgr_dists(grc, from = from, to = to)            2   0.007
+## 1   d2 &lt;- dodgr_dists(grc, from = from, to = to)            2   0.006
 ##   relative user.self sys.self user.child sys.child
-## 2    3.429     0.024        0          0         0
-## 1    1.000     0.004        0          0         0</code></pre>
+## 2        4     0.024        0          0         0
+## 1        1     0.004        0          0         0</code></pre>
 <p>And reducing numbers of graph edges by half enables pairwise routing between 100 points to be conducted around 4 times faster. All routing algorithms scale non-linearly with size, and relative improvements in efficiency will be even greater for larger graphs.</p>
 </div>
 <div id="bibliography" class="section level1 unnumbered">
