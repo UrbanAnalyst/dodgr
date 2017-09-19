@@ -27,8 +27,8 @@
 #' \itemize{
 #' \item \code{\link{dodgr_components}}: Number all graph edges according to
 #' their presence in distinct connected components.
-#' \item \code{\link{convert_graph}}: Convert a graph of arbitrary form into a
-#' standardised, minimal form for submission to \code{dodgr} routines.
+#' \item \code{\link{dodgr_convert_graph}}: Convert a graph of arbitrary form
+#' into a standardised, minimal form for submission to \code{dodgr} routines.
 #' \item \code{\link{dodgr_contract_graph}}: Contract a graph by removing
 #' redundant edges.
 #' }

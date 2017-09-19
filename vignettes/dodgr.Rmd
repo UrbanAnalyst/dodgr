@@ -519,16 +519,16 @@ nrow (graph); nrow (grc$graph); nrow (grc$graph) / nrow (graph)
 ```
 equivalent to the removal of just under half of all edges. In order to fairly
 compre differences in routing efficiency, these graphs can first be converted to
-a standardised minimal form used for routing with the `convert_graph()`
+a standardised minimal form used for routing with the `dodgr_convert_graph()`
 function:
 ```{r}
-graph <- convert_graph (graph)$graph
-grc <- convert_graph (grc$graph)$graph
+graph <- dodgr_convert_graph (graph)$graph
+grc <- dodgr_convert_graph (grc$graph)$graph
 names (grc)
 ```
-The `convert_graph` function also returns a matrix of all vertices (`$xy`), with
-the graph again in a list item named `$graph`.  The difference in routing
-efficiency can then be seen with the following code
+The `dodgr_convert_graph()` function also returns a matrix of all vertices
+(`$xy`), with the graph again in a list item named `$graph`.  The difference in
+routing efficiency can then be seen with the following code
 ```{r}
 from <- sample (grc$from, size = 100)
 to <- sample (grc$to, size = 100)

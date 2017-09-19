@@ -47,7 +47,7 @@ NULL
 #' graph_from_df
 #'
 #' Convert a standard graph data.frame into an object of class graph. Graphs
-#' are standardised with the function \code{convert_graph()$graph}, and contain
+#' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 #' only the four columns [from, to, d, w]
 #' @noRd
 NULL

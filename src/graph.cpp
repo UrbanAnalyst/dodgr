@@ -47,14 +47,14 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //' graph_from_df
 //'
 //' Convert a standard graph data.frame into an object of class graph. Graphs
-//' are standardised with the function \code{convert_graph()$graph}, and contain
+//' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 //' only the four columns [from, to, d, w]
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
     if (!(gr.ncol () == 4 || gr.ncol () == 5 || gr.ncol () == 6))
-        throw std::runtime_error ("graph must have 4--6 columns: run convert_graph() first");
+        throw std::runtime_error ("graph must have 4--6 columns: run dodgr_convert_graph() first");
 
     Rcpp::StringVector edge_id = gr ["edge_id"];
     Rcpp::StringVector from = gr ["from"];

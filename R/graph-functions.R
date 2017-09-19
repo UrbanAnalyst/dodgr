@@ -147,7 +147,7 @@ find_w_col <- function (graph)
     return (w_col)
 }
 
-#' convert_graph
+#' dodgr_convert_graph
 #'
 #' Convert a graph represented as an arbitarily-structured \code{data.frame} to
 #' standard 4 or 5-column format for submission to C++ routines
@@ -165,8 +165,8 @@ find_w_col <- function (graph)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' names (graph)
-#' names (convert_graph (graph)$graph)
-convert_graph <- function (graph, components = TRUE)
+#' names (dodgr_convert_graph (graph)$graph)
+dodgr_convert_graph <- function (graph, components = TRUE)
 {
     if (is (graph, "graph_converted"))
         return (list (graph = graph))
@@ -372,7 +372,7 @@ dodgr_components <- function (graph)
     if ("component" %in% names (graph))
         message ("graph already has a component column")
     else
-        graph$component <- convert_graph (graph)$graph$component
+        graph$component <- dodgr_convert_graph (graph)$graph$component
 
     return (graph)
 }
@@ -403,7 +403,7 @@ dodgr_components <- function (graph)
 #' nrow (graph$map) # 3,692 = number of old edges replaced by new ones
 dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
-    graph_converted <- convert_graph (graph)$graph
+    graph_converted <- dodgr_convert_graph (graph)$graph
     graph_contracted <- rcpp_contract_graph (graph_converted, quiet = quiet)
 
     # re-insert spatial coordinates:
@@ -448,7 +448,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     verts <- unique (c (graph [, fr], graph [, to]))
     if (length (verts) > nverts)
     {
-        grc <- convert_graph (graph)$graph
+        grc <- dodgr_convert_graph (graph)$graph
         indx <- match (rcpp_sample_graph (grc, nverts), grc$edge_id)
         graph <- graph [sort (indx), ]
     }
