@@ -20,3 +20,10 @@ A connected sub-component of \code{graph}
 \description{
 Sample a random but connected sub-component of a graph
 }
+\examples{
+graph <- weight_streetnet (hampi)
+nrow (graph) # 5,742
+graph <- dodgr_sample (graph, nverts = 200)
+nrow (graph) # generally around 400 edges
+nrow (dodgr_vertices (graph)) # 200
+}

@@ -15,10 +15,30 @@
 #' the street network.
 #'
 #' @export
+#' @examples
+#' \dontrun{
+#' streetnet <- dodgr_streetnet ("hampi india", expand = 0)
+#' # convert to form needed for \code{dodgr} functions:
+#' graph <- weight_streetnet (streetnet)
+#' nrow (graph) # 5,742 edges
+#' # Alternative ways of extracting street networks by using a small selection of
+#' # graph vertices to define bounding box:
+#' verts <- dodgr_vertices (graph)
+#' verts <- verts [sample (nrow (verts), size = 200), ]
+#' streetnet <- dodgr_streetnet (pts = verts, expand = 0)
+#' graph <- weight_streetnet (streetnet)
+#' nrow (graph)
+#' # This will generally have many more rows because most street networks include
+#' # streets that extend considerably beyond the specified bounding box.
+#' }
 dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 {
     if (!missing (bbox))
+    {
         bbox <- osmdata::getbb (bbox)
+        bbox [1, ] <- bbox [1, ] + c (-expand, expand) * diff (bbox [1, ])
+        bbox [2, ] <- bbox [2, ] + c (-expand, expand) * diff (bbox [2, ])
+    }
     else if (!missing (pts))
     {
         nms <- names (pts)

@@ -21,3 +21,7 @@ Extract vertices of graph, including spatial coordinates if included
 \note{
 Values of \code{n} are 0-indexed
 }
+\examples{
+graph <- weight_streetnet (hampi)
+v <- dodgr_vertices (graph)
+}

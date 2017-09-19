@@ -13,11 +13,18 @@ convert_graph(graph, components = TRUE)
 result in faster processing).}
 }
 \value{
-A \code{data.frame} with the same number of rows but with columns of
-\code{edge_id}, \code{from}, \code{to}, \code{d}, \code{w}, and
-\code{component}, not all of which may be included.
+A list of two components: \code{graph}, a \code{data.frame} with the
+same number of rows but with columns of \code{edge_id}, \code{from},
+\code{to}, \code{d}, \code{w}, and \code{component}, not all of which may be
+included; and \code{xy}, A matrix of coordinates of all vertices in
+\code{graph}.
 }
 \description{
 Convert a graph represented as an arbitarily-structured \code{data.frame} to
 standard 4 or 5-column format for submission to C++ routines
+}
+\examples{
+graph <- weight_streetnet (hampi)
+names (graph)
+names (convert_graph (graph)$graph)
 }

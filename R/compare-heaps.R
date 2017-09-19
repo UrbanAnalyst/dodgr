@@ -15,6 +15,9 @@
 #' \code{data.frame} form.
 #'
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' compare_heaps (graph, nverts = 100, replications = 1)
 compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
     if (is.numeric (nverts))

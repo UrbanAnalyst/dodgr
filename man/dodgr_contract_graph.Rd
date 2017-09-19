@@ -19,11 +19,18 @@ compact graph).}
 \item{quiet}{If \code{FALSE}, display progress on screen}
 }
 \value{
-A complex object with both the original graph and its compact verion
-(\code{$original} and \code{$compact}, respectively), along with several
-indexes used to map vertices and edges between the two.
+A list with the contracted graph (\code{graph}), and a map
+(\code{map}) between the IDs of edges in the contracted graph and those in
+the original, full graph.
 }
 \description{
 Removes redundant (straight-line) vertices from graph, leaving only junction
 vertices.
+}
+\examples{
+graph <- weight_streetnet (hampi)
+nrow (graph) # 5,742
+graph <- dodgr_contract_graph (graph)
+nrow (graph$graph) # size of contracted graph = 2,878
+nrow (graph$map) # 3,692 = number of old edges replaced by new ones
 }

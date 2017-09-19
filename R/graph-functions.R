@@ -155,11 +155,17 @@ find_w_col <- function (graph)
 #' @param graph A \code{data.frame} containing the edges of the graph
 #' @param components If FALSE, components are not calculated (will generally
 #' result in faster processing).
-#' @return A \code{data.frame} with the same number of rows but with columns of
-#' \code{edge_id}, \code{from}, \code{to}, \code{d}, \code{w}, and
-#' \code{component}, not all of which may be included.
+#' @return A list of two components: \code{graph}, a \code{data.frame} with the
+#' same number of rows but with columns of \code{edge_id}, \code{from},
+#' \code{to}, \code{d}, \code{w}, and \code{component}, not all of which may be
+#' included; and \code{xy}, A matrix of coordinates of all vertices in
+#' \code{graph}.
 #'
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' names (graph)
+#' names (convert_graph (graph)$graph)
 convert_graph <- function (graph, components = TRUE)
 {
     if (is (graph, "graph_converted"))
@@ -270,6 +276,9 @@ convert_graph <- function (graph, components = TRUE)
 #' @note Values of \code{n} are 0-indexed
 #'
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
     fr_col <- find_fr_col (graph)
@@ -355,6 +364,9 @@ match_pts_to_graph <- function (verts, xy)
 #' @return Equivalent graph with additional \code{component} column,
 #' sequentially numbered from 1 = largest component.
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' graph <- dodgr_components (graph)
 dodgr_components <- function (graph)
 {
     if ("component" %in% names (graph))
@@ -379,10 +391,16 @@ dodgr_components <- function (graph)
 #' compact graph).
 #' @param quiet If \code{FALSE}, display progress on screen
 #'
-#' @return A complex object with both the original graph and its compact verion
-#' (\code{$original} and \code{$compact}, respectively), along with several
-#' indexes used to map vertices and edges between the two.
+#' @return A list with the contracted graph (\code{graph}), and a map
+#' (\code{map}) between the IDs of edges in the contracted graph and those in
+#' the original, full graph.
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' nrow (graph) # 5,742
+#' graph <- dodgr_contract_graph (graph)
+#' nrow (graph$graph) # size of contracted graph = 2,878
+#' nrow (graph$map) # 3,692 = number of old edges replaced by new ones
 dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
     graph_converted <- convert_graph (graph)$graph
@@ -417,6 +435,12 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 #'
 #' @return A connected sub-component of \code{graph}
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' nrow (graph) # 5,742
+#' graph <- dodgr_sample (graph, nverts = 200)
+#' nrow (graph) # generally around 400 edges
+#' nrow (dodgr_vertices (graph)) # 200
 dodgr_sample <- function (graph, nverts = 1000)
 {
     fr <- find_fr_id_col (graph)

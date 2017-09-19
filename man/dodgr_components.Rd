@@ -17,3 +17,7 @@ sequentially numbered from 1 = largest component.
 Identify connected components of graph and add corresponding \code{component}
 column to \code{data.frame}.
 }
+\examples{
+graph <- weight_streetnet (hampi)
+graph <- dodgr_components (graph)
+}
