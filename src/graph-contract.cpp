@@ -1,18 +1,16 @@
 #include "graph.h"
 
-
-unsigned int get_max_edge_id (edge_map_t &edge_map)
+edge_id_t new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
 {
-    unsigned int max_edge_id = 0;
-    for (auto e: edge_map)
-    {
-        unsigned int id = std::stoi (e.second.getID ());
-        if (id > max_edge_id)
-            max_edge_id = id;
-    }
-    max_edge_id++;
+    const int range = 1e8;
+    std::uniform_int_distribution <unsigned int> unif (0, range);
 
-    return max_edge_id;
+    edge_id_t new_id = edge_map.begin()->first;
+    while (edge_map.find (new_id) != edge_map.end ())
+    {
+        new_id = std::to_string (unif (rng));
+    }
+    return new_id;
 }
 
 
@@ -25,9 +23,11 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto v: vertex_map)
         verts.insert (v.first);
 
-    unsigned int max_edge_id = get_max_edge_id (edge_map);
-
     std::vector<edge_id_t> newe;
+
+    // Random generator for new_edge_id
+    std::random_device rd;
+    std::mt19937 rng (rd()); // mersenne twister
 
     while (verts.size () > 0)
     {
@@ -40,13 +40,13 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             edges_done.emplace (e, false);
 
         newe.clear ();
-        newe.push_back (std::to_string (max_edge_id++));
+        newe.push_back (new_edge_id (edge_map, rng));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
                 (edges.size () == 2 || edges.size () == 4))
         {
             if (edges.size () == 4) // is_intermediate_double as well!
-                newe.push_back (std::to_string (max_edge_id++));
+                newe.push_back (new_edge_id (edge_map, rng));
 
             // remove intervening vertex:
             auto nbs = vtx.get_all_neighbours (); // unordered_set <vertex_id_t>
