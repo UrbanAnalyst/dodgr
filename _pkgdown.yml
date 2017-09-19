@@ -1,0 +1,50 @@
+title: dodgr
+
+templates:
+  params:
+    bootswatch: cerulean
+
+reference:
+  - title: Package doc and data
+    contents:
+    - dodgr-package
+  - title: The Main Function
+    contents:
+    - dodgr_dists
+  - title: Functions to Obtain Graphs
+    contents:
+    - dodgr_streetnet
+    - weight_streetnet
+  - title: Functions to Modify Graphs
+    contents:
+    - dodgr_components
+    - dodgr_convert_graph
+    - dodgr_contract_graph
+  - title: Miscellaneous Functions
+    contents:
+    - dodgr_sample
+    - dodgr_vertices
+    - compare_heaps
+  - title: Package data
+    contents:
+    - hampi
+    - weighting_profiles
+
+articles:
+  - title: The dodgr package
+    contents:
+    - dodgr
+
+navbar:
+  title: dodgr
+  type: default
+  left:
+  - text: Home
+    href: index.html
+  - text: Vignettes
+    href: articles/index.html
+  - text: Functions
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/mpadge/dodgr

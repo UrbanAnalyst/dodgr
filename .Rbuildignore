@@ -7,3 +7,4 @@
 ^vignettes/bencharm_data.rds$
 ^vignettes/bencharm.Rmd$
 docs/
+^_pkgdown\.yml$
