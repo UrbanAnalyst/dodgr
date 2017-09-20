@@ -1,4 +1,4 @@
-*[.]md$
+^aaa\.Rmd$
 ^README\.Rmd$
 ^README-.*\.png$
 ^\.travis\.yml$
