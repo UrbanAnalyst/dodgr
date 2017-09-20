@@ -37,8 +37,8 @@ directed property---and `weight2(A->B) != weight1(A->B)`---the dual property.
 paths are calculating using the other weight. A canonical example of a
 dual-weighted directed graph is a street network to be used for routing. Routes
 are usually calculated by weighting different kinds of streets or ways according
-to a particular mode of transport, while the desired output is a direct distance
-which has to be calculated using a different set of weights.
+to a particular mode of transport, while the desired output is a direct,
+unweighted distance.
 
 The shortest path algorithm relies on priority queue code adapted from original
 code by Shane Saunders available here
@@ -56,13 +56,13 @@ devtools::install_github("mpadge/dodgr")
 devtools::load_all (".", export_all = FALSE)
 ```
 
-## Simple Usage
+## Usage
 
 The primary function,
 ```{r, eval = FALSE}
-d <- dodgr_dists (graph = graph, from = from)
+d <- dodgr_dists (graph = graph, from = pts, to = pts)
 ```
-produces a square matrix of distances between all points listed in `from` and
+produces a square matrix of distances between all points listed in `pts` and
 routed along the dual-weighted directed network given in `graph`. An even
 simpler usage allows calculation of pair-wise distances between a set of
 geographical coordinates (here, for a sizey chunk of New York City):
@@ -81,8 +81,6 @@ This will automatically download the street network (using
 [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then
 calculating distances between 1,000 points can be done in around 10 seconds.
 
-## Detailed Usage
-
 A graph or network in `dodgr` is represented as a flat table
 (`data.frame`, `tibble`, `data.table`, whatever) of minimally four columns:
 `from`, `to`, `weight`, and `distance`. The first two can be of arbitrary form
@@ -92,16 +90,9 @@ those paths. For a street network example, `weight` will generally be the actual
 distance multiplied by a priority weighting for a given mode of transport and
 type of way, while `distance` will be the pysical distance.
 
-The primary function of `dodgr` is `dodgr_dists()`, which accepts the three main
-arguments of
-
-1. `graph` - the flat table described above;
-2. `from` - a list of origin points for which distances are to be calcualted; and
-3. `to` - a list of equivalent destination points. If missing, pairwise
-   distances are calculated between all points in `from`.
-
-For spatial graphs in which `graph` has additional longitude and latitude
-coordinates, `from` and `to` may also be given as lists of coordinates;
-otherwise they must match onto names or values given in `graph$from` and
-`graph$to`. Coordinates in `from` and `to` that do not exactly match on to
-values given in `graph` will be mapped on to the nearest `graph` nodes.
+For more detail, see the
+[main package vignette](https://mpadge.github.io/dodgr/articles/dodgr.html),
+along with a second vignette detailing
+[benchmark timings](https://mpadge.github.io/dodgr/articles/benchmark.html),
+showing that under many circumstances, `dodgr` performs considerably faster than
+equivalent routines from the `igraph` package.
