@@ -1,6 +1,5 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
 language: R
+warnings_are_errors: true
 sudo: false
 cache: packages
 
@@ -8,3 +7,14 @@ addons:
     apt:
         packages:
             - valgrind
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+r_github_packages:
+      - jimhester/covr
+
+after_success:
+      - Rscript -e 'covr::codecov()'

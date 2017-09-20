@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/dodgr.svg)](https://travis-ci.org/mpadge/dodgr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr)
+[![Build Status](https://travis-ci.org/mpadge/dodgr.svg)](https://travis-ci.org/mpadge/dodgr) [![codecov](https://codecov.io/gh/mpadge/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/dodgr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr)
 
 dodgr: Distances on Directed Graphs in R
 ========================================
@@ -38,9 +38,9 @@ pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
 st <- Sys.time ()
 d <- dodgr_dists (from = pts)
 Sys.time () - st
-#> Time difference of 9.514754 secs
+#> Time difference of 9.301914 secs
 range (d, na.rm = TRUE)
-#> [1]  0.00000 19.44195
+#> [1]  0.00000 16.57934
 ```
 
 This will automatically download the street network (using [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then calculating distances between 1,000 points can be done in around 10 seconds.

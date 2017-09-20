@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 [![Build Status](https://travis-ci.org/mpadge/dodgr.svg)](https://travis-ci.org/mpadge/dodgr) 
+[![codecov](https://codecov.io/gh/mpadge/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/dodgr)
 [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr) 
 
