@@ -448,10 +448,26 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 #' nrow (gc$contracted) # size of contracted graph = 3,033
 #' verts <- dodgr_vertices (graph)
 #' verts <- verts [sample (nrow (verts), 100), ]
-#' # gc <- dodgr_reinsert_verts (gc, verts = verts)
+#' gc <- dodgr_reinsert_verts (gc, verts = verts)
 #' nrow (gc$contracted) # will be > 2,878
 dodgr_reinsert_verts <- function (gc, verts = NULL)
 {
+    ids <- grepl ("id", names (verts), ignore.case = TRUE)
+    if (any (ids))
+        verts <- verts [[which (ids)]]
+    else if (ncol (verts) > 1)
+        verts <- match_pts_to_graph (dodgr_vertices (gc$original), xy = verts)
+    else
+        stop ("format of verts not recognised.")
+
+    verts_contr <- dodgr_vertices (gc$contracted)
+    verts <- verts [!verts %in% verts_contr$id]
+
+    orig <- dodgr_convert_graph (gc$orig)$graph
+    contr <- dodgr_convert_graph (gc$contracted)$graph
+
+    gc$contracted <- rcpp_insert_vertices (orig, contr, gc$map, verts)
+
     return (gc)
 }
 

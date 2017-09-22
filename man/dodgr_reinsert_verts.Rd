@@ -31,6 +31,6 @@ gc <- dodgr_contract_graph (graph)
 nrow (gc$contracted) # size of contracted graph = 3,033
 verts <- dodgr_vertices (graph)
 verts <- verts [sample (nrow (verts), 100), ]
-# gc <- dodgr_reinsert_verts (gc, verts = verts)
+gc <- dodgr_reinsert_verts (gc, verts = verts)
 nrow (gc$contracted) # will be > 2,878
 }
