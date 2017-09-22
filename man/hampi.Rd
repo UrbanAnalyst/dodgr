@@ -10,6 +10,11 @@ network of Hampi.}
 A sample street network from the township of Hampi, Karnataka, India.
 }
 \note{
-Can be re-created with \code{get_streetnet("hampi india")}
+Can be re-created with the following command:
+}
+\examples{
+\dontrun{
+hampi <- dodgr_streetnet("hampi india")
+}
 }
 \keyword{datasets}

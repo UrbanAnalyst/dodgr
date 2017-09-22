@@ -77,5 +77,8 @@ NULL
 #' @format A Simple Features \code{sf} \code{data.frame} containing the street
 #' network of Hampi.
 #'
-#' @note Can be re-created with \code{get_streetnet("hampi india")}
+#' @note Can be re-created with the following command:
+#' @examples \dontrun{
+#' hampi <- dodgr_streetnet("hampi india")
+#' }
 NULL
