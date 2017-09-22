@@ -18,7 +18,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo = FALSE, message = FALSE}
+```{r pkg-load, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
 
@@ -34,13 +34,13 @@ A. In Fig. 1, for example, the weights between the graph vertices (A, B, C, and
 D) differ depending on the direction of travel, and it is only possible to
 traverse the entire graph in an anti-clockwise direction.
 
-```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
+```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
 
 Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
 graph of Fig. 1, presuming the edge weights to take values of 1, 2, and 3, would
 be,
-```{r, echo = FALSE}
+```{r sample-graph1, echo = FALSE}
 graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
                      to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
                      d = c (1, 2, 1, 3, 2, 1, 2, 1))
@@ -48,7 +48,7 @@ graph
 ```
 The primary function of `dodgr` is `dodgr_dists`, which calculates pair-wise
 shortest distances between all vertices of a graph.
-```{r}
+```{r sample-dists1}
 dodgr_dists (graph)
 dodgr_dists (graph, from = c ("A", "C"), to = c ("B", "C", "D"))
 ```
@@ -63,7 +63,7 @@ other **R** packages, such as
 through its ability to trace paths through *dual-weighted* directed graphs,
 illustrated in Fig. 2.
 
-```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
+```{r fig2, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
 ```
 Dual-weighted directed graphs are common in many areas, a foremost example
 being routing through street networks. Routes through street networks depends on
@@ -81,7 +81,7 @@ If no weights are specified, distances alone are used both for routing and final
 distance calculations.  Consider that the weights and distances of Fig. 2 are
 the black and grey lines, respectively, with the latter all equal to one. In
 this case, the graph and associated shortest distances are,
-```{r, echo = FALSE}
+```{r sample-graph2, echo = FALSE}
 graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
                      to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
                      w = c (1, 2, 1, 3, 2, 1, 2, 1),
@@ -113,7 +113,7 @@ npts <- 1000
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
 bb; head (xy)
 ```
-```{r, echo = FALSE}
+```{r york-bb, echo = FALSE}
 bb <- rbind (c (-1.241536, -0.9215361), c (53.799056, 54.1190555))
 rownames (bb) <- c ("x", "y")
 colnames (bb) <- c ("min", "max")
@@ -128,23 +128,23 @@ system.time(
             d <- dodgr_dists (from = xy, wt_profile = "foot", quiet = FALSE)
             )
 ```
-```{r, echo = FALSE}
+```{r dists-york-message, echo = FALSE}
 message (paste0 ("No graph submitted to dodgr_dists; ",
                  "downloading street network ... done\n",
                  "Converting network to dodgr graph ... done\n",
                  "Calculating shortest paths ... done"))
 ```
-```{r, echo = FALSE}
+```{r dists-york-time, echo = FALSE}
 st <- system.time (Sys.sleep (0.1))
 st [1] <- 26.620
 st [2] <- 0.132
 st [3] <- 28.567
 st
 ```
-```{r, eval = FALSE}
+```{r dists-york-structure, eval = FALSE}
 dim (d); range (d, na.rm = TRUE)
 ```
-```{r, echo = FALSE}
+```{r dists-york-output, echo = FALSE}
 c (1000, 1000)
 c (0.00000, 46.60609)
 ```
@@ -162,20 +162,20 @@ above (through the `quiet = FALSE` option) can be implemented separately. To
 illustrate, the remainder of this vignette analyses the much smaller street
 network of Hampi, Karnataka, India, included in the `dodgr` package as the
 dataset `hampi`. This data set may be re-created with the following single line:
-```{r, york-streetnet, eval = FALSE}
+```{r get-hampi-code, eval = FALSE}
 hampi <- dodgr_streetnet ("hampi india")
 ```
 Or with the equivalent version bundled with the package:
-```{r}
+```{r hampi-call}
 class (hampi)
 ```
-```{r, eval = FALSE}
+```{r hampi-geom-class, eval = FALSE}
 class (hampi$geometry)
 ```
-```{r, echo = FALSE}
+```{r hampi-geom-class-output, echo = FALSE}
 c ("sfc_LINESTRING", "sfc")
 ```
-```{r}
+```{r hampi-dim}
 dim (hampi)
 ```
 The `streetnet` is an [`sf`](https://cran.r-project.org/package=sf) (Simple
@@ -183,7 +183,7 @@ Features) object containing 182 `LINESTRING` geometries. In other words, it's
 got an `sf` representation of 182 street segments. The **R** package `osmplotr`
 can be used to visualise this street network (with the help of `magrittr` pipe
 operator, `%>%`):
-```{r, eval = FALSE}
+```{r hampi-osmplotr, eval = FALSE}
 library (osmplotr)
 library (magrittr)
 map <- osm_basemap (hampi, bg = "gray95") %>%
@@ -191,10 +191,10 @@ map <- osm_basemap (hampi, bg = "gray95") %>%
     add_axes () %>%
     print_osm_map ()
 ```
-```{r, echo = FALSE, message = FALSE}
+```{r load-magritr, echo = FALSE, message = FALSE}
 library (magrittr)
 ```
-```{r, echo = FALSE, eval = FALSE}
+```{r hampi-osmplotr-to-file, echo = FALSE, eval = FALSE}
 devtools::load_all ("../../osmplotr", export_all = FALSE)
 map <- osm_basemap (hampi, bg = "gray95") %>%
     add_osm_objects (hampi, col = "gray5") %>%
@@ -208,28 +208,28 @@ installed with `devtools::install_github ("ropensci/osmplotr")`.)
 
 The `sf` class data representing the street network of Hampi can then be
 converted into a flat `data.frame` object by
-```{r}
+```{r hampi-weight_streetnet}
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 dim (graph)
 ```
-```{r}
+```{r hampi-head}
 head (graph)
 ```
 Note that the actual graph contains around 30 times as many edges as there are
 streets, indicating that each street is composed on average of around 30
 individual segments.  The individual points points or vertices from those
 segments can be extracted with,
-```{r}
+```{r hampi-verts}
 vt <- dodgr_vertices (graph)
 head(vt)
 ```
-```{r}
+```{r hampi-verts-out}
 dim (vt)
 ```
 From which we see that the OpenStreetMap representation of the streets of Hampi
 has 182 line segments with 2,814 unique points and 5,742 edges between those
 points.  The number of edges per vertex in the entire network is thus,
-```{r}
+```{r hampi-edge2vert}
 nrow (graph) / nrow (vt)
 ```
 A simple straight line has two edges between all intermediate nodes, and this
@@ -244,7 +244,7 @@ description of weighting street networks.
 The foregoing `graph` object returned from `weight_streetnet()` also includes a
 `$component` column enumerating all of the distinct inter-connected components of
 the graph.
-```{r}
+```{r hampi-components}
 table (graph$component)
 ```
 Components are numbered in order of decreasing size, with `$component = 1`
@@ -252,14 +252,14 @@ always denoting the largest component. In this case, that component contains
 3,596 edges, representing 63% of the graph. There are clearly only three distinct
 components, but this number may be much larger for larger graphs, and may be
 obtained from,
-```{r}
+```{r hampi-num-components}
 length (unique (graph$component))
 ```
 Component numbers can be determined for any types of graph with the
 `dodgr_components()` function. For example, the following lines reduce the
 previous graph to a minmial (non-spatial) structure of four columns, and then
 (re-)calculate a fifth column of `$component`s:
-```{r}
+```{r hampi-graph-min}
 cols <- c ("edge_id", "from_id", "to_id", "d")
 graph_min <- graph [, which (names (graph) %in% cols)]
 graph_min <- dodgr_components (graph_min)
@@ -268,7 +268,7 @@ head (graph_min)
 The `component` column column can be used to select or filter any component in
 a graph.  It is particularly useful to ensure routing calculations consider only
 connected vertices through simply removing all minor components:
-```{r}
+```{r hampi-connected}
 graph_connected <- graph [graph$component == 1, ]
 ```
 This is explored further below (under Distance Matrices).
@@ -281,7 +281,7 @@ As demonstrated above, this can be done easily within `dodgr` with the
 `weight_streetnet()` function, which using the named weighting profiles included
 with the `dodgr` package. Each profile assigns weights to each distinct type of
 highway.
-```{r}
+```{r weighting-profiles}
 names (weighting_profiles)
 class (weighting_profiles)
 unique (weighting_profiles$name)
@@ -290,7 +290,7 @@ weighting_profiles [weighting_profiles$name == "foot", ]
 Each profile is defined by a series of percentage weights quantifying
 highway-type preferences for a particular mode of travel.  The distinct types of
 highways within the Hampi graph obtained above can be tabulated with:
-```{r}
+```{r hampi-highway-types}
 table (graph$highway)
 ```
 Hampi is unlike most other human settlements on the planet in being a Unesco
@@ -305,13 +305,13 @@ graph including a specified number of vertices. This function is used in the
 `compare_heaps()` function described below, but is also useful for general
 statistical analyses of large graphs which may otherwise take too long to
 compute.
-```{r}
+```{r dodgr-sample}
 graph_sub <- dodgr_sample (graph, nverts = 100)
 nrow (graph_sub)
 ```
 The random sample has around twice as many edges as vertices, in accordance with
 the statistics calculated above.
-```{r}
+```{r dodgr-sample-verts}
 nrow (dodgr_vertices (graph_sub))
 ```
 
@@ -338,7 +338,7 @@ random points within the bounding box of the above map of Hampi. As demonstrated
 above, the coordinates of all vertices may be extracted with the
 `dodgr_vertices()` function, enabling random points to be generated with the
 following lines:
-```{r}
+```{r verts-to-points}
 vt <- dodgr_vertices (graph)
 n <- 100 # number of points to generate
 xy <- data.frame (x = min (vt$x) + runif (n) * diff (range (vt$x)),
@@ -347,13 +347,13 @@ xy <- data.frame (x = min (vt$x) + runif (n) * diff (range (vt$x)),
 Submitting these to `dodgr_dists()` as points **from** which to route will
 generate a distance matrix from each of these 100 points to every other point in
 the graph:
-```{r}
+```{r dodogr-dists-structure}
 d <- dodgr_dists (graph, from = xy)
 dim (d); range (d, na.rm = TRUE)
 ```
 If the `to` argument is also specified, the matrix returned will have rows
 matching `from` and columns matching `to`
-```{r}
+```{r dodogr-dists-structure2}
 d <- dodgr_dists (graph, from = xy, to = xy [1:10, ])
 dim (d)
 ```
@@ -365,7 +365,7 @@ disconnected edges will have `graph$component > 1`, because `graph$component ==
 1` always denotes the largest connected component.  This means that the graph
 can always be reduced to the single largest component with the following single
 line:
-```{r}
+```{r main-component}
 graph_connected <- graph [graph$component == 1, ]
 ```
 A distance matrix obtained from running `dodgr_dists` on `graph_connected`
@@ -384,7 +384,7 @@ and `to` arguments) is determined by an extra parameter `expand`, quantifying
 the relative extent to which the bounding box should exceed the spatial range of
 the routing points. This is illustrated in the following code which calculates
 distances between 100 random points:
-```{r, eval = FALSE}
+```{r york-streetnet, eval = FALSE}
 bb <- osmdata::getbb ("york uk")
 npts <- 100
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
@@ -396,11 +396,11 @@ routed_points <- function (expand = 0, pts)
     length (which (is.na (d0))) / length (d0)
 }
 ```
-```{r, eval = FALSE}
+```{r york-streetnet-output, eval = FALSE}
 vapply (c (0, 0.05, 0.1), function (i) routed_points (i, pts = xy),
         numeric (1))
 ```
-```{r, echo = FALSE}
+```{r york-streetntet-values, echo = FALSE}
 c (0.078, 0.0586, 0)
 ```
 With a street network that precisely encompasses the submitted routing points
@@ -412,13 +412,13 @@ For non-spatial graphs, `from` and `to` must match precisely on to vertices
 named in the graph itself. In the graph considered above, these vertex names
 were contained in the columns, `from_id` and `to_id`. The minimum that a `dodgr`
 graph requires is,
-```{r}
+```{r york-streetnet-graph-head}
 head (graph [, names (graph) %in% c ("from_id", "to_id", "d")])
 ```
 in which case the `from` values submitted to `dodgr_dists()` (and `to`, if
 given) must directly name the vertices in the `from_id` and `to_id` columns of
 the graph. This is illustrated in the following code:
-```{r}
+```{r york-streetnet-graph-strucutre}
 graph_min <- graph [, names (graph) %in% c ("from_id", "to_id", "d")]
 fr <- sample (graph_min$from_id, size = 10) # 10 random points
 to <- sample (graph_min$to_id, size = 20)
@@ -453,7 +453,7 @@ submitted in order to determine the optimal kind of heap.
 The comparisons are actually made on a randomly selected sub-component of the
 graph containing a defined number of vertices (with a default of 1,000, or the
 entire graph if it contains fewer than 1,000 vertices).
-```{r}
+```{r compare-heaps}
 compare_heaps (graph, nverts = 100, replications = 1)
 ```
 The key column of that `data.frame` is `relative`, which quantifies the relative
@@ -477,7 +477,7 @@ improves performance with respect to `igraph`.
 For those wishing to do explicit comparisons themselves, the following code
 generates the `igraph` equivalent of `dodgr_dists()`, although of course for
 single-weighted graphs only:
-```{r, eval = FALSE}
+```{r graph-code, eval = FALSE}
 edges <- cbind (graph$from_id, graph$to_id)
 pts <- sample (unique (as.vector (edges)), 100) # set of random routing points
 edges <- as.vector (t (edges))
@@ -492,7 +492,7 @@ d <- igraph::distances (igr, v = pts, to = pts, mode = "out")
 A further unique feature of `dodgr` is the ability to remove redundant vertices
 from graphs (see Fig. 3), thereby speeding up routing calculations.
 
-```{r, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant."}
+```{r fig3, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant."}
 ```
 
 In Fig. 3(A), the only way to get from vertex 1 to 3, 4 or 5 is through C. The
@@ -509,19 +509,19 @@ networks differ, through for example dense inner-urban networks generally being
 less redundant than less dense extra-urban or rural networks. The contracted
 version of a graph can be obtained with the function `dodgr_compact_graph()`,
 illustrated here with the York example from above.
-```{r}
+```{r contract-graph}
 grc <- dodgr_contract_graph (graph)
 ```
 The function `dodgr_compact_graph()` returns a list with both the original and
 compact graphs. Relative sizes are
-```{r}
+```{r contract-graph-structure}
 nrow (graph); nrow (grc$graph); nrow (grc$graph) / nrow (graph)
 ```
 equivalent to the removal of just under half of all edges. In order to fairly
 compre differences in routing efficiency, these graphs can first be converted to
 a standardised minimal form used for routing with the `dodgr_convert_graph()`
 function:
-```{r}
+```{r convert-graph}
 graph <- dodgr_convert_graph (graph)$graph
 grc <- dodgr_convert_graph (grc$graph)$graph
 names (grc)
@@ -529,7 +529,7 @@ names (grc)
 The `dodgr_convert_graph()` function also returns a matrix of all vertices
 (`$xy`), with the graph again in a list item named `$graph`.  The difference in
 routing efficiency can then be seen with the following code
-```{r}
+```{r benchmark1}
 from <- sample (grc$from, size = 100)
 to <- sample (grc$to, size = 100)
 rbenchmark::benchmark (

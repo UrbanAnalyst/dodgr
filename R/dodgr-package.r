@@ -81,7 +81,7 @@ NULL
 #' extraneous columns to reduce size:
 #' @examples \dontrun{
 #' hampi <- dodgr_streetnet("hampi india")
-#' cols <- c ("osm_id", "highway", "geometry")
-#' hampi <- hampi [which (names (hampi) %in% cols), ]
+#' cols <- c ("osm_id", "highway", "oneway", "geometry")
+#' hampi <- hampi [, which (names (hampi) %in% cols)]
 #' }
 NULL
