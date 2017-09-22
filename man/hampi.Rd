@@ -10,11 +10,14 @@ network of Hampi.}
 A sample street network from the township of Hampi, Karnataka, India.
 }
 \note{
-Can be re-created with the following command:
+Can be re-created with the following command, which also removes 
+extraneous columns to reduce size:
 }
 \examples{
 \dontrun{
 hampi <- dodgr_streetnet("hampi india")
+cols <- c ("osm_id", "highway", "geometry")
+hampi <- hampi [which (names (hampi) \%in\% cols), ]
 }
 }
 \keyword{datasets}
