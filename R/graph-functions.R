@@ -155,10 +155,10 @@ find_w_col <- function (graph)
 #' @param graph A \code{data.frame} containing the edges of the graph
 #' @param components If FALSE, components are not calculated (will generally
 #' result in faster processing).
-#' @return A list of two components: \code{graph}, a \code{data.frame} with the
-#' same number of rows but with columns of \code{edge_id}, \code{from},
+#' @return A list of two components: (i) \code{graph}, a \code{data.frame} with
+#' the same number of rows but with columns of \code{edge_id}, \code{from},
 #' \code{to}, \code{d}, \code{w}, and \code{component}, not all of which may be
-#' included; and \code{xy}, A matrix of coordinates of all vertices in
+#' included; and (ii) \code{xy}, a matrix of coordinates of all vertices in
 #' \code{graph}.
 #'
 #' @export
@@ -391,15 +391,15 @@ dodgr_components <- function (graph)
 #' compact graph).
 #' @param quiet If \code{FALSE}, display progress on screen
 #'
-#' @return A list with the contracted graph (\code{graph}), and a map
-#' (\code{map}) between the IDs of edges in the contracted graph and those in
-#' the original, full graph.
+#' @return A list with the original graph (\code{$origina}), the contracted
+#' graph (\code{$contracted}), and a map (\code{map}) between the IDs of edges
+#' in the contracted graph and those in the original, full graph.
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' nrow (graph) # 5,742
 #' graph <- dodgr_contract_graph (graph)
-#' nrow (graph$graph) # size of contracted graph = 2,878
+#' nrow (graph$original) # size of contracted graph = 2,878
 #' nrow (graph$map) # 3,692 = number of old edges replaced by new ones
 dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
 {
@@ -411,16 +411,48 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
     {
         spcols <- find_spatial_cols (graph)
         fr_col <- find_fr_id_col (graph)
-        indx <- match (graph_contracted$graph$from, graph [, fr_col])
+        indx <- match (graph_contracted$contracted$from, graph [, fr_col])
         fr_xy <- graph [indx, spcols$fr_col]
         to_col <- find_to_id_col (graph)
-        indx <- match (graph_contracted$graph$to, graph [, to_col])
+        indx <- match (graph_contracted$contracted$to, graph [, to_col])
         to_xy <- graph [indx, spcols$to_col]
-        graph_contracted$graph <- cbind (graph_contracted$graph,
+        graph_contracted$contracted <- cbind (graph_contracted$contracted,
                                          fr_xy, to_xy)
     }
 
+    graph_contracted$original <- graph
+
     return (graph_contracted)
+}
+
+#' dodgr_reinsert_verts
+#'
+#' Re-inserts vertices in a contracted graph. Vertices used for routing may often
+#' be redundant - that is, be intermediate vertices between just two other
+#' points - and will be removed in \code{\link{dodgr_contract_graph}}. This
+#' function re-inserts vertices for routing prior to submitting graph to
+#' \code{\link{dodgr_dists}}.
+#'
+#' @param gc The result of call to \code{\link{dodgr_contract_graph}}, a list of
+#' the three items of (i) the original graph; (ii) the contracted graph; and
+#' (iii) an edge map related contracted to original edges.
+#' @param verts List of vertices to be used for routing, or equivalent list of
+#' geographical coordinates.
+#'
+#' @return A modified version of \code{gc}, with the contracted graph
+#' (\code{$contracted}) including all vertices contained in \code{verts}.
+#' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' gc <- dodgr_contract_graph (graph)
+#' nrow (gc$contracted) # size of contracted graph = 3,033
+#' verts <- dodgr_vertices (graph)
+#' verts <- verts [sample (nrow (verts), 100), ]
+#' # gc <- dodgr_reinsert_verts (gc, verts = verts)
+#' nrow (gc$contracted) # will be > 2,878
+dodgr_reinsert_verts <- function (gc, verts = NULL)
+{
+    return (gc)
 }
 
 #' dodgr_sample
