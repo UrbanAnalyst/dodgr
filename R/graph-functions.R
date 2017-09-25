@@ -372,7 +372,10 @@ dodgr_components <- function (graph)
     if ("component" %in% names (graph))
         message ("graph already has a component column")
     else
-        graph$component <- dodgr_convert_graph (graph)$graph$component
+    {
+        component <- dodgr_convert_graph (graph, components = TRUE)
+        graph$component <- component$graph$component
+    }
 
     return (graph)
 }
