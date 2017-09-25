@@ -1,8 +1,8 @@
 #include "graph.h"
 
 
-void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid)
+void add_to_edge_map (vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map, vertex_id_t vid, edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids;
     if (vert2edge_map.find (vid) == vert2edge_map.end ())
@@ -15,10 +15,23 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_ids.insert (eid);
         vert2edge_map [vid] = edge_ids;
     }
+
+    // TODO: This isn't yet correct; fix!
+    std::unordered_set <vertex_id_t> vert_ids;
+    if (edge2vert_map.find (eid) == edge2vert_map.end ())
+    {
+        vert_ids.emplace (vid);
+        edge2vert_map.emplace (eid, vert_ids);
+    } else
+    {
+        vert_ids = edge2vert_map [eid];
+        vert_ids.insert (vid);
+        edge2vert_map [eid] = vert_ids;
+    }
 }
 
-void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid)
+void erase_from_edge_map (vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map, vertex_id_t vid, edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids = vert2edge_map [vid];
     if (edge_ids.find (eid) != edge_ids.end ())
@@ -26,6 +39,9 @@ void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_ids.erase (eid);
         vert2edge_map [vid] = edge_ids;
     }
+
+    if (edge2vert_map.find (eid) != edge2vert_map.end ())
+        edge2vert_map.erase (eid);
 }
 
 //' graph_has_components
@@ -51,7 +67,8 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //' only the four columns [from, to, d, w]
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map)
 {
     if (!(gr.ncol () == 4 || gr.ncol () == 5 || gr.ncol () == 6))
         throw std::runtime_error ("graph must have 4--6 columns: run dodgr_convert_graph() first");
@@ -92,8 +109,8 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
                 edge_id_str, replacement_edges);
 
         edge_map.emplace (edge_id_str, edge);
-        add_to_edge_map (vert2edge_map, from_id, edge_id_str);
-        add_to_edge_map (vert2edge_map, to_id, edge_id_str);
+        add_to_edge_map (vert2edge_map, edge2vert_map, from_id, edge_id_str);
+        add_to_edge_map (vert2edge_map, edge2vert_map, to_id, edge_id_str);
     }
 }
 
@@ -172,8 +189,9 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
+    edge2vert_map_t edge2vert_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, edge2vert_map);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);

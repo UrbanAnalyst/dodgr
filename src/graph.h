@@ -109,20 +109,22 @@ struct edge_t
 typedef std::unordered_map <vertex_id_t, vertex_t> vertex_map_t;
 typedef std::unordered_map <edge_id_t, edge_t> edge_map_t;
 typedef std::unordered_map <vertex_id_t, std::unordered_set <edge_id_t>> vert2edge_map_t;
+typedef std::unordered_map <edge_id_t, std::unordered_set <vertex_id_t>> edge2vert_map_t;
 
 //----------------------------
 //----- functions in graph.cpp
 //----------------------------
-void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid);
+void add_to_edge_map (vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map, vertex_id_t vid, edge_id_t eid);
 
-void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid);
+void erase_from_edge_map (vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map, vertex_id_t vid, edge_id_t eid);
 
 bool graph_has_components (Rcpp::DataFrame graph);
 
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
-        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
+        edge2vert_map_t &edge2vert_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
@@ -153,7 +155,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 unsigned int get_max_edge_id (edge_map_t &edge_map);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map);
+        vert2edge_map_t &vert2edge_map, edge2vert_map_t &edge2vert_map);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet);
 

@@ -17,7 +17,7 @@ edge_id_t new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map)
+        vert2edge_map_t &vert2edge_map, edge2vert_map_t &edge2vert_map)
 {
     std::unordered_set <vertex_id_t> verts;
     for (auto v: vertex_map)
@@ -87,10 +87,10 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                             else
                                 old_edges.insert (e);
 
-                            erase_from_edge_map (vert2edge_map, vtx_id, e);
-                            add_to_edge_map (vert2edge_map, vtx_id, ne);
-                            erase_from_edge_map (vert2edge_map, vt_from, e);
-                            add_to_edge_map (vert2edge_map, vt_from, ne);
+                            erase_from_edge_map (vert2edge_map, edge2vert_map, vtx_id, e);
+                            add_to_edge_map (vert2edge_map, edge2vert_map, vtx_id, ne);
+                            erase_from_edge_map (vert2edge_map, edge2vert_map, vt_from, e);
+                            add_to_edge_map (vert2edge_map, edge2vert_map, vt_from, ne);
 
                             vertex_t vt = vertex_map [vt_from];
                             vt.replace_neighbour (vtx_id, vt_to);
@@ -121,10 +121,10 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                             } else
                                 old_edges.insert (e);
 
-                            erase_from_edge_map (vert2edge_map, vtx_id, e);
-                            add_to_edge_map (vert2edge_map, vtx_id, ne);
-                            erase_from_edge_map (vert2edge_map, vt_to, e);
-                            add_to_edge_map (vert2edge_map, vt_to, ne);
+                            erase_from_edge_map (vert2edge_map, edge2vert_map, vtx_id, e);
+                            add_to_edge_map (vert2edge_map, edge2vert_map, vtx_id, ne);
+                            erase_from_edge_map (vert2edge_map, edge2vert_map, vt_to, e);
+                            add_to_edge_map (vert2edge_map, edge2vert_map, vt_to, ne);
 
                             vertex_t vt = vertex_map [vt_to];
                             vt.replace_neighbour (vtx_id, vt_from);
@@ -169,13 +169,14 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
     edge_map_t edge_map;
     std::unordered_map <vertex_id_t, unsigned int> components;
     vert2edge_map_t vert2edge_map;
+    edge2vert_map_t edge2vert_map;
 
     if (!quiet)
     {
         Rcpp::Rcout << "Constructing graph ... ";
         Rcpp::Rcout.flush ();
     }
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, edge2vert_map);
     if (!quiet)
     {
         Rcpp::Rcout << std::endl << "Determining connected components ... ";
@@ -192,7 +193,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
     vertex_map_t vertices2 = vertices;
     edge_map_t edge_map2 = edge_map;
 
-    contract_graph (vertices2, edge_map2, vert2edge_map);
+    contract_graph (vertices2, edge_map2, vert2edge_map, edge2vert_map);
 
     if (!quiet)
     {
@@ -285,10 +286,12 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
     vertex_map_t vertices_full, vertices_contracted;
     edge_map_t edge_map_full, edge_map_contracted;
     vert2edge_map_t vert2edge_map_full, vert2edge_map_contracted;
+    edge2vert_map_t edge2vert_map_full, edge2vert_map_contracted;
 
-    graph_from_df (fullgraph, vertices_full, edge_map_full, vert2edge_map_full);
+    graph_from_df (fullgraph, vertices_full, edge_map_full, vert2edge_map_full,
+            edge2vert_map_full);
     graph_from_df (contracted, vertices_contracted, edge_map_contracted,
-            vert2edge_map_contracted);
+            vert2edge_map_contracted, edge2vert_map_contracted);
 
     Rcpp::Rcout << "vertices: " << vertices_full.size () << " -> " <<
         vertices_contracted.size () << "; edges " << edge_map_full.size () <<

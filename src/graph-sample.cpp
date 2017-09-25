@@ -108,8 +108,9 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
+    edge2vert_map_t edge2vert_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, edge2vert_map);
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)
