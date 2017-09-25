@@ -13,6 +13,62 @@ edge_id_t new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
     return new_id;
 }
 
+vertex_id_t contract_one_edge (vert2edge_map_t &vert2edge_map,
+        vertex_map_t &vertex_map, edge_map_t &edge_map,
+        const std::unordered_set <edge_id_t> &edges,
+        std::unordered_map <edge_id_t, bool> &edges_done,
+        std::set <edge_id_t> &old_edges,
+        const std::unordered_set <vertex_id_t> nbs,
+        const vertex_id_t &vtx_id,
+        const edge_id_t &new_edge_id,
+        float &d, float &w,
+        const bool &from)
+{
+    vertex_id_t vtx1;
+
+    for (edge_id_t edge_id: edges)
+    {
+        if (!edges_done [edge_id])
+        {
+            edge_t edge = edge_map.find (edge_id)->second;
+            vertex_id_t vtx2;
+            if (from)
+            {
+                vtx1 = edge.get_from_vertex ();
+                vtx2 = edge.get_to_vertex ();
+            } else
+            {
+                vtx1 = edge.get_to_vertex ();
+                vtx2 = edge.get_from_vertex ();
+            }
+
+            if (nbs.find (vtx1) != nbs.end ())
+            {
+                d += edge.dist;
+                w += edge.weight;
+                if (edge.get_old_edges().size() > 0)
+                    old_edges = edge.get_old_edges();
+                else
+                    old_edges.insert (edge_id);
+
+                erase_from_edge_map (vert2edge_map, vtx_id, edge_id);
+                add_to_edge_map (vert2edge_map, vtx_id, new_edge_id);
+                erase_from_edge_map (vert2edge_map, vtx1, edge_id);
+                add_to_edge_map (vert2edge_map, vtx1, new_edge_id);
+
+                vertex_t vt = vertex_map [vtx1];
+                vt.replace_neighbour (vtx_id, vtx2);
+                vertex_map [vtx1] = vt;
+
+                edges_done [edge_id] = true;
+                break;
+            }
+        }
+    }
+
+    return vtx1;
+}
+
 
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
@@ -23,7 +79,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto v: vertex_map)
         verts.insert (v.first);
 
-    std::vector<edge_id_t> newe;
+    std::vector<edge_id_t> new_edge_ids;
 
     // Random generator for new_edge_id
     std::random_device rd;
@@ -39,17 +95,17 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         for (auto e: edges)
             edges_done.emplace (e, false);
 
-        newe.clear ();
-        newe.push_back (new_edge_id (edge_map, rng));
+        new_edge_ids.clear ();
+        new_edge_ids.push_back (new_edge_id (edge_map, rng));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
                 (edges.size () == 2 || edges.size () == 4))
         {
             if (edges.size () == 4) // is_intermediate_double as well!
-                newe.push_back (new_edge_id (edge_map, rng));
+                new_edge_ids.push_back (new_edge_id (edge_map, rng));
 
             // remove intervening vertex:
-            auto nbs = vtx.get_all_neighbours (); // unordered_set <vertex_id_t>
+            std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
             std::vector <vertex_id_t> two_nbs;
             for (vertex_id_t nb: nbs)
                 two_nbs.push_back (nb); // size is always 2
@@ -64,80 +120,24 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map [two_nbs [1]] = vt1;
 
             // construct new edge and remove old ones
-            for (edge_id_t ne: newe)
+            for (edge_id_t new_edge_id: new_edge_ids)
             {
                 float d = 0.0, w = 0.0;
                 vertex_id_t vt_from, vt_to;
 
-                // insert "in" edge first
                 std::set <edge_id_t> old_edges;
 
-                for (edge_id_t e: edges)
-                {
-                    if (!edges_done [e])
-                    {
-                        edge_t ei = edge_map.find (e)->second;
-                        vt_from = ei.get_from_vertex ();
-                        if (vt_from == two_nbs [0] || vt_from == two_nbs [1])
-                        {
-                            d += ei.dist;
-                            w += ei.weight;
-                            if (ei.get_old_edges().size() > 0)
-                                old_edges = ei.get_old_edges();
-                            else
-                                old_edges.insert (e);
+                vt_from = contract_one_edge (vert2edge_map, vertex_map, edge_map,
+                        edges, edges_done, old_edges, nbs, vtx_id,
+                        new_edge_id, d, w, true);
 
-                            erase_from_edge_map (vert2edge_map, vtx_id, e);
-                            add_to_edge_map (vert2edge_map, vtx_id, ne);
-                            erase_from_edge_map (vert2edge_map, vt_from, e);
-                            add_to_edge_map (vert2edge_map, vt_from, ne);
+                vt_to = contract_one_edge (vert2edge_map, vertex_map, edge_map,
+                        edges, edges_done, old_edges, nbs, vtx_id,
+                        new_edge_id, d, w, false);
 
-                            vertex_t vt = vertex_map [vt_from];
-                            vt.replace_neighbour (vtx_id, vt_to);
-                            vertex_map [vt_from] = vt;
-
-                            edges_done [e] = true;
-                            break;
-                        }
-                    }
-                }
-
-                // then "out" edge
-                for (edge_id_t e: edges)
-                {
-                    if (!edges_done [e])
-                    {
-                        edge_t ei = edge_map.find (e)->second;
-                        vt_to = ei.get_to_vertex ();
-                        if (vt_to == two_nbs [0] || vt_to == two_nbs [1])
-                        {
-                            d += ei.dist;
-                            w += ei.weight;
-                            if (ei.get_old_edges().size() > 0)
-                            {
-                                std::set <edge_id_t> tempe = ei.get_old_edges();
-                                for (auto et: tempe)
-                                    old_edges.insert (et);
-                            } else
-                                old_edges.insert (e);
-
-                            erase_from_edge_map (vert2edge_map, vtx_id, e);
-                            add_to_edge_map (vert2edge_map, vtx_id, ne);
-                            erase_from_edge_map (vert2edge_map, vt_to, e);
-                            add_to_edge_map (vert2edge_map, vt_to, ne);
-
-                            vertex_t vt = vertex_map [vt_to];
-                            vt.replace_neighbour (vtx_id, vt_from);
-                            vertex_map [vt_to] = vt;
-
-                            edges_done [e] = true;
-                            break;
-                        }
-                    }
-                }
-                vert2edge_map[vtx_id].insert(ne);
-                edge_t new_edge = edge_t (vt_from, vt_to, d, w, ne, old_edges);
-                edge_map.emplace (ne, new_edge);
+                vert2edge_map [vtx_id].insert (new_edge_id);
+                edge_t new_edge = edge_t (vt_from, vt_to, d, w, new_edge_id, old_edges);
+                edge_map.emplace (new_edge_id, new_edge);
             }
             for (edge_id_t e: edges)
             {

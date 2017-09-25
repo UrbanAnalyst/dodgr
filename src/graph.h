@@ -152,6 +152,17 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 //----------------------------
 unsigned int get_max_edge_id (edge_map_t &edge_map);
 
+vertex_id_t contract_one_edge (vert2edge_map_t &vert2edge_map,
+        vertex_map_t &vertex_map, edge_map_t &edge_map,
+        const std::unordered_set <edge_id_t> &edges,
+        std::unordered_map <edge_id_t, bool> &edges_done,
+        std::set <edge_id_t> &old_edges,
+        const std::vector <vertex_id_t> &two_nbs,
+        const vertex_id_t &vtx_id,
+        const edge_id_t &new_edge_id,
+        float &d, float &w,
+        const bool &from);
+
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map);
 
