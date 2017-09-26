@@ -1,7 +1,7 @@
 #include "graph.h"
 
 
-void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
+void add_to_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids;
@@ -17,7 +17,7 @@ void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
     }
 }
 
-void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
+void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids = vert2edge_map [vid];
@@ -62,6 +62,8 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
     Rcpp::NumericVector dist = gr ["d"];
     Rcpp::NumericVector weight = gr ["w"];
 
+    std::set <edge_id_t> replacement_edges; // all empty here
+    
     for (int i = 0; i < to.length (); i ++)
     {
         vertex_id_t from_id = std::string (from [i]);
@@ -85,15 +87,14 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm,
         to_vtx.add_neighbour_in (from_id);
         vm [to_id] = to_vtx;
 
-        std::set <edge_id_t> replacement_edges;
         edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
 
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
                 edge_id_str, replacement_edges);
 
         edge_map.emplace (edge_id_str, edge);
-        add_to_edge_map (vert2edge_map, from_id, edge_id_str);
-        add_to_edge_map (vert2edge_map, to_id, edge_id_str);
+        add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
+        add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 

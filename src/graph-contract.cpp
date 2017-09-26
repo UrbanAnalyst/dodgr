@@ -13,60 +13,95 @@ edge_id_t new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
     return new_id;
 }
 
-vertex_id_t contract_one_edge (vert2edge_map_t &vert2edge_map,
-        vertex_map_t &vertex_map, edge_map_t &edge_map,
+//' get_to_from
+//'
+//' Get one pair of two and from edges and vertices. Main task is to make sure
+//' that bi-directed edges ("intermediate_double") correctly return the
+//' **different** values of from and to vertices and edges.
+//'
+//' @noRd
+void get_to_from (const edge_map_t &edge_map,
         const std::unordered_set <edge_id_t> &edges,
-        std::unordered_map <edge_id_t, bool> &edges_done,
-        std::set <edge_id_t> &old_edges,
-        const std::unordered_set <vertex_id_t> nbs,
-        const vertex_id_t &vtx_id,
-        const edge_id_t &new_edge_id,
-        float &d, float &w,
-        const bool &from)
+        const std::vector <vertex_id_t> &two_nbs,
+        vertex_id_t &vt_from, vertex_id_t &vt_to,
+        edge_id_t &edge_from_id, edge_id_t &edge_to_id)
 {
-    vertex_id_t vtx1;
-
     for (edge_id_t edge_id: edges)
     {
-        if (!edges_done [edge_id])
+        edge_t edge = edge_map.find (edge_id)->second;
+        if (edge_from_id == "")
         {
-            edge_t edge = edge_map.find (edge_id)->second;
-            vertex_id_t vtx2;
-            if (from)
+            if (edge.get_from_vertex () == two_nbs [0] &&
+                    (edge_to_id == "" || vt_to != two_nbs [0]))
             {
-                vtx1 = edge.get_from_vertex ();
-                vtx2 = edge.get_to_vertex ();
-            } else
+                edge_from_id = edge_id;
+                vt_from = two_nbs [0];
+            } else if (edge.get_from_vertex () == two_nbs [1] &&
+                    (edge_to_id == "" || vt_to != two_nbs [1]))
             {
-                vtx1 = edge.get_to_vertex ();
-                vtx2 = edge.get_from_vertex ();
+                edge_from_id = edge_id;
+                vt_from = two_nbs [1];
             }
-
-            if (nbs.find (vtx1) != nbs.end ())
+        }
+        if (edge_to_id == "")
+        {
+            if (edge.get_to_vertex () == two_nbs [0] &&
+                    (edge_from_id == "" || vt_from != two_nbs [0]))
             {
-                d += edge.dist;
-                w += edge.weight;
-                if (edge.get_old_edges().size() > 0)
-                    old_edges = edge.get_old_edges();
-                else
-                    old_edges.insert (edge_id);
-
-                erase_from_edge_map (vert2edge_map, vtx_id, edge_id);
-                add_to_edge_map (vert2edge_map, vtx_id, new_edge_id);
-                erase_from_edge_map (vert2edge_map, vtx1, edge_id);
-                add_to_edge_map (vert2edge_map, vtx1, new_edge_id);
-
-                vertex_t vt = vertex_map [vtx1];
-                vt.replace_neighbour (vtx_id, vtx2);
-                vertex_map [vtx1] = vt;
-
-                edges_done [edge_id] = true;
-                break;
+                edge_to_id = edge_id;
+                vt_to = two_nbs [0];
+            } else if (edge.get_to_vertex () == two_nbs [1] &&
+                    (edge_from_id == "" || vt_from != two_nbs [1]))
+            {
+                edge_to_id = edge_id;
+                vt_to = two_nbs [1];
             }
         }
     }
+}
 
-    return vtx1;
+void contract_one_edge (vert2edge_map_t &vert2edge_map,
+        vertex_map_t &vertex_map, edge_map_t &edge_map,
+        const vertex_id_t vtx_id, const vertex_id_t vt_from,
+        const vertex_id_t vt_to,
+        const edge_id_t edge_from_id, const edge_id_t edge_to_id,
+        const edge_id_t new_edge_id)
+{
+    edge_t edge_from = edge_map.find (edge_from_id)->second,
+           edge_to = edge_map.find (edge_to_id)->second;
+    float d = edge_from.dist + edge_to.dist,
+          w = edge_from.weight + edge_to.weight;
+
+    std::set <edge_id_t> old_edges,
+        old_edges_fr = edge_from.get_old_edges (),
+        old_edges_to = edge_to.get_old_edges ();
+    for (auto e: old_edges_fr)
+        old_edges.insert (e);
+    for (auto e: old_edges_to)
+        old_edges.insert (e);
+    old_edges.insert (edge_from_id);
+    old_edges.insert (edge_to_id);
+
+    // Note that vert2edge_map [vtx_id] does not need to be erased
+    erase_from_v2e_map (vert2edge_map, vtx_id, edge_from_id);
+    erase_from_v2e_map (vert2edge_map, vtx_id, edge_to_id);
+    erase_from_v2e_map (vert2edge_map, vt_from, edge_from_id);
+    erase_from_v2e_map (vert2edge_map, vt_to, edge_to_id);
+    add_to_v2e_map (vert2edge_map, vt_from, new_edge_id);
+    add_to_v2e_map (vert2edge_map, vt_to, new_edge_id);
+
+    vertex_t vt = vertex_map [vt_from];
+    vt.replace_neighbour (vtx_id, vt_from);
+    vertex_map [vt_from] = vt;
+    vt = vertex_map [vt_to];
+    vt.replace_neighbour (vtx_id, vt_to);
+    vertex_map [vt_to] = vt;
+
+    edge_map.erase (edge_from_id);
+    edge_map.erase (edge_to_id);
+    edge_t new_edge = edge_t (vt_from, vt_to, d, w,
+            new_edge_id, old_edges);
+    edge_map.emplace (new_edge_id, new_edge);
 }
 
 
@@ -119,30 +154,23 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             vertex_map [two_nbs [0]] = vt0;
             vertex_map [two_nbs [1]] = vt1;
 
-            // construct new edge and remove old ones
+            // construct new edge(s) and remove old ones. There are 2
+            // new_edge_ids only for intermediate double vertices
+            // (that is, bi-directional).
             for (edge_id_t new_edge_id: new_edge_ids)
             {
-                float d = 0.0, w = 0.0;
-                vertex_id_t vt_from, vt_to;
+                //float d = 0.0, w = 0.0;
+                vertex_id_t vt_from = "", vt_to = "";
+                edge_id_t edge_from_id = "", edge_to_id = "";
 
-                std::set <edge_id_t> old_edges;
+                // get the from and to edges and vertices
+                get_to_from (edge_map, edges, two_nbs,
+                        vt_from, vt_to, edge_from_id, edge_to_id);
+                edges.erase (edge_from_id);
+                edges.erase (edge_to_id);
 
-                vt_from = contract_one_edge (vert2edge_map, vertex_map, edge_map,
-                        edges, edges_done, old_edges, nbs, vtx_id,
-                        new_edge_id, d, w, true);
-
-                vt_to = contract_one_edge (vert2edge_map, vertex_map, edge_map,
-                        edges, edges_done, old_edges, nbs, vtx_id,
-                        new_edge_id, d, w, false);
-
-                vert2edge_map [vtx_id].insert (new_edge_id);
-                edge_t new_edge = edge_t (vt_from, vt_to, d, w, new_edge_id, old_edges);
-                edge_map.emplace (new_edge_id, new_edge);
-            }
-            for (edge_id_t e: edges)
-            {
-                if (edge_map.find (e) != edge_map.end ())
-                    edge_map.erase (e);
+                contract_one_edge (vert2edge_map, vertex_map, edge_map, vtx_id,
+                        vt_from, vt_to, edge_from_id, edge_to_id, new_edge_id);
             }
         }
         verts.erase (vtx_id);
