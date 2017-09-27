@@ -542,4 +542,28 @@ And reducing numbers of graph edges by half enables pairwise routing between
 non-linearly with size, and relative improvements in efficiency will be even
 greater for larger graphs. 
 
+## Routing on Contracted Graphs
+
+Routing is often desired between defined points, and these points may
+inadvertedly be removed in graph contraction. The `dodgr_contract_graph()`
+function accepts an additional argument specifying vertices to keep within the
+contracted graph. This list of vertices must directly match the vertex ID values
+in the graph.
+
+The following code illustrates how to retain specific vertices within contracted
+graphs:
+```{r contracted-with-verts}
+grc <- dodgr_contract_graph (graph)
+nrow (grc)
+verts <- sample (dodgr_vertices (graph)$id, size = 100)
+head (verts) # a character vector
+grc <- dodgr_contract_graph (graph, verts)
+nrow (grc)
+```
+Retaining the nominated vertices yields a graph with considerably more edges
+than the fully contracted graph excluding these vertices. The `dodgr_dists()`
+function can be applied to the latter graph to obtain accurate distances
+precisely routed between these points, yet using the speed advantages of graph
+contraction.
+
 # Bibliography

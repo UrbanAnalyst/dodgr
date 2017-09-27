@@ -20,6 +20,14 @@
 #' nrow (graph) # 2,878
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
+    if (!is.null (verts))
+    {
+        if (!(length (verts) == 1 | is.vector (verts)))
+            stop ("verts must be a single value or a vector of vertex IDs")
+        if (!is.character (verts))
+            verts <- paste0 (verts)
+    }
+
     graph_converted <- dodgr_convert_graph (graph)$graph
     verts <- verts [which (verts %in% dodgr_vertices (graph_converted)$id)]
     graph_contracted <- rcpp_contract_graph (graph_converted, verts)

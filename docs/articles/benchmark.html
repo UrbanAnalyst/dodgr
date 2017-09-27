@@ -60,7 +60,7 @@
       <h1>dodgr benchmark</h1>
                         <h4 class="author">Andreas Petutschnig</h4>
             
-            <h4 class="date">2017-09-25</h4>
+            <h4 class="date">2017-09-27</h4>
           </div>
 
     
@@ -69,13 +69,13 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This vignette contains runtime comparisons for a number of routing operations between random vertices using distance calculation functions from the <code>dodgr</code> and <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> packages. The experiments are run using the <code>compare_heaps()</code> function, which successively calls functions <code><a href="http://www.rdocumentation.org/packages/igraph/topics/distances">igraph::distances()</a></code> and then <code>dodgr_dists()</code> with all implemented options for the <code>heap</code> parameter and measures their respecive runtimes.</p>
+<p>This vignette contains runtime comparisons for a number of routing operations between random vertices using distance calculation functions from the <code>dodgr</code> and <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> packages. The experiments are run using the <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> function, which successively calls functions <code><a href="http://www.rdocumentation.org/packages/igraph/topics/distances">igraph::distances()</a></code> and then <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> with all implemented options for the <code>heap</code> parameter and measures their respecive runtimes.</p>
 <p>The graph data on which the tests are performed are taken from the <a href="https://cran.r-project.org/package=igraphdata"><code>igraphdata</code></a> package.</p>
 </div>
 <div id="get-graph-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#get-graph-data" class="anchor"></a>Get Graph Data</h1>
-<p>To be able to run <code>compare_heaps()</code>, we need to create <code>data.frame</code> objects from the <code>igraphdata</code> data. As we need at least columns for each graph edges’ origin, destination and weight, not all <code>igraphdata</code> are fit for our purposes, because they lack a weight column. In these cases, all their edge weights are assumed to be 1 so they can be brought into a valid format.</p>
+<p>To be able to run <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code>, we need to create <code>data.frame</code> objects from the <code>igraphdata</code> data. As we need at least columns for each graph edges’ origin, destination and weight, not all <code>igraphdata</code> are fit for our purposes, because they lack a weight column. In these cases, all their edge weights are assumed to be 1 so they can be brought into a valid format.</p>
 <p>The following code compiles all <code>igraph</code> objects into a list of usable <code>data.frame</code> objects. If the data features a column <code>weight</code>, it will be used for the edge weights, otherwise all edge weights are assumed to be 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">datasets &lt;-<span class="st"> </span><span class="kw">data</span> (<span class="dt">package =</span> <span class="st">"igraphdata"</span>)
 datasets &lt;-<span class="st"> </span>datasets<span class="op">$</span>results [, <span class="st">"Item"</span>]
@@ -106,10 +106,10 @@ gr_el &lt;-<span class="st"> </span><span class="dv">1</span>
         gr_el &lt;-<span class="st"> </span>gr_el <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
     }
 }</code></pre></div>
-<p>Now, <code>compare_heaps()</code> can be run for all graphs. First, show the number of vertices and edges of all graphs in the list.</p>
+<p>Now, <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> can be run for all graphs. First, show the number of vertices and edges of all graphs in the list.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">num_edges &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span class="kw">lapply</span> (all_graphs, nrow))
 num_vertices &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span class="kw">lapply</span> (all_graphs, <span class="cf">function</span> (i)
-                                <span class="kw">nrow</span> (<span class="kw">dodgr_vertices</span> (i))))
+                                <span class="kw">nrow</span> (<span class="kw"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> (i))))
 <span class="kw">data.frame</span> (num_edges, num_vertices, <span class="dt">ratio =</span> num_edges <span class="op">/</span><span class="st"> </span>num_vertices)</code></pre></div>
 <pre><code>##    num_edges num_vertices      ratio
 ## 1          7            3   2.333333
@@ -143,7 +143,7 @@ num_vertices &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span
 ## 29     32424           75 432.320000
 ## 30     11855         2230   5.316143</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">lapply</span> (all_graphs, <span class="cf">function</span> (i)
-                      <span class="kw">compare_heaps</span> (i, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">10</span>))
+                      <span class="kw"><a href="../reference/compare_heaps.html">compare_heaps</a></span> (i, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">10</span>))
 <span class="kw">saveRDS</span> (benchmarks, <span class="dt">file =</span> <span class="st">"benchmark_data.rds"</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">readRDS</span> (<span class="st">"benchmark_data.rds"</span>)
 elapsed &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span> (benchmarks, <span class="st">"elapsed"</span>))
