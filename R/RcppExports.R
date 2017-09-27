@@ -29,17 +29,16 @@ rcpp_contract_graph <- function(graph, quiet) {
 
 #' rcpp_insert_vertices
 #'
-#' Insert routing vertices in contracted graph
+#' Re-insert routing vertices in contracted graph, actually done just by
+#' returning lists of edge IDs to be re-inserted from full graph, and
+#' corresponding contracted edge IDs to be removed from contracted graph.
 #'
 #' @param fullgraph graph to be processed
 #' @param contracted graph to be processed
 #' @param map Map of old-to-new vertices returned from rcpp_contract_graph
-#' @param pts_to_insert Index into graph of those points closest to desired
-#' routing points. These are to be re-inserted in the contracted graph.
-#' @return \code{Rcpp::List} containing one \code{data.frame} with the
-#' contracted graph, one \code{data.frame} with the original graph and one
-#' \code{data.frame} containing information about the relating edge ids of the
-#' original and contracted graph.
+#' @param pts_to_insert Names of vertices to be re-inserted.
+#' @return \code{Rcpp::List} of names of edges to re-insert and edges to remove
+#' from contracted graph.
 #'
 #' @noRd
 rcpp_insert_vertices <- function(fullgraph, contracted, map, verts_to_insert) {

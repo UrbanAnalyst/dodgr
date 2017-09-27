@@ -424,6 +424,9 @@ dodgr_contract_graph <- function (graph, verts = NULL, quiet = TRUE)
     }
 
     graph_contracted$original <- graph
+    if ("component" %in% names (graph))
+        graph_contracted$contracted <-
+            dodgr_components (graph_contracted$contracted)
 
     return (graph_contracted)
 }
@@ -458,18 +461,45 @@ dodgr_reinsert_verts <- function (gc, verts = NULL)
     ids <- grepl ("id", names (verts), ignore.case = TRUE)
     if (any (ids))
         verts <- verts [[which (ids)]]
-    else if (ncol (verts) > 1)
+    else if (is.matrix (verts) && ncol (verts) > 1)
         verts <- match_pts_to_graph (dodgr_vertices (gc$original), xy = verts)
-    else
+    else if (!is.vector (verts))
         stop ("format of verts not recognised.")
 
     verts_contr <- dodgr_vertices (gc$contracted)
     verts <- verts [!verts %in% verts_contr$id]
 
-    orig <- dodgr_convert_graph (gc$orig)$graph
-    contr <- dodgr_convert_graph (gc$contracted)$graph
+    if (length (verts) > 0)
+    {
+        orig <- dodgr_convert_graph (gc$orig)$graph
+        contr <- dodgr_convert_graph (gc$contracted)$graph
 
-    gc$contracted <- rcpp_insert_vertices (orig, contr, gc$map, verts)
+        edges <- rcpp_insert_vertices (orig, contr, gc$map, verts)
+        indx_insert <- match (edges$insert, orig$edge_id)
+        contr <- rbind (contr, orig [indx_insert, ])
+        indx_erase <- seq (nrow (contr)) [!seq (nrow (contr)) %in% 
+                                          match (edges$erase, contr$edge_id)]
+        gc$contracted <- contr [indx_erase, ]
+    }
+
+    # re-insert spatial columns in contracted
+    if (is_graph_spatial (gc$original))
+    {
+        spcols <- find_spatial_cols (gc$original)
+        fr_col <- find_fr_id_col (gc$original)
+        indx <- match (gc$contracted$from, gc$original [, fr_col])
+        fr_xy <- gc$original [indx, spcols$fr_col]
+        to_col <- find_to_id_col (gc$original)
+        indx <- match (gc$contracted$to, gc$original [, to_col])
+        to_xy <- gc$original [indx, spcols$to_col]
+        gc$contracted <- cbind (gc$contracted, fr_xy, to_xy)
+    }
+
+    if ("component" %in% names (gc$contracted))
+    {
+        gc$contracted$component <- NULL
+        gc$contracted <- dodgr_components (gc$contracted)
+    }
 
     return (gc)
 }
