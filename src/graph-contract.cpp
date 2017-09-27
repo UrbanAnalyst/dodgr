@@ -111,11 +111,15 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map)
+        vert2edge_map_t &vert2edge_map,
+        std::unordered_set <vertex_id_t> verts_to_keep)
 {
     std::unordered_set <vertex_id_t> verts;
     for (auto v: vertex_map)
-        verts.insert (v.first);
+    {
+        if (verts_to_keep.find (v.first) == verts_to_keep.end ())
+            verts.insert (v.first);
+    }
     std::unordered_set <edge_id_t> edgelist;
     for (auto e: edge_map)
         edgelist.insert (e.first);
@@ -189,7 +193,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' Removes nodes and edges from a graph that are not needed for routing
 //'
 //' @param graph graph to be processed
-//' @param quiet If TRUE, display progress
 //'
 //' @return \code{Rcpp::List} containing one \code{data.frame} with the
 //' contracted graph, one \code{data.frame} with the original graph and one
@@ -198,42 +201,29 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
+Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
+        Rcpp::Nullable <Rcpp::StringVector> vertlist_in)
 {
+    std::unordered_set <vertex_id_t> verts_to_keep;
+    if (vertlist_in.isNotNull ())
+    {
+        Rcpp::StringVector vertlist (vertlist_in);
+        for (int i = 0; i < vertlist.length (); i ++)
+            verts_to_keep.emplace (std::string (vertlist [i]));
+    }
+
     vertex_map_t vertices;
     edge_map_t edge_map;
-    std::unordered_map <vertex_id_t, unsigned int> components;
     vert2edge_map_t vert2edge_map;
 
-    if (!quiet)
-    {
-        Rcpp::Rcout << "Constructing graph ... ";
-        Rcpp::Rcout.flush ();
-    }
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
-    if (!quiet)
-    {
-        Rcpp::Rcout << std::endl << "Determining connected components ... ";
-        Rcpp::Rcout.flush ();
-    }
-    int largest_component = identify_graph_components (vertices, components);
-    largest_component++; // suppress unused variable warning
 
-    if (!quiet)
-    {
-        Rcpp::Rcout << std::endl << "Removing intermediate nodes ... ";
-        Rcpp::Rcout.flush ();
-    }
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
 
-    contract_graph (vertices_contracted, edge_map_contracted, vert2edge_map);
+    contract_graph (vertices_contracted, edge_map_contracted, vert2edge_map,
+            verts_to_keep);
 
-    if (!quiet)
-    {
-        Rcpp::Rcout << std::endl << "Mapping contracted to original graph ... ";
-        Rcpp::Rcout.flush ();
-    }
     int nedges = edge_map_contracted.size ();
 
     // These vectors are all for the contracted graph:
@@ -262,20 +252,6 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
         map_size += e->second.get_old_edges ().size ();
     }
 
-    Rcpp::StringVector edge_id_orig (map_size), edge_id_comp (map_size);
-    int pos = 0;
-    for (auto e = edge_map_contracted.begin ();
-            e != edge_map_contracted.end (); ++e)
-    {
-        edge_id_t eid = e->second.getID ();
-        std::set <edge_id_t> edges = e->second.get_old_edges ();
-        for (auto ei: edges)
-        {
-            edge_id_comp (pos) = eid;
-            edge_id_orig (pos++) = ei;
-        }
-    }
-
     Rcpp::DataFrame contracted = Rcpp::DataFrame::create (
             Rcpp::Named ("edge_id") = edgeid_vec,
             Rcpp::Named ("from") = from_vec,
@@ -284,105 +260,5 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet)
             Rcpp::Named ("w") = weight_vec,
             Rcpp::_["stringsAsFactors"] = false);
 
-    Rcpp::DataFrame map = Rcpp::DataFrame::create (
-            Rcpp::Named ("id_contracted") = edge_id_comp,
-            Rcpp::Named ("id_original") = edge_id_orig,
-            Rcpp::_["stringsAsFactors"] = false);
-
-    if (!quiet)
-        Rcpp::Rcout << std::endl;
-
-    return Rcpp::List::create (
-            Rcpp::Named ("contracted") = contracted,
-            Rcpp::Named ("map") = map);
-}
-
-
-//' rcpp_insert_vertices
-//'
-//' Re-insert routing vertices in contracted graph, actually done just by
-//' returning lists of edge IDs to be re-inserted from full graph, and
-//' corresponding contracted edge IDs to be removed from contracted graph.
-//'
-//' @param fullgraph graph to be processed
-//' @param contracted graph to be processed
-//' @param map Map of old-to-new vertices returned from rcpp_contract_graph
-//' @param pts_to_insert Names of vertices to be re-inserted.
-//' @return \code{Rcpp::List} of names of edges to re-insert and edges to remove
-//' from contracted graph.
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame contracted, Rcpp::DataFrame map,
-        std::vector <std::string> verts_to_insert)
-{
-    // verts_to_insert is actually vert_id_t, but that can't be exported to Rcpp
-    vertex_map_t vertices;
-    edge_map_t edge_map;
-    vert2edge_map_t vert2edge_map;
-
-    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
-
-    // Get maps of new-to-old and old-to-new edges
-    Rcpp::StringVector edge_orig = map ["id_original"];
-    Rcpp::StringVector edge_contr = map ["id_contracted"];
-
-    std::unordered_map <edge_id_t, edge_id_t> edge_old2new_map;
-    std::unordered_map <edge_id_t, std::set <edge_id_t> > edge_new2old_map;
-    for (int i = 0; i < edge_orig.size (); i++)
-    {
-        edge_id_t eor = Rcpp::as <edge_id_t> (edge_orig (i)),
-                  eco = Rcpp::as <edge_id_t> (edge_contr (i));
-        edge_old2new_map.emplace (eor, eco);
-
-        std::set <edge_id_t> these_edges;
-        if (edge_new2old_map.find (eco) != edge_new2old_map.end ())
-        {
-            these_edges = edge_new2old_map.find (eco)->second;
-            edge_new2old_map.erase (eco);
-        }
-        these_edges.emplace (eor);
-        edge_new2old_map.emplace (eco, these_edges);
-    }
-
-    // Convert verts_to_insert to a list of edges_to_insert (according to edge
-    // IDs from original graph), and edges_to_erase. Note that verts_to_insert
-    // only includes vertices **not** present in contracted graph, meaning they
-    // must map onto new (contracted) edge IDs. Note also that vert2edge_map is
-    // made from the original graph. Original edge IDs thus have to be mapped
-    // onto contracted edge IDs, and these in turn re-mapped onto the full lists
-    // of **all** original edges which they have replaced.
-    std::unordered_set <edge_id_t> edges_to_insert, edges_to_erase;
-    for (auto i: verts_to_insert)
-    {
-        std::unordered_set <edge_id_t> edges =
-            vert2edge_map.find (i)->second;
-        for (auto e: edges)
-        {
-            // Not all edges will have been replaced, so this is necssary:
-            if (edge_old2new_map.find (e) != edge_old2new_map.end ())
-            {
-                edge_id_t new_edge = edge_old2new_map.find (e)->second;
-                std::set <edge_id_t> all_old_edges = edge_new2old_map.find (new_edge)->second;
-                for (auto ei: all_old_edges)
-                    edges_to_insert.emplace (ei);
-                edges_to_erase.emplace (new_edge);
-            }
-        }
-    }
-
-    // Then just return lists of edges_to_insert and edges_to_erase
-    Rcpp::StringVector edge_insert (edges_to_insert.size ()),
-        edge_erase (edges_to_erase.size ());
-    unsigned int i = 0;
-    for (const auto &e: edges_to_insert)
-        edge_insert (i++) = e;
-    i = 0;
-    for (const auto &e: edges_to_erase)
-        edge_erase (i++) = e;
-
-    return Rcpp::List::create (
-            Rcpp::Named ("insert") = edge_insert,
-            Rcpp::Named ("erase") = edge_erase);
+    return contracted;
 }

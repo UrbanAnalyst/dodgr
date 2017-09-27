@@ -167,10 +167,8 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
         const edge_id_t new_edge_id);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map);
+        vert2edge_map_t &vert2edge_map,
+        std::unordered_set <vertex_id_t> verts_to_keep);
 
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet);
-
-Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame contracted, Rcpp::DataFrame map,
-        std::vector <std::string> verts_to_insert);
+Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
+        Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
