@@ -318,13 +318,11 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
         std::vector <std::string> verts_to_insert)
 {
     // verts_to_insert is actually vert_id_t, but that can't be exported to Rcpp
-    vertex_map_t vertices_full, vertices_contracted;
-    edge_map_t edge_map_full, edge_map_contracted;
-    vert2edge_map_t vert2edge_map_full, vert2edge_map_contracted;
+    vertex_map_t vertices;
+    edge_map_t edge_map;
+    vert2edge_map_t vert2edge_map;
 
-    graph_from_df (fullgraph, vertices_full, edge_map_full, vert2edge_map_full);
-    graph_from_df (contracted, vertices_contracted, edge_map_contracted,
-            vert2edge_map_contracted);
+    graph_from_df (fullgraph, vertices, edge_map, vert2edge_map);
 
     // Get maps of new-to-old and old-to-new edges
     Rcpp::StringVector edge_orig = map ["id_original"];
@@ -349,16 +347,28 @@ Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
     }
 
     // Convert verts_to_insert to a list of edges_to_insert (according to edge
-    // IDs from original graph), and edges_to_erase
+    // IDs from original graph), and edges_to_erase. Note that verts_to_insert
+    // only includes vertices **not** present in contracted graph, meaning they
+    // must map onto new (contracted) edge IDs. Note also that vert2edge_map is
+    // made from the original graph. Original edge IDs thus have to be mapped
+    // onto contracted edge IDs, and these in turn re-mapped onto the full lists
+    // of **all** original edges which they have replaced.
     std::unordered_set <edge_id_t> edges_to_insert, edges_to_erase;
     for (auto i: verts_to_insert)
     {
         std::unordered_set <edge_id_t> edges =
-            vert2edge_map_full.find (i)->second;
+            vert2edge_map.find (i)->second;
         for (auto e: edges)
         {
-            edges_to_insert.emplace (e);
-            edges_to_erase.emplace (edge_old2new_map.find (e)->second);
+            // Not all edges will have been replaced, so this is necssary:
+            if (edge_old2new_map.find (e) != edge_old2new_map.end ())
+            {
+                edge_id_t new_edge = edge_old2new_map.find (e)->second;
+                std::set <edge_id_t> all_old_edges = edge_new2old_map.find (new_edge)->second;
+                for (auto ei: all_old_edges)
+                    edges_to_insert.emplace (ei);
+                edges_to_erase.emplace (new_edge);
+            }
         }
     }
 
