@@ -34,7 +34,7 @@ test_that("components", {
 
 test_that("contract graph", {
     graph <- weight_streetnet (hampi)
-    graph_c <- dodgr_contract_graph (graph)$contracted
+    graph_c <- dodgr_contract_graph (graph)
     expect_true (nrow (graph_c) < nrow (graph))
 })
 
