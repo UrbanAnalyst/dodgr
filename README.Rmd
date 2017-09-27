@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 [![Build Status](https://travis-ci.org/gmost/dodgr.svg)](https://travis-ci.org/gmost/dodgr) 
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gmost/dodgr?branch=master&svg=true)](https://ci.appveyor.com/project/gmost/dodgr)
 [![codecov](https://codecov.io/gh/gmost/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/gmost/dodgr)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr) 

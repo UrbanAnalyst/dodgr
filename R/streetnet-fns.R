@@ -81,6 +81,10 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 #' with a column of graph component numbers.
 #'
 #' @export
+#' @examples
+#' net <- weight_streetnet (hampi) # internal sf-formatted street network
+#' class(net) # data.frame
+#' dim(net) # 6096  11; 6096 streets
 weight_streetnet <- function (sf_lines, wt_profile = "bicycle")
 {
     if (!is (sf_lines, "sf"))

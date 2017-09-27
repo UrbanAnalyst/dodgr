@@ -56,7 +56,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
             message (paste0 ("No graph submitted to dodgr_dists; ",
                              "downloading street network ... "),
                      appendLF = FALSE)
-        graph <- dodgr_streetnet (pts = from) %>%
+        graph <- dodgr_streetnet (pts = from, expand = 0.1) %>%
             weight_streetnet (wt_profile = wt_profile)
     }
 
