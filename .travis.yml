@@ -20,10 +20,10 @@ matrix:
         - os: linux
           r: oldrel
           dist: trusty
-        - os: osx
-          r: release
-        - os: osx
-          r: devel
+          #- os: osx
+          #r: release
+          #- os: osx
+          #r: devel
 
 notifications:
   email:
