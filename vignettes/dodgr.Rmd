@@ -25,7 +25,7 @@ devtools::load_all (".", export_all = FALSE)
 # Background: Directed Graphs
 
 `dodgr` is an **R** package for calculating **D**istances **O**n **D**irected
-**G**raphs. It does so very efficiently, and is able to process larger graphs
+**Gr**aphs. It does so very efficiently, and is able to process larger graphs
 than many other comparable **R** packages. Skip straight to the Intro if you
 know what directed graphs are (but maybe make a brief stop-in to Dual-Weighted
 Directed Graphs below.) Directed graphs are ones in which the "distance" (or

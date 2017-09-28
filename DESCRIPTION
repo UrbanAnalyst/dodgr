@@ -29,6 +29,7 @@ Suggests:
     igraphdata,
     knitr,
     purrr,
+    RColorBrewer,
     rmarkdown,
     roxygen2,
     scales,
