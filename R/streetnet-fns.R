@@ -11,6 +11,7 @@
 #' @param pts List of points presumably containing spatial coordinates
 #' @param expand Relative factor by which street network should extend beyond
 #' limits defined by pts (only if \code{bbox} not given).
+#' @param quiet If \code{FALSE}, display progress messages
 #' @return A Simple Features (\code{sf}) object with coordinates of all lines in
 #' the street network.
 #'
@@ -31,7 +32,7 @@
 #' # This will generally have many more rows because most street networks include
 #' # streets that extend considerably beyond the specified bounding box.
 #' }
-dodgr_streetnet <- function (bbox, pts, expand = 0.05)
+dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 {
     if (!missing (bbox))
     {
@@ -62,7 +63,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05)
 
     dat <- osmdata::opq (bbox) %>%
         osmdata::add_osm_feature (key = "highway") %>%
-        osmdata::osmdata_sf ()
+        osmdata::osmdata_sf (quiet = quiet)
 
     return (dat$osm_lines)
 }
