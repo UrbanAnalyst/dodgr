@@ -171,6 +171,9 @@ get_pts_index <- function (vert_map, xy, pts)
             stop (paste0 ("xy has no geographical coordinates ",
                           "against which to match pts"))
 
+        names (pts) [ix] <- "x"
+        names (pts) [iy] <- "y"
+
         pts <- rcpp_points_index (xy, pts)
         # xy has same order as vert_map
     }
