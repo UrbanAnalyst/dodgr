@@ -4,7 +4,7 @@
 \alias{dodgr_streetnet}
 \title{dodgr_streetnet}
 \usage{
-dodgr_streetnet(bbox, pts, expand = 0.05)
+dodgr_streetnet(bbox, pts, expand = 0.05, quiet = TRUE)
 }
 \arguments{
 \item{bbox}{Bounding box as vector or matrix of coordinates, or location
@@ -14,6 +14,8 @@ name. Passed to \code{osmdata::getbb}.}
 
 \item{expand}{Relative factor by which street network should extend beyond
 limits defined by pts (only if \code{bbox} not given).}
+
+\item{quiet}{If \code{FALSE}, display progress messages}
 }
 \value{
 A Simple Features (\code{sf}) object with coordinates of all lines in

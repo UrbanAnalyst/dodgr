@@ -58,6 +58,9 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
                      appendLF = FALSE)
         graph <- dodgr_streetnet (pts = from, expand = 0.1) %>%
             weight_streetnet (wt_profile = wt_profile)
+        if (!quiet)
+            message ("done")
+
     }
 
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
@@ -76,7 +79,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     }
 
     if (!quiet)
-        message ("done\nConverting network to dodgr graph ... ",
+        message ("Converting network to dodgr graph ... ",
                  appendLF = FALSE)
     graph <- dodgr_convert_graph (graph, components = FALSE)
     xy <- graph$xy
