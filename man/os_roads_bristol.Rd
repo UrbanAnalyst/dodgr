@@ -31,5 +31,12 @@ os_roads_bristol <- os_roads[bristol_pol, ] \%>\%
   st_zm(drop = TRUE)
 mapview::mapview(os_roads_bristol)
 }
+# Converting this 'sf data.frame' to a 'dodgr' network requires manual
+# specification of weighting profile:
+colnm <- "formOfWay"
+wts <- c (0.1, 0.2, 0.8, 1)
+names (wts) <- unique (os_roads_bristol [[colnm]])
+net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
+                         type_col = colnm, id_col = "identifier")
 }
 \keyword{datasets}

@@ -19,5 +19,7 @@ hampi <- dodgr_streetnet("hampi india")
 cols <- c ("osm_id", "highway", "oneway", "geometry")
 hampi <- hampi [, which (names (hampi) \%in\% cols)]
 }
+# this 'sf data.frame' can be converted to a 'dodgr' network with
+net <- weight_streetnet (hampi, wt_profile = 'foot')
 }
 \keyword{datasets}
