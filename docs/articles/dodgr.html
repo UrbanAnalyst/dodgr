@@ -40,7 +40,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mpadge/dodgr">
+  <a href="https://github.com/gmost/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -60,7 +60,7 @@
       <h1>dodgr</h1>
                         <h4 class="author">Mark Padgham</h4>
             
-            <h4 class="date">2017-09-19</h4>
+            <h4 class="date">2017-09-27</h4>
           </div>
 
     
@@ -71,7 +71,7 @@
 <a href="#background-directed-graphs" class="anchor"></a>Background: Directed Graphs</h1>
 <p><code>dodgr</code> is an <strong>R</strong> package for calculating <strong>D</strong>istances <strong>O</strong>n <strong>D</strong>irected <strong>G</strong>raphs. It does so very efficiently, and is able to process larger graphs than many other comparable <strong>R</strong> packages. Skip straight to the Intro if you know what directed graphs are (but maybe make a brief stop-in to Dual-Weighted Directed Graphs below.) Directed graphs are ones in which the “distance” (or some equivalent measure) from A to B is not necessarily equal to that from B to A. In Fig. 1, for example, the weights between the graph vertices (A, B, C, and D) differ depending on the direction of travel, and it is only possible to traverse the entire graph in an anti-clockwise direction.</p>
 <div class="figure" style="text-align: center">
-<img src="dodgr_files/figure-html/unnamed-chunk-2-1.svg" alt="Figure 1: A weighted, directed graph" width="672"><p class="caption">
+<img src="dodgr_files/figure-html/fig1-1.svg" alt="Figure 1: A weighted, directed graph" width="672"><p class="caption">
 Figure 1: A weighted, directed graph
 </p>
 </div>
@@ -101,7 +101,7 @@ Figure 1: A weighted, directed graph
 <a href="#dual-weighted-directed-graphs" class="anchor"></a>Dual-Weighted Directed Graphs</h2>
 <p>Shortest-path distances on weighted graphs can be calculated using a number of other <strong>R</strong> packages, such as <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> or <a href="https://cran.r-project.org/package=e1071"><code>e1071</code></a>. <code>dodgr</code> comes into its own through its ability to trace paths through <em>dual-weighted</em> directed graphs, illustrated in Fig. 2.</p>
 <div class="figure" style="text-align: center">
-<img src="dodgr_files/figure-html/unnamed-chunk-5-1.svg" alt="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows." width="672"><p class="caption">
+<img src="dodgr_files/figure-html/fig2-1.svg" alt="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows." width="672"><p class="caption">
 Figure 2: A <strong>dual</strong>-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows.
 </p>
 </div>
@@ -169,7 +169,7 @@ bb; <span class="kw">head</span> (xy)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span> (hampi<span class="op">$</span>geometry)</code></pre></div>
 <pre><code>## [1] "sfc_LINESTRING" "sfc"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span> (hampi)</code></pre></div>
-<pre><code>## [1] 182   8</code></pre>
+<pre><code>## [1] 189   4</code></pre>
 <p>The <code>streetnet</code> is an <a href="https://cran.r-project.org/package=sf"><code>sf</code></a> (Simple Features) object containing 182 <code>LINESTRING</code> geometries. In other words, it’s got an <code>sf</code> representation of 182 street segments. The <strong>R</strong> package <code>osmplotr</code> can be used to visualise this street network (with the help of <code>magrittr</code> pipe operator, <code>%&gt;%</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span> (osmplotr)
 <span class="kw">library</span> (magrittr)
@@ -184,7 +184,7 @@ map &lt;-<span class="st"> </span><span class="kw">osm_basemap</span> (hampi, <s
 <p>The <code>sf</code> class data representing the street network of Hampi can then be converted into a flat <code>data.frame</code> object by</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph &lt;-<span class="st"> </span><span class="kw"><a href="../reference/weight_streetnet.html">weight_streetnet</a></span> (hampi, <span class="dt">wt_profile =</span> <span class="st">"foot"</span>)
 <span class="kw">dim</span> (graph)</code></pre></div>
-<pre><code>## [1] 5742   11</code></pre>
+<pre><code>## [1] 6096   11</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span> (graph)</code></pre></div>
 <pre><code>##   edge_id    from_id from_lon from_lat      to_id   to_lon   to_lat
 ## 1       1  339318500 76.47489 15.34169  339318502 76.47612 15.34173
@@ -211,10 +211,10 @@ map &lt;-<span class="st"> </span><span class="kw">osm_basemap</span> (hampi, <s
 ## 8   339318503 76.47641 15.34190 4
 ## 10 2398958034 76.47650 15.34199 5</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span> (vt)</code></pre></div>
-<pre><code>## [1] 2814    4</code></pre>
+<pre><code>## [1] 2987    4</code></pre>
 <p>From which we see that the OpenStreetMap representation of the streets of Hampi has 182 line segments with 2,814 unique points and 5,742 edges between those points. The number of edges per vertex in the entire network is thus,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span> (graph) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span> (vt)</code></pre></div>
-<pre><code>## [1] 2.040512</code></pre>
+<pre><code>## [1] 2.040844</code></pre>
 <p>A simple straight line has two edges between all intermediate nodes, and this thus indicates that the network in it’s entirety is quite simple. The <code>data.frame</code> resulting from <code><a href="../reference/weight_streetnet.html">weight_streetnet()</a></code> is what <code>dodgr</code> uses to calculate shortest path routes, as will be described below, following a brief description of weighting street networks.</p>
 <div id="graph-components" class="section level2">
 <h2 class="hasAnchor">
@@ -223,7 +223,7 @@ map &lt;-<span class="st"> </span><span class="kw">osm_basemap</span> (hampi, <s
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span> (graph<span class="op">$</span>component)</code></pre></div>
 <pre><code>## 
 ##    1    2    3 
-## 3596 2128   18</code></pre>
+## 3934 2144   18</code></pre>
 <p>Components are numbered in order of decreasing size, with <code>$component = 1</code> always denoting the largest component. In this case, that component contains 3,596 edges, representing 63% of the graph. There are clearly only three distinct components, but this number may be much larger for larger graphs, and may be obtained from,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span> (<span class="kw">unique</span> (graph<span class="op">$</span>component))</code></pre></div>
 <pre><code>## [1] 3</code></pre>
@@ -273,9 +273,9 @@ graph_min &lt;-<span class="st"> </span><span class="kw"><a href="../reference/d
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span> (graph<span class="op">$</span>highway)</code></pre></div>
 <pre><code>## 
 ##       footway living_street          path    pedestrian       primary 
-##           424           116          2184           142          1194 
+##           424           116          2200           142          1194 
 ##   residential       service         steps      tertiary         track 
-##            94           168           128           284           694 
+##            94           176           128           396           912 
 ##  unclassified 
 ##           314</code></pre>
 <p>Hampi is unlike most other human settlements on the planet in being a Unesco World Heritage area in which automobiles are generally prohibited. Accordingly, numbers of <code>"footway"</code>, <code>"path"</code>, and <code>"pedestrian"</code> ways far exceed typical categories denoting automobile traffic (<code>"primary", "residential", "tertiary"</code>)</p>
@@ -308,8 +308,8 @@ xy &lt;-<span class="st"> </span><span class="kw">data.frame</span> (<span class
 <p>Submitting these to <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> as points <strong>from</strong> which to route will generate a distance matrix from each of these 100 points to every other point in the graph:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (graph, <span class="dt">from =</span> xy)
 <span class="kw">dim</span> (d); <span class="kw">range</span> (d, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1]  100 2814</code></pre>
-<pre><code>## [1]  0.00000 16.37421</code></pre>
+<pre><code>## [1]  100 2987</code></pre>
+<pre><code>## [1]  0.00000 16.49124</code></pre>
 <p>If the <code>to</code> argument is also specified, the matrix returned will have rows matching <code>from</code> and columns matching <code>to</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (graph, <span class="dt">from =</span> xy, <span class="dt">to =</span> xy [<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ])
 <span class="kw">dim</span> (d)</code></pre></div>
@@ -324,7 +324,7 @@ routed_points &lt;-<span class="st"> </span><span class="cf">function</span> (<s
 {
     gr0 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_streetnet.html">dodgr_streetnet</a></span> (<span class="dt">pts =</span> pts, <span class="dt">expand =</span> expand) <span class="op">%&gt;%</span>
 <span class="st">        </span><span class="kw"><a href="../reference/weight_streetnet.html">weight_streetnet</a></span> ()
-    d0 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (gr0, <span class="dt">from =</span> xy)
+    d0 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (gr0, <span class="dt">from =</span> pts)
     <span class="kw">length</span> (<span class="kw">which</span> (<span class="kw">is.na</span> (d0))) <span class="op">/</span><span class="st"> </span><span class="kw">length</span> (d0)
 }</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vapply</span> (<span class="kw">c</span> (<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>), <span class="cf">function</span> (i) <span class="kw">routed_points</span> (i, <span class="dt">pts =</span> xy),
@@ -364,28 +364,28 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dis
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/compare_heaps.html">compare_heaps</a></span> (graph, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>##                                                                                   test
 ## 6       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "BHeap")
-## 7       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "FHeap")
 ## 8     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeap")
 ## 9  d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeapExt")
 ## 10     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "Heap23")
+## 7       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "FHeap")
 ## 1                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "BHeap")
 ## 2                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "FHeap")
-## 5                 d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "Heap23")
 ## 3                d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeap")
 ## 4             d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeapExt")
+## 5                 d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "Heap23")
 ## 11                  d &lt;- igraph::distances(igr, v = from_id, to = to_id, mode = "out")
 ##    replications elapsed relative user.self sys.self user.child sys.child
-## 6            10   0.005      1.0     0.008        0          0         0
-## 7            10   0.005      1.0     0.004        0          0         0
-## 8            10   0.005      1.0     0.008        0          0         0
-## 9            10   0.005      1.0     0.008        0          0         0
-## 10           10   0.005      1.0     0.004        0          0         0
-## 1            10   0.006      1.2     0.004        0          0         0
-## 2            10   0.008      1.6     0.008        0          0         0
-## 5            10   0.008      1.6     0.008        0          0         0
-## 3            10   0.009      1.8     0.008        0          0         0
-## 4            10   0.009      1.8     0.008        0          0         0
-## 11           10   0.032      6.4     0.032        0          0         0</code></pre>
+## 6            10   0.004     1.00     0.004        0          0         0
+## 8            10   0.004     1.00     0.004        0          0         0
+## 9            10   0.004     1.00     0.004        0          0         0
+## 10           10   0.004     1.00     0.004        0          0         0
+## 7            10   0.005     1.25     0.004        0          0         0
+## 1            10   0.006     1.50     0.008        0          0         0
+## 2            10   0.006     1.50     0.004        0          0         0
+## 3            10   0.006     1.50     0.004        0          0         0
+## 4            10   0.006     1.50     0.004        0          0         0
+## 5            10   0.006     1.50     0.008        0          0         0
+## 11           10   0.029     7.25     0.028        0          0         0</code></pre>
 <p>The key column of that <code>data.frame</code> is <code>relative</code>, which quantifies the relative performance of each test in relation to the best which is given a score of 1. <code>dodgr</code> using the default <code>heap = "BHeap"</code>, which is a binary heap priority queue, performs faster than <code>igraph</code> <span class="citation">(Csardi and Nepusz 2006)</span> for these graphs. Different kind of graphs will perform differently with different priority queue structures, and this function enables users to empirically discern the optimal heap for their kind of graph.</p>
 <p>Note, however, that this is not an entirely fair comparison, because <code>dodgr</code> calculates dual-weighted distances, whereas <code>igraph</code>—and indeed all other <strong>R</strong> packages—only directly calculate distances based on a single set of weights. Implementing dual-weighted routing in these cases requires explicitly re-tracing all paths and summing the second set of weights along each path. A time comparison in that case would be very strongly in favour of <code>dodgr</code>. Moreover, <code>dodgr</code> can convert graphs to contracted form through removing redundant vertices, as detailed in the following section. Doing so greatly improves performance with respect to <code>igraph</code>.</p>
 <p>For those wishing to do explicit comparisons themselves, the following code generates the <code>igraph</code> equivalent of <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code>, although of course for single-weighted graphs only:</p>
@@ -402,7 +402,7 @@ d &lt;-<span class="st"> </span>igraph<span class="op">::</span><span class="kw"
 <a href="#graph-contraction" class="anchor"></a>Graph Contraction</h1>
 <p>A further unique feature of <code>dodgr</code> is the ability to remove redundant vertices from graphs (see Fig. 3), thereby speeding up routing calculations.</p>
 <div class="figure" style="text-align: center">
-<img src="dodgr_files/figure-html/unnamed-chunk-43-1.svg" alt="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant." width="672"><p class="caption">
+<img src="dodgr_files/figure-html/fig3-1.svg" alt="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant." width="672"><p class="caption">
 Figure 3: <strong>(A)</strong> Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (<strong>B</strong>) Equivalent graph to (<strong>A</strong>) contracted through removal of vertex#2. (<strong>C</strong>) Vertex#2 is not redundant.
 </p>
 </div>
@@ -410,13 +410,13 @@ Figure 3: <strong>(A)</strong> Vertex#2 is redundant for routing calculations fr
 <p>Different kinds of graphs have different degrees of redundancy, and even street networks differ, through for example dense inner-urban networks generally being less redundant than less dense extra-urban or rural networks. The contracted version of a graph can be obtained with the function <code>dodgr_compact_graph()</code>, illustrated here with the York example from above.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> (graph)</code></pre></div>
 <p>The function <code>dodgr_compact_graph()</code> returns a list with both the original and compact graphs. Relative sizes are</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span> (graph); <span class="kw">nrow</span> (grc<span class="op">$</span>graph); <span class="kw">nrow</span> (grc<span class="op">$</span>graph) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span> (graph)</code></pre></div>
-<pre><code>## [1] 5742</code></pre>
-<pre><code>## [1] 2876</code></pre>
-<pre><code>## [1] 0.5008708</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span> (graph); <span class="kw">nrow</span> (grc); <span class="kw">nrow</span> (grc) <span class="op">/</span><span class="st"> </span><span class="kw">nrow</span> (graph)</code></pre></div>
+<pre><code>## [1] 6096</code></pre>
+<pre><code>## [1] 662</code></pre>
+<pre><code>## [1] 0.1085958</code></pre>
 <p>equivalent to the removal of just under half of all edges. In order to fairly compre differences in routing efficiency, these graphs can first be converted to a standardised minimal form used for routing with the <code><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph()</a></code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph</a></span> (graph)<span class="op">$</span>graph
-grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph</a></span> (grc<span class="op">$</span>graph)<span class="op">$</span>graph
+grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph</a></span> (grc)<span class="op">$</span>graph
 <span class="kw">names</span> (grc)</code></pre></div>
 <pre><code>## [1] "edge_id"   "from"      "to"        "d"         "w"         "component"</code></pre>
 <p>The <code><a href="../reference/dodgr_convert_graph.html">dodgr_convert_graph()</a></code> function also returns a matrix of all vertices (<code>$xy</code>), with the graph again in a list item named <code>$graph</code>. The difference in routing efficiency can then be seen with the following code</p>
@@ -427,12 +427,29 @@ rbenchmark<span class="op">::</span><span class="kw"><a href="http://www.rdocume
                        d2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> (graph, <span class="dt">from =</span> from, <span class="dt">to =</span> to),
                        <span class="dt">replications =</span> <span class="dv">2</span>)</code></pre></div>
 <pre><code>##                                             test replications elapsed
-## 2 d2 &lt;- dodgr_dists(graph, from = from, to = to)            2   0.024
-## 1   d2 &lt;- dodgr_dists(grc, from = from, to = to)            2   0.006
+## 2 d2 &lt;- dodgr_dists(graph, from = from, to = to)            2   0.027
+## 1   d2 &lt;- dodgr_dists(grc, from = from, to = to)            2   0.003
 ##   relative user.self sys.self user.child sys.child
-## 2        4     0.024        0          0         0
+## 2        9     0.024        0          0         0
 ## 1        1     0.004        0          0         0</code></pre>
 <p>And reducing numbers of graph edges by half enables pairwise routing between 100 points to be conducted around 4 times faster. All routing algorithms scale non-linearly with size, and relative improvements in efficiency will be even greater for larger graphs.</p>
+<div id="routing-on-contracted-graphs" class="section level2">
+<h2 class="hasAnchor">
+<a href="#routing-on-contracted-graphs" class="anchor"></a>Routing on Contracted Graphs</h2>
+<p>Routing is often desired between defined points, and these points may inadvertedly be removed in graph contraction. The <code><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph()</a></code> function accepts an additional argument specifying vertices to keep within the contracted graph. This list of vertices must directly match the vertex ID values in the graph.</p>
+<p>The following code illustrates how to retain specific vertices within contracted graphs:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> (graph)
+<span class="kw">nrow</span> (grc)</code></pre></div>
+<pre><code>## [1] 662</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">verts &lt;-<span class="st"> </span><span class="kw">sample</span> (<span class="kw"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> (graph)<span class="op">$</span>id, <span class="dt">size =</span> <span class="dv">100</span>)
+<span class="kw">head</span> (verts) <span class="co"># a character vector</span></code></pre></div>
+<pre><code>## [1] "1376768804" "571423835"  "3921522972" "2398957555" "2195425097"
+## [6] "1560930407"</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grc &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> (graph, verts)
+<span class="kw">nrow</span> (grc)</code></pre></div>
+<pre><code>## [1] 850</code></pre>
+<p>Retaining the nominated vertices yields a graph with considerably more edges than the fully contracted graph excluding these vertices. The <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> function can be applied to the latter graph to obtain accurate distances precisely routed between these points, yet using the speed advantages of graph contraction.</p>
+</div>
 </div>
 <div id="bibliography" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -494,7 +511,11 @@ rbenchmark<span class="op">::</span><span class="kw"><a href="http://www.rdocume
       <li><a href="#shortest-path-calculations-priority-queues">Shortest Path Calculations: Priority Queues</a></li>
       </ul>
 </li>
-      <li><a href="#graph-contraction">Graph Contraction</a></li>
+      <li>
+<a href="#graph-contraction">Graph Contraction</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#routing-on-contracted-graphs">Routing on Contracted Graphs</a></li>
+      </ul>
+</li>
       <li><a href="#bibliography">Bibliography</a></li>
       </ul>
 </div>

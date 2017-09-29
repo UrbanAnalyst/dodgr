@@ -13,10 +13,10 @@ dodgr_convert_graph(graph, components = TRUE)
 result in faster processing).}
 }
 \value{
-A list of two components: \code{graph}, a \code{data.frame} with the
-same number of rows but with columns of \code{edge_id}, \code{from},
+A list of two components: (i) \code{graph}, a \code{data.frame} with
+the same number of rows but with columns of \code{edge_id}, \code{from},
 \code{to}, \code{d}, \code{w}, and \code{component}, not all of which may be
-included; and \code{xy}, A matrix of coordinates of all vertices in
+included; and (ii) \code{xy}, a matrix of coordinates of all vertices in
 \code{graph}.
 }
 \description{

@@ -77,8 +77,11 @@ NULL
 #' @format A Simple Features \code{sf} \code{data.frame} containing the street
 #' network of Hampi.
 #'
-#' @note Can be re-created with the following command:
+#' @note Can be re-created with the following command, which also removes 
+#' extraneous columns to reduce size:
 #' @examples \dontrun{
 #' hampi <- dodgr_streetnet("hampi india")
+#' cols <- c ("osm_id", "highway", "oneway", "geometry")
+#' hampi <- hampi [, which (names (hampi) %in% cols)]
 #' }
 NULL

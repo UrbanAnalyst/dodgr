@@ -113,10 +113,10 @@ typedef std::unordered_map <vertex_id_t, std::unordered_set <edge_id_t>> vert2ed
 //----------------------------
 //----- functions in graph.cpp
 //----------------------------
-void add_to_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
+void add_to_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid);
 
-void erase_from_edge_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
+void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
         edge_id_t eid);
 
 bool graph_has_components (Rcpp::DataFrame graph);
@@ -150,13 +150,25 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 //----------------------------
 //----- functions in graph-contract.cpp
 //----------------------------
-unsigned int get_max_edge_id (edge_map_t &edge_map);
+edge_id_t get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng);
+
+void get_to_from (const edge_map_t &edge_map,
+        const std::unordered_set <edge_id_t> &edges,
+        const std::vector <vertex_id_t> &two_nbs,
+        vertex_id_t &vt_from, vertex_id_t &vt_to,
+        edge_id_t &edge_from_id, edge_id_t &edge_to_id);
+
+void contract_one_edge (vert2edge_map_t &vert2edge_map,
+        vertex_map_t &vertex_map, edge_map_t &edge_map,
+        const std::unordered_set <edge_id_t> &edgelist,
+        const vertex_id_t vtx_id, const vertex_id_t vt_from,
+        const vertex_id_t vt_to,
+        const edge_id_t edge_from_id, const edge_id_t edge_to_id,
+        const edge_id_t new_edge_id);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map);
+        vert2edge_map_t &vert2edge_map,
+        std::unordered_set <vertex_id_t> verts_to_keep);
 
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph, bool quiet);
-
-Rcpp::List rcpp_insert_vertices (Rcpp::DataFrame fullgraph,
-        Rcpp::DataFrame contracted, Rcpp::DataFrame map,
-        std::vector <std::string> verts_to_insert);
+Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
+        Rcpp::Nullable <Rcpp::StringVector> vertlist_in);

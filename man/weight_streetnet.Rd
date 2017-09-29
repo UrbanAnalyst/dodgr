@@ -21,3 +21,8 @@ Weight (or re-weight) an \code{sf}-formatted OSM street network according to
 a named routino profile, selected from (foot, horse, wheelchair, bicycle,
 moped, motorcycle, motorcar, goods, hgv, psv).
 }
+\examples{
+net <- weight_streetnet (hampi) # internal sf-formatted street network
+class(net) # data.frame
+dim(net) # 6096  11; 6096 streets
+}

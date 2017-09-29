@@ -64,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/dodgr">
+  <a href="https://github.com/gmost/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -122,14 +122,14 @@ the street network.</p>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='no'>streetnet</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_streetnet</span> (<span class='st'>"hampi india"</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 <span class='co'># convert to form needed for \code{dodgr} functions:</span>
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>streetnet</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>weight_streetnet</span> (<span class='no'>streetnet</span>)
 <span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># 5,742 edges</span>
 <span class='co'># Alternative ways of extracting street networks by using a small selection of</span>
 <span class='co'># graph vertices to define bounding box:</span>
-<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>graph</span>)
+<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_vertices</span> (<span class='no'>graph</span>)
 <span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span> [<span class='fu'>sample</span> (<span class='fu'>nrow</span> (<span class='no'>verts</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>200</span>), ]
 <span class='no'>streetnet</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_streetnet</span> (<span class='kw'>pts</span> <span class='kw'>=</span> <span class='no'>verts</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>streetnet</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>weight_streetnet</span> (<span class='no'>streetnet</span>)
 <span class='fu'>nrow</span> (<span class='no'>graph</span>)
 <span class='co'># This will generally have many more rows because most street networks include</span>
 <span class='co'># streets that extend considerably beyond the specified bounding box.</span>

@@ -1,5 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/dodgr.svg)](https://travis-ci.org/mpadge/dodgr) [![codecov](https://codecov.io/gh/mpadge/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/dodgr) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr)
+[![Build Status](https://travis-ci.org/gmost/dodgr.svg)](https://travis-ci.org/gmost/dodgr) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/gmost/dodgr?branch=master&svg=true)](https://ci.appveyor.com/project/gmost/dodgr) [![codecov](https://codecov.io/gh/gmost/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/gmost/dodgr) [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr) [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](http://cran.r-project.org/package=dodgr)
+
 
 dodgr: Distances on Directed Graphs in R
 ========================================
@@ -15,7 +16,7 @@ You can install `dodgr` from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mpadge/dodgr")
+devtools::install_github("gmost/dodgr")
 ```
 
 Usage
@@ -38,13 +39,13 @@ pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
 st <- Sys.time ()
 d <- dodgr_dists (from = pts)
 Sys.time () - st
-#> Time difference of 11.9341 secs
+#> Time difference of 9.473597 secs
 range (d, na.rm = TRUE)
-#> [1]  0.00000 16.51525
+#> [1]  0.00000 16.64285
 ```
 
 This will automatically download the street network (using [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then calculating distances between 1,000 points can be done in around 10 seconds.
 
 A graph or network in `dodgr` is represented as a flat table (`data.frame`, `tibble`, `data.table`, whatever) of minimally four columns: `from`, `to`, `weight`, and `distance`. The first two can be of arbitrary form (`numeric` or `character`); `weight` is used to evaluate the shortest paths, and the desired distances are evaluated by summing the values of `distance` along those paths. For a street network example, `weight` will generally be the actual distance multiplied by a priority weighting for a given mode of transport and type of way, while `distance` will be the pysical distance.
 
-For more detail, see the [main package vignette](https://mpadge.github.io/dodgr/articles/dodgr.html), along with a second vignette detailing [benchmark timings](https://mpadge.github.io/dodgr/articles/benchmark.html), showing that under many circumstances, `dodgr` performs considerably faster than equivalent routines from the `igraph` package.
+For more detail, see the [main package vignette](https://gmost/dodgr/articles/dodgr.html), along with a second vignette detailing [benchmark timings](https://gmost/dodgr/articles/benchmark.html), showing that under many circumstances, `dodgr` performs considerably faster than equivalent routines from the `igraph` package.

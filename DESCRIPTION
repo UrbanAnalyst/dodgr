@@ -1,6 +1,6 @@
 Package: dodgr
-Title: Distances on Directed Graphs in R
-Version: 0.0.0.9000
+Title: Distances on Directed Graphs
+Version: 0.0.1
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Andreas", "Peutschnig", role="aut"),
@@ -40,6 +40,6 @@ VignetteBuilder: knitr
 NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/mpadge/dodgr
-BugReports: https://github.com/mpadge/dodgr/issues
+URL: https://github.com/gmost/dodgr
+BugReports: https://github.com/gmost/dodgr/issues
 RoxygenNote: 6.0.1

@@ -56,8 +56,11 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
             message (paste0 ("No graph submitted to dodgr_dists; ",
                              "downloading street network ... "),
                      appendLF = FALSE)
-        graph <- dodgr_streetnet (pts = from) %>%
+        graph <- dodgr_streetnet (pts = from, expand = 0.1) %>%
             weight_streetnet (wt_profile = wt_profile)
+        if (!quiet)
+            message ("done")
+
     }
 
     heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
@@ -76,7 +79,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     }
 
     if (!quiet)
-        message ("done\nConverting network to dodgr graph ... ",
+        message ("Converting network to dodgr graph ... ",
                  appendLF = FALSE)
     graph <- dodgr_convert_graph (graph, components = FALSE)
     xy <- graph$xy
@@ -167,6 +170,9 @@ get_pts_index <- function (vert_map, xy, pts)
         if (is.null (xy))
             stop (paste0 ("xy has no geographical coordinates ",
                           "against which to match pts"))
+
+        names (pts) [ix] <- "x"
+        names (pts) [iy] <- "y"
 
         pts <- rcpp_points_index (xy, pts)
         # xy has same order as vert_map
