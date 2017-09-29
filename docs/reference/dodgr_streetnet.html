@@ -86,12 +86,12 @@
     
     <p>Use the <code>osmdata</code> package to extract the street network for a given
 location. For routing between a given set of points (passed as <code>pts</code>),
-the <code>bbox</code> argument may be ommitted, in which case a bounding box will
+the <code>bbox</code> argument may be omitted, in which case a bounding box will
 be constructed by expanding the range of <code>pts</code> by the relative amount of
 <code>expand</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_streetnet</span>(<span class='no'>bbox</span>, <span class='no'>pts</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0.05</span>)</pre>
+    <pre class="usage"><span class='fu'>dodgr_streetnet</span>(<span class='no'>bbox</span>, <span class='no'>pts</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -110,6 +110,10 @@ name. Passed to <code><a href='http://www.rdocumentation.org/packages/osmdata/to
       <td><p>Relative factor by which street network should extend beyond
 limits defined by pts (only if <code>bbox</code> not given).</p></td>
     </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>If <code>FALSE</code>, display progress messages</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -122,14 +126,14 @@ the street network.</p>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='no'>streetnet</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_streetnet</span> (<span class='st'>"hampi india"</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 <span class='co'># convert to form needed for \code{dodgr} functions:</span>
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>weight_streetnet</span> (<span class='no'>streetnet</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>streetnet</span>)
 <span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># 5,742 edges</span>
 <span class='co'># Alternative ways of extracting street networks by using a small selection of</span>
 <span class='co'># graph vertices to define bounding box:</span>
-<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_vertices</span> (<span class='no'>graph</span>)
+<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>graph</span>)
 <span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span> [<span class='fu'>sample</span> (<span class='fu'>nrow</span> (<span class='no'>verts</span>), <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>200</span>), ]
 <span class='no'>streetnet</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_streetnet</span> (<span class='kw'>pts</span> <span class='kw'>=</span> <span class='no'>verts</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>weight_streetnet</span> (<span class='no'>streetnet</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>streetnet</span>)
 <span class='fu'>nrow</span> (<span class='no'>graph</span>)
 <span class='co'># This will generally have many more rows because most street networks include</span>
 <span class='co'># streets that extend considerably beyond the specified bounding box.</span>

@@ -101,10 +101,11 @@ extraneous columns to reduce size:</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>hampi</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_streetnet</span>(<span class='st'>"hampi india"</span>)
+<span class='no'>hampi</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_streetnet.html'>dodgr_streetnet</a></span>(<span class='st'>"hampi india"</span>)
 <span class='no'>cols</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span> (<span class='st'>"osm_id"</span>, <span class='st'>"highway"</span>, <span class='st'>"oneway"</span>, <span class='st'>"geometry"</span>)
 <span class='no'>hampi</span> <span class='kw'>&lt;-</span> <span class='no'>hampi</span> [, <span class='fu'>which</span> (<span class='fu'>names</span> (<span class='no'>hampi</span>) <span class='kw'>%in%</span> <span class='no'>cols</span>)]
-<span class='co'># }</span></pre>
+<span class='co'># }</span><div class='input'><span class='co'># this 'sf data.frame' can be converted to a 'dodgr' network with</span>
+<span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>'foot'</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
