@@ -76,30 +76,64 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #'
 #' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
 #' objects, typically extracted with \code{get_stretnet}
-#' @param wt_profile Name of weighting profile
+#' @param wt_profile Name of weighting profile, or vector of values with names
+#' corresponding to names in \code{type_col}
+#' @param type_col Specify column of the \code{sf} \code{data.frame} object
+#' which designates different types of highways to be used for weighting
+#' (default works with \code{osmdata} objects).
+#' @param id_col Specify column of the code{sf} \code{data.frame} object which
+#' provides unique idendifiers for each highway (default works with
+#' \code{osmdata} objects).
 #'
 #' @return A \code{data.frame} of edges representing the street network, along
 #' with a column of graph component numbers.
 #'
 #' @export
 #' @examples
-#' net <- weight_streetnet (hampi) # internal sf-formatted street network
+#' # hampi is included with package as an 'osmdata' sf-formatted street network
+#' net <- weight_streetnet (hampi)
 #' class(net) # data.frame
 #' dim(net) # 6096  11; 6096 streets
-weight_streetnet <- function (sf_lines, wt_profile = "bicycle")
+#' # os_roads_bristol is also included as an sf data.frame, but in a different
+#' # format requiring identification of columns and specification of custom
+#' # weighting scheme.
+#' colnm <- "formOfWay"
+#' wts <- c (0.1, 0.2, 0.8, 1)
+#' names (wts) <- unique (os_roads_bristol [[colnm]])
+#' net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
+#'                          type_col = colnm, id_col = "identifier")
+#' dim (net) # 406 11; 406 streets
+weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
+                              type_col = "highway", id_col = "osm_id")
 {
     if (!is (sf_lines, "sf"))
         stop ('sf_lines must be class "sf"')
-    if (!all (c ("geometry", "highway", "osm_id") %in% names (sf_lines)))
+    if (!all (c ("geometry", type_col, id_col) %in% names (sf_lines)))
         stop (paste0 ('sf_lines must be class "sf" and ',
                       'have highway and geometry columns'))
 
-    prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
-                    "motorcycle", "motorcar", "goods", "hgv", "psv")
-    wt_profile <- match.arg (tolower (wt_profile), prf_names)
-    profiles <- dodgr::weighting_profiles
-    wt_profile <- profiles [profiles$name == wt_profile, ]
-    wt_profile$value <- wt_profile$value / 100
+    if (type_col != "highway")
+        names (sf_lines) [which (names (sf_lines) == type_col)] <- "highway"
+    if (id_col != "osm_id")
+        names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
+
+    if (is.character (wt_profile))
+    {
+        prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
+                        "motorcycle", "motorcar", "goods", "hgv", "psv")
+        wt_profile <- match.arg (tolower (wt_profile), prf_names)
+        profiles <- dodgr::weighting_profiles
+        wt_profile <- profiles [profiles$name == wt_profile, ]
+        wt_profile$value <- wt_profile$value / 100
+    } else if (is.numeric (wt_profile) & !is.null (names (wt_profile)))
+    {
+        nms <- names (wt_profile)
+        wt_profile <- data.frame (name = "custom",
+                                  way = nms,
+                                  value = wt_profile)
+    } else
+        stop ("Custom named profiles must be vectors with named values")
+
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
     graph <- data.frame (edge_id = seq (nrow (dat [[1]])),

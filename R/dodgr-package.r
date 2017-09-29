@@ -86,9 +86,9 @@ NULL
 #' }
 NULL
 
-#' hampi
+#' os_roads_bristol
 #'
-#' A sample street network from the township of Hampi, Karnataka, India.
+#' A sample street network for Bristol, U.K., from the Ordnance Survey.
 #'
 #' @name os_roads_bristol
 #' @docType data
@@ -96,9 +96,10 @@ NULL
 #' @format A Simple Features \code{sf} \code{data.frame} representing
 #' motorways in Bristol, UK.
 #'
-#' @note Input data downloaded from \url{https://www.ordnancesurvey.co.uk/opendatadownload/products.html}.
-#' This dataset is open access and can be used under the \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License} and
-#' must be cited as follows:
+#' @note Input data downloaded from 
+#' \url{https://www.ordnancesurvey.co.uk/opendatadownload/products.html}.
+#' This dataset is open access and can be used under the
+#' \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License} and must be cited as follows:
 #' Contains OS data © Crown copyright and database right (2017)
 #'  
 #' @examples \dontrun{
