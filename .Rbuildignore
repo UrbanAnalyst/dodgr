@@ -11,3 +11,5 @@ docs/
 tests/valgrind-script.R$
 tests/valgrind-test.R$
 ^_pkgdown\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
