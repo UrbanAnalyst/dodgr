@@ -12,3 +12,5 @@ tests/valgrind-script.R$
 tests/valgrind-test.R$
 ^_pkgdown\.yml$
 ^appveyor\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
