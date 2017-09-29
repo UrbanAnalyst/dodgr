@@ -24,7 +24,7 @@ the street network.
 \description{
 Use the \code{osmdata} package to extract the street network for a given
 location. For routing between a given set of points (passed as \code{pts}),
-the \code{bbox} argument may be ommitted, in which case a bounding box will
+the \code{bbox} argument may be omitted, in which case a bounding box will
 be constructed by expanding the range of \code{pts} by the relative amount of
 \code{expand}.
 }

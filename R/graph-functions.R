@@ -1,6 +1,6 @@
 #' dodgr_convert_graph
 #'
-#' Convert a graph represented as an arbitarily-structured \code{data.frame} to
+#' Convert a graph represented as an arbitrarily-structured \code{data.frame} to
 #' standard 4 or 5-column format for submission to C++ routines
 #'
 #' @param graph A \code{data.frame} containing the edges of the graph

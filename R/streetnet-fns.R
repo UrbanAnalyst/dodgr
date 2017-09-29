@@ -2,7 +2,7 @@
 #'
 #' Use the \code{osmdata} package to extract the street network for a given
 #' location. For routing between a given set of points (passed as \code{pts}),
-#' the \code{bbox} argument may be ommitted, in which case a bounding box will
+#' the \code{bbox} argument may be omitted, in which case a bounding box will
 #' be constructed by expanding the range of \code{pts} by the relative amount of
 #' \code{expand}.
 #'
@@ -75,14 +75,14 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
 #' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
-#' objects, typically extracted with \code{get_stretnet}
+#' objects, typically extracted with \code{get_streetnet}
 #' @param wt_profile Name of weighting profile, or vector of values with names
 #' corresponding to names in \code{type_col}
 #' @param type_col Specify column of the \code{sf} \code{data.frame} object
 #' which designates different types of highways to be used for weighting
 #' (default works with \code{osmdata} objects).
 #' @param id_col Specify column of the code{sf} \code{data.frame} object which
-#' provides unique idendifiers for each highway (default works with
+#' provides unique identifiers for each highway (default works with
 #' \code{osmdata} objects).
 #'
 #' @return A \code{data.frame} of edges representing the street network, along

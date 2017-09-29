@@ -15,7 +15,7 @@
 #' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
-#' @note \code{graph} must minimially contain four columns of \code{from},
+#' @note \code{graph} must minimally contain four columns of \code{from},
 #' \code{to}, \code{dist}. If an additional column named \code{weight} or
 #' \code{wt} is present, shortest paths are calculated according to values
 #' specified in that column; otherwise according to \code{dist} values. Either
@@ -37,7 +37,7 @@
 #' precisely matching node numbers or names given in \code{graph$from} or
 #' \code{graph$to}. If \code{to} is missing, pairwise distances are calculated
 #' between all points specified in \code{from}. If neither \code{from} nor
-#' \code{to} are specified, pairwise distances are calcualted between all nodes
+#' \code{to} are specified, pairwise distances are calculated between all nodes
 #' in \code{graph}.
 #'
 #' @export
