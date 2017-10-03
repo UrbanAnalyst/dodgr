@@ -50,13 +50,19 @@
 dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
                          heap = 'BHeap', quiet = TRUE)
 {
-    if (missing (graph) & !missing (from))
+    if (missing (graph) & (!missing (from) | !missing (to)))
     {
         if (!quiet)
             message (paste0 ("No graph submitted to dodgr_dists; ",
                              "downloading street network ... "),
                      appendLF = FALSE)
-        graph <- dodgr_streetnet (pts = from, expand = 0.1) %>%
+        pts <- NULL
+        if (!missing (from))
+            pts  <- from
+        if (!missing (to))
+            pts <- rbind (pts, to)
+        pts <- pts [which (!duplicated (pts)), ]
+        graph <- dodgr_streetnet (pts = pts, expand = 0.1) %>%
             weight_streetnet (wt_profile = wt_profile)
         if (!quiet)
             message ("done")
@@ -85,26 +91,51 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     xy <- graph$xy
     graph <- graph$graph
     vert_map <- make_vert_map (graph)
+    # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
-    if (missing (from))
-        from <- -1
-    else
-        from <- get_pts_index (vert_map, xy, from) # 0-indexed
+    from_id <- NULL
+    from_index <- -1
+    if (!missing (from))
+    {
+        if (!is.null (rownames (from)))
+            from_id <- rownames (from)
+        else if (is.vector (from) & !is.null (names (from)))
+            from_id <- names (from)
+        else if (is.matrix (from) & any (grepl ("id", colnames (from),
+                                                ignore.case = TRUE)))
+            from_id <- from [, which (grepl ("id", colnames (from)))]
 
-    if (missing (to))
-        to <- -1
-    else
-        to <- get_pts_index (vert_map, xy, to)
+        from_index <- get_pts_index (vert_map, xy, from) # 0-indexed
+    }
+
+    to_id <- NULL
+    to_index <- -1
+    if (!missing (to))
+    {
+        if (!is.null (rownames (to)))
+            to_id <- rownames (to)
+        else if (is.vector (to) & !is.null (names (to)))
+            to_id <- names (to)
+        else if (is.matrix (to) & any (grepl ("id", colnames (to),
+                                              ignore.case = TRUE)))
+            to_id <- to [, which (grepl ("id", colnames (to)))]
+
+        to_index <- get_pts_index (vert_map, xy, to)
+    }
 
     if (!quiet)
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
-    d <- rcpp_get_sp (graph, vert_map, from, to, heap)
-    if (any (from < 0))
-        from <- seq (nrow (vert_map)) - 1
-    if (any (to < 0))
-        to <- seq (nrow (vert_map)) - 1
-    rownames (d) <- vert_map$vert [from + 1] # coz from is 0-indexed
-    colnames (d) <- vert_map$vert [to + 1] # ditto
+    d <- rcpp_get_sp (graph, vert_map, from_index, to_index, heap)
+
+    if (!is.null (from_id))
+        rownames (d) <- from_id
+    else
+        rownames (d) <- vert_map$vert [from_index + 1] # coz from is 0-indexed
+    if (!is.null (to_id))
+        colnames (d) <- to_id
+    else
+        colnames (d) <- vert_map$vert [to_index + 1] # ditto
+
     if (!quiet)
         message ("done.")
 
@@ -133,8 +164,9 @@ make_vert_map <- function (graph)
 #' corresponding IDs, obtained from \code{make_vert_map}
 #' @param xy List of x (longitude) and y (latitude) coordinates of all vertices
 #' in \code{vert_map}
-#' @param pts Matrix or \code{data.frame} of arbitrary geographical coordinates
-#' for which to get index into vertices of graph.
+#' @param pts Either a vector of names, or a matrix or \code{data.frame} of
+#' arbitrary geographical coordinates for which to get index into vertices of
+#' graph.
 #'
 #' @noRd
 get_pts_index <- function (vert_map, xy, pts)
