@@ -97,14 +97,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     from_index <- -1
     if (!missing (from))
     {
-        if (!is.null (rownames (from)))
-            from_id <- rownames (from)
-        else if (is.vector (from) & !is.null (names (from)))
-            from_id <- names (from)
-        else if (is.matrix (from) & any (grepl ("id", colnames (from),
-                                                ignore.case = TRUE)))
-            from_id <- from [, which (grepl ("id", colnames (from)))]
-
+        from_id <- get_id_cols (from)
         from_index <- get_pts_index (vert_map, xy, from) # 0-indexed
     }
 
@@ -112,14 +105,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     to_index <- -1
     if (!missing (to))
     {
-        if (!is.null (rownames (to)))
-            to_id <- rownames (to)
-        else if (is.vector (to) & !is.null (names (to)))
-            to_id <- names (to)
-        else if (is.matrix (to) & any (grepl ("id", colnames (to),
-                                              ignore.case = TRUE)))
-            to_id <- to [, which (grepl ("id", colnames (to)))]
-
+        to_id <- get_id_cols (to)
         to_index <- get_pts_index (vert_map, xy, to)
     }
 
@@ -140,6 +126,29 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
         message ("done.")
 
     return (d)
+}
+
+#' get_id_col
+#'
+#' Get the ID columns from a matrix or data.frame of from or two points
+#' @param pts The \code{from} or \code{to} args passed to \code{dodgr_dists}
+#' @return Character vector of names of points, if they exist in \code{pts}
+#' @noRd
+get_id_cols <- function (pts)
+{
+    ids <- NULL
+    if (any (grepl ("id", colnames (pts), ignore.case = TRUE)))
+    {
+        nmc <- which (grepl ("id", colnames (pts)))
+        if (is (pts, "data.frame"))
+            ids <- pts [[nmc]]
+        else if (is.matrix (pts))
+            ids <- pts [, nmc, drop = TRUE]
+    } else if (is.vector (pts) & !is.null (names (pts)))
+        ids <- names (pts)
+    else if (!is.null (rownames (pts)))
+        ids <- rownames (pts)
+    return (ids)
 }
 
 #' make_vert_map
