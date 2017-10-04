@@ -68,7 +68,7 @@ produces a square matrix of distances between all points listed in `pts` and
 routed along the dual-weighted directed network given in `graph`. An even
 simpler usage allows calculation of pair-wise distances between a set of
 geographical coordinates (here, for a sizey chunk of New York City):
-```{r ny-example}
+```{r ny-example, eval = FALSE}
 xlim <- c (-74.12931, -73.99214)
 ylim <- c (40.70347, 40.75354)
 npts <- 1000
@@ -77,7 +77,9 @@ pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
 st <- Sys.time ()
 d <- dodgr_dists (from = pts)
 Sys.time () - st
+#> Time difference of 9.473597 secs
 range (d, na.rm = TRUE)
+#> [1]  0.00000 16.64285
 ```
 This will automatically download the street network (using
 [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then
