@@ -159,11 +159,11 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 }
 
 
-//' rcpp_aggregate_paths
+//' rcpp_get_paths
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_aggregate_paths (Rcpp::DataFrame graph,
+Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,

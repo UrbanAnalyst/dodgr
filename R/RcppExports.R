@@ -109,11 +109,11 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
-#' rcpp_aggregate_paths
+#' rcpp_get_paths
 #'
 #' @noRd
-rcpp_aggregate_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_aggregate_paths`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_sf_as_network
