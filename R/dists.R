@@ -111,7 +111,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
 
     if (!quiet)
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
-    d <- rcpp_get_sp (graph, vert_map, from_index, to_index, heap)
+    d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
 
     if (!is.null (from_id))
         rownames (d) <- from_id

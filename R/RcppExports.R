@@ -102,11 +102,18 @@ rcpp_sample_graph <- function(graph, nverts_to_sample) {
     .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
-#' rcpp_get_sp
+#' rcpp_get_sp_dists
 #'
 #' @noRd
-rcpp_get_sp <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi, heap_type)
+}
+
+#' rcpp_aggregate_paths
+#'
+#' @noRd
+rcpp_aggregate_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_aggregate_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_sf_as_network

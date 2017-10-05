@@ -40,9 +40,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_get_sp
-Rcpp::NumericMatrix rcpp_get_sp(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_get_sp(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
+// rcpp_get_sp_dists
+Rcpp::NumericMatrix rcpp_get_sp_dists(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_get_sp_dists(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,7 +51,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector <int> >::type fromi(fromiSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp(graph, vert_map_in, fromi, toi, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_dists(graph, vert_map_in, fromi, toi, heap_type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_aggregate_paths
+Rcpp::List rcpp_aggregate_paths(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_aggregate_paths(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< std::vector <int> >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
+    Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_paths(graph, vert_map_in, fromi, toi, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
