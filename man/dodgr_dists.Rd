@@ -31,7 +31,7 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 square matrix of distances between nodes
 }
 \description{
-dodgr_dists
+Calculate matrix of pair-wise distances between points.
 }
 \note{
 \code{graph} must minimally contain four columns of \code{from},

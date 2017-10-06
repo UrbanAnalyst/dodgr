@@ -1,5 +1,7 @@
 #' dodgr_dists
 #'
+#' Calculate matrix of pair-wise distances between points.
+#'
 #' @param graph \code{data.frame} or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which route distances are to

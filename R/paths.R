@@ -1,5 +1,7 @@
 #' dodgr_paths
 #'
+#' Calculate lists of pair-wise shortest paths between points.
+#'
 #' @param graph \code{data.frame} or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which route distances are to
@@ -13,7 +15,9 @@
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
 #' @param quiet If \code{FALSE}, display progress messages on screen.
-#' @return List of paths tracing all connections between nodes
+#' @return List of list of paths tracing all connections between nodes such that
+#' if \code{x <- dodgr_paths (graph, from, to)}, then the path between
+#' \code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}.
 #'
 #' @note \code{graph} must minimally contain four columns of \code{from},
 #' \code{to}, \code{dist}. If an additional column named \code{weight} or
@@ -45,8 +49,9 @@
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 100)
 #' to <- sample (graph$to_id, size = 50)
-#' d <- dodgr_dists (graph, from = from, to = to)
-#' # d is a 100-by-50 matrix of distances between \code{from} and \code{to}
+#' dp <- dodgr_paths (graph, from = from, to = to)
+#' # dp is a list with 100 items, and each of those 100 items has 30 items, each
+#' # of which is a single path listing all vertiex IDs as taken from \code{graph}.
 dodgr_paths <- function (graph, from, to, wt_profile = "bicycle",
                          heap = 'BHeap', quiet = TRUE)
 {
@@ -93,25 +98,20 @@ dodgr_paths <- function (graph, from, to, wt_profile = "bicycle",
     vert_map <- make_vert_map (graph)
     # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
-    from_id <- NULL
     from_index <- -1
     if (!missing (from))
-    {
-        from_id <- get_id_cols (from)
         from_index <- get_pts_index (vert_map, xy, from) # 0-indexed
-    }
 
-    to_id <- NULL
     to_index <- -1
     if (!missing (to))
-    {
-        to_id <- get_id_cols (to)
         to_index <- get_pts_index (vert_map, xy, to)
-    }
 
     if (!quiet)
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
     paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
 
-    return (paths)
+    # convert 1-based indices back into vertex IDs:
+    lapply (paths, function (i)
+            lapply (i, function (j)
+                    vert_map$vert [j] ))
 }

@@ -111,6 +111,19 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
 
 #' rcpp_get_paths
 #'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param toi Index into vert_map_in of vertex numbers
+#'
+#' @note The graph is constructed with 0-indexed vertex numbers contained in
+#' code{vert_map_in}. Both \code{fromi} and \code{toi} already map directly
+#' onto these. The graph has to be constructed by first constructing a
+#' \code{std::map} object (\code{vertmap}) for \code{vert_map_in}, then
+#' translating all \code{graph["from"/"to"]} values into these indices. This
+#' construction is done in \code{inst_graph}.
+#'
 #' @noRd
 rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)

@@ -28,10 +28,12 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-List of paths tracing all connections between nodes
+List of list of paths tracing all connections between nodes such that
+if \code{x <- dodgr_paths (graph, from, to)}, then the path between
+\code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}.
 }
 \description{
-dodgr_paths
+Calculate lists of pair-wise shortest paths between points.
 }
 \note{
 \code{graph} must minimally contain four columns of \code{from},
@@ -63,6 +65,7 @@ in \code{graph}.
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
 to <- sample (graph$to_id, size = 50)
-d <- dodgr_dists (graph, from = from, to = to)
-# d is a 100-by-50 matrix of distances between \\code{from} and \\code{to}
+dp <- dodgr_paths (graph, from = from, to = to)
+# dp is a list with 100 items, and each of those 100 items has 30 items, each
+# of which is a single path listing all vertiex IDs as taken from \\code{graph}.
 }

@@ -2,7 +2,7 @@
 #include "dijkstra.h"
 #include "heaps/heap_lib.h"
 
-#include <algorithm> // std::fill
+#include <algorithm> // std::fill, std::reverse
 
 #include <Rcpp.h>
 
@@ -141,6 +141,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     for (unsigned int v = 0; v < nfrom; v++)
     {
         std::fill (w, w + nverts, INFINITE_FLOAT);
+        std::fill (d, d + nverts, INFINITE_FLOAT);
 
         dijkstra->run (d, w, prev, fromi [v]);
         for (unsigned int vi = 0; vi < nto; vi++)
@@ -160,6 +161,19 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 
 
 //' rcpp_get_paths
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param toi Index into vert_map_in of vertex numbers
+//'
+//' @note The graph is constructed with 0-indexed vertex numbers contained in
+//' code{vert_map_in}. Both \code{fromi} and \code{toi} already map directly
+//' onto these. The graph has to be constructed by first constructing a
+//' \code{std::map} object (\code{vertmap}) for \code{vert_map_in}, then
+//' translating all \code{graph["from"/"to"]} values into these indices. This
+//' construction is done in \code{inst_graph}.
 //'
 //' @noRd
 // [[Rcpp::export]]
@@ -217,36 +231,42 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     dijkstra->init (g); // specify the graph
 
     Rcpp::List res (nfrom);
+    float* w = new float [nverts];
+    float* d = new float [nverts];
+    int* prev = new int [nverts];
+
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        float* w = new float [nverts];
-        float* d = new float [nverts];
-        int* prev = new int [nverts];
-
         std::fill (w, w + nverts, INFINITE_FLOAT);
+        std::fill (d, d + nverts, INFINITE_FLOAT);
 
         dijkstra->run (d, w, prev, fromi [v]);
 
-        Rcpp::NumericVector onePath;
+        Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
-            unsigned int target = toi [vi];
-            if (w [target] < INFINITE_FLOAT)
+            std::vector <unsigned int> onePath;
+            if (w [toi [vi]] < INFINITE_FLOAT)
             {
-                while (target > 0 & target < INFINITE_INT)
+                unsigned int target = toi [vi];
+                while (target < INFINITE_INT)
                 {
-                    onePath.push_back (target);
+                    // Note that targets are all C++ 0-indexed and are converted
+                    // directly here to R-style 1-indexes.
+                    onePath.push_back (target + 1);
                     target = prev [target];
                 }
             }
+            std::reverse (onePath.begin (), onePath.end ());
+            res1 [vi] = onePath;
         }
-        res [v] = onePath;
-        
-        delete [] d;
-        delete [] w;
-        delete [] prev;
+        res [v] = res1;
     }
 
+
+    delete [] d;
+    delete [] w;
+    delete [] prev;
 
     delete dijkstra;
     delete g;
