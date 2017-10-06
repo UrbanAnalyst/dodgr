@@ -31,6 +31,19 @@ test_that("paths", {
     expect_true (all (lens - lens2 == 1))
 })
 
+test_that("flows", {
+    graph <- weight_streetnet (hampi)
+    graph <- dodgr_convert_graph (graph)$graph
+    from <- sample (graph$from, size = 10)
+    to <- sample (graph$from, size = 5)
+    to <- to [!to %in% from]
+    flows <- matrix (10 * runif (length (from) * length (to)),
+                     nrow = length (from))
+    graph2 <- dodgr_flows (graph, from = from, to = to, flows = flows)
+    expect_equal (ncol (graph2) - ncol (graph), 1)
+    expect_true (mean (graph2$flow) > 0)
+})
+
 test_that("convert graph", {
     graph <- weight_streetnet (hampi)
     graph2 <- dodgr_convert_graph (graph)$graph

@@ -104,3 +104,70 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 
     return (paths)
 }
+
+
+
+#' dodgr_flows
+#'
+#' Aggregate flows throughout a network based on an input matrix of flows
+#' between all pairs of \code{from} and \code{to} points.
+#'
+#' @param graph \code{data.frame} or equivalent object representing the network
+#' graph (see Details)
+#' @param from Vector or matrix of points **from** which route distances are to
+#' be calculated (see Details)
+#' @param to Vector or matrix of points **to** which route distances are to be
+#' calculated (see Details)
+#' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
+#' \code{ncol(flows)==length(to)}.
+#' @param wt_profile Name of weighting profile for street networks (one of foot,
+#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' @param heap Type of heap to use in priority queue. Options include
+#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
+#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
+#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
+#' @param quiet If \code{FALSE}, display progress messages on screen.
+#' @return Modified version of graph with additonal \code{flow} column added.
+#'
+#' @export
+dodgr_flows <- function (graph, from, to, flows,
+                         wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
+{
+    if (missing (graph) & (!missing (from) | !missing (to)))
+        graph <- graph_from_pts (from, to, expand = 0.1,
+                                 wt_profile = wt_profile, quiet = quiet)
+
+    if ("flow" %in% names (graph))
+        warning ("graph already has a 'flow' column; ",
+                  "this will be overwritten")
+
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
+
+    if (!quiet)
+        message ("Converting network to dodgr graph ... ",
+                 appendLF = FALSE)
+    graph <- dodgr_convert_graph (graph, components = FALSE)
+    xy <- graph$xy
+    graph <- graph$graph
+    vert_map <- make_vert_map (graph)
+    # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
+
+    if (!is.matrix (flows))
+        flow <- as.matrix (flows)
+    if (!(length (from) == 1 | nrow (flows) == length (from)))
+        stop ("flows must have number of rows equal to length of from")
+    if (!(length (to) == 1 | ncol (flows) == length (to)))
+        stop ("flows must have number of columns equal to length of to")
+
+    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
+    to_index <- get_tofrom_index (vert_map, xy, to)
+
+    if (!quiet)
+        message ("done\nAggregating flows ... ", appendLF = FALSE)
+
+    graph$flow <- rcpp_aggregate_flows (graph, vert_map, from_index, to_index,
+                                        flows, heap)
+    return (graph)
+}

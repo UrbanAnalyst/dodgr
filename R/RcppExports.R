@@ -129,6 +129,22 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
+#' rcpp_aggregate_flows
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param toi Index into vert_map_in of vertex numbers
+#'
+#' @note The flow data to be used for aggregation is a matrix mapping flows
+#' betwen each pair of from and to points.
+#'
+#' @noRd
+rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
+    .Call(`_dodgr_rcpp_aggregate_flows`, graph, vert_map_in, fromi, toi, flows, heap_type)
+}
+
 #' rcpp_sf_as_network
 #'
 #' Return OSM data in Simple Features format

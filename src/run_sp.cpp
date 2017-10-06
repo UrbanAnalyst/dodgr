@@ -273,3 +273,128 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 
     return (res);
 }
+
+//' rcpp_aggregate_flows
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param toi Index into vert_map_in of vertex numbers
+//'
+//' @note The flow data to be used for aggregation is a matrix mapping flows
+//' betwen each pair of from and to points.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in,
+        std::vector <int> fromi,
+        std::vector <int> toi,
+        Rcpp::NumericMatrix flows,
+        std::string heap_type)
+{
+    if (fromi [0] < 0) // use all vertices
+    {
+        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        fromi = Rcpp::as <std::vector <int>> (id_vec);
+    }
+    if (toi [0] < 0) // use all vertices
+    {
+        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        toi = Rcpp::as <std::vector <int>> (id_vec);
+    }
+    unsigned int nfrom = fromi.size (), nto = toi.size ();
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <float> dist = graph ["d"];
+    std::vector <float> wt = graph ["w"];
+
+    unsigned int nedges = graph.nrow ();
+    std::map <std::string, unsigned int> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    for (int i = 0; i < vert_map_in.nrow (); ++i)
+    {
+        vert_map.emplace (vert_map_id [i], vert_map_n [i]);
+    }
+    unsigned int nverts = vert_map.size ();
+
+    // Make a std::map with keys made from from and two vertex IDs, and values
+    // giving indices into graph
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
+    for (unsigned int i = 0; i < from.size (); i++)
+    {
+        std::string two_verts = "f" + from [i] + "t" + to [i];
+        verts_to_edge_map.emplace (two_verts, i);
+    }
+
+    DGraph *g = new DGraph (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    Dijkstra *dijkstra;
+
+    if (heap_type == "FHeap")
+        dijkstra = dijkstra_fheap (nverts);
+    else if (heap_type == "BHeap")
+        dijkstra = dijkstra_bheap (nverts);
+    else if (heap_type == "Heap23")
+        dijkstra = dijkstra_heap23 (nverts);
+    else if (heap_type == "TriHeap")
+        dijkstra = dijkstra_triheap (nverts);
+    else if (heap_type == "TriHeapExt")
+        dijkstra = dijkstra_triheapext (nverts);
+    else if (heap_type == "Radix")
+        dijkstra = dijkstra_radix (nverts);
+
+    dijkstra->init (g); // specify the graph
+
+    Rcpp::List res (nfrom);
+    float* w = new float [nverts];
+    float* d = new float [nverts];
+    int* prev = new int [nverts];
+
+    for (unsigned int v = 0; v < nfrom; v++)
+    {
+        std::fill (w, w + nverts, INFINITE_FLOAT);
+        std::fill (d, d + nverts, INFINITE_FLOAT);
+
+        dijkstra->run (d, w, prev, fromi [v]);
+
+        Rcpp::List res1 (nto);
+        for (unsigned int vi = 0; vi < nto; vi++)
+        {
+            std::vector <unsigned int> onePath;
+            float flow_ij = flows (v, vi);
+            if (w [toi [vi]] < INFINITE_FLOAT)
+            {
+                // target values are int indices into vert_map_in, which means
+                // corresponding vertex IDs can be taken directly from
+                // vert_map_id
+                unsigned int target = toi [vi];
+                while (target < INFINITE_INT)
+                {
+                    if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                    {
+                        std::string v2 = "f" + vert_map_id [prev [target]] +
+                                        "t" + vert_map_id [target];
+                        aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
+                    }
+
+                    target = prev [target];
+                }
+            }
+        }
+    }
+
+    delete [] d;
+    delete [] w;
+    delete [] prev;
+
+    delete dijkstra;
+    delete g;
+
+    return (aggregate_flows);
+}
