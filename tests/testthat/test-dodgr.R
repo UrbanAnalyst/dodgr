@@ -9,6 +9,17 @@ test_that("dists", {
     expect_equal (ncol (d), 50)
 })
 
+test_that("paths", {
+    graph <- weight_streetnet (hampi)
+    from <- sample (graph$from_id, size = 100)
+    to <- sample (graph$from_id, size = 50)
+    dp <- dodgr_paths (graph, from = from, to = to)
+    expect_is (dp, "list")
+    expect_equal (length (dp), 100)
+    expect_equal (unique (sapply (dp, length)), 50)
+    expect_is (dp [[1]] [[1]], "character")
+})
+
 test_that("convert graph", {
     graph <- weight_streetnet (hampi)
     graph2 <- dodgr_convert_graph (graph)$graph
