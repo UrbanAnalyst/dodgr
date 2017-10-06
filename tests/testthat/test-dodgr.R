@@ -17,13 +17,13 @@ test_that("paths", {
     dp <- dodgr_paths (graph, from = from, to = to)
     expect_is (dp, "list")
     expect_equal (length (dp), 100)
-    expect_equal (unique (sapply (dp, length)), 50)
+    expect_equal (unique (sapply (dp, length)), length (to))
     expect_is (dp [[1]] [[1]], "character")
     lens <- unlist (lapply (dp, function (i) lapply (i, length)))
     dp <- dodgr_paths (graph, from = from, to = to, vertices = FALSE)
     expect_is (dp, "list")
     expect_equal (length (dp), 100)
-    expect_equal (unique (sapply (dp, length)), 50)
+    expect_equal (unique (sapply (dp, length)), length (to))
     lens2 <- unlist (lapply (dp, function (i) lapply (i, length)))
     # edge lists should all have one less item than vertex lists
     lens2 <- lens2 [which (lens > 0)]
@@ -43,7 +43,7 @@ test_that("sample graph", {
     graph_s <- dodgr_sample (graph, nverts = 100)
     expect_true (nrow (graph_s) < nrow (graph))
     v <- dodgr_vertices (graph_s)
-    expect_equal (nrow (v), 100)
+    expect_true (nrow (v) %in% 100:101)
 })
 
 test_that("components", {

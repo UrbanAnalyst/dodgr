@@ -204,6 +204,10 @@ dodgr_components <- function (graph)
 #' @param nverts Number of vertices to sample
 #'
 #' @return A connected sub-component of \code{graph}
+#'
+#' @note Graphs may occassionally have \code{nverts + 1} vertices, rather than
+#' the requested \code{nverts}.
+#'
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

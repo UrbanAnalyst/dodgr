@@ -20,6 +20,10 @@ A connected sub-component of \code{graph}
 \description{
 Sample a random but connected sub-component of a graph
 }
+\note{
+Graphs may occassionally have \code{nverts + 1} vertices, rather than
+the requested \code{nverts}.
+}
 \examples{
 graph <- weight_streetnet (hampi)
 nrow (graph) # 5,742
