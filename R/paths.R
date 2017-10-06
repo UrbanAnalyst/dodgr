@@ -8,6 +8,8 @@
 #' be calculated (see Details)
 #' @param to Vector or matrix of points **to** which route distances are to be
 #' calculated (see Details)
+#' @param vertices If \code{TRUE}, return lists of lists of vertices for each
+#' path, otherwise return corresponding lists of edge numbers from \code{graph}.
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #' @param heap Type of heap to use in priority queue. Options include
@@ -52,8 +54,8 @@
 #' dp <- dodgr_paths (graph, from = from, to = to)
 #' # dp is a list with 100 items, and each of those 100 items has 30 items, each
 #' # of which is a single path listing all vertiex IDs as taken from \code{graph}.
-dodgr_paths <- function (graph, from, to, wt_profile = "bicycle",
-                         heap = 'BHeap', quiet = TRUE)
+dodgr_paths <- function (graph, from, to, vertices = TRUE,
+                         wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
     {
@@ -111,7 +113,25 @@ dodgr_paths <- function (graph, from, to, wt_profile = "bicycle",
     paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
 
     # convert 1-based indices back into vertex IDs:
-    lapply (paths, function (i)
-            lapply (i, function (j)
-                    vert_map$vert [j] ))
+    paths <- lapply (paths, function (i)
+                     lapply (i, function (j)
+                             vert_map$vert [j] ))
+
+    if (!vertices)
+    {
+        # convert vertex IDs to corresponding sequences of edge numbers
+        graph_verts <- paste0 ("f", graph$from, "t", graph$to)
+
+        paths <- lapply (paths, function (i)
+                         lapply (i, function (j)
+                                 if (length (j) > 0)
+                                 {
+                                     indx <- 2:length (j)
+                                     pij <- paste0 ("f", j [indx - 1],
+                                                    "t", j [indx])
+                                     match (pij, graph_verts)
+                                 } ))
+    }
+
+    return (paths)
 }

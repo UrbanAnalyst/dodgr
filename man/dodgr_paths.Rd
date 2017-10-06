@@ -4,8 +4,8 @@
 \alias{dodgr_paths}
 \title{dodgr_paths}
 \usage{
-dodgr_paths(graph, from, to, wt_profile = "bicycle", heap = "BHeap",
-  quiet = TRUE)
+dodgr_paths(graph, from, to, vertices = TRUE, wt_profile = "bicycle",
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -16,6 +16,9 @@ be calculated (see Details)}
 
 \item{to}{Vector or matrix of points **to** which route distances are to be
 calculated (see Details)}
+
+\item{vertices}{If \code{TRUE}, return lists of lists of vertices for each
+path, otherwise return corresponding lists of edge numbers from \code{graph}.}
 
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
