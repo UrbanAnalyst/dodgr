@@ -53,38 +53,12 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
                          heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
-    {
-        if (!quiet)
-            message (paste0 ("No graph submitted to dodgr_dists; ",
-                             "downloading street network ... "),
-                     appendLF = FALSE)
-        pts <- NULL
-        if (!missing (from))
-            pts  <- from
-        if (!missing (to))
-            pts <- rbind (pts, to)
-        pts <- pts [which (!duplicated (pts)), ]
-        graph <- dodgr_streetnet (pts = pts, expand = 0.1) %>%
-            weight_streetnet (wt_profile = wt_profile)
-        if (!quiet)
-            message ("done")
+        graph <- graph_from_pts (from, to, expand = 0.1,
+                                 wt_profile = wt_profile, quiet = quiet)
 
-    }
-
-    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
-    heap <- match.arg (arg = heap, choices = heaps)
-    if (heap == "Radix")
-    {
-        dfr <- min (abs (c (graph$d %% 1, graph$d %% 1 - 1)))
-        if (dfr > 1e-6)
-        {
-            message (paste0 ("RadixHeap can only be implemented for ",
-                             "integer weights;\nall weights will now be ",
-                             "rounded"))
-            graph$d <- round (graph$d)
-            graph$d_weighted <- round (graph$d_weighted)
-        }
-    }
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
 
     if (!quiet)
         message ("Converting network to dodgr graph ... ",
@@ -95,21 +69,15 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     vert_map <- make_vert_map (graph)
     # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
+    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
     from_id <- NULL
-    from_index <- -1
     if (!missing (from))
-    {
         from_id <- get_id_cols (from)
-        from_index <- get_pts_index (vert_map, xy, from) # 0-indexed
-    }
 
+    to_index <- get_tofrom_index (vert_map, xy, to)
     to_id <- NULL
-    to_index <- -1
     if (!missing (to))
-    {
         to_id <- get_id_cols (to)
-        to_index <- get_pts_index (vert_map, xy, to)
-    }
 
     if (!quiet)
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
@@ -222,4 +190,79 @@ get_pts_index <- function (vert_map, xy, pts)
     }
 
     pts - 1 # 0-indexed for C++
+}
+
+#' get_heap
+#'
+#' Match the heap arg and convert graph is necessary (for Radix)
+#' @param heap Name of heap as passed to \code{dodgr_dists}
+#' @param graph \code{data.frame} of graph edges
+#' @return List of matched heap arg and potentially converted graph
+#' @noRd
+get_heap <- function (heap, graph)
+{
+    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
+    heap <- match.arg (arg = heap, choices = heaps)
+    if (heap == "Radix")
+    {
+        dfr <- min (abs (c (graph$d %% 1, graph$d %% 1 - 1)))
+        if (dfr > 1e-6)
+        {
+            message (paste0 ("RadixHeap can only be implemented for ",
+                             "integer weights;\nall weights will now be ",
+                             "rounded"))
+            graph$d <- round (graph$d)
+            graph$d_weighted <- round (graph$d_weighted)
+        }
+    }
+
+    list (heap = heap, graph = graph)
+}
+
+#' graph_from_pts
+#'
+#' Download a street network when \code{graph} not passed to \code{dodgr_dists},
+#' by using the lists of from and to points.
+#' @param from Arg passed to \code{dodgr_dists}
+#' @param to Arg passed to \code{dodgr_dists}
+#' @param expand Factor by which street network is to be expanded beyond range
+#' of \code{from} and \code{to} points.
+#' @return Converted graph as \code{data.frame}
+#' @noRd
+graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
+                            quiet = TRUE)
+{
+    if (!quiet)
+        message (paste0 ("No graph submitted to dodgr_dists; ",
+                         "downloading street network ... "),
+                 appendLF = FALSE)
+
+    pts <- NULL
+    if (!missing (from))
+        pts  <- from
+    if (!missing (to))
+        pts <- rbind (pts, to)
+    pts <- pts [which (!duplicated (pts)), ]
+    graph <- dodgr_streetnet (pts = pts, expand = expand) %>%
+        weight_streetnet (wt_profile = wt_profile)
+
+    if (!quiet)
+        message ("done")
+
+    return (graph)
+}
+
+#' get_tofrom_index
+#'
+#' Convert a list of from or two points as passed to \code{dodgr_dists} into an
+#' equivalent 0-based index of vertices in \code{vert_map}
+#' @note 0-based for passing directly to C++ routines!
+#' @noRd
+get_tofrom_index <- function (vert_map, xy, tofrom)
+{
+    index <- -1
+    if (!missing (tofrom))
+        index <- get_pts_index (vert_map, xy, tofrom) # 0-indexed
+
+    return (index)
 }

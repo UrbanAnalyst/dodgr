@@ -58,38 +58,12 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
                          wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
-    {
-        if (!quiet)
-            message (paste0 ("No graph submitted to dodgr_dists; ",
-                             "downloading street network ... "),
-                     appendLF = FALSE)
-        pts <- NULL
-        if (!missing (from))
-            pts  <- from
-        if (!missing (to))
-            pts <- rbind (pts, to)
-        pts <- pts [which (!duplicated (pts)), ]
-        graph <- dodgr_streetnet (pts = pts, expand = 0.1) %>%
-            weight_streetnet (wt_profile = wt_profile)
-        if (!quiet)
-            message ("done")
+        graph <- graph_from_pts (from, to, expand = 0.1,
+                                 wt_profile = wt_profile, quiet = quiet)
 
-    }
-
-    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
-    heap <- match.arg (arg = heap, choices = heaps)
-    if (heap == "Radix")
-    {
-        dfr <- min (abs (c (graph$d %% 1, graph$d %% 1 - 1)))
-        if (dfr > 1e-6)
-        {
-            message (paste0 ("RadixHeap can only be implemented for ",
-                             "integer weights;\nall weights will now be ",
-                             "rounded"))
-            graph$d <- round (graph$d)
-            graph$d_weighted <- round (graph$d_weighted)
-        }
-    }
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
 
     if (!quiet)
         message ("Converting network to dodgr graph ... ",
@@ -100,13 +74,8 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     vert_map <- make_vert_map (graph)
     # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
-    from_index <- -1
-    if (!missing (from))
-        from_index <- get_pts_index (vert_map, xy, from) # 0-indexed
-
-    to_index <- -1
-    if (!missing (to))
-        to_index <- get_pts_index (vert_map, xy, to)
+    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
+    to_index <- get_tofrom_index (vert_map, xy, to)
 
     if (!quiet)
         message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
