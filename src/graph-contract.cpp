@@ -262,3 +262,53 @@ Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
 
     return contracted;
 }
+
+//' rcpp_merge_flows
+//'
+//' Merge flows in directed graph to form aggregate undirected flows, and return
+//' a corresponding undirected graph useful for visualisation.
+//'
+//' @param graph The result of a call to \code{dodgr_flows}
+//' @return A single vector of aggregate flows with non-zero values only for
+//' those edges to be retained in the directed graph.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
+{
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <float> dist = graph ["d"];
+    std::vector <float> wt = graph ["w"];
+    std::vector <float> flow = graph ["flow"];
+
+    // vertvert_map just holds index of where pair of vertices were first found.
+    // These can only be duplicated once, so only one single value is ever
+    // needed.
+    std::unordered_map <std::string, int> vertvert_map;
+    Rcpp::NumericVector flow_total (from.size ());
+    for (unsigned int i = 0; i < from.size (); i++)
+    {
+        std::string ft = "a" + from [i] + "b" + to [i],
+            tf = "a" + to [i] + "b" + from [i];
+        if (vertvert_map.find (ft) == vertvert_map.end () &&
+                vertvert_map.find (tf) == vertvert_map.end ())
+        {
+            vertvert_map.emplace (ft, i);
+            flow_total [i] = flow [i];
+        } else
+        {
+            unsigned int where = INFINITE_INT;;
+            if (vertvert_map.find (ft) != vertvert_map.end ())
+                where = vertvert_map.at (ft);
+            else if (vertvert_map.find (tf) != vertvert_map.end ())
+                where = vertvert_map.at (tf);
+            if (where == INFINITE_INT)
+                throw std::runtime_error ("there is no where; this can never happen");
+            flow_total [i] = flow [where] + flow [i];
+            flow [where] = 0.0;
+        } 
+    }
+
+    return flow_total;
+}

@@ -26,6 +26,20 @@ rcpp_contract_graph <- function(graph, vertlist_in) {
     .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
 }
 
+#' rcpp_merge_flows
+#'
+#' Merge flows in directed graph to form aggregate undirected flows, and return
+#' a corresponding undirected graph useful for visualisation.
+#'
+#' @param graph The result of a call to \code{dodgr_flows}
+#' @return A single vector of aggregate flows with non-zero values only for
+#' those edges to be retained in the directed graph.
+#'
+#' @noRd
+rcpp_merge_flows <- function(graph) {
+    .Call(`_dodgr_rcpp_merge_flows`, graph)
+}
+
 #' graph_has_components
 #'
 #' Does a graph have a vector of connected component IDs? Only used in

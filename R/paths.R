@@ -181,3 +181,28 @@ dodgr_flows <- function (graph, from, to, flows, directed = TRUE,
                                         flows, heap)
     return (graph)
 }
+
+#' merge_directed_flows
+#'
+#' The \code{dodgr_flows} function returns a column of aggregated flows directed
+#' along each edge of a graph, so the aggregated flow from vertex A to vertex B
+#' will not necessarily equal that from B to A, and the total flow in both
+#' directions will be the sum of flow from A to B plus that from B to A. This
+#' function converts a directed graph to undirected form through reducing all
+#' pairs of directed edges to a single edge, and aggregating flows from both
+#' directions.
+#'
+#' @param graph A graph containing a \code{flow} column as returned from
+#' \code{dodgr_flows}
+#' @return An equivalent graph in which all directed edges have been reduced to
+#' single, undirected edges, and all directed flows aggregated to undirected
+#' flows.
+#' @export
+merge_directed_flows <- function (graph)
+{
+    flows <- rcpp_merge_flows (graph)
+    indx <- which (flows > 0)
+    graph <- graph [indx, , drop = FALSE]
+    graph$flow <- flows [indx]
+    return (graph)
+}
