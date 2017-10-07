@@ -4,8 +4,8 @@
 \alias{dodgr_flows}
 \title{dodgr_flows}
 \usage{
-dodgr_flows(graph, from, to, flows, directed = TRUE, wt_profile = "bicycle",
-  heap = "BHeap", quiet = TRUE)
+dodgr_flows(graph, from, to, flows, wt_profile = "bicycle", heap = "BHeap",
+  quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

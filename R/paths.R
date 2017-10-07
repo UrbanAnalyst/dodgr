@@ -140,7 +140,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges
-dodgr_flows <- function (graph, from, to, flows, directed = TRUE,
+dodgr_flows <- function (graph, from, to, flows,
                          wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
