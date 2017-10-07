@@ -130,7 +130,17 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
 #' @export
-dodgr_flows <- function (graph, from, to, flows,
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' from <- sample (graph$from_id, size = 10)
+#' to <- sample (graph$to_id, size = 5)
+#' to <- to [!to %in% from]
+#' flows <- matrix (10 * runif (length (from) * length (to)),
+#'                  nrow = length (from))
+#' graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+#' # graph then has an additonal 'flows` column of aggregate flows along all
+#' # edges
+dodgr_flows <- function (graph, from, to, flows, directed = TRUE,
                          wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))

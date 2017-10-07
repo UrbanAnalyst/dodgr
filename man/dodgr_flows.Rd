@@ -4,8 +4,8 @@
 \alias{dodgr_flows}
 \title{dodgr_flows}
 \usage{
-dodgr_flows(graph, from, to, flows, wt_profile = "bicycle", heap = "BHeap",
-  quiet = TRUE)
+dodgr_flows(graph, from, to, flows, directed = TRUE, wt_profile = "bicycle",
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -36,4 +36,15 @@ Modified version of graph with additonal \code{flow} column added.
 \description{
 Aggregate flows throughout a network based on an input matrix of flows
 between all pairs of \code{from} and \code{to} points.
+}
+\examples{
+graph <- weight_streetnet (hampi)
+from <- sample (graph$from_id, size = 10)
+to <- sample (graph$to_id, size = 5)
+to <- to [!to \%in\% from]
+flows <- matrix (10 * runif (length (from) * length (to)),
+                 nrow = length (from))
+graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+# graph then has an additonal 'flows` column of aggregate flows along all
+# edges
 }
