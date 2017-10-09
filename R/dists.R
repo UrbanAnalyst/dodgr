@@ -10,6 +10,9 @@
 #' calculated (see Details)
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' @param expand Only when \code{graph} not given, the multiplicative factor by
+#' which to expand the street network surrounding the points defined by
+#' \code{from} and/or \code{to}.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -50,10 +53,10 @@
 #' d <- dodgr_dists (graph, from = from, to = to)
 #' # d is a 100-by-50 matrix of distances between \code{from} and \code{to}
 dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
-                         heap = 'BHeap', quiet = TRUE)
+                         expand = 0, heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
-        graph <- graph_from_pts (from, to, expand = 0.1,
+        graph <- graph_from_pts (from, to, expand = expand,
                                  wt_profile = wt_profile, quiet = quiet)
 
     hps <- get_heap (heap, graph)
