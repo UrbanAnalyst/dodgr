@@ -211,6 +211,8 @@ match_pts_to_graph <- function (verts, xy)
 
     xyi <- find_xy_col_simple (verts)
     verts <- data.frame (x = verts [, xyi [1]], y = verts [, xyi [2]])
+    if (is (xy, "tbl"))
+        xy <- data.frame (xy)
     xyi <- find_xy_col_simple (xy)
     xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
 
