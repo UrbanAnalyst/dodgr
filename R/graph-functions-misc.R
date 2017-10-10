@@ -149,6 +149,36 @@ find_w_col <- function (graph)
     return (w_col)
 }
 
+#' find_xy_col_simple
+#'
+#' Find the x and y cols of a simple data.frame of verts of xy points (used only
+#' in match_pts_to_graph).
+#' @param dfr Either the result of \code{dodgr_vertices}, or a \code{data.frame}
+#' or equivalent structure (matrix, \pkg{tibble}) of spatial points.
+#' @return Vector of two values of location of x and y columns
+#' @noRd
+find_xy_col_simple <- function (dfr)
+{
+    nms <- names (dfr)
+    if (is.null (nms))
+        nms <- colnames (dfr)
+
+    if (!is.null (nms))
+    {
+        ix <- which (grepl ("x", nms, ignore.case = TRUE) |
+                     grepl ("lon", nms, ignore.case = TRUE))
+        iy <- which (grepl ("y", nms, ignore.case = TRUE) |
+                     grepl ("lat", nms, ignore.case = TRUE))
+    } else
+    {
+        # verts always has cols, so this can only happen for dfr = xy
+        message ("xy has no named columns; assuming order is x then y")
+        ix <- 1
+        iy <- 2
+    }
+    c (ix, iy)
+}
+
 #' match_pts_to_graph
 #'
 #' Match spatial points to a spatial graph which contains vertex coordindates
@@ -179,23 +209,10 @@ match_pts_to_graph <- function (verts, xy)
     if (ncol (xy) != 2)
         stop ("xy must have only two columns")
 
-    nms <- names (verts)
-    if (is.null (nms))
-        nms <- colnames (verts)
-    if (!is.null (nms))
-    {
-        ix <- which (grepl ("x", nms, ignore.case = TRUE) |
-                     grepl ("lon", nms, ignore.case = TRUE))
-        iy <- which (grepl ("y", nms, ignore.case = TRUE) |
-                     grepl ("lat", nms, ignore.case = TRUE))
-    } else
-    {
-        message ("xy has no named columns; assuming order is x then y")
-        ix <- 1
-        iy <- 2
-    }
-
-    verts <- data.frame (x = verts [, ix], y = verts [, iy])
+    xyi <- find_xy_col_simple (verts)
+    verts <- data.frame (x = verts [, xyi [1]], y = verts [, xyi [2]])
+    xyi <- find_xy_col_simple (xy)
+    xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
 
     rcpp_points_index (verts, xy)
 }
