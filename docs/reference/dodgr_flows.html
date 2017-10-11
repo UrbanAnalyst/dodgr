@@ -146,7 +146,11 @@ Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
                  <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>length</span> (<span class='no'>from</span>))
 <span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_flows</span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
 <span class='co'># graph then has an additonal 'flows` column of aggregate flows along all</span>
-<span class='co'># edges</span></div></pre>
+<span class='co'># edges. These flows are directed, and can be aggregated to equivalent</span>
+<span class='co'># undirected flows on an equivalent undirected graph with:</span>
+<span class='no'>graph_dir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='merge_directed_flows.html'>merge_directed_flows</a></span> (<span class='no'>graph</span>)
+<span class='co'># This graph will only include those edges having non-zero flows, and so:</span>
+<span class='fu'>nrow</span> (<span class='no'>graph</span>); <span class='fu'>nrow</span> (<span class='no'>graph_dir</span>) <span class='co'># the latter is much smaller</span></div><div class='output co'>#&gt; [1] 6096</div><div class='output co'>#&gt; [1] 1886</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
