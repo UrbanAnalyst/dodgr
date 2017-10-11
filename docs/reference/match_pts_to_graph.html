@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dodgr_sample — dodgr_sample • dodgr</title>
+<title>match_pts_to_graph — match_pts_to_graph • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,45 +80,47 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>dodgr_sample</h1>
+    <h1>match_pts_to_graph</h1>
     </div>
 
     
-    <p>Sample a random but connected sub-component of a graph</p>
+    <p>Match spatial points to a spatial graph which contains vertex coordindates</p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_sample</span>(<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
+    <pre class="usage"><span class='fu'>match_pts_to_graph</span>(<span class='no'>verts</span>, <span class='no'>xy</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>graph</th>
-      <td><p>A flat table of graph edges. Must contain columns labelled
-<code>from</code> and <code>to</code>, or <code>start</code> and <code>stop</code>. May also contain
-similarly labelled columns of spatial coordinates (for example
-<code>from_x</code>) or <code>stop_lon</code>).</p></td>
+      <th>verts</th>
+      <td><p>A <code>data.frame</code> of vertices obtained from
+<code><a href='dodgr_vertices.html'>dodgr_vertices(graph)</a></code>.</p></td>
     </tr>
     <tr>
-      <th>nverts</th>
-      <td><p>Number of vertices to sample</p></td>
+      <th>xy</th>
+      <td><p>coordinates of points to be matched to the vertices</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A connected sub-component of <code>graph</code></p>
-    
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>Graphs may occassionally have <code>nverts + 1</code> vertices, rather than
-the requested <code>nverts</code>.</p>
+    <p>A vector index into verts</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># 5,742</span></div><div class='output co'>#&gt; [1] 6096</div><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_sample</span> (<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>200</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># generally around 400 edges</span></div><div class='output co'>#&gt; [1] 406</div><div class='input'><span class='fu'>nrow</span> (<span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>graph</span>)) <span class='co'># 200</span></div><div class='output co'>#&gt; [1] 200</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"foot"</span>)
+<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>net</span>)
+<span class='co'># Then generate some random points to match to graph</span>
+<span class='no'>npts</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
+<span class='no'>xy</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span> (
+                  <span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'>min</span> (<span class='no'>verts</span>$<span class='no'>x</span>) + <span class='fu'>runif</span> (<span class='no'>npts</span>) * <span class='fu'>diff</span> (<span class='fu'>range</span> (<span class='no'>verts</span>$<span class='no'>x</span>)),
+                  <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'>min</span> (<span class='no'>verts</span>$<span class='no'>y</span>) + <span class='fu'>runif</span> (<span class='no'>npts</span>) * <span class='fu'>diff</span> (<span class='fu'>range</span> (<span class='no'>verts</span>$<span class='no'>y</span>))
+                  )
+<span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='fu'>match_pts_to_graph</span> (<span class='no'>verts</span>, <span class='no'>xy</span>)
+<span class='no'>pts</span> <span class='co'># an index into verts</span></div><div class='output co'>#&gt;  [1] 758 586 579 502 539 591 748 235 422 579</div><div class='input'><span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span>$<span class='no'>id</span> [<span class='no'>pts</span>]
+<span class='no'>pts</span> <span class='co'># names of those vertices</span></div><div class='output co'>#&gt;  [1] "1388482047" "3544918756" "3544918709" "1161117452" "1691496412"
+#&gt;  [6] "3544918772" "1388483694" "339574188"  "1161117548" "3544918709"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -126,8 +128,6 @@ the requested <code>nverts</code>.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#note">Note</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

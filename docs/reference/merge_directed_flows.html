@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dodgr_sample — dodgr_sample • dodgr</title>
+<title>merge_directed_flows — merge_directed_flows • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,45 +80,38 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>dodgr_sample</h1>
+    <h1>merge_directed_flows</h1>
     </div>
 
     
-    <p>Sample a random but connected sub-component of a graph</p>
+    <p>The <code>dodgr_flows</code> function returns a column of aggregated flows directed
+along each edge of a graph, so the aggregated flow from vertex A to vertex B
+will not necessarily equal that from B to A, and the total flow in both
+directions will be the sum of flow from A to B plus that from B to A. This
+function converts a directed graph to undirected form through reducing all
+pairs of directed edges to a single edge, and aggregating flows from both
+directions.</p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_sample</span>(<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
+    <pre class="usage"><span class='fu'>merge_directed_flows</span>(<span class='no'>graph</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>graph</th>
-      <td><p>A flat table of graph edges. Must contain columns labelled
-<code>from</code> and <code>to</code>, or <code>start</code> and <code>stop</code>. May also contain
-similarly labelled columns of spatial coordinates (for example
-<code>from_x</code>) or <code>stop_lon</code>).</p></td>
-    </tr>
-    <tr>
-      <th>nverts</th>
-      <td><p>Number of vertices to sample</p></td>
+      <td><p>A graph containing a <code>flow</code> column as returned from
+<code>dodgr_flows</code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A connected sub-component of <code>graph</code></p>
-    
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>Graphs may occassionally have <code>nverts + 1</code> vertices, rather than
-the requested <code>nverts</code>.</p>
+    <p>An equivalent graph in which all directed edges have been reduced to
+single, undirected edges, and all directed flows aggregated to undirected
+flows.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># 5,742</span></div><div class='output co'>#&gt; [1] 6096</div><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_sample</span> (<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>200</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># generally around 400 edges</span></div><div class='output co'>#&gt; [1] 406</div><div class='input'><span class='fu'>nrow</span> (<span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>graph</span>)) <span class='co'># 200</span></div><div class='output co'>#&gt; [1] 200</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -126,11 +119,7 @@ the requested <code>nverts</code>.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#note">Note</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

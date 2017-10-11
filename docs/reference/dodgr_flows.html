@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>compare_heaps — compare_heaps • dodgr</title>
+<title>dodgr_flows — dodgr_flows • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,70 +80,73 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>compare_heaps</h1>
+    <h1>dodgr_flows</h1>
     </div>
 
     
-    <p>Perform timing comparison between different kinds of heaps as well as with
-equivalent <code>igraph</code> routine <code>distances</code>. To do this, a random
-sub-graph containing a defined number of vertices is first selected.
-Alternatively, this random sub-graph can be pre-generated with the
-<code>dodgr_sample</code> function and passed directly.</p>
+    <p>Aggregate flows throughout a network based on an input matrix of flows
+between all pairs of <code>from</code> and <code>to</code> points.</p>
     
 
-    <pre class="usage"><span class='fu'>compare_heaps</span>(<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>replications</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>dodgr_flows</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='no'>flows</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>, <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>graph</th>
-      <td><p><code>data.frame</code> object representing the network graph (or a
-sub-sample selected with codedodgr_sample)</p></td>
+      <td><p><code>data.frame</code> or equivalent object representing the network
+graph (see Details)</p></td>
     </tr>
     <tr>
-      <th>nverts</th>
-      <td><p>Number of vertices used to generate random sub-graph. If a
-non-numeric value is given, the whole graph will be used.</p></td>
+      <th>from</th>
+      <td><p>Vector or matrix of points **from** which route distances are to
+be calculated (see Details)</p></td>
     </tr>
     <tr>
-      <th>replications</th>
-      <td><p>Number of replications to be used in comparison</p></td>
+      <th>to</th>
+      <td><p>Vector or matrix of points **to** which route distances are to be
+calculated (see Details)</p></td>
+    </tr>
+    <tr>
+      <th>flows</th>
+      <td><p>Matrix of flows with <code>nrow(flows)==length(from)</code> and
+<code>ncol(flows)==length(to)</code>.</p></td>
+    </tr>
+    <tr>
+      <th>wt_profile</th>
+      <td><p>Name of weighting profile for street networks (one of foot,
+horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).</p></td>
+    </tr>
+    <tr>
+      <th>heap</th>
+      <td><p>Type of heap to use in priority queue. Options include
+Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
+<code>Radix</code>, Trinomial Heap (<code>TriHeap</code>), Extended Trinomial Heap
+(<code>TriHeapExt</code>, and 2-3 Heap (<code>Heap23</code>).</p></td>
+    </tr>
+    <tr>
+      <th>quiet</th>
+      <td><p>If <code>FALSE</code>, display progress messages on screen.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Result of <code>rbenachmar::benchmark</code> comparison in
-<code>data.frame</code> form.</p>
+    <p>Modified version of graph with additonal <code>flow</code> column added.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
-<span class='fu'>compare_heaps</span> (<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>replications</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt;                                                                                   test
-#&gt; 6       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "BHeap")
-#&gt; 8     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeap")
-#&gt; 10     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "Heap23")
-#&gt; 7       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "FHeap")
-#&gt; 9  d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeapExt")
-#&gt; 1                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "BHeap")
-#&gt; 3                d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeap")
-#&gt; 2                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "FHeap")
-#&gt; 5                 d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "Heap23")
-#&gt; 4             d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeapExt")
-#&gt; 11                  d &lt;- igraph::distances(igr, v = from_id, to = to_id, mode = "out")
-#&gt;    replications elapsed relative user.self sys.self user.child sys.child
-#&gt; 6            10   0.009    1.000     0.008        0          0         0
-#&gt; 8            10   0.009    1.000     0.008        0          0         0
-#&gt; 10           10   0.009    1.000     0.008        0          0         0
-#&gt; 7            10   0.010    1.111     0.012        0          0         0
-#&gt; 9            10   0.011    1.222     0.008        0          0         0
-#&gt; 1            10   0.014    1.556     0.012        0          0         0
-#&gt; 3            10   0.014    1.556     0.016        0          0         0
-#&gt; 2            10   0.015    1.667     0.016        0          0         0
-#&gt; 5            10   0.015    1.667     0.012        0          0         0
-#&gt; 4            10   0.016    1.778     0.016        0          0         0
-#&gt; 11           10   0.022    2.444     0.020        0          0         0</div></pre>
+<span class='no'>from</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>from_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>to_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='no'>to</span> [!<span class='no'>to</span> <span class='kw'>%in%</span> <span class='no'>from</span>]
+<span class='no'>flows</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span> (<span class='fl'>10</span> * <span class='fu'>runif</span> (<span class='fu'>length</span> (<span class='no'>from</span>) * <span class='fu'>length</span> (<span class='no'>to</span>)),
+                 <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>length</span> (<span class='no'>from</span>))
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_flows</span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
+<span class='co'># graph then has an additonal 'flows` column of aggregate flows along all</span>
+<span class='co'># edges</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

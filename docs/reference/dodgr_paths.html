@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dodgr_dists — dodgr_dists • dodgr</title>
+<title>dodgr_paths — dodgr_paths • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,14 +80,14 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>dodgr_dists</h1>
+    <h1>dodgr_paths</h1>
     </div>
 
     
-    <p>Calculate matrix of pair-wise distances between points.</p>
+    <p>Calculate lists of pair-wise shortest paths between points.</p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_dists</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+    <pre class="usage"><span class='fu'>dodgr_paths</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='kw'>vertices</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>,
   <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -109,15 +109,14 @@ be calculated (see Details)</p></td>
 calculated (see Details)</p></td>
     </tr>
     <tr>
+      <th>vertices</th>
+      <td><p>If <code>TRUE</code>, return lists of lists of vertices for each
+path, otherwise return corresponding lists of edge numbers from <code>graph</code>.</p></td>
+    </tr>
+    <tr>
       <th>wt_profile</th>
       <td><p>Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).</p></td>
-    </tr>
-    <tr>
-      <th>expand</th>
-      <td><p>Only when <code>graph</code> not given, the multiplicative factor by
-which to expand the street network surrounding the points defined by
-<code>from</code> and/or <code>to</code>.</p></td>
     </tr>
     <tr>
       <th>heap</th>
@@ -134,7 +133,9 @@ Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>square matrix of distances between nodes</p>
+    <p>List of list of paths tracing all connections between nodes such that
+if <code>x &lt;- dodgr_paths (graph, from, to)</code>, then the path between
+<code>from[i]</code> and <code>to[j]</code> is <code>x [[i]] [[j]]</code>.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -166,8 +167,9 @@ in <code>graph</code>.</p>
     <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
 <span class='no'>from</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>from_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>100</span>)
 <span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>to_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>50</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_dists</span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>)
-<span class='co'># d is a 100-by-50 matrix of distances between \code{from} and \code{to}</span></div></pre>
+<span class='no'>dp</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_paths</span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>)
+<span class='co'># dp is a list with 100 items, and each of those 100 items has 30 items, each</span>
+<span class='co'># of which is a single path listing all vertiex IDs as taken from \code{graph}.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

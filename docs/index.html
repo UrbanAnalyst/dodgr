@@ -89,9 +89,9 @@ pts &lt;-<span class="st"> </span><span class="kw">data.frame</span> (<span clas
 st &lt;-<span class="st"> </span><span class="kw">Sys.time</span> ()
 d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.html">dodgr_dists</a></span> (<span class="dt">from =</span> pts)
 <span class="kw">Sys.time</span> () <span class="op">-</span><span class="st"> </span>st
-<span class="co">#&gt; Time difference of 12.6176 secs</span>
+<span class="co">#&gt; Time difference of 9.473597 secs</span>
 <span class="kw">range</span> (d, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt; [1]  0.00000 17.01889</span></code></pre></div>
+<span class="co">#&gt; [1]  0.00000 16.64285</span></code></pre></div>
 <p>This will automatically download the street network (using <a href="https://cran.r-project.org/package=osmdata"><code>osmdata</code></a>), and even then calculating distances between 1,000 points can be done in around 10 seconds.</p>
 <p>A graph or network in <code>dodgr</code> is represented as a flat table (<code>data.frame</code>, <code>tibble</code>, <code>data.table</code>, whatever) of minimally four columns: <code>from</code>, <code>to</code>, <code>weight</code>, and <code>distance</code>. The first two can be of arbitrary form (<code>numeric</code> or <code>character</code>); <code>weight</code> is used to evaluate the shortest paths, and the desired distances are evaluated by summing the values of <code>distance</code> along those paths. For a street network example, <code>weight</code> will generally be the actual distance multiplied by a priority weighting for a given mode of transport and type of way, while <code>distance</code> will be the pysical distance.</p>
 <p>For more detail, see the <a href="https://gmost/dodgr/articles/dodgr.html">main package vignette</a>, along with a second vignette detailing <a href="https://gmost/dodgr/articles/benchmark.html">benchmark timings</a>, showing that under many circumstances, <code>dodgr</code> performs considerably faster than equivalent routines from the <code>igraph</code> package.</p>

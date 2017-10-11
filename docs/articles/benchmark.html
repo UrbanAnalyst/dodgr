@@ -60,7 +60,7 @@
       <h1>dodgr benchmark</h1>
                         <h4 class="author">Andreas Petutschnig</h4>
             
-            <h4 class="date">2017-10-04</h4>
+            <h4 class="date">2017-10-11</h4>
           </div>
 
     
@@ -69,7 +69,7 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This vignette contains runtime comparisons for a number of routing operations between random vertices using distance calculation functions from the <code>dodgr</code> and <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> packages. The experiments are run using the <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> function, which successively calls functions <code>igraph::distances()</code> and then <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> with all implemented options for the <code>heap</code> parameter and measures their respecive runtimes.</p>
+<p>This vignette contains runtime comparisons for a number of routing operations between random vertices using distance calculation functions from the <code>dodgr</code> and <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> packages. The experiments are run using the <code><a href="../reference/compare_heaps.html">compare_heaps()</a></code> function, which successively calls functions <code><a href="http://www.rdocumentation.org/packages/igraph/topics/distances">igraph::distances()</a></code> and then <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> with all implemented options for the <code>heap</code> parameter and measures their respecive runtimes.</p>
 <p>The graph data on which the tests are performed are taken from the <a href="https://cran.r-project.org/package=igraphdata"><code>igraphdata</code></a> package.</p>
 </div>
 <div id="get-graph-data" class="section level1">
@@ -93,7 +93,7 @@ gr_el &lt;-<span class="st"> </span><span class="dv">1</span>
     <span class="cf">for</span> (j <span class="cf">in</span> <span class="kw">seq_along</span> (dat_graph))
     {
         graph &lt;-<span class="st"> </span>dat_graph [[j]]
-        graph &lt;-<span class="st"> </span>igraph<span class="op">::</span><span class="kw">get.data.frame</span> (graph)
+        graph &lt;-<span class="st"> </span>igraph<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/igraph/topics/graph_from_data_frame">get.data.frame</a></span> (graph)
         from_id &lt;-<span class="st"> </span>graph<span class="op">$</span>from
         to_id &lt;-<span class="st"> </span>graph<span class="op">$</span>to
         <span class="cf">if</span> (<span class="st">"weight"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span> (graph))
@@ -146,8 +146,8 @@ num_vertices &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span
                       <span class="kw"><a href="../reference/compare_heaps.html">compare_heaps</a></span> (i, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">10</span>))
 <span class="kw">saveRDS</span> (benchmarks, <span class="dt">file =</span> <span class="st">"benchmark_data.rds"</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">readRDS</span> (<span class="st">"benchmark_data.rds"</span>)
-elapsed &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw">map</span> (benchmarks, <span class="st">"elapsed"</span>))
-tests &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw">map</span> (benchmarks, <span class="st">"test"</span>))
+elapsed &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span> (benchmarks, <span class="st">"elapsed"</span>))
+tests &lt;-<span class="st"> </span><span class="kw">unlist</span> (purrr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/purrr/topics/map">map</a></span> (benchmarks, <span class="st">"test"</span>))
 tests &lt;-<span class="st"> </span><span class="kw">as.character</span> (tests)
 tests &lt;-<span class="st"> </span><span class="kw">sub</span> (<span class="st">"d &lt;- dodgr_dists</span><span class="ch">\\</span><span class="st">(graph, from = from_id, to = to_id, heap ="</span>,
      <span class="st">"Contracted"</span>, tests)
@@ -170,26 +170,26 @@ bm &lt;-<span class="st"> </span><span class="kw">data.frame</span> (num_vertice
 bm_igraph &lt;-<span class="st"> </span>bm [bm<span class="op">$</span>Test <span class="op">==</span><span class="st"> "igraph"</span>, ]
 bm_heaps &lt;-<span class="st"> </span>bm [bm<span class="op">$</span>Test <span class="op">!=</span><span class="st"> "igraph"</span>, ]
 igr_legend_num &lt;-<span class="st"> </span><span class="kw">which</span> (<span class="kw">sort</span> (<span class="kw">unique</span> (bm<span class="op">$</span>Test)) <span class="op">==</span><span class="st"> "igraph"</span>)
-pal &lt;-<span class="st"> </span><span class="kw">brewer_pal</span> (n_tests, <span class="st">"Paired"</span>)
+pal &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/brewer_pal">brewer_pal</a></span> (n_tests, <span class="st">"Paired"</span>)
 legend_cols &lt;-<span class="st"> </span><span class="kw">pal</span> (n_tests)
 legend_cols [igr_legend_num] &lt;-<span class="st"> "#000000FF"</span>
 
-<span class="kw">ggplot</span> (bm_heaps) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span> (<span class="dt">size =</span> <span class="fl">0.8</span>, <span class="kw">aes</span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span> (<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="kw">aes</span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_line</span> (<span class="dt">data =</span> bm_igraph, <span class="dt">size =</span> <span class="fl">1.1</span>, <span class="kw">aes</span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> <span class="st">"igraph"</span>)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_point</span> (<span class="dt">data =</span> bm_igraph, <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="kw">aes</span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> <span class="st">"igraph"</span>)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">scale_color_manual</span> (<span class="dt">values =</span> legend_cols) <span class="op">+</span>
-<span class="st">    </span><span class="kw">scale_x_log10</span> (<span class="dt">breaks =</span> <span class="kw">trans_breaks</span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
-                   <span class="dt">labels =</span> <span class="kw">trans_format</span> (<span class="st">"log10"</span>, <span class="kw">math_format</span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
-<span class="st">    </span><span class="kw">scale_y_log10</span> (<span class="dt">breaks =</span> <span class="kw">trans_breaks</span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
-                   <span class="dt">labels =</span> <span class="kw">trans_format</span> (<span class="st">"log10"</span>, <span class="kw">math_format</span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span> (<span class="dt">title =</span> <span class="st">"dodgr benchmark results"</span>,
+<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span> (bm_heaps) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span> (<span class="dt">size =</span> <span class="fl">0.8</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span> (<span class="dt">size =</span> <span class="fl">1.5</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> Test)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span> (<span class="dt">data =</span> bm_igraph, <span class="dt">size =</span> <span class="fl">1.1</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> <span class="st">"igraph"</span>)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span> (<span class="dt">data =</span> bm_igraph, <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span> (<span class="dt">x =</span> ratio, <span class="dt">y =</span> elapsed, <span class="dt">colour =</span> <span class="st">"igraph"</span>)) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_manual">scale_color_manual</a></span> (<span class="dt">values =</span> legend_cols) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_x_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous">scale_y_log10</a></span> (<span class="dt">breaks =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_breaks">trans_breaks</a></span> (<span class="st">"log10"</span>, <span class="cf">function</span> (x) <span class="dv">10</span><span class="op">^</span>x),
+                   <span class="dt">labels =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/trans_format">trans_format</a></span> (<span class="st">"log10"</span>, <span class="kw"><a href="http://www.rdocumentation.org/packages/scales/topics/math_format">math_format</a></span> (<span class="dv">10</span><span class="op">^</span>.x))) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/labs">labs</a></span> (<span class="dt">title =</span> <span class="st">"dodgr benchmark results"</span>,
           <span class="dt">x =</span> <span class="st">"Ratio of edges to vertices (log scale)"</span>,
           <span class="dt">y =</span> <span class="st">"Runtime [s] (log scale)"</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">theme_bw</span> (<span class="dt">base_family =</span> <span class="st">"TeX Gyre Bonum"</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">theme</span> (<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>),
-                    <span class="dt">legend.box.background =</span> <span class="kw">element_rect</span> ())</code></pre></div>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_bw</a></span> (<span class="dt">base_family =</span> <span class="st">"TeX Gyre Bonum"</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span> (<span class="dt">plot.title =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_text</a></span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>),
+                    <span class="dt">legend.box.background =</span> <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/element">element_rect</a></span> ())</code></pre></div>
 <p><img src="benchmark_files/figure-html/unnamed-chunk-6-1.png" width="1152"></p>
 </div>
 </div>
@@ -197,7 +197,8 @@ legend_cols [igr_legend_num] &lt;-<span class="st"> "#000000FF"</span>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
         <div id="tocnav">
-      <h2>Contents</h2>
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#introduction">Introduction</a></li>
       <li><a href="#get-graph-data">Get Graph Data</a></li>
