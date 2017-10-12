@@ -13,7 +13,7 @@ header-includes:
     - \usepackage{tikz}
     - \usetikzlibrary{arrows}
 vignette: >
-  %\VignetteIndexEntry{dodgr}
+  %\VignetteIndexEntry{1 dodgr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -589,5 +589,116 @@ than the fully contracted graph excluding these vertices. The `dodgr_dists()`
 function can be applied to the latter graph to obtain accurate distances
 precisely routed between these points, yet using the speed advantages of graph
 contraction.
+
+# 6 Shortest Paths
+
+Shortest paths can also be extracted with the `dodgr_paths()` function. For
+given vectors of `from` and `to` points, this returns a nested list so that if,
+```{r}
+dp <- dodgr_paths (graph, from = from, to = to)
+```
+then `dp [[i]] [[j]]` will contain the path from `from [i]` to `to [j]`. The
+paths are represented as sequences of vertex names. Consider the following
+example,
+```{r}
+graph <- weight_streetnet (hampi)
+head (graph)
+```
+The columns of `from_id` and `to_id` contain the names of the vertices. To
+extract shortest paths between some of these, first take some small samples of
+`from` and `to` points, and submit them to `dodgr_paths()`:
+```{r}
+from <- sample (graph$from_id, size = 10)
+to <- sample (graph$to_id, size = 5)
+dp <- dodgr_paths (graph, from = from, to = to)
+length (dp)
+```
+The result (`dp`) is a list of 10 items, each of which contains 5 vectors. An
+example is,
+```{r, eval = FALSE}
+dp [[1]] [[1]]
+```
+```{r, echo = FALSE}
+n <- 0
+i <- 0
+while (all (n == 0))
+{
+    i <- i + 1
+    n <- which (lapply (dp [[i]], length) > 0)
+}
+j <- n [1]
+dp [[i]] [[j]]
+```
+For spatial graphs, the coordinates of these paths can be obtained by extracting
+the vertices with `dodgr_vertices()` and matching the vertex IDs:
+```{r, eval = FALSE}
+verts <- dodgr_vertices (graph)
+path1 <- verts [match (dp [[1]] [[1]], verts$id), ]
+head (path1)
+```
+```{r, echo = FALSE}
+verts <- dodgr_vertices (graph)
+path1 <- verts [match (dp [[i]] [[j]], verts$id), ]
+head (path1)
+```
+Paths calculated on contracted graphs will of course have fewer vertices than
+those calculated on full graphs.
+
+# 7 Aggregated Flows
+
+The final major function of `dodgr` is `dodgr_flows()`, which aggregates
+''flows'' throughout a network from a set of origin (`from`) and destination
+(`to`) points.  Flows commonly arise in origin-destination matrices used in
+transport studies, but may be any kind of generic flows on graphs. A flow matrix
+specifies the flow between each pair of origin and destination points, and the
+`dodgr_flows()` function aggregates all of these flows throughout a network and
+assigns a resultant aggregate flow to each edge.
+
+For a set of `nf` points of origin and `nt` points of destination, flow are
+defined by a simple `nf`-by-`nt` matrix of values, as in the following code:
+```{r}
+graph <- weight_streetnet (hampi)
+from <- sample (graph$from_id, size = 10)
+to <- sample (graph$to_id, size = 10)
+flows <- matrix (10 * runif (length (from) * length (to)),
+                 nrow = length (from))
+```
+This `flows` matrix is then submitted to `dodgr_flows()`, which simply appends
+an additional column of `flows` to the submitted `graph`:
+```{r}
+graph_f <- dodgr_flows (graph, from = from, to = to, flows = flows)
+head (graph_f)
+```
+Note that these flows are *directed*, so the flow from 'A' to 'B' will not
+necessarily equal the flow from 'B' to 'A'. It is often desirable to aggregate
+flows in an undirected manner, for example for visualisations where plotting
+pairs of directed flows between each edge if often not feasible for large
+graphs. Directed flows can be aggregated to equivalent undirected flows with the
+`merge_directed_flows()` function:
+```{r}
+graph_dir <- merge_directed_flows (graph_f)
+```
+Resultant graphs produced by `merge_directed_flows()` only include those edges
+having non-zero flows, and so:
+```{r}
+nrow (graph_f); nrow (graph_dir) # the latter is much smaller
+```
+The resultant graph can readily be merged with the original graph to regain the
+original data on vertex coordinates through
+```{r}
+graph <- graph [graph_dir$edge_id, ]
+graph$flow <- graph_dir$flow
+```
+This graph may then be used to visalise flows, as in the following simple
+example:
+```{r, message = FALSE}
+library (ggplot2)
+ggplot() + labs (x = "longitude", y = "latitude") +
+        geom_segment (data = graph, size = 5 * graph$flow / max (graph$flow),
+                      aes (x = from_lon, y = from_lat, xend = to_lon, yend = to_lat,
+                           colour = flow, size = flow)) +
+        scale_colour_gradient (low = "lawngreen", high = "dodgerblue")
+```
+
 
 # Bibliography

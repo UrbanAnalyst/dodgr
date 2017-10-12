@@ -9,7 +9,7 @@ output:
         number_sections: true
         theme: flatly
 vignette: >
-  %\VignetteIndexEntry{benchmark}
+  %\VignetteIndexEntry{2 benchmark}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
