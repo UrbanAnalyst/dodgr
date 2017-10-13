@@ -1,6 +1,7 @@
 # CRAN notes for osmdata_0.0.3 submission
 
 * Previous failure on solaris rectified (a C++ implicit type conversion)
+* Previous failure on Windows oldrel rectified (it was just a test failure).
 
 ## Test environments
 
