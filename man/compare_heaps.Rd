@@ -26,3 +26,7 @@ sub-graph containing a defined number of vertices is first selected.
 Alternatively, this random sub-graph can be pre-generated with the
 \code{dodgr_sample} function and passed directly.
 }
+\examples{
+graph <- weight_streetnet (hampi)
+compare_heaps (graph, nverts = 100, replications = 1)
+}

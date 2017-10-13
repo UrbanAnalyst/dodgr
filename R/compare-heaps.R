@@ -15,13 +15,16 @@
 #' \code{data.frame} form.
 #'
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' compare_heaps (graph, nverts = 100, replications = 1)
 compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
     if (is.numeric (nverts))
         graph <- dodgr_sample (graph, nverts = nverts)
-    graph <- convert_graph (graph)$graph
-    graph_contracted <- dodgr_contract_graph (graph)$graph
-    graph_contracted <- convert_graph (graph_contracted)$graph
+    graph <- dodgr_convert_graph (graph)$graph
+    graph_contracted <- dodgr_contract_graph (graph)
+    graph_contracted <- dodgr_convert_graph (graph_contracted)$graph
 
     # route only between points on the contracted graph:
     from_id <- unique (graph_contracted$from)

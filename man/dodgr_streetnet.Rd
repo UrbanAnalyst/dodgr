@@ -4,7 +4,7 @@
 \alias{dodgr_streetnet}
 \title{dodgr_streetnet}
 \usage{
-dodgr_streetnet(bbox, pts, expand = 0.05)
+dodgr_streetnet(bbox, pts, expand = 0.05, quiet = TRUE)
 }
 \arguments{
 \item{bbox}{Bounding box as vector or matrix of coordinates, or location
@@ -14,6 +14,8 @@ name. Passed to \code{osmdata::getbb}.}
 
 \item{expand}{Relative factor by which street network should extend beyond
 limits defined by pts (only if \code{bbox} not given).}
+
+\item{quiet}{If \code{FALSE}, display progress messages}
 }
 \value{
 A Simple Features (\code{sf}) object with coordinates of all lines in
@@ -22,7 +24,24 @@ the street network.
 \description{
 Use the \code{osmdata} package to extract the street network for a given
 location. For routing between a given set of points (passed as \code{pts}),
-the \code{bbox} argument may be ommitted, in which case a bounding box will
+the \code{bbox} argument may be omitted, in which case a bounding box will
 be constructed by expanding the range of \code{pts} by the relative amount of
 \code{expand}.
+}
+\examples{
+\dontrun{
+streetnet <- dodgr_streetnet ("hampi india", expand = 0)
+# convert to form needed for \\code{dodgr} functions:
+graph <- weight_streetnet (streetnet)
+nrow (graph) # 5,742 edges
+# Alternative ways of extracting street networks by using a small selection of
+# graph vertices to define bounding box:
+verts <- dodgr_vertices (graph)
+verts <- verts [sample (nrow (verts), size = 200), ]
+streetnet <- dodgr_streetnet (pts = verts, expand = 0)
+graph <- weight_streetnet (streetnet)
+nrow (graph)
+# This will generally have many more rows because most street networks include
+# streets that extend considerably beyond the specified bounding box.
+}
 }

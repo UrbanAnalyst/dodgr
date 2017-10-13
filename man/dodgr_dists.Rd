@@ -4,8 +4,8 @@
 \alias{dodgr_dists}
 \title{dodgr_dists}
 \usage{
-dodgr_dists(graph, from, to, wt_profile = "bicycle", heap = "BHeap",
-  quiet = TRUE)
+dodgr_dists(graph, from, to, wt_profile = "bicycle", expand = 0,
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -20,6 +20,10 @@ calculated (see Details)}
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 
+\item{expand}{Only when \code{graph} not given, the multiplicative factor by
+which to expand the street network surrounding the points defined by
+\code{from} and/or \code{to}.}
+
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -31,10 +35,10 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 square matrix of distances between nodes
 }
 \description{
-dodgr_dists
+Calculate matrix of pair-wise distances between points.
 }
 \note{
-\code{graph} must minimially contain four columns of \code{from},
+\code{graph} must minimally contain four columns of \code{from},
 \code{to}, \code{dist}. If an additional column named \code{weight} or
 \code{wt} is present, shortest paths are calculated according to values
 specified in that column; otherwise according to \code{dist} values. Either
@@ -56,6 +60,13 @@ equivalent of longitude and latitude coordinates, or else single columns
 precisely matching node numbers or names given in \code{graph$from} or
 \code{graph$to}. If \code{to} is missing, pairwise distances are calculated
 between all points specified in \code{from}. If neither \code{from} nor
-\code{to} are specified, pairwise distances are calcualted between all nodes
+\code{to} are specified, pairwise distances are calculated between all nodes
 in \code{graph}.
+}
+\examples{
+graph <- weight_streetnet (hampi)
+from <- sample (graph$from_id, size = 100)
+to <- sample (graph$to_id, size = 50)
+d <- dodgr_dists (graph, from = from, to = to)
+# d is a 100-by-50 matrix of distances between \\code{from} and \\code{to}
 }

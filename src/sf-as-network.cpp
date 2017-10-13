@@ -71,8 +71,6 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     Rcpp::CharacterVector nms = sf_lines.attr ("names");
     if (nms [nms.size () - 1] != "geometry")
         throw std::runtime_error ("sf_lines have no geometry component");
-    if (nms [0] != "osm_id")
-        throw std::runtime_error ("sf_lines have no osm_id component");
     int one_way_index = -1;
     int one_way_bicycle_index = -1;
     int highway_index = -1;

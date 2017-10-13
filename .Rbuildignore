@@ -1,4 +1,5 @@
-^README\.Rmd$
+^aaa\.Rmd$
+^README\.*
 ^README-.*\.png$
 ^\.travis\.yml$
 ^README\.md$
@@ -7,3 +8,9 @@
 ^vignettes/bencharm_data.rds$
 ^vignettes/bencharm.Rmd$
 docs/
+tests/valgrind-script.R$
+tests/valgrind-test.R$
+^_pkgdown\.yml$
+^appveyor\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$

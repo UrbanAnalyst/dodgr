@@ -1,0 +1,56 @@
+title: dodgr
+
+templates:
+  params:
+    bootswatch: cerulean
+
+reference:
+  - title: Package doc
+    contents:
+    - dodgr-package
+  - title: The Main Functions
+    contents:
+    - dodgr_dists
+    - dodgr_paths
+    - dodgr_flows
+  - title: Functions to Obtain Graphs
+    contents:
+    - dodgr_streetnet
+    - weight_streetnet
+  - title: Functions to Modify Graphs
+    contents:
+    - dodgr_components
+    - dodgr_convert_graph
+    - dodgr_contract_graph
+  - title: Miscellaneous Functions
+    contents:
+    - dodgr_sample
+    - dodgr_vertices
+    - match_pts_to_graph
+    - compare_heaps
+    - merge_directed_flows
+  - title: Package data
+    contents:
+    - hampi
+    - os_roads_bristol
+    - weighting_profiles
+
+articles:
+  - title: The dodgr package
+    contents:
+    - dodgr
+    - benchmark
+
+navbar:
+  title: dodgr
+  type: default
+  left:
+  - text: Home
+    href: index.html
+  - text: Vignettes
+    href: articles/index.html
+  - text: Functions
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/gmost/dodgr
