@@ -20,7 +20,7 @@ FHeap::FHeap(int n)
 #if FHEAP_DUMP
     Rcpp::Rcout << "new, ";
 #endif
-    maxTrees = 1 + (int)(1.44 * log(n)/log(2.0));
+    maxTrees = 1 + (int)(1.44 * log((double) n)/log(2.0));
     maxNodes = n;
 
     trees = new FHeapNode *[maxTrees];
