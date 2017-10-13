@@ -1,34 +1,3 @@
-/***************************************************************************
- *  Project:    osmdata
- *  File:       lines-as-network.cpp
- *  Language:   C++
- *
- *  osmdata is free software: you can redistribute it and/or modify it under
- *  the terms of the GNU General Public License as published by the Free
- *  Software Foundation, either version 3 of the License, or (at your option)
- *  any later version.
- *
- *  osmdata is distributed in the hope that it will be useful, but WITHOUT ANY
- *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- *  details.
- *
- *  You should have received a copy of the GNU General Public License along with
- *  osm-router.  If not, see <http://www.gnu.org/licenses/>.
- *
- *  Author:     Mark Padgham 
- *  E-Mail:     mark.padgham@email.com 
- *
- *  Description:    Convert sf linestring collection to data.frame of network
- *                  connections
- *
- *  Limitations:
- *
- *  Dependencies:       none (rapidXML header included in osmdatar)
- *
- *  Compiler Options:   -std=c++11
- ***************************************************************************/
-
 #include <string>
 #include <cmath>
 
