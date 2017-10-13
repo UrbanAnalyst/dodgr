@@ -1,5 +1,5 @@
 ^aaa\.Rmd$
-^README\.Rmd$
+^README\.*
 ^README-.*\.png$
 ^\.travis\.yml$
 ^README\.md$

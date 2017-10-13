@@ -1,4 +1,4 @@
-# v0.0.1.99 (current dev)
+# v0.0.2
 
 Major changes:
 - New function, `dodgr_paths`, for returning explicit shortest path routes.
