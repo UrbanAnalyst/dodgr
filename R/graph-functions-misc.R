@@ -84,6 +84,10 @@ find_xy_col <- function (graph, indx, x = TRUE)
 }
 
 #' find_spatial_cols
+#'
+#' @return \code{fr_col} and \code{to_col} as vectors of 2 values of \code{x}
+#' then \code{y} coordinates
+#'
 #' @noRd
 find_spatial_cols <- function (graph)
 {

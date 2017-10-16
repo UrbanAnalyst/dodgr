@@ -113,6 +113,63 @@ dodgr_convert_graph <- function (graph, components = TRUE)
     return (list (graph = graph, xy = xy))
 }
 
+#' get_graph_cols
+#'
+#' Identify the essential columns of the graph table (data.frame, tibble,
+#' whatever) to be analysed in the C++ routines.
+#'
+#' @param graph A \code{data.frame} containing the edges of the graph
+#' @param components If FALSE, components are not calculated (will generally
+#' result in faster processing).
+#' @return A named vector of column numbers of \code{edge_id}, \code{from},
+#' \code{to}, \code{d}, \code{w}, \code{xfr}, \code{yfr}, \code{xto},
+#' \code{yto}, and \code{component}, some of which may be NA.
+#'
+#' @noRd
+dodgr_graph_cols <- function (graph)
+{
+    edge_id <- NA
+    if (any (grepl ("edge", names (graph))))
+        edge_id <- which (grepl ("edge", names (graph)))
+
+    component <- NULL
+    if (any (grepl ("comp", names (graph))))
+        component <- which (grepl ("comp", names (graph)))
+
+    d_col <- find_d_col (graph)
+    w_col <- find_w_col (graph)
+    if (length (w_col) == 0)
+        w_col <- d_col
+
+    fr_col <- find_fr_col (graph)
+    to_col <- find_to_col (graph)
+    if (length (fr_col) != length (to_col))
+        stop (paste0 ("from and to columns in graph appear ",
+                      "to have different strutures"))
+
+    xfr <- yfr <- xto <- yto <- NA
+    # TODO: Modify for other complex but non-spatial types of graph
+    if (is_graph_spatial (graph))
+    {
+        spcols <- find_spatial_cols (graph)
+
+        xfr <- spcols$fr_col [1]
+        yfr <- spcols$fr_col [2]
+        xto <- spcols$to_col [1]
+        yto <- spcols$to_col [2]
+    } else
+    {
+        if (length (fr_col) != 1 & length (to_col) != 1)
+            stop ("Unable to determine from and to columns in graph")
+    }
+
+    ret <- c (edge_id, from, to, d_col, w_col, component, xfr, yfr, xto, yto)
+    names (ret) <- c ("edge_id", "from", "to", "d", "w", "component",
+                      "xft", "yfr", "xto", "yto")
+
+    return (ret)
+}
+
 
 #' dodgr_vertices
 #'
