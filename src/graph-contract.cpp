@@ -212,6 +212,12 @@ Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
             verts_to_keep.emplace (std::string (vertlist [i]));
     }
 
+    // Get set of all original edge IDs
+    std::unordered_set <edge_id_t> original_edges;
+    Rcpp::StringVector edge_id = graph ["edge_id"];
+    for (auto e: edge_id)
+        original_edges.emplace (e);
+
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
@@ -249,7 +255,25 @@ Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
 
         edge_count++;
 
-        map_size += e->second.get_old_edges ().size ();
+        if (original_edges.find (e->first) == original_edges.end ())
+            map_size += e->second.get_old_edges ().size ();
+    }
+
+    // population the new -> old edge map
+    std::vector <edge_id_t> edge_map_new (map_size), edge_map_old (map_size);
+    unsigned int count = 0;
+    for (auto e = edge_map_contracted.begin ();
+            e != edge_map_contracted.end (); ++e)
+    {
+        if (original_edges.find (e->first) == original_edges.end ())
+        {
+            std::set <edge_id_t> old_edges = e->second.get_old_edges ();
+            for (auto oe: old_edges)
+            {
+                edge_map_new [count] = e->first;
+                edge_map_old [count++] = oe;
+            }
+        }
     }
 
     Rcpp::DataFrame contracted = Rcpp::DataFrame::create (
@@ -258,6 +282,11 @@ Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
             Rcpp::Named ("to") = to_vec,
             Rcpp::Named ("d") = dist_vec,
             Rcpp::Named ("w") = weight_vec,
+            Rcpp::_["stringsAsFactors"] = false);
+
+    Rcpp::DataFrame edges_new2old = Rcpp::DataFrame::create (
+            Rcpp::Named ("edge_new") = edge_map_new,
+            Rcpp::Named ("edge_old") = edge_map_old,
             Rcpp::_["stringsAsFactors"] = false);
 
     return contracted;
