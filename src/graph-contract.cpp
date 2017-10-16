@@ -201,7 +201,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in)
 {
     std::unordered_set <vertex_id_t> verts_to_keep;
@@ -289,7 +289,9 @@ Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
             Rcpp::Named ("edge_old") = edge_map_old,
             Rcpp::_["stringsAsFactors"] = false);
 
-    return contracted;
+    return Rcpp::List::create (
+            Rcpp::Named ("graph") = contracted,
+            Rcpp::Named ("edge_map") = edges_new2old);
 }
 
 //' rcpp_merge_flows

@@ -23,7 +23,7 @@ compare_heaps <- function(graph, nverts = 100, replications = 2)
     if (is.numeric (nverts))
         graph <- dodgr_sample (graph, nverts = nverts)
     graph <- dodgr_convert_graph (graph)$graph
-    graph_contracted <- dodgr_contract_graph (graph)
+    graph_contracted <- dodgr_contract_graph (graph)$graph
     graph_contracted <- dodgr_convert_graph (graph_contracted)$graph
 
     # route only between points on the contracted graph:

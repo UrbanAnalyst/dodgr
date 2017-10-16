@@ -113,7 +113,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra;
+    Dijkstra *dijkstra = NULL;
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
@@ -213,7 +213,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra;
+    Dijkstra *dijkstra = NULL;
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
@@ -334,7 +334,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra;
+    Dijkstra *dijkstra = NULL;
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);

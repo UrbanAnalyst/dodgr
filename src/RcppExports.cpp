@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // rcpp_contract_graph
-Rcpp::DataFrame rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
+Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP vertlist_inSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

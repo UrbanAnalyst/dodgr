@@ -534,7 +534,7 @@ less redundant than less dense extra-urban or rural networks. The contracted
 version of a graph can be obtained with the function `dodgr_compact_graph()`,
 illustrated here with the York example from above.
 ```{r contract-graph}
-grc <- dodgr_contract_graph (graph)
+grc <- dodgr_contract_graph (graph)$graph
 ```
 The function `dodgr_compact_graph()` returns a list with both the original and
 compact graphs. Relative sizes are
@@ -577,11 +577,11 @@ in the graph.
 The following code illustrates how to retain specific vertices within contracted
 graphs:
 ```{r contracted-with-verts}
-grc <- dodgr_contract_graph (graph)
+grc <- dodgr_contract_graph (graph)$graph
 nrow (grc)
 verts <- sample (dodgr_vertices (graph)$id, size = 100)
 head (verts) # a character vector
-grc <- dodgr_contract_graph (graph, verts)
+grc <- dodgr_contract_graph (graph, verts)$graph
 nrow (grc)
 ```
 Retaining the nominated vertices yields a graph with considerably more edges

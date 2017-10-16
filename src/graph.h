@@ -170,7 +170,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep);
 
-Rcpp::DataFrame rcpp_contract_graph (Rcpp::DataFrame graph,
+Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 
 Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph);
