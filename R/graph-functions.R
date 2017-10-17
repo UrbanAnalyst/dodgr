@@ -20,7 +20,7 @@ null_to_na <- function (x)
 #' @noRd
 dodgr_graph_cols <- function (graph)
 {
-    if (is (graph, "dodgr_streetnet"))
+    if (is (graph, "dodgr_streetnet") & ncol (graph) == 11)
     {
         # columns are always identically structured
         edge_id <- 1
@@ -80,6 +80,26 @@ dodgr_graph_cols <- function (graph)
     return (ret)
 }
 
+#' convert_graph
+#'
+#' Convert graph to a standard form suitable for submission to C++ routines
+#' @noRd
+convert_graph <- function (graph, gr_cols)
+{
+    indx <- which (!is.na (gr_cols [1:5]))
+    graph <- graph [, gr_cols [1:5] [indx]]
+    names (graph) <- c ("id", "from", "to", "d", "w") [indx]
+    if ("id" %in% names (graph))
+        if (!is.character (graph$id))
+            graph$id <- paste0 (graph$id)
+    if (!is.character (graph$from))
+        graph$from <- paste0 (graph$from)
+    if (!is.character (graph$to))
+        graph$to <- paste0 (graph$to)
+    return (graph)
+}
+
+
 
 #' dodgr_vertices
 #'
@@ -137,9 +157,7 @@ dodgr_components <- function (graph)
     else
     {
         gr_cols <- dodgr_graph_cols (graph)
-        # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-        graph2 <- graph [, gr_cols [1:5]]
-        names (graph2) <- c ("id", "from", "to", "d", "w")
+        graph2 <- convert_graph (graph, gr_cols)
         cns <- rcpp_get_component_vector (graph2)
 
         indx <- match (graph2$id, cns$edge_id)
@@ -182,8 +200,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     if (length (verts) > nverts)
     {
         gr_cols <- dodgr_graph_cols (graph)
-        graph2 <- graph [, gr_cols [1:5]]
-        names (graph2) <- c ("id", "from", "to", "d", "w")
+        graph2 <- convert_graph (graph, gr_cols)
         indx <- match (rcpp_sample_graph (graph2, nverts), graph$edge_id)
         graph <- graph [sort (indx), ]
     }

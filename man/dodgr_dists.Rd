@@ -64,6 +64,13 @@ between all points specified in \code{from}. If neither \code{from} nor
 in \code{graph}.
 }
 \examples{
+# A simple graph
+graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
+                     to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
+                     d = c (1, 2, 1, 3, 2, 1, 2, 1))
+dodgr_dists (graph)
+
+# A larger example from the included \\code{\\link{hampi}} data.
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
 to <- sample (graph$to_id, size = 50)

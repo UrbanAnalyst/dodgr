@@ -76,9 +76,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     to_index <- index_id$index
     to_id <- index_id$id
 
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    graph <- graph [, gr_cols [2:5]]
-    names (graph) <- c ("from", "to", "d", "w")
+    graph <- convert_graph (graph, gr_cols)
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -184,9 +182,7 @@ dodgr_flows <- function (graph, from, to, flows,
     if (!(length (to) == 1 | ncol (flows) == length (to)))
         stop ("flows must have number of columns equal to length of to")
 
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    graph2 <- graph [, gr_cols [2:5]]
-    names (graph2) <- c ("from", "to", "d", "w")
+    graph2 <- convert_graph (graph, gr_cols)
 
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
@@ -233,9 +229,7 @@ merge_directed_flows <- function (graph)
         stop ("graph does not have any flows to merge")
 
     gr_cols <- dodgr_graph_cols (graph)
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    graph2 <- graph [, gr_cols [2:5]]
-    names (graph2) <- c ("from", "to", "d", "w")
+    graph2 <- convert_graph (graph, gr_cols)
     graph2$flow <- graph$flow
 
     flows <- rcpp_merge_flows (graph2)

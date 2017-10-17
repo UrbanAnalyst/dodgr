@@ -47,6 +47,13 @@
 #'
 #' @export
 #' @examples
+#' # A simple graph
+#' graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
+#'                      to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
+#'                      d = c (1, 2, 1, 3, 2, 1, 2, 1))
+#' dodgr_dists (graph)
+#'
+#' # A larger example from the included \code{\link{hampi}} data.
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 100)
 #' to <- sample (graph$to_id, size = 50)
@@ -73,9 +80,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     to_index <- index_id$index
     to_id <- index_id$id
 
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    graph <- graph [, gr_cols [2:5]]
-    names (graph) <- c ("from", "to", "d", "w")
+    graph <- convert_graph (graph, gr_cols)
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -146,10 +151,11 @@ get_id_cols <- function (pts)
 make_vert_map <- function (graph, gr_cols)
 {
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    verts <- c (graph [[gr_cols [2] ]], graph [[gr_cols [3] ]])
+    verts <- c (paste0 (graph [[gr_cols [2] ]]),
+                paste0 (graph [[gr_cols [3] ]]))
     indx <- which (!duplicated (verts))
     # Note id has to be 0-indexed:
-    data.frame (vert = verts [indx], id = seq (indx) - 1,
+    data.frame (vert = paste0 (verts [indx]), id = seq (indx) - 1,
                 stringsAsFactors = FALSE)
 }
 

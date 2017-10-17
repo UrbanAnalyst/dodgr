@@ -125,7 +125,8 @@ cbind (x, y)
 Those points can simply be passed to `dodgr_dists()`:
 ```{r dodgr-dists-in-york, eval = FALSE}
 system.time(
-            d <- dodgr_dists (from = xy, wt_profile = "foot", quiet = FALSE)
+            d <- dodgr_dists (from = xy, to = xy,
+                              wt_profile = "foot", quiet = FALSE)
             )
 ```
 ```{r dists-york-message, echo = FALSE}
@@ -169,18 +170,15 @@ Or with the equivalent version bundled with the package:
 ```{r hampi-call}
 class (hampi)
 ```
-```{r hampi-geom-class, eval = FALSE}
+```{r hampi-geom-class}
 class (hampi$geometry)
-```
-```{r hampi-geom-class-output, echo = FALSE}
-c ("sfc_LINESTRING", "sfc")
 ```
 ```{r hampi-dim}
 dim (hampi)
 ```
 The `streetnet` is an [`sf`](https://cran.r-project.org/package=sf) (Simple
-Features) object containing 182 `LINESTRING` geometries. In other words, it's
-got an `sf` representation of 182 street segments. The **R** package `osmplotr`
+Features) object containing 189 `LINESTRING` geometries. In other words, it's
+got an `sf` representation of 189 street segments. The **R** package `osmplotr`
 can be used to visualise this street network (with the help of `magrittr` pipe
 operator, `%>%`):
 ```{r hampi-osmplotr, eval = FALSE}
@@ -227,7 +225,7 @@ head(vt)
 dim (vt)
 ```
 From which we see that the OpenStreetMap representation of the streets of Hampi
-has 182 line segments with 2,814 unique points and 5,742 edges between those
+has 189 line segments with 2,987 unique points and 6,096 edges between those
 points.  The number of edges per vertex in the entire network is thus,
 ```{r hampi-edge2vert}
 nrow (graph) / nrow (vt)
@@ -249,7 +247,7 @@ table (graph$component)
 ```
 Components are numbered in order of decreasing size, with `$component = 1`
 always denoting the largest component. In this case, that component contains
-3,596 edges, representing 63% of the graph. There are clearly only three distinct
+3,934 edges, representing 65% of the graph. There are clearly only three distinct
 components, but this number may be much larger for larger graphs, and may be
 obtained from,
 ```{r hampi-num-components}
@@ -536,35 +534,25 @@ illustrated here with the York example from above.
 ```{r contract-graph}
 grc <- dodgr_contract_graph (graph)$graph
 ```
-The function `dodgr_compact_graph()` returns a list with both the original and
-compact graphs. Relative sizes are
+The function `dodgr_compact_graph()` returns a list with the compact graph and a
+table relating the contracted edges to the corresponding original edges in the
+full graph. Relative sizes are
 ```{r contract-graph-structure}
 nrow (graph); nrow (grc); nrow (grc) / nrow (graph)
 ```
-equivalent to the removal of just under half of all edges. In order to fairly
-compre differences in routing efficiency, these graphs can first be converted to
-a standardised minimal form used for routing with the `dodgr_convert_graph()`
-function:
-```{r convert-graph}
-graph <- dodgr_convert_graph (graph)$graph
-grc <- dodgr_convert_graph (grc)$graph
-names (grc)
-```
-The `dodgr_convert_graph()` function also returns a matrix of all vertices
-(`$xy`), with the graph again in a list item named `$graph`.  The difference in
-routing efficiency can then be seen with the following code
+equivalent to the removal of around 90% of all edges.  The difference in routing
+efficiency can then be seen with the following code
 ```{r benchmark1}
-from <- sample (grc$from, size = 100)
-to <- sample (grc$to, size = 100)
+from <- sample (grc$from_id, size = 100)
+to <- sample (grc$to_id, size = 100)
 rbenchmark::benchmark (
                        d2 <- dodgr_dists (grc, from = from, to = to),
                        d2 <- dodgr_dists (graph, from = from, to = to),
                        replications = 2)
 ```
-And reducing numbers of graph edges by half enables pairwise routing between
-100 points to be conducted around 4 times faster.  All routing algorithms scale
-non-linearly with size, and relative improvements in efficiency will be even
-greater for larger graphs. 
+And contracting the graph has a similar effect of speeding up pairwise routing
+between these 100 points.  All routing algorithms scale non-linearly with size,
+and relative improvements in efficiency will be even greater for larger graphs. 
 
 ## 5.1 Routing on Contracted Graphs
 
@@ -669,6 +657,11 @@ an additional column of `flows` to the submitted `graph`:
 graph_f <- dodgr_flows (graph, from = from, to = to, flows = flows)
 head (graph_f)
 ```
+Most flows are zero because they have only been calculated between very few
+points in the graph.
+```{r}
+summary (graph_f$flow)
+```
 Note that these flows are *directed*, so the flow from 'A' to 'B' will not
 necessarily equal the flow from 'B' to 'A'. It is often desirable to aggregate
 flows in an undirected manner, for example for visualisations where plotting
@@ -676,18 +669,18 @@ pairs of directed flows between each edge if often not feasible for large
 graphs. Directed flows can be aggregated to equivalent undirected flows with the
 `merge_directed_flows()` function:
 ```{r}
-graph_dir <- merge_directed_flows (graph_f)
+graph_undir <- merge_directed_flows (graph_f)
 ```
 Resultant graphs produced by `merge_directed_flows()` only include those edges
 having non-zero flows, and so:
 ```{r}
-nrow (graph_f); nrow (graph_dir) # the latter is much smaller
+nrow (graph_f); nrow (graph_undir) # the latter is much smaller
 ```
 The resultant graph can readily be merged with the original graph to regain the
 original data on vertex coordinates through
 ```{r}
-graph <- graph [graph_dir$edge_id, ]
-graph$flow <- graph_dir$flow
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
 ```
 This graph may then be used to visalise flows, as in the following simple
 example:

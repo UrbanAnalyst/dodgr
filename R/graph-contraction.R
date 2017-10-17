@@ -32,9 +32,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     gr_cols <- dodgr_graph_cols (graph)
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    graph2 <- graph [, gr_cols [1:5]]
-    names (graph2) <- c ("id", "from", "to", "d", "w")
+    graph2 <- convert_graph (graph, gr_cols)
     graph_contracted <- rcpp_contract_graph (graph2, verts)
 
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
