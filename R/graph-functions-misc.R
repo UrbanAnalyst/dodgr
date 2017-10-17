@@ -9,8 +9,10 @@
 is_graph_spatial <- function (graph)
 {
     ncol (graph) > 4 &
-        (any (grepl ("x", names (graph), ignore.case = TRUE)) |
-         any (grepl ("y", names (graph), ignore.case = TRUE)) |
+        (any (grepl ("x", names (graph) [find_fr_col (graph)],
+                     ignore.case = TRUE)) |
+         any (grepl ("y", names (graph) [find_to_col (graph)],
+                     ignore.case = TRUE)) |
          any (grepl ("lon", names (graph), ignore.case = TRUE)) |
          any (grepl ("lat", names (graph), ignore.case = TRUE)))
 }
