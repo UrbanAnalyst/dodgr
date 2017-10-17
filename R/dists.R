@@ -63,37 +63,39 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     heap <- hps$heap
     graph <- hps$graph
 
-    if (!quiet)
-        message ("Converting network to dodgr graph ... ",
-                 appendLF = FALSE)
-    graph <- dodgr_convert_graph (graph, components = FALSE)
-    xy <- graph$xy
-    graph <- graph$graph
+    gr_cols <- dodgr_graph_cols (graph)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph)
-    # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
-    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
-    from_id <- NULL
+    from_index <- to_index <- -1
+    from_id <- to_id <- NULL
     if (!missing (from))
+    {
+        from_index <- get_pts_index (graph, gr_cols, vert_map, from)
         from_id <- get_id_cols (from)
-
-    to_index <- get_tofrom_index (vert_map, xy, to)
-    to_id <- NULL
+        if (is.null (from_id))
+            from_id <- vert_map$vert [from_index + 1] # from_index is 0-based
+    }
     if (!missing (to))
+    {
+        to_index <- get_pts_index (graph, gr_cols, vert_map, to)
         to_id <- get_id_cols (to)
+        if (is.null (to_id))
+            to_id <- vert_map$vert [to_index + 1]
+    }
 
     if (!quiet)
-        message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
-    d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
+        message ("Calculating shortest paths ... ", appendLF = FALSE)
+    d <- rcpp_get_sp_dists (graph, gr_cols, vert_map, from_index, to_index, heap)
 
     if (!is.null (from_id))
         rownames (d) <- from_id
     else
-        rownames (d) <- vert_map$vert [from_index + 1] # coz from is 0-indexed
+        rownames (d) <- vert_map$vert
     if (!is.null (to_id))
         colnames (d) <- to_id
     else
-        colnames (d) <- vert_map$vert [to_index + 1] # ditto
+        colnames (d) <- vert_map$vert
 
     if (!quiet)
         message ("done.")
@@ -101,7 +103,8 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     return (d)
 }
 
-#' get_id_col
+
+#' get_id_cols
 #'
 #' Get the ID columns from a matrix or data.frame of from or two points
 #' @param pts The \code{from} or \code{to} args passed to \code{dodgr_dists}
@@ -130,7 +133,9 @@ get_id_cols <- function (pts)
 #' @noRd
 make_vert_map <- function (graph)
 {
-    verts <- c (graph$from, graph$to)
+    gr_cols <- dodgr_graph_cols (graph)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    verts <- c (graph [[gr_cols [2] ]], graph [[gr_cols [3] ]])
     indx <- which (!duplicated (verts))
     # Note id has to be 0-indexed:
     data.frame (vert = verts [indx], id = seq (indx) - 1,
@@ -151,7 +156,7 @@ make_vert_map <- function (graph)
 #' graph.
 #'
 #' @noRd
-get_pts_index <- function (vert_map, xy, pts)
+get_pts_index <- function (graph, gr_cols, vert_map, pts)
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
         pts <- matrix (pts, ncol = 1)
@@ -181,14 +186,16 @@ get_pts_index <- function (vert_map, xy, pts)
         if (length (ix) != 1 | length (iy) != 1)
             stop (paste0 ("Unable to determine geographical ",
                           "coordinates in pts"))
-        if (is.null (xy))
-            stop (paste0 ("xy has no geographical coordinates ",
+
+        # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+        if (any (is.na (gr_cols [7:10])))
+            stop (paste0 ("Cannot determine geographical coordinates ",
                           "against which to match pts"))
 
         names (pts) [ix] <- "x"
         names (pts) [iy] <- "y"
 
-        pts <- rcpp_points_index (xy, pts)
+        pts <- rcpp_points_index (dodgr_vertices (graph), pts)
         # xy has same order as vert_map
     }
 
@@ -253,19 +260,4 @@ graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
         message ("done")
 
     return (graph)
-}
-
-#' get_tofrom_index
-#'
-#' Convert a list of from or two points as passed to \code{dodgr_dists} into an
-#' equivalent 0-based index of vertices in \code{vert_map}
-#' @note 0-based for passing directly to C++ routines!
-#' @noRd
-get_tofrom_index <- function (vert_map, xy, tofrom)
-{
-    index <- -1
-    if (!missing (tofrom))
-        index <- get_pts_index (vert_map, xy, tofrom) # 0-indexed
-
-    return (index)
 }

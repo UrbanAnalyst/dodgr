@@ -119,8 +119,8 @@ rcpp_sample_graph <- function(graph, gr_cols, nverts_to_sample) {
 #' rcpp_get_sp_dists
 #'
 #' @noRd
-rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_sp_dists <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists`, graph, gr_cols, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_get_paths

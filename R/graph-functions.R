@@ -52,6 +52,7 @@ dodgr_graph_cols <- function (graph)
             stop ("Unable to determine from and to columns in graph")
     }
 
+    # This is NOT a list because it's much easier to pass as vector to C++
     ret <- c (edge_id, fr_col, to_col, d_col, w_col, component,
               xfr, yfr, xto, yto)
     names (ret) <- c ("edge_id", "from", "to", "d", "w", "component",
