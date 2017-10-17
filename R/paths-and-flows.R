@@ -128,6 +128,9 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' \code{ncol(flows)==length(to)}.
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' @param contract If \code{TRUE}, calculate flows on contracted graph before
+#' mapping them back on to the original full graph (recommended as this will
+#' generally be much faster).
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -150,8 +153,8 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-dodgr_flows <- function (graph, from, to, flows,
-                         wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
+dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
+                         contract = FALSE, heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -164,6 +167,14 @@ dodgr_flows <- function (graph, from, to, flows,
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
+
+    if (contract)
+    {
+        graph_full <- graph
+        graph <- dodgr_contract_graph (graph)
+        edge_map <- graph$edge_map
+        graph <- graph$graph
+    }
 
     gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
@@ -190,6 +201,16 @@ dodgr_flows <- function (graph, from, to, flows,
     graph$flow <- rcpp_aggregate_flows (graph2, vert_map,
                                         from_index, to_index,
                                         flows, heap)
+
+    if (contract) # map contracted flows back onto full graph
+    {
+        indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
+        indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
+        graph_full$flow <- 1
+        graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
+        graph <- graph_full
+    }
+
     return (graph)
 }
 

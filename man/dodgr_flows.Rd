@@ -4,8 +4,8 @@
 \alias{dodgr_flows}
 \title{dodgr_flows}
 \usage{
-dodgr_flows(graph, from, to, flows, wt_profile = "bicycle", heap = "BHeap",
-  quiet = TRUE)
+dodgr_flows(graph, from, to, flows, wt_profile = "bicycle",
+  contract = FALSE, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -22,6 +22,10 @@ calculated (see Details)}
 
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
+
+\item{contract}{If \code{TRUE}, calculate flows on contracted graph before
+mapping them back on to the original full graph (recommended as this will
+generally be much faster).}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
