@@ -65,7 +65,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
 
     gr_cols <- dodgr_graph_cols (graph)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    vert_map <- make_vert_map (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index
@@ -73,6 +73,9 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
     to_index <- index_id$index
     to_id <- index_id$id
+
+    graph <- graph [, gr_cols [2:5]]
+    names (graph) <- c ("from", "to", "d", "w")
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -140,10 +143,9 @@ get_id_cols <- function (pts)
 #'
 #' Map unique vertex names to sequential numbers in matrix
 #' @noRd
-make_vert_map <- function (graph)
+make_vert_map <- function (graph, gr_cols)
 {
-    gr_cols <- dodgr_graph_cols (graph)
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     verts <- c (graph [[gr_cols [2] ]], graph [[gr_cols [3] ]])
     indx <- which (!duplicated (verts))
     # Note id has to be 0-indexed:

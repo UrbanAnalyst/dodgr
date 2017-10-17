@@ -20,36 +20,52 @@ null_to_na <- function (x)
 #' @noRd
 dodgr_graph_cols <- function (graph)
 {
-    edge_id <- which (grepl ("edge", names (graph))) %>% null_to_na ()
-    component <- which (grepl ("comp", names (graph))) %>% null_to_na ()
-
-    d_col <- find_d_col (graph)
-    w_col <- find_w_col (graph)
-    if (length (w_col) == 0)
-        w_col <- d_col
-
-    fr_col <- find_fr_id_col (graph)
-    to_col <- find_to_id_col (graph)
-
-    xfr <- yfr <- xto <- yto <- NA
-    # TODO: Modify for other complex but non-spatial types of graph
-    if (is_graph_spatial (graph))
+    if (is (graph, "dodgr_streetnet"))
     {
-        spcols <- find_spatial_cols (graph)
-
-        if (!(all (apply (graph [, spcols$fr_col], 2, is.numeric)) |
-              all (apply (graph [, spcols$to_tol], 2, is.numeric))))
-            stop (paste0 ("graph appears to have non-numeric ",
-                          "longitudes and latitudes"))
-
-        xfr <- spcols$fr_col [1]
-        yfr <- spcols$fr_col [2]
-        xto <- spcols$to_col [1]
-        yto <- spcols$to_col [2]
+        # columns are always identically structured
+        edge_id <- 1
+        fr_col <- 2
+        to_col <- 5
+        d_col <- 8
+        w_col <- 9
+        component <- 11
+        xfr <- 3
+        yfr <- 4
+        xto <- 6
+        yto <- 7
     } else
     {
-        if (length (fr_col) != 1 & length (to_col) != 1)
-            stop ("Unable to determine from and to columns in graph")
+        edge_id <- which (grepl ("edge", names (graph))) %>% null_to_na ()
+        component <- which (grepl ("comp", names (graph))) %>% null_to_na ()
+
+        d_col <- find_d_col (graph)
+        w_col <- find_w_col (graph)
+        if (length (w_col) == 0)
+            w_col <- d_col
+
+        fr_col <- find_fr_id_col (graph)
+        to_col <- find_to_id_col (graph)
+
+        xfr <- yfr <- xto <- yto <- NA
+        # TODO: Modify for other complex but non-spatial types of graph
+        if (is_graph_spatial (graph))
+        {
+            spcols <- find_spatial_cols (graph)
+
+            if (!(all (apply (graph [, spcols$fr_col], 2, is.numeric)) |
+                  all (apply (graph [, spcols$to_tol], 2, is.numeric))))
+                stop (paste0 ("graph appears to have non-numeric ",
+                              "longitudes and latitudes"))
+
+            xfr <- spcols$fr_col [1]
+            yfr <- spcols$fr_col [2]
+            xto <- spcols$to_col [1]
+            yto <- spcols$to_col [2]
+        } else
+        {
+            if (length (fr_col) != 1 & length (to_col) != 1)
+                stop ("Unable to determine from and to columns in graph")
+        }
     }
 
     # This is NOT a list because it's much easier to pass as vector to C++
@@ -122,6 +138,8 @@ dodgr_components <- function (graph)
     {
         cols <- dodgr_graph_cols (graph)
         cns <- rcpp_get_component_vector (graph, cols)
+        # Rcpp treats cols as a pointer, and so substracts 1 from all
+        cols <- cols + 1
 
         indx <- match (paste0 (graph [[cols [1] ]]), cns$edge_id)
         component <- cns$edge_component [indx]

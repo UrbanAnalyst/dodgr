@@ -14,6 +14,10 @@
 #' @return Result of \code{rbenachmar::benchmark} comparison in
 #' \code{data.frame} form.
 #'
+#' @note \pkg{igraph} caches intermediate results of graph processing, so
+#' the \pkg{igraph} comparisons will be faster on subsequent runs. To obtain
+#' fair comparisons, run only once or re-start the current R session.
+#'
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

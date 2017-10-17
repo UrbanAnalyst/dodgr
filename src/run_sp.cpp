@@ -97,6 +97,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
     // convert 1-indexed gr_cols to 0-indexed
+    /*
     for (unsigned int i = 0; i < gr_cols.size (); i++)
         gr_cols [i] -= 1;
 
@@ -104,6 +105,11 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     std::vector <std::string> to = graph [gr_cols [2]];
     std::vector <float> dist = graph [gr_cols [3]];
     std::vector <float> wt = graph [gr_cols [4]];
+    */
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <float> dist = graph ["d"];
+    std::vector <float> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
