@@ -164,30 +164,29 @@ dodgr_flows <- function (graph, from, to, flows,
     heap <- hps$heap
     graph <- hps$graph
 
-    if (!quiet)
-        message ("Converting network to dodgr graph ... ",
-                 appendLF = FALSE)
-    graph <- dodgr_convert_graph (graph, components = FALSE)
-    xy <- graph$xy
-    graph <- graph$graph
+    gr_cols <- dodgr_graph_cols (graph)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph)
-    # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
+
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index
+    from_id <- index_id$id
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index
+    to_id <- index_id$id
 
     if (!is.matrix (flows))
         flow <- as.matrix (flows)
-    if (!(length (from) == 1 | nrow (flows) == length (from)))
+    if (nrow (flows) != length (from_index))
         stop ("flows must have number of rows equal to length of from")
-    if (!(length (to) == 1 | ncol (flows) == length (to)))
+    if (ncol (flows) != length (to_index))
         stop ("flows must have number of columns equal to length of to")
 
-    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
-    to_index <- get_tofrom_index (vert_map, xy, to)
-
     if (!quiet)
-        message ("done\nAggregating flows ... ", appendLF = FALSE)
+        message ("Aggregating flows ... ", appendLF = FALSE)
 
-    graph$flow <- rcpp_aggregate_flows (graph, vert_map, from_index, to_index,
-                                        flows, heap)
+    graph$flow <- rcpp_aggregate_flows (graph, gr_cols, vert_map, from_index,
+                                        to_index, flows, heap)
     return (graph)
 }
 
