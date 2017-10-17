@@ -20,23 +20,23 @@ null_to_na <- function (x)
 #' @noRd
 dodgr_graph_cols <- function (graph)
 {
-    if (is (graph, "dodgr_streetnet") & ncol (graph) == 11)
+    nms <- names (graph)
+    component <- which (grepl ("comp", nms)) %>% null_to_na ()
+    if (is (graph, "dodgr_streetnet") & ncol (graph) >= 11)
     {
         # columns are always identically structured
-        edge_id <- 1
-        fr_col <- 2
-        to_col <- 5
-        d_col <- 8
-        w_col <- 9
-        component <- 11
-        xfr <- 3
-        yfr <- 4
-        xto <- 6
-        yto <- 7
+        edge_id <- which (nms == "edge_id")
+        fr_col <- which (nms == "from_id")
+        to_col <- which (nms == "to_id")
+        d_col <- which (nms == "d")
+        w_col <- which (nms == "d_weighted")
+        xfr <- which (nms == "from_lon")
+        yfr <- which (nms == "from_lat")
+        xto <- which (nms == "to_lon")
+        yto <- which (nms == "to_lat")
     } else
     {
-        edge_id <- which (grepl ("edge", names (graph))) %>% null_to_na ()
-        component <- which (grepl ("comp", names (graph))) %>% null_to_na ()
+        edge_id <- which (grepl ("edge", nms)) %>% null_to_na ()
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
@@ -69,10 +69,14 @@ dodgr_graph_cols <- function (graph)
     }
 
     # This is NOT a list because it's much easier to pass as vector to C++
-    ret <- c (edge_id, fr_col, to_col, d_col, w_col, component,
-              xfr, yfr, xto, yto)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w", "component",
+    ret <- c (edge_id, fr_col, to_col, d_col, w_col, xfr, yfr, xto, yto)
+    names (ret) <- c ("edge_id", "from", "to", "d", "w", 
                       "xfr", "yfr", "xto", "yto")
+    if (!is.na (component))
+    {
+        ret <- c (ret, component)
+        names (ret) [length (ret)] <- "component"
+    }
     class (ret) <- c (class (ret), "graph_columns")
 
     # Note that these are R-style 1-indexed, so need to be converted in C++ to
@@ -120,14 +124,19 @@ convert_graph <- function (graph, gr_cols)
 dodgr_vertices <- function (graph)
 {
     cols <- dodgr_graph_cols (graph)
+    nms <- names (cols)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     if (is_graph_spatial (graph))
-        verts <- data.frame (id = c (graph [[cols [2] ]], graph [[cols [3] ]]),
-                             x = c (graph [[cols [7] ]], graph [[cols [9] ]]),
-                             y = c (graph [[cols [8] ]], graph [[cols [10] ]]),
+        verts <- data.frame (id = c (graph [[cols [which (nms == "from")] ]],
+                                     graph [[cols [which (nms == "to")] ]]),
+                             x = c (graph [[cols [which (nms == "xfr")] ]],
+                                    graph [[cols [which (nms == "xto")] ]]),
+                             y = c (graph [[cols [which (nms == "yfr")] ]],
+                                    graph [[cols [which (nms == "yto")] ]]),
                              stringsAsFactors = FALSE)
     else
-        verts <- data.frame (id = c (graph [[cols [2] ]], graph [[cols [3] ]]),
+        verts <- data.frame (id = c (graph [[cols [which (nms == "from")] ]],
+                                     graph [[cols [which (nms == "to")] ]]),
                              stringsAsFactors = FALSE)
 
     indx <- which (!duplicated (verts))

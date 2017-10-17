@@ -73,7 +73,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     }
 
     Rcpp::List geoms = sf_lines [nms.size () - 1];
-    std::vector<bool> isOneWay (geoms.length ());
+    std::vector <std::string> way_names = geoms.attr ("names");
+    std::vector <bool> isOneWay (geoms.length ());
     std::fill (isOneWay.begin (), isOneWay.end (), false);
     // Get dimension of matrix
     size_t nrows = 0;
@@ -96,8 +97,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     }
 
     Rcpp::NumericMatrix nmat = Rcpp::NumericMatrix (Rcpp::Dimension (nrows, 6));
-    Rcpp::CharacterMatrix idmat = Rcpp::CharacterMatrix (Rcpp::Dimension (nrows,
-                3));
+    Rcpp::CharacterMatrix idmat =
+        Rcpp::CharacterMatrix (Rcpp::Dimension (nrows, 4));
 
     nrows = 0;
     ngeoms = 0;
@@ -136,6 +137,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             idmat (nrows, 0) = rnms (i-1);
             idmat (nrows, 1) = rnms (i);
             idmat (nrows, 2) = hway;
+            idmat (nrows, 3) = way_names [ngeoms];
             nrows ++;
             if (isOneWay [ngeoms])
             {
@@ -148,17 +150,16 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                 idmat (nrows, 0) = rnms (i);
                 idmat (nrows, 1) = rnms (i-1);
                 idmat (nrows, 2) = hway;
+                idmat (nrows, 3) = way_names [ngeoms];
                 nrows ++;
             }
         }
         ngeoms ++;
     }
 
-    Rcpp::List res (2);
-    res [0] = nmat;
-    res [1] = idmat;
-
-    return res;
+    return Rcpp::List::create (
+            Rcpp::Named ("numeric_values") = nmat,
+            Rcpp::Named ("character_values") = idmat);
 }
 
 //' rcpp_points_index

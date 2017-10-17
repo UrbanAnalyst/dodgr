@@ -117,6 +117,9 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     if (id_col != "osm_id")
         names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
 
+    if (is.null (names (sf_lines$geometry)))
+        names (sf_lines$geometry) <- sf_lines$osm_id
+
     if (is.character (wt_profile))
     {
         prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
@@ -136,22 +139,23 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
-    graph <- data.frame (edge_id = seq (nrow (dat [[1]])),
-                         from_id = as.character (dat [[2]] [, 1]),
-                         from_lon = dat [[1]] [, 1],
-                         from_lat = dat [[1]] [, 2],
-                         to_id = as.character (dat [[2]] [, 2]),
-                         to_lon = dat [[1]] [, 3],
-                         to_lat = dat [[1]] [, 4],
-                         d = dat [[1]] [, 5],
-                         d_weighted = dat [[1]] [, 6],
-                         highway = as.character (dat [[2]] [, 3]),
+    graph <- data.frame (edge_id = seq (nrow (dat$character_values)),
+                         from_id = as.character (dat$character_values [, 1]),
+                         from_lon = dat$numeric_values [, 1],
+                         from_lat = dat$numeric_values [, 2],
+                         to_id = as.character (dat$character_values [, 2]),
+                         to_lon = dat$numeric_values [, 3],
+                         to_lat = dat$numeric_values [, 4],
+                         d = dat$numeric_values [, 5],
+                         d_weighted = dat$numeric_values [, 6],
+                         highway = as.character (dat$character_values [, 3]),
+                         way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
                          )
 
     # get component numbers for each edge
-    graph <- dodgr_components (graph)
     class (graph) <- c (class (graph), "dodgr_streetnet")
+    graph <- dodgr_components (graph)
 
     return (graph)
 }

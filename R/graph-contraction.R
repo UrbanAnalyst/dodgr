@@ -53,6 +53,17 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         spcols <- find_spatial_cols (graph)$to_col
         graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]
         graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]
+        # Then just make sure way_id values match those in original graph
+        if ("way_id" %in% names (graph))
+        {
+            indx <- match (graph_contracted$graph$edge_id,
+                           graph_contracted$edge_map$edge_new)
+            indx <- graph_contracted$edge_map$edge_old [indx]
+            indx <- match (indx, graph [, gr_cols [1] ])
+            indx2 <- which (!is.na (indx))
+            indx <- indx [indx2]
+            graph_refill$way_id [indx2] <- graph$way_id [indx]
+        }
     }
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE)))
