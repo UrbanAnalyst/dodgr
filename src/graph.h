@@ -175,4 +175,5 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         Rcpp::NumericVector gr_cols,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 
-Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph);
+Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph,
+        Rcpp::NumericVector gr_cols);

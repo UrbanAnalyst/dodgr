@@ -177,16 +177,17 @@ dodgr_flows <- function (graph, from, to, flows,
 
     if (!is.matrix (flows))
         flow <- as.matrix (flows)
-    if (nrow (flows) != length (from_index))
+    if (!(length (from) == 1 | nrow (flows) == length (from)))
         stop ("flows must have number of rows equal to length of from")
-    if (ncol (flows) != length (to_index))
+    if (!(length (to) == 1 | ncol (flows) == length (to)))
         stop ("flows must have number of columns equal to length of to")
 
     if (!quiet)
-        message ("Aggregating flows ... ", appendLF = FALSE)
+        message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    graph$flow <- rcpp_aggregate_flows (graph, gr_cols, vert_map, from_index,
-                                        to_index, flows, heap)
+    graph$flow <- rcpp_aggregate_flows (graph, gr_cols, vert_map,
+                                        from_index, to_index,
+                                        flows, heap)
     return (graph)
 }
 
@@ -208,7 +209,8 @@ dodgr_flows <- function (graph, from, to, flows,
 #' @export
 merge_directed_flows <- function (graph)
 {
-    flows <- rcpp_merge_flows (graph)
+    gr_cols <- dodgr_graph_cols (graph)
+    flows <- rcpp_merge_flows (graph, gr_cols)
     indx <- which (flows > 0)
     graph <- graph [indx, , drop = FALSE]
     graph$flow <- flows [indx]

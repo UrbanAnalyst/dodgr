@@ -19,13 +19,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_merge_flows
-Rcpp::NumericVector rcpp_merge_flows(Rcpp::DataFrame graph);
-RcppExport SEXP _dodgr_rcpp_merge_flows(SEXP graphSEXP) {
+Rcpp::NumericVector rcpp_merge_flows(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols);
+RcppExport SEXP _dodgr_rcpp_merge_flows(SEXP graphSEXP, SEXP gr_colsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_merge_flows(graph));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_merge_flows(graph, gr_cols));
     return rcpp_result_gen;
 END_RCPP
 }

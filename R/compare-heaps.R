@@ -22,13 +22,13 @@ compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
     if (is.numeric (nverts))
         graph <- dodgr_sample (graph, nverts = nverts)
-    graph <- dodgr_convert_graph (graph)$graph
     graph_contracted <- dodgr_contract_graph (graph)$graph
-    graph_contracted <- dodgr_convert_graph (graph_contracted)$graph
 
     # route only between points on the contracted graph:
-    from_id <- unique (graph_contracted$from)
-    to_id <- unique (graph_contracted$to)
+    gr_cols <- dodgr_graph_cols (graph)
+    # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    from_id <- unique (graph_contracted [[gr_cols [2] ]])
+    to_id <- unique (graph_contracted [[gr_cols [3] ]])
 
     # set up igraph:
     fr_col <- find_fr_id_col (graph)
