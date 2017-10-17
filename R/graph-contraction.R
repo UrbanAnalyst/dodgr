@@ -32,23 +32,37 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     cols <- dodgr_graph_cols (graph)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     graph_contracted <- rcpp_contract_graph (graph, cols, verts)
 
-    # re-insert spatial coordinates:
+    # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
+    # have to be matched onto original graph, and the remaining columns padded
+    # out.
+    indx <- match (graph_contracted$graph$from, graph [[cols [2] ]])
+    graph_refill <- graph [indx, ]
+    graph_refill [cols [1] ] <- graph_contracted$graph$edge_id
+    graph_refill [cols [2] ] <- graph_contracted$graph$from
+    graph_refill [cols [3] ] <- graph_contracted$graph$to
+    graph_refill [cols [4] ] <- graph_contracted$graph$d
+    graph_refill [cols [5] ] <- graph_contracted$graph$w
+
+    # Then re-insert spatial coordinates (only to verts; from already there)
     if (is_graph_spatial (graph))
     {
-        spcols <- find_spatial_cols (graph)
-        fr_col <- find_fr_id_col (graph)
-        indx <- match (graph_contracted$graph$from, graph [, fr_col])
-        fr_xy <- graph [indx, spcols$fr_col]
-        to_col <- find_to_id_col (graph)
-        indx <- match (graph_contracted$graph$to, graph [, to_col])
-        to_xy <- graph [indx, spcols$to_col]
-        graph_contracted$graph <- cbind (graph_contracted$graph, fr_xy, to_xy)
+        indx <- match (graph_contracted$graph$to, graph [[cols [3] ]])
+        spcols <- find_spatial_cols (graph)$to_col
+        graph_refill [[spcols [1] ]] <- graph [indx, spcols [1] ]
+        graph_refill [[spcols [2] ]] <- graph [indx, spcols [2] ]
     }
 
-    if ("component" %in% names (graph$graph))
-        graph_contracted$graph <- dodgr_components (graph_contracted$graph)
+    if (any (grepl ("comp", names (graph), ignore.case = TRUE)))
+    {
+        ci <- which (grepl ("comp", names (graph), ignore.case = TRUE))
+        cnm <- names (graph) [ci]
+        graph_refill [[cnm]] <- NULL
+        graph_refill <- dodgr_components (graph_refill)
+        names (graph_refill) [ci] <- cnm
+    }
 
-    return (graph_contracted)
+    return (list (graph = graph_refill, edge_map = graph_contracted$edge_map))
 }

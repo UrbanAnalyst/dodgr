@@ -28,11 +28,8 @@ dodgr_graph_cols <- function (graph)
     if (length (w_col) == 0)
         w_col <- d_col
 
-    fr_col <- find_fr_col (graph)
-    to_col <- find_to_col (graph)
-    if (length (fr_col) != length (to_col))
-        stop (paste0 ("from and to columns in graph appear ",
-                      "to have different strutures"))
+    fr_col <- find_fr_id_col (graph)
+    to_col <- find_to_id_col (graph)
 
     xfr <- yfr <- xto <- yto <- NA
     # TODO: Modify for other complex but non-spatial types of graph
@@ -49,9 +46,6 @@ dodgr_graph_cols <- function (graph)
         yfr <- spcols$fr_col [2]
         xto <- spcols$to_col [1]
         yto <- spcols$to_col [2]
-
-        fr_col <- fr_col [!fr_col %in% spcols$fr_col]
-        to_col <- to_col [!to_col %in% spcols$to_col]
     } else
     {
         if (length (fr_col) != 1 & length (to_col) != 1)

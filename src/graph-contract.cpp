@@ -226,7 +226,6 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
     vert2edge_map_t vert2edge_map;
 
     graph_from_df (graph, gr_cols, vertices, edge_map, vert2edge_map);
-    Rcpp::Rcout << "graph has " << edge_map.size () << " edges" << std::endl;
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
