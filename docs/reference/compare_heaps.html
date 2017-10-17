@@ -117,33 +117,39 @@ non-numeric value is given, the whole graph will be used.</p></td>
     <p>Result of <code>rbenachmar::benchmark</code> comparison in
 <code>data.frame</code> form.</p>
     
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p><span class="pkg">igraph</span> caches intermediate results of graph processing, so
+the <span class="pkg">igraph</span> comparisons will be faster on subsequent runs. To obtain
+fair comparisons, run only once or re-start the current R session.</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
 <span class='fu'>compare_heaps</span> (<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>replications</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt;                                                                                   test
 #&gt; 6       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "BHeap")
+#&gt; 7       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "FHeap")
 #&gt; 8     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeap")
 #&gt; 10     d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "Heap23")
-#&gt; 7       d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "FHeap")
 #&gt; 9  d &lt;- dodgr_dists(graph_contracted, from = from_id, to = to_id, heap = "TriHeapExt")
+#&gt; 4             d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeapExt")
 #&gt; 1                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "BHeap")
 #&gt; 3                d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeap")
-#&gt; 2                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "FHeap")
 #&gt; 5                 d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "Heap23")
-#&gt; 4             d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "TriHeapExt")
+#&gt; 2                  d &lt;- dodgr_dists(graph, from = from_id, to = to_id, heap = "FHeap")
 #&gt; 11                  d &lt;- igraph::distances(igr, v = from_id, to = to_id, mode = "out")
 #&gt;    replications elapsed relative user.self sys.self user.child sys.child
-#&gt; 6            10   0.009    1.000     0.008        0          0         0
-#&gt; 8            10   0.009    1.000     0.008        0          0         0
-#&gt; 10           10   0.009    1.000     0.008        0          0         0
-#&gt; 7            10   0.010    1.111     0.012        0          0         0
-#&gt; 9            10   0.011    1.222     0.008        0          0         0
-#&gt; 1            10   0.014    1.556     0.012        0          0         0
-#&gt; 3            10   0.014    1.556     0.016        0          0         0
-#&gt; 2            10   0.015    1.667     0.016        0          0         0
-#&gt; 5            10   0.015    1.667     0.012        0          0         0
-#&gt; 4            10   0.016    1.778     0.016        0          0         0
-#&gt; 11           10   0.022    2.444     0.020        0          0         0</div></pre>
+#&gt; 6            10   0.005      1.0     0.004        0          0         0
+#&gt; 7            10   0.005      1.0     0.004        0          0         0
+#&gt; 8            10   0.005      1.0     0.004        0          0         0
+#&gt; 10           10   0.005      1.0     0.008        0          0         0
+#&gt; 9            10   0.006      1.2     0.008        0          0         0
+#&gt; 4            10   0.009      1.8     0.008        0          0         0
+#&gt; 1            10   0.010      2.0     0.008        0          0         0
+#&gt; 3            10   0.010      2.0     0.012        0          0         0
+#&gt; 5            10   0.010      2.0     0.012        0          0         0
+#&gt; 2            10   0.011      2.2     0.012        0          0         0
+#&gt; 11           10   0.030      6.0     0.028        0          0         0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -151,6 +157,8 @@ non-numeric value is given, the whole graph will be used.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

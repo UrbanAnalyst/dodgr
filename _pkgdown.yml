@@ -20,7 +20,6 @@ reference:
   - title: Functions to Modify Graphs
     contents:
     - dodgr_components
-    - dodgr_convert_graph
     - dodgr_contract_graph
   - title: Miscellaneous Functions
     contents:
