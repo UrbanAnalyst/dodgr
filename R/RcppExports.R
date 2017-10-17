@@ -22,8 +22,8 @@ NULL
 #' original and contracted graph.
 #'
 #' @noRd
-rcpp_contract_graph <- function(graph, gr_cols, vertlist_in) {
-    .Call(`_dodgr_rcpp_contract_graph`, graph, gr_cols, vertlist_in)
+rcpp_contract_graph <- function(graph, vertlist_in) {
+    .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
 }
 
 #' rcpp_merge_flows
@@ -70,13 +70,14 @@ NULL
 #'
 #' Get component numbers for each edge of graph
 #'
-#' @param graph graph to be processed
+#' @param graph graph to be processed; stripped down and standardised to five
+#' columns
 #'
 #' @return Two vectors: one of edge IDs and one of corresponding component
 #' numbers
 #' @noRd
-rcpp_get_component_vector <- function(graph, gr_cols) {
-    .Call(`_dodgr_rcpp_get_component_vector`, graph, gr_cols)
+rcpp_get_component_vector <- function(graph) {
+    .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
 #' sample_one_edge_no_comps
@@ -112,15 +113,15 @@ NULL
 #' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
-rcpp_sample_graph <- function(graph, gr_cols, nverts_to_sample) {
-    .Call(`_dodgr_rcpp_sample_graph`, graph, gr_cols, nverts_to_sample)
+rcpp_sample_graph <- function(graph, nverts_to_sample) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
 #' rcpp_get_sp_dists
 #'
 #' @noRd
-rcpp_get_sp_dists <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp_dists`, graph, gr_cols, vert_map_in, fromi, toi, heap_type)
+rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_get_paths
@@ -139,8 +140,8 @@ rcpp_get_sp_dists <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type
 #' construction is done in \code{inst_graph}.
 #'
 #' @noRd
-rcpp_get_paths <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_paths`, graph, gr_cols, vert_map_in, fromi, toi, heap_type)
+rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_aggregate_flows
@@ -155,8 +156,8 @@ rcpp_get_paths <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type) {
 #' betwen each pair of from and to points.
 #'
 #' @noRd
-rcpp_aggregate_flows <- function(graph, gr_cols, vert_map_in, fromi, toi, flows, heap_type) {
-    .Call(`_dodgr_rcpp_aggregate_flows`, graph, gr_cols, vert_map_in, fromi, toi, flows, heap_type)
+rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
+    .Call(`_dodgr_rcpp_aggregate_flows`, graph, vert_map_in, fromi, toi, flows, heap_type)
 }
 
 #' rcpp_sf_as_network

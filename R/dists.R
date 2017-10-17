@@ -64,7 +64,6 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
@@ -74,12 +73,13 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     to_index <- index_id$index
     to_id <- index_id$id
 
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     graph <- graph [, gr_cols [2:5]]
     names (graph) <- c ("from", "to", "d", "w")
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
-    d <- rcpp_get_sp_dists (graph, gr_cols, vert_map, from_index, to_index, heap)
+    d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
 
     if (!is.null (from_id))
         rownames (d) <- from_id

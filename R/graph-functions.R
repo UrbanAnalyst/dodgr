@@ -136,12 +136,13 @@ dodgr_components <- function (graph)
         message ("graph already has a component column")
     else
     {
-        cols <- dodgr_graph_cols (graph)
-        cns <- rcpp_get_component_vector (graph, cols)
-        # Rcpp treats cols as a pointer, and so substracts 1 from all
-        cols <- cols + 1
+        gr_cols <- dodgr_graph_cols (graph)
+        # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+        graph2 <- graph [, gr_cols [1:5]]
+        names (graph2) <- c ("id", "from", "to", "d", "w")
+        cns <- rcpp_get_component_vector (graph2)
 
-        indx <- match (paste0 (graph [[cols [1] ]]), cns$edge_id)
+        indx <- match (graph2$id, cns$edge_id)
         component <- cns$edge_component [indx]
         # Then re-number in order to decreasing component size:
         graph$component <- match (component, order (table (component),
@@ -180,8 +181,10 @@ dodgr_sample <- function (graph, nverts = 1000)
     verts <- unique (c (graph [, fr], graph [, to]))
     if (length (verts) > nverts)
     {
-        cols <- dodgr_graph_cols (graph)
-        indx <- match (rcpp_sample_graph (graph, cols, nverts), graph$edge_id)
+        gr_cols <- dodgr_graph_cols (graph)
+        graph2 <- graph [, gr_cols [1:5]]
+        names (graph2) <- c ("id", "from", "to", "d", "w")
+        indx <- match (rcpp_sample_graph (graph2, nverts), graph$edge_id)
         graph <- graph [sort (indx), ]
     }
 

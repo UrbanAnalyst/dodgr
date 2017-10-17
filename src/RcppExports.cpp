@@ -6,15 +6,14 @@
 using namespace Rcpp;
 
 // rcpp_contract_graph
-Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
-RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP gr_colsSEXP, SEXP vertlist_inSEXP) {
+Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
+RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP vertlist_inSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable <Rcpp::StringVector> >::type vertlist_in(vertlist_inSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_contract_graph(graph, gr_cols, vertlist_in));
+    rcpp_result_gen = Rcpp::wrap(rcpp_contract_graph(graph, vertlist_in));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -31,76 +30,71 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_component_vector
-Rcpp::List rcpp_get_component_vector(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols);
-RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP, SEXP gr_colsSEXP) {
+Rcpp::List rcpp_get_component_vector(Rcpp::DataFrame graph);
+RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph, gr_cols));
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
     return rcpp_result_gen;
 END_RCPP
 }
 // rcpp_sample_graph
-Rcpp::StringVector rcpp_sample_graph(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols, unsigned int nverts_to_sample);
-RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP gr_colsSEXP, SEXP nverts_to_sampleSEXP) {
+Rcpp::StringVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample);
+RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type nverts_to_sample(nverts_to_sampleSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, gr_cols, nverts_to_sample));
+    rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, nverts_to_sample));
     return rcpp_result_gen;
 END_RCPP
 }
 // rcpp_get_sp_dists
-Rcpp::NumericMatrix rcpp_get_sp_dists(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_get_sp_dists(SEXP graphSEXP, SEXP gr_colsSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
+Rcpp::NumericMatrix rcpp_get_sp_dists(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_get_sp_dists(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type fromi(fromiSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_dists(graph, gr_cols, vert_map_in, fromi, toi, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_dists(graph, vert_map_in, fromi, toi, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
 // rcpp_get_paths
-Rcpp::List rcpp_get_paths(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_get_paths(SEXP graphSEXP, SEXP gr_colsSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
+Rcpp::List rcpp_get_paths(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_get_paths(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type fromi(fromiSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_paths(graph, gr_cols, vert_map_in, fromi, toi, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_paths(graph, vert_map_in, fromi, toi, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
 // rcpp_aggregate_flows
-Rcpp::NumericVector rcpp_aggregate_flows(Rcpp::DataFrame graph, Rcpp::NumericVector gr_cols, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, Rcpp::NumericMatrix flows, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_aggregate_flows(SEXP graphSEXP, SEXP gr_colsSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
+Rcpp::NumericVector rcpp_aggregate_flows(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, Rcpp::NumericMatrix flows, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_aggregate_flows(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gr_cols(gr_colsSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type fromi(fromiSEXP);
     Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type flows(flowsSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_flows(graph, gr_cols, vert_map_in, fromi, toi, flows, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_flows(graph, vert_map_in, fromi, toi, flows, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }

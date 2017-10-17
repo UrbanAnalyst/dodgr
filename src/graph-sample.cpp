@@ -100,7 +100,7 @@ vertex_id_t select_random_vert (Rcpp::DataFrame graph,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols, unsigned int nverts_to_sample)
+        unsigned int nverts_to_sample)
 {
     std::random_device rd;
     std::default_random_engine rng (rd()); // safest to use here
@@ -109,7 +109,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, gr_cols, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)

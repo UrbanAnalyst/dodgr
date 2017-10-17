@@ -50,18 +50,14 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 //' only the four columns [from, to, d, w]
 //' @noRd
-void graph_from_df (Rcpp::DataFrame gr, Rcpp::NumericVector gr_cols,
-        vertex_map_t &vm, edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
+void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
+        vert2edge_map_t &vert2edge_map)
 {
-    // convert 1-indexed gr_cols to 0-indexed
-    for (unsigned int i = 0; i < gr_cols.size (); i++)
-        gr_cols [i] -= 1;
-
-    Rcpp::StringVector edge_id = gr [gr_cols [0]];
-    Rcpp::StringVector from = gr [gr_cols [1]];
-    Rcpp::StringVector to = gr [gr_cols [2]];
-    Rcpp::NumericVector dist = gr [gr_cols [3]];
-    Rcpp::NumericVector weight = gr [gr_cols [4]];
+    Rcpp::StringVector edge_id = gr ["id"];
+    Rcpp::StringVector from = gr ["from"];
+    Rcpp::StringVector to = gr ["to"];
+    Rcpp::NumericVector dist = gr ["d"];
+    Rcpp::NumericVector weight = gr ["w"];
 
     std::set <edge_id_t> replacement_edges; // all empty here
     
@@ -163,20 +159,20 @@ unsigned int identify_graph_components (vertex_map_t &v,
 //'
 //' Get component numbers for each edge of graph
 //'
-//' @param graph graph to be processed
+//' @param graph graph to be processed; stripped down and standardised to five
+//' columns
 //'
 //' @return Two vectors: one of edge IDs and one of corresponding component
 //' numbers
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols)
+Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, gr_cols, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);

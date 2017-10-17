@@ -121,14 +121,13 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 
 bool graph_has_components (Rcpp::DataFrame graph);
 
-void graph_from_df (Rcpp::DataFrame gr, Rcpp::NumericVector gr_cols,
-        vertex_map_t &vm, edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
+void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
+        vert2edge_map_t &vert2edge_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
 
-Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols);
+Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph);
 
 //----------------------------
 //----- functions in graph-sample.cpp
@@ -172,7 +171,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 
 Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph,

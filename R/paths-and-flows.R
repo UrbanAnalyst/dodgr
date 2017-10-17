@@ -67,7 +67,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 
     gr_cols <- dodgr_graph_cols (graph)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    vert_map <- make_vert_map (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index
@@ -76,9 +76,13 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     to_index <- index_id$index
     to_id <- index_id$id
 
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    graph <- graph [, gr_cols [2:5]]
+    names (graph) <- c ("from", "to", "d", "w")
+
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
-    paths <- rcpp_get_paths (graph, gr_cols, vert_map, from_index, to_index, heap)
+    paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
 
     # convert 1-based indices back into vertex IDs:
     paths <- lapply (paths, function (i)
@@ -93,8 +97,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     if (!vertices)
     {
         # convert vertex IDs to corresponding sequences of edge numbers
-        graph_verts <- paste0 ("f", graph [[gr_cols [2] ]],
-                               "t", graph [[gr_cols [3] ]])
+        graph_verts <- paste0 ("f", graph$from, "t", graph$to)
 
         paths <- lapply (paths, function (i)
                          lapply (i, function (j)
@@ -165,8 +168,7 @@ dodgr_flows <- function (graph, from, to, flows,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    vert_map <- make_vert_map (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index
@@ -182,10 +184,14 @@ dodgr_flows <- function (graph, from, to, flows,
     if (!(length (to) == 1 | ncol (flows) == length (to)))
         stop ("flows must have number of columns equal to length of to")
 
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    graph2 <- graph [, gr_cols [2:5]]
+    names (graph2) <- c ("from", "to", "d", "w")
+
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    graph$flow <- rcpp_aggregate_flows (graph, gr_cols, vert_map,
+    graph$flow <- rcpp_aggregate_flows (graph2, vert_map,
                                         from_index, to_index,
                                         flows, heap)
     return (graph)

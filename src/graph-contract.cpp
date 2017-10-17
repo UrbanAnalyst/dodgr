@@ -202,7 +202,6 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in)
 {
     std::unordered_set <vertex_id_t> verts_to_keep;
@@ -215,9 +214,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
 
     // Get set of all original edge IDs
     std::unordered_set <edge_id_t> original_edges;
-    // TODO: Delete next line!
-    //Rcpp::StringVector edge_id = graph ["edge_id"];
-    Rcpp::StringVector edge_id = graph [gr_cols [0]];
+    Rcpp::StringVector edge_id = graph ["id"];
     for (auto e: edge_id)
         original_edges.emplace (e);
 
@@ -225,7 +222,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, gr_cols, vertices, edge_map, vert2edge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
