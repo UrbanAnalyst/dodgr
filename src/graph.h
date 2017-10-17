@@ -173,5 +173,4 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 
-Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols);
+Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph);

@@ -48,7 +48,7 @@ graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows` column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
-graph_dir <- merge_directed_flows (graph)
+graph_undir <- merge_directed_flows (graph)
 # This graph will only include those edges having non-zero flows, and so:
-nrow (graph); nrow (graph_dir) # the latter is much smaller
+nrow (graph); nrow (graph_undir) # the latter is much smaller
 }

@@ -149,9 +149,9 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
-#' graph_dir <- merge_directed_flows (graph)
+#' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
-#' nrow (graph); nrow (graph_dir) # the latter is much smaller
+#' nrow (graph); nrow (graph_undir) # the latter is much smaller
 dodgr_flows <- function (graph, from, to, flows,
                          wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
 {
@@ -213,10 +213,33 @@ dodgr_flows <- function (graph, from, to, flows,
 #' single, undirected edges, and all directed flows aggregated to undirected
 #' flows.
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' from <- sample (graph$from_id, size = 10)
+#' to <- sample (graph$to_id, size = 5)
+#' to <- to [!to %in% from]
+#' flows <- matrix (10 * runif (length (from) * length (to)),
+#'                  nrow = length (from))
+#' graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+#' # graph then has an additonal 'flows` column of aggregate flows along all
+#' # edges. These flows are directed, and can be aggregated to equivalent
+#' # undirected flows on an equivalent undirected graph with:
+#' graph_undir <- merge_directed_flows (graph)
+#' # This graph will only include those edges having non-zero flows, and so:
+#' nrow (graph); nrow (graph_undir) # the latter is much smaller
 merge_directed_flows <- function (graph)
 {
+    if (!"flow" %in% names (graph))
+        stop ("graph does not have any flows to merge")
+
     gr_cols <- dodgr_graph_cols (graph)
-    flows <- rcpp_merge_flows (graph, gr_cols)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    graph2 <- graph [, gr_cols [2:5]]
+    names (graph2) <- c ("from", "to", "d", "w")
+    graph2$flow <- graph$flow
+
+    flows <- rcpp_merge_flows (graph2)
+
     indx <- which (flows > 0)
     graph <- graph [indx, , drop = FALSE]
     graph$flow <- flows [indx]

@@ -36,8 +36,8 @@ rcpp_contract_graph <- function(graph, vertlist_in) {
 #' those edges to be retained in the directed graph.
 #'
 #' @noRd
-rcpp_merge_flows <- function(graph, gr_cols) {
-    .Call(`_dodgr_rcpp_merge_flows`, graph, gr_cols)
+rcpp_merge_flows <- function(graph) {
+    .Call(`_dodgr_rcpp_merge_flows`, graph)
 }
 
 #' graph_has_components

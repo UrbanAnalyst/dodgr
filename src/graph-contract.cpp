@@ -305,17 +305,12 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols)
+Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
 {
-    // convert 1-indexed gr_cols to 0-indexed
-    for (unsigned int i = 0; i < gr_cols.size (); i++)
-        gr_cols [i] -= 1;
-
-    std::vector <std::string> from = graph [gr_cols [1]];
-    std::vector <std::string> to = graph [gr_cols [2]];
-    std::vector <float> dist = graph [gr_cols [3]];
-    std::vector <float> wt = graph [gr_cols [4]];
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <float> dist = graph ["d"];
+    std::vector <float> wt = graph ["w"];
     std::vector <float> flow = graph ["flow"]; // always called "flow"
 
     // vertvert_map just holds index of where pair of vertices were first found.
