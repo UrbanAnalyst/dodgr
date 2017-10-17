@@ -68,10 +68,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE)))
     {
-        ci <- which (grepl ("comp", names (graph), ignore.case = TRUE))
-        cnm <- names (graph) [ci]
+        ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
+        cnm <- names (graph_refill) [ci]
         graph_refill [[cnm]] <- NULL
         graph_refill <- dodgr_components (graph_refill)
+        ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
         names (graph_refill) [ci] <- cnm
     }
 
