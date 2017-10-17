@@ -67,22 +67,12 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph)
 
-    from_index <- to_index <- -1
-    from_id <- to_id <- NULL
-    if (!missing (from))
-    {
-        from_index <- get_pts_index (graph, gr_cols, vert_map, from)
-        from_id <- get_id_cols (from)
-        if (is.null (from_id))
-            from_id <- vert_map$vert [from_index + 1] # from_index is 0-based
-    }
-    if (!missing (to))
-    {
-        to_index <- get_pts_index (graph, gr_cols, vert_map, to)
-        to_id <- get_id_cols (to)
-        if (is.null (to_id))
-            to_id <- vert_map$vert [to_index + 1]
-    }
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index
+    from_id <- index_id$id
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index
+    to_id <- index_id$id
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -101,6 +91,25 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
         message ("done.")
 
     return (d)
+}
+
+#' get_index_id_cols
+#'
+#' Get an index of \code{pts} matching \code{vert_map}, as well as the
+#' corresonding names of those \code{pts}
+#' @noRd
+get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
+{
+    index <- -1
+    id <- NULL
+    if (!missing (pts))
+    {
+        index <- get_pts_index (graph, gr_cols, vert_map, pts)
+        id <- get_id_cols (pts)
+        if (is.null (id))
+            id <- vert_map$vert [index + 1] # from_index is 0-based
+    }
+    list (index = index, id = id)
 }
 
 

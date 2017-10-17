@@ -139,8 +139,8 @@ rcpp_get_sp_dists <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type
 #' construction is done in \code{inst_graph}.
 #'
 #' @noRd
-rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_paths <- function(graph, gr_cols, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths`, graph, gr_cols, vert_map_in, fromi, toi, heap_type)
 }
 
 #' rcpp_aggregate_flows
@@ -155,8 +155,8 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' betwen each pair of from and to points.
 #'
 #' @noRd
-rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
-    .Call(`_dodgr_rcpp_aggregate_flows`, graph, vert_map_in, fromi, toi, flows, heap_type)
+rcpp_aggregate_flows <- function(graph, gr_cols, vert_map_in, fromi, toi, flows, heap_type) {
+    .Call(`_dodgr_rcpp_aggregate_flows`, graph, gr_cols, vert_map_in, fromi, toi, flows, heap_type)
 }
 
 #' rcpp_sf_as_network

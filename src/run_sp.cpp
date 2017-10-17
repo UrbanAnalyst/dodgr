@@ -183,6 +183,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
+        Rcpp::NumericVector gr_cols,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
@@ -200,10 +201,14 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
+    // convert 1-indexed gr_cols to 0-indexed
+    for (unsigned int i = 0; i < gr_cols.size (); i++)
+        gr_cols [i] -= 1;
+
+    std::vector <std::string> from = graph [gr_cols [1]];
+    std::vector <std::string> to = graph [gr_cols [2]];
+    std::vector <float> dist = graph [gr_cols [3]];
+    std::vector <float> wt = graph [gr_cols [4]];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
@@ -293,6 +298,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
+        Rcpp::NumericVector gr_cols,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
@@ -311,10 +317,14 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
+    // convert 1-indexed gr_cols to 0-indexed
+    for (unsigned int i = 0; i < gr_cols.size (); i++)
+        gr_cols [i] -= 1;
+
+    std::vector <std::string> from = graph [gr_cols [1]];
+    std::vector <std::string> to = graph [gr_cols [2]];
+    std::vector <float> dist = graph [gr_cols [3]];
+    std::vector <float> wt = graph [gr_cols [4]];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;

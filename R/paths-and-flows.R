@@ -65,31 +65,36 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     heap <- hps$heap
     graph <- hps$graph
 
-    if (!quiet)
-        message ("Converting network to dodgr graph ... ",
-                 appendLF = FALSE)
-    graph <- dodgr_convert_graph (graph, components = FALSE)
-    xy <- graph$xy
-    graph <- graph$graph
+    gr_cols <- dodgr_graph_cols (graph)
+    # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph)
-    # vert_map$vert is char vertex ID; vert_map$id is 0-indexed integer
 
-    from_index <- get_tofrom_index (vert_map, xy, from) # 0-indexed
-    to_index <- get_tofrom_index (vert_map, xy, to)
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index
+    from_id <- index_id$id
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index
+    to_id <- index_id$id
 
     if (!quiet)
-        message ("done\nCalculating shortest paths ... ", appendLF = FALSE)
-    paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
+        message ("Calculating shortest paths ... ", appendLF = FALSE)
+    paths <- rcpp_get_paths (graph, gr_cols, vert_map, from_index, to_index, heap)
 
     # convert 1-based indices back into vertex IDs:
     paths <- lapply (paths, function (i)
                      lapply (i, function (j)
                              vert_map$vert [j] ))
 
+    # name path lists
+    for (i in seq (from_index))
+        names (paths [[i]]) <- paste0 (from_id [1], "-", to_id)
+    names (paths) <- from_id
+
     if (!vertices)
     {
         # convert vertex IDs to corresponding sequences of edge numbers
-        graph_verts <- paste0 ("f", graph$from, "t", graph$to)
+        graph_verts <- paste0 ("f", graph [[gr_cols [2] ]],
+                               "t", graph [[gr_cols [3] ]])
 
         paths <- lapply (paths, function (i)
                          lapply (i, function (j)
