@@ -3,7 +3,6 @@
 export(compare_heaps)
 export(dodgr_components)
 export(dodgr_contract_graph)
-export(dodgr_convert_graph)
 export(dodgr_dists)
 export(dodgr_flows)
 export(dodgr_paths)

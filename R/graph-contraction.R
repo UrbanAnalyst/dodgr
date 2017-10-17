@@ -28,11 +28,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
             stop ("verts must be a single value or a vector of vertex IDs")
         if (!is.character (verts))
             verts <- paste0 (verts)
+        verts <- verts [which (verts %in% dodgr_vertices (graph)$id)]
     }
 
-    graph_converted <- dodgr_convert_graph (graph)$graph
-    verts <- verts [which (verts %in% dodgr_vertices (graph_converted)$id)]
-    graph_contracted <- rcpp_contract_graph (graph_converted, verts)
+    cols <- dodgr_graph_cols (graph)
+    graph_contracted <- rcpp_contract_graph (graph, cols, verts)
 
     # re-insert spatial coordinates:
     if (is_graph_spatial (graph))

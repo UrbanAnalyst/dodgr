@@ -22,8 +22,8 @@ NULL
 #' original and contracted graph.
 #'
 #' @noRd
-rcpp_contract_graph <- function(graph, vertlist_in) {
-    .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
+rcpp_contract_graph <- function(graph, gr_cols, vertlist_in) {
+    .Call(`_dodgr_rcpp_contract_graph`, graph, gr_cols, vertlist_in)
 }
 
 #' rcpp_merge_flows
@@ -75,8 +75,8 @@ NULL
 #' @return Two vectors: one of edge IDs and one of corresponding component
 #' numbers
 #' @noRd
-rcpp_get_component_vector <- function(graph) {
-    .Call(`_dodgr_rcpp_get_component_vector`, graph)
+rcpp_get_component_vector <- function(graph, gr_cols) {
+    .Call(`_dodgr_rcpp_get_component_vector`, graph, gr_cols)
 }
 
 #' sample_one_edge_no_comps
@@ -112,8 +112,8 @@ NULL
 #' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
-rcpp_sample_graph <- function(graph, nverts_to_sample) {
-    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
+rcpp_sample_graph <- function(graph, gr_cols, nverts_to_sample) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, gr_cols, nverts_to_sample)
 }
 
 #' rcpp_get_sp_dists
