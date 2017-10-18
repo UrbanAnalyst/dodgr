@@ -188,9 +188,13 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
 
     if (!is.matrix (flows))
         flow <- as.matrix (flows)
-    if (!(length (from) == 1 | nrow (flows) == length (from)))
+    if (!(length (from) == 1 |
+          nrow (flows) == length (from) |
+          nrow (flow) == nrow (from)))
         stop ("flows must have number of rows equal to length of from")
-    if (!(length (to) == 1 | ncol (flows) == length (to)))
+    if (!(length (to) == 1 |
+          ncol (flows) == length (to) |
+          ncol (flows) == nrow (to)))
         stop ("flows must have number of columns equal to length of to")
 
     graph2 <- convert_graph (graph, gr_cols)
