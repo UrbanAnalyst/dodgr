@@ -153,8 +153,9 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
-                         contract = FALSE, heap = 'BHeap', quiet = TRUE)
+dodgr_flows <- function (graph, from, to, flows,
+                         wt_profile = "bicycle", contract = FALSE,
+                         heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -187,15 +188,22 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
     to_id <- index_id$id
 
     if (!is.matrix (flows))
-        flow <- as.matrix (flows)
-    if (!(length (from) == 1 |
-          nrow (flows) == length (from) |
-          nrow (flow) == nrow (from)))
-        stop ("flows must have number of rows equal to length of from")
-    if (!(length (to) == 1 |
-          ncol (flows) == length (to) |
-          ncol (flows) == nrow (to)))
-        stop ("flows must have number of columns equal to length of to")
+        flows <- as.matrix (flows)
+    # change from and to just to check conformity - they're not re-used
+    if (!missing (from))
+    {
+        if (!is.matrix (from))
+            from <- matrix (from)
+        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
+            stop ("flows must have number of rows equal to length of from")
+    }
+    if (!missing (to))
+    {
+        if (!is.matrix (to))
+            to <- matrix (to)
+        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
+            stop ("flows must have number of columns equal to length of to")
+    }
 
     graph2 <- convert_graph (graph, gr_cols)
 
