@@ -193,14 +193,14 @@ dodgr_flows <- function (graph, from, to, flows,
     if (!missing (from))
     {
         if (!is.matrix (from))
-            from <- matrix (from)
+            from <- as.matrix (from)
         if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
             stop ("flows must have number of rows equal to length of from")
     }
     if (!missing (to))
     {
         if (!is.matrix (to))
-            to <- matrix (to)
+            to <- as.matrix (to)
         if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
             stop ("flows must have number of columns equal to length of to")
     }
