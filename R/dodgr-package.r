@@ -43,7 +43,7 @@
 #' @name dodgr
 #' @docType package
 #' @importFrom igraph distances E make_directed_graph
-#' @importFrom magrittr %>%
+#' @importFrom magrittr %>% extract2
 #' @importFrom methods is
 #' @importFrom osmdata add_osm_feature getbb opq osmdata_sf
 #' @importFrom rbenchmark benchmark
