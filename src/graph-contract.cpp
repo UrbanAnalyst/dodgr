@@ -124,7 +124,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
     for (auto e: edge_map)
         edgelist.insert (e.first);
 
-    std::vector<edge_id_t> new_edge_ids;
+    std::vector <edge_id_t> new_edge_ids;
 
     // Random generator for new_edge_id
     std::random_device rd;
@@ -152,6 +152,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             // remove intervening vertex:
             std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
             std::vector <vertex_id_t> two_nbs;
+            two_nbs.reserve (2);
             for (vertex_id_t nb: nbs)
                 two_nbs.push_back (nb); // size is always 2
 
@@ -234,7 +235,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
 
     // These vectors are all for the contracted graph:
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
-        edgeid_vec (nedges), highway_vec (nedges);
+        edgeid_vec (nedges);
     Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges);
 
     int map_size = 0; // size of edge map contracted -> original
@@ -259,7 +260,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
             map_size += e->second.get_old_edges ().size ();
     }
 
-    // population the new -> old edge map
+    // populate the new -> old edge map
     std::vector <edge_id_t> edge_map_new (map_size), edge_map_old (map_size);
     unsigned int count = 0;
     for (auto e = edge_map_contracted.begin ();
