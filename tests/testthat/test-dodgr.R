@@ -51,7 +51,7 @@ test_that("sample graph", {
     graph_s <- dodgr_sample (graph, nverts = 100)
     expect_true (nrow (graph_s) < nrow (graph))
     v <- dodgr_vertices (graph_s)
-    expect_true (nrow (v) %in% 100:101)
+    expect_true (nrow (v) == 100)
 })
 
 test_that("components", {

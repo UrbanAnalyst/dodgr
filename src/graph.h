@@ -145,7 +145,7 @@ vertex_id_t select_random_vert (Rcpp::DataFrame graph,
         edge_map_t &edge_map, vertex_map_t &vertices);
 
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        Rcpp::NumericVector gr_cols, unsigned int nverts_to_sample);
+        unsigned int nverts_to_sample);
 
 //----------------------------
 //----- functions in graph-contract.cpp

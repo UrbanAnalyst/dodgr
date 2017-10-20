@@ -160,13 +160,18 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
             if (std::find (vertlist.begin(), vertlist.end(), vt) ==
                     vertlist.end())
                 vertlist.push_back (vt);
-            if (vertlist.size () < nverts_to_sample)
+            if (vertlist.size () >= nverts_to_sample)
+            {
+                break;
+            } else
             {
                 vt = this_edge.get_to_vertex ();
                 if (std::find (vertlist.begin(), vertlist.end(), vt) ==
                         vertlist.end())
                     vertlist.push_back (vt);
             }
+            if (vertlist.size () >= nverts_to_sample)
+                break;
         }
         count++;
         if (count > (100 * nverts_to_sample))
