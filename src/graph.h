@@ -166,6 +166,9 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
         const edge_id_t edge_from_id, const edge_id_t edge_to_id,
         const edge_id_t new_edge_id);
 
+bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
+        const edge_id_t &e2);
+
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep);

@@ -107,6 +107,24 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
     edge_map.emplace (new_edge_id, new_edge);
 }
 
+//' same_hwy_type
+//'
+//' Determine whether two edges represent the same weight category (type of
+//' highway for street networks, for example). Categories are not retained in 
+//' converted graphs, but can be discerned by comparing ratios of weighted to
+//' non-weighted distances.
+//' @noRd
+bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
+        const edge_id_t &e2)
+{
+    const float tol = 1.0e-6;
+
+    edge_t edge1 = edge_map.find (e1)->second,
+           edge2 = edge_map.find (e2)->second;
+
+    return (fabs (edge1.weight / edge1.dist - edge2.weight / edge2.dist) < tol);
+}
+
 
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
@@ -177,12 +195,15 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 // get the from and to edges and vertices
                 get_to_from (edge_map, edges, two_nbs,
                         vt_from, vt_to, edge_from_id, edge_to_id);
-                edges.erase (edge_from_id);
-                edges.erase (edge_to_id);
+                if (same_hwy_type (edge_map, edge_from_id, edge_to_id))
+                {
+                    edges.erase (edge_from_id);
+                    edges.erase (edge_to_id);
 
-                contract_one_edge (vert2edge_map, vertex_map, edge_map,
-                        edgelist, vtx_id, vt_from, vt_to,
-                        edge_from_id, edge_to_id, new_edge_id);
+                    contract_one_edge (vert2edge_map, vertex_map, edge_map,
+                            edgelist, vtx_id, vt_from, vt_to,
+                            edge_from_id, edge_to_id, new_edge_id);
+                }
             }
         }
         verts.erase (vtx_id);
