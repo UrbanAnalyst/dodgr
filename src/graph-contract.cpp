@@ -167,36 +167,49 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             if (edges.size () == 4) // is_intermediate_double as well!
                 new_edge_ids.push_back (get_new_edge_id (edge_map, rng));
 
-            // remove intervening vertex:
+            // Get the two adjacent vertices
             std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
             std::vector <vertex_id_t> two_nbs;
             two_nbs.reserve (2);
             for (vertex_id_t nb: nbs)
                 two_nbs.push_back (nb); // size is always 2
 
-            vertex_t vt0 = vertex_map [two_nbs [0]];
-            vertex_t vt1 = vertex_map [two_nbs [1]];
-            // Note that replace neighbour includes bi-directional replacement,
-            // so this works for intermediate_double() too
-            vt0.replace_neighbour (vtx_id, two_nbs [1]);
-            vt1.replace_neighbour (vtx_id, two_nbs [0]);
-            vertex_map [two_nbs [0]] = vt0;
-            vertex_map [two_nbs [1]] = vt1;
-
-            // construct new edge(s) and remove old ones. There are 2
-            // new_edge_ids only for intermediate double vertices
-            // (that is, bi-directional).
+            // ensure two edges are same highway type
+            bool hwys_are_same = true;
             for (edge_id_t new_edge_id: new_edge_ids)
             {
-                //float d = 0.0, w = 0.0;
                 vertex_id_t vt_from = "", vt_to = "";
                 edge_id_t edge_from_id = "", edge_to_id = "";
-
-                // get the from and to edges and vertices
                 get_to_from (edge_map, edges, two_nbs,
                         vt_from, vt_to, edge_from_id, edge_to_id);
-                if (same_hwy_type (edge_map, edge_from_id, edge_to_id))
+                hwys_are_same = same_hwy_type (edge_map, edge_from_id,
+                        edge_to_id);
+            }
+
+            if (hwys_are_same)
+            {
+                // remove intervening vertex:
+                vertex_t vt0 = vertex_map [two_nbs [0]];
+                vertex_t vt1 = vertex_map [two_nbs [1]];
+                // Note that replace neighbour includes bi-directional replacement,
+                // so this works for intermediate_double() too
+                vt0.replace_neighbour (vtx_id, two_nbs [1]);
+                vt1.replace_neighbour (vtx_id, two_nbs [0]);
+                vertex_map [two_nbs [0]] = vt0;
+                vertex_map [two_nbs [1]] = vt1;
+
+                // construct new edge(s) and remove old ones. There are 2
+                // new_edge_ids only for intermediate double vertices
+                // (that is, bi-directional).
+                for (edge_id_t new_edge_id: new_edge_ids)
                 {
+                    vertex_id_t vt_from = "", vt_to = "";
+                    edge_id_t edge_from_id = "", edge_to_id = "";
+
+                    // get the from and to edges and vertices
+                    get_to_from (edge_map, edges, two_nbs,
+                            vt_from, vt_to, edge_from_id, edge_to_id);
+
                     edges.erase (edge_from_id);
                     edges.erase (edge_to_id);
 

@@ -10,6 +10,15 @@
 #' @noRd
 NULL
 
+#' same_hwy_type
+#'
+#' Determine whether two edges represent the same weight category (type of
+#' highway for street networks, for example). Categories are not retained in 
+#' converted graphs, but can be discerned by comparing ratios of weighted to
+#' non-weighted distances.
+#' @noRd
+NULL
+
 #' rcpp_contract_graph
 #'
 #' Removes nodes and edges from a graph that are not needed for routing
