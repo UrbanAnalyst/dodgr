@@ -85,7 +85,6 @@ struct edge_t
     public:
         float dist;
         float weight;
-        std::string group_id;
         bool replaced_by_compact = false;
 
         vertex_id_t get_from_vertex () { return from; }
@@ -94,8 +93,7 @@ struct edge_t
         std::set <edge_id_t> get_old_edges () { return old_edges; }
 
         edge_t (vertex_id_t from_id, vertex_id_t to_id, float dist, float weight,
-                   edge_id_t id, std::set <edge_id_t> replacement_edges,
-                   std::string group_id)
+                   edge_id_t id, std::set <edge_id_t> replacement_edges)
         {
             this -> to = to_id;
             this -> from = from_id;
@@ -104,7 +102,6 @@ struct edge_t
             this -> id = id;
             this -> old_edges.insert (replacement_edges.begin (),
                     replacement_edges.end ());
-            this -> group_id = group_id;
         }
 };
 
@@ -125,7 +122,7 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 bool graph_has_components (Rcpp::DataFrame graph);
 
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map, std::string group_id);
+        vert2edge_map_t &vert2edge_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
@@ -170,16 +167,13 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
         const edge_id_t new_edge_id);
 
 bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
-        const edge_id_t &e2,
-        std::unordered_map <edge_id_t, std::string> group_map);
+        const edge_id_t &e2);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
-        std::unordered_set <vertex_id_t> verts_to_keep,
-        std::unordered_map <edge_id_t, std::string> group_map);
+        std::unordered_set <vertex_id_t> verts_to_keep);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::Nullable <Rcpp::StringVector> vertlist_in,
-        std::string group_id);
+        Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
 
 Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph);

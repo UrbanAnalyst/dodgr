@@ -102,8 +102,7 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 
     edge_map.erase (edge_from_id);
     edge_map.erase (edge_to_id);
-    edge_t new_edge = edge_t (vt_from, vt_to, d, w,
-            new_edge_id, old_edges, (std::string) "");
+    edge_t new_edge = edge_t (vt_from, vt_to, d, w, new_edge_id, old_edges);
     edge_map.emplace (new_edge_id, new_edge);
 }
 
@@ -115,19 +114,14 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 //' non-weighted distances.
 //' @noRd
 bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
-        const edge_id_t &e2,
-        std::unordered_map <edge_id_t, std::string> group_map)
+        const edge_id_t &e2)
 {
     const float tol = 1.0e-6;
 
     edge_t edge1 = edge_map.find (e1)->second,
            edge2 = edge_map.find (e2)->second;
 
-    bool same_wt = fabs (edge1.weight / edge1.dist -
-            edge2.weight / edge2.dist) < tol;
-    bool same_way = edge1.group_id == edge2.group_id;
-
-    return (same_wt || same_way);
+    return (fabs (edge1.weight / edge1.dist - edge2.weight / edge2.dist) < tol);
 }
 
 
@@ -135,8 +129,7 @@ bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
 // associated vertex and edge maps.
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
-        std::unordered_set <vertex_id_t> verts_to_keep,
-        std::unordered_map <edge_id_t, std::string> group_map)
+        std::unordered_set <vertex_id_t> verts_to_keep)
 {
     std::unordered_set <vertex_id_t> verts;
     for (auto v: vertex_map)
@@ -189,7 +182,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 get_to_from (edge_map, edges, two_nbs,
                         vt_from, vt_to, edge_from_id, edge_to_id);
                 hwys_are_same = same_hwy_type (edge_map, edge_from_id,
-                        edge_to_id, group_map);
+                        edge_to_id);
                 if (!hwys_are_same)
                     break;
             }
@@ -245,8 +238,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::Nullable <Rcpp::StringVector> vertlist_in,
-        std::string group_id)
+        Rcpp::Nullable <Rcpp::StringVector> vertlist_in)
 {
     std::unordered_set <vertex_id_t> verts_to_keep;
     if (vertlist_in.isNotNull ())
@@ -266,21 +258,13 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, group_id);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
 
-    Rcpp::StringVector group_ids (graph.nrow ());
-    if (group_id != "")
-        group_ids = graph [group_id];
-
-    std::unordered_map <edge_id_t, std::string> group_map;
-    for (unsigned int i = 0; i < edge_id.size (); i++)
-        group_map.emplace ((edge_id_t) edge_id [i], (std::string) group_ids [i]);
-
     contract_graph (vertices_contracted, edge_map_contracted, vert2edge_map,
-            verts_to_keep, group_map);
+            verts_to_keep);
 
     int nedges = edge_map_contracted.size ();
 

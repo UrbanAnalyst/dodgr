@@ -9,16 +9,6 @@
 #' \code{from_x}) or \code{stop_lon}).
 #' @param verts Optional list of vertices to be retained as routing points.
 #' These must match the \code{from_id} and \code{to_id} columns of \code{graph}.
-#' @param group_id (Optional) Column of \code{graph} to be used to ensure
-#' contracted edges follow same groupings as original graph (see details).
-#'
-#' @note Networks may have paths which are duplicated along some sections. The
-#' \code{group_id} parameter can be used to ensure that contracted edges reflect
-#' these original groupings, rather than potentially combining paths along
-#' alternative duplicated segments. For OpenStreetMap graphs obtained with
-#' \code{weight_streetnet}, this will generally be "way_id", which is the column
-#' identifying defined OSM ways. \code{dodgr_contracte_graph} will then only
-#' contracted edges sharing the same values of \code{way_id}.
 #'
 #' @return A list of two items: \code{graph} containing contracted version of
 #' the original \code{graph}, converted to a standardised format, and
@@ -30,7 +20,7 @@
 #' nrow (graph) # 5,742
 #' graph <- dodgr_contract_graph (graph)
 #' nrow (graph$graph) # 2,878
-dodgr_contract_graph <- function (graph, verts = NULL, group_id = "")
+dodgr_contract_graph <- function (graph, verts = NULL)
 {
     if (!is.null (verts))
     {
@@ -41,12 +31,9 @@ dodgr_contract_graph <- function (graph, verts = NULL, group_id = "")
         verts <- verts [which (verts %in% dodgr_vertices (graph)$id)]
     }
 
-    if (group_id != "" & !group_id %in% names (graph))
-        stop ("group_id variable ", group_id, " does not exist in graph")
-
     gr_cols <- dodgr_graph_cols (graph)
     graph2 <- convert_graph (graph, gr_cols)
-    graph_contracted <- rcpp_contract_graph (graph2, verts, group_id)
+    graph_contracted <- rcpp_contract_graph (graph2, verts)
 
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph, and the remaining columns padded
