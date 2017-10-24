@@ -81,11 +81,11 @@ struct edge_t
         vertex_id_t from, to;
         edge_id_t id;
         std::set <edge_id_t> old_edges;
-        std::string group_id;
 
     public:
         float dist;
         float weight;
+        std::string group_id;
         bool replaced_by_compact = false;
 
         vertex_id_t get_from_vertex () { return from; }
@@ -170,11 +170,13 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
         const edge_id_t new_edge_id);
 
 bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
-        const edge_id_t &e2);
+        const edge_id_t &e2,
+        std::unordered_map <edge_id_t, std::string> group_map);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
-        std::unordered_set <vertex_id_t> verts_to_keep);
+        std::unordered_set <vertex_id_t> verts_to_keep,
+        std::unordered_map <edge_id_t, std::string> group_map);
 
 Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         Rcpp::Nullable <Rcpp::StringVector> vertlist_in,
