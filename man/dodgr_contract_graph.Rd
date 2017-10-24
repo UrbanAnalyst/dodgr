@@ -4,7 +4,7 @@
 \alias{dodgr_contract_graph}
 \title{dodgr_contract_graph}
 \usage{
-dodgr_contract_graph(graph, verts = NULL)
+dodgr_contract_graph(graph, verts = NULL, group_id = "")
 }
 \arguments{
 \item{graph}{A flat table of graph edges. Must contain columns labelled
@@ -14,6 +14,9 @@ similarly labelled columns of spatial coordinates (for example
 
 \item{verts}{Optional list of vertices to be retained as routing points.
 These must match the \code{from_id} and \code{to_id} columns of \code{graph}.}
+
+\item{group_id}{(Optional) Column of \code{graph} to be used to ensure
+contracted edges follow same groupings as original graph (see details).}
 }
 \value{
 A list of two items: \code{graph} containing contracted version of
@@ -24,6 +27,15 @@ corresponding edges in original (uncontracted) graph.
 \description{
 Removes redundant (straight-line) vertices from graph, leaving only junction
 vertices.
+}
+\note{
+Networks may have paths which are duplicated along some sections. The
+\code{group_id} parameter can be used to ensure that contracted edges reflect
+these original groupings, rather than potentially combining paths along
+alternative duplicated segments. For OpenStreetMap graphs obtained with
+\code{weight_streetnet}, this will generally be "way_id", which is the column
+identifying defined OSM ways. \code{dodgr_contracte_graph} will then only
+contracted edges sharing the same values of \code{way_id}.
 }
 \examples{
 graph <- weight_streetnet (hampi)
