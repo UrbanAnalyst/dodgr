@@ -31,8 +31,8 @@ NULL
 #' original and contracted graph.
 #'
 #' @noRd
-rcpp_contract_graph <- function(graph, vertlist_in) {
-    .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
+rcpp_contract_graph <- function(graph, vertlist_in, group_id) {
+    .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in, group_id)
 }
 
 #' rcpp_merge_flows

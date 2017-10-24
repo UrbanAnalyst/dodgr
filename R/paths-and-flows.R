@@ -154,8 +154,8 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 dodgr_flows <- function (graph, from, to, flows,
-                         wt_profile = "bicycle", contract = FALSE,
-                         heap = 'BHeap', quiet = TRUE)
+                         wt_profile = "bicycle", group_id = "",
+                         contract = FALSE, heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -206,6 +206,9 @@ dodgr_flows <- function (graph, from, to, flows,
     }
 
     graph2 <- convert_graph (graph, gr_cols)
+
+    if (group_id != "" & !group_id %in% names (graph))
+        stop ("group_id variable does not exist in graph")
 
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)

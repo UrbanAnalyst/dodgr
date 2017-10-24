@@ -6,14 +6,15 @@
 using namespace Rcpp;
 
 // rcpp_contract_graph
-Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
-RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP vertlist_inSEXP) {
+Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in, std::string group_id);
+RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP vertlist_inSEXP, SEXP group_idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable <Rcpp::StringVector> >::type vertlist_in(vertlist_inSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_contract_graph(graph, vertlist_in));
+    Rcpp::traits::input_parameter< std::string >::type group_id(group_idSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_contract_graph(graph, vertlist_in, group_id));
     return rcpp_result_gen;
 END_RCPP
 }

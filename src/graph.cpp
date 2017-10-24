@@ -51,13 +51,17 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //' only the four columns [from, to, d, w]
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map)
+        vert2edge_map_t &vert2edge_map, std::string group_id)
 {
     Rcpp::StringVector edge_id = gr ["id"];
     Rcpp::StringVector from = gr ["from"];
     Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];
     Rcpp::NumericVector weight = gr ["w"];
+
+    Rcpp::StringVector group_ids (edge_id.size ());
+    if (group_id != "")
+        group_ids = gr [group_id];
 
     std::set <edge_id_t> replacement_edges; // all empty here
     
@@ -87,7 +91,7 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
         edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
 
         edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                edge_id_str, replacement_edges);
+                edge_id_str, replacement_edges, (std::string) group_ids [i]);
 
         edge_map.emplace (edge_id_str, edge);
         add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
@@ -172,7 +176,8 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    std::string gr_id = ""; // null group_id variable
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, gr_id);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);
