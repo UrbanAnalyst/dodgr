@@ -61,6 +61,13 @@ NULL
 #' Convert a standard graph data.frame into an object of class graph. Graphs
 #' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 #' only the four columns [from, to, d, w]
+#'
+#' One necessary trick is that there are sometimes duplicated edges, and these
+#' are also collapsed here to single edges. Not doing that results in routing
+#' along potentially multiple, yet otherwise identical, paths. Because many
+#' unordered_maps are used, this can result in unpredictable behaviour and
+#' routing may artibrarily go along one or the other path.
+#'
 #' @noRd
 NULL
 

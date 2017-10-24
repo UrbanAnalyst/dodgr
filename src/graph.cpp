@@ -49,6 +49,13 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //' Convert a standard graph data.frame into an object of class graph. Graphs
 //' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 //' only the four columns [from, to, d, w]
+//'
+//' One necessary trick is that there are sometimes duplicated edges, and these
+//' are also collapsed here to single edges. Not doing that results in routing
+//' along potentially multiple, yet otherwise identical, paths. Because many
+//' unordered_maps are used, this can result in unpredictable behaviour and
+//' routing may artibrarily go along one or the other path.
+//'
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map)
@@ -60,38 +67,74 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
     Rcpp::NumericVector weight = gr ["w"];
 
     std::set <edge_id_t> replacement_edges; // all empty here
+
+    // make map of vertex pairs to avoid duplicated edges. Consider them
+    // duplicated if the ratio of wt to dist is within 1/1000th. This is only
+    // used here to construct the index of duplicated vertices which are then
+    // not added to the resultant graph.
+    std::vector <bool> duplicated;
+    duplicated.reserve (edge_id.size ());
+    std::unordered_map <std::string,
+        std::unordered_set <unsigned int> > vertvert_map;
+    for (int i = 0; i < from.length (); i ++)
+    {
+        duplicated [i] = false;
+
+        std::string twoverts = (std::string) from [i] + "-" + (std::string) to [i];
+        unsigned int dw = round (1000.0 * dist [i] / weight [i]);
+        std::unordered_set <unsigned int> dw_vals;
+        if (vertvert_map.find (twoverts) == vertvert_map.end ())
+        {
+            dw_vals.insert (dw);
+            vertvert_map.emplace (twoverts, dw_vals);
+        } else 
+        {
+            dw_vals = vertvert_map.at (twoverts);
+            if (dw_vals.find (dw) == dw_vals.end ())
+            {
+                dw_vals.insert (dw);
+                vertvert_map.emplace (twoverts, dw_vals);
+            } else
+            {
+                duplicated [i] = true;
+            }
+        }
+    }
     
     for (int i = 0; i < to.length (); i ++)
     {
-        vertex_id_t from_id = std::string (from [i]);
-        vertex_id_t to_id = std::string (to [i]);
-
-        if (vm.find (from_id) == vm.end ())
+        if (!duplicated [i])
         {
-            vertex_t fromV = vertex_t ();
-            vm.emplace (from_id, fromV);
+            vertex_id_t from_id = std::string (from [i]);
+            vertex_id_t to_id = std::string (to [i]);
+
+            if (vm.find (from_id) == vm.end ())
+            {
+                vertex_t fromV = vertex_t ();
+                vm.emplace (from_id, fromV);
+            }
+            vertex_t from_vtx = vm.at (from_id);
+            from_vtx.add_neighbour_out (to_id);
+            vm [from_id] = from_vtx;
+
+            if (vm.find (to_id) == vm.end ())
+            {
+                vertex_t toV = vertex_t ();
+                vm.emplace (to_id, toV);
+            }
+            vertex_t to_vtx = vm.at (to_id);
+            to_vtx.add_neighbour_in (from_id);
+            vm [to_id] = to_vtx;
+
+            edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
+
+            edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
+                    edge_id_str, replacement_edges);
+
+            edge_map.emplace (edge_id_str, edge);
+            add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
+            add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
         }
-        vertex_t from_vtx = vm.at (from_id);
-        from_vtx.add_neighbour_out (to_id);
-        vm [from_id] = from_vtx;
-
-        if (vm.find (to_id) == vm.end ())
-        {
-            vertex_t toV = vertex_t ();
-            vm.emplace (to_id, toV);
-        }
-        vertex_t to_vtx = vm.at (to_id);
-        to_vtx.add_neighbour_in (from_id);
-        vm [to_id] = to_vtx;
-
-        edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
-
-        edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                edge_id_str, replacement_edges);
-
-        edge_map.emplace (edge_id_str, edge);
-        add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
-        add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 

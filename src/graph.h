@@ -7,6 +7,7 @@
 #include <limits>
 #include <random>
 #include <string> // stoi
+#include <cmath> // round
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
