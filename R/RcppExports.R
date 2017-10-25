@@ -56,6 +56,13 @@ rcpp_merge_flows <- function(graph) {
 #' @noRd
 NULL
 
+#' get_duplicated_edges
+#'
+#' A map between duplicated edges. First item is edge to be kept; second is an
+#' unsorted_list of duplicates of that edge.
+#' @noRd
+NULL
+
 #' graph_from_df
 #'
 #' Convert a standard graph data.frame into an object of class graph. Graphs

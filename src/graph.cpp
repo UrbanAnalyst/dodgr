@@ -44,6 +44,76 @@ bool graph_has_components (Rcpp::DataFrame graph)
     return has_comps;
 }
 
+//' get_duplicated_edges
+//'
+//' A map between duplicated edges. First item is edge to be kept; second is an
+//' unsorted_list of duplicates of that edge.
+//' @noRd
+int2ints_map_t get_duplicated_edges (Rcpp::DataFrame gr)
+{
+    const float precision = 1000.0;
+
+    Rcpp::StringVector from = gr ["from"];
+    Rcpp::StringVector to = gr ["to"];
+    Rcpp::NumericVector dist = gr ["d"];
+    Rcpp::NumericVector weight = gr ["w"];
+
+    std::vector <bool> duplicated;
+    duplicated.reserve (from.size ());
+
+    // Duplicated edges have to be identified through combination of vertex
+    // pairs and weight/dist ratio. If duplicated, these then have to be mapped
+    // back onto edge numbers where this combination first occurred. This thus
+    // requires two maps: (1) a map between vert pairs and all possible dw
+    // values for that pair, and (2) a map between strings formed from [vert1,
+    // vert2, dw] and single edge numbers of first occurrence.
+    std::unordered_map <std::string,
+        std::unordered_set <unsigned int> > vertwt_map;
+    std::unordered_map <std::string, unsigned int> vertedge_map;
+
+    // And this is the map that provides the ultimate output of the fn (a
+    // std::unordered_map of <unsigned int, std::unordered_set
+    // <unsigned int> >).
+    int2ints_map_t dupledge_map;
+
+    for (int i = 0; i < from.length (); i ++)
+    {
+        duplicated [i] = false;
+
+        std::string twoverts = (std::string) from [i] + "-" +
+            (std::string) to [i];
+        unsigned int dw = round (precision * dist [i] / weight [i]);
+        std::string eew = twoverts + "-" + std::to_string (dw);
+        std::unordered_set <unsigned int> dw_vals, dupl_edgenums;
+        if (vertwt_map.find (twoverts) == vertwt_map.end ())
+        {
+            dw_vals.insert (dw); // only 1 value here
+            vertwt_map.emplace (twoverts, dw_vals);
+            vertedge_map.emplace (eew, i);
+        } else 
+        {
+            dw_vals = vertwt_map.at (twoverts);
+            if (dw_vals.find (dw) == dw_vals.end ())
+            {
+                dw_vals.insert (dw);
+                vertwt_map.emplace (twoverts, dw_vals);
+                vertedge_map.emplace (eew, i);
+            } else
+            {
+                duplicated [i] = true;
+                unsigned int orig_edge = vertedge_map.at (eew);
+                std::unordered_set <unsigned int> edges;
+                if (dupledge_map.find (orig_edge) != dupledge_map.end ())
+                    edges = dupledge_map.at (orig_edge);
+                edges.emplace (i);
+                dupledge_map.emplace (orig_edge, edges);
+            }
+        }
+    }
+
+    return dupledge_map;
+}
+
 //' graph_from_df
 //'
 //' Convert a standard graph data.frame into an object of class graph. Graphs
@@ -58,7 +128,7 @@ bool graph_has_components (Rcpp::DataFrame graph)
 //'
 //' @noRd
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map)
+        vert2edge_map_t &vert2edge_map, int2ints_map_t &dupledge_map)
 {
     Rcpp::StringVector edge_id = gr ["id"];
     Rcpp::StringVector from = gr ["from"];
@@ -68,42 +138,12 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
 
     std::set <edge_id_t> replacement_edges; // all empty here
 
-    // make map of vertex pairs to avoid duplicated edges. Consider them
-    // duplicated if the ratio of wt to dist is within 1/1000th. This is only
-    // used here to construct the index of duplicated vertices which are then
-    // not added to the resultant graph.
-    std::vector <bool> duplicated;
-    duplicated.reserve (edge_id.size ());
-    std::unordered_map <std::string,
-        std::unordered_set <unsigned int> > vertvert_map;
-    for (int i = 0; i < from.length (); i ++)
-    {
-        duplicated [i] = false;
-
-        std::string twoverts = (std::string) from [i] + "-" + (std::string) to [i];
-        unsigned int dw = round (1000.0 * dist [i] / weight [i]);
-        std::unordered_set <unsigned int> dw_vals;
-        if (vertvert_map.find (twoverts) == vertvert_map.end ())
-        {
-            dw_vals.insert (dw);
-            vertvert_map.emplace (twoverts, dw_vals);
-        } else 
-        {
-            dw_vals = vertvert_map.at (twoverts);
-            if (dw_vals.find (dw) == dw_vals.end ())
-            {
-                dw_vals.insert (dw);
-                vertvert_map.emplace (twoverts, dw_vals);
-            } else
-            {
-                duplicated [i] = true;
-            }
-        }
-    }
-    
+    // edge_map ends up the same size even if the duplicated edges are included;
+    // the duplicated condition simply ensures that it is always the first edge
+    // that is stored, not some random other edge.
     for (int i = 0; i < to.length (); i ++)
     {
-        if (!duplicated [i])
+        if (dupledge_map.find (i) == dupledge_map.end ())
         {
             vertex_id_t from_id = std::string (from [i]);
             vertex_id_t to_id = std::string (to [i]);
@@ -215,7 +255,8 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    int2ints_map_t dupledge_map = get_duplicated_edges (graph);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map, dupledge_map);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);

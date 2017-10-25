@@ -13,6 +13,9 @@ const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 typedef std::string vertex_id_t, edge_id_t;
+typedef std::unordered_map <unsigned int,
+    std::unordered_set <unsigned int> > int2ints_map_t;
+
 struct edge_component
 {
     // used only for edge sampling on graphs without component numbers
@@ -122,8 +125,10 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 
 bool graph_has_components (Rcpp::DataFrame graph);
 
+int2ints_map_t get_duplicated_edges (Rcpp::DataFrame gr);
+
 void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map);
+        vert2edge_map_t &vert2edge_map, int2ints_map_t &dupledge_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
