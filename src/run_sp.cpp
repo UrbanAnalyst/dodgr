@@ -340,7 +340,6 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         {
             verts_to_dist_map [two_verts] = wt [i];
             verts_to_edge_map [two_verts] = i;
-            Rcpp::Rcout << "[" << two_verts << ": " << wt [i] << "]" << std::endl;
         }
     }
 
