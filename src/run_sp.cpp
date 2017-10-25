@@ -312,19 +312,19 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     std::vector <float> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
-    std::map <std::string, unsigned int> vert_map;
-    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
-    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    std::vector <std::string> vert_name = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, unsigned int> vert_map_i;
     for (int i = 0; i < vert_map_in.nrow (); ++i)
     {
-        vert_map.emplace (vert_map_id [i], vert_map_n [i]);
+        vert_map_i.emplace (vert_name [i], vert_indx [i]);
     }
-    unsigned int nverts = vert_map.size ();
+    unsigned int nverts = vert_map_i.size ();
 
-    // Make a std::map with keys made from from and two vertex IDs, and values
-    // giving indices into graph
+    // Make a std::map with keys made from from and two vertex IDs,
+    // and values giving indices into graph
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
-    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int i = 0; i < from.size (); i++)
     {
         std::string two_verts = "f" + from [i] + "t" + to [i];
@@ -332,7 +332,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     }
 
     DGraph *g = new DGraph (nverts);
-    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     Dijkstra *dijkstra = NULL;
 
@@ -356,6 +356,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     float* d = new float [nverts];
     int* prev = new int [nverts];
 
+    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
         std::fill (w, w + nverts, INFINITE_FLOAT);
@@ -372,14 +373,14 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
             {
                 // target values are int indices into vert_map_in, which means
                 // corresponding vertex IDs can be taken directly from
-                // vert_map_id
+                // vert_name
                 unsigned int target = toi [vi];
                 while (target < INFINITE_INT)
                 {
                     if (prev [target] >= 0 && prev [target] < INFINITE_INT)
                     {
-                        std::string v2 = "f" + vert_map_id [prev [target]] +
-                                        "t" + vert_map_id [target];
+                        std::string v2 = "f" + vert_name [prev [target]] +
+                                        "t" + vert_name [target];
                         aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
                     }
 
