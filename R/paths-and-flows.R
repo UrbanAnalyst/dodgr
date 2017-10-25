@@ -218,6 +218,11 @@ dodgr_flows <- function (graph, from, to, flows,
     {
         indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
         indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
+        # edge_map only has the contracted edges; flows from the original
+        # non-contracted edges also need to be inserted
+        edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
+        indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
+        indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
         graph_full$flow <- 0
         graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
         graph <- graph_full

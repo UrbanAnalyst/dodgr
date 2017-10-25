@@ -322,13 +322,26 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     }
     unsigned int nverts = vert_map_i.size ();
 
-    // Make a std::map with keys made from from and two vertex IDs,
-    // and values giving indices into graph
+    /* Flows from the dijkstra output are reallocated based on matching vertex
+     * pairs to edge indices. Note, however, that contracted graphs frequently
+     * have duplicate vertex pairs with different distances. The following
+     * therefore uses two maps, one to hold the ultimate index from vertex
+     * pairs, and the other to hold minimal distances.
+     */
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, float> verts_to_dist_map;
     for (unsigned int i = 0; i < from.size (); i++)
     {
         std::string two_verts = "f" + from [i] + "t" + to [i];
         verts_to_edge_map.emplace (two_verts, i);
+        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
+            verts_to_dist_map.emplace (two_verts, wt [i]);
+        else if (wt [i] < verts_to_dist_map.at (two_verts))
+        {
+            verts_to_dist_map [two_verts] = wt [i];
+            verts_to_edge_map [two_verts] = i;
+            Rcpp::Rcout << "[" << two_verts << ": " << wt [i] << "]" << std::endl;
+        }
     }
 
     DGraph *g = new DGraph (nverts);
