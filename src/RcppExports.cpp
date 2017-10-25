@@ -6,13 +6,13 @@
 using namespace Rcpp;
 
 // rcpp_contract_graph
-Rcpp::List rcpp_contract_graph(Rcpp::DataFrame graph, Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
+Rcpp::List rcpp_contract_graph(const Rcpp::DataFrame& graph, Rcpp::Nullable <Rcpp::StringVector>& vertlist_in);
 RcppExport SEXP _dodgr_rcpp_contract_graph(SEXP graphSEXP, SEXP vertlist_inSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable <Rcpp::StringVector> >::type vertlist_in(vertlist_inSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable <Rcpp::StringVector>& >::type vertlist_in(vertlist_inSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_contract_graph(graph, vertlist_in));
     return rcpp_result_gen;
 END_RCPP
@@ -29,12 +29,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_component_vector
-Rcpp::List rcpp_get_component_vector(Rcpp::DataFrame graph);
+Rcpp::List rcpp_get_component_vector(const Rcpp::DataFrame& graph);
 RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
     return rcpp_result_gen;
 END_RCPP
@@ -98,13 +98,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_sf_as_network
-Rcpp::List rcpp_sf_as_network(const Rcpp::List& sf_lines, Rcpp::DataFrame pr);
+Rcpp::List rcpp_sf_as_network(const Rcpp::List& sf_lines, const Rcpp::DataFrame& pr);
 RcppExport SEXP _dodgr_rcpp_sf_as_network(SEXP sf_linesSEXP, SEXP prSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type sf_lines(sf_linesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type pr(prSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type pr(prSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_sf_as_network(sf_lines, pr));
     return rcpp_result_gen;
 END_RCPP

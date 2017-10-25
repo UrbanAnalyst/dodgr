@@ -1,8 +1,8 @@
 #include "graph.h"
 
 
-void add_to_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid)
+void add_to_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
+        const edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids;
     if (vert2edge_map.find (vid) == vert2edge_map.end ())
@@ -17,8 +17,8 @@ void add_to_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
     }
 }
 
-void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid)
+void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
+        const edge_id_t eid)
 {
     std::unordered_set <edge_id_t> edge_ids = vert2edge_map [vid];
     if (edge_ids.find (eid) != edge_ids.end ())
@@ -33,7 +33,7 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
 //' Does a graph have a vector of connected component IDs? Only used in
 //' \code{sample_one_vertex}
 //' @noRd
-bool graph_has_components (Rcpp::DataFrame graph)
+bool graph_has_components (const Rcpp::DataFrame &graph)
 {
     Rcpp::CharacterVector graph_names = graph.attr ("names");
     bool has_comps = false;
@@ -44,75 +44,6 @@ bool graph_has_components (Rcpp::DataFrame graph)
     return has_comps;
 }
 
-//' get_duplicated_edges
-//'
-//' A map between duplicated edges. First item is edge to be kept; second is an
-//' unsorted_list of duplicates of that edge.
-//' @noRd
-int2ints_map_t get_duplicated_edges (Rcpp::DataFrame gr)
-{
-    const float precision = 1000.0;
-
-    Rcpp::StringVector from = gr ["from"];
-    Rcpp::StringVector to = gr ["to"];
-    Rcpp::NumericVector dist = gr ["d"];
-    Rcpp::NumericVector weight = gr ["w"];
-
-    std::vector <bool> duplicated;
-    duplicated.reserve (from.size ());
-
-    // Duplicated edges have to be identified through combination of vertex
-    // pairs and weight/dist ratio. If duplicated, these then have to be mapped
-    // back onto edge numbers where this combination first occurred. This thus
-    // requires two maps: (1) a map between vert pairs and all possible dw
-    // values for that pair, and (2) a map between strings formed from [vert1,
-    // vert2, dw] and single edge numbers of first occurrence.
-    std::unordered_map <std::string,
-        std::unordered_set <unsigned int> > vertwt_map;
-    std::unordered_map <std::string, unsigned int> vertedge_map;
-
-    // And this is the map that provides the ultimate output of the fn (a
-    // std::unordered_map of <unsigned int, std::unordered_set
-    // <unsigned int> >).
-    int2ints_map_t dupledge_map;
-
-    for (int i = 0; i < from.length (); i ++)
-    {
-        duplicated [i] = false;
-
-        std::string twoverts = (std::string) from [i] + "-" +
-            (std::string) to [i];
-        unsigned int dw = round (precision * dist [i] / weight [i]);
-        std::string eew = twoverts + "-" + std::to_string (dw);
-        std::unordered_set <unsigned int> dw_vals, dupl_edgenums;
-        if (vertwt_map.find (twoverts) == vertwt_map.end ())
-        {
-            dw_vals.insert (dw); // only 1 value here
-            vertwt_map.emplace (twoverts, dw_vals);
-            vertedge_map.emplace (eew, i);
-        } else 
-        {
-            dw_vals = vertwt_map.at (twoverts);
-            if (dw_vals.find (dw) == dw_vals.end ())
-            {
-                dw_vals.insert (dw);
-                vertwt_map.emplace (twoverts, dw_vals);
-                vertedge_map.emplace (eew, i);
-            } else
-            {
-                duplicated [i] = true;
-                unsigned int orig_edge = vertedge_map.at (eew);
-                std::unordered_set <unsigned int> edges;
-                if (dupledge_map.find (orig_edge) != dupledge_map.end ())
-                    edges = dupledge_map.at (orig_edge);
-                edges.emplace (i);
-                dupledge_map.emplace (orig_edge, edges);
-            }
-        }
-    }
-
-    return dupledge_map;
-}
 
 //' graph_from_df
 //'
@@ -120,15 +51,9 @@ int2ints_map_t get_duplicated_edges (Rcpp::DataFrame gr)
 //' are standardised with the function \code{dodgr_convert_graph()$graph}, and contain
 //' only the four columns [from, to, d, w]
 //'
-//' One necessary trick is that there are sometimes duplicated edges, and these
-//' are also collapsed here to single edges. Not doing that results in routing
-//' along potentially multiple, yet otherwise identical, paths. Because many
-//' unordered_maps are used, this can result in unpredictable behaviour and
-//' routing may artibrarily go along one or the other path.
-//'
 //' @noRd
-void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map, int2ints_map_t &dupledge_map)
+void graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
     Rcpp::StringVector edge_id = gr ["id"];
     Rcpp::StringVector from = gr ["from"];
@@ -138,43 +63,37 @@ void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
 
     std::set <edge_id_t> replacement_edges; // all empty here
 
-    // edge_map ends up the same size even if the duplicated edges are included;
-    // the duplicated condition simply ensures that it is always the first edge
-    // that is stored, not some random other edge.
     for (int i = 0; i < to.length (); i ++)
     {
-        if (dupledge_map.find (i) == dupledge_map.end ())
+        vertex_id_t from_id = std::string (from [i]);
+        vertex_id_t to_id = std::string (to [i]);
+
+        if (vm.find (from_id) == vm.end ())
         {
-            vertex_id_t from_id = std::string (from [i]);
-            vertex_id_t to_id = std::string (to [i]);
-
-            if (vm.find (from_id) == vm.end ())
-            {
-                vertex_t fromV = vertex_t ();
-                vm.emplace (from_id, fromV);
-            }
-            vertex_t from_vtx = vm.at (from_id);
-            from_vtx.add_neighbour_out (to_id);
-            vm [from_id] = from_vtx;
-
-            if (vm.find (to_id) == vm.end ())
-            {
-                vertex_t toV = vertex_t ();
-                vm.emplace (to_id, toV);
-            }
-            vertex_t to_vtx = vm.at (to_id);
-            to_vtx.add_neighbour_in (from_id);
-            vm [to_id] = to_vtx;
-
-            edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
-
-            edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                    edge_id_str, replacement_edges);
-
-            edge_map.emplace (edge_id_str, edge);
-            add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
-            add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
+            vertex_t fromV = vertex_t ();
+            vm.emplace (from_id, fromV);
         }
+        vertex_t from_vtx = vm.at (from_id);
+        from_vtx.add_neighbour_out (to_id);
+        vm [from_id] = from_vtx;
+
+        if (vm.find (to_id) == vm.end ())
+        {
+            vertex_t toV = vertex_t ();
+            vm.emplace (to_id, toV);
+        }
+        vertex_t to_vtx = vm.at (to_id);
+        to_vtx.add_neighbour_in (from_id);
+        vm [to_id] = to_vtx;
+
+        edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
+
+        edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
+                edge_id_str, replacement_edges);
+
+        edge_map.emplace (edge_id_str, edge);
+        add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
+        add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 
@@ -249,14 +168,13 @@ unsigned int identify_graph_components (vertex_map_t &v,
 //' numbers
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
+Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    int2ints_map_t dupledge_map = get_duplicated_edges (graph);
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, dupledge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     int largest_component = identify_graph_components (vertices, components);
@@ -270,7 +188,6 @@ Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph)
         std::unordered_set <edge_id_t> edges = ve.second;
         for (edge_id_t e: edges)
             comp_nums.emplace (e, components.find (vi)->second);
-            //comp_nums.emplace (e, components [vi]);
     }
 
     Rcpp::StringVector edge_id (comp_nums.size ());

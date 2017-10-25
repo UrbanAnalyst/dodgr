@@ -29,7 +29,7 @@ float haversine (float x1, float y1, float x2, float y2)
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
-        Rcpp::DataFrame pr)
+        const Rcpp::DataFrame &pr)
 {
     std::map <std::string, float> profile;
     Rcpp::StringVector hw = pr [1];

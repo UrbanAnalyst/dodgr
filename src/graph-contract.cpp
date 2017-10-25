@@ -237,8 +237,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::Nullable <Rcpp::StringVector> vertlist_in)
+Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
+        Rcpp::Nullable <Rcpp::StringVector> &vertlist_in)
 {
     std::unordered_set <vertex_id_t> verts_to_keep;
     if (vertlist_in.isNotNull ())
@@ -258,8 +258,7 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    int2ints_map_t dupledge_map = get_duplicated_edges (graph);
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, dupledge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
@@ -313,21 +312,6 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
         }
     }
 
-    // And the duplicated edges map
-    map_size = 0;
-    for (auto d: dupledge_map)
-        map_size += d.second.size ();
-    std::vector <edge_id_t> edges_original (map_size), edges_dupl (map_size);
-    count = 0;
-    for (auto d: dupledge_map)
-    {
-        for (auto de: d.second)
-        {
-            edges_original [count] = d.first;
-            edges_dupl [count++] = de;
-        }
-    }
-
     Rcpp::DataFrame contracted = Rcpp::DataFrame::create (
             Rcpp::Named ("edge_id") = edgeid_vec,
             Rcpp::Named ("from") = from_vec,
@@ -341,15 +325,9 @@ Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
             Rcpp::Named ("edge_old") = edge_map_old,
             Rcpp::_["stringsAsFactors"] = false);
 
-    Rcpp::DataFrame edges_duplicated = Rcpp::DataFrame::create (
-            Rcpp::Named ("edge_orig") = edges_original,
-            Rcpp::Named ("edge_dupl") = edges_dupl,
-            Rcpp::_["stringsAsFactors"] = false);
-
     return Rcpp::List::create (
             Rcpp::Named ("graph") = contracted,
-            Rcpp::Named ("edge_map") = edges_new2old,
-            Rcpp::Named ("duplicated") = edges_duplicated);
+            Rcpp::Named ("edge_map") = edges_new2old);
 }
 
 //' rcpp_merge_flows

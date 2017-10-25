@@ -36,18 +36,6 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     graph_contracted <- rcpp_contract_graph (graph2, verts)
 
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
-    # have to be matched onto original graph, and the remaining columns padded
-    # out.
-    #indx <- match (graph_contracted$graph$from, graph2$from)
-    #graph_refill <- graph [indx, ]
-    #graph_refill [, gr_cols [1] ] <- graph_contracted$graph$edge_id
-    #graph_refill [, gr_cols [2] ] <- graph_contracted$graph$from
-    #graph_refill [, gr_cols [3] ] <- graph_contracted$graph$to
-    #graph_refill [, gr_cols [4] ] <- graph_contracted$graph$d
-    #graph_refill [, gr_cols [5] ] <- graph_contracted$graph$w
-
-    # ------- new code
-    # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:
     indx_contr <- match (graph_contracted$edge_map$edge_new,
@@ -76,7 +64,9 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         indx <- match (graph_contracted$graph$to [indx_contr], graph2$to)
         graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]
         graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]
-        # Then just make sure way_id values match those in original graph
+        # This code matches way_id values to those in original graph, but that's
+        # kind of arbitrary because with duplicated ways the ID matching can
+        # never be systematically controlled
         #if ("way_id" %in% names (graph))
         #{
         #    indx <- match (graph_contracted$graph$edge_id,

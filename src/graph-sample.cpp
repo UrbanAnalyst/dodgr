@@ -109,8 +109,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    int2ints_map_t dupledge_map = get_duplicated_edges (graph);
-    graph_from_df (graph, vertices, edge_map, vert2edge_map, dupledge_map);
+    graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)

@@ -117,23 +117,21 @@ typedef std::unordered_map <vertex_id_t, std::unordered_set <edge_id_t>> vert2ed
 //----------------------------
 //----- functions in graph.cpp
 //----------------------------
-void add_to_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid);
+void add_to_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
+        const edge_id_t eid);
 
-void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, vertex_id_t vid,
-        edge_id_t eid);
+void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
+        const edge_id_t eid);
 
-bool graph_has_components (Rcpp::DataFrame graph);
+bool graph_has_components (const Rcpp::DataFrame &graph);
 
-int2ints_map_t get_duplicated_edges (Rcpp::DataFrame gr);
-
-void graph_from_df (Rcpp::DataFrame gr, vertex_map_t &vm, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map, int2ints_map_t &dupledge_map);
+void graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
 
-Rcpp::List rcpp_get_component_vector (Rcpp::DataFrame graph);
+Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph);
 
 //----------------------------
 //----- functions in graph-sample.cpp
@@ -179,7 +177,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep);
 
-Rcpp::List rcpp_contract_graph (Rcpp::DataFrame graph,
-        Rcpp::Nullable <Rcpp::StringVector> vertlist_in);
+Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
+        Rcpp::Nullable <Rcpp::StringVector> &vertlist_in);
 
 Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph);
