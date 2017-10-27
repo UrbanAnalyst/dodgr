@@ -368,6 +368,8 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     float* d = new float [nverts];
     int* prev = new int [nverts];
 
+    unsigned int junk = 0; // TODO: Delete that!
+
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
@@ -379,28 +381,39 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
-            std::vector <unsigned int> onePath;
-            float flow_ij = flows (v, vi);
-            if (w [toi [vi]] < INFINITE_FLOAT)
+            if (vi != v) // Exclude self-flows
             {
-                // target values are int indices into vert_map_in, which means
-                // corresponding vertex IDs can be taken directly from
-                // vert_name
-                unsigned int target = toi [vi];
-                while (target < INFINITE_INT)
+                std::vector <unsigned int> onePath;
+                float flow_ij = flows (v, vi);
+                if (flow_ij > 0)
+                    junk++;
+                if (w [toi [vi]] < INFINITE_FLOAT)
                 {
-                    if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                    // target values are int indices into vert_map_in, which means
+                    // corresponding vertex IDs can be taken directly from
+                    // vert_name
+                    unsigned int target = toi [vi];
+                    while (target < INFINITE_INT)
                     {
-                        std::string v2 = "f" + vert_name [prev [target]] +
-                                        "t" + vert_name [target];
-                        aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
-                    }
+                        if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                        {
+                            std::string v2 = "f" + vert_name [prev [target]] +
+                                "t" + vert_name [target];
+                            aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
+                        }
 
-                    target = prev [target];
-                }
-            }
-        }
-    }
+                        target = prev [target];
+                        // Only allocate that flow from origin vertex v to all
+                        // previous vertices up until the target vi
+                        if (target == fromi [v])
+                        {
+                            break;
+                        }
+                    } // end while target
+                } // end if w < INF
+            } // end if vi != v
+        } // end for vi over nto
+    } // end for v over nfrom
 
     delete [] d;
     delete [] w;
