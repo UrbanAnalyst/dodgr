@@ -11,8 +11,6 @@ Minor changes:
 - `weight_streetnet` now accepts arbitrary `sf`-formatted networks via
   specification of custom weighting profiles, along with highway type and ID
   columns in data.frame.
-- `dodgr_contract_graph` accepts additional `group_id` argument to control
-  contraction along defined paths.
 - Distance matrices from `dodgr_dists` inherit the names of routing points
   (`from` and `to` parameters).
 
