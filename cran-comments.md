@@ -1,4 +1,4 @@
-# CRAN notes for osmdata_0.0.3 submission
+# CRAN notes for dodgr_0.0.2 submission
 
 * Fixed previous failure on solaris (a C++ implicit type conversion)
 * Fixed previous failure on Windows oldrel (it was just a test failure).
