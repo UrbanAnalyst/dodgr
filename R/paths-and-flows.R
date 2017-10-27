@@ -169,10 +169,44 @@ dodgr_flows <- function (graph, from, to, flows,
     heap <- hps$heap
     graph <- hps$graph
 
+    # change from and to just to check conformity
+    verts <- NULL
+    if (!missing (from))
+    {
+        if (!is.matrix (from))
+            from <- as.matrix (from)
+        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
+            stop ("flows must have number of rows equal to length of from")
+        if (ncol (from) == 2)
+        {
+            verts <- dodgr_vertices (graph)
+            from <- verts$id [match_pts_to_graph (verts, from)]
+        }
+    }
+    if (!missing (to))
+    {
+        if (!is.matrix (to))
+            to <- as.matrix (to)
+        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
+            stop ("flows must have number of columns equal to length of to")
+        if (ncol (to) == 2)
+        {
+            if (is.null (verts))
+                verts <- dodgr_vertices (graph)
+            to <- verts$id [match_pts_to_graph (verts, to)]
+        }
+    }
+
     if (contract)
     {
+        # keep routing points in contracted graph
+        pts <- NULL
+        if (!missing (from))
+            pts <- c (pts, from)
+        if (!missing (to))
+            pts <- c (pts, to)
         graph_full <- graph
-        graph <- dodgr_contract_graph (graph)
+        graph <- dodgr_contract_graph (graph, unique (pts))
         edge_map <- graph$edge_map
         graph <- graph$graph
     }
@@ -189,21 +223,6 @@ dodgr_flows <- function (graph, from, to, flows,
 
     if (!is.matrix (flows))
         flows <- as.matrix (flows)
-    # change from and to just to check conformity - they're not re-used
-    if (!missing (from))
-    {
-        if (!is.matrix (from))
-            from <- as.matrix (from)
-        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
-            stop ("flows must have number of rows equal to length of from")
-    }
-    if (!missing (to))
-    {
-        if (!is.matrix (to))
-            to <- as.matrix (to)
-        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
-            stop ("flows must have number of columns equal to length of to")
-    }
 
     graph2 <- convert_graph (graph, gr_cols)
 
