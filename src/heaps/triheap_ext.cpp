@@ -38,7 +38,7 @@ TriHeapExt::TriHeapExt(int n)
 
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
-    maxTrees = 1 + (int)(log(n)/log(3.0));
+    maxTrees = 1 + (int)(log((double) n)/log(3.0));
 
     /* The tolerance trigger of the heap.  That is, t+1; the number used for
      * detecting when we are over the tolerance and need to cleanup active

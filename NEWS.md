@@ -1,3 +1,7 @@
+# v0.0.3
+
+Tidy C++ code that flagged errors on CRAN solaris machine. Nothing else.
+
 # v0.0.2
 
 Major changes:

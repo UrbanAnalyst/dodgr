@@ -1,7 +1,10 @@
-# CRAN notes for dodgr_0.0.2 submission
+# CRAN notes for dodgr_0.0.3 submission
 
-* Fixed previous failure on solaris (a C++ implicit type conversion)
-* Fixed previous failure on Windows oldrel (it was just a test failure).
+This submission should rectify all previous errors on CRAN solaris machine.
+These were from internally bundled code and were only flagged on that machine.
+Clang with all warning options on did not raise these errors, making it
+difficult to identify and remove them. I am confident that this submission has
+now achieved that.
 
 ## Test environments
 

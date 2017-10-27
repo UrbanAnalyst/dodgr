@@ -9,7 +9,7 @@ RadixHeap::RadixHeap(int n)
 {
     itemCount = 0;
     dMin = 0;
-    nBuckets = static_cast<int>( ceil(log2(MaxKey + 1)) + 2 );
+    nBuckets = static_cast<int>( ceil(log2((double) MaxKey + 1.0)) + 2 );
 
     /* allocate node lookup array (indexed by item no) */
     nodes = new RadixHeapNode *[n];

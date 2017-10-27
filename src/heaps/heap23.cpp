@@ -33,7 +33,7 @@ Heap23::Heap23(int n)
     /* The maximum number of nodes and the maximum number of trees allowed.
     */
     maxNodes = n; 
-    maxTrees = (int)(0.5 + log(n+1)/log(2.0));
+    maxTrees = (int)(0.5 + log((double) n+1.0)/log(2.0));
 
     /* Allocate space for an array of pointers to trees, and nodes in the heap.
      * Initialise all array entries to zero, that is, NULL pointers.

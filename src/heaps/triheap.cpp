@@ -36,7 +36,7 @@ TriHeap::TriHeap(int n)
 
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
-    maxTrees = 1 + (int)(log(n)/log(3.0));
+    maxTrees = 1 + (int)(log((double) n)/log(3.0));
 
     /* Allocate space for an array of pointers to trees, and nodes in the heap.
      * Initialise all array entries to zero, that is, NULL pointers.
