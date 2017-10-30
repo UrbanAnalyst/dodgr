@@ -12,7 +12,7 @@
 /* --- Constructor ---
  * Creates a DGraph object containing n vertices.
  */
-DGraph::DGraph(int n)
+DGraph::DGraph(unsigned int n)
 {
     nVertices = n;
 
@@ -34,7 +34,7 @@ DGraph::~DGraph()
 void DGraph::clear()
 {
     DGraphEdge *edge, *nextEdge;
-    for(int i = 0; i < nVertices; i++) {
+    for(unsigned int i = 0; i < nVertices; i++) {
         edge = vertices[i].outHead;
 
         while(edge) {
@@ -48,9 +48,9 @@ void DGraph::clear()
 
 void DGraph::initVertices()
 {
-    for(int i = 0; i < nVertices; i++) {
-        vertices[i].outHead = vertices[i].outTail = 0;
-        vertices[i].inHead = vertices[i].inTail = 0;
+    for(unsigned int i = 0; i < nVertices; i++) {
+        vertices[i].outHead = vertices[i].outTail = std::nullptr_t ();
+        vertices[i].inHead = vertices[i].inTail = std::nullptr_t ();
         vertices[i].outSize = vertices[i].inSize = 0;
     }
 }
@@ -59,15 +59,16 @@ void DGraph::initVertices()
  * Adds a new edge from vertex 'source' to vertex 'target' with
  * with a corresponding distance of dist.
  */
-void DGraph::addNewEdge(int source, int target, float dist, float wt)
+void DGraph::addNewEdge(unsigned int source, unsigned int target,
+        float dist, float wt)
 {
     DGraphEdge *newEdge = new DGraphEdge;
     newEdge->source = source;
     newEdge->target = target;
     newEdge->dist = dist;
     newEdge->wt = wt;
-    newEdge->nextOut = NULL;
-    newEdge->nextIn = NULL;
+    newEdge->nextOut = std::nullptr_t ();
+    newEdge->nextIn = std::nullptr_t ();
 
     DGraphVertex *vertex = &vertices[source];
     if(vertex->outTail) {
@@ -90,7 +91,7 @@ void DGraph::addNewEdge(int source, int target, float dist, float wt)
     vertex->inSize++;
 }
 
-bool DGraph::edgeExists(int v, int w) const
+bool DGraph::edgeExists(unsigned int v, unsigned int w) const
 {
     /* Scan all existing edges from v to determine whether an edge to w exists.
     */
@@ -105,20 +106,20 @@ bool DGraph::edgeExists(int v, int w) const
 /* --- reachable() ---
  * Test whether all vertices are reachable from the source vertex s.
  */
-bool DGraph::reachable (int s) const
+bool DGraph::reachable (unsigned int s) const
 {
-    int *stack = new int [nVertices];
-    int tos = 0;
+    unsigned int *stack = new unsigned int [nVertices];
+    unsigned int tos = 0;
 
-    int *visited = new int [nVertices];
-    for(int i = 0; i < nVertices; i++)
+    unsigned int *visited = new unsigned int [nVertices];
+    for(unsigned int i = 0; i < nVertices; i++)
         visited [i] = 0;
 
-    int vertexCount = 0;
+    unsigned int vertexCount = 0;
     visited [s] = 1;
     stack [tos++] = s;
     DGraphEdge *edge;
-    int v, w;
+    unsigned int v, w;
     while (tos) {
         v = stack [--tos];
         vertexCount++;
@@ -149,7 +150,7 @@ void DGraph::print() const
 
     Rcpp::Rcout << "Graph (vertex: edge{dist} list) = " << std::endl;
 
-    for(int i = 0; i < nVertices; i++) {
+    for(unsigned int i = 0; i < nVertices; i++) {
         Rcpp::Rcout << i << ": ";
         edge = vertices[i].outHead;
         while(edge) {

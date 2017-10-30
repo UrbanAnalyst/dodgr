@@ -16,7 +16,7 @@
  * (points to a heap descriptor object) specifies then heap to be used by
  * Dijkstra's algorithm.
  */
-Dijkstra::Dijkstra(int n, HeapDesc *heapD)
+Dijkstra::Dijkstra(unsigned int n, HeapDesc *heapD)
 {
     heap = heapD->newInstance(n);    
     s = new bool[n];
@@ -84,7 +84,7 @@ void Dijkstra::run(float *d, float *w, int *prev, unsigned int v0)
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
                     w [et] = wt;
-                    prev [et] = (int) v;
+                    prev [et] = static_cast <int> (v);
                     if (f [et]) {
                         heap->decreaseKey(et, wt);
                     }

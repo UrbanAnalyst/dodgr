@@ -10,6 +10,7 @@
 #include <cmath> // round
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
+const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 typedef std::string vertex_id_t, edge_id_t;
@@ -31,8 +32,8 @@ struct vertex_t
     public:
         void add_neighbour_in (vertex_id_t vert_id) { in.insert (vert_id); }
         void add_neighbour_out (vertex_id_t vert_id) { out.insert (vert_id); }
-        int get_degree_in () { return in.size (); }
-        int get_degree_out () { return out.size (); }
+        unsigned long int get_degree_in () { return in.size (); }
+        unsigned long int get_degree_out () { return out.size (); }
 
         std::unordered_set <vertex_id_t> get_all_neighbours ()
         {
@@ -87,23 +88,25 @@ struct edge_t
         std::set <edge_id_t> old_edges;
 
     public:
-        float dist;
-        float weight;
-        bool replaced_by_compact = false;
+        double dist;
+        double weight;
+        bool replaced_by_compact;
 
         vertex_id_t get_from_vertex () { return from; }
         vertex_id_t get_to_vertex () { return to; }
         edge_id_t getID () { return id; }
         std::set <edge_id_t> get_old_edges () { return old_edges; }
 
-        edge_t (vertex_id_t from_id, vertex_id_t to_id, float dist, float weight,
-                   edge_id_t id, std::set <edge_id_t> replacement_edges)
+        edge_t (vertex_id_t from_id, vertex_id_t to_id,
+                double dist_in, double weight_in, edge_id_t id_in,
+                std::set <edge_id_t> replacement_edges)
         {
+            replaced_by_compact = false;
             this -> to = to_id;
             this -> from = from_id;
-            this -> dist = dist;
-            this -> weight = weight;
-            this -> id = id;
+            this -> dist = dist_in;
+            this -> weight = weight_in;
+            this -> id = id_in;
             this -> old_edges.insert (replacement_edges.begin (),
                     replacement_edges.end ());
         }
@@ -112,7 +115,8 @@ struct edge_t
 
 typedef std::unordered_map <vertex_id_t, vertex_t> vertex_map_t;
 typedef std::unordered_map <edge_id_t, edge_t> edge_map_t;
-typedef std::unordered_map <vertex_id_t, std::unordered_set <edge_id_t>> vert2edge_map_t;
+typedef std::unordered_map <vertex_id_t,
+        std::unordered_set <edge_id_t> > vert2edge_map_t;
 
 //----------------------------
 //----- functions in graph.cpp

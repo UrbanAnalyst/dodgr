@@ -21,7 +21,7 @@
  */
 class DGraphEdge {
     public:
-        int source, target;
+        unsigned int source, target;
         float dist, wt;
         DGraphEdge *nextOut, *nextIn;
 };
@@ -56,16 +56,17 @@ class DGraphVertex {
  */
 class DGraph {
     public:
-        int nVertices;
+        unsigned int nVertices;
         DGraphVertex *vertices;
 
-        DGraph(int n);
+        DGraph(unsigned int n);
         ~DGraph();
 
         void clear();
-        void addNewEdge(int srcVertexNo, int destVertexNo, float dist, float wt);
-        bool edgeExists(int v, int w) const;
-        bool reachable(int s) const;
+        void addNewEdge(unsigned int srcVertexNo, unsigned int destVertexNo,
+                float dist, float wt);
+        bool edgeExists(unsigned int v, unsigned int w) const;
+        bool reachable(unsigned int s) const;
         void print() const;
     private:
         void initVertices();

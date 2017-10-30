@@ -14,7 +14,7 @@ class DGraph;    // Graph
  */
 class Dijkstra {
     public:
-        Dijkstra(int n, HeapDesc *heapD);
+        Dijkstra(unsigned int n, HeapDesc *heapD);
         ~Dijkstra();
 
         void init(const DGraph *g);

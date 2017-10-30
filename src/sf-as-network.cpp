@@ -43,7 +43,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     int one_way_index = -1;
     int one_way_bicycle_index = -1;
     int highway_index = -1;
-    for (int i = 0; i < nms.size (); i++)
+    for (unsigned int i = 0; i < nms.size (); i++)
     {
         if (nms [i] == "oneway")
             one_way_index = i;
@@ -65,7 +65,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     {
         if (ow.size () == owb.size ())
         {
-            for (unsigned i = 0; i != ow.size (); ++ i)
+            for (unsigned int i = 0; i != ow.size (); ++ i)
                 if (ow [i] == "NA" && owb [i] != "NA")
                     ow [i] = owb [i];
         } else if (owb.size () > ow.size ())
