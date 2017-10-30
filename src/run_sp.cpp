@@ -172,7 +172,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
             id_vec = vert_map_in ["id"];
         toi = Rcpp::as <std::vector <int> > (id_vec);
     }
-    unsigned int nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = fromi.size (), nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -188,7 +188,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     {
         vert_map.emplace (vert_map_id [i], vert_map_n [i]);
     }
-    unsigned int nverts = vert_map.size ();
+    unsigned int nverts = static_cast <unsigned int> (vert_map.size ());
 
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
@@ -233,7 +233,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
-                    onePath.push_back (target + 1);
+                    onePath.push_back (static_cast <unsigned int> (target + 1));
                     target = prev [target];
                     if (target < 0)
                         break;
@@ -288,7 +288,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
             id_vec = vert_map_in ["id"];
         toi = Rcpp::as <std::vector <int> > (id_vec);
     }
-    unsigned int nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = fromi.size (), nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -305,7 +305,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     {
         vert_map_i.emplace (vert_name [i], vert_indx [i]);
     }
-    unsigned int nverts = vert_map_i.size ();
+    unsigned int nverts = static_cast <unsigned int> (vert_map_i.size ());
 
     /* Flows from the dijkstra output are reallocated based on matching vertex
      * pairs to edge indices. Note, however, that contracted graphs frequently
@@ -377,20 +377,21 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
                     // target values are int indices into vert_map_in, which means
                     // corresponding vertex IDs can be taken directly from
                     // vert_name
-                    unsigned int target = toi [vi];
+                    int target = toi [vi];
                     while (target < INFINITE_INT)
                     {
                         if (prev [target] >= 0 && prev [target] < INFINITE_INT)
                         {
-                            std::string v2 = "f" + vert_name [prev [target]] +
-                                "t" + vert_name [target];
+                            std::string v2 = "f" +
+                                vert_name [static_cast <size_t> (prev [target])] +
+                                "t" + vert_name [static_cast <size_t> (target)];
                             aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
                         }
 
                         target = prev [target];
                         // Only allocate that flow from origin vertex v to all
                         // previous vertices up until the target vi
-                        if (target == fromi [v])
+                        if (target < 0 || target == fromi [v])
                         {
                             break;
                         }
