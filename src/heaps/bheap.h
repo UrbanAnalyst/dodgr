@@ -21,7 +21,7 @@
 class BHeapNode {
     public:
         unsigned int item;
-        float key;
+        double key;
 };
 
 /* --- BHeap ---
@@ -43,8 +43,8 @@ class BHeap : public Heap {
             deleteItem(v);
             return v;
         }
-        void insert(unsigned int item, float key);
-        void decreaseKey(unsigned int item, float newKey);
+        void insert(unsigned int item, double key);
+        void decreaseKey(unsigned int item, double newKey);
         unsigned int nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }

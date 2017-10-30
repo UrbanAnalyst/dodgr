@@ -112,7 +112,7 @@ TriHeapExt::~TriHeapExt()
 /* --- insert() ---
  * inserts item $item$ with associated key $k$ into the heap.
  */
-void TriHeapExt::insert(unsigned int item, float k)
+void TriHeapExt::insert(unsigned int item, double k)
 {
     TriHeapExtNode *newNode;
 
@@ -160,7 +160,7 @@ unsigned int TriHeapExt::deleteMin()
     TriHeapExtNode *node, *nodePartner;
     TriHeapExtNode *nextChildZero = std::nullptr_t (),
                    *nextChildHigher = std::nullptr_t ();
-    float k, k2;
+    double k, k2;
     unsigned int d, nextDim, v, item;
     unsigned int wasExtra;
 
@@ -481,7 +481,7 @@ unsigned int TriHeapExt::deleteMin()
  * up to the user to ensure that newValue is in-fact less than or equal to the
  * current value.
  */
-void TriHeapExt::decreaseKey(unsigned int item, float newValue)
+void TriHeapExt::decreaseKey(unsigned int item, double newValue)
 {
     TriHeapExtNode *v, *v2, *w, *w2, *p, *above, *partner, *activeNode;
     TriHeapExtNode *l, *r, *lowChild, *highChild, *node;

@@ -59,7 +59,7 @@ class TriHeapExtNode {
         ActiveItem *activeEntry;
         unsigned int dim;
 
-        float key;
+        double key;
         unsigned int item;
 };
 
@@ -122,9 +122,9 @@ class TriHeapExt : public Heap {
         TriHeapExt(unsigned int n);
         ~TriHeapExt();
 
-        void insert(unsigned int item, float k);
+        void insert(unsigned int item, double k);
         unsigned int deleteMin();
-        void decreaseKey(unsigned int item, float newValue);
+        void decreaseKey(unsigned int item, double newValue);
         unsigned int nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }    

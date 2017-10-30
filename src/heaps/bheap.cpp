@@ -51,7 +51,7 @@ unsigned int BHeap::min()
 /* --- insert() ---
  * Inserts an item $item$ with associated key value $key$ into the heap.
  */
-void BHeap::insert(unsigned int item, float key)
+void BHeap::insert(unsigned int item, double key)
 {
     /* i - insertion point
      * j - parent of i
@@ -125,7 +125,7 @@ void BHeap::deleteItem(unsigned int item)
 /* --- decreaseKey() ---
  * Decreases the value of $item$'s key to the value $newKey$.
  */
-void BHeap::decreaseKey(unsigned int item, float newKey)
+void BHeap::decreaseKey(unsigned int item, double newKey)
 {
     const unsigned int n = itemCount;
 

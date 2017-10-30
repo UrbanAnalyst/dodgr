@@ -13,15 +13,7 @@ void inst_graph (DGraph *g, unsigned int nedges,
         std::vector <std::string> &from,
         std::vector <std::string> &to,
         std::vector <T> &dist,
-        std::vector <T> &wt)
-{
-    for (unsigned int i = 0; i < nedges; ++i)
-    {
-        unsigned int fromi = vert_map [from [i]];
-        unsigned int toi = vert_map [to [i]];
-        g->addNewEdge (fromi, toi, dist [i], wt [i]);
-    }
-}
+        std::vector <T> &wt);
 template void inst_graph <double> (DGraph *g, unsigned int nedges,
         std::map <std::string, unsigned int> &vert_map,
         std::vector <std::string> &from,

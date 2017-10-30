@@ -93,7 +93,7 @@ TriHeap::~TriHeap()
 /* --- insert() ---
  * Inserts a new item, $item$, with assoicated key, $k$, into the heap.
  */
-void TriHeap::insert(unsigned int item, float k)
+void TriHeap::insert(unsigned int item, double k)
 {
     TriHeapNode *newNode;
 
@@ -140,7 +140,7 @@ unsigned int TriHeap::deleteMin()
     TriHeapNode *l, *parent, *childZero, *childHigher;
     TriHeapNode *ptr, *nextPartner, *nextParent, *nextFirstChild;
     TriHeapNode *nextChildZero, *nextChildHigher;
-    float k, k2;
+    double k, k2;
     unsigned int d, nextDim, v, item;
     unsigned int wasExtra;
 
@@ -430,7 +430,7 @@ unsigned int TriHeap::deleteMin()
  * $newValue$.   It is up to the user to ensure that $newValue$ is in-fact less
  * than or equal to the current value.
  */
-void TriHeap::decreaseKey(unsigned int item, float newValue)
+void TriHeap::decreaseKey(unsigned int item, double newValue)
 {
     TriHeapNode *v, *v2, *w, *w2, *p, *above, *partner, *activeNode;
     TriHeapNode *l, *r, *lowChild, *highChild, *ptr;

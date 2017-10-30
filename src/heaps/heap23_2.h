@@ -53,7 +53,7 @@ class Heap23Node {
         unsigned int extra;    
         unsigned int dim;
 
-        float key;
+        double key;
         unsigned int item;
 };
 
@@ -82,9 +82,9 @@ class Heap23 : public Heap {
         Heap23(unsigned int maxNodes);
         ~Heap23();
 
-        void insert(unsigned int item, float k);
+        void insert(unsigned int item, double k);
         unsigned int deleteMin();
-        void decreaseKey(unsigned int item, float newValue);
+        void decreaseKey(unsigned int item, double newValue);
         unsigned int nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }

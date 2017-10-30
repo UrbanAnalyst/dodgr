@@ -66,7 +66,7 @@ FHeap::~FHeap()
 /* --- insert() ---
  * Inserts an item $item$ with associated key $k$ into the heap.
  */
-void FHeap::insert(unsigned int item, float k)
+void FHeap::insert(unsigned int item, double k)
 {
     FHeapNode *newNode;
 
@@ -102,7 +102,7 @@ void FHeap::insert(unsigned int item, float k)
 unsigned int FHeap::deleteMin()
 {
     FHeapNode *minNode, *child, *next;
-    float k, k2;
+    double k, k2;
     unsigned int r, v, item;
 
 #if FHEAP_DUMP
@@ -161,7 +161,7 @@ unsigned int FHeap::deleteMin()
  * Decreases the key used for item $item$ to the value newValue.  It is left
  * for the user to ensure that newValue is in-fact less than the current value
  */
-void FHeap::decreaseKey(unsigned int item, float newValue)
+void FHeap::decreaseKey(unsigned int item, double newValue)
 {
     FHeapNode *cutNode, *parent, *newRoots, *r, *l;
     unsigned int prevRank;

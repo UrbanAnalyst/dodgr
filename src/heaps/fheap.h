@@ -34,7 +34,7 @@ class FHeapNode {
         FHeapNode *child;
         unsigned int rank;
         unsigned int marked;
-        float key;
+        double key;
         unsigned int item;
 };
 
@@ -64,8 +64,8 @@ class FHeap: public Heap {
         ~FHeap();
 
         unsigned int deleteMin();
-        void insert(unsigned int item, float k);
-        void decreaseKey(unsigned int item, float newValue);
+        void insert(unsigned int item, double k);
+        void decreaseKey(unsigned int item, double newValue);
         unsigned int nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }

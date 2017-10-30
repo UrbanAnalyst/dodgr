@@ -49,7 +49,7 @@ RadixHeap::~RadixHeap()
     delete [] u;
 }
 
-void RadixHeap::insert(unsigned int item, float k)
+void RadixHeap::insert(unsigned int item, double k)
 {
     RadixHeapNode *newNode = new RadixHeapNode;
     newNode->item = static_cast <int> (item); // MP explicit conversion for radix
@@ -64,7 +64,7 @@ void RadixHeap::insert(unsigned int item, float k)
 #endif
 }
 
-void RadixHeap::decreaseKey(unsigned int item, float k)
+void RadixHeap::decreaseKey(unsigned int item, double k)
 {
     RadixHeapNode *node;
     node = nodes[item];

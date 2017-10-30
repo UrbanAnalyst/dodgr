@@ -80,7 +80,7 @@ Heap23::~Heap23()
 /* --- insert() ---
  * Inserts item $item$, with associated key $k$, into the heap.
  */
-void Heap23::insert(unsigned int item, float k)
+void Heap23::insert(unsigned int item, double k)
 {
     Heap23Node *newNode;
 
@@ -122,7 +122,7 @@ void Heap23::insert(unsigned int item, float k)
 unsigned int Heap23::deleteMin()
 {
     Heap23Node *minNode, *child, *next;
-    float k, k2;
+    double k, k2;
     unsigned int r, v, item;
 
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
@@ -197,7 +197,7 @@ unsigned int Heap23::deleteMin()
  * is the users reponsibility to ensure that newValue is in-fact less than or
  * equal to the current value.
  */
-void Heap23::decreaseKey(unsigned int item, float newValue)
+void Heap23::decreaseKey(unsigned int item, double newValue)
 {
     Heap23Node *cutNode, *parent;
 

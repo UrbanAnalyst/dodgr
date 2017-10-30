@@ -14,7 +14,7 @@
  * interchangeably by algorithms that were written using the universal
  * interface it provides.
  *
- * This heap stores integer items, and associates with each item a float
+ * This heap stores integer items, and associates with each item a double
  * key.  Any derived heap heap must provide the following methods:
  *
  * deleteMin()    - removes the item with the minimum key from the heap, and
@@ -30,8 +30,8 @@ class Heap {
     public:
         virtual ~Heap(){}
         virtual unsigned int deleteMin() = 0;
-        virtual void insert(unsigned int item, float key) = 0;
-        virtual void decreaseKey(unsigned int item, float newKey) = 0;
+        virtual void insert(unsigned int item, double key) = 0;
+        virtual void decreaseKey(unsigned int item, double newKey) = 0;
         virtual unsigned int nItems() const = 0;
         virtual long int nComps() const = 0;
         virtual void dump() const = 0;
