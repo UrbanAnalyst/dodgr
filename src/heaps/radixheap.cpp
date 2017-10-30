@@ -54,7 +54,7 @@ void RadixHeap::insert(unsigned int item, double k)
     RadixHeapNode *newNode = new RadixHeapNode;
     newNode->item = static_cast <int> (item); // MP explicit conversion for radix
     // MP radix only works for int keys, so k is rounded:
-    newNode->key = static_cast <int> (roundf (k));
+    newNode->key = static_cast <int> (round (k));
     nodes[item] = newNode;
     placeNode(nBuckets,newNode);
     itemCount++;    
@@ -70,7 +70,7 @@ void RadixHeap::decreaseKey(unsigned int item, double k)
     node = nodes[item];
     removeNode(node);
     // MP radix only works for int keys, so k is rounded:
-    node->key = static_cast <int> (roundf (k));
+    node->key = static_cast <int> (round (k));
     placeNode (static_cast <unsigned int> (node->bucket), node);
 #ifdef RADIXHEAP_DEBUG
     Rcpp::Rcout << "performed decrease-key (" << k << ") on item " << node->item << std::endl;
