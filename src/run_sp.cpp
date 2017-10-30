@@ -59,34 +59,35 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     if (fromi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int>> (id_vec);
+        fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int>> (id_vec);
+        toi = Rcpp::as <std::vector <int> > (id_vec);
     }
-    unsigned int nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = fromi.size (), nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
     std::vector <double> wt = graph ["w"];
 
-    unsigned int nedges = graph.nrow ();
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    for (int i = 0; i < vert_map_in.nrow (); ++i)
+    for (unsigned int i = 0;
+            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
     {
         vert_map.emplace (vert_map_id [i], vert_map_n [i]);
     }
-    unsigned int nverts = vert_map.size ();
+    unsigned int nverts = static_cast <unsigned int> (vert_map.size ());
 
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra = NULL;
+    Dijkstra *dijkstra = std::nullptr_t ();
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
@@ -110,13 +111,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
             Rcpp::NumericVector::get_na ());
-    Rcpp::NumericMatrix dout (nfrom, nto, na_vec.begin ());
+    Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
+            static_cast <int> (nto), na_vec.begin ());
     for (unsigned int v = 0; v < nfrom; v++)
     {
         std::fill (w, w + nverts, INFINITE_DOUBLE);
         std::fill (d, d + nverts, INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, fromi [v]);
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
             if (w [toi [vi]] < INFINITE_DOUBLE)
                 dout (v, vi) = d [toi [vi]];
@@ -159,12 +161,12 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     if (fromi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int>> (id_vec);
+        fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int>> (id_vec);
+        toi = Rcpp::as <std::vector <int> > (id_vec);
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
@@ -186,7 +188,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra = NULL;
+    Dijkstra *dijkstra = std::nullptr_t ();
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
@@ -270,12 +272,12 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     if (fromi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int>> (id_vec);
+        fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
         Rcpp::NumericVector id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int>> (id_vec);
+        toi = Rcpp::as <std::vector <int> > (id_vec);
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
 
@@ -319,7 +321,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     DGraph *g = new DGraph (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    Dijkstra *dijkstra = NULL;
+    Dijkstra *dijkstra = std::nullptr_t ();
 
     if (heap_type == "FHeap")
         dijkstra = dijkstra_fheap (nverts);
