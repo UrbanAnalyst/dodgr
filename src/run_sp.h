@@ -5,7 +5,7 @@
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
-const float INFINITE_INT =  std::numeric_limits<int>::max ();
+const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 template <typename T>
 void inst_graph (DGraph *g, unsigned int nedges,

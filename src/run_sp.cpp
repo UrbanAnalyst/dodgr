@@ -175,11 +175,12 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     std::vector <double> dist = graph ["d"];
     std::vector <double> wt = graph ["w"];
 
-    unsigned int nedges = graph.nrow ();
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    for (int i = 0; i < vert_map_in.nrow (); ++i)
+    for (unsigned int i = 0;
+            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
     {
         vert_map.emplace (vert_map_id [i], vert_map_n [i]);
     }
@@ -215,7 +216,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         std::fill (w, w + nverts, INFINITE_DOUBLE);
         std::fill (d, d + nverts, INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, fromi [v]);
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
@@ -223,13 +224,13 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
             std::vector <unsigned int> onePath;
             if (w [toi [vi]] < INFINITE_DOUBLE)
             {
-                unsigned int target = toi [vi];
+                unsigned int target = static_cast <unsigned int> (toi [vi]);
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
                     onePath.push_back (target + 1);
-                    target = prev [target];
+                    target = static_cast <unsigned int> (prev [target]);
                 }
             }
             std::reverse (onePath.begin (), onePath.end ());
@@ -286,12 +287,13 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     std::vector <double> dist = graph ["d"];
     std::vector <double> wt = graph ["w"];
 
-    unsigned int nedges = graph.nrow ();
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::vector <std::string> vert_name = vert_map_in ["vert"];
     std::vector <unsigned int> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
     std::map <std::string, unsigned int> vert_map_i;
-    for (int i = 0; i < vert_map_in.nrow (); ++i)
+    for (unsigned int i = 0;
+            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
     {
         vert_map_i.emplace (vert_name [i], vert_indx [i]);
     }
@@ -351,7 +353,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         std::fill (w, w + nverts, INFINITE_DOUBLE);
         std::fill (d, d + nverts, INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, fromi [v]);
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
