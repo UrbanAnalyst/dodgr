@@ -5,6 +5,9 @@
  *  Shane Saunders
  */
 
+#include <stdexcept> // runtime_error
+
+
 /* --- Heap --- 
  * This is an abstract base class from which specific heap classes can be
  * derived.  Different heaps derived from this abstract base class can be used
@@ -25,25 +28,25 @@
  */
 class Heap {
     public:
-        virtual ~Heap() { };
+        virtual ~Heap() { }
         virtual unsigned int deleteMin() = 0;
         virtual void insert(unsigned int item, float key) = 0;
         virtual void decreaseKey(unsigned int item, float newKey) = 0;
         virtual unsigned int nItems() const = 0;
-        virtual long nComps() const = 0;
+        virtual long int nComps() const = 0;
         virtual void dump() const = 0;
 };
 
 class HeapDesc {
     public:
-        virtual ~HeapDesc() { };
+        virtual ~HeapDesc() { }
         virtual Heap *newInstance(int n) const = 0;
 };
 
 template <class T>
 class HeapD: public HeapDesc {
     public:
-        Heap *newInstance(int n) const { return new T(n); };
+        Heap *newInstance(int n) const { return new T(n); }
 };
 
 

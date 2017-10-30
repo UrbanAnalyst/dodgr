@@ -35,19 +35,23 @@ TriHeap::TriHeap(unsigned int n)
 
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
-    maxTrees = 1 + (unsigned int)(log((double) n)/log(3.0));
+    maxTrees = 1 + static_cast <unsigned int> (log(static_cast <double> (n)) /
+            log (3.0));
 
     /* Allocate space for an array of pointers to trees, and nodes in the heap.
      * Initialise all array entries to zero, that is, NULL pointers.
      */
     trees = new TriHeapNode *[maxTrees];
-    for (unsigned int i = 0; i < maxTrees; i++) trees[i] = 0;
+    for (unsigned int i = 0; i < maxTrees; i++)
+        trees[i] = std::nullptr_t ();
 
     active = new TriHeapNode *[maxTrees];
-    for (unsigned int i = 0; i < maxTrees; i++) active[i] = 0;
+    for (unsigned int i = 0; i < maxTrees; i++)
+        active[i] = std::nullptr_t ();
 
     nodes = new TriHeapNode *[n];
-    for (unsigned int i = 0; i < n; i++) nodes[i] = 0;
+    for (unsigned int i = 0; i < n; i++)
+        nodes[i] = std::nullptr_t ();
 
     /* We begin with no nodes in the heap. */
     itemCount = 0;
@@ -102,10 +106,10 @@ void TriHeap::insert(unsigned int item, float k)
      * NULL by meld().
      */
     newNode = new TriHeapNode;
-    newNode->child = NULL;
+    newNode->child = std::nullptr_t ();
     newNode->extra = FALSE;
-    newNode->left = newNode->right = NULL;
-    newNode->partner = NULL;
+    newNode->left = newNode->right = std::nullptr_t ();
+    newNode->partner = std::nullptr_t ();
 
     newNode->dim = 0;
     newNode->item = item;
@@ -193,7 +197,7 @@ unsigned int TriHeap::deleteMin()
 
     /* An active node may have been destroyed. */
     if(minNode->parent) {
-        active[minNode->dim] = NULL;
+        active[minNode->dim] = std::nullptr_t ();
     }
 
     /* During break-up breakNode points to the node that `appears' to have
@@ -221,7 +225,8 @@ unsigned int TriHeap::deleteMin()
         /* Nodes in this break up may go from active to inactive. */
         do {
             ptr = ptr->right;
-            if(active[ptr->dim] == ptr) active[ptr->dim] = NULL;
+            if(active[ptr->dim] == ptr)
+                active[ptr->dim] = std::nullptr_t ();
         } while(ptr != tail);
 
         if(parent) {
@@ -280,6 +285,8 @@ unsigned int TriHeap::deleteMin()
                 nextFirstChild = parent;
             }
             nextParent = nextFirstChild->parent;
+            nextChildZero = std::nullptr_t ();
+            nextChildHigher = std::nullptr_t ();
             if(nextParent) {
                 nextChildZero = nextParent->child->right;
                 nextChildHigher = nextFirstChild->right;
@@ -299,7 +306,8 @@ unsigned int TriHeap::deleteMin()
                 */
                 do {
                     ptr = ptr->right;
-                    if(active[ptr->dim] == ptr) active[ptr->dim] = NULL;
+                    if(active[ptr->dim] == ptr)
+                        active[ptr->dim] = std::nullptr_t ();
                 } while(ptr != tail);
             }
 
@@ -318,7 +326,7 @@ unsigned int TriHeap::deleteMin()
             }
             else {
                 /* No lower dimension children. */
-                parent->child = NULL;
+                parent->child = std::nullptr_t ();
             }
 
 
@@ -352,7 +360,7 @@ unsigned int TriHeap::deleteMin()
                  * resulting from break-up.
                  */
                 if(active[d] == partner) {
-                    active[d] = NULL;
+                    active[d] = std::nullptr_t ();
                     if(partner->key < parent->key) {
                         /* We make the linked list point to `partner' instead of
                          * `parent', and make parent an extra node.
@@ -365,7 +373,8 @@ unsigned int TriHeap::deleteMin()
                 }
             }
             else {
-                if(active[d] == breakNode) active[d] = NULL;
+                if(active[d] == breakNode)
+                    active[d] = std::nullptr_t ();
             }
             tail->right = parent;
             tail = parent;
@@ -378,17 +387,17 @@ unsigned int TriHeap::deleteMin()
      * will become empty unless breakNode has a partner node.
      */
     if(partner) {
-        partner->partner = NULL;
+        partner->partner = std::nullptr_t ();
 
         if(partner->extra) {
             partner->extra = FALSE;
-            partner->parent = NULL;
+            partner->parent = std::nullptr_t ();
             partner->left = partner->right = partner;
             trees[d] = partner;
         }
     }
     else {
-        trees[d] = NULL;
+        trees[d] = std::nullptr_t ();
         treeSum -= (1 << d);
     }
     itemCount--;
@@ -397,7 +406,7 @@ unsigned int TriHeap::deleteMin()
      * trunk level of the heap.
      */
     if(head) {
-        tail->right = NULL;
+        tail->right = std::nullptr_t ();
         meld(head);
     }
 
@@ -405,7 +414,7 @@ unsigned int TriHeap::deleteMin()
     item = minNode->item;
 
     /* Delete the old minimum node. */
-    nodes[item] = NULL;
+    nodes[item] = std::nullptr_t ();
     delete minNode;
 
 #if SHOW_trih
@@ -557,7 +566,7 @@ void TriHeap::decreaseKey(unsigned int item, float newValue)
              */
             v->extra = FALSE;
             v2->extra = TRUE;
-            v->parent = NULL;
+            v->parent = std::nullptr_t ();
             v->left = v->right = v;
             trees[d] = v;
             return;
@@ -717,7 +726,7 @@ promote:
         }
         else {
             /* v was an only child. */
-            p->child = NULL;
+            p->child = std::nullptr_t ();
         }
 
         if(highChild != v) {
@@ -763,7 +772,7 @@ promote:
                 if(partner) partner->partner = v;
                 trees[p->dim] = v;
                 v->left = v->right = v;
-                v->parent = NULL;
+                v->parent = std::nullptr_t ();
             }
 
             /* p will become an extra node, see below. */
@@ -783,7 +792,7 @@ promote:
         p->partner = v2;
 
         /* The result of promotion is to release the active node. */
-        active[d] = NULL;
+        active[d] = std::nullptr_t ();
 
         d = v->dim;  /* next dimension, moving up */
 
@@ -829,7 +838,7 @@ void TriHeap::meld(TriHeapNode *treeList)
     /* addTree points to the tree to be merged. */
     addTree = treeList;
 
-    carryTree = NULL;
+    carryTree = std::nullptr_t ();
 
     do {
         /* addTree() gets merged into the heap, and also carryTree if one
@@ -844,15 +853,15 @@ void TriHeap::meld(TriHeapNode *treeList)
          * Note that if addTree is NULL and the loop has not exited, then
          * there is only a carryTree to be merged, so treat it like addTree.
          */
-        next = NULL;
+        next = std::nullptr_t ();
         if(addTree) {
             next = addTree->right;
             addTree->right = addTree->left = addTree;
-            addTree->parent = NULL;
+            addTree->parent = std::nullptr_t ();
         }
         else {
             addTree = carryTree;
-            carryTree = NULL;
+            carryTree = std::nullptr_t ();
         }
 
 #if SHOW_trih
@@ -955,14 +964,16 @@ unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
         if(nextOther) {
             addChild(tree, other);
             tree->dim++;
-            *a = NULL;  *b = tree;
+            *a = std::nullptr_t ();
+            *b = tree;
         }
         else {
             tree->partner = other;
             other->partner = tree;
             other->extra = TRUE;
 
-            *a = tree;  *b = NULL;
+            *a = tree;
+            *b = std::nullptr_t ();
         }
     }
     else if(!nextOther) {
@@ -971,7 +982,7 @@ unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
          * values of keys.  The resulting 3-node trunk becomes a carry tree.
          */
 
-        tree->partner = NULL;
+        tree->partner = std::nullptr_t ();
         other->partner = nextTree;
         nextTree->partner = other;
 
@@ -987,7 +998,8 @@ unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
         tree->dim++;
 
         c++;
-        *a = NULL;  *b = tree;
+        *a = std::nullptr_t ();
+        *b = tree;
     }
     else {
         /* Otherwise, both nextTree and nextOther exist.  The result consists
@@ -996,11 +1008,11 @@ unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
          * and (nextTree).  This uses no key comparisons.
          */
 
-        tree->partner=NULL;
-        nextTree->partner = NULL;
+        tree->partner = std::nullptr_t ();
+        nextTree->partner = std::nullptr_t ();
         nextTree->extra = FALSE;
         nextTree->left = nextTree->right = nextTree;
-        nextTree->parent = NULL;
+        nextTree->parent = std::nullptr_t ();
 
         addChild(tree, other);
 
@@ -1078,7 +1090,7 @@ void TriHeap::replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode)
 /* --- dumpNodes() ---
  * Recursively print the nodes of a trinomial heap.
  */
-TriHeapNode **Active;
+//TriHeapNode **Active;
 void TriHeap::dumpNodes(TriHeapNode *node, unsigned int level)
 {
 #if SHOW_trih

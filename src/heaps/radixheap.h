@@ -25,7 +25,7 @@ class RadixHeap: public Heap {
         void decreaseKey(unsigned int item, float newValue);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }
+        long int nComps() const { return compCount; }
         void dump() const;
 
     private:
@@ -42,7 +42,7 @@ class RadixHeap: public Heap {
         unsigned int dMin;
 
         unsigned int itemCount;
-        unsigned int compCount;
+        long int compCount;
 };
 
 #endif

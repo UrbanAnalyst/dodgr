@@ -127,7 +127,7 @@ class TriHeapExt : public Heap {
         void decreaseKey(unsigned int item, float newValue);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }    
+        long int nComps() const { return compCount; }    
 
         void dump() const;
 
@@ -141,7 +141,7 @@ class TriHeapExt : public Heap {
         CandidateItem *candQueueHead;
 
         unsigned int maxNodes, maxTrees, activeLimit, itemCount, activeCount, treeSum;
-        long compCount;
+        long int compCount;
 
         void meld(TriHeapExtNode *treeList);
         void activate(TriHeapExtNode *n);

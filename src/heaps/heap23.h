@@ -77,7 +77,7 @@ class Heap23 : public Heap {
         void decreaseKey(unsigned int item, float newValue);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }
+        long int nComps() const { return compCount; }
 
         void dump() const;
 

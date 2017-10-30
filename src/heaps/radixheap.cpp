@@ -3,20 +3,24 @@
 #include <cmath>
 #include "radixheap.h"
 
+#include <cstddef> // std::nullptr_t
+
 
 RadixHeap::RadixHeap(unsigned int n)
 {
     itemCount = 0;
     dMin = 0;
-    nBuckets = static_cast<unsigned int>( ceil(log2((double) MaxKey + 1.0)) + 2 );
+    nBuckets = static_cast<unsigned int>(
+            ceil(log2(static_cast <double> (MaxKey) + 1.0)) + 2 );
 
     /* allocate node lookup array (indexed by item no) */
     nodes = new RadixHeapNode *[n];
-    for(unsigned int i = 0; i < n; i++) nodes[i] = 0;
+
+    for(unsigned int i = 0; i < n; i++) nodes[i] = std::nullptr_t ();
 
     /* allocate and initialise buckets */
     RadixHeapNode blankNode;
-    blankNode.next = blankNode.prev = 0;
+    blankNode.next = blankNode.prev = std::nullptr_t ();
     blankNode.item = -1;
     blankNode.bucket = -1;
     blankNode.key = -1;
@@ -32,10 +36,10 @@ RadixHeap::RadixHeap(unsigned int n)
     u[0] = -1;
     unsigned int l = 1;
     for(unsigned int i = 1; i <= nBuckets; i++) {
-        u[i] = (int) l - 1;
+        u[i] = static_cast <int> (l) - 1;
         l *= 2;
     }
-    u[nBuckets] = (int) (n*MaxKey + 1);
+    u[nBuckets] = static_cast <int> (n*MaxKey + 1);
 }
 
 RadixHeap::~RadixHeap()
@@ -48,9 +52,9 @@ RadixHeap::~RadixHeap()
 void RadixHeap::insert(unsigned int item, float k)
 {
     RadixHeapNode *newNode = new RadixHeapNode;
-    newNode->item = (int) item; // MP explicit conversion for radix
+    newNode->item = static_cast <int> (item); // MP explicit conversion for radix
     // MP radix only works for int keys, so k is rounded:
-    newNode->key = (int) roundf (k);
+    newNode->key = static_cast <int> (roundf (k));
     nodes[item] = newNode;
     placeNode(nBuckets,newNode);
     itemCount++;    
@@ -66,8 +70,8 @@ void RadixHeap::decreaseKey(unsigned int item, float k)
     node = nodes[item];
     removeNode(node);
     // MP radix only works for int keys, so k is rounded:
-    node->key = (int) roundf (k);
-    placeNode((unsigned int) node->bucket, node);
+    node->key = static_cast <int> (roundf (k));
+    placeNode (static_cast <unsigned int> (node->bucket), node);
 #ifdef RADIXHEAP_DEBUG
     Rcpp::Rcout << "performed decrease-key (" << k << ") on item " << node->item << std::endl;
     dump();
@@ -80,8 +84,8 @@ unsigned int RadixHeap::deleteMin()
     if(bucketHeaders[1].next != &bucketHeaders[1]) {
         RadixHeapNode *minNode = bucketHeaders[1].next;
         removeNode(minNode);
-        unsigned int minItem = (unsigned int) minNode->item;
-        nodes[minItem] = 0;
+        unsigned int minItem = static_cast <unsigned int> (minNode->item);
+        nodes[minItem] = std::nullptr_t ();
         delete minNode;
         itemCount--;        
         return minItem;
@@ -94,22 +98,22 @@ unsigned int RadixHeap::deleteMin()
     /* find and remove the minimum node from bucket i */
     RadixHeapNode *header = &bucketHeaders[i];
     RadixHeapNode *minNode = bucketHeaders[i].next;
-    unsigned int minKey = (unsigned int) minNode->key;
+    unsigned int minKey = static_cast <unsigned int> (minNode->key);
     RadixHeapNode *node = minNode->next;
     while(node != header) {
-        if(node->key < minKey) {
+        if(static_cast <unsigned int> (node->key) < minKey) {
             minNode = node;
-            minKey = (unsigned int) node->key;
+            minKey = static_cast <unsigned int> (node->key);
         }
         node = node->next;
     }
     removeNode(minNode);
 
     /* recalulate upper bounds on empty buckets */
-    u[0] = (int) minKey - 1;
-    u[1] = (int) minKey;
+    u[0] = static_cast <int> (minKey - 1);
+    u[1] = static_cast <int> (minKey);
     unsigned int l = 1;
-    int s = (int) minKey;
+    int s = static_cast <int> (minKey);
     int uMax = u[i];
     for(unsigned int j = 2; j < i; j++) {
         s += l;
@@ -138,8 +142,8 @@ unsigned int RadixHeap::deleteMin()
         << minNode->key << ")" << std::endl;
     dump();
 #endif    
-    unsigned int minItem = (unsigned int) minNode->item;
-    nodes[minItem] = 0;
+    unsigned int minItem = static_cast <unsigned int> (minNode->item);
+    nodes[minItem] = std::nullptr_t ();
     delete minNode;
     itemCount--;
     return minItem;
@@ -164,7 +168,7 @@ void RadixHeap::placeNode(unsigned int startBucket, RadixHeapNode *node)
 void RadixHeap::insertNode(unsigned int i, RadixHeapNode *node)
 {
     /* link the node into bucket i */
-    node->bucket = (int) i;
+    node->bucket = static_cast <int> (i);
     RadixHeapNode *tailNode = &bucketHeaders[i];
     RadixHeapNode *prevNode = tailNode->prev;    
     node->next = tailNode;
@@ -181,7 +185,7 @@ void RadixHeap::removeNode(RadixHeapNode *node)
 }
 
 void RadixHeap::dump() const {    
-    int i = (int) nBuckets;
+    int i = static_cast <int> (nBuckets);
     while (i > 0 && bucketHeaders[i].next == &bucketHeaders[i])
         i--; 
 

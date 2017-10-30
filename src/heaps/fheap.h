@@ -68,14 +68,14 @@ class FHeap: public Heap {
         void decreaseKey(unsigned int item, float newValue);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }
+        long int nComps() const { return compCount; }
         void dump() const;
 
     private:
         FHeapNode **trees;
         FHeapNode **nodes;
         unsigned int maxNodes, maxTrees, itemCount, treeSum;
-        long compCount;
+        long int compCount;
 
         void meld(FHeapNode *treeList);
         static void dumpNodes(FHeapNode *node, unsigned int level);

@@ -47,7 +47,7 @@ class BHeap : public Heap {
         void decreaseKey(unsigned int item, float newKey);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }
+        long int nComps() const { return compCount; }
         void dump() const;
 
         /* extra functions */
@@ -57,7 +57,7 @@ class BHeap : public Heap {
         BHeapNode *a;
         unsigned int *aPos;
         unsigned int itemCount;    
-        long compCount;    
+        long int compCount;    
 
         void siftUp(unsigned int p, unsigned int q);
 };

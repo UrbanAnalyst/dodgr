@@ -87,7 +87,7 @@ class Heap23 : public Heap {
         void decreaseKey(unsigned int item, float newValue);
         unsigned int nItems() const { return itemCount; }
 
-        long nComps() const { return compCount; }
+        long int nComps() const { return compCount; }
 
         void dump() const;
 
@@ -95,7 +95,7 @@ class Heap23 : public Heap {
         Heap23Node **trees;
         Heap23Node **nodes;
         unsigned int maxNodes, maxTrees, itemCount, treeSum;
-        long compCount;
+        long int compCount;
 
         void meld(Heap23Node *treeList);
         void removeNode(Heap23Node *cutNode);
