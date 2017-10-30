@@ -13,7 +13,7 @@
 /* --- Constructor ---
  * Allocates and initialises a binary heap capable of holding n items.
  */
-BHeap::BHeap(int n)
+BHeap::BHeap(unsigned int n)
 {
     //    int i;
 
@@ -21,7 +21,7 @@ BHeap::BHeap(int n)
      * a[] since the indexing method does not use a[0].
      */
     a = new BHeapNode[n+1];
-    aPos = new int[n];
+    aPos = new unsigned int[n];
     //    for(i = 0; i <= n; i++) {
     //        a[i].item = 0;
     //	a[i].key = 0;
@@ -42,7 +42,7 @@ BHeap::~BHeap()
 /* --- min() ---
  * Returns the item with the minimum key in the heap.
  */
-int BHeap::min()
+unsigned int BHeap::min()
 {
     /* the item at the top of the binary heap has the minimum key value */
     return a[1].item;
@@ -51,13 +51,13 @@ int BHeap::min()
 /* --- insert() ---
  * Inserts an item $item$ with associated key value $key$ into the heap.
  */
-void BHeap::insert(int item, float key)
+void BHeap::insert(unsigned int item, float key)
 {
     /* i - insertion point
      * j - parent of i
      * y - parent's entry in the heap
      */
-    int i, j;
+    unsigned int i, j;
     BHeapNode y;
 
     /* $i$ initially indexes the new entry at the bottom of the heap */
@@ -89,13 +89,13 @@ void BHeap::insert(int item, float key)
 /* --- delete() ---
  * Deletes item $item$ from the heap.
  */
-void BHeap::deleteItem(int item)
+void BHeap::deleteItem(unsigned int item)
 {
     /* Decrease the number of entries in the heap and record the position of
      * the item to be deleted.
      */
-    const int n = --itemCount;
-    const int p = aPos[item];
+    const unsigned int n = --itemCount;
+    const unsigned int p = aPos[item];
 
     /* Heap needs adjusting if the position of the deleted item was not at the
      * end of the heap.
@@ -125,9 +125,9 @@ void BHeap::deleteItem(int item)
 /* --- decreaseKey() ---
  * Decreases the value of $item$'s key to the value $newKey$.
  */
-void BHeap::decreaseKey(int item, float newKey)
+void BHeap::decreaseKey(unsigned int item, float newKey)
 {
-    const int n = itemCount;
+    const unsigned int n = itemCount;
 
     itemCount = aPos[item] - 1;
     insert(item, newKey);
@@ -142,14 +142,14 @@ void BHeap::decreaseKey(int item, float newKey)
  * the root down, sifting up the minimum child until it is located in the
  * correct part of the binary heap.
  */
-void BHeap::siftUp(int p, int q)
+void BHeap::siftUp(unsigned int p, unsigned int q)
 {
     /* y - the heap entry of the root.
      * j - the current insertion point for the root.
      * k - the child of the insertion point.
      * z - heap entry of the child of the insertion point.
      */
-    int j, k;
+    unsigned int j, k;
     BHeapNode y, z;
 
     /* Get the value of the root and initialise the insertion point and child.

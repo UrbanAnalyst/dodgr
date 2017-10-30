@@ -45,11 +45,11 @@ class TriHeapNode {
         TriHeapNode *child;
         TriHeapNode *partner;
 
-        int extra;    
-        int dim;
+        unsigned int extra;    
+        unsigned int dim;
 
         float key;
-        int item;
+        unsigned int item;
 };
 
 /* --- TriHeap ---
@@ -75,13 +75,13 @@ class TriHeapNode {
  */
 class TriHeap : public Heap {
     public:
-        TriHeap(int maxNodes);
+        TriHeap(unsigned int maxNodes);
         ~TriHeap();
 
         unsigned int deleteMin();
-        void insert(int item, float k);
-        void decreaseKey(int item, float newValue);
-        int nItems() const { return itemCount; }
+        void insert(unsigned int item, float k);
+        void decreaseKey(unsigned int item, float newValue);
+        unsigned int nItems() const { return itemCount; }
 
         long nComps() const { return compCount; }
 
@@ -91,16 +91,16 @@ class TriHeap : public Heap {
         TriHeapNode **trees;
         TriHeapNode **active;
         TriHeapNode **nodes;
-        int maxNodes, maxTrees, itemCount, treeSum;
+        unsigned int maxNodes, maxTrees, itemCount, treeSum;
         long compCount;
 
         void meld(TriHeapNode *treeList);
 
-        static int merge(TriHeapNode **a, TriHeapNode **b);
+        static unsigned int merge(TriHeapNode **a, TriHeapNode **b);
         static void addChild(TriHeapNode *p, TriHeapNode *c);
         static void replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode);
 
-        static void dumpNodes(TriHeapNode *node, int level);
+        static void dumpNodes(TriHeapNode *node, unsigned int level);
 };
 
 /*---------------------------------------------------------------------------*/

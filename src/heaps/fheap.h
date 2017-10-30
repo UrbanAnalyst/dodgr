@@ -32,10 +32,10 @@ class FHeapNode {
         FHeapNode *parent;
         FHeapNode *left, *right;
         FHeapNode *child;
-        int rank;
-        int marked;
+        unsigned int rank;
+        unsigned int marked;
         float key;
-        int item;
+        unsigned int item;
 };
 
 /* --- FHeap ---
@@ -60,13 +60,13 @@ class FHeapNode {
  */
 class FHeap: public Heap {
     public:
-        FHeap(int n);
+        FHeap(unsigned int n);
         ~FHeap();
 
         unsigned int deleteMin();
-        void insert(int item, float k);
-        void decreaseKey(int item, float newValue);
-        int nItems() const { return itemCount; }
+        void insert(unsigned int item, float k);
+        void decreaseKey(unsigned int item, float newValue);
+        unsigned int nItems() const { return itemCount; }
 
         long nComps() const { return compCount; }
         void dump() const;
@@ -74,11 +74,11 @@ class FHeap: public Heap {
     private:
         FHeapNode **trees;
         FHeapNode **nodes;
-        int maxNodes, maxTrees, itemCount, treeSum;
+        unsigned int maxNodes, maxTrees, itemCount, treeSum;
         long compCount;
 
         void meld(FHeapNode *treeList);
-        static void dumpNodes(FHeapNode *node, int level);
+        static void dumpNodes(FHeapNode *node, unsigned int level);
 };
 
 /*---------------------------------------------------------------------------*/

@@ -27,9 +27,9 @@ class Heap {
     public:
         virtual ~Heap() { };
         virtual unsigned int deleteMin() = 0;
-        virtual void insert(int item, float key) = 0;
-        virtual void decreaseKey(int item, float newKey) = 0;
-        virtual int nItems() const = 0;
+        virtual void insert(unsigned int item, float key) = 0;
+        virtual void decreaseKey(unsigned int item, float newKey) = 0;
+        virtual unsigned int nItems() const = 0;
         virtual long nComps() const = 0;
         virtual void dump() const = 0;
 };

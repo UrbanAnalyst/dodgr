@@ -26,9 +26,8 @@
 /* --- Constructor ---
  * Allocates a trinomial heap capable of holding $n$ items.
  */
-TriHeap::TriHeap(int n)
+TriHeap::TriHeap(unsigned int n)
 {
-    int i;
 #if SHOW_trih
     Rcpp::Rcout << "init, ";
     Rcpp::Rcout.flush ();
@@ -36,19 +35,19 @@ TriHeap::TriHeap(int n)
 
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
-    maxTrees = 1 + (int)(log((double) n)/log(3.0));
+    maxTrees = 1 + (unsigned int)(log((double) n)/log(3.0));
 
     /* Allocate space for an array of pointers to trees, and nodes in the heap.
      * Initialise all array entries to zero, that is, NULL pointers.
      */
     trees = new TriHeapNode *[maxTrees];
-    for(i = 0; i < maxTrees; i++) trees[i] = 0;
+    for (unsigned int i = 0; i < maxTrees; i++) trees[i] = 0;
 
     active = new TriHeapNode *[maxTrees];
-    for(i = 0; i < maxTrees; i++) active[i] = 0;
+    for (unsigned int i = 0; i < maxTrees; i++) active[i] = 0;
 
     nodes = new TriHeapNode *[n];
-    for(i = 0; i < n; i++) nodes[i] = 0;
+    for (unsigned int i = 0; i < n; i++) nodes[i] = 0;
 
     /* We begin with no nodes in the heap. */
     itemCount = 0;
@@ -68,14 +67,12 @@ TriHeap::TriHeap(int n)
 */
 TriHeap::~TriHeap()
 {
-    int i;
-
 #if SHOW_trih
     Rcpp::Rcout << "free, ";
     Rcpp::Rcout.flush ();
 #endif
 
-    for(i = 0; i < maxNodes; i++) {
+    for (unsigned int i = 0; i < maxNodes; i++) {
         delete nodes[i];
     }
 
@@ -92,7 +89,7 @@ TriHeap::~TriHeap()
 /* --- insert() ---
  * Inserts a new item, $item$, with assoicated key, $k$, into the heap.
  */
-void TriHeap::insert(int item, float k)
+void TriHeap::insert(unsigned int item, float k)
 {
     TriHeapNode *newNode;
 
@@ -141,7 +138,7 @@ unsigned int TriHeap::deleteMin()
     TriHeapNode *nextChildZero, *nextChildHigher;
     float k, k2;
     unsigned int d, nextDim, v, item;
-    int wasExtra;
+    unsigned int wasExtra;
 
 #if SHOW_trih
     Rcpp::Rcout << "deleteMin, ";
@@ -150,11 +147,12 @@ unsigned int TriHeap::deleteMin()
 
     /* First we determine the maximum dimension tree in the heap. */
     v = treeSum;
-    d = -1;
+    d = 0;
     while(v) {
         v = v >> 1;
         d++;
     };
+    d--;
 
     /* Now locate the root node with the smallest key, scanning from the
      * maximum dimension root position, down to dimension 0 root position.
@@ -423,11 +421,11 @@ unsigned int TriHeap::deleteMin()
  * $newValue$.   It is up to the user to ensure that $newValue$ is in-fact less
  * than or equal to the current value.
  */
-void TriHeap::decreaseKey(int item, float newValue)
+void TriHeap::decreaseKey(unsigned int item, float newValue)
 {
     TriHeapNode *v, *v2, *w, *w2, *p, *above, *partner, *activeNode;
     TriHeapNode *l, *r, *lowChild, *highChild, *ptr;
-    int d;
+    unsigned int d;
 
 #if SHOW_trih
     Rcpp::Rcout << "decreaseKey on vn = " << item << "(" << newValue << "), ";
@@ -821,7 +819,7 @@ void TriHeap::meld(TriHeapNode *treeList)
 {
     TriHeapNode *next, *addTree;
     TriHeapNode *carryTree;
-    int d;
+    unsigned int d;
 
 #if SHOW_trih
     Rcpp::Rcout << "meld - ";
@@ -917,10 +915,10 @@ void TriHeap::meld(TriHeapNode *treeList)
  *
  * Returns the number of key comparisons used.
  */
-int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
+unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
 {
     TriHeapNode *tree, *nextTree, *other, *nextOther;
-    int c;
+    unsigned int c;
 
     /* Number of comparisons. */
     c = 0;
@@ -1081,14 +1079,14 @@ void TriHeap::replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode)
  * Recursively print the nodes of a trinomial heap.
  */
 TriHeapNode **Active;
-void TriHeap::dumpNodes(TriHeapNode *node, int level)
+void TriHeap::dumpNodes(TriHeapNode *node, unsigned int level)
 {
 #if SHOW_trih
     TriHeapNode *childNode, *partnerNode;
-    int i, childCount;
+    unsigned int childCount;
 
     /* Print leading whitespace for this level. */
-    for(i = 0; i < level; i++)
+    for (unsigned int i = 0; i < level; i++)
         Rcpp::Rcout << "   ";
 
     Rcpp::Rcout << node->item << "(" << node->key << ")" << std::endl;
@@ -1101,18 +1099,18 @@ void TriHeap::dumpNodes(TriHeapNode *node, int level)
         do {
             dumpNodes(childNode, level+1);
             if(childNode->dim != childCount) {
-                for(i = 0; i < level+1; i++)
+                for (unsigned int i = 0; i < level+1; i++)
                     Rcpp::Rcout << "   ";
                 throw std::runtime_error ("error(dim)");
             }
             if(childNode->parent != node) {
-                for(i = 0; i < level+1; i++)
+                for (unsigned int i = 0; i < level+1; i++)
                     Rcpp::Rcout << "   ";
                 throw std::runtime_error ("error(parent)");
             }
             if(Active[childNode->dim] != childNode &&
                     childNode->key < node->key) {
-                for(i = 0; i < level; i++)
+                for (unsigned int i = 0; i < level; i++)
                     Rcpp::Rcout << "   ";
                 throw std::runtime_error ("error(key)");
             }
@@ -1121,14 +1119,14 @@ void TriHeap::dumpNodes(TriHeapNode *node, int level)
         } while(childNode != node->child->right);
 
         if(childCount != node->dim) {
-            for(i = 0; i < level; i++)
+            for (unsigned int i = 0; i < level; i++)
                 Rcpp::Rcout << "   ";
             throw std::runtime_error ("error(childCount)");
         }
     }
     else { 
         if(node->dim != 0) {
-            for(i = 0; i < level; i++)
+            for (unsigned int i = 0; i < level; i++)
                 Rcpp::Rcout << "   ";
             throw std::runtime_error ("error(dim)");
         }
@@ -1136,14 +1134,14 @@ void TriHeap::dumpNodes(TriHeapNode *node, int level)
 
     if((partner=node->partner)) {
         if(node->extra==partner->extra) {
-            for(i = 0; i < level; i++)
+            for (unsigned int i = 0; i < level; i++)
                 Rcpp::Rcout << "   ";
             Rcpp::Rcout << partner->item;
             throw std::runtime_error (" - error(extra?)");
         }
         if(partner->extra) {
             if(partner->dim != node->dim) {
-                for(i = 0; i < level; i++)
+                for (unsigned int i = 0; i < level; i++)
                     Rcpp::Rcout << "   ";
                 Rcpp::Rcout << partner->item;
                 throw std::runtime_error (" - error(dim)");
@@ -1151,14 +1149,14 @@ void TriHeap::dumpNodes(TriHeapNode *node, int level)
 
             dumpNodes(partner, level);
             if(partner->key < node->key) {
-                for(i = 0; i < level; i++)
+                for (unsigned int i = 0; i < level; i++)
                     Rcpp::Rcout << "   ";
                 throw std::runtime_error ("error(key)");
             }
         }
     }
     else if(node->parent) {
-        for(i = 0; i < level; i++)
+        for (unsigned int i = 0; i < level; i++)
             Rcpp::Rcout << "   ";
         throw std::runtime_error ("error(no partner)");
     }
@@ -1171,19 +1169,18 @@ void TriHeap::dumpNodes(TriHeapNode *node, int level)
 void TriHeap::dump() const
 {
 #if SHOW_trih
-    int i;
     TriHeapNode *node;
 
     Active = active;
 
     Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl;
     Rcpp::Rcout << "array entries 0..maxTrees =";
-    for(i=0; i<maxTrees; i++) {
+    for (unsigned int i=0; i<maxTrees; i++) {
         bool tempval = trees [i] ? 1 : 0
             Rcpp::Rcout << " " << tempval;
     }
     Rcpp::Rcout << std::endl << "active nodes =";
-    for(i=0; i<maxTrees-1; i++) {
+    for (unsigned int i=0; i<maxTrees-1; i++) {
         if(active[i]) {
             Rcpp::Rcout << " " << active [i]->item;
             if(active[i]->dim != i) {
@@ -1201,7 +1198,7 @@ void TriHeap::dump() const
         }
     }
     Rcpp::Rcout << std::endl << std::endl;
-    for(i=0; i<maxTrees; i++) {
+    for (unsigned int i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
             Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);

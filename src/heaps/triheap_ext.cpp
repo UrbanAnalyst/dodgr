@@ -15,7 +15,6 @@
 //#if SHOW_trih_ext
 #include <cstdio>
 #include <stdexcept>
-#include <Rcpp.h>
 //#endif
 
 
@@ -28,9 +27,8 @@
  * creates and returns a pointer to a trinomial heap.  Argument
  * maxNodes specifies the maximum number of nodes the heap can contain.
  */
-TriHeapExt::TriHeapExt(int n)
+TriHeapExt::TriHeapExt(unsigned int n)
 {
-    int i;
 #if SHOW_trih_ext
     Rcpp::Rcout << "init, ";
     Rcpp::Rcout.flush ();
@@ -38,7 +36,7 @@ TriHeapExt::TriHeapExt(int n)
 
     /* The maximum number of nodes and the maximum number of trees allowed. */
     maxNodes = n;
-    maxTrees = 1 + (int)(log((double) n)/log(3.0));
+    maxTrees = 1 + (unsigned int)(log((double) n)/log(3.0));
 
     /* The tolerance trigger of the heap.  That is, t+1; the number used for
      * detecting when we are over the tolerance and need to cleanup active
@@ -50,10 +48,10 @@ TriHeapExt::TriHeapExt(int n)
      * Initialise all array entries to zero, that is, NULL pointers.
      */
     trees = new TriHeapExtNode *[maxTrees];
-    for(i = 0; i < maxTrees; i++) trees[i] = 0;
+    for (unsigned int i = 0; i < maxTrees; i++) trees[i] = 0;
 
     nodes = new TriHeapExtNode *[n];
-    for(i = 0; i < n; i++) nodes[i] = 0;
+    for (unsigned int i = 0; i < n; i++) nodes[i] = 0;
 
     /* Allocate space for:
      *  - an unordered array of pointers to active nodes.
@@ -61,13 +59,13 @@ TriHeapExt::TriHeapExt(int n)
      *  - an array of pointers to entries in the candidates queue.
      */
     activeNodes = new TriHeapExtNode *[activeLimit];
-    for(i = 0; i < activeLimit; i++) activeNodes[i] = 0;
+    for (unsigned int i = 0; i < activeLimit; i++) activeNodes[i] = 0;
 
     activeQueues = new ActiveItem *[activeLimit-1];
-    for(i = 0; i < activeLimit-1; i++) activeQueues[i] = 0;
+    for (unsigned int i = 0; i < activeLimit-1; i++) activeQueues[i] = 0;
 
     candidateItems = new CandidateItem *[activeLimit-1];
-    for(i = 0; i < activeLimit-1; i++) candidateItems[i] = 0;
+    for (unsigned int i = 0; i < activeLimit-1; i++) candidateItems[i] = 0;
 
     /* We begin with no nodes in the heap. */
     itemCount = 0;
@@ -89,14 +87,12 @@ TriHeapExt::TriHeapExt(int n)
 */
 TriHeapExt::~TriHeapExt()
 {
-    int i;
-
 #if SHOW_trih_ext
     Rcpp::Rcout << "free, ";
     Rcpp::Rcout.flush ();
 #endif
 
-    for(i = 0; i < maxNodes; i++) {
+    for (unsigned int i = 0; i < maxNodes; i++) {
         delete nodes[i];
     }
 
@@ -110,7 +106,7 @@ TriHeapExt::~TriHeapExt()
 /* --- insert() ---
  * inserts item $item$ with associated key $k$ into the heap.
  */
-void TriHeapExt::insert(int item, float k)
+void TriHeapExt::insert(unsigned int item, float k)
 {
     TriHeapExtNode *newNode;
 
@@ -158,8 +154,8 @@ unsigned int TriHeapExt::deleteMin()
     TriHeapExtNode *node, *nodePartner;
     TriHeapExtNode *nextChildZero, *nextChildHigher;
     float k, k2;
-    unsigned int i, d, nextDim, v, item;
-    int wasExtra;
+    unsigned int d, nextDim, v, item;
+    unsigned int wasExtra;
 
 #if SHOW_trih_ext
     dump();
@@ -169,11 +165,12 @@ unsigned int TriHeapExt::deleteMin()
 
     /* First we determine the maximum dimension tree in the heap. */
     v = treeSum;
-    d = -1;
+    d = 0;
     while(v) {
         v = v >> 1;
         d++;
     };
+    d--;
 
     /* Now locate the root node with the smallest key, scanning from the
      * maximum dimension root position, down to dimension 0 root position.
@@ -195,7 +192,7 @@ unsigned int TriHeapExt::deleteMin()
         }
 
     }
-    i = activeCount;
+    unsigned int i = activeCount;
     while(i > 0) {
         i--;
         next = activeNodes[i];
@@ -477,12 +474,12 @@ unsigned int TriHeapExt::deleteMin()
  * up to the user to ensure that newValue is in-fact less than or equal to the
  * current value.
  */
-void TriHeapExt::decreaseKey(int item, float newValue)
+void TriHeapExt::decreaseKey(unsigned int item, float newValue)
 {
     TriHeapExtNode *v, *v2, *w, *w2, *p, *above, *partner, *activeNode;
     TriHeapExtNode *l, *r, *lowChild, *highChild, *node;
     ActiveItem *activeEntry;
-    int d;
+    unsigned int d;
 
 #if SHOW_trih_ext
     dump();
@@ -924,7 +921,7 @@ void TriHeapExt::meld(TriHeapExtNode *treeList)
 {
     TriHeapExtNode *next, *addTree;
     TriHeapExtNode *carryTree;
-    int d;
+    unsigned int d;
 
 #if SHOW_trih_ext
     Rcpp::Rcout << "meld - ";
@@ -1009,7 +1006,7 @@ void TriHeapExt::meld(TriHeapExtNode *treeList)
  */
 void TriHeapExt::activate(TriHeapExtNode *node)
 {
-    int i, d;
+    unsigned int d;
     ActiveItem *activeEntry, *first, *last;
     CandidateItem *candidate, *lastC;
 
@@ -1019,7 +1016,7 @@ void TriHeapExt::activate(TriHeapExtNode *node)
      */
 
     /* Add n to the array of active nodes. */
-    i = activeCount++;
+    unsigned int i = activeCount++;
     activeNodes[i] = node;
 
     /* Create an entry for n in the list of pointers to active nodes. */
@@ -1077,7 +1074,7 @@ void TriHeapExt::deactivate(TriHeapExtNode *node)
     ActiveItem *activeEntry, *next, *prev, *first, *second;
     TriHeapExtNode *topActive;
     CandidateItem *candidate, *nextCandidate, *prevCandidate;
-    int i, d;
+    unsigned int d;
 
     /* Obtain pointers to the corresponding entry in the active node structure
      * and remove the node from the array of active nodes.
@@ -1085,7 +1082,7 @@ void TriHeapExt::deactivate(TriHeapExtNode *node)
 
     activeEntry = node->activeEntry;
 
-    i = --activeCount;
+    unsigned int i = --activeCount;
     topActive = activeNodes[i];
     activeNodes[activeEntry->position] = topActive;
     topActive->activeEntry->position = activeEntry->position;
@@ -1172,10 +1169,10 @@ void TriHeapExt::replaceActive(
  *
  * Returns the number of key comparisons used.
  */
-int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
+unsigned int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
 {
     TriHeapExtNode *tree, *nextTree, *other, *nextOther;
-    int c;
+    unsigned int c;
 
     /* Number of comparisons. */
     c = 0;
@@ -1336,14 +1333,15 @@ void TriHeapExt::replaceChild(
 /* --- dumpNodes() ----
  * Recursively print the nodes of a trinomial heap.
  */
-void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
+void TriHeapExt::dumpNodes(TriHeapExtNode *node, unsigned int level)
 {
     //#if SHOW_trih_ext
     TriHeapExtNode *childNode, *partner;
-    int i, childCount;
+    unsigned int childCount;
 
     /* Print leading whitespace for this level. */
-    for(i = 0; i < level; i++)
+#if SHOW_trih_ext
+    for (unsigned int i = 0; i < level; i++)
         Rcpp::Rcout << "   ";
 
     Rcpp::Rcout << node->item << "(" << node->key << ")";
@@ -1351,6 +1349,7 @@ void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
     if(node->activeEntry)
         Rcpp::Rcout << '*';
     Rcpp::Rcout << std::endl;
+#endif
 
     if((childNode = node->child)) {
         childNode = node->child->right;
@@ -1417,20 +1416,19 @@ void TriHeapExt::dumpNodes(TriHeapExtNode *node, int level)
  */
 void TriHeapExt::dump() const
 {
-    //#if SHOW_trih_ext
-    int i, j;
+#if SHOW_trih_ext
     TriHeapExtNode *node;
     TriHeapExtNode *firstChild;
-    int c;
+    unsigned int c;
 
     Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl <<
         "array entries 0..maxTrees =";
-    for(i=0; i<maxTrees; i++) {
+    for (unsigned int i=0; i<maxTrees; i++) {
         bool is1or0 = trees [i] ? 1 : 0;
         Rcpp::Rcout << " " << is1or0;
     }
     Rcpp::Rcout << std::endl << "active nodes =";
-    for(i=0; i<activeCount; i++) {
+    for (unsigned int i=0; i<activeCount; i++) {
         if((node = activeNodes[i])) {
             Rcpp::Rcout << " " << node->item;
             firstChild = node->extra ? node->partner : node;
@@ -1448,7 +1446,7 @@ void TriHeapExt::dump() const
             }
 
             c = 0;
-            for(j = i+1; j < activeCount; j++) {
+            for(unsigned int j = i+1; j < activeCount; j++) {
                 if(activeNodes[j] == node) c++;
             }
             if(c) {
@@ -1460,14 +1458,14 @@ void TriHeapExt::dump() const
         }
     }
     Rcpp::Rcout << std::endl << std::endl;
-    for(i=0; i<maxTrees; i++) {
+    for (unsigned int i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
             Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);
             Rcpp::Rcout << std::endl;
         }
     }
-    //#endif
+#endif
 }
 
 /*---------------------------------------------------------------------------*/

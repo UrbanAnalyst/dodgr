@@ -22,9 +22,8 @@
 /* --- Constructor ---
  * Allocates a 2-3 heap capable of holding $n$ items.
  */
-Heap23::Heap23(int n)
+Heap23::Heap23(unsigned int n)
 {
-    int i;
 #if TTHEAP_DUMP
     Rcpp::Rcout << "init, ";
     Rcpp::Rcout.flush ();
@@ -33,16 +32,16 @@ Heap23::Heap23(int n)
     /* The maximum number of nodes and the maximum number of trees allowed.
     */
     maxNodes = n; 
-    maxTrees = (int)(0.5 + log((double) n+1.0)/log(2.0));
+    maxTrees = (unsigned int)(0.5 + log((double) n+1.0)/log(2.0));
 
     /* Allocate space for an array of pointers to trees, and nodes in the heap.
      * Initialise all array entries to zero, that is, NULL pointers.
      */
     trees = new Heap23Node *[maxTrees];
-    for(i = 0; i < maxTrees; i++) trees[i] = 0;
+    for(unsigned int i = 0; i < maxTrees; i++) trees[i] = 0;
 
     nodes = new Heap23Node *[n];
-    for(i = 0; i < n; i++) nodes[i] = 0;
+    for(unsigned int i = 0; i < n; i++) nodes[i] = 0;
 
     /* We begin with no nodes in the heap. */
     itemCount = 0;
@@ -62,14 +61,12 @@ Heap23::Heap23(int n)
 */
 Heap23::~Heap23()
 {
-    int i;
-
 #if TTHEAP_DUMP
     Rcpp::Rcout << "free, ";
     Rcpp::Rcout.flush ();
 #endif
 
-    for(i = 0; i < maxNodes; i++) delete nodes[i];
+    for(unsigned int i = 0; i < maxNodes; i++) delete nodes[i];
 
     delete [] nodes;
     delete [] trees;    
@@ -82,7 +79,7 @@ Heap23::~Heap23()
 /* --- insert() ---
  * Inserts item $item$, with associated key $k$, into the heap.
  */
-void Heap23::insert(int item, float k)
+void Heap23::insert(unsigned int item, float k)
 {
     Heap23Node *newNode;
 
@@ -134,11 +131,15 @@ unsigned int Heap23::deleteMin()
 
     /* First we determine the maximum rank tree in the heap. */
     v = treeSum;
-    r = -1;
+    // MP Note: r was an int formerly intialised at -1, but it's used as a
+    // direct array index below, so really should be unsigned! The r-- at end
+    // fixes that.
+    r = 0;
     while(v) {
         v = v >> 1;
         r++;
     };
+    r--;
 
     /* Now locate the root node with the smallest key, scanning from the
      * maximum rank root position, down to rank 0 root position.
@@ -195,7 +196,7 @@ unsigned int Heap23::deleteMin()
  * is the users reponsibility to ensure that newValue is in-fact less than or
  * equal to the current value.
  */
-void Heap23::decreaseKey(int item, float newValue)
+void Heap23::decreaseKey(unsigned int item, float newValue)
 {
     Heap23Node *cutNode, *parent;
 
@@ -242,7 +243,7 @@ void Heap23::meld(Heap23Node *treeList)
 {
     Heap23Node *next, *addTree;
     Heap23Node *carryTree;
-    int d;
+    unsigned int d;
 
 #if TTHEAP_DUMP
     Rcpp::Rcout << "meld - ";
@@ -335,7 +336,7 @@ void Heap23::meld(Heap23Node *treeList)
 void Heap23::removeNode(Heap23Node *rNode)
 {
     Heap23Node *parent, *child, *ax, *bx, *ap, *bp, *b1, *c, *p;
-    int d, d1;
+    unsigned int d, d1;
 
     parent = rNode->parent;
     child = rNode->child;
@@ -483,10 +484,10 @@ void Heap23::removeNode(Heap23Node *rNode)
  *
  * Returns the number of key comparisons used.
  */
-int Heap23::merge(Heap23Node **a, Heap23Node **b)
+unsigned int Heap23::merge(Heap23Node **a, Heap23Node **b)
 {
     Heap23Node *tree, *nextTree, *other, *nextOther;
-    int c;
+    unsigned int c;
 
     /* Number of comparisons. */
     c = 0;
@@ -598,7 +599,7 @@ void Heap23::trimExtraNode(Heap23Node *x)
  */
 void Heap23::swapTrunks(Heap23Node *lowNode, Heap23Node *highNode)
 {
-    int d;
+    unsigned int d;
     Heap23Node *parent, *l, *r;
 
     /* The dimensions of the two nodes are exchanged. */
@@ -699,14 +700,14 @@ void Heap23::replaceNode(Heap23Node *oldNode, Heap23Node *newNode)
 /* --- dumpNopdes() ---
  * Recursively print the nodes of a 2-3 heap.
  */
-void Heap23::dumpNodes(Heap23Node *node, int level)
+void Heap23::dumpNodes(Heap23Node *node, unsigned int level)
 {
 #if TTHEAP_DUMP
     Heap23Node *childNode, *partner;
-    int i, childCount;
+    unsigned int childCount;
 
     /* Print leading whitespace for this level. */
-    for(i = 0; i < level; i++)
+    for(unsigned int i = 0; i < level; i++)
         Rcpp::Rcout << "   ";
 
     Rcpp::Rcout << node->item << "(" << node->key << ")" << std::endl;
@@ -719,17 +720,17 @@ void Heap23::dumpNodes(Heap23Node *node, int level)
         do {
             dumpNodes(childNode, level+1);
             if(childNode->dim != childCount) {
-                for(i = 0; i < level+1; i++)
+                for(unsigned int i = 0; i < level+1; i++)
                     Rcpp::Rcout << "   ";
                 throw std::error ("error(dim)");
             }
             if(childNode->parent != node) {
-                for(i = 0; i < level+1; i++)
+                for(unsigned int i = 0; i < level+1; i++)
                     Rcpp::Rcout << "   ";
                 throw std::error ("error(parent)");
             }
             if(childNode->key < node->key) {
-                for(i = 0; i < level+1; i++)
+                for(unsigned int i = 0; i < level+1; i++)
                     Rcpp::Rcout << "   ";
                 throw std::error ("error(key)");
             }
@@ -738,14 +739,14 @@ void Heap23::dumpNodes(Heap23Node *node, int level)
         } while(childNode != node->child->right);
 
         if(childCount != node->dim && childCount != node->dim + 1) {
-            for(i = 0; i < level; i++)
+            for(unsigned int i = 0; i < level; i++)
                 Rcpp::Rcout << "   ";
             throw std::error ("error(childCount)");
         }
     }
     else { 
         if(node->dim != 0) {
-            for(i = 0; i < level; i++)
+            for(unsigned int i = 0; i < level; i++)
                 Rcpp::Rcout << "   ";
             throw std::error ("error(dim)");
         }
@@ -759,17 +760,16 @@ void Heap23::dumpNodes(Heap23Node *node, int level)
 void Heap23::dump() const
 {
 #if TTHEAP_DUMP
-    int i;
     Heap23Node *node;
 
     Rcpp::Rcout << std::endl << "value = " << treeSum << std::endl;
     Rcpp::Rcout << "array entries 0..maxTrees =";
-    for(i=0; i<maxTrees; i++) {
+    for(unsigned int i=0; i<maxTrees; i++) {
         bool tempval = trees [i] ? 1 : 0;
         Rcpp::Rcout << " " << tempval;
     }
     Rcpp::Rcout << std::endl << std::endl;
-    for(i=0; i<maxTrees; i++) {
+    for(unsigned int i=0; i<maxTrees; i++) {
         if((node = trees[i])) {
             Rcpp::Rcout << "tree " << i << std::endl << std::endl;
             dumpNodes(node, 0);

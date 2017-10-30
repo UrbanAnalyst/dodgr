@@ -4,6 +4,9 @@
 
 //#define RADIXHEAP_DEBUG
 
+// MP RadixHeaps need to have int item, key, bucket, rather than the unsigned
+// int vals that all other heap types have. This is because they need to be
+// initialised to -1 to find the min heap and work on that.
 
 class RadixHeapNode {
     public:    
@@ -14,32 +17,32 @@ class RadixHeapNode {
 
 class RadixHeap: public Heap {
     public:
-        RadixHeap(int n);
+        RadixHeap(unsigned int n);
         ~RadixHeap();
 
         unsigned int deleteMin();
-        void insert(int item, float k);
-        void decreaseKey(int item, float newValue);
-        int nItems() const { return itemCount; }
+        void insert(unsigned int item, float k);
+        void decreaseKey(unsigned int item, float newValue);
+        unsigned int nItems() const { return itemCount; }
 
         long nComps() const { return compCount; }
         void dump() const;
 
     private:
-        void placeNode(int startBucket, RadixHeapNode *node);
-        void insertNode(int i, RadixHeapNode *node);
+        void placeNode(unsigned int startBucket, RadixHeapNode *node);
+        void insertNode(unsigned int i, RadixHeapNode *node);
         void removeNode(RadixHeapNode *node);
 
-        static const int MaxKey = 500000;
+        static const unsigned int MaxKey = 500000;
         RadixHeapNode **nodes;
         RadixHeapNode *bucketHeaders;
         int *u;
 
-        int nBuckets;
-        int dMin;
+        unsigned int nBuckets;
+        unsigned int dMin;
 
-        int itemCount;
-        int compCount;
+        unsigned int itemCount;
+        unsigned int compCount;
 };
 
 #endif

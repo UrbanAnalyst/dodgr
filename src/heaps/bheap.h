@@ -20,7 +20,7 @@
  */
 class BHeapNode {
     public:
-        int item;
+        unsigned int item;
         float key;
 };
 
@@ -33,33 +33,33 @@ class BHeapNode {
  */
 class BHeap : public Heap {
     public:
-        BHeap(int n);
+        BHeap(unsigned int n);
         ~BHeap();
 
-        void deleteItem(int item);
+        void deleteItem(unsigned int item);
         unsigned int deleteMin() {
-            int v;
+            unsigned int v;
             v = min();
             deleteItem(v);
             return v;
         }
-        void insert(int item, float key);
-        void decreaseKey(int item, float newKey);
-        int nItems() const { return itemCount; }
+        void insert(unsigned int item, float key);
+        void decreaseKey(unsigned int item, float newKey);
+        unsigned int nItems() const { return itemCount; }
 
         long nComps() const { return compCount; }
         void dump() const;
 
         /* extra functions */
-        int min();
+        unsigned int min();
 
     private:
         BHeapNode *a;
-        int *aPos;
-        int itemCount;    
+        unsigned int *aPos;
+        unsigned int itemCount;    
         long compCount;    
 
-        void siftUp(int p, int q);
+        void siftUp(unsigned int p, unsigned int q);
 };
 
 /*---------------------------------------------------------------------------*/
