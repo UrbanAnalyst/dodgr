@@ -29,6 +29,10 @@ template void inst_graph <double> (DGraph *g, unsigned int nedges,
         std::vector <double> &dist,
         std::vector <double> &wt);
 
+
+//----------------------------
+//----- functions in run_sp.cpp
+//----------------------------
 Dijkstra * dijkstra_bheap (unsigned int nverts);
 Dijkstra * dijkstra_fheap (unsigned int nverts);
 Dijkstra * dijkstra_heap23 (unsigned int nverts);
@@ -54,3 +58,9 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         std::vector <int> toi,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
+
+
+//----------------------------
+//----- functions in sf_as_network.cpp
+//----------------------------
+double haversine (double x1, double y1, double x2, double y2);

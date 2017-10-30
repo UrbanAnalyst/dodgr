@@ -1,17 +1,11 @@
-#include <string>
-#include <cmath>
-
-#include <Rcpp.h>
-
-const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-const int INFINITE_INT =  std::numeric_limits<int>::max ();
+#include "sf-as-network.h"
 
 // Haversine great circle distance between two points
-float haversine (float x1, float y1, float x2, float y2)
+double haversine (double x1, double y1, double x2, double y2)
 {
-    float xd = (x2 - x1) * M_PI / 180.0;
-    float yd = (y2 - y1) * M_PI / 180.0;
-    float d = sin (yd / 2.0) * sin (yd / 2.0) + cos (y2 * M_PI / 180.0) *
+    double xd = (x2 - x1) * M_PI / 180.0;
+    double yd = (y2 - y1) * M_PI / 180.0;
+    double d = sin (yd / 2.0) * sin (yd / 2.0) + cos (y2 * M_PI / 180.0) *
         cos (y1 * M_PI / 180.0) * sin (xd / 2.0) * sin (xd / 2.0);
     d = 2.0 * 3671.0 * asin (sqrt (d));
     return (d);
@@ -31,7 +25,7 @@ float haversine (float x1, float y1, float x2, float y2)
 Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         const Rcpp::DataFrame &pr)
 {
-    std::map <std::string, float> profile;
+    std::map <std::string, double> profile;
     Rcpp::StringVector hw = pr [1];
     Rcpp::NumericVector val = pr [2];
     for (int i = 0; i != hw.size (); i ++)
@@ -46,11 +40,11 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     for (unsigned int i = 0; i < nms.size (); i++)
     {
         if (nms [i] == "oneway")
-            one_way_index = i;
+            one_way_index = static_cast <int> (i);
         if (nms [i] == "oneway.bicycle")
-            one_way_bicycle_index = i;
+            one_way_bicycle_index = static_cast <int> (i);
         if (nms [i] == "highway")
-            highway_index = i;
+            highway_index = static_cast <int> (i);
     }
     Rcpp::CharacterVector ow = NULL;
     Rcpp::CharacterVector owb = NULL;
@@ -74,16 +68,16 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
 
     Rcpp::List geoms = sf_lines [nms.size () - 1];
     std::vector <std::string> way_names = geoms.attr ("names");
-    std::vector <bool> isOneWay (geoms.length ());
+    std::vector <bool> isOneWay (static_cast <size_t> (geoms.length ()));
     std::fill (isOneWay.begin (), isOneWay.end (), false);
     // Get dimension of matrix
     size_t nrows = 0;
-    int ngeoms = 0;
+    unsigned int ngeoms = 0;
     for (auto g = geoms.begin (); g != geoms.end (); ++g)
     {
         // Rcpp uses an internal proxy iterator here, NOT a direct copy
         Rcpp::NumericMatrix gi = (*g);
-        int rows = gi.nrow () - 1;
+        size_t rows = static_cast <size_t> (gi.nrow () - 1);
         nrows += rows;
         if (ngeoms < ow.size ())
         {
@@ -107,7 +101,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     {
         Rcpp::NumericMatrix gi = (*g);
         std::string hway = std::string (highway [ngeoms]);
-        float hw_factor = profile [hway];
+        double hw_factor = profile [hway];
         if (hw_factor == 0.0) hw_factor = 1e-5;
         hw_factor = 1.0 / hw_factor;
 
@@ -124,9 +118,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         if (rnms.size () != gi.nrow ())
             throw std::runtime_error ("geom size differs from rownames");
 
-        for (int i = 1; i < gi.nrow (); i ++)
+        for (unsigned int i = 1;
+                i < static_cast <unsigned int> (gi.nrow ()); i ++)
         {
-            float d = haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
+            double d = haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
                     gi (i, 1));
             nmat (nrows, 0) = gi (i-1, 0);
             nmat (nrows, 1) = gi (i-1, 1);
@@ -184,13 +179,13 @@ Rcpp::NumericVector rcpp_points_index (const Rcpp::DataFrame &xy,
 
     Rcpp::NumericVector index (pts.nrow ());
 
-    for (int i = 0; i < pts.nrow (); i++) // Rcpp::nrow is int!
+    for (unsigned int i = 0; i < static_cast <unsigned int> (pts.nrow ()); i++) // Rcpp::nrow is int!
     {
-        float dmin = INFINITE_FLOAT;
+        double dmin = INFINITE_DOUBLE;
         int jmin = INFINITE_INT;
         for (int j = 0; j < xy.nrow (); j++)
         {
-            float dij = (vtx [j] - ptx [i]) * (vtx [j] - ptx [i]) +
+            double dij = (vtx [j] - ptx [i]) * (vtx [j] - ptx [i]) +
                 (vty [j] - pty [i]) * (vty [j] - pty [i]);
             if (dij < dmin)
             {
