@@ -28,7 +28,7 @@ void get_to_from (const edge_map_t &edge_map,
         vertex_id_t &vt_from, vertex_id_t &vt_to,
         edge_id_t &edge_from_id, edge_id_t &edge_to_id)
 {
-    for (edge_id_t edge_id: edges)
+    for (auto edge_id: edges)
     {
         edge_t edge = edge_map.find (edge_id)->second;
         if (edge_from_id == "")
@@ -72,7 +72,7 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 {
     edge_t edge_from = edge_map.find (edge_from_id)->second,
            edge_to = edge_map.find (edge_to_id)->second;
-    float d = edge_from.dist + edge_to.dist,
+    double d = edge_from.dist + edge_to.dist,
           w = edge_from.weight + edge_to.weight;
 
     std::set <edge_id_t> old_edges,
@@ -118,7 +118,7 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
         const edge_id_t &e2)
 {
-    const float tol = 1.0e-6;
+    const double tol = 1.0e-6;
 
     edge_t edge1 = edge_map.find (e1)->second,
            edge2 = edge_map.find (e2)->second;
@@ -271,15 +271,15 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     contract_graph (vertices_contracted, edge_map_contracted, vert2edge_map,
             verts_to_keep);
 
-    int nedges = edge_map_contracted.size ();
+    size_t nedges = edge_map_contracted.size ();
 
     // These vectors are all for the contracted graph:
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
         edgeid_vec (nedges);
     Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges);
 
-    int map_size = 0; // size of edge map contracted -> original
-    int edge_count = 0;
+    unsigned int map_size = 0; // size of edge map contracted -> original
+    unsigned int edge_count = 0;
     for (auto e = edge_map_contracted.begin ();
             e != edge_map_contracted.end (); ++e)
     {
@@ -350,9 +350,9 @@ Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
-    std::vector <float> flow = graph ["flow"]; // always called "flow"
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+    std::vector <double> flow = graph ["flow"]; // always called "flow"
 
     // vertvert_map just holds index of where pair of vertices were first found.
     // These can only be duplicated once, so only one single value is ever
@@ -370,15 +370,15 @@ Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
             flow_total [i] = flow [i];
         } else
         {
-            unsigned int where = INFINITE_INT;;
+            int where = INFINITE_INT;;
             if (vertvert_map.find (ft) != vertvert_map.end ())
                 where = vertvert_map.at (ft);
             else if (vertvert_map.find (tf) != vertvert_map.end ())
                 where = vertvert_map.at (tf);
             if (where == INFINITE_INT)
                 throw std::runtime_error ("there is no where; this can never happen");
-            flow_total [i] = flow [where] + flow [i];
-            flow [where] = 0.0;
+            flow_total [i] = flow [static_cast <unsigned int> (where)] + flow [i];
+            flow [static_cast <unsigned int> (where)] = 0.0;
         } 
     }
 

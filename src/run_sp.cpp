@@ -2,34 +2,7 @@
 #include "dijkstra.h"
 #include "heaps/heap_lib.h"
 
-#include <algorithm> // std::fill, std::reverse
-
-#include <Rcpp.h>
-
-const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-const float INFINITE_INT =  std::numeric_limits<int>::max ();
-
-template <typename T>
-void inst_graph (DGraph *g, unsigned int nedges,
-        std::map <std::string, unsigned int> &vert_map,
-        std::vector <std::string> &from,
-        std::vector <std::string> &to,
-        std::vector <T> &dist,
-        std::vector <T> &wt)
-{
-    for (unsigned int i = 0; i < nedges; ++i)
-    {
-        unsigned int fromi = vert_map [from [i]];
-        unsigned int toi = vert_map [to [i]];
-        g->addNewEdge (fromi, toi, dist [i], wt [i]);
-    }
-}
-template void inst_graph <float> (DGraph *g, unsigned int nedges,
-        std::map <std::string, unsigned int> &vert_map,
-        std::vector <std::string> &from,
-        std::vector <std::string> &to,
-        std::vector <float> &dist,
-        std::vector <float> &wt);
+#include "run_sp.h"
 
 Dijkstra * dijkstra_bheap (unsigned int nverts)
 {
@@ -97,8 +70,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
@@ -128,8 +101,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     else if (heap_type == "Radix")
         dijkstra = dijkstra_radix (nverts);
 
-    float* w = new float [nverts];
-    float* d = new float [nverts];
+    double* w = new double [nverts];
+    double* d = new double [nverts];
     int* prev = new int [nverts];
 
     dijkstra->init (g); // specify the graph
@@ -140,12 +113,12 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     Rcpp::NumericMatrix dout (nfrom, nto, na_vec.begin ());
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_FLOAT);
-        std::fill (d, d + nverts, INFINITE_FLOAT);
+        std::fill (w, w + nverts, INFINITE_DOUBLE);
+        std::fill (d, d + nverts, INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, fromi [v]);
         for (unsigned int vi = 0; vi < nto; vi++)
-            if (w [toi [vi]] < INFINITE_FLOAT)
+            if (w [toi [vi]] < INFINITE_DOUBLE)
                 dout (v, vi) = d [toi [vi]];
     }
 
@@ -197,8 +170,8 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
     std::map <std::string, unsigned int> vert_map;
@@ -231,14 +204,14 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     dijkstra->init (g); // specify the graph
 
     Rcpp::List res (nfrom);
-    float* w = new float [nverts];
-    float* d = new float [nverts];
+    double* w = new double [nverts];
+    double* d = new double [nverts];
     int* prev = new int [nverts];
 
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_FLOAT);
-        std::fill (d, d + nverts, INFINITE_FLOAT);
+        std::fill (w, w + nverts, INFINITE_DOUBLE);
+        std::fill (d, d + nverts, INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, fromi [v]);
 
@@ -246,7 +219,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             std::vector <unsigned int> onePath;
-            if (w [toi [vi]] < INFINITE_FLOAT)
+            if (w [toi [vi]] < INFINITE_DOUBLE)
             {
                 unsigned int target = toi [vi];
                 while (target < INFINITE_INT)
@@ -308,8 +281,8 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
-    std::vector <float> dist = graph ["d"];
-    std::vector <float> wt = graph ["w"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
 
     unsigned int nedges = graph.nrow ();
     std::vector <std::string> vert_name = vert_map_in ["vert"];
@@ -329,7 +302,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
      * pairs, and the other to hold minimal distances.
      */
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
-    std::unordered_map <std::string, float> verts_to_dist_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
     for (unsigned int i = 0; i < from.size (); i++)
     {
         std::string two_verts = "f" + from [i] + "t" + to [i];
@@ -364,8 +337,8 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     dijkstra->init (g); // specify the graph
 
     Rcpp::List res (nfrom);
-    float* w = new float [nverts];
-    float* d = new float [nverts];
+    double* w = new double [nverts];
+    double* d = new double [nverts];
     int* prev = new int [nverts];
 
     unsigned int junk = 0; // TODO: Delete that!
@@ -373,8 +346,8 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_FLOAT);
-        std::fill (d, d + nverts, INFINITE_FLOAT);
+        std::fill (w, w + nverts, INFINITE_DOUBLE);
+        std::fill (d, d + nverts, INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, fromi [v]);
 
@@ -384,10 +357,10 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
             if (vi != v) // Exclude self-flows
             {
                 std::vector <unsigned int> onePath;
-                float flow_ij = flows (v, vi);
+                double flow_ij = flows (v, vi);
                 if (flow_ij > 0)
                     junk++;
-                if (w [toi [vi]] < INFINITE_FLOAT)
+                if (w [toi [vi]] < INFINITE_DOUBLE)
                 {
                     // target values are int indices into vert_map_in, which means
                     // corresponding vertex IDs can be taken directly from

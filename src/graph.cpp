@@ -142,7 +142,7 @@ unsigned int identify_graph_components (vertex_map_t &v,
         }
     }
 
-    unsigned int largest_id = 0;
+    long int largest_id = 0;
     if (compnum > 0)
     {
         std::vector <unsigned int> comp_sizes (compnum + 1, 0);
@@ -153,7 +153,7 @@ unsigned int identify_graph_components (vertex_map_t &v,
         largest_id = std::distance (comp_sizes.begin (), maxi);
     }
 
-    return largest_id;
+    return static_cast <unsigned int> (largest_id);
 }
 
 
@@ -177,7 +177,7 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
     graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     std::unordered_map <vertex_id_t, unsigned int> components;
-    int largest_component = identify_graph_components (vertices, components);
+    unsigned int largest_component = identify_graph_components (vertices, components);
     largest_component++; // suppress unused variable warning
 
     // Then map component numbers of vertices onto edges

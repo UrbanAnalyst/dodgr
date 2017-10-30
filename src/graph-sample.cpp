@@ -21,7 +21,8 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
     unsigned int largest_component = identify_graph_components (vertices, components);
 
     bool in_largest = false;
-    std::uniform_int_distribution <unsigned int> uni0 (0, edge_map.size () - 1);
+    std::uniform_int_distribution <unsigned int> uni0 (0,
+            static_cast <unsigned int> (edge_map.size ()) - 1);
     unsigned int e0 = uni0 (rng);
     while (!in_largest)
     {
@@ -59,7 +60,8 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
     std::mt19937 rng (rd()); // mersenne twister
 
     Rcpp::NumericVector component = graph ["component"];
-    std::uniform_int_distribution <unsigned int> uni (0, graph.nrow () - 1);
+    std::uniform_int_distribution <unsigned int> uni (0,
+            static_cast <unsigned int> (graph.nrow ()) - 1);
     unsigned int e0 = uni (rng);
     while (component (e0) > 1)
         e0 = uni (rng);
@@ -126,7 +128,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     {
         Rcpp::Rcout << "Largest connected component only has " <<
             vert_ids.size () << " vertices" << std::endl;
-        nverts_to_sample = vert_ids.size ();
+        nverts_to_sample = static_cast <unsigned int> (vert_ids.size ());
     }
 
     vertex_id_t this_vert = select_random_vert (graph, edge_map, vertices);
@@ -147,7 +149,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     {
         // initialise random int generator:
         // TODO: Is this quicker to use a single unif and round each time?
-        std::uniform_int_distribution <unsigned int> uni (0, vertlist.size () - 1);
+        std::uniform_int_distribution <unsigned int> uni (0,
+                static_cast <unsigned int> (vertlist.size ()) - 1);
         unsigned int randv = uni (rng);
         this_vert = vertlist [randv];
 
@@ -186,7 +189,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         }
     }
 
-    unsigned int nedges = edgelist.size ();
+    unsigned int nedges = static_cast <unsigned int> (edgelist.size ());
 
     // edgelist is an unordered set, so has to be iteratively inserted
     edges_out = Rcpp::StringVector (nedges);

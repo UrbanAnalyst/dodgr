@@ -22,7 +22,7 @@
 class DGraphEdge {
     public:
         unsigned int source, target;
-        float dist, wt;
+        double dist, wt;
         DGraphEdge *nextOut, *nextIn;
 };
 
@@ -64,7 +64,7 @@ class DGraph {
 
         void clear();
         void addNewEdge(unsigned int srcVertexNo, unsigned int destVertexNo,
-                float dist, float wt);
+                double dist, double wt);
         bool edgeExists(unsigned int v, unsigned int w) const;
         bool reachable(unsigned int s) const;
         void print() const;
