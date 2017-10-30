@@ -56,14 +56,16 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         std::vector <int> toi,
         std::string heap_type)
 {
+    Rcpp::NumericVector id_vec;
     if (fromi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        id_vec = vert_map_in ["id"];
         fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        if (id_vec.size() == 0)
+            id_vec = vert_map_in ["id"];
         toi = Rcpp::as <std::vector <int> > (id_vec);
     }
     size_t nfrom = fromi.size (), nto = toi.size ();
@@ -158,14 +160,16 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         std::vector <int> toi,
         std::string heap_type)
 {
+    Rcpp::NumericVector id_vec;
     if (fromi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        id_vec = vert_map_in ["id"];
         fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        if (id_vec.size() == 0)
+            id_vec = vert_map_in ["id"];
         toi = Rcpp::as <std::vector <int> > (id_vec);
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
@@ -224,13 +228,15 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
             std::vector <unsigned int> onePath;
             if (w [toi [vi]] < INFINITE_DOUBLE)
             {
-                unsigned int target = static_cast <unsigned int> (toi [vi]);
+                int target = toi [vi];
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
                     onePath.push_back (target + 1);
-                    target = static_cast <unsigned int> (prev [target]);
+                    target = prev [target];
+                    if (target < 0)
+                        break;
                 }
             }
             std::reverse (onePath.begin (), onePath.end ());
@@ -270,14 +276,16 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         Rcpp::NumericMatrix flows,
         std::string heap_type)
 {
+    Rcpp::NumericVector id_vec;
     if (fromi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        id_vec = vert_map_in ["id"];
         fromi = Rcpp::as <std::vector <int> > (id_vec);
     }
     if (toi [0] < 0) // use all vertices
     {
-        Rcpp::NumericVector id_vec = vert_map_in ["id"];
+        if (id_vec.size() == 0)
+            id_vec = vert_map_in ["id"];
         toi = Rcpp::as <std::vector <int> > (id_vec);
     }
     unsigned int nfrom = fromi.size (), nto = toi.size ();
