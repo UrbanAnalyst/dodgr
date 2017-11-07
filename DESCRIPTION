@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.0.3
+Version: 0.0.3.001
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Andreas", "Peutschnig", role="aut"),
@@ -44,3 +44,5 @@ LazyData: true
 URL: https://github.com/gmost/dodgr
 BugReports: https://github.com/gmost/dodgr/issues
 RoxygenNote: 6.0.1
+Remotes:
+    osmdata
