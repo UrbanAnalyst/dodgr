@@ -61,9 +61,11 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
     } else
         stop ('Either bbox or pts must be specified.')
 
+    # osm_poly2line merges all street polygons with the line ones
     net <- osmdata::opq (bbox) %>%
                 osmdata::add_osm_feature (key = "highway") %>%
                 osmdata::osmdata_sf (quiet = quiet) %>%
+                osmdata::osm_poly2line () %>%
                 extract2 ("osm_lines")
     if (nrow (net) == 0)
         stop ("Street network unable to be downloaded")
