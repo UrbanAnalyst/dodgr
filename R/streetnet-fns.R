@@ -80,7 +80,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
 #' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
-#' objects, typically extracted with \code{get_streetnet}
+#' objects, typically extracted with \code{dodgr_streetnet}
 #' @param wt_profile Name of weighting profile, or vector of values with names
 #' corresponding to names in \code{type_col}
 #' @param type_col Specify column of the \code{sf} \code{data.frame} object
