@@ -139,7 +139,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
             if (w [toi [vi]] < INFINITE_DOUBLE)
+            {
                 dout (v, vi) = d [toi [vi]];
+            }
     }
 
     delete [] d;
@@ -369,8 +371,6 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     double* d = new double [nverts];
     int* prev = new int [nverts];
 
-    unsigned int junk = 0; // TODO: Delete that!
-
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
@@ -382,12 +382,10 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
-            if (vi != v) // Exclude self-flows
+            if (fromi [v] != toi [vi]) // Exclude self-flows
             {
                 std::vector <unsigned int> onePath;
                 double flow_ij = flows (v, vi);
-                if (flow_ij > 0)
-                    junk++;
                 if (w [toi [vi]] < INFINITE_DOUBLE)
                 {
                     // target values are int indices into vert_map_in, which means
