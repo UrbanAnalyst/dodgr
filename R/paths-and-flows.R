@@ -165,6 +165,9 @@ dodgr_flows <- function (graph, from, to, flows,
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
 
+    if(any(is.na(flows))) {
+        flows[is.na(flows)] <- 0
+    }
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
