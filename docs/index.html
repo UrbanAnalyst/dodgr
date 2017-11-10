@@ -40,7 +40,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/gmost/dodgr">
+  <a href="https://github.com/ATFutures/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -73,7 +73,7 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install <code>dodgr</code> from github with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
-devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"gmost/dodgr"</span>)</code></pre></div>
+devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"ATFutures/dodgr"</span>)</code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -94,7 +94,7 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.
 <span class="co">#&gt; [1]  0.00000 16.64285</span></code></pre></div>
 <p>This will automatically download the street network (using <a href="https://cran.r-project.org/package=osmdata"><code>osmdata</code></a>), and even then calculating distances between 1,000 points can be done in around 10 seconds.</p>
 <p>A graph or network in <code>dodgr</code> is represented as a flat table (<code>data.frame</code>, <code>tibble</code>, <code>data.table</code>, whatever) of minimally four columns: <code>from</code>, <code>to</code>, <code>weight</code>, and <code>distance</code>. The first two can be of arbitrary form (<code>numeric</code> or <code>character</code>); <code>weight</code> is used to evaluate the shortest paths, and the desired distances are evaluated by summing the values of <code>distance</code> along those paths. For a street network example, <code>weight</code> will generally be the actual distance multiplied by a priority weighting for a given mode of transport and type of way, while <code>distance</code> will be the pysical distance.</p>
-<p>For more detail, see the <a href="https://gmost/dodgr/articles/dodgr.html">main package vignette</a>, along with a second vignette detailing <a href="https://gmost/dodgr/articles/benchmark.html">benchmark timings</a>, showing that under many circumstances, <code>dodgr</code> performs considerably faster than equivalent routines from the <code>igraph</code> package.</p>
+<p>For more detail, see the <a href="https://ATFutures/dodgr/articles/dodgr.html">main package vignette</a>, along with a second vignette detailing <a href="https://ATFutures/dodgr/articles/benchmark.html">benchmark timings</a>, showing that under many circumstances, <code>dodgr</code> performs considerably faster than equivalent routines from the <code>igraph</code> package.</p>
 </div>
 </div>
 </div>
@@ -106,9 +106,9 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.
 <ul class="list-unstyled">
 <li>Download from CRAN at <br><a href="https://cran.r-project.org/package=dodgr">https://​cran.r-project.org/​package=dodgr</a>
 </li>
-<li>Browse source code at <br><a href="https://github.com/gmost/dodgr">https://​github.com/​gmost/​dodgr</a>
+<li>Browse source code at <br><a href="https://github.com/ATFutures/dodgr">https://​github.com/​ATFutures/​dodgr</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/gmost/dodgr/issues">https://​github.com/​gmost/​dodgr/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/ATFutures/dodgr/issues">https://​github.com/​ATFutures/​dodgr/​issues</a>
 </li>
 </ul>
 <h2>License</h2>
@@ -121,9 +121,9 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.
 </ul>
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/gmost/dodgr"><img src="https://travis-ci.org/gmost/dodgr.svg" alt="Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/gmost/dodgr"><img src="https://ci.appveyor.com/api/projects/status/github/gmost/dodgr?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
-<li><a href="https://codecov.io/gh/gmost/dodgr"><img src="https://codecov.io/gh/gmost/dodgr/branch/master/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://travis-ci.org/ATFutures/dodgr"><img src="https://travis-ci.org/ATFutures/dodgr.svg" alt="Build Status"></a></li>
+<li><a href="https://ci.appveyor.com/project/ATFutures/dodgr"><img src="https://ci.appveyor.com/api/projects/status/github/ATFutures/dodgr?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
+<li><a href="https://codecov.io/gh/ATFutures/dodgr"><img src="https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
 <li><a href="http://cran.r-project.org/web/packages/dodgr"><img src="http://www.r-pkg.org/badges/version/dodgr" alt="CRAN_Status_Badge"></a></li>
 <li><a href="http://cran.r-project.org/package=dodgr"><img src="http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange" alt="CRAN Downloads"></a></li>

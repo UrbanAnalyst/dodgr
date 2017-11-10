@@ -41,8 +41,8 @@ VignetteBuilder: knitr
 NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/gmost/dodgr
-BugReports: https://github.com/gmost/dodgr/issues
+URL: https://github.com/ATFutures/dodgr
+BugReports: https://github.com/ATFutures/dodgr/issues
 RoxygenNote: 6.0.1
 Remotes:
     ropensci/osmdata

@@ -64,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gmost/dodgr">
+  <a href="https://github.com/ATFutures/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -121,11 +121,12 @@ Contains OS data © Crown copyright and database right (2017)</p>
 <span class='kw pkg'>mapview</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/mapview/topics/mapView'>mapview</a></span>(<span class='no'>os_roads_bristol</span>)
 <span class='co'># }</span><div class='input'><span class='co'># Converting this 'sf data.frame' to a 'dodgr' network requires manual</span>
 <span class='co'># specification of weighting profile:</span>
-<span class='no'>colnm</span> <span class='kw'>&lt;-</span> <span class='st'>"formOfWay"</span>
+<span class='no'>colnm</span> <span class='kw'>&lt;-</span> <span class='st'>"formOfWay"</span> <span class='co'># name of column used to determine weights</span>
 <span class='no'>wts</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span> (<span class='fl'>0.1</span>, <span class='fl'>0.2</span>, <span class='fl'>0.8</span>, <span class='fl'>1</span>)
 <span class='fu'>names</span> (<span class='no'>wts</span>) <span class='kw'>&lt;-</span> <span class='fu'>unique</span> (<span class='no'>os_roads_bristol</span> <span class='kw'>[[</span><span class='no'>colnm</span>]])
 <span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>os_roads_bristol</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='no'>wts</span>,
-                         <span class='kw'>type_col</span> <span class='kw'>=</span> <span class='no'>colnm</span>, <span class='kw'>id_col</span> <span class='kw'>=</span> <span class='st'>"identifier"</span>)</div></pre>
+                         <span class='kw'>type_col</span> <span class='kw'>=</span> <span class='no'>colnm</span>, <span class='kw'>id_col</span> <span class='kw'>=</span> <span class='st'>"identifier"</span>)
+<span class='co'># 'id_col' tells the function which column to use to attribute IDs of ways</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

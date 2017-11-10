@@ -64,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gmost/dodgr">
+  <a href="https://github.com/ATFutures/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -88,8 +88,8 @@
 between all pairs of <code>from</code> and <code>to</code> points.</p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_flows</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='no'>flows</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>, <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>dodgr_flows</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='no'>flows</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>,
+  <span class='kw'>contract</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -118,6 +118,12 @@ calculated (see Details)</p></td>
       <th>wt_profile</th>
       <td><p>Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).</p></td>
+    </tr>
+    <tr>
+      <th>contract</th>
+      <td><p>If <code>TRUE</code>, calculate flows on contracted graph before
+mapping them back on to the original full graph (recommended as this will
+generally be much faster).</p></td>
     </tr>
     <tr>
       <th>heap</th>
