@@ -1,6 +1,5 @@
 #include "graph.h"
 
-
 void add_to_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
         const edge_id_t eid)
 {
@@ -36,12 +35,11 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
 bool graph_has_components (const Rcpp::DataFrame &graph)
 {
     Rcpp::CharacterVector graph_names = graph.attr ("names");
-    bool has_comps = false;
     for (auto n: graph_names)
         if (n == "component")
-            has_comps = true;
+            return true;
 
-    return has_comps;
+    return false;
 }
 
 

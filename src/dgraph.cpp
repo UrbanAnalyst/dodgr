@@ -2,21 +2,18 @@
  * ----------------------------------------------------------------------------
  * Author:  Shane Saunders
  */
-#include <cstdio>
 #include "dgraph.h"
 
 #include <Rcpp.h>
+//#include <cstdio>
 
 /*--- DGraph ----------------------------------------------------------------*/
 
 /* --- Constructor ---
  * Creates a DGraph object containing n vertices.
  */
-DGraph::DGraph(unsigned int n)
+DGraph::DGraph(unsigned int n) : m_vertices(n)
 {
-    nVertices = n;
-
-    vertices = new DGraphVertex[n];
     initVertices();
 }
 
@@ -25,7 +22,17 @@ DGraph::DGraph(unsigned int n)
 DGraph::~DGraph()
 {
     clear();
-    delete [] vertices;
+}
+
+// length of vertices
+unsigned int DGraph::nVertices() const
+{
+  return m_vertices.size();
+}
+
+const std::vector<DGraphVertex>& DGraph::vertices() const
+{
+  return m_vertices;
 }
 
 /* --- clear() ---
@@ -34,8 +41,8 @@ DGraph::~DGraph()
 void DGraph::clear()
 {
     DGraphEdge *edge, *nextEdge;
-    for(unsigned int i = 0; i < nVertices; i++) {
-        edge = vertices[i].outHead;
+    for(unsigned int i = 0; i < m_vertices.size(); i++) {
+        edge = m_vertices[i].outHead;
 
         while(edge) {
             nextEdge = edge->nextOut;
@@ -48,10 +55,10 @@ void DGraph::clear()
 
 void DGraph::initVertices()
 {
-    for(unsigned int i = 0; i < nVertices; i++) {
-        vertices[i].outHead = vertices[i].outTail = std::nullptr_t ();
-        vertices[i].inHead = vertices[i].inTail = std::nullptr_t ();
-        vertices[i].outSize = vertices[i].inSize = 0;
+    for(unsigned int i = 0; i < m_vertices.size(); i++) {
+        m_vertices[i].outHead = m_vertices[i].outTail = nullptr;
+        m_vertices[i].inHead = m_vertices[i].inTail = nullptr;
+        m_vertices[i].outSize = m_vertices[i].inSize = 0;
     }
 }
 
@@ -67,10 +74,10 @@ void DGraph::addNewEdge(unsigned int source, unsigned int target,
     newEdge->target = target;
     newEdge->dist = dist;
     newEdge->wt = wt;
-    newEdge->nextOut = std::nullptr_t ();
-    newEdge->nextIn = std::nullptr_t ();
+    newEdge->nextOut = nullptr;
+    newEdge->nextIn = nullptr;
 
-    DGraphVertex *vertex = &vertices[source];
+    DGraphVertex *vertex = &m_vertices[source];
     if(vertex->outTail) {
         vertex->outTail->nextOut = newEdge;
     }
@@ -80,7 +87,7 @@ void DGraph::addNewEdge(unsigned int source, unsigned int target,
     vertex->outTail = newEdge;
     vertex->outSize++;
 
-    vertex = &vertices[target];
+    vertex = &m_vertices[target];
     if(vertex->inTail) {
         vertex->inTail->nextIn = newEdge;
     }
@@ -95,7 +102,7 @@ bool DGraph::edgeExists(unsigned int v, unsigned int w) const
 {
     /* Scan all existing edges from v to determine whether an edge to w exists.
     */
-    const DGraphEdge *edge = vertices[v].outHead;
+    const DGraphEdge *edge = m_vertices[v].outHead;
     while(edge) {
         if(edge->target == w) return true;
         edge = edge->nextOut;
@@ -108,12 +115,10 @@ bool DGraph::edgeExists(unsigned int v, unsigned int w) const
  */
 bool DGraph::reachable (unsigned int s) const
 {
-    unsigned int *stack = new unsigned int [nVertices];
+    std::vector<unsigned int> stack(m_vertices.size());
     unsigned int tos = 0;
 
-    unsigned int *visited = new unsigned int [nVertices];
-    for(unsigned int i = 0; i < nVertices; i++)
-        visited [i] = 0;
+    std::vector<unsigned int> visited(m_vertices.size(), 0);
 
     unsigned int vertexCount = 0;
     visited [s] = 1;
@@ -123,7 +128,7 @@ bool DGraph::reachable (unsigned int s) const
     while (tos) {
         v = stack [--tos];
         vertexCount++;
-        edge = vertices [v].outHead;
+        edge = m_vertices [v].outHead;
         while (edge) {
             w = edge->target;
             if (!visited [w]) {
@@ -134,10 +139,7 @@ bool DGraph::reachable (unsigned int s) const
         }
     }
 
-    delete [] stack;
-    delete [] visited;
-
-    return vertexCount == nVertices;
+    return vertexCount == m_vertices.size();
 }
 
 
@@ -150,9 +152,9 @@ void DGraph::print() const
 
     Rcpp::Rcout << "Graph (vertex: edge{dist} list) = " << std::endl;
 
-    for(unsigned int i = 0; i < nVertices; i++) {
+    for(unsigned int i = 0; i < m_vertices.size(); i++) {
         Rcpp::Rcout << i << ": ";
-        edge = vertices[i].outHead;
+        edge = m_vertices[i].outHead;
         while(edge) {
             Rcpp::Rcout << edge->target << "{" << edge->dist << "} ";
             edge = edge->nextOut;

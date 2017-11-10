@@ -370,7 +370,7 @@ Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
             flow_total [i] = flow [i];
         } else
         {
-            int where = INFINITE_INT;;
+            int where = INFINITE_INT;
             if (vertvert_map.find (ft) != vertvert_map.end ())
                 where = vertvert_map.at (ft);
             else if (vertvert_map.find (tf) != vertvert_map.end ())

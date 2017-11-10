@@ -13,28 +13,29 @@
 
 /* - Constructor -
  * Allocate the algorithm for use on graphs of n vertices.  The parameter heapD
- * (points to a heap descriptor object) specifies then heap to be used by
+ * (points to a heap descriptor object) specifies the heap to be used by
  * Dijkstra's algorithm.
  */
-Dijkstra::Dijkstra(unsigned int n, HeapDesc *heapD)
+Dijkstra::Dijkstra(unsigned int n, const HeapDesc& heapD, std::shared_ptr<const DGraph> g) 
 {
-    heap = heapD->newInstance(n);    
-    s = new bool[n];
-    f = new bool[n];
+    m_heap = heapD.newInstance(n);
+    m_s = new bool[n];
+    m_f = new bool[n];
+    init(g);
 }
 
 /* - Destructor - */
 Dijkstra::~Dijkstra() {
-    delete [] s;
-    delete [] f;
-    delete heap;
+    delete [] m_s;
+    delete [] m_f;
+    delete m_heap;
 }
 
 /* - init() -
  * Initialise the algorithm for use with the graph pointed to by g.
  */
-void Dijkstra::init(const DGraph *g) {
-    graph = g;
+void Dijkstra::init(std::shared_ptr<const DGraph> g) {
+    m_graph = g;
 }
 
 /* - run() -
@@ -42,7 +43,8 @@ void Dijkstra::init(const DGraph *g) {
  * This assumes that the array d has been initialised with d[v] = INFINITE_DIST
  * for all vertices v != v0.
  */
-void Dijkstra::run(double *d, double *w, int *prev, unsigned int v0)
+
+void Dijkstra::run(std::vector<double>& d, std::vector<double>& w, std::vector<int>& prev, unsigned int v0)
 {
     /* indexes, counters, pointers */
     const DGraphEdge *edge;
@@ -51,46 +53,46 @@ void Dijkstra::run(double *d, double *w, int *prev, unsigned int v0)
     /*** initialisation ***/
 
     /* optimise access to the data structures allocated for the algorithm */
-    const unsigned int n = graph->nVertices;
-    const DGraphVertex *vertices = graph->vertices;
+    const unsigned int n = m_graph->nVertices();
+    const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     /* initialise all vertices as unexplored */
-    std::fill (s, s + n, false);
-    std::fill (f, f + n, false);
+    std::fill (m_s, m_s + n, false);
+    std::fill (m_f, m_f + n, false);
 
     /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
-    heap->insert(v0, 0.0);
-    f [v0] = true;
+    m_heap->insert(v0, 0.0);
+    m_f [v0] = true;
 
     /* repeatedly update distances from the minimum remaining trigger vertex */
-    while (heap->nItems() > 0) {
+    while (m_heap->nItems() > 0) {
         /* delete the vertex in frontier that has minimum distance */
-        unsigned int v = heap->deleteMin();
+        unsigned int v = m_heap->deleteMin();
 
         /* the selected vertex moves from the frontier to the solution set */
-        s [v] = true;
-        f [v] = false;
+        m_s [v] = true;
+        m_f [v] = false;
 
         /* explore the OUT set of v */
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
 
-            if (!s[et]) {
+            if (!m_s[et]) {
                 double wt = w [v] + edge->wt;
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
                     w [et] = wt;
                     prev [et] = static_cast <int> (v);
-                    if (f [et]) {
-                        heap->decreaseKey(et, wt);
+                    if (m_f [et]) {
+                      m_heap->decreaseKey(et, wt);
                     }
                     else {
-                        heap->insert (et, wt);
-                        f [et] = true;
+                      m_heap->insert (et, wt);
+                        m_f [et] = true;
                     }
                 }
             }
