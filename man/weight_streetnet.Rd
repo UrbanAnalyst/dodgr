@@ -9,7 +9,7 @@ weight_streetnet(sf_lines, wt_profile = "bicycle", type_col = "highway",
 }
 \arguments{
 \item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
-objects, typically extracted with \code{get_streetnet}}
+objects, typically extracted with \code{dodgr_streetnet}}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names
 corresponding to names in \code{type_col}}
