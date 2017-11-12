@@ -2,11 +2,7 @@
 #include "run_sp.h"
 
 #include "dgraph.h"
-#include "dijkstra.h"
 #include "heaps/heap_lib.h"
-
-#include <memory>
-#include <vector>
 
 template <typename T>
 void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
@@ -25,20 +21,20 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 }
 
 
-std::shared_ptr<HeapDesc> getHeapImpl(const std::string& heap_type)
+std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type)
 {
   if (heap_type == "FHeap")
-    return std::make_shared<HeapD<FHeap>>();
+    return std::make_shared <HeapD<FHeap> >();
   else if (heap_type == "BHeap")
-    return std::make_shared<HeapD<BHeap>>();
+    return std::make_shared <HeapD<BHeap> >();
   else if (heap_type == "Heap23")
-    return std::make_shared<HeapD<Heap23>>();
+    return std::make_shared <HeapD<Heap23> >();
   else if (heap_type == "TriHeap")
-    return std::make_shared<HeapD<TriHeap>>();
+    return std::make_shared <HeapD<TriHeap> >();
   else if (heap_type == "TriHeapExt")
-    return std::make_shared<HeapD<TriHeapExt>>();
+    return std::make_shared <HeapD<TriHeapExt> >();
   else if (heap_type == "Radix")
-    return std::make_shared<HeapD<RadixHeap>>();
+    return std::make_shared <HeapD<RadixHeap> >();
   else 
     throw std::runtime_error("invalid heap type: " + heap_type);
 }
@@ -50,8 +46,8 @@ std::shared_ptr<HeapDesc> getHeapImpl(const std::string& heap_type)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi, // this arg gets overwritten?
-        std::vector <int> toi, // 
+        std::vector <int> fromi,
+        std::vector <int> toi,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
