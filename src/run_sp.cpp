@@ -1,66 +1,48 @@
+
+#include "run_sp.h"
+
 #include "dgraph.h"
 #include "dijkstra.h"
 #include "heaps/heap_lib.h"
 
-#include "run_sp.h"
+#include <memory>
+#include <vector>
 
 template <typename T>
-void inst_graph (DGraph *g, unsigned int nedges,
-        std::map <std::string, unsigned int> &vert_map,
-        std::vector <std::string> &from,
-        std::vector <std::string> &to,
-        std::vector <T> &dist,
-        std::vector <T> &wt)
+void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
+        const std::map <std::string, unsigned int>& vert_map,
+        const std::vector <std::string>& from,
+        const std::vector <std::string>& to,
+        const std::vector <T>& dist,
+        const std::vector <T>& wt)
 {
     for (unsigned int i = 0; i < nedges; ++i)
     {
-        unsigned int fromi = vert_map [from [i]];
-        unsigned int toi = vert_map [to [i]];
+        unsigned int fromi = vert_map.at(from [i]);
+        unsigned int toi = vert_map.at(to [i]);
         g->addNewEdge (fromi, toi, dist [i], wt [i]);
     }
 }
 
-Dijkstra * dijkstra_bheap (unsigned int nverts)
-{
-    HeapD<BHeap> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
 
-Dijkstra * dijkstra_fheap (unsigned int nverts)
+std::shared_ptr<HeapDesc> getHeapImpl(const std::string& heap_type)
 {
-    HeapD<FHeap> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
+  if (heap_type == "FHeap")
+    return std::make_shared<HeapD<FHeap>>();
+  else if (heap_type == "BHeap")
+    return std::make_shared<HeapD<BHeap>>();
+  else if (heap_type == "Heap23")
+    return std::make_shared<HeapD<Heap23>>();
+  else if (heap_type == "TriHeap")
+    return std::make_shared<HeapD<TriHeap>>();
+  else if (heap_type == "TriHeapExt")
+    return std::make_shared<HeapD<TriHeapExt>>();
+  else if (heap_type == "Radix")
+    return std::make_shared<HeapD<RadixHeap>>();
+  else 
+    throw std::runtime_error("invalid heap type: " + heap_type);
 }
-
-Dijkstra * dijkstra_heap23 (unsigned int nverts)
-{
-    HeapD<Heap23> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
-
-Dijkstra * dijkstra_triheap (unsigned int nverts)
-{
-    HeapD<TriHeap> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
-
-Dijkstra * dijkstra_triheapext (unsigned int nverts)
-{
-    HeapD<TriHeapExt> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
-
-Dijkstra * dijkstra_radix (unsigned int nverts)
-{
-    HeapD<RadixHeap> heapD;
-    Dijkstra *dijkstra = new Dijkstra (nverts, &heapD);
-    return dijkstra;
-}
+  
 
 //' rcpp_get_sp_dists
 //'
@@ -68,9 +50,9 @@ Dijkstra * dijkstra_radix (unsigned int nverts)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
-        std::vector <int> toi,
-        std::string heap_type)
+        std::vector <int> fromi, // this arg gets overwritten?
+        std::vector <int> toi, // 
+        const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
     if (fromi [0] < 0) // use all vertices
@@ -102,29 +84,16 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     }
     unsigned int nverts = static_cast <unsigned int> (vert_map.size ());
 
-    DGraph *g = new DGraph (nverts);
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra = std::nullptr_t ();
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
 
-    if (heap_type == "FHeap")
-        dijkstra = dijkstra_fheap (nverts);
-    else if (heap_type == "BHeap")
-        dijkstra = dijkstra_bheap (nverts);
-    else if (heap_type == "Heap23")
-        dijkstra = dijkstra_heap23 (nverts);
-    else if (heap_type == "TriHeap")
-        dijkstra = dijkstra_triheap (nverts);
-    else if (heap_type == "TriHeapExt")
-        dijkstra = dijkstra_triheapext (nverts);
-    else if (heap_type == "Radix")
-        dijkstra = dijkstra_radix (nverts);
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
 
-    double* w = new double [nverts];
-    double* d = new double [nverts];
-    int* prev = new int [nverts];
-
-    dijkstra->init (g); // specify the graph
+    //dijkstra->init (g); // specify the graph
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
@@ -133,8 +102,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_DOUBLE);
-        std::fill (d, d + nverts, INFINITE_DOUBLE);
+        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
@@ -143,14 +112,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
                 dout (v, vi) = d [toi [vi]];
             }
     }
-
-    delete [] d;
-    delete [] w;
-    delete [] prev;
-
-    delete dijkstra;
-    delete g;
-
     return (dout);
 }
 
@@ -176,7 +137,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
-        std::string heap_type)
+        const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
     if (fromi [0] < 0) // use all vertices
@@ -208,35 +169,20 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     }
     unsigned int nverts = static_cast <unsigned int> (vert_map.size ());
 
-    DGraph *g = new DGraph (nverts);
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Dijkstra *dijkstra = std::nullptr_t ();
-
-    if (heap_type == "FHeap")
-        dijkstra = dijkstra_fheap (nverts);
-    else if (heap_type == "BHeap")
-        dijkstra = dijkstra_bheap (nverts);
-    else if (heap_type == "Heap23")
-        dijkstra = dijkstra_heap23 (nverts);
-    else if (heap_type == "TriHeap")
-        dijkstra = dijkstra_triheap (nverts);
-    else if (heap_type == "TriHeapExt")
-        dijkstra = dijkstra_triheapext (nverts);
-    else if (heap_type == "Radix")
-        dijkstra = dijkstra_radix (nverts);
-
-    dijkstra->init (g); // specify the graph
-
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    
     Rcpp::List res (nfrom);
-    double* w = new double [nverts];
-    double* d = new double [nverts];
-    int* prev = new int [nverts];
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
 
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_DOUBLE);
-        std::fill (d, d + nverts, INFINITE_DOUBLE);
+        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
@@ -262,15 +208,6 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         }
         res [v] = res1;
     }
-
-
-    delete [] d;
-    delete [] w;
-    delete [] prev;
-
-    delete dijkstra;
-    delete g;
-
     return (res);
 }
 
@@ -346,36 +283,21 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         }
     }
 
-    DGraph *g = new DGraph (nverts);
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    Dijkstra *dijkstra = std::nullptr_t ();
-
-    if (heap_type == "FHeap")
-        dijkstra = dijkstra_fheap (nverts);
-    else if (heap_type == "BHeap")
-        dijkstra = dijkstra_bheap (nverts);
-    else if (heap_type == "Heap23")
-        dijkstra = dijkstra_heap23 (nverts);
-    else if (heap_type == "TriHeap")
-        dijkstra = dijkstra_triheap (nverts);
-    else if (heap_type == "TriHeapExt")
-        dijkstra = dijkstra_triheapext (nverts);
-    else if (heap_type == "Radix")
-        dijkstra = dijkstra_radix (nverts);
-
-    dijkstra->init (g); // specify the graph
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
-    double* w = new double [nverts];
-    double* d = new double [nverts];
-    int* prev = new int [nverts];
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
 
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
-        std::fill (w, w + nverts, INFINITE_DOUBLE);
-        std::fill (d, d + nverts, INFINITE_DOUBLE);
+        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
@@ -414,13 +336,6 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
             } // end if vi != v
         } // end for vi over nto
     } // end for v over nfrom
-
-    delete [] d;
-    delete [] w;
-    delete [] prev;
-
-    delete dijkstra;
-    delete g;
 
     return (aggregate_flows);
 }

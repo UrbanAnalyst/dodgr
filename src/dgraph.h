@@ -1,6 +1,7 @@
 #ifndef DGRAPH_H
 #define DGRAPH_H
 
+#include <vector>
 #include <limits>
 /* Directed Graphs
  * ----------------------------------------------------------------------------
@@ -56,12 +57,16 @@ class DGraphVertex {
  */
 class DGraph {
     public:
-        unsigned int nVertices;
-        DGraphVertex *vertices;
-
         DGraph(unsigned int n);
         ~DGraph();
-
+        
+        unsigned int nVertices() const;
+        const std::vector<DGraphVertex>& vertices() const;
+        
+        // disable copy/assign as will crash (double-delete)
+        DGraph(const DGraph&) = delete;
+        DGraph& operator=(const DGraph&) = delete;
+    
         void clear();
         void addNewEdge(unsigned int srcVertexNo, unsigned int destVertexNo,
                 double dist, double wt);
@@ -70,6 +75,9 @@ class DGraph {
         void print() const;
     private:
         void initVertices();
+    
+        std::vector<DGraphVertex> m_vertices;
+  
 };
 
 
