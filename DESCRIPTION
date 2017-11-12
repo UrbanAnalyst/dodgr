@@ -22,7 +22,8 @@ Imports:
     osmdata,
     rbenchmark,
     sp,
-    Rcpp (>= 0.12.6)
+    Rcpp (>= 0.12.6),
+    RcppParallel
 Suggests:
     devtools,
     ggplot2,
@@ -35,8 +36,11 @@ Suggests:
     scales,
     testthat
 LinkingTo:
-    Rcpp
-SystemRequirements: C++11
+    Rcpp,
+    RcppParallel
+SystemRequirements:
+    C++11,
+    GNU make
 VignetteBuilder: knitr
 NeedsCompilation: yes
 Encoding: UTF-8

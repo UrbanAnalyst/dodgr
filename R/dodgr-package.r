@@ -49,6 +49,7 @@
 #' @importFrom rbenchmark benchmark
 #' @importFrom sp bbox point.in.polygon
 #' @importFrom Rcpp evalCpp
+#' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib dodgr, .registration = TRUE
 NULL
 
