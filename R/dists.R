@@ -92,6 +92,13 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
 
+    if (parallel & heap == "TriHeapExt")
+    {
+        message ("Extended TriHeaps can not be calculated in parallel; ",
+                 "reverting to serial calculation")
+        parallel <- FALSE
+    }
+
     if (parallel)
         d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index, heap)
     else
