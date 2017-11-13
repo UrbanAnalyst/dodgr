@@ -5,7 +5,7 @@
 \title{dodgr_dists}
 \usage{
 dodgr_dists(graph, from, to, wt_profile = "bicycle", expand = 0,
-  heap = "BHeap", quiet = TRUE)
+  heap = "BHeap", parallel = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -28,6 +28,9 @@ which to expand the street network surrounding the points defined by
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+
+\item{parallel}{If \code{TRUE}, perform routing calculation in parallel (see
+details)}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
@@ -62,6 +65,11 @@ precisely matching node numbers or names given in \code{graph$from} or
 between all points specified in \code{from}. If neither \code{from} nor
 \code{to} are specified, pairwise distances are calculated between all nodes
 in \code{graph}.
+
+Calculations in parallel (\code{parallel = TRUE}) ought very generally be
+advantageous. For small graphs, Calculating distances in parallel is likely
+to offer relatively little gain in speed, but increases from parallel
+computation will generally markedly increase with increasing graph sizes.
 }
 \examples{
 # A simple graph

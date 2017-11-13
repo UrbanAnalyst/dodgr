@@ -17,6 +17,8 @@
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
+#' @param parallel If \code{TRUE}, perform routing calculation in parallel (see
+#' details)
 #' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
@@ -45,6 +47,11 @@
 #' \code{to} are specified, pairwise distances are calculated between all nodes
 #' in \code{graph}.
 #'
+#' Calculations in parallel (\code{parallel = TRUE}) ought very generally be
+#' advantageous. For small graphs, Calculating distances in parallel is likely
+#' to offer relatively little gain in speed, but increases from parallel
+#' computation will generally markedly increase with increasing graph sizes.
+#'
 #' @export
 #' @examples
 #' # A simple graph
@@ -59,8 +66,8 @@
 #' to <- sample (graph$to_id, size = 50)
 #' d <- dodgr_dists (graph, from = from, to = to)
 #' # d is a 100-by-50 matrix of distances between \code{from} and \code{to}
-dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
-                         expand = 0, heap = 'BHeap', quiet = TRUE)
+dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
+                         heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = expand,
@@ -84,7 +91,11 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle",
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
-    d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
+
+    if (parallel)
+        d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index, heap)
+    else
+        d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
 
     if (!is.null (from_id))
         rownames (d) <- from_id
