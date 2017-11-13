@@ -43,12 +43,13 @@ std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type)
 struct oneDijkstra : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
+    Rcpp::IntegerVector toi;
     size_t nverts;
-    //RcppParallel::RVector <int> dp_toi;
 
-    std::shared_ptr <Dijkstra> dijkstra_ptr;
+    std::shared_ptr <DGraph> g;
+    std::string heap_type;
 
-    RcppParallel::RMatrix <double> dp_dout;
+    RcppParallel::RMatrix <double> dout;
 
     std::vector <double> w;
     std::vector <double> d;
@@ -57,42 +58,42 @@ struct oneDijkstra : public RcppParallel::Worker
     // constructor
     oneDijkstra (
             const Rcpp::IntegerVector fromi,
+            const Rcpp::IntegerVector toi,
             const size_t nverts,
-            std::shared_ptr <Dijkstra> dijkstra,
+            const std::shared_ptr <DGraph> g,
+            const std::string & heap_type,
             Rcpp::NumericMatrix dout) :
-        dp_fromi (fromi), nverts (nverts),
-        dijkstra_ptr (dijkstra), dp_dout (dout)
+        dp_fromi (fromi), toi (toi), nverts (nverts),
+        g (g), heap_type (heap_type),
+        dout (dout)
     {
     }
-    /* not necessary
-    oneDijkstra (const oneDijkstra & one_dijkstra, RcppParallel::Split) :
-        dp_fromi (one_dijkstra.dp_fromi), nverts (one_dijkstra.nverts),
-        dijkstra_ptr (one_dijkstra.dijkstra_ptr), dp_dout (dp_dout)
-    {
-    }
-    */
 
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        std::shared_ptr<Dijkstra> dijkstra =
+            std::make_shared <Dijkstra> (nverts,
+                    *getHeapImpl (heap_type), g);
+        w.reserve (nverts);
+        d.reserve (nverts);
+        prev.reserve (nverts);
+
         for (std::size_t i = begin; i < end; i++)
         {
             // These have to be reserved within the parallel operator function!
-            w.reserve (nverts);
-            d.reserve (nverts);
-            prev.reserve (nverts);
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-            //std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
-            dijkstra_ptr->run (d, w, prev,
+            dijkstra->run (d, w, prev,
                     static_cast <unsigned int> (dp_fromi [i]));
-            /*
-            for (size_t j = 0; j < dp_toi.size (); j++)
+            for (size_t j = 0; j < toi.size (); j++)
             {
-                dp_dout [i, j] = d [dp_toi [j]];
+                if (w [toi [j]] < INFINITE_DOUBLE)
+                {
+                    dout (i, j) = d [toi [j]];
+                }
             }
-            */
         }
     }
                                    
@@ -141,8 +142,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr <Dijkstra> dijkstra =
-        std::make_shared <Dijkstra> (nverts, *getHeapImpl (heap_type), g);
+    //std::shared_ptr <Dijkstra> dijkstra =
+    //    std::make_shared <Dijkstra> (nverts, *getHeapImpl (heap_type), g);
 
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
             Rcpp::NumericVector::get_na ());
@@ -150,7 +151,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
     // Create parallel worker
-    oneDijkstra one_dijkstra (fromi, nverts, dijkstra, dout);
+    oneDijkstra one_dijkstra (fromi, toi, nverts, g, heap_type, dout);
 
     RcppParallel::parallelFor (0, fromi.length (), one_dijkstra);
     
