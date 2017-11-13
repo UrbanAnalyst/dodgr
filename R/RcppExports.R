@@ -127,6 +127,13 @@ rcpp_sample_graph <- function(graph, nverts_to_sample) {
     .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
+#' rcpp_get_sp_dists_par
+#'
+#' @noRd
+rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi, heap_type)
+}
+
 #' rcpp_get_sp_dists
 #'
 #' @noRd

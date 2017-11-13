@@ -30,6 +30,12 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         std::vector <int> toi,
         const std::string& heap_type);
 
+Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in,
+        Rcpp::NumericVector fromi,
+        Rcpp::NumericVector toi,
+        std::string heap_type);
+
 Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,

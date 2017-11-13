@@ -38,7 +38,124 @@ std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type)
   else 
     throw std::runtime_error("invalid heap type: " + heap_type);
 }
-  
+
+
+struct oneDijkstra : public RcppParallel::Worker
+{
+    size_t nverts;
+
+    RcppParallel::RVector <int> dp_fromi, dp_toi;
+    RcppParallel::RMatrix <double> dp_dout;
+
+    std::vector <int> prev;
+    std::vector <double> w, d;
+
+    std::shared_ptr <Dijkstra> dijkstra_ptr;
+
+    // constructor
+    oneDijkstra (const size_t nverts,
+            const Rcpp::IntegerVector fromi,
+            const Rcpp::IntegerVector toi,
+            std::vector <double> &w,
+            std::vector <double> &d,
+            std::vector <int> &prev,
+            std::shared_ptr <Dijkstra> dijkstra,
+            Rcpp::NumericMatrix dout) :
+        nverts (nverts), dp_fromi (fromi), dp_toi (toi),
+        w (w), d (d), prev (prev), dijkstra_ptr (dijkstra), dp_dout (dout) {}
+
+    oneDijkstra (const oneDijkstra& one_dijkstra, RcppParallel::Split) :
+        nverts (one_dijkstra.nverts), dp_fromi (one_dijkstra.dp_fromi), 
+        dp_toi (one_dijkstra.dp_toi), w (one_dijkstra.w), d (one_dijkstra.d),
+        prev (one_dijkstra.prev), dijkstra_ptr (one_dijkstra.dijkstra_ptr),
+        dp_dout (one_dijkstra.dp_dout) {}
+
+    // Parallel function operator
+    void operator() (std::size_t begin, std::size_t end)
+    {
+        for (std::size_t i = begin; i < end; i++)
+        {
+            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+
+            dijkstra_ptr->run (d, w, prev,
+                    static_cast <unsigned int> (round (dp_fromi [i])));
+            //dijkstra_ptr->run (d, w, prev, 0);
+            /*
+            for (unsigned int j = 0; j < dp_toi.size (); j++)
+            {
+                if (w [static_cast <unsigned int> (dp_toi [j])] < INFINITE_INT)
+                {
+                }
+            }
+            */
+        }
+    }
+                                   
+};
+
+//' rcpp_get_sp_dists_par
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        const std::string& heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    if (fromi [0] < 0) // use all vertices
+    {
+        id_vec = vert_map_in ["id"];
+        fromi = id_vec;
+    }
+    if (toi [0] < 0) // use all vertices
+    {
+        if (id_vec.size () == 0)
+            id_vec = vert_map_in ["id"];
+        toi = id_vec;
+    }
+    size_t nfrom = fromi.size (), nto = toi.size ();
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::map <std::string, unsigned int> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    for (unsigned int i = 0;
+            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
+    {
+        vert_map.emplace (vert_map_id [i], vert_map_n [i]);
+    }
+    size_t nverts = static_cast <size_t> (vert_map.size ());
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    std::shared_ptr <Dijkstra> dijkstra =
+        std::make_shared <Dijkstra> (nverts, *getHeapImpl (heap_type), g);
+
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
+            Rcpp::NumericVector::get_na ());
+    Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
+            static_cast <int> (nto), na_vec.begin ());
+
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
+
+    // Create parallel worker
+    oneDijkstra one_dijkstra (nverts, toi, fromi, w, d, prev, dijkstra, dout);
+
+    RcppParallel::parallelFor (0, nfrom, one_dijkstra);
+    
+    return (dout);
+}
 
 //' rcpp_get_sp_dists
 //'
@@ -96,6 +213,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
             Rcpp::NumericVector::get_na ());
     Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
             static_cast <int> (nto), na_vec.begin ());
+
     for (unsigned int v = 0; v < nfrom; v++)
     {
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
