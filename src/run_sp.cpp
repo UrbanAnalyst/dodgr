@@ -51,10 +51,6 @@ struct oneDijkstra : public RcppParallel::Worker
 
     RcppParallel::RMatrix <double> dout;
 
-    std::vector <double> w;
-    std::vector <double> d;
-    std::vector <int> prev;
-
     // constructor
     oneDijkstra (
             const Rcpp::IntegerVector fromi,
@@ -75,9 +71,9 @@ struct oneDijkstra : public RcppParallel::Worker
         std::shared_ptr<Dijkstra> dijkstra =
             std::make_shared <Dijkstra> (nverts,
                     *getHeapImpl (heap_type), g);
-        w.reserve (nverts);
-        d.reserve (nverts);
-        prev.reserve (nverts);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <int> prev (nverts);
 
         for (std::size_t i = begin; i < end; i++)
         {
@@ -141,9 +137,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
 
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
-
-    //std::shared_ptr <Dijkstra> dijkstra =
-    //    std::make_shared <Dijkstra> (nverts, *getHeapImpl (heap_type), g);
 
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
             Rcpp::NumericVector::get_na ());
