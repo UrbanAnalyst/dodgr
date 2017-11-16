@@ -40,7 +40,7 @@ std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type)
 }
 
 
-struct oneDijkstra : public RcppParallel::Worker
+struct OneDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     Rcpp::IntegerVector toi;
@@ -52,7 +52,7 @@ struct oneDijkstra : public RcppParallel::Worker
     RcppParallel::RMatrix <double> dout;
 
     // constructor
-    oneDijkstra (
+    OneDist (
             const Rcpp::IntegerVector fromi,
             const Rcpp::IntegerVector toi,
             const size_t nverts,
@@ -144,9 +144,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
     // Create parallel worker
-    oneDijkstra one_dijkstra (fromi, toi, nverts, g, heap_type, dout);
+    OneDist one_dist (fromi, toi, nverts, g, heap_type, dout);
 
-    RcppParallel::parallelFor (0, fromi.length (), one_dijkstra);
+    RcppParallel::parallelFor (0, fromi.length (), one_dist);
     
     return (dout);
 }
