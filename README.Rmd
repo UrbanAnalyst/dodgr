@@ -28,6 +28,7 @@ knitr::opts_chunk$set(
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr) 
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](http://cran.r-project.org/package=dodgr)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/1396/badge)](https://bestpractices.coreinfrastructure.org/projects/1396)
 
 # dodgr: Distances on Directed Graphs in R
 
