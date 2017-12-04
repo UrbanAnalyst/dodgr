@@ -194,13 +194,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
 
-    std::vector<double> w(nverts);
-    std::vector<double> d(nverts);
-    std::vector<int> prev(nverts);
+    std::vector<double> w (nverts);
+    std::vector<double> d (nverts);
+    std::vector<int> prev (nverts);
 
-    //dijkstra->init (g); // specify the graph
+    dijkstra->init (g); // specify the graph
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
@@ -215,10 +216,12 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
-            if (w [toi [vi]] < INFINITE_DOUBLE)
+        {
+            if (toi [vi] < INFINITE_INT)
             {
                 dout (v, vi) = d [toi [vi]];
             }
+        }
     }
     return (dout);
 }
