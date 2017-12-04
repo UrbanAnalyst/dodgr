@@ -251,7 +251,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         # xy has same order as vert_map
     }
 
-    pts - 1 # 0-indexed for C++
+    pts + 1 # Result of rcpp_points_index is 0-indexed for C++
 }
 
 #' get_heap
