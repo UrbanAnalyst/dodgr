@@ -131,6 +131,12 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     if (!missing (pts))
     {
         index <- get_pts_index (graph, gr_cols, vert_map, pts)
+        if (is.vector (pts) & length (pts == 2) &
+            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &
+             any (grepl ("y", names (pts), ignore.case = TRUE))) |
+             (any (grepl ("lon", names (pts), ignore.case = TRUE) &
+                   (any (grepl ("lat", names (pts), ignore.case = TRUE)))))))
+            names (pts) <- NULL
         id <- get_id_cols (pts)
         if (is.null (id))
             id <- vert_map$vert [index + 1] # from_index is 0-based
@@ -194,7 +200,18 @@ make_vert_map <- function (graph, gr_cols)
 get_pts_index <- function (graph, gr_cols, vert_map, pts)
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
-        pts <- matrix (pts, ncol = 1)
+    {
+        if (length (pts) != 2 & is.character (pts))
+            pts <- matrix (pts, ncol = 1)
+        else
+        {
+            nms <- names (pts)
+            if (is.null (nms))
+                nms <- c ("x", "y")
+            pts <- matrix (pts, nrow = 1) # vector of (x,y) vals
+            colnames (pts) <- nms
+        }
+    }
 
     if (ncol (pts) == 1)
     {
