@@ -81,10 +81,10 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index # 0-based
+    from_index <- index_id$index - 1 # 0-based
     from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index # 0-based
+    to_index <- index_id$index - 1 # 0-based
     to_id <- index_id$id
 
     graph <- convert_graph (graph, gr_cols)
@@ -134,7 +134,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     if (!missing (pts))
     {
         index <- get_pts_index (graph, gr_cols, vert_map, pts)
-        if (is.vector (pts) & length (pts == 2) &
+        if (is.vector (pts) & length (pts == 2) & is.numeric (pts) &
             ((any (grepl ("x", names (pts), ignore.case = TRUE)) &
              any (grepl ("y", names (pts), ignore.case = TRUE))) |
              (any (grepl ("lon", names (pts), ignore.case = TRUE) &
@@ -204,7 +204,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
 {
     if (!(is.matrix (pts) | is.data.frame (pts)))
     {
-        if (length (pts) != 2 & is.character (pts))
+        if (!is.numeric (pts))
             pts <- matrix (pts, ncol = 1)
         else
         {
@@ -250,11 +250,12 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         names (pts) [ix] <- "x"
         names (pts) [iy] <- "y"
 
-        pts <- rcpp_points_index (dodgr_vertices (graph), pts)
+        # Result of rcpp_points_index is 0-indexed for C++
+        pts <- rcpp_points_index (dodgr_vertices (graph), pts) + 1
         # xy has same order as vert_map
     }
 
-    pts # Result of rcpp_points_index is 0-indexed for C++
+    pts
 }
 
 #' get_heap

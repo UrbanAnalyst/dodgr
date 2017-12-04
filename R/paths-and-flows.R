@@ -70,10 +70,10 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index # 0-based
+    from_index <- index_id$index - 1 # 0-based
     from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index # 0-based
+    to_index <- index_id$index - 1 # 0-based
     to_id <- index_id$id
 
     graph <- convert_graph (graph, gr_cols)
@@ -218,10 +218,10 @@ dodgr_flows <- function (graph, from, to, flows,
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index # 0-based
+    from_index <- index_id$index - 1 # 0-based
     from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index # 0-based
+    to_index <- index_id$index - 1 # 0-based
     to_id <- index_id$id
 
     if (!is.matrix (flows))
