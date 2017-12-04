@@ -81,10 +81,10 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index
+    from_index <- index_id$index # 0-based
     from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index
+    to_index <- index_id$index # 0-based
     to_id <- index_id$id
 
     graph <- convert_graph (graph, gr_cols)
@@ -123,6 +123,9 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
 #'
 #' Get an index of \code{pts} matching \code{vert_map}, as well as the
 #' corresonding names of those \code{pts}
+#'
+#' @return list of \code{index}, which is 0-based for C++, and corresponding
+#' \code{id} values.
 #' @noRd
 get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 {
@@ -139,7 +142,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
             names (pts) <- NULL
         id <- get_id_cols (pts)
         if (is.null (id))
-            id <- vert_map$vert [index + 1] # from_index is 0-based
+            id <- vert_map$vert [index] # from_index is 1-based
     }
     list (index = index, id = id)
 }
@@ -251,7 +254,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         # xy has same order as vert_map
     }
 
-    pts + 1 # Result of rcpp_points_index is 0-indexed for C++
+    pts # Result of rcpp_points_index is 0-indexed for C++
 }
 
 #' get_heap
