@@ -152,6 +152,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
 
     while (verts.size () > 0)
     {
+        Rcpp::checkUserInterrupt ();
         std::unordered_set <vertex_id_t>::iterator vid = verts.begin ();
         vertex_id_t vtx_id = vertex_map.find (*vid)->first;
         vertex_t vtx = vertex_map.find (*vid)->second;

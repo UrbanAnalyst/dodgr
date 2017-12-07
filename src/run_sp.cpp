@@ -211,6 +211,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 
     for (unsigned int v = 0; v < nfrom; v++)
     {
+        Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
@@ -292,6 +293,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 
     for (unsigned int v = 0; v < nfrom; v++)
     {
+        Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
@@ -407,6 +409,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
+        Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
@@ -535,6 +538,7 @@ Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
+        Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 

@@ -63,6 +63,7 @@ void graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 
     for (int i = 0; i < to.length (); i ++)
     {
+        Rcpp::checkUserInterrupt ();
         vertex_id_t from_id = std::string (from [i]);
         vertex_id_t to_id = std::string (to [i]);
 

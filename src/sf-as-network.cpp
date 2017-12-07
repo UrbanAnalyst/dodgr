@@ -99,6 +99,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     int fake_id = 0;
     for (auto g = geoms.begin (); g != geoms.end (); ++ g)
     {
+        Rcpp::checkUserInterrupt ();
         Rcpp::NumericMatrix gi = (*g);
         std::string hway = std::string (highway [ngeoms]);
         double hw_factor = profile [hway];
