@@ -450,3 +450,133 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
 
     return (aggregate_flows);
 }
+
+//' rcpp_aggregate_all_flows
+//'
+//' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
+//' destinations from given set of origins, with flows attenuated by distance from
+//' those origins.
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param k Coefficient of (current proof-of-principle-only) exponential
+//' distance decay function.
+//'
+//' @note The flow data to be used for aggregation is a matrix mapping flows
+//' betwen each pair of from and to points.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in,
+        std::vector <int> fromi,
+        double k,
+        Rcpp::NumericMatrix flows,
+        std::string heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    if (fromi [0] < 0) // use all vertices
+    {
+        id_vec = vert_map_in ["id"];
+        fromi = Rcpp::as <std::vector <int> > (id_vec);
+    }
+    size_t nfrom = fromi.size ();
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::vector <std::string> vert_name = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, unsigned int> vert_map_i;
+    for (unsigned int i = 0;
+            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
+    {
+        vert_map_i.emplace (vert_name [i], vert_indx [i]);
+    }
+    unsigned int nverts = static_cast <unsigned int> (vert_map_i.size ());
+
+    /* Flows from the dijkstra output are reallocated based on matching vertex
+     * pairs to edge indices. Note, however, that contracted graphs frequently
+     * have duplicate vertex pairs with different distances. The following
+     * therefore uses two maps, one to hold the ultimate index from vertex
+     * pairs, and the other to hold minimal distances.
+     */
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
+    for (unsigned int i = 0; i < from.size (); i++)
+    {
+        std::string two_verts = "f" + from [i] + "t" + to [i];
+        verts_to_edge_map.emplace (two_verts, i);
+        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
+            verts_to_dist_map.emplace (two_verts, wt [i]);
+        else if (wt [i] < verts_to_dist_map.at (two_verts))
+        {
+            verts_to_dist_map [two_verts] = wt [i];
+            verts_to_edge_map [two_verts] = i;
+        }
+    }
+
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
+
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+
+    Rcpp::List res (nfrom);
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
+
+    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
+    for (unsigned int v = 0; v < nfrom; v++)
+    {
+        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
+
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+
+        /*
+        Rcpp::List res1 (nto);
+        for (unsigned int vi = 0; vi < nto; vi++)
+        {
+            if (fromi [v] != toi [vi]) // Exclude self-flows
+            {
+                std::vector <unsigned int> onePath;
+                double flow_ij = flows (v, vi);
+                if (w [toi [vi]] < INFINITE_DOUBLE)
+                {
+                    // target values are int indices into vert_map_in, which means
+                    // corresponding vertex IDs can be taken directly from
+                    // vert_name
+                    int target = toi [vi];
+                    while (target < INFINITE_INT)
+                    {
+                        if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                        {
+                            std::string v2 = "f" +
+                                vert_name [static_cast <size_t> (prev [target])] +
+                                "t" + vert_name [static_cast <size_t> (target)];
+                            aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
+                        }
+
+                        target = prev [target];
+                        // Only allocate that flow from origin vertex v to all
+                        // previous vertices up until the target vi
+                        if (target < 0 || target == fromi [v])
+                        {
+                            break;
+                        }
+                    } // end while target
+                } // end if w < INF
+            } // end if vi != v
+        } // end for vi over nto
+        */
+    } // end for v over nfrom
+
+    return (aggregate_flows);
+}

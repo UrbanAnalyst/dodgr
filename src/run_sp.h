@@ -55,3 +55,10 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
 
+Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
+        Rcpp::DataFrame vert_map_in,
+        std::vector <int> fromi,
+        double k,
+        Rcpp::NumericMatrix flows,
+        std::string heap_type);
+

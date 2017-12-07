@@ -177,6 +177,27 @@ rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_typ
     .Call(`_dodgr_rcpp_aggregate_flows`, graph, vert_map_in, fromi, toi, flows, heap_type)
 }
 
+#' rcpp_aggregate_all_flows
+#'
+#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
+#' destinations from given set of origins, with flows attenuated by distance from
+#' those origins.
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param k Coefficient of (current proof-of-principle-only) exponential
+#' distance decay function.
+#'
+#' @note The flow data to be used for aggregation is a matrix mapping flows
+#' betwen each pair of from and to points.
+#'
+#' @noRd
+rcpp_aggregate_all_flows <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
+    .Call(`_dodgr_rcpp_aggregate_all_flows`, graph, vert_map_in, fromi, k, flows, heap_type)
+}
+
 #' rcpp_sf_as_network
 #'
 #' Return OSM data in Simple Features format
