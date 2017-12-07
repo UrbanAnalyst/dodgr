@@ -1,3 +1,12 @@
+# v0.0.3.001
+
+Major changes:
+- New function `dodgr_flowmap` plots maps of flows. Currently only writes .png
+  files, because large networks can not be effectively plotted on graphic
+  devices.
+- `dodgr_flows` has option to routes flows from a set of source origins to all
+  points in a network, attenuated by distance from those origins.
+
 # v0.0.3
 
 Tidy C++ code that flagged errors on CRAN solaris machine. Nothing else.

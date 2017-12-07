@@ -4,6 +4,8 @@
 ^\.travis\.yml$
 ^README\.md$
 ^makefile$
+^CONDUCT\.md$
+^CONTRIBUTING\.md$
 ^cran-comments.md$
 ^vignettes/makefile$
 ^vignettes/bencharm_data.rds$

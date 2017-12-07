@@ -42,10 +42,12 @@
 #'
 #' @name dodgr
 #' @docType package
+#' @importFrom grDevices colorRampPalette
 #' @importFrom igraph distances E make_directed_graph
 #' @importFrom magrittr %>% extract2
 #' @importFrom methods is
 #' @importFrom osmdata add_osm_feature getbb opq osmdata_sf osm_poly2line
+#' @importFrom osmplotr add_axes add_colourbar get_bbox osm_basemap print_osm_map
 #' @importFrom rbenchmark benchmark
 #' @importFrom sp bbox point.in.polygon
 #' @importFrom Rcpp evalCpp

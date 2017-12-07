@@ -16,17 +16,18 @@ Description: Distances on dual-weighted directed graphs using priority-queue
 Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
+    ggplot2,
     igraph,
     magrittr,
     methods,
     osmdata,
+    osmplotr,
     rbenchmark,
     sp,
     Rcpp (>= 0.12.6),
     RcppParallel
 Suggests:
     devtools,
-    ggplot2,
     igraphdata,
     knitr,
     purrr,
