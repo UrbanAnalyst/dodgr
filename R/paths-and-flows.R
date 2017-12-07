@@ -132,8 +132,10 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
 #' @param aggregate_all If \code{TRUE}, flows are aggregate from each origin
-#' (\code{from} point) to \strong{ALL} other points according to a decay from
-#' points of origin (currently hard-coded for trial only) - see note.
+#' (\code{from} point) to \strong{ALL} other points according to an exponential
+#' decay from points of origin.
+#' @param k Width coefficient of exponential decay for \code{aggregate_all =
+#' TRUE}, with distance decay defined as \code{exp(-d/k)}.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -160,7 +162,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
-                         contract = FALSE, aggregate_all = FALSE,
+                         contract = FALSE, aggregate_all = FALSE, k = 2,
                          heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
@@ -244,7 +246,7 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
                                             flows, heap)
     else
         graph$flow <- rcpp_aggregate_all_flows (graph2, vert_map,
-                                            from_index, 2, # k = 2!
+                                            from_index, k,
                                             flows, heap)
 
     if (contract) # map contracted flows back onto full graph

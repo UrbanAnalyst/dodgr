@@ -5,7 +5,8 @@
 \title{dodgr_flows}
 \usage{
 dodgr_flows(graph, from, to, flows, wt_profile = "bicycle",
-  contract = FALSE, aggregate_all = FALSE, heap = "BHeap", quiet = TRUE)
+  contract = FALSE, aggregate_all = FALSE, k = 2, heap = "BHeap",
+  quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -28,8 +29,11 @@ mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
 
 \item{aggregate_all}{If \code{TRUE}, flows are aggregate from each origin
-(\code{from} point) to \strong{ALL} other points according to a decay from
-points of origin (currently hard-coded for trial only) - see note.}
+(\code{from} point) to \strong{ALL} other points according to an exponential
+decay from points of origin.}
+
+\item{k}{Width coefficient of exponential decay for \code{aggregate_all =
+TRUE}, with distance decay defined as \code{exp(-d/k)}.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
