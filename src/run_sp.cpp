@@ -540,42 +540,24 @@ Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
-        /*
-        Rcpp::List res1 (nto);
-        for (unsigned int vi = 0; vi < nto; vi++)
+        for (unsigned int vi = 0; vi < nverts; vi++)
         {
-            if (fromi [v] != toi [vi]) // Exclude self-flows
+            if (prev [vi] > 0)
             {
-                std::vector <unsigned int> onePath;
-                double flow_ij = flows (v, vi);
-                if (w [toi [vi]] < INFINITE_DOUBLE)
-                {
-                    // target values are int indices into vert_map_in, which means
-                    // corresponding vertex IDs can be taken directly from
-                    // vert_name
-                    int target = toi [vi];
-                    while (target < INFINITE_INT)
-                    {
-                        if (prev [target] >= 0 && prev [target] < INFINITE_INT)
-                        {
-                            std::string v2 = "f" +
-                                vert_name [static_cast <size_t> (prev [target])] +
-                                "t" + vert_name [static_cast <size_t> (target)];
-                            aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
-                        }
+                // NOTE: Critically important that these are in the right order!
+                std::string vert_to = vert_name [vi],
+                    vert_from = vert_name [prev [vi]];
+                std::string two_verts = "f" + vert_from + "t" + vert_to;
+                if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
+                    Rcpp::stop ("vertex pair forms no known edge");
 
-                        target = prev [target];
-                        // Only allocate that flow from origin vertex v to all
-                        // previous vertices up until the target vi
-                        if (target < 0 || target == fromi [v])
-                        {
-                            break;
-                        }
-                    } // end while target
-                } // end if w < INF
-            } // end if vi != v
-        } // end for vi over nto
-        */
+                unsigned int indx = verts_to_edge_map [two_verts];
+                if (d [vi] != INFINITE_DOUBLE)
+                {
+                    aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);
+                }
+            }
+        }
     } // end for v over nfrom
 
     return (aggregate_flows);

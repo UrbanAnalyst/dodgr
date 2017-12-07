@@ -5,7 +5,7 @@
 \title{dodgr_flows}
 \usage{
 dodgr_flows(graph, from, to, flows, wt_profile = "bicycle",
-  contract = FALSE, heap = "BHeap", quiet = TRUE)
+  contract = FALSE, aggregate_all = FALSE, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -27,6 +27,10 @@ horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
 
+\item{aggregate_all}{If \code{TRUE}, flows are aggregate from each origin
+(\code{from} point) to \strong{ALL} other points according to a decay from
+points of origin (currently hard-coded for trial only) - see note.}
+
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -40,6 +44,10 @@ Modified version of graph with additonal \code{flow} column added.
 \description{
 Aggregate flows throughout a network based on an input matrix of flows
 between all pairs of \code{from} and \code{to} points.
+}
+\note{
+If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
+only the first column of \code{flows} is used.
 }
 \examples{
 graph <- weight_streetnet (hampi)

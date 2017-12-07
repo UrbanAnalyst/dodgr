@@ -131,12 +131,18 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
+#' @param aggregate_all If \code{TRUE}, flows are aggregate from each origin
+#' (\code{from} point) to \strong{ALL} other points according to a decay from
+#' points of origin (currently hard-coded for trial only) - see note.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
 #' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return Modified version of graph with additonal \code{flow} column added.
+#'
+#' @note If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
+#' only the first column of \code{flows} is used.
 #'
 #' @export
 #' @examples
@@ -153,9 +159,9 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-dodgr_flows <- function (graph, from, to, flows,
-                         wt_profile = "bicycle",
-                         contract = FALSE, heap = 'BHeap', quiet = TRUE)
+dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
+                         contract = FALSE, aggregate_all = FALSE,
+                         heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -232,9 +238,14 @@ dodgr_flows <- function (graph, from, to, flows,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    graph$flow <- rcpp_aggregate_flows (graph2, vert_map,
-                                        from_index, to_index,
-                                        flows, heap)
+    if (!aggregate_all)
+        graph$flow <- rcpp_aggregate_flows (graph2, vert_map,
+                                            from_index, to_index,
+                                            flows, heap)
+    else
+        graph$flow <- rcpp_aggregate_all_flows (graph2, vert_map,
+                                            from_index, 2, # k = 2!
+                                            flows, heap)
 
     if (contract) # map contracted flows back onto full graph
     {
