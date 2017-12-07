@@ -173,8 +173,8 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
 
-    if(any(is.na(flows))) {
-        flows[is.na(flows)] <- 0
+    if (any (is.na (flows))) {
+        flows [is.na (flows)] <- 0
     }
     hps <- get_heap (heap, graph)
     heap <- hps$heap
@@ -227,10 +227,10 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
-    from_id <- index_id$id
+    #from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
     to_index <- index_id$index - 1 # 0-based
-    to_id <- index_id$id
+    #to_id <- index_id$id
 
     if (!is.matrix (flows))
         flows <- as.matrix (flows)
@@ -308,7 +308,7 @@ merge_directed_flows <- function (graph)
     flows <- rcpp_merge_flows (graph2)
 
     indx <- which (flows > 0)
-    graph <- graph [indx, , drop = FALSE]
+    graph <- graph [indx, , drop = FALSE] #nolint
     graph$flow <- flows [indx]
     return (graph)
 }
