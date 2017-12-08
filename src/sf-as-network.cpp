@@ -46,9 +46,9 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         if (nms [i] == "highway")
             highway_index = static_cast <int> (i);
     }
-    Rcpp::CharacterVector ow = NULL;
-    Rcpp::CharacterVector owb = NULL;
-    Rcpp::CharacterVector highway = NULL;
+    Rcpp::CharacterVector ow = nullptr;
+    Rcpp::CharacterVector owb = nullptr;
+    Rcpp::CharacterVector highway = nullptr;
     if (one_way_index >= 0)
         ow = sf_lines [one_way_index];
     if (one_way_bicycle_index >= 0)
