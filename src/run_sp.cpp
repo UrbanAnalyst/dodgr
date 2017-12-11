@@ -141,6 +141,31 @@ size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
     return nfrom;
 }
 
+// Flows from the dijkstra output are reallocated based on matching vertex
+// pairs to edge indices. Note, however, that contracted graphs frequently
+// have duplicate vertex pairs with different distances. The following
+// therefore uses two maps, one to hold the ultimate index from vertex
+// pairs, and the other to hold minimal distances. This is used in flow routines
+// only.
+void make_vert_to_edge_maps (const std::vector <std::string> &from,
+        const std::vector <std::string> &to, const std::vector <double> &wt,
+        std::unordered_map <std::string, unsigned int> &verts_to_edge_map,
+        std::unordered_map <std::string, double> &verts_to_dist_map)
+{
+    for (unsigned int i = 0; i < from.size (); i++)
+    {
+        std::string two_verts = "f" + from [i] + "t" + to [i];
+        verts_to_edge_map.emplace (two_verts, i);
+        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
+            verts_to_dist_map.emplace (two_verts, wt [i]);
+        else if (wt [i] < verts_to_dist_map.at (two_verts))
+        {
+            verts_to_dist_map [two_verts] = wt [i];
+            verts_to_edge_map [two_verts] = i;
+        }
+    }
+}
+
 //' rcpp_get_sp_dists_par
 //'
 //' @noRd
@@ -288,7 +313,8 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
     
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);
@@ -365,31 +391,15 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
     size_t nverts = make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
-    /* Flows from the dijkstra output are reallocated based on matching vertex
-     * pairs to edge indices. Note, however, that contracted graphs frequently
-     * have duplicate vertex pairs with different distances. The following
-     * therefore uses two maps, one to hold the ultimate index from vertex
-     * pairs, and the other to hold minimal distances.
-     */
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
-    for (unsigned int i = 0; i < from.size (); i++)
-    {
-        std::string two_verts = "f" + from [i] + "t" + to [i];
-        verts_to_edge_map.emplace (two_verts, i);
-        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
-            verts_to_dist_map.emplace (two_verts, wt [i]);
-        else if (wt [i] < verts_to_dist_map.at (two_verts))
-        {
-            verts_to_dist_map [two_verts] = wt [i];
-            verts_to_edge_map [two_verts] = i;
-        }
-    }
+    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    std::shared_ptr<Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);
@@ -486,31 +496,15 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     size_t nverts = make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
-    /* Flows from the dijkstra output are reallocated based on matching vertex
-     * pairs to edge indices. Note, however, that contracted graphs frequently
-     * have duplicate vertex pairs with different distances. The following
-     * therefore uses two maps, one to hold the ultimate index from vertex
-     * pairs, and the other to hold minimal distances.
-     */
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
-    for (unsigned int i = 0; i < from.size (); i++)
-    {
-        std::string two_verts = "f" + from [i] + "t" + to [i];
-        verts_to_edge_map.emplace (two_verts, i);
-        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
-            verts_to_dist_map.emplace (two_verts, wt [i]);
-        else if (wt [i] < verts_to_dist_map.at (two_verts))
-        {
-            verts_to_dist_map [two_verts] = wt [i];
-            verts_to_edge_map [two_verts] = i;
-        }
-    }
+    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);
@@ -584,12 +578,7 @@ Rcpp::NumericVector rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    size_t nfrom = fromi.size ();
+    size_t nfrom = get_fromi (vert_map_in, fromi, id_vec);
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -601,38 +590,18 @@ Rcpp::NumericVector rcpp_spatial_interaction (const Rcpp::DataFrame graph,
     std::vector <unsigned int> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
     std::map <std::string, unsigned int> vert_map_i;
-    for (unsigned int i = 0;
-            i < static_cast <unsigned int> (vert_map_in.nrow ()); ++i)
-    {
-        vert_map_i.emplace (vert_name [i], vert_indx [i]);
-    }
-    unsigned int nverts = static_cast <unsigned int> (vert_map_i.size ());
+    size_t nverts = make_vert_map (vert_map_in, vert_name,
+            vert_indx, vert_map_i);
 
-    /* Flows from the dijkstra output are reallocated based on matching vertex
-     * pairs to edge indices. Note, however, that contracted graphs frequently
-     * have duplicate vertex pairs with different distances. The following
-     * therefore uses two maps, one to hold the ultimate index from vertex
-     * pairs, and the other to hold minimal distances.
-     */
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
-    for (unsigned int i = 0; i < from.size (); i++)
-    {
-        std::string two_verts = "f" + from [i] + "t" + to [i];
-        verts_to_edge_map.emplace (two_verts, i);
-        if (verts_to_dist_map.find (two_verts) == verts_to_dist_map.end ())
-            verts_to_dist_map.emplace (two_verts, wt [i]);
-        else if (wt [i] < verts_to_dist_map.at (two_verts))
-        {
-            verts_to_dist_map [two_verts] = wt [i];
-            verts_to_edge_map [two_verts] = i;
-        }
-    }
+    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared<Dijkstra>(nverts, *getHeapImpl(heap_type), g);
+    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);
