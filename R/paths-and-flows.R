@@ -124,6 +124,37 @@ nodes_arg_to_pts <- function (nodes, graph)
     return (nodes)
 }
 
+
+# keep from and to routing points in contracted graph
+contract_graph_with_pts <- function (graph, from, to)
+{
+    pts <- NULL
+    if (!missing (from))
+        pts <- c (pts, from)
+    if (!missing (to))
+        pts <- c (pts, to)
+    graph_full <- graph
+    graph <- dodgr_contract_graph (graph, unique (pts))
+    graph$graph_full <- graph_full
+    return (graph)
+}
+
+# map contracted flows back onto full graph
+uncontract_graph <- function (graph, edge_map, graph_full)
+{
+    indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
+    indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
+    # edge_map only has the contracted edges; flows from the original
+    # non-contracted edges also need to be inserted
+    edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
+    indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
+    indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
+    graph_full$flow <- 0
+    graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
+
+    return (graph_full)
+}
+
 #' dodgr_flows
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
@@ -195,42 +226,15 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
     # change from and to just to check conformity
     verts <- NULL
     if (!missing (from))
-    {
-        if (!is.matrix (from))
-            from <- as.matrix (from)
-        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
-            stop ("flows must have number of rows equal to length of from")
-        if (ncol (from) == 2)
-        {
-            verts <- dodgr_vertices (graph)
-            from <- verts$id [match_pts_to_graph (verts, from)]
-        }
-    }
+        from <- nodes_arg_to_pts (from, graph)
     if (!missing (to))
-    {
-        if (!is.matrix (to))
-            to <- as.matrix (to)
-        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
-            stop ("flows must have number of columns equal to length of to")
-        if (ncol (to) == 2)
-        {
-            if (is.null (verts))
-                verts <- dodgr_vertices (graph)
-            to <- verts$id [match_pts_to_graph (verts, to)]
-        }
-    }
+        to <- nodes_arg_to_pts (to, graph)
 
     if (contract)
     {
-        # keep routing points in contracted graph
-        pts <- NULL
-        if (!missing (from))
-            pts <- c (pts, from)
-        if (!missing (to))
-            pts <- c (pts, to)
-        graph_full <- graph
-        graph <- dodgr_contract_graph (graph, unique (pts))
-        edge_map <- graph$edge_map
+        graph <- contract_graph_with_pts (graph, from, to)
+        graph_full <- graph$graph_full
+        edge_graph <- graph$edge_map
         graph <- graph$graph
     }
 
@@ -262,18 +266,7 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
                                            flows, heap)
 
     if (contract) # map contracted flows back onto full graph
-    {
-        indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
-        indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
-        # edge_map only has the contracted edges; flows from the original
-        # non-contracted edges also need to be inserted
-        edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
-        indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
-        indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
-        graph_full$flow <- 0
-        graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
-        graph <- graph_full
-    }
+        graph <- uncontract_graph (graph, edge_map, graph_full)
 
     return (graph)
 }
@@ -371,42 +364,13 @@ dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
               "of length > 1")
     
     if (!missing (nodes))
-    {
-        if (!is.matrix (nodes))
-            nodes <- as.matrix (nodes)
-        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
-            stop ("flows must have number of rows equal to length of from")
-        if (ncol (from) == 2)
-        {
-            verts <- dodgr_vertices (graph)
-            from <- verts$id [match_pts_to_graph (verts, from)]
-        }
-    }
-    if (!missing (to))
-    {
-        if (!is.matrix (to))
-            to <- as.matrix (to)
-        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
-            stop ("flows must have number of columns equal to length of to")
-        if (ncol (to) == 2)
-        {
-            if (is.null (verts))
-                verts <- dodgr_vertices (graph)
-            to <- verts$id [match_pts_to_graph (verts, to)]
-        }
-    }
+        nodes <- nodes_arg_to_pts (nodes, graph)
 
     if (contract)
     {
-        # keep routing points in contracted graph
-        pts <- NULL
-        if (!missing (from))
-            pts <- c (pts, from)
-        if (!missing (to))
-            pts <- c (pts, to)
-        graph_full <- graph
-        graph <- dodgr_contract_graph (graph, unique (pts))
-        edge_map <- graph$edge_map
+        graph <- contract_graph_with_pts (graph, from, to)
+        graph_full <- graph$graph_full
+        edge_graph <- graph$edge_map
         graph <- graph$graph
     }
 
@@ -438,18 +402,7 @@ dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
                                            flows, heap)
 
     if (contract) # map contracted flows back onto full graph
-    {
-        indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
-        indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
-        # edge_map only has the contracted edges; flows from the original
-        # non-contracted edges also need to be inserted
-        edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
-        indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
-        indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
-        graph_full$flow <- 0
-        graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
-        graph <- graph_full
-    }
+        graph <- uncontract_graph (graph, edge_map, graph_full)
 
     return (graph)
 }
