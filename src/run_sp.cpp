@@ -145,8 +145,8 @@ size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type)
@@ -187,8 +187,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type)
@@ -263,8 +263,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type)
@@ -341,8 +341,8 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_flows_aggregate (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         Rcpp::NumericMatrix flows,
@@ -463,8 +463,8 @@ Rcpp::NumericVector rcpp_flows_aggregate (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_flows_disperse (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         double k,
         Rcpp::NumericMatrix flows,
@@ -576,8 +576,8 @@ Rcpp::NumericVector rcpp_flows_disperse (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_spatial_interaction (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericVector rcpp_spatial_interaction (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         double k,
         Rcpp::NumericMatrix dens,

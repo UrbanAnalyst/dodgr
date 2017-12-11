@@ -38,39 +38,39 @@ size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
         Rcpp::IntegerVector &fromi, Rcpp::NumericVector &id_vec);
 
 // the main functions
-Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
         const std::string& heap_type);
 
-Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         Rcpp::NumericVector fromi,
         Rcpp::NumericVector toi,
         std::string heap_type);
 
-Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
         std::string heap_type);
 
-Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
         std::string heap_type);
 
-Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericVector rcpp_aggregate_flows (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
 
-Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
-        Rcpp::DataFrame vert_map_in,
+Rcpp::NumericVector rcpp_aggregate_all_flows (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         double k,
         Rcpp::NumericMatrix flows,
