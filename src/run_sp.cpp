@@ -96,9 +96,9 @@ struct OneDist : public RcppParallel::Worker
 };
 
 
-size_t make_vert_map (Rcpp::DataFrame &vert_map_in,
-        std::vector <std::string> &vert_map_id,
-        std::vector <unsigned int> &vert_map_n,
+size_t make_vert_map (const Rcpp::DataFrame &vert_map_in,
+        const std::vector <std::string> &vert_map_id,
+        const std::vector <unsigned int> &vert_map_n,
         std::map <std::string, unsigned int> &vert_map)
 {
     for (unsigned int i = 0;
@@ -108,6 +108,37 @@ size_t make_vert_map (Rcpp::DataFrame &vert_map_in,
     }
     size_t nverts = static_cast <size_t> (vert_map.size ());
     return (nverts);
+}
+
+size_t get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
+        Rcpp::IntegerVector &fromi, Rcpp::IntegerVector &toi,
+        Rcpp::NumericVector &id_vec)
+{
+    if (fromi [0] < 0) // use all vertices
+    {
+        id_vec = vert_map_in ["id"];
+        fromi = id_vec;
+    }
+    if (toi [0] < 0) // use all vertices
+    {
+        if (id_vec.size () == 0)
+            id_vec = vert_map_in ["id"];
+        toi = id_vec;
+    }
+    size_t nfrom = fromi.size ();
+    return nfrom;
+}
+
+size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
+        Rcpp::IntegerVector &fromi, Rcpp::NumericVector &id_vec)
+{
+    if (fromi [0] < 0) // use all vertices
+    {
+        id_vec = vert_map_in ["id"];
+        fromi = id_vec;
+    }
+    size_t nfrom = fromi.size ();
+    return nfrom;
 }
 
 //' rcpp_get_sp_dists_par
@@ -121,18 +152,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = id_vec;
-    }
-    if (toi [0] < 0) // use all vertices
-    {
-        if (id_vec.size () == 0)
-            id_vec = vert_map_in ["id"];
-        toi = id_vec;
-    }
-    size_t nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -168,23 +189,13 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (Rcpp::DataFrame graph,
 // [[Rcpp::export]]
 Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
-        std::vector <int> toi,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    if (toi [0] < 0) // use all vertices
-    {
-        if (id_vec.size() == 0)
-            id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    size_t nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -254,23 +265,13 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
 // [[Rcpp::export]]
 Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
-        std::vector <int> toi,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    if (toi [0] < 0) // use all vertices
-    {
-        if (id_vec.size() == 0)
-            id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    size_t nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -342,24 +343,14 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_flows_aggregate (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
-        std::vector <int> toi,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
         Rcpp::NumericMatrix flows,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    if (toi [0] < 0) // use all vertices
-    {
-        if (id_vec.size() == 0)
-            id_vec = vert_map_in ["id"];
-        toi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    size_t nfrom = fromi.size (), nto = toi.size ();
+    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -474,18 +465,13 @@ Rcpp::NumericVector rcpp_flows_aggregate (Rcpp::DataFrame graph,
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_flows_disperse (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
+        Rcpp::IntegerVector fromi,
         double k,
         Rcpp::NumericMatrix flows,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    if (fromi [0] < 0) // use all vertices
-    {
-        id_vec = vert_map_in ["id"];
-        fromi = Rcpp::as <std::vector <int> > (id_vec);
-    }
-    size_t nfrom = fromi.size ();
+    size_t nfrom = get_fromi (vert_map_in, fromi, id_vec);
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -592,7 +578,7 @@ Rcpp::NumericVector rcpp_flows_disperse (Rcpp::DataFrame graph,
 // [[Rcpp::export]]
 Rcpp::NumericVector rcpp_spatial_interaction (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
+        Rcpp::IntegerVector fromi,
         double k,
         Rcpp::NumericMatrix dens,
         std::string heap_type)
