@@ -112,6 +112,17 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 }
 
 
+nodes_arg_to_pts <- function (nodes, graph)
+{
+    if (!is.matrix (nodes))
+        nodes <- as.matrix (nodes)
+    if (ncol (nodes) == 2)
+    {
+        verts <- dodgr_vertices (graph)
+        nodes <- verts$id [match_pts_to_graph (verts, nodes)]
+    }
+    return (nodes)
+}
 
 #' dodgr_flows
 #'
@@ -311,5 +322,134 @@ merge_directed_flows <- function (graph)
     indx <- which (flows > 0)
     graph <- graph [indx, , drop = FALSE] #nolint
     graph$flow <- flows [indx]
+    return (graph)
+}
+
+#' dodgr_spatial_interaction
+#'
+#' Fit a single-constrained exponential spatial interaction model to a vector of
+#' location densities. 
+#'
+#' @param graph \code{data.frame} or equivalent object representing the network
+#' graph (see Details)
+#' @param nodes Vector of points at which spatial interactions are to be
+#' calculated (see Details)
+#' @param dens Vector of corresponding densities used to calculate spatial
+#' interactions
+#' @param k Width coefficient of exponential spatial interaction model.
+#' @param heap Type of heap to use in priority queue. Options include
+#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
+#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
+#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
+#' @param contract If \code{TRUE}, calculate flows on contracted graph before
+#' mapping them back on to the original full graph (recommended as this will
+#' generally be much faster).
+#' @param quiet If \code{FALSE}, display progress messages on screen.
+#' @return Matrix of same number of rows and columns as length of \code{nodes}
+#' and \code{dens}, with rows containing the spatial interactions between each
+#' node and all others.
+#'
+#' @export
+dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
+                                       contract = FALSE, heap = 'BHeap',
+                                       quiet = TRUE)
+{
+    if (any (is.na (dens))) {
+        dens [is.na (dens)] <- 0
+    }
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
+
+    verts <- NULL
+    if (length (nodes) != length (dens))
+        stop ("nodes and dens must have same length")
+    if (!(is.vector (nodes) & is.vector (dens)))
+        stop ("nodes and dens must both be vectors")
+    if (length (nodes) < 2)
+        stop ("spatial interactions can only be calculated between vectors ",
+              "of length > 1")
+    
+    if (!missing (nodes))
+    {
+        if (!is.matrix (nodes))
+            nodes <- as.matrix (nodes)
+        if (!(nrow (from) == 1 | nrow (flows) == nrow (from)))
+            stop ("flows must have number of rows equal to length of from")
+        if (ncol (from) == 2)
+        {
+            verts <- dodgr_vertices (graph)
+            from <- verts$id [match_pts_to_graph (verts, from)]
+        }
+    }
+    if (!missing (to))
+    {
+        if (!is.matrix (to))
+            to <- as.matrix (to)
+        if (!(nrow (to) == 1 | ncol (flows) == nrow (to)))
+            stop ("flows must have number of columns equal to length of to")
+        if (ncol (to) == 2)
+        {
+            if (is.null (verts))
+                verts <- dodgr_vertices (graph)
+            to <- verts$id [match_pts_to_graph (verts, to)]
+        }
+    }
+
+    if (contract)
+    {
+        # keep routing points in contracted graph
+        pts <- NULL
+        if (!missing (from))
+            pts <- c (pts, from)
+        if (!missing (to))
+            pts <- c (pts, to)
+        graph_full <- graph
+        graph <- dodgr_contract_graph (graph, unique (pts))
+        edge_map <- graph$edge_map
+        graph <- graph$graph
+    }
+
+    gr_cols <- dodgr_graph_cols (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
+
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index - 1 # 0-based
+    #from_id <- index_id$id
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index - 1 # 0-based
+    #to_id <- index_id$id
+
+    if (!is.matrix (flows))
+        flows <- as.matrix (flows)
+
+    graph2 <- convert_graph (graph, gr_cols)
+
+    if (!quiet)
+        message ("\nAggregating flows ... ", appendLF = FALSE)
+
+    if (!aggregate_all)
+        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
+                                            from_index, to_index,
+                                            flows, heap)
+    else
+        graph$flow <- rcpp_flows_disperse (graph2, vert_map,
+                                           from_index, k,
+                                           flows, heap)
+
+    if (contract) # map contracted flows back onto full graph
+    {
+        indx_to_full <- match (edge_map$edge_old, graph_full$edge_id)
+        indx_to_contr <- match (edge_map$edge_new, graph$edge_id)
+        # edge_map only has the contracted edges; flows from the original
+        # non-contracted edges also need to be inserted
+        edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
+        indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
+        indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
+        graph_full$flow <- 0
+        graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
+        graph <- graph_full
+    }
+
     return (graph)
 }
