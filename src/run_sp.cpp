@@ -563,22 +563,22 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
 //' @param graph The data.frame holding the graph edges
 //' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
 //' index of vertices
-//' @param fromi Index into vert_map_in of vertex numbers
+//' @param nodes Index into vert_map_in of vertex numbers
 //' @param k Coefficient of exponential spatial interaction function.
 //' @param dens Vector of densities of same size as both \code{vert_map_in}
 //' and \code{fromi}.
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_spatial_interaction (const Rcpp::DataFrame graph,
+Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
-        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector nodes,
         double k,
-        Rcpp::NumericMatrix dens,
+        Rcpp::NumericVector dens,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi (vert_map_in, fromi, id_vec);
+    size_t nfrom = get_fromi (vert_map_in, nodes, id_vec);
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -608,43 +608,26 @@ Rcpp::NumericVector rcpp_spatial_interaction (const Rcpp::DataFrame graph,
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
-    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
+    Rcpp::NumericMatrix SI (nodes.size (), nodes.size ());
     for (unsigned int v = 0; v < nfrom; v++)
     {
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (nodes [v]));
 
-        for (unsigned int vi = 0; vi < nverts; vi++)
+        double flowsums = 0.0;
+        for (unsigned int vi = 0; vi < nfrom; vi++)
         {
-            if (prev [vi] > 0)
-            {
-                // NOTE: Critically important that these are in the right order!
-                std::string vert_to = vert_name [vi],
-                    vert_from = vert_name [prev [vi]];
-                std::string two_verts = "f" + vert_from + "t" + vert_to;
-                if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
-                    Rcpp::stop ("vertex pair forms no known edge");
-
-                unsigned int indx = verts_to_edge_map [two_verts];
-                if (d [vi] != INFINITE_DOUBLE)
-                {
-                    if (k > 0.0)
-                        aggregate_flows [indx] += dens (v, 0) * exp (-d [vi] / k);
-                    else // standard logistic polynomial for UK cycling models
-                    {
-                        double lp = -3.894 + (-0.5872 * d [vi]) +
-                            (1.832 * sqrt (d [vi])) +
-                            (0.007956 * d [vi] * d [vi]);
-                        aggregate_flows [indx] += dens (v, 0) *
-                            exp (lp) / (1.0 + exp (lp));
-                    }
-                }
-            }
+            // Doesn't matter if d [] == INFINITE_INT
+            const double tempd = dens (v) * dens (vi) * exp (-d [nodes [vi]] / k);
+            SI (v, vi) = tempd;
+            flowsums += tempd;
         }
+        for (unsigned int vi = 0; vi < nfrom; vi++)
+            SI (v, vi) = SI (v, vi) / flowsums;
     } // end for v over nfrom
 
-    return (aggregate_flows);
+    return (SI);
 }

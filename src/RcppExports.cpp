@@ -129,18 +129,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_spatial_interaction
-Rcpp::NumericVector rcpp_spatial_interaction(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, double k, Rcpp::NumericMatrix dens, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_spatial_interaction(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP densSEXP, SEXP heap_typeSEXP) {
+Rcpp::NumericMatrix rcpp_spatial_interaction(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector nodes, double k, Rcpp::NumericVector dens, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_spatial_interaction(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP nodesSEXP, SEXP kSEXP, SEXP densSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type nodes(nodesSEXP);
     Rcpp::traits::input_parameter< double >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dens(densSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens(densSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_spatial_interaction(graph, vert_map_in, fromi, k, dens, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_spatial_interaction(graph, vert_map_in, nodes, k, dens, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }

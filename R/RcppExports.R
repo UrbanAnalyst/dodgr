@@ -210,14 +210,14 @@ rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) 
 #' @param graph The data.frame holding the graph edges
 #' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
 #' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
+#' @param nodes Index into vert_map_in of vertex numbers
 #' @param k Coefficient of exponential spatial interaction function.
 #' @param dens Vector of densities of same size as both \code{vert_map_in}
 #' and \code{fromi}.
 #'
 #' @noRd
-rcpp_spatial_interaction <- function(graph, vert_map_in, fromi, k, dens, heap_type) {
-    .Call(`_dodgr_rcpp_spatial_interaction`, graph, vert_map_in, fromi, k, dens, heap_type)
+rcpp_spatial_interaction <- function(graph, vert_map_in, nodes, k, dens, heap_type) {
+    .Call(`_dodgr_rcpp_spatial_interaction`, graph, vert_map_in, nodes, k, dens, heap_type)
 }
 
 #' rcpp_sf_as_network

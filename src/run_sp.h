@@ -81,3 +81,9 @@ Rcpp::NumericVector rcpp_aggregate_all_flows (const Rcpp::DataFrame graph,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
 
+Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector nodes,
+        double k,
+        Rcpp::NumericVector dens,
+        std::string heap_type);
