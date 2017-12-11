@@ -161,7 +161,7 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
-#' rcpp_aggregate_flows
+#' rcpp_flows_aggregate
 #'
 #' @param graph The data.frame holding the graph edges
 #' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
@@ -173,11 +173,11 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' betwen each pair of from and to points.
 #'
 #' @noRd
-rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
-    .Call(`_dodgr_rcpp_aggregate_flows`, graph, vert_map_in, fromi, toi, flows, heap_type)
+rcpp_flows_aggregate <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
+    .Call(`_dodgr_rcpp_flows_aggregate`, graph, vert_map_in, fromi, toi, flows, heap_type)
 }
 
-#' rcpp_aggregate_all_flows
+#' rcpp_flows_disperse
 #'
 #' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
 #' destinations from given set of origins, with flows attenuated by distance from
@@ -188,14 +188,15 @@ rcpp_aggregate_flows <- function(graph, vert_map_in, fromi, toi, flows, heap_typ
 #' index of vertices
 #' @param fromi Index into vert_map_in of vertex numbers
 #' @param k Coefficient of (current proof-of-principle-only) exponential
-#' distance decay function.
+#' distance decay function.  If value of \code{k<0} is given, a standard
+#' logistic polynomial will be used.
 #'
 #' @note The flow data to be used for aggregation is a matrix mapping flows
 #' betwen each pair of from and to points.
 #'
 #' @noRd
-rcpp_aggregate_all_flows <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
-    .Call(`_dodgr_rcpp_aggregate_all_flows`, graph, vert_map_in, fromi, k, flows, heap_type)
+rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
+    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, heap_type)
 }
 
 #' rcpp_sf_as_network

@@ -96,9 +96,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_aggregate_flows
-Rcpp::NumericVector rcpp_aggregate_flows(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, Rcpp::NumericMatrix flows, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_aggregate_flows(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
+// rcpp_flows_aggregate
+Rcpp::NumericVector rcpp_flows_aggregate(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, std::vector <int> toi, Rcpp::NumericMatrix flows, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_aggregate(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -108,13 +108,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector <int> >::type toi(toiSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type flows(flowsSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_flows(graph, vert_map_in, fromi, toi, flows, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_flows_aggregate(graph, vert_map_in, fromi, toi, flows, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_aggregate_all_flows
-Rcpp::NumericVector rcpp_aggregate_all_flows(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, double k, Rcpp::NumericMatrix flows, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_aggregate_all_flows(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
+// rcpp_flows_disperse
+Rcpp::NumericVector rcpp_flows_disperse(Rcpp::DataFrame graph, Rcpp::DataFrame vert_map_in, std::vector <int> fromi, double k, Rcpp::NumericMatrix flows, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_disperse(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP flowsSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,7 +124,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type k(kSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type flows(flowsSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_all_flows(graph, vert_map_in, fromi, k, flows, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_flows_disperse(graph, vert_map_in, fromi, k, flows, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }

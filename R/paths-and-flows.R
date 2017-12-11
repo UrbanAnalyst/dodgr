@@ -135,7 +135,8 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 #' (\code{from} point) to \strong{ALL} other points according to an exponential
 #' decay from points of origin.
 #' @param k Width coefficient of exponential decay for \code{aggregate_all =
-#' TRUE}, with distance decay defined as \code{exp(-d/k)}.
+#' TRUE}, with distance decay defined as \code{exp(-d/k)}. If value of
+#' \code{k<0} is given, a standard logistic polynomial will be used.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -241,13 +242,13 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
     if (!aggregate_all)
-        graph$flow <- rcpp_aggregate_flows (graph2, vert_map,
+        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
                                             from_index, to_index,
                                             flows, heap)
     else
-        graph$flow <- rcpp_aggregate_all_flows (graph2, vert_map,
-                                            from_index, k,
-                                            flows, heap)
+        graph$flow <- rcpp_flows_disperse (graph2, vert_map,
+                                           from_index, k,
+                                           flows, heap)
 
     if (contract) # map contracted flows back onto full graph
     {

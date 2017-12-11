@@ -324,7 +324,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
     return (res);
 }
 
-//' rcpp_aggregate_flows
+//' rcpp_flows_aggregate
 //'
 //' @param graph The data.frame holding the graph edges
 //' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
@@ -337,7 +337,7 @@ Rcpp::List rcpp_get_paths (Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_aggregate (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         std::vector <int> toi,
@@ -454,7 +454,7 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
     return (aggregate_flows);
 }
 
-//' rcpp_aggregate_all_flows
+//' rcpp_flows_disperse
 //'
 //' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
 //' destinations from given set of origins, with flows attenuated by distance from
@@ -465,14 +465,15 @@ Rcpp::NumericVector rcpp_aggregate_flows (Rcpp::DataFrame graph,
 //' index of vertices
 //' @param fromi Index into vert_map_in of vertex numbers
 //' @param k Coefficient of (current proof-of-principle-only) exponential
-//' distance decay function.
+//' distance decay function.  If value of \code{k<0} is given, a standard
+//' logistic polynomial will be used.
 //'
 //' @note The flow data to be used for aggregation is a matrix mapping flows
 //' betwen each pair of from and to points.
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_disperse (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
         double k,
@@ -558,7 +559,16 @@ Rcpp::NumericVector rcpp_aggregate_all_flows (Rcpp::DataFrame graph,
                 unsigned int indx = verts_to_edge_map [two_verts];
                 if (d [vi] != INFINITE_DOUBLE)
                 {
-                    aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);
+                    if (k > 0.0)
+                        aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);
+                    else // standard logistic polynomial for UK cycling models
+                    {
+                        double lp = -3.894 + (-0.5872 * d [vi]) +
+                            (1.832 * sqrt (d [vi])) +
+                            (0.007956 * d [vi] * d [vi]);
+                        aggregate_flows [indx] += flows (v, 0) *
+                            exp (lp) / (1.0 + exp (lp));
+                    }
                 }
             }
         }

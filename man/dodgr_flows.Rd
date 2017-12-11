@@ -33,7 +33,8 @@ generally be much faster).}
 decay from points of origin.}
 
 \item{k}{Width coefficient of exponential decay for \code{aggregate_all =
-TRUE}, with distance decay defined as \code{exp(-d/k)}.}
+TRUE}, with distance decay defined as \code{exp(-d/k)}. If value of
+\code{k<0} is given, a standard logistic polynomial will be used.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
