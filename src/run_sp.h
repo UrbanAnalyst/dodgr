@@ -22,8 +22,15 @@ const int INFINITE_INT =  std::numeric_limits<int>::max ();
 //----- functions in run_sp.cpp
 //----------------------------
 
+// ancilliary functions
 std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type);
 
+size_t make_vert_map (Rcpp::DataFrame &vert_map_in,
+        std::vector <std::string> &vert_map_id,
+        std::vector <unsigned int> &vert_map_n,
+        std::map <std::string, unsigned int> &vert_map);
+
+// the main functions
 Rcpp::NumericMatrix rcpp_get_sp_dists (Rcpp::DataFrame graph,
         Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,
