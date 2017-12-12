@@ -343,7 +343,7 @@ merge_directed_flows <- function (graph)
 #'
 #' @export
 dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
-                                       contract = FALSE, heap = 'BHeap',
+                                       contract = TRUE, heap = 'BHeap',
                                        quiet = TRUE)
 {
     if (any (is.na (dens))) {

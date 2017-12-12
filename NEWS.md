@@ -7,6 +7,10 @@ Major changes:
 - `dodgr_flows` has option to routes flows from a set of source origins to all
   points in a network, attenuated by distance from those origins.
 
+Minor changes:
+- `match_pts_to_graph` now accepts Simple Features (sf) collections of
+  `sfc_POINT` objects to be matched.
+
 # v0.0.3
 
 Tidy C++ code that flagged errors on CRAN solaris machine. Nothing else.

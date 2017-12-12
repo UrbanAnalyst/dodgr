@@ -5,7 +5,7 @@
 \title{dodgr_spatial_interaction}
 \usage{
 dodgr_spatial_interaction(graph, nodes = NULL, dens = NULL, k = 2,
-  contract = FALSE, heap = "BHeap", quiet = TRUE)
+  contract = TRUE, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

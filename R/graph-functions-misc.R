@@ -191,7 +191,8 @@ find_xy_col_simple <- function (dfr)
 #'
 #' @param verts A \code{data.frame} of vertices obtained from
 #' \code{dodgr_vertices(graph)}.
-#' @param xy coordinates of points to be matched to the vertices
+#' @param xy coordinates of points to be matched to the vertices, either as
+#' matrix or \pkg{sf}-formatted \code{data.frame}.
 #'
 #' @return A vector index into verts
 #' @export
@@ -212,15 +213,29 @@ match_pts_to_graph <- function (verts, xy)
 {
     if (!(is.matrix (xy) | is.data.frame (xy)))
         stop ("xy must be a matrix or data.frame")
-    if (ncol (xy) != 2)
-        stop ("xy must have only two columns")
+    if (!is (xy, "sf"))
+        if (ncol (xy) != 2)
+            stop ("xy must have only two columns")
 
     xyi <- find_xy_col_simple (verts)
     verts <- data.frame (x = verts [, xyi [1]], y = verts [, xyi [2]])
     if (is (xy, "tbl"))
         xy <- data.frame (xy)
-    xyi <- find_xy_col_simple (xy)
-    xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
+    if (is (xy, "sf"))
+    {
+        if (!"geometry" %in% names (xy))
+            stop ("xy has no sf geometry column")
+        if (!is (xy$geometry, "sfc_POINT"))
+            stop ("xy$geometry must be a collection of sfc_POINT objects")
+        xy <- unlist (lapply (xy$geometry, as.numeric)) %>%
+            matrix (nrow = 2) %>% t ()
+        xy <- data.frame (x = xy [, 1], y = xy [, 2])
+    } else
+    {
+        xyi <- find_xy_col_simple (xy)
+        xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
+    }
 
-    rcpp_points_index (verts, xy)
+    # rcpp_points_index is 0-indexed, so ...
+    rcpp_points_index (verts, xy) + 1
 }

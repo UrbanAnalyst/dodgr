@@ -241,7 +241,7 @@ rcpp_sf_as_network <- function(sf_lines, pr) {
 #' @param graph Rcpp::DataFrame containing the graph
 #' @param pts Rcpp::DataFrame containing the routing points
 #'
-#' @return Rcpp::NumericVector index into graph of nearest points
+#' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
 #'
 #' @noRd
 rcpp_points_index <- function(xy, pts) {

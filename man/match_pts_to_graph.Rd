@@ -10,7 +10,8 @@ match_pts_to_graph(verts, xy)
 \item{verts}{A \code{data.frame} of vertices obtained from
 \code{dodgr_vertices(graph)}.}
 
-\item{xy}{coordinates of points to be matched to the vertices}
+\item{xy}{coordinates of points to be matched to the vertices, either as
+matrix or \pkg{sf}-formatted \code{data.frame}.}
 }
 \value{
 A vector index into verts

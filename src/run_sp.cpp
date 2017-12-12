@@ -625,8 +625,15 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
             SI (v, vi) = tempd;
             flowsums += tempd;
         }
-        for (unsigned int vi = 0; vi < nfrom; vi++)
-            SI (v, vi) = dens (v) * SI (v, vi) / flowsums;
+        if (flowsums == 0.0)
+        {
+            for (unsigned int vi = 0; vi < nfrom; vi++)
+                SI (v, vi) = 0.0;
+        } else
+        {
+            for (unsigned int vi = 0; vi < nfrom; vi++)
+                SI (v, vi) = dens (v) * SI (v, vi) / flowsums;
+        }
     } // end for v over nfrom
 
     return (SI);
