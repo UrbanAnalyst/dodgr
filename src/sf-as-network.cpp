@@ -13,7 +13,7 @@ double haversine (double x1, double y1, double x2, double y2)
 
 //' rcpp_sf_as_network
 //'
-//' Return OSM data in Simple Features format
+//' Return OSM data from Simple Features format input
 //'
 //' @param sf_lines An sf collection of LINESTRING objects
 //' @param pr Rcpp::DataFrame containing the weighting profile

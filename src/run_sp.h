@@ -87,3 +87,11 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         double k,
         Rcpp::NumericVector dens,
         std::string heap_type);
+
+Rcpp::NumericVector rcpp_one_spatial_interaction (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector nodes,
+        double k,
+        size_t i,
+        Rcpp::NumericVector dens,
+        std::string heap_type);

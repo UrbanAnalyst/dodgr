@@ -578,7 +578,7 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi (vert_map_in, nodes, id_vec);
+    size_t nnodes = get_fromi (vert_map_in, nodes, id_vec);
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -603,13 +603,13 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
             *getHeapImpl(heap_type), g);
 
-    Rcpp::List res (nfrom);
+    Rcpp::List res (nnodes);
     std::vector<double> w(nverts);
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
     Rcpp::NumericMatrix SI (nodes.size (), nodes.size ());
-    for (unsigned int v = 0; v < nfrom; v++)
+    for (unsigned int v = 0; v < nnodes; v++)
     {
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
@@ -618,23 +618,113 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         dijkstra->run (d, w, prev, static_cast <unsigned int> (nodes [v]));
 
         double flowsums = 0.0;
-        for (unsigned int vi = 0; vi < nfrom; vi++)
+        for (unsigned int vi = 0; vi < nnodes; vi++)
         {
-            // Doesn't matter if d [] == INFINITE_INT
-            const double tempd = dens (v) * dens (vi) * exp (-d [nodes [vi]] / k);
+            // Doesn't matter if d [] == INFINITE_INT; and dens(v) is const so
+            // can be ignored here
+            const double tempd = dens (vi) * exp (-d [nodes [vi]] / k);
             SI (v, vi) = tempd;
             flowsums += tempd;
         }
         if (flowsums == 0.0)
         {
-            for (unsigned int vi = 0; vi < nfrom; vi++)
+            for (unsigned int vi = 0; vi < nnodes; vi++)
                 SI (v, vi) = 0.0;
         } else
         {
-            for (unsigned int vi = 0; vi < nfrom; vi++)
+            for (unsigned int vi = 0; vi < nnodes; vi++)
                 SI (v, vi) = dens (v) * SI (v, vi) / flowsums;
         }
-    } // end for v over nfrom
+    } // end for v over nnodes
+
+    return (SI);
+}
+
+//' rcpp_one_spatial_interaction
+//'
+//' Singly constrained spatial interaction model for one node only, using
+//' exponential interaction function. Given an input vector of site densities,
+//' this function maps these onto full 2D spatial interaction terms
+//' (origin-destination) by calculating values of \code{T_i T_j exp (-k d_jk)}
+//' for each site, \code{i}, normalised by total sums for that site
+//' (\code{\sum_j}).
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param nodes Index into vert_map_in of vertex numbers
+//' @param k Coefficient of exponential spatial interaction function.
+//' @param dens Vector of densities of same size as both \code{vert_map_in}
+//' and \code{fromi}.
+//' @param i Node for which spatial interactions are to be evaluated
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_one_spatial_interaction (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector nodes,
+        double k,
+        size_t i,
+        Rcpp::NumericVector dens,
+        std::string heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    size_t nnodes = get_fromi (vert_map_in, nodes, id_vec);
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::vector <std::string> vert_name = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, unsigned int> vert_map_i;
+    size_t nverts = make_vert_map (vert_map_in, vert_name,
+            vert_indx, vert_map_i);
+
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
+    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
+
+    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+            *getHeapImpl(heap_type), g);
+
+    Rcpp::List res (nnodes);
+    std::vector<double> w(nverts);
+    std::vector<double> d(nverts);
+    std::vector<int> prev(nverts);
+
+    Rcpp::NumericVector SI (nodes.size ());
+
+    // no loop:
+    std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+    std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
+
+    dijkstra->run (d, w, prev, static_cast <unsigned int> (nodes [i]));
+
+    double flowsums = 0.0;
+    for (unsigned int vi = 0; vi < nnodes; vi++)
+    {
+        // Doesn't matter if d [] == INFINITE_INT; and dens(v) is const so
+        // can be ignored here
+        const double tempd = dens (vi) * exp (-d [nodes [vi]] / k);
+        SI (vi) = tempd;
+        flowsums += tempd;
+    }
+    if (flowsums == 0.0)
+    {
+        for (unsigned int vi = 0; vi < nnodes; vi++)
+            SI (vi) = 0.0;
+    } else
+    {
+        for (unsigned int vi = 0; vi < nnodes; vi++)
+            SI (vi) = dens (i) * SI (vi) / flowsums;
+    }
 
     return (SI);
 }
