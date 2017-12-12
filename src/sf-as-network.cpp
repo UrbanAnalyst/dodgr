@@ -275,3 +275,144 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
 
     return index;
 }
+
+//' rcpp_aggregate_to_sf
+//'
+//' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
+//'
+//' @param graph_full Rcpp::DataFrame containing the **full** graph
+//' @param graph_contr Rcpp::DataFrame containing the **contracted** graph
+//' @param edge_map Rcpp::DataFrame containing the edge map returned from
+//' \code{dodgr_contract_graph}
+//'
+//' @return Rcpp::List object of `sf::LINESTRING` geoms
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
+        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
+{
+    Rcpp::List res;
+
+    Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
+            new_edges = edge_map ["edge_new"],
+            contr_edges = graph_contr ["edge_id"],
+            idf_r = graph_full ["from_id"],
+            idt_r = graph_full ["to_id"];
+
+    Rcpp::NumericVector xf = graph_full ["from_lon"],
+            yf = graph_full ["from_lat"],
+            xt = graph_full ["to_lon"],
+            yt = graph_full ["to_lat"];
+
+    std::map <std::string, std::string> idmap_full;
+    for (size_t i = 0; i < idf_r.size (); i++)
+    {
+        idmap_full.emplace (static_cast <std::string> (idf_r [i]),
+                static_cast <std::string> (idt_r [i]));
+    }
+
+    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    {
+        Rcpp::checkUserInterrupt ();
+        std::set <unsigned int> edges;
+        std::map <std::string, std::string> idmap;
+        for (size_t j = 0; j < edge_map.nrow (); j++)
+        {
+            if (new_edges [j] == contr_edges [i])
+            {
+                // old_edges is 1-indexed!
+                size_t the_edge = atoi (old_edges [j]) - 1;
+                edges.emplace (the_edge);
+                if (the_edge > idf_r.size ())
+                    Rcpp::stop ("the_edge > size of fulll graph");
+
+                idmap.emplace (static_cast <std::string> (idf_r [the_edge]),
+                        static_cast <std::string> (idt_r [the_edge]));
+            }
+        }
+
+        /*
+         * idmap then has a map between from and to IDs of original edges for
+         * the contracted edge. These are not necessarily in any sequential
+         * order, and so the following code constructs longest sequences of edge
+         * IDs. If a "to" ID either already exists in idmap, or cannot be found,
+         * then that segment is dumped as a list component of edge_ids.
+         */
+
+        if (idmap.size () == 0) // edge is not a replacement
+        {
+            edges.emplace (i);
+        } else
+        {
+            std::deque <std::string> id;
+            // Store first edge and erase from idmap
+            std::string front_node = idmap.begin ()->first;
+            id.push_back (front_node); // from ID; push_Back coz deque is empty
+            std::string back_node = idmap.begin ()->second;
+            idmap.erase (idmap.begin ());
+
+            while (idmap.size () > 0)
+            {
+                std::map <std::string, std::string>::iterator it;
+                it = idmap.find (back_node);
+                bool back = true;
+                if (it == idmap.end ())
+                {
+                    it = idmap.find (front_node);
+                    if (it == idmap.end ())
+                    {
+                        Rcpp::CharacterVector idvec (id.size ());
+                        std::deque <std::string>::iterator idj;
+                        for (idj = id.begin (); idj != id.end (); ++idj)
+                        {
+                            size_t pos = std::distance (id.begin (), idj);
+                            idvec [pos] = *(idj);
+                        }
+                        res.push_back (idvec);
+                        // start new ID set
+                        id.clear ();
+                        front_node = idmap.begin ()->first;
+                        id.push_back (front_node);
+                        back_node = idmap.begin()->second;
+                        id.push_back (back_node);
+                        idmap.erase (idmap.begin ());
+                    } else
+                    {
+                        id.push_front (front_node);
+                        front_node = it->second;
+                        idmap.erase (it);
+                        back = false;
+                    }
+                } else
+                {
+                    id.push_back (back_node);
+                    back_node = it->second;
+                    idmap.erase (it);
+                    back = true;
+                }
+                if (idmap.size () == 0)
+                {
+                    if (back)
+                        id.push_back (back_node);
+                    else
+                        id.push_front (front_node);
+                    Rcpp::CharacterVector idvec (id.size ());
+                    for (std::deque <std::string>::iterator idj = id.begin ();
+                            idj != id.end (); ++idj)
+                    {
+                        size_t pos = std::distance (id.begin (), idj);
+                        idvec [pos] = *(idj);
+                    }
+                    res.push_back (idvec);
+                    id.clear ();
+                }
+            }
+        }
+
+        // Then the list of edge IDs just has to be converted to corresponding
+        // list of coordinate matrices
+    }
+
+    return res;
+}

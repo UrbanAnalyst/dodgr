@@ -285,3 +285,19 @@ rcpp_points_index_par <- function(xy, pts) {
     .Call(`_dodgr_rcpp_points_index_par`, xy, pts)
 }
 
+#' rcpp_aggregate_to_sf
+#'
+#' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
+#'
+#' @param graph_full Rcpp::DataFrame containing the **full** graph
+#' @param graph_contr Rcpp::DataFrame containing the **contracted** graph
+#' @param edge_map Rcpp::DataFrame containing the edge map returned from
+#' \code{dodgr_contract_graph}
+#'
+#' @return Rcpp::List object of `sf::LINESTRING` geoms
+#'
+#' @noRd
+rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
+    .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
+}
+
