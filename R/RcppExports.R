@@ -248,3 +248,17 @@ rcpp_points_index <- function(xy, pts) {
     .Call(`_dodgr_rcpp_points_index`, xy, pts)
 }
 
+#' rcpp_points_index_par
+#'
+#' Get index of nearest vertices to list of points
+#'
+#' @param graph Rcpp::DataFrame containing the graph
+#' @param pts Rcpp::DataFrame containing the routing points
+#'
+#' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
+#'
+#' @noRd
+rcpp_points_index_par <- function(xy, pts) {
+    .Call(`_dodgr_rcpp_points_index_par`, xy, pts)
+}
+
