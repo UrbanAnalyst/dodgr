@@ -67,16 +67,16 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::vector <int> toi,
         std::string heap_type);
 
-Rcpp::NumericVector rcpp_aggregate_flows (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
-        std::vector <int> toi,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
 
-Rcpp::NumericVector rcpp_aggregate_all_flows (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
-        std::vector <int> fromi,
+        Rcpp::IntegerVector fromi,
         double k,
         Rcpp::NumericMatrix flows,
         std::string heap_type);

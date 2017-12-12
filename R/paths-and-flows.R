@@ -224,7 +224,6 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
     graph <- hps$graph
 
     # change from and to just to check conformity
-    verts <- NULL
     if (!missing (from))
         from <- nodes_arg_to_pts (from, graph)
     if (!missing (to))
@@ -234,7 +233,7 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
     {
         graph <- contract_graph_with_pts (graph, from, to)
         graph_full <- graph$graph_full
-        edge_graph <- graph$edge_map
+        edge_map <- graph$edge_map
         graph <- graph$graph
     }
 
@@ -354,7 +353,6 @@ dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
     heap <- hps$heap
     graph <- hps$graph
 
-    verts <- NULL
     if (length (nodes) != length (dens))
         stop ("nodes and dens must have same length")
     if (!(is.vector (nodes) & is.vector (dens)))
@@ -362,47 +360,24 @@ dodgr_spatial_interaction <- function (graph, nodes = NULL, dens = NULL, k = 2,
     if (length (nodes) < 2)
         stop ("spatial interactions can only be calculated between vectors ",
               "of length > 1")
-    
+
     if (!missing (nodes))
         nodes <- nodes_arg_to_pts (nodes, graph)
 
     if (contract)
-    {
-        graph <- contract_graph_with_pts (graph, from, to)
-        graph_full <- graph$graph_full
-        edge_graph <- graph$edge_map
-        graph <- graph$graph
-    }
+        graph <- contract_graph_with_pts (graph, nodes)$graph
 
     gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
 
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index - 1 # 0-based
-    #from_id <- index_id$id
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index - 1 # 0-based
-    #to_id <- index_id$id
-
-    if (!is.matrix (flows))
-        flows <- as.matrix (flows)
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, nodes)
+    node_index <- index_id$index - 1 # 0-based
 
     graph2 <- convert_graph (graph, gr_cols)
 
     if (!quiet)
-        message ("\nAggregating flows ... ", appendLF = FALSE)
+        message ("\nCalculating spatial interaction matrix ... ",
+                 appendLF = FALSE)
 
-    if (!aggregate_all)
-        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
-                                            from_index, to_index,
-                                            flows, heap)
-    else
-        graph$flow <- rcpp_flows_disperse (graph2, vert_map,
-                                           from_index, k,
-                                           flows, heap)
-
-    if (contract) # map contracted flows back onto full graph
-        graph <- uncontract_graph (graph, edge_map, graph_full)
-
-    return (graph)
+    rcpp_spatial_interaction (graph2, vert_map, node_index, k, dens, heap)
 }
