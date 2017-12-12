@@ -1,0 +1,24 @@
+# script to generate `data/hampi.rda` 
+
+```{r load, echo = FALSE}
+library (magrittr)
+library (osmdata)
+```
+```{r}
+hampi <- opq ("hampi india") %>%
+    add_osm_feature (key = "highway") %>%
+    osmdata_sf () %>%
+    osm_poly2line () %>%
+    extract2 ("osm_lines")
+```
+Then need to get rid of columns, especially the ones with Kannada names which
+are non-UTF8
+```{r}
+nms <- c ("osm_id", "bicycle", "covered", "foot", "highway", "incline",
+          "motorcar", "motorcycle", "motor_vehicle", "oneway", "surface",
+          "tracktype", "tunnel", "width", "geometry")
+hampi <- hampi [, match (nms, names (hampi))]
+```
+```{r}
+devtools::use_data (hampi, overwrite = TRUE, compress = 'xz')
+```
