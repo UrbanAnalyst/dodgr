@@ -292,7 +292,7 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
 {
-    Rcpp::List res;
+    Rcpp::List res, edge_sequences;
 
     Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
             new_edges = edge_map ["edge_new"],
@@ -348,9 +348,27 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             std::deque <std::string> id;
             // Store first edge and erase from idmap
             std::string front_node = idmap.begin ()->first;
-            id.push_back (front_node); // from ID; push_Back coz deque is empty
             std::string back_node = idmap.begin ()->second;
-            idmap.erase (idmap.begin ());
+            // Ensure sequence doesn't start at terminal end. This requires
+            // checking that the second node is the first node of another edge.
+            if (idmap.find (back_node) != idmap.end ())
+            {
+                idmap.erase (idmap.begin ());
+            } else
+            {
+                std::map <std::string, std::string>::iterator it;
+                for (it = idmap.begin (); it != idmap.end (); ++it)
+                {
+                    if (idmap.find (it->second) != idmap.end ())
+                    {
+                        front_node = it->first;
+                        back_node = it->second;
+                        idmap.erase (it);
+                        break;
+                    }
+                }
+            }
+            id.push_back (front_node); // from ID; push_Back coz deque is empty
 
             while (idmap.size () > 0)
             {
@@ -369,7 +387,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                             size_t pos = std::distance (id.begin (), idj);
                             idvec [pos] = *(idj);
                         }
-                        res.push_back (idvec);
+                        edge_sequences.push_back (idvec);
                         // start new ID set
                         id.clear ();
                         front_node = idmap.begin ()->first;
@@ -404,7 +422,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                         size_t pos = std::distance (id.begin (), idj);
                         idvec [pos] = *(idj);
                     }
-                    res.push_back (idvec);
+                    edge_sequences.push_back (idvec);
                     id.clear ();
                 }
             }
@@ -414,5 +432,6 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         // list of coordinate matrices
     }
 
+    res = edge_sequences;
     return res;
 }
