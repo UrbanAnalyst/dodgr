@@ -311,7 +311,8 @@ Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, dou
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
-        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
+        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map,
+        bool displ_progress)
 {
     Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
             new_edges = edge_map ["edge_new"],
@@ -346,7 +347,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
      * other holding the same values in reverse. The latter enables sequences to
      * be traced in reverse by matching end points.
      */
-    Progress p (graph_contr.nrow ());
+    Progress p (graph_contr.nrow (), displ_progress);
     for (size_t i = 0; i < graph_contr.nrow (); i++)
     {
         Rcpp::checkUserInterrupt ();
@@ -412,7 +413,8 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             edge_sequences [i] = idvec;
             id.clear ();
         }
-        p.increment ();
+        if (displ_progress)
+            p.increment ();
     }
 
     // Then append the non-contracted edges that are in the contracted graph

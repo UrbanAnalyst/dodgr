@@ -22,4 +22,5 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
 Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
         Rcpp::DataFrame &pts);
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
-        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map);
+        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map,
+        bool displ_progress);

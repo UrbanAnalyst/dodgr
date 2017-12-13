@@ -297,7 +297,7 @@ rcpp_points_index_par <- function(xy, pts) {
 #' @return Rcpp::List object of `sf::LINESTRING` geoms
 #'
 #' @noRd
-rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
-    .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
+rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map, displ_progress) {
+    .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map, displ_progress)
 }
 

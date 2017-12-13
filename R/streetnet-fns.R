@@ -172,6 +172,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 #' objects representing longest sequences between all junction nodes.
 #'
 #' @param net A \pkg{dodgr} network
+#' @param displ_progress Should a progress bar be displayed?
 #' @return A Simple Features Collection (\code{sfc}) list of \code{LINESTRING}
 #' objects.
 #'
@@ -185,8 +186,8 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 #' xy <- dodgr_to_sf (hw)
 #' dim (hw) # 5,845 edges
 #' length (xy) # 682 aggregated linestrings aggregated from those edges
-dodgr_to_sf <- function (net)
+dodgr_to_sf <- function (net, displ_progress = FALSE)
 {
     gc <- dodgr_contract_graph (net)
-    rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+    rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map, displ_progress)
 }

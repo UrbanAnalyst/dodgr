@@ -4,10 +4,12 @@
 \alias{dodgr_to_sf}
 \title{dodgr_to_sf}
 \usage{
-dodgr_to_sf(net)
+dodgr_to_sf(net, displ_progress = FALSE)
 }
 \arguments{
 \item{net}{A \pkg{dodgr} network}
+
+\item{displ_progress}{Should a progress bar be displayed?}
 }
 \value{
 A Simple Features Collection (\code{sfc}) list of \code{LINESTRING}
