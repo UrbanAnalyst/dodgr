@@ -292,8 +292,6 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
 {
-    Rcpp::List res, edge_sequences;
-
     Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
             new_edges = edge_map ["edge_new"],
             contr_edges = graph_contr ["edge_id"],
@@ -305,6 +303,14 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             xt = graph_full ["to_lon"],
             yt = graph_full ["to_lat"];
 
+
+    std::unordered_set <std::string> new_edge_list;
+    for (size_t i = 0; i < edge_map.nrow (); i++)
+            new_edge_list.emplace (new_edges [i]);
+    const size_t nedges = new_edge_list.size ();
+    Rcpp::List edge_sequences (nedges);
+    size_t edge_count = 0;
+
     /* The first edge of a sequence won't be necessarily at the start of a
      * sequence, so two maps are made, one from each node to the next, and the
      * other holding the same values in reverse. The latter enables sequences to
@@ -313,7 +319,6 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     for (size_t i = 0; i < graph_contr.nrow (); i++)
     {
         Rcpp::checkUserInterrupt ();
-        std::set <unsigned int> edges;
         std::map <std::string, std::string> idmap, idmap_rev;
         for (size_t j = 0; j < edge_map.nrow (); j++)
         {
@@ -321,7 +326,6 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             {
                 // old_edges is 1-indexed!
                 size_t the_edge = atoi (old_edges [j]) - 1;
-                edges.emplace (the_edge);
                 if (the_edge > idf_r.size ())
                     Rcpp::stop ("the_edge > size of fulll graph");
 
@@ -340,10 +344,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
          * then that segment is dumped as a list component of edge_ids.
          */
 
-        if (idmap.size () == 0) // edge is not a replacement
-        {
-            edges.emplace (i);
-        } else
+        if (idmap.size () > 0)
         {
             // Find the front of the sequence of which the first idmap pair is
             // part by stepping backwards through idmap_rev
@@ -373,7 +374,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                         size_t pos = std::distance (id.begin (), idj);
                         idvec [pos] = *(idj);
                     }
-                    edge_sequences.push_back (idvec);
+                    edge_sequences [edge_count++] = idvec;
 
                     // start new ID set
                     id.clear ();
@@ -405,14 +406,19 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                         size_t pos = std::distance (id.begin (), idj);
                         idvec [pos] = *(idj);
                     }
-                    edge_sequences.push_back (idvec);
+                    edge_sequences [edge_count++] = idvec;
                     id.clear ();
                 }
             }
         }
+    }
 
-        // Then the list of edge IDs just has to be converted to corresponding
-        // list of coordinate matrices
+    // Then the list of edge IDs just has to be converted to corresponding
+    // list of coordinate matrices
+    Rcpp::List res (nedges);
+    for (size_t i = 0; i < nedges; i++)
+    {
+        Rcpp::CharacterVector idvec = edge_sequences [i];
     }
 
     res = edge_sequences;
