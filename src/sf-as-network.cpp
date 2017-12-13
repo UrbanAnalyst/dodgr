@@ -367,6 +367,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                 idmap_rev.emplace (node_t, node_f);
             }
         }
+        size_t nnodes = idmap.size ();
 
         /*
          * idmap then has a map between from and to IDs of original edges for
@@ -382,36 +383,26 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             // part by stepping backwards through idmap_rev
             std::string front_node = idmap.begin ()->first;
             std::string back_node = idmap.begin ()->second;
-            std::map <std::string, std::string>::iterator it;
             while (idmap_rev.find (front_node) != idmap_rev.end ())
                 front_node = idmap_rev.find (front_node)->second;
             back_node = idmap.find (front_node)->second;
 
-            std::deque <std::string> id;
-            id.push_back (front_node);
-            id.push_back (back_node);
+            std::vector <std::string> id (nnodes + 1);
+            id [0] = front_node;
+            id [1] = back_node;
+            size_t count = 2;
             idmap.erase (front_node);
-            idmap_rev.erase (back_node);
 
             while (idmap.size () > 0)
             {
-                it = idmap.find (back_node);
+                std::map <std::string, std::string>::iterator it =
+                    idmap.find (back_node);
                 back_node = it->second;
-                id.push_back (back_node);
-                if (idmap_rev.find (it->first) != idmap_rev.end ())
-                    idmap_rev.erase (it->first);
+                id [count++] = back_node;
                 idmap.erase (it);
             }
 
-            Rcpp::CharacterVector idvec (id.size ());
-            for (std::deque <std::string>::iterator idj = id.begin ();
-                    idj != id.end (); ++idj)
-            {
-                size_t pos = std::distance (id.begin (), idj);
-                idvec [pos] = *(idj);
-            }
-            edge_sequences [i] = idvec;
-            id.clear ();
+            edge_sequences [i] = id;
         }
         if (displ_progress)
             p.increment ();
