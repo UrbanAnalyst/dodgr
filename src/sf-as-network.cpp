@@ -305,18 +305,16 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             xt = graph_full ["to_lon"],
             yt = graph_full ["to_lat"];
 
-    std::map <std::string, std::string> idmap_full;
-    for (size_t i = 0; i < idf_r.size (); i++)
-    {
-        idmap_full.emplace (static_cast <std::string> (idf_r [i]),
-                static_cast <std::string> (idt_r [i]));
-    }
-
+    /* The first edge of a sequence won't be necessarily at the start of a
+     * sequence, so two maps are made, one from each node to the next, and the
+     * other holding the same values in reverse. The latter enables sequences to
+     * be traced in reverse by matching end points.
+     */
     for (size_t i = 0; i < graph_contr.nrow (); i++)
     {
         Rcpp::checkUserInterrupt ();
         std::set <unsigned int> edges;
-        std::map <std::string, std::string> idmap;
+        std::map <std::string, std::string> idmap, idmap_rev;
         for (size_t j = 0; j < edge_map.nrow (); j++)
         {
             if (new_edges [j] == contr_edges [i])
@@ -327,8 +325,10 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                 if (the_edge > idf_r.size ())
                     Rcpp::stop ("the_edge > size of fulll graph");
 
-                idmap.emplace (static_cast <std::string> (idf_r [the_edge]),
-                        static_cast <std::string> (idt_r [the_edge]));
+                std::string node_f = static_cast <std::string> (idf_r [the_edge]),
+                    node_t = static_cast <std::string> (idt_r [the_edge]);
+                idmap.emplace (node_f, node_t);
+                idmap_rev.emplace (node_t, node_f);
             }
         }
 
@@ -345,76 +345,59 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             edges.emplace (i);
         } else
         {
-            std::deque <std::string> id;
-            // Store first edge and erase from idmap
+            // Find the front of the sequence of which the first idmap pair is
+            // part by stepping backwards through idmap_rev
             std::string front_node = idmap.begin ()->first;
             std::string back_node = idmap.begin ()->second;
-            // Ensure sequence doesn't start at terminal end. This requires
-            // checking that the second node is the first node of another edge.
-            if (idmap.find (back_node) != idmap.end ())
-            {
-                idmap.erase (idmap.begin ());
-            } else
-            {
-                std::map <std::string, std::string>::iterator it;
-                for (it = idmap.begin (); it != idmap.end (); ++it)
-                {
-                    if (idmap.find (it->second) != idmap.end ())
-                    {
-                        front_node = it->first;
-                        back_node = it->second;
-                        idmap.erase (it);
-                        break;
-                    }
-                }
-            }
-            id.push_back (front_node); // from ID; push_Back coz deque is empty
+            std::map <std::string, std::string>::iterator it;
+            while (idmap_rev.find (front_node) != idmap_rev.end ())
+                front_node = idmap_rev.find (front_node)->second;
+            back_node = idmap.find (front_node)->second;
+
+            std::deque <std::string> id;
+            id.push_back (front_node);
+            id.push_back (back_node);
+            idmap.erase (front_node);
+            idmap_rev.erase (back_node);
 
             while (idmap.size () > 0)
             {
-                std::map <std::string, std::string>::iterator it;
                 it = idmap.find (back_node);
-                bool back = true;
                 if (it == idmap.end ())
                 {
-                    it = idmap.find (front_node);
-                    if (it == idmap.end ())
+                    // dump that sequence and start a new one
+                    Rcpp::CharacterVector idvec (id.size ());
+                    std::deque <std::string>::iterator idj;
+                    for (idj = id.begin (); idj != id.end (); ++idj)
                     {
-                        Rcpp::CharacterVector idvec (id.size ());
-                        std::deque <std::string>::iterator idj;
-                        for (idj = id.begin (); idj != id.end (); ++idj)
-                        {
-                            size_t pos = std::distance (id.begin (), idj);
-                            idvec [pos] = *(idj);
-                        }
-                        edge_sequences.push_back (idvec);
-                        // start new ID set
-                        id.clear ();
-                        front_node = idmap.begin ()->first;
-                        id.push_back (front_node);
-                        back_node = idmap.begin()->second;
-                        id.push_back (back_node);
-                        idmap.erase (idmap.begin ());
-                    } else
-                    {
-                        id.push_front (front_node);
-                        front_node = it->second;
-                        idmap.erase (it);
-                        back = false;
+                        size_t pos = std::distance (id.begin (), idj);
+                        idvec [pos] = *(idj);
                     }
+                    edge_sequences.push_back (idvec);
+
+                    // start new ID set
+                    id.clear ();
+                    front_node = idmap.begin ()->first;
+                    back_node = idmap.begin()->second;
+                    // rewind to front of sequence
+                    while (idmap_rev.find (front_node) != idmap_rev.end ())
+                        front_node = idmap_rev.find (front_node)->second;
+                    back_node = idmap.find (front_node)->second;
+                    id.push_back (front_node);
+                    id.push_back (back_node);
+                    idmap.erase (front_node);
+                    idmap_rev.erase (back_node);
                 } else
                 {
-                    id.push_back (back_node);
                     back_node = it->second;
+                    id.push_back (back_node);
+                    if (idmap_rev.find (it->first) != idmap_rev.end ())
+                        idmap_rev.erase (it->first);
                     idmap.erase (it);
-                    back = true;
                 }
+
                 if (idmap.size () == 0)
                 {
-                    if (back)
-                        id.push_back (back_node);
-                    else
-                        id.push_front (front_node);
                     Rcpp::CharacterVector idvec (id.size ());
                     for (std::deque <std::string>::iterator idj = id.begin ();
                             idj != id.end (); ++idj)
