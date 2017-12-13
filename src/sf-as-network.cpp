@@ -347,6 +347,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
      * other holding the same values in reverse. The latter enables sequences to
      * be traced in reverse by matching end points.
      */
+    Progress p (graph_contr.nrow ());
     for (size_t i = 0; i < graph_contr.nrow (); i++)
     {
         Rcpp::checkUserInterrupt ();
@@ -442,6 +443,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
                 }
             }
         }
+        p.increment ();
     }
 
     // Then append the non-contracted edges that are in the contracted graph

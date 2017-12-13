@@ -25,7 +25,8 @@ Imports:
     rbenchmark,
     sp,
     Rcpp (>= 0.12.6),
-    RcppParallel
+    RcppParallel,
+    RcppProgress
 Suggests:
     devtools,
     igraphdata,
@@ -38,7 +39,8 @@ Suggests:
     testthat
 LinkingTo:
     Rcpp,
-    RcppParallel
+    RcppParallel,
+    RcppProgress
 SystemRequirements:
     C++11,
     GNU make

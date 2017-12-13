@@ -4,6 +4,9 @@
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
