@@ -164,3 +164,29 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
     return (graph)
 }
+
+#' dodgr_to_sf
+#'
+#' Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
+#' Features (\pkg{sf}) object through aggregating edges into \code{LINESTRING}
+#' objects representing longest sequences between all junction nodes.
+#'
+#' @param net A \pkg{dodgr} network
+#' @return A Simple Features Collection (\code{sfc}) list of \code{LINESTRING}
+#' objects.
+#'
+#' @note The output of this function corresponds to the edges obtained from
+#' \code{dodgr_contract_graph}. An \pkg{sf} \code{data.frame} may be created by
+#' appeding any data from the latter to the \code{sfc} output of this function -
+#' see \pkg{sf} for details.
+#' @export
+#' @examples
+#' hw <- weight_streetnet (hampi)
+#' xy <- dodgr_to_sf (hw)
+#' dim (hw) # 5,845 edges
+#' length (xy) # 682 aggregated linestrings aggregated from those edges
+dodgr_to_sf <- function (net)
+{
+    gc <- dodgr_contract_graph (net)
+    rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+}

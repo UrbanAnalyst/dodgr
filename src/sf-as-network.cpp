@@ -276,6 +276,27 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
     return index;
 }
 
+// from osmdata/src/get-bbox.cpp
+Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, double ymax)
+{
+    std::vector <std::string> names;
+    names.push_back ("xmin");
+    names.push_back ("ymin");
+    names.push_back ("xmax");
+    names.push_back ("ymax");
+
+    Rcpp::NumericVector bbox (4, NA_REAL);
+    bbox (0) = xmin;
+    bbox (1) = xmax;
+    bbox (2) = ymin;
+    bbox (3) = ymax;
+
+    bbox.attr ("names") = names;
+    bbox.attr ("class") = "bbox";
+
+    return bbox;
+}
+
 //' rcpp_aggregate_to_sf
 //'
 //' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
@@ -304,10 +325,20 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             yt = graph_full ["to_lat"];
 
 
-    std::unordered_set <std::string> new_edge_list;
-    for (size_t i = 0; i < edge_map.nrow (); i++)
-            new_edge_list.emplace (new_edges [i]);
-    const size_t nedges = new_edge_list.size ();
+    // store vector of names used to name the resultant sf-objects. A
+    // corresponding set is also used below to insert non-contracted edges in
+    // final result
+    std::vector <std::string> new_edge_names;
+    std::unordered_set <std::string> new_edge_set;
+    new_edge_names.push_back (static_cast <std::string> (new_edges [0]));
+    for (size_t i = 1; i < new_edges.size (); i++)
+    {
+        new_edge_set.emplace (new_edges [i]);
+        if (static_cast <std::string> (new_edges [i]) != new_edge_names.back ())
+            new_edge_names.push_back (static_cast <std::string> (new_edges [i]));
+    }
+
+    const size_t nedges = new_edge_names.size ();
     Rcpp::List edge_sequences (nedges);
     size_t edge_count = 0;
 
@@ -413,7 +444,51 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         }
     }
 
-    // Then the list of edge IDs just has to be converted to corresponding
+    // Then append the non-contracted edges that are in the contracted graph
+    Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
+            idt_r_c = graph_contr ["to_id"];
+    edge_count = 0;
+    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    {
+        if (new_edge_set.find (static_cast <std::string> (contr_edges [i])) ==
+                new_edge_set.end ())
+        {
+            edge_count++;
+        }
+    }
+    Rcpp::List edge_sequences_new (edge_count);
+    std::vector <std::string> old_edge_names (edge_count);
+    edge_count = 0;
+    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    {
+        if (new_edge_set.find (static_cast <std::string> (contr_edges [i])) ==
+                new_edge_set.end ())
+        {
+            old_edge_names [edge_count] = contr_edges [i];
+            Rcpp::CharacterVector idvec (2);
+            idvec [0] = idf_r_c [i];
+            idvec [1] = idt_r_c [i];
+            edge_sequences_new [edge_count++] = idvec;
+        }
+    }
+    // Then just join the two edge_sequence Lists together, along with vectors
+    // of edge names
+    const size_t total_edges = edge_sequences.size () +
+        edge_sequences_new.size ();
+    Rcpp::List edge_sequences_all (total_edges);
+    std::vector <std::string> all_edge_names (total_edges);
+    for (size_t i = 0; i < edge_sequences.size (); i++)
+    {
+        all_edge_names [i] = new_edge_names [i];
+        edge_sequences_all [i] = edge_sequences [i];
+    }
+    for (size_t i = 0; i < edge_sequences_new.size (); i++)
+    {
+        all_edge_names [edge_sequences.size () + i] = old_edge_names [i];
+        edge_sequences_all [edge_sequences.size () + i] = edge_sequences_new [i];
+    }
+
+    // Finally the list of edge IDs just has to be converted to corresponding
     // list of coordinate matrices. These first require maps of from and to IDs
     // to integer indices into the graph_full columns
     std::unordered_map <std::string, size_t> edge_num_map;
@@ -424,10 +499,12 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         edge_num_map.emplace (idft, i);
     }
     
-    Rcpp::List res (nedges);
-    for (size_t i = 0; i < nedges; i++)
+    Rcpp::List res (total_edges);
+    double xmin = INFINITE_DOUBLE, xmax = -INFINITE_DOUBLE,
+           ymin = INFINITE_DOUBLE, ymax = -INFINITE_DOUBLE;
+    for (size_t i = 0; i < total_edges; i++)
     {
-        Rcpp::CharacterVector idvec = edge_sequences [i];
+        Rcpp::CharacterVector idvec = edge_sequences_all [i];
         Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
         // Fill first edge
         std::string id0 = static_cast <std::string> (idvec [0]),
@@ -456,8 +533,26 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         Rcpp::NumericMatrix mat (x.size (), 2);
         mat (Rcpp::_, 0) = x;
         mat (Rcpp::_, 1) = y;
+        xmin = std::min (xmin, static_cast <double> (Rcpp::min (x)));
+        xmax = std::max (xmax, static_cast <double> (Rcpp::max (x)));
+        ymin = std::min (ymin, static_cast <double> (Rcpp::min (y)));
+        ymax = std::max (ymax, static_cast <double> (Rcpp::max (y)));
+
+        // Then some sf necessities:
+        mat.attr ("class") = 
+            Rcpp::CharacterVector::create ("XY", "LINESTRING", "sfg");
         res (i) = mat;
     }
+
+    res.attr ("names") = all_edge_names;
+    res.attr ("n_empty") = 0;
+    res.attr ("class") = Rcpp::CharacterVector::create ("sfc_LINESTRING", "sfc");
+    res.attr ("precision") = 0.0;
+    res.attr ("bbox") = rcpp_get_bbox_sf (xmin, ymin, xmax, ymax);
+    Rcpp::List crs = Rcpp::List::create ((int) 4326, osm_p4s);
+    crs.attr ("names") = Rcpp::CharacterVector::create ("epsg", "proj4string");
+    crs.attr ("class") = "crs";
+    res.attr ("crs") = crs;
 
     return res;
 }
