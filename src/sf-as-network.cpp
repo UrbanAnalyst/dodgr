@@ -414,13 +414,50 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     }
 
     // Then the list of edge IDs just has to be converted to corresponding
-    // list of coordinate matrices
+    // list of coordinate matrices. These first require maps of from and to IDs
+    // to integer indices into the graph_full columns
+    std::unordered_map <std::string, size_t> edge_num_map;
+    for (size_t i = 0; i < idf_r.size (); i++)
+    {
+        std::string idft = static_cast <std::string> (idf_r [i]) + "-" +
+            static_cast <std::string> (idt_r [i]);
+        edge_num_map.emplace (idft, i);
+    }
+    
     Rcpp::List res (nedges);
     for (size_t i = 0; i < nedges; i++)
     {
         Rcpp::CharacterVector idvec = edge_sequences [i];
+        Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
+        // Fill first edge
+        std::string id0 = static_cast <std::string> (idvec [0]),
+            id1 = static_cast <std::string> (idvec [1]);
+        std::string id01 = id0 + "-" + id1;
+        size_t j = edge_num_map.find (id01)->second;
+        x [0] = xf [j];
+        y [0] = yf [j];
+        x [1] = xt [j];
+        y [1] = yt [j];
+        // Then just remaining "to" values
+        idvec.erase (0);
+        idvec.erase (0);
+        size_t count = 2;
+        while (idvec.size () > 0)
+        {
+            id0 = id1;
+            id1 = static_cast <std::string> (idvec [0]);
+            id01 = id0 + "-" + id1;
+            j = edge_num_map.find (id01)->second;
+            x [count] = xt [j];
+            y [count] = yt [j];
+            count++;
+            idvec.erase (0);
+        }
+        Rcpp::NumericMatrix mat (x.size (), 2);
+        mat (Rcpp::_, 0) = x;
+        mat (Rcpp::_, 1) = y;
+        res (i) = mat;
     }
 
-    res = edge_sequences;
     return res;
 }
