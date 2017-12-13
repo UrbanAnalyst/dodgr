@@ -340,7 +340,6 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
 
     const size_t nedges = new_edge_names.size ();
     Rcpp::List edge_sequences (nedges);
-    size_t edge_count = 0;
 
     /* The first edge of a sequence won't be necessarily at the start of a
      * sequence, so two maps are made, one from each node to the next, and the
@@ -396,52 +395,22 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             while (idmap.size () > 0)
             {
                 it = idmap.find (back_node);
-                if (it == idmap.end ())
-                {
-                    // dump that sequence and start a new one
-                    Rcpp::CharacterVector idvec (id.size ());
-                    std::deque <std::string>::iterator idj;
-                    for (idj = id.begin (); idj != id.end (); ++idj)
-                    {
-                        size_t pos = std::distance (id.begin (), idj);
-                        idvec [pos] = *(idj);
-                    }
-                    edge_sequences [edge_count++] = idvec;
-
-                    // start new ID set
-                    id.clear ();
-                    front_node = idmap.begin ()->first;
-                    back_node = idmap.begin()->second;
-                    // rewind to front of sequence
-                    while (idmap_rev.find (front_node) != idmap_rev.end ())
-                        front_node = idmap_rev.find (front_node)->second;
-                    back_node = idmap.find (front_node)->second;
-                    id.push_back (front_node);
-                    id.push_back (back_node);
-                    idmap.erase (front_node);
-                    idmap_rev.erase (back_node);
-                } else
-                {
-                    back_node = it->second;
-                    id.push_back (back_node);
-                    if (idmap_rev.find (it->first) != idmap_rev.end ())
-                        idmap_rev.erase (it->first);
-                    idmap.erase (it);
-                }
-
-                if (idmap.size () == 0)
-                {
-                    Rcpp::CharacterVector idvec (id.size ());
-                    for (std::deque <std::string>::iterator idj = id.begin ();
-                            idj != id.end (); ++idj)
-                    {
-                        size_t pos = std::distance (id.begin (), idj);
-                        idvec [pos] = *(idj);
-                    }
-                    edge_sequences [edge_count++] = idvec;
-                    id.clear ();
-                }
+                back_node = it->second;
+                id.push_back (back_node);
+                if (idmap_rev.find (it->first) != idmap_rev.end ())
+                    idmap_rev.erase (it->first);
+                idmap.erase (it);
             }
+
+            Rcpp::CharacterVector idvec (id.size ());
+            for (std::deque <std::string>::iterator idj = id.begin ();
+                    idj != id.end (); ++idj)
+            {
+                size_t pos = std::distance (id.begin (), idj);
+                idvec [pos] = *(idj);
+            }
+            edge_sequences [i] = idvec;
+            id.clear ();
         }
         p.increment ();
     }
@@ -449,7 +418,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     // Then append the non-contracted edges that are in the contracted graph
     Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
             idt_r_c = graph_contr ["to_id"];
-    edge_count = 0;
+    size_t edge_count = 0;
     for (size_t i = 0; i < graph_contr.nrow (); i++)
     {
         if (new_edge_set.find (static_cast <std::string> (contr_edges [i])) ==
