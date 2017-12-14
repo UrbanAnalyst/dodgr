@@ -21,6 +21,62 @@ Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, dou
     return bbox;
 }
 
+//' Make unordered_set of all new edge names
+//' @noRd
+size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
+        const Rcpp::CharacterVector &new_edges)
+{
+    new_edge_name_set.clear ();
+    for (size_t i = 0; i < new_edges.size (); i++)
+    {
+        new_edge_name_set.emplace (static_cast <std::string> (new_edges [i]));
+    }
+    return new_edge_name_set.size ();
+}
+
+//' Make vector of all new edge names
+//' @noRd
+void make_edge_name_vec (const size_t n,
+        const Rcpp::CharacterVector &new_edges,
+        std::vector <std::string> &new_edge_name_vec)
+{
+    new_edge_name_vec.clear ();
+    new_edge_name_vec.resize (n);
+    new_edge_name_vec [0] = static_cast <std::string> (new_edges [0]);
+    size_t count = 0;
+    for (size_t i = 1; i < new_edges.size (); i++)
+    {
+        std::string new_edge_i = static_cast <std::string> (new_edges [i]);
+        if (new_edge_i != new_edge_name_vec [count])
+            new_edge_name_vec [++count] = new_edge_i;
+    }
+}
+
+
+//' Get numbers of old edges corresponding to each contracted edge
+//' @noRd
+size_t get_edgevec_sizes (const size_t nedges,
+        const Rcpp::CharacterVector &new_edges,
+        std::vector <size_t> &edgevec_sizes)
+{
+    edgevec_sizes.clear ();
+    edgevec_sizes.resize (nedges);
+    size_t count = 1, edgenum = 0;
+    for (size_t i = 1; i < new_edges.size (); i++)
+    {
+        if (new_edges [i] == new_edges [i - 1])
+            count++;
+        else
+        {
+            edgevec_sizes [edgenum++] = count;
+            count = 1;
+        }
+    }
+    // And last count too:
+    edgevec_sizes [edgenum++] = count;
+    return edgenum;
+}
+
 //' rcpp_aggregate_to_sf
 //'
 //' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
@@ -54,39 +110,19 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     // final result
     std::vector <std::string> new_edge_names;
     std::unordered_set <std::string> new_edge_set;
-    new_edge_names.push_back (static_cast <std::string> (new_edges [0]));
-    for (size_t i = 1; i < new_edges.size (); i++)
-    {
-        std::string new_edge_i = static_cast <std::string> (new_edges [i]);
-        new_edge_set.emplace (new_edge_i);
-        if (new_edge_i != new_edge_names.back ())
-            new_edge_names.push_back (new_edge_i);
-    }
-    const size_t nedges = new_edge_names.size ();
-    Rcpp::List edge_sequences (nedges);
+    const size_t nedges = make_edge_name_set (new_edge_set, new_edges);
+    make_edge_name_vec (nedges, new_edges, new_edge_names);
 
-    // read the entire edge map and store as a simgle map, starting by defining
-    // the size of each.
-    std::vector <size_t> edgevec_sizes (nedges);
-    size_t count = 1, edgenum = 0;
-    for (size_t i = 1; i < edge_map.nrow (); i++)
-    {
-        if (new_edges [i] == new_edges [i - 1])
-            count++;
-        else
-        {
-            edgevec_sizes [edgenum++] = count;
-            count = 1;
-        }
-    }
-    // And last count too:
-    edgevec_sizes [edgenum] = count;
+    // Then get numbers of original edges for each contracted edge
+    std::vector <size_t> edgevec_sizes;
+    size_t check = get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
+    if (check != nedges)
+        Rcpp::stop ("number of new edges in contracted graph not the right size");
 
     // Then store the actual vectors
     std::unordered_map <std::string,
         std::vector <std::string> > full_from_edge_map, full_to_edge_map;
-    count = 1;
-    edgenum = 0;
+    size_t count = 1, edgenum = 0;
     std::vector <std::string> from_node, to_node;
     from_node.resize (edgevec_sizes [edgenum]);
     to_node.resize (edgevec_sizes [edgenum]);
@@ -122,6 +158,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
      * other holding the same values in reverse. The latter enables sequences to
      * be traced in reverse by matching end points.
      */
+    Rcpp::List edge_sequences (nedges); // holds final sequences
     for (size_t i = 0; i < nedges; i++)
     {
         Rcpp::checkUserInterrupt ();
