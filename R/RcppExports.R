@@ -13,6 +13,14 @@ NULL
 #' @noRd
 NULL
 
+#' Collect sets of all from and to vertices for each set of edges corresponding
+#' to each contracted edge. These sets aren't in any particular order, but the
+#' two sets may be used to match the from and to vertices. These sets are then
+#' arranged into sequences in the subsequent function,
+#' \code{order_vert_sequences}.
+#' @noRd
+NULL
+
 #' rcpp_aggregate_to_sf
 #'
 #' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame

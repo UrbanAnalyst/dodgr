@@ -29,6 +29,21 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
                             std::vector <std::string> > &full_from_edge_map,
         std::unordered_map <std::string,
                             std::vector <std::string> > &full_to_edge_map);
+void order_vert_sequences (Rcpp::List &edge_sequences,
+        std::vector <std::string> &new_edge_names,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_from_edge_map,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_to_edge_map);
+size_t count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
+        std::unordered_set <std::string> &new_edge_name_set);
+void append_nc_edges (const size_t nc_edge_count, 
+        const Rcpp::DataFrame &graph_contr,
+        std::unordered_set <std::string> &new_edge_name_set,
+        std::vector <std::string> &new_edge_name_vec,
+        const Rcpp::List &edge_sequences_contr,
+        std::vector <std::string> &all_edge_names,
+        Rcpp::List &edge_sequences_all);
 Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax,
         double ymin, double ymax);
 

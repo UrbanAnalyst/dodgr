@@ -56,6 +56,12 @@ size_t get_edgevec_sizes (const size_t nedges,
     return edgenum;
 }
 
+//' Collect sets of all from and to vertices for each set of edges corresponding
+//' to each contracted edge. These sets aren't in any particular order, but the
+//' two sets may be used to match the from and to vertices. These sets are then
+//' arranged into sequences in the subsequent function,
+//' \code{order_vert_sequences}.
+//' @noRd
 void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
         const Rcpp::CharacterVector &idf_r,
         const Rcpp::CharacterVector &idt_r,
@@ -96,6 +102,119 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
 
     from_node.clear ();
     to_node.clear ();
+}
+
+void order_vert_sequences (Rcpp::List &edge_sequences,
+        std::vector <std::string> &new_edge_names,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_from_edge_map,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_to_edge_map)
+{
+    const size_t nedges = edge_sequences.size ();
+    for (size_t i = 0; i < nedges; i++)
+    {
+        Rcpp::checkUserInterrupt ();
+        std::map <std::string, std::string> idmap, idmap_rev;
+        std::string this_edge = new_edge_names [i];
+        std::vector <std::string> from_edges = full_from_edge_map [this_edge],
+            to_edges = full_to_edge_map [this_edge];
+        for (size_t j = 0; j < from_edges.size (); j++)
+        {
+            idmap.emplace (from_edges [j], to_edges [j]);
+            idmap_rev.emplace (to_edges [j], from_edges [j]);
+        }
+        size_t nnodes = idmap.size ();
+
+        // Find the front of the sequence of which the first idmap pair is
+        // part by stepping backwards through idmap_rev
+        std::string front_node = idmap.begin ()->first;
+        std::string back_node = idmap.begin ()->second;
+        while (idmap_rev.find (front_node) != idmap_rev.end ())
+            front_node = idmap_rev.find (front_node)->second;
+        back_node = idmap.find (front_node)->second;
+
+        std::vector <std::string> id (nnodes + 1);
+        id [0] = front_node;
+        id [1] = back_node;
+        size_t count = 2;
+        idmap.erase (front_node);
+
+        while (idmap.size () > 0)
+        {
+            std::map <std::string, std::string>::iterator it =
+                idmap.find (back_node);
+            back_node = it->second;
+            id [count++] = back_node;
+            idmap.erase (it);
+        }
+        idmap_rev.clear ();
+
+        edge_sequences [i] = id;
+    }
+}
+
+// Count number of non-contracted edges in the contracted graph (non-contracted
+// because they can not be simplified).
+size_t count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
+        std::unordered_set <std::string> &new_edge_name_set)
+{
+    size_t edge_count = 0;
+    for (size_t i = 0; i < contr_edges.size (); i++)
+    {
+        if (new_edge_name_set.find (static_cast <std::string>
+                    (contr_edges [i])) == new_edge_name_set.end ())
+        {
+            edge_count++;
+        }
+    }
+    return edge_count;
+}
+
+// Append non-contracted edges to contracted edges in all edge-to-vertex maps
+void append_nc_edges (const size_t nc_edge_count, 
+        const Rcpp::DataFrame &graph_contr,
+        std::unordered_set <std::string> &new_edge_name_set,
+        std::vector <std::string> &new_edge_name_vec,
+        const Rcpp::List &edge_sequences_contr,
+        std::vector <std::string> &all_edge_names,
+        Rcpp::List &edge_sequences_all)
+{
+    Rcpp::List edge_sequences_new (nc_edge_count);
+    std::vector <std::string> old_edge_names (nc_edge_count);
+    size_t count = 0;
+    Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
+            idt_r_c = graph_contr ["to_id"],
+            contr_edges = graph_contr ["edge_id"];
+    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    {
+        if (new_edge_name_set.find (static_cast <std::string>
+                    (contr_edges [i])) == new_edge_name_set.end ())
+        {
+            old_edge_names [count] = contr_edges [i];
+            Rcpp::CharacterVector idvec (2);
+            idvec [0] = idf_r_c [i];
+            idvec [1] = idt_r_c [i];
+            edge_sequences_new [count++] = idvec;
+        }
+    }
+    // Then just join the two edge_sequence Lists together, along with vectors
+    // of edge names
+    const size_t total_edges = edge_sequences_contr.size () + nc_edge_count;
+    //Rcpp::List edge_sequences_all (total_edges);
+    //std::vector <std::string> all_edge_names (total_edges);
+    //edge_sequences_all.resize (total_edges);
+    all_edge_names.resize (total_edges);
+    for (size_t i = 0; i < edge_sequences_contr.size (); i++)
+    {
+        all_edge_names [i] = new_edge_name_vec [i];
+        edge_sequences_all [i] = edge_sequences_contr [i];
+    }
+    for (size_t i = 0; i < edge_sequences_new.size (); i++)
+    {
+        all_edge_names [edge_sequences_contr.size () + i] = old_edge_names [i];
+        edge_sequences_all [edge_sequences_contr.size () + i] = edge_sequences_new [i];
+    }
 }
 
 // from osmdata/src/get-bbox.cpp
@@ -173,91 +292,19 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             new_edge_names, full_from_edge_map, full_to_edge_map);
 
     Rcpp::List edge_sequences (nedges); // holds final sequences
-    for (size_t i = 0; i < nedges; i++)
-    {
-        Rcpp::checkUserInterrupt ();
-        std::map <std::string, std::string> idmap, idmap_rev;
-        std::string this_edge = new_edge_names [i];
-        std::vector <std::string> from_edges = full_from_edge_map [this_edge],
-            to_edges = full_to_edge_map [this_edge];
-        for (size_t j = 0; j < from_edges.size (); j++)
-        {
-            idmap.emplace (from_edges [j], to_edges [j]);
-            idmap_rev.emplace (to_edges [j], from_edges [j]);
-        }
-        size_t nnodes = idmap.size ();
-
-        // Find the front of the sequence of which the first idmap pair is
-        // part by stepping backwards through idmap_rev
-        std::string front_node = idmap.begin ()->first;
-        std::string back_node = idmap.begin ()->second;
-        while (idmap_rev.find (front_node) != idmap_rev.end ())
-            front_node = idmap_rev.find (front_node)->second;
-        back_node = idmap.find (front_node)->second;
-
-        std::vector <std::string> id (nnodes + 1);
-        id [0] = front_node;
-        id [1] = back_node;
-        size_t count = 2;
-        idmap.erase (front_node);
-
-        while (idmap.size () > 0)
-        {
-            Rcpp::checkUserInterrupt ();
-            std::map <std::string, std::string>::iterator it =
-                idmap.find (back_node);
-            back_node = it->second;
-            id [count++] = back_node;
-            idmap.erase (it);
-        }
-        idmap_rev.clear ();
-
-        edge_sequences [i] = id;
-    }
+    // The main work done in this whole file:
+    order_vert_sequences (edge_sequences, new_edge_names, full_from_edge_map,
+            full_to_edge_map);
 
     // Then append the non-contracted edges that are in the contracted graph
-    Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
-            idt_r_c = graph_contr ["to_id"];
-    size_t edge_count = 0;
-    for (size_t i = 0; i < graph_contr.nrow (); i++)
-    {
-        if (new_edge_set.find (static_cast <std::string> (contr_edges [i])) ==
-                new_edge_set.end ())
-        {
-            edge_count++;
-        }
-    }
-    Rcpp::List edge_sequences_new (edge_count);
-    std::vector <std::string> old_edge_names (edge_count);
-    edge_count = 0;
-    for (size_t i = 0; i < graph_contr.nrow (); i++)
-    {
-        if (new_edge_set.find (static_cast <std::string> (contr_edges [i])) ==
-                new_edge_set.end ())
-        {
-            old_edge_names [edge_count] = contr_edges [i];
-            Rcpp::CharacterVector idvec (2);
-            idvec [0] = idf_r_c [i];
-            idvec [1] = idt_r_c [i];
-            edge_sequences_new [edge_count++] = idvec;
-        }
-    }
-    // Then just join the two edge_sequence Lists together, along with vectors
-    // of edge names
-    const size_t total_edges = edge_sequences.size () +
-        edge_sequences_new.size ();
+    size_t nc_edge_count = count_non_contracted_edges (contr_edges,
+            new_edge_set);
+    std::vector <std::string> all_edge_names;
+    const size_t total_edges = nedges + nc_edge_count;
     Rcpp::List edge_sequences_all (total_edges);
-    std::vector <std::string> all_edge_names (total_edges);
-    for (size_t i = 0; i < edge_sequences.size (); i++)
-    {
-        all_edge_names [i] = new_edge_names [i];
-        edge_sequences_all [i] = edge_sequences [i];
-    }
-    for (size_t i = 0; i < edge_sequences_new.size (); i++)
-    {
-        all_edge_names [edge_sequences.size () + i] = old_edge_names [i];
-        edge_sequences_all [edge_sequences.size () + i] = edge_sequences_new [i];
-    }
+    append_nc_edges (nc_edge_count, graph_contr,
+            new_edge_set, new_edge_names, edge_sequences,
+            all_edge_names, edge_sequences_all);
 
     // Finally the list of edge IDs just has to be converted to corresponding
     // list of coordinate matrices. These first require maps of from and to IDs
