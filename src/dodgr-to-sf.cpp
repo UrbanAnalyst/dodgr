@@ -1,26 +1,5 @@
 #include "dodgr-to-sf.h"
 
-// from osmdata/src/get-bbox.cpp
-Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, double ymax)
-{
-    std::vector <std::string> names;
-    names.push_back ("xmin");
-    names.push_back ("ymin");
-    names.push_back ("xmax");
-    names.push_back ("ymax");
-
-    Rcpp::NumericVector bbox (4, NA_REAL);
-    bbox (0) = xmin;
-    bbox (1) = xmax;
-    bbox (2) = ymin;
-    bbox (3) = ymax;
-
-    bbox.attr ("names") = names;
-    bbox.attr ("class") = "bbox";
-
-    return bbox;
-}
-
 //' Make unordered_set of all new edge names
 //' @noRd
 size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
@@ -77,6 +56,69 @@ size_t get_edgevec_sizes (const size_t nedges,
     return edgenum;
 }
 
+void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
+        const Rcpp::CharacterVector &idf_r,
+        const Rcpp::CharacterVector &idt_r,
+        const Rcpp::CharacterVector &old_edges,
+        const Rcpp::CharacterVector &new_edges,
+        const std::vector <std::string> &new_edge_names,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_from_edge_map,
+        std::unordered_map <std::string,
+                            std::vector <std::string> > &full_to_edge_map)
+{
+    size_t count = 1, edgenum = 0;
+    std::vector <std::string> from_node, to_node;
+    from_node.resize (edgevec_sizes [edgenum]);
+    to_node.resize (edgevec_sizes [edgenum]);
+    size_t the_edge = atoi (old_edges [0]) - 1; // it's 1-indexed!
+    from_node [0] = static_cast <std::string> (idf_r [the_edge]);
+    to_node [0] = static_cast <std::string> (idt_r [the_edge]);
+    for (size_t i = 1; i < new_edges.size (); i++)
+    {
+        if (new_edges [i] != new_edges [i - 1])
+        {
+            full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
+            full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
+            from_node.clear ();
+            to_node.clear ();
+            edgenum++;
+            from_node.resize (edgevec_sizes [edgenum]);
+            to_node.resize (edgevec_sizes [edgenum]);
+            count = 0;
+        }
+        size_t the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
+        from_node [count] = static_cast <std::string> (idf_r [the_edge]);
+        to_node [count++] = static_cast <std::string> (idt_r [the_edge]);
+    }
+    full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
+    full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
+
+    from_node.clear ();
+    to_node.clear ();
+}
+
+// from osmdata/src/get-bbox.cpp
+Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, double ymax)
+{
+    std::vector <std::string> names;
+    names.push_back ("xmin");
+    names.push_back ("ymin");
+    names.push_back ("xmax");
+    names.push_back ("ymax");
+
+    Rcpp::NumericVector bbox (4, NA_REAL);
+    bbox (0) = xmin;
+    bbox (1) = xmax;
+    bbox (2) = ymin;
+    bbox (3) = ymax;
+
+    bbox.attr ("names") = names;
+    bbox.attr ("class") = "bbox";
+
+    return bbox;
+}
+
 //' rcpp_aggregate_to_sf
 //'
 //' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
@@ -119,45 +161,17 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     if (check != nedges)
         Rcpp::stop ("number of new edges in contracted graph not the right size");
 
-    // Then store the actual vectors
-    std::unordered_map <std::string,
-        std::vector <std::string> > full_from_edge_map, full_to_edge_map;
-    size_t count = 1, edgenum = 0;
-    std::vector <std::string> from_node, to_node;
-    from_node.resize (edgevec_sizes [edgenum]);
-    to_node.resize (edgevec_sizes [edgenum]);
-    size_t the_edge = atoi (old_edges [0]) - 1; // it's 1-indexed!
-    from_node [0] = static_cast <std::string> (idf_r [the_edge]);
-    to_node [0] = static_cast <std::string> (idt_r [the_edge]);
-    for (size_t i = 1; i < edge_map.nrow (); i++)
-    {
-        if (new_edges [i] != new_edges [i - 1])
-        {
-            full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
-            full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
-            from_node.clear ();
-            to_node.clear ();
-            edgenum++;
-            from_node.resize (edgevec_sizes [edgenum]);
-            to_node.resize (edgevec_sizes [edgenum]);
-            count = 0;
-        }
-        size_t the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
-        from_node [count] = static_cast <std::string> (idf_r [the_edge]);
-        to_node [count++] = static_cast <std::string> (idt_r [the_edge]);
-    }
-    full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
-    full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
-
-    // and the final values:
-    from_node.clear ();
-    to_node.clear ();
-
-    /* The first edge of a sequence won't be necessarily at the start of a
+    /* Map contracted edge ids onto corresponding pairs of from and to vertices.
+     * The first vertex of a sequence won't be necessarily at the start of a
      * sequence, so two maps are made, one from each node to the next, and the
      * other holding the same values in reverse. The latter enables sequences to
      * be traced in reverse by matching end points.
      */
+    std::unordered_map <std::string,
+        std::vector <std::string> > full_from_edge_map, full_to_edge_map;
+    get_edge_to_vert_maps (edgevec_sizes, idf_r, idt_r, old_edges, new_edges,
+            new_edge_names, full_from_edge_map, full_to_edge_map);
+
     Rcpp::List edge_sequences (nedges); // holds final sequences
     for (size_t i = 0; i < nedges; i++)
     {
