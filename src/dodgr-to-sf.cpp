@@ -63,8 +63,7 @@ size_t get_edgevec_sizes (const size_t nedges,
 //' \code{order_vert_sequences}.
 //' @noRd
 void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
-        const Rcpp::CharacterVector &idf_r,
-        const Rcpp::CharacterVector &idt_r,
+        const Rcpp::DataFrame &graph_full,
         const Rcpp::CharacterVector &old_edges,
         const Rcpp::CharacterVector &new_edges,
         const std::vector <std::string> &new_edge_names,
@@ -73,6 +72,9 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
         std::unordered_map <std::string,
                             std::vector <std::string> > &full_to_edge_map)
 {
+    Rcpp::CharacterVector idf_r = graph_full ["from_id"],
+            idt_r = graph_full ["to_id"];
+
     size_t count = 1, edgenum = 0;
     std::vector <std::string> from_node, to_node;
     from_node.resize (edgevec_sizes [edgenum]);
@@ -201,9 +203,6 @@ void append_nc_edges (const size_t nc_edge_count,
     // Then just join the two edge_sequence Lists together, along with vectors
     // of edge names
     const size_t total_edges = edge_sequences_contr.size () + nc_edge_count;
-    //Rcpp::List edge_sequences_all (total_edges);
-    //std::vector <std::string> all_edge_names (total_edges);
-    //edge_sequences_all.resize (total_edges);
     all_edge_names.resize (total_edges);
     for (size_t i = 0; i < edge_sequences_contr.size (); i++)
     {
@@ -238,26 +237,17 @@ Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, dou
     return bbox;
 }
 
-//' rcpp_aggregate_to_sf
-//'
-//' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
-//'
-//' @param graph_full Rcpp::DataFrame containing the **full** graph
-//' @param graph_contr Rcpp::DataFrame containing the **contracted** graph
-//' @param edge_map Rcpp::DataFrame containing the edge map returned from
-//' \code{dodgr_contract_graph}
-//'
-//' @return Rcpp::List object of `sf::LINESTRING` geoms
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
-        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
+// Convert the Rcpp::List of vertex names to corresponding coordinates,
+// construct matrices of sequential coordinates for each contracted edge, and
+// convert these to sf geometry objects
+void xy_to_sf (const Rcpp::DataFrame &graph_full,
+        const Rcpp::List &edge_sequences, 
+        const std::vector <std::string> &all_edge_names,
+        Rcpp::List &res)
 {
-    Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
-            new_edges = edge_map ["edge_new"],
-            contr_edges = graph_contr ["edge_id"],
-            idf_r = graph_full ["from_id"],
+    const size_t total_edges = res.size ();
+
+    Rcpp::CharacterVector idf_r = graph_full ["from_id"],
             idt_r = graph_full ["to_id"];
 
     Rcpp::NumericVector xf = graph_full ["from_lon"],
@@ -265,50 +255,6 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             xt = graph_full ["to_lon"],
             yt = graph_full ["to_lat"];
 
-
-    // store vector of names used to name the resultant sf-objects. A
-    // corresponding set is also used below to insert non-contracted edges in
-    // final result
-    std::vector <std::string> new_edge_names;
-    std::unordered_set <std::string> new_edge_set;
-    const size_t nedges = make_edge_name_set (new_edge_set, new_edges);
-    make_edge_name_vec (nedges, new_edges, new_edge_names);
-
-    // Then get numbers of original edges for each contracted edge
-    std::vector <size_t> edgevec_sizes;
-    size_t check = get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
-    if (check != nedges)
-        Rcpp::stop ("number of new edges in contracted graph not the right size");
-
-    /* Map contracted edge ids onto corresponding pairs of from and to vertices.
-     * The first vertex of a sequence won't be necessarily at the start of a
-     * sequence, so two maps are made, one from each node to the next, and the
-     * other holding the same values in reverse. The latter enables sequences to
-     * be traced in reverse by matching end points.
-     */
-    std::unordered_map <std::string,
-        std::vector <std::string> > full_from_edge_map, full_to_edge_map;
-    get_edge_to_vert_maps (edgevec_sizes, idf_r, idt_r, old_edges, new_edges,
-            new_edge_names, full_from_edge_map, full_to_edge_map);
-
-    Rcpp::List edge_sequences (nedges); // holds final sequences
-    // The main work done in this whole file:
-    order_vert_sequences (edge_sequences, new_edge_names, full_from_edge_map,
-            full_to_edge_map);
-
-    // Then append the non-contracted edges that are in the contracted graph
-    size_t nc_edge_count = count_non_contracted_edges (contr_edges,
-            new_edge_set);
-    std::vector <std::string> all_edge_names;
-    const size_t total_edges = nedges + nc_edge_count;
-    Rcpp::List edge_sequences_all (total_edges);
-    append_nc_edges (nc_edge_count, graph_contr,
-            new_edge_set, new_edge_names, edge_sequences,
-            all_edge_names, edge_sequences_all);
-
-    // Finally the list of edge IDs just has to be converted to corresponding
-    // list of coordinate matrices. These first require maps of from and to IDs
-    // to integer indices into the graph_full columns
     std::unordered_map <std::string, size_t> edge_num_map;
     for (size_t i = 0; i < idf_r.size (); i++)
     {
@@ -316,13 +262,12 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
             static_cast <std::string> (idt_r [i]);
         edge_num_map.emplace (idft, i);
     }
-    
-    Rcpp::List res (total_edges);
+
     double xmin = INFINITE_DOUBLE, xmax = -INFINITE_DOUBLE,
            ymin = INFINITE_DOUBLE, ymax = -INFINITE_DOUBLE;
     for (size_t i = 0; i < total_edges; i++)
     {
-        Rcpp::CharacterVector idvec = edge_sequences_all [i];
+        Rcpp::CharacterVector idvec = edge_sequences [i];
         Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
         // Fill first edge
         std::string id0 = static_cast <std::string> (idvec [0]),
@@ -371,6 +316,75 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     crs.attr ("names") = Rcpp::CharacterVector::create ("epsg", "proj4string");
     crs.attr ("class") = "crs";
     res.attr ("crs") = crs;
+}
+
+//' rcpp_aggregate_to_sf
+//'
+//' Aggregate a dodgr network data.frame to an sf LINESTRING data.frame
+//'
+//' @param graph_full Rcpp::DataFrame containing the **full** graph
+//' @param graph_contr Rcpp::DataFrame containing the **contracted** graph
+//' @param edge_map Rcpp::DataFrame containing the edge map returned from
+//' \code{dodgr_contract_graph}
+//'
+//' @return Rcpp::List object of `sf::LINESTRING` geoms
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
+        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
+{
+    Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
+            new_edges = edge_map ["edge_new"],
+            contr_edges = graph_contr ["edge_id"];
+
+    // store vector of names used to name the resultant sf-objects. A
+    // corresponding set is also used below to insert non-contracted edges in
+    // final result
+    std::vector <std::string> new_edge_names;
+    std::unordered_set <std::string> new_edge_set;
+    const size_t nedges = make_edge_name_set (new_edge_set, new_edges);
+    make_edge_name_vec (nedges, new_edges, new_edge_names);
+
+    // Then get numbers of original edges for each contracted edge
+    std::vector <size_t> edgevec_sizes;
+    size_t check = get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
+    if (check != nedges)
+        Rcpp::stop ("number of new edges in contracted graph not the right size");
+
+    /* Map contracted edge ids onto corresponding pairs of from and to vertices.
+     * The first vertex of a sequence won't be necessarily at the start of a
+     * sequence, so two maps are made, one from each node to the next, and the
+     * other holding the same values in reverse. The latter enables sequences to
+     * be traced in reverse by matching end points.
+     */
+    std::unordered_map <std::string,
+        std::vector <std::string> > full_from_edge_map, full_to_edge_map;
+    get_edge_to_vert_maps (edgevec_sizes, graph_full, old_edges, new_edges,
+            new_edge_names, full_from_edge_map, full_to_edge_map);
+    edgevec_sizes.clear ();
+
+    Rcpp::List edge_sequences (nedges); // holds final sequences
+    // The main work done in this whole file:
+    order_vert_sequences (edge_sequences, new_edge_names, full_from_edge_map,
+            full_to_edge_map);
+    full_from_edge_map.clear ();
+    full_to_edge_map.clear ();
+
+    // Then append the non-contracted edges that are in the contracted graph
+    size_t nc_edge_count = count_non_contracted_edges (contr_edges,
+            new_edge_set);
+    std::vector <std::string> all_edge_names;
+    const size_t total_edges = nedges + nc_edge_count;
+    Rcpp::List edge_sequences_all (total_edges);
+    append_nc_edges (nc_edge_count, graph_contr,
+            new_edge_set, new_edge_names, edge_sequences,
+            all_edge_names, edge_sequences_all);
+    new_edge_names.clear ();
+    new_edge_set.clear ();
+
+    Rcpp::List res (total_edges);
+    xy_to_sf (graph_full, edge_sequences_all, all_edge_names, res);
 
     return res;
 }
