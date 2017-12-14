@@ -334,76 +334,113 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     new_edge_names.push_back (static_cast <std::string> (new_edges [0]));
     for (size_t i = 1; i < new_edges.size (); i++)
     {
-        new_edge_set.emplace (new_edges [i]);
-        if (static_cast <std::string> (new_edges [i]) != new_edge_names.back ())
-            new_edge_names.push_back (static_cast <std::string> (new_edges [i]));
+        std::string new_edge_i = static_cast <std::string> (new_edges [i]);
+        new_edge_set.emplace (new_edge_i);
+        if (new_edge_i != new_edge_names.back ())
+            new_edge_names.push_back (new_edge_i);
     }
-
     const size_t nedges = new_edge_names.size ();
     Rcpp::List edge_sequences (nedges);
+
+    // read the entire edge map and store as a simgle map, starting by defining
+    // the size of each.
+    std::vector <size_t> edgevec_sizes (nedges);
+    size_t count = 1, edgenum = 0;
+    for (size_t i = 1; i < edge_map.nrow (); i++)
+    {
+        if (new_edges [i] == new_edges [i - 1])
+            count++;
+        else
+        {
+            edgevec_sizes [edgenum++] = count;
+            count = 1;
+        }
+    }
+    // And last count too:
+    edgevec_sizes [edgenum] = count;
+
+    // Then store the actual vectors
+    std::unordered_map <std::string,
+        std::vector <std::string> > full_from_edge_map, full_to_edge_map;
+    count = 1;
+    edgenum = 0;
+    std::vector <std::string> from_node, to_node;
+    from_node.resize (edgevec_sizes [edgenum]);
+    to_node.resize (edgevec_sizes [edgenum]);
+    size_t the_edge = atoi (old_edges [0]) - 1; // it's 1-indexed!
+    from_node [0] = static_cast <std::string> (idf_r [the_edge]);
+    to_node [0] = static_cast <std::string> (idt_r [the_edge]);
+    for (size_t i = 1; i < edge_map.nrow (); i++)
+    {
+        if (new_edges [i] != new_edges [i - 1])
+        {
+            full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
+            full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
+            from_node.clear ();
+            to_node.clear ();
+            edgenum++;
+            from_node.resize (edgevec_sizes [edgenum]);
+            to_node.resize (edgevec_sizes [edgenum]);
+            count = 0;
+        }
+        size_t the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
+        from_node [count] = static_cast <std::string> (idf_r [the_edge]);
+        to_node [count++] = static_cast <std::string> (idt_r [the_edge]);
+    }
+    full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
+    full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
+
+    // and the final values:
+    from_node.clear ();
+    to_node.clear ();
 
     /* The first edge of a sequence won't be necessarily at the start of a
      * sequence, so two maps are made, one from each node to the next, and the
      * other holding the same values in reverse. The latter enables sequences to
      * be traced in reverse by matching end points.
      */
-    Progress p (graph_contr.nrow (), displ_progress);
-    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    Progress p (nedges, displ_progress);
+    for (size_t i = 0; i < nedges; i++)
     {
         Rcpp::checkUserInterrupt ();
         std::map <std::string, std::string> idmap, idmap_rev;
-        for (size_t j = 0; j < edge_map.nrow (); j++)
+        std::string this_edge = new_edge_names [i];
+        std::vector <std::string> from_edges = full_from_edge_map [this_edge],
+            to_edges = full_to_edge_map [this_edge];
+        for (size_t j = 0; j < from_edges.size (); j++)
         {
-            if (new_edges [j] == contr_edges [i])
-            {
-                // old_edges is 1-indexed!
-                size_t the_edge = atoi (old_edges [j]) - 1;
-                if (the_edge > idf_r.size ())
-                    Rcpp::stop ("the_edge > size of fulll graph");
-
-                std::string node_f = static_cast <std::string> (idf_r [the_edge]),
-                    node_t = static_cast <std::string> (idt_r [the_edge]);
-                idmap.emplace (node_f, node_t);
-                idmap_rev.emplace (node_t, node_f);
-            }
+            idmap.emplace (from_edges [j], to_edges [j]);
+            idmap_rev.emplace (to_edges [j], from_edges [j]);
         }
         size_t nnodes = idmap.size ();
 
-        /*
-         * idmap then has a map between from and to IDs of original edges for
-         * the contracted edge. These are not necessarily in any sequential
-         * order, and so the following code constructs longest sequences of edge
-         * IDs. If a "to" ID either already exists in idmap, or cannot be found,
-         * then that segment is dumped as a list component of edge_ids.
-         */
+        // Find the front of the sequence of which the first idmap pair is
+        // part by stepping backwards through idmap_rev
+        std::string front_node = idmap.begin ()->first;
+        std::string back_node = idmap.begin ()->second;
+        while (idmap_rev.find (front_node) != idmap_rev.end ())
+            front_node = idmap_rev.find (front_node)->second;
+        back_node = idmap.find (front_node)->second;
 
-        if (idmap.size () > 0)
+        std::vector <std::string> id (nnodes + 1);
+        id [0] = front_node;
+        id [1] = back_node;
+        size_t count = 2;
+        idmap.erase (front_node);
+
+        while (idmap.size () > 0)
         {
-            // Find the front of the sequence of which the first idmap pair is
-            // part by stepping backwards through idmap_rev
-            std::string front_node = idmap.begin ()->first;
-            std::string back_node = idmap.begin ()->second;
-            while (idmap_rev.find (front_node) != idmap_rev.end ())
-                front_node = idmap_rev.find (front_node)->second;
-            back_node = idmap.find (front_node)->second;
-
-            std::vector <std::string> id (nnodes + 1);
-            id [0] = front_node;
-            id [1] = back_node;
-            size_t count = 2;
-            idmap.erase (front_node);
-
-            while (idmap.size () > 0)
-            {
-                std::map <std::string, std::string>::iterator it =
-                    idmap.find (back_node);
-                back_node = it->second;
-                id [count++] = back_node;
-                idmap.erase (it);
-            }
-
-            edge_sequences [i] = id;
+            Rcpp::checkUserInterrupt ();
+            std::map <std::string, std::string>::iterator it =
+                idmap.find (back_node);
+            back_node = it->second;
+            id [count++] = back_node;
+            idmap.erase (it);
         }
+        idmap_rev.clear ();
+
+        edge_sequences [i] = id;
+
         if (displ_progress)
             p.increment ();
     }
