@@ -4,9 +4,6 @@
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
-#include <progress_bar.hpp>
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
@@ -22,5 +19,4 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
 Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
         Rcpp::DataFrame &pts);
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
-        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map,
-        bool displ_progress);
+        const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map);
