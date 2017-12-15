@@ -71,10 +71,17 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
-    from_id <- index_id$id
+    if (!is.null (index_id$id))
+        from_id <- index_id$id # can be null
+    else
+        from_id <- vert_map$vert
+
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
     to_index <- index_id$index - 1 # 0-based
-    to_id <- index_id$id
+    if (!is.null (index_id$id))
+        to_id <- index_id$id # can be null
+    else
+        to_id <- vert_map$vert
 
     graph <- convert_graph (graph, gr_cols)
 
@@ -86,11 +93,13 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     paths <- lapply (paths, function (i)
                      lapply (i, function (j)
                              vert_map$vert [j] ))
-
     # name path lists
-    for (i in seq (from_index))
-        names (paths [[i]]) <- paste0 (from_id [1], "-", to_id)
-    names (paths) <- from_id
+    if (!is.null (from_id) & !is.null (to_id))
+    {
+        for (i in seq (from_id))
+            names (paths [[i]]) <- paste0 (from_id [i], "-", to_id)
+        names (paths) <- from_id
+    }
 
     if (!vertices)
     {

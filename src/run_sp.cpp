@@ -321,6 +321,8 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
+    dijkstra->init (g); // specify the graph
+
     for (unsigned int v = 0; v < nfrom; v++)
     {
         Rcpp::checkUserInterrupt ();
@@ -342,7 +344,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
                     // directly here to R-style 1-indexes.
                     onePath.push_back (static_cast <unsigned int> (target + 1));
                     target = prev [target];
-                    if (target < 0)
+                    if (target < 0 || target == fromi [v])
                         break;
                 }
             }
@@ -415,7 +417,6 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
 
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
-        Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             if (fromi [v] != toi [vi]) // Exclude self-flows

@@ -70,7 +70,7 @@ dodgr_graph_cols <- function (graph)
 
     # This is NOT a list because it's much easier to pass as vector to C++
     ret <- c (edge_id, fr_col, to_col, d_col, w_col, xfr, yfr, xto, yto)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w", 
+    names (ret) <- c ("edge_id", "from", "to", "d", "w",
                       "xfr", "yfr", "xto", "yto")
     if (!is.na (component))
     {
@@ -126,18 +126,23 @@ dodgr_vertices <- function (graph)
     cols <- dodgr_graph_cols (graph)
     nms <- names (cols)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
+    # NOTE: c (x, y), where x and y are both factors gives junk, so explicit
+    # conversion required here: TODO: Find a better way?
+    from_id <- graph [[cols [which (nms == "from")] ]]
+    to_id <- graph [[cols [which (nms == "to")] ]]
+    if (is.factor (from_id))
+        from_id <- paste0 (from_id)
+    if (is.factor (to_id))
+        to_id <- paste0 (to_id)
     if (is_graph_spatial (graph))
-        verts <- data.frame (id = c (graph [[cols [which (nms == "from")] ]],
-                                     graph [[cols [which (nms == "to")] ]]),
+        verts <- data.frame (id = c (from_id, to_id),
                              x = c (graph [[cols [which (nms == "xfr")] ]],
                                     graph [[cols [which (nms == "xto")] ]]),
                              y = c (graph [[cols [which (nms == "yfr")] ]],
                                     graph [[cols [which (nms == "yto")] ]]),
                              stringsAsFactors = FALSE)
     else
-        verts <- data.frame (id = c (graph [[cols [which (nms == "from")] ]],
-                                     graph [[cols [which (nms == "to")] ]]),
-                             stringsAsFactors = FALSE)
+        verts <- data.frame (id = c (from_id, to_id))
 
     indx <- which (!duplicated (verts))
     verts <- verts [indx, , drop = FALSE] #nolint
