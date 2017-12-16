@@ -182,7 +182,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
-#' @param aggregate_all If \code{TRUE}, flows are aggregate from each origin
+#' @param aggregate_all If \code{TRUE}, flows are aggregated from each origin
 #' (\code{from} point) to \strong{ALL} other points according to an exponential
 #' decay from points of origin.
 #' @param k Width coefficient of exponential decay for \code{aggregate_all =

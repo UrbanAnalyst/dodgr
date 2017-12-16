@@ -28,7 +28,7 @@ horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
 
-\item{aggregate_all}{If \code{TRUE}, flows are aggregate from each origin
+\item{aggregate_all}{If \code{TRUE}, flows are aggregated from each origin
 (\code{from} point) to \strong{ALL} other points according to an exponential
 decay from points of origin.}
 

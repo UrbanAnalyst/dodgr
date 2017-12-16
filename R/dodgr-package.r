@@ -27,6 +27,8 @@
 #' \itemize{
 #' \item \code{\link{dodgr_components}}: Number all graph edges according to
 #' their presence in distinct connected components.
+#' \item \code{\link{dodgr_convert_graph}}: Convert a graph of arbitrary form
+#' into a standardised, minimal form for submission to \code{dodgr} routines.
 #' \item \code{\link{dodgr_contract_graph}}: Contract a graph by removing
 #' redundant edges.
 #' }
@@ -42,16 +44,13 @@
 #'
 #' @name dodgr
 #' @docType package
-#' @importFrom grDevices colorRampPalette
 #' @importFrom igraph distances E make_directed_graph
-#' @importFrom magrittr %>% extract2
+#' @importFrom magrittr %>%
 #' @importFrom methods is
-#' @importFrom osmdata add_osm_feature getbb opq osmdata_sf osm_poly2line
-#' @importFrom osmplotr add_axes add_colourbar get_bbox osm_basemap print_osm_map
+#' @importFrom osmdata add_osm_feature getbb opq osmdata_sf
 #' @importFrom rbenchmark benchmark
 #' @importFrom sp bbox point.in.polygon
 #' @importFrom Rcpp evalCpp
-#' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib dodgr, .registration = TRUE
 NULL
 
@@ -124,10 +123,9 @@ NULL
 #' }
 #' # Converting this 'sf data.frame' to a 'dodgr' network requires manual
 #' # specification of weighting profile:
-#' colnm <- "formOfWay" # name of column used to determine weights
+#' colnm <- "formOfWay"
 #' wts <- c (0.1, 0.2, 0.8, 1)
 #' names (wts) <- unique (os_roads_bristol [[colnm]])
 #' net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
 #'                          type_col = colnm, id_col = "identifier")
-#' # 'id_col' tells the function which column to use to attribute IDs of ways
 NULL
