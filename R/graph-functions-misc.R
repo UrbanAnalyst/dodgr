@@ -237,6 +237,6 @@ match_pts_to_graph <- function (verts, xy)
     }
 
     # rcpp_points_index is 0-indexed, so ...
-    #rcpp_points_index (verts, xy) + 1
-    rcpp_points_index_par (verts, xy) + 1
+    rcpp_points_index (verts, xy) + 1
+    #rcpp_points_index_par (verts, xy) + 1
 }
