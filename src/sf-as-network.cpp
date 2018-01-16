@@ -160,8 +160,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
 
 struct OnePointIndex : public RcppParallel::Worker
 {
-    Rcpp::NumericVector xy_x, xy_y, pt_x, pt_y;
-    const size_t n;
+    const Rcpp::NumericVector xy_x, xy_y, pt_x, pt_y;
+    const size_t nxy;
     RcppParallel::RVector <int> index;
 
     // constructor
@@ -170,10 +170,10 @@ struct OnePointIndex : public RcppParallel::Worker
             const Rcpp::NumericVector xy_y,
             const Rcpp::NumericVector pt_x,
             const Rcpp::NumericVector pt_y,
-            const size_t n,
+            const size_t nxy,
             Rcpp::IntegerVector index) :
-        xy_x (xy_x), xy_y (xy_y), pt_x (pt_x), pt_y (pt_y), n (n),
-        index (index)
+        xy_x (xy_x), xy_y (xy_y), pt_x (pt_x), pt_y (pt_y),
+        nxy (nxy), index (index)
     {
     }
 
@@ -184,7 +184,7 @@ struct OnePointIndex : public RcppParallel::Worker
         {
             double dmin = INFINITE_DOUBLE;
             int jmin = INFINITE_INT;
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < nxy; j++)
             {
                 double dij = (xy_x [j] - pt_x [i]) * (xy_x [j] - pt_x [i]) +
                     (xy_y [j] - pt_y [i]) * (xy_y [j] - pt_y [i]);
@@ -199,6 +199,39 @@ struct OnePointIndex : public RcppParallel::Worker
     }
                                    
 };
+
+//' rcpp_points_index_par
+//'
+//' Get index of nearest vertices to list of points
+//'
+//' @param graph Rcpp::DataFrame containing the graph
+//' @param pts Rcpp::DataFrame containing the routing points
+//'
+//' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
+        Rcpp::DataFrame &pts)
+{
+    Rcpp::NumericVector ptx = pts ["x"];
+    Rcpp::NumericVector pty = pts ["y"];
+
+    Rcpp::NumericVector vtx = xy ["x"];
+    Rcpp::NumericVector vty = xy ["y"];
+
+    size_t npts = static_cast <size_t> (pts.nrow ()),
+           nxy = static_cast <size_t> (xy.nrow ());
+
+    //Rcpp::IntegerVector index (n, Rcpp::IntegerVector::get_na ());
+    Rcpp::IntegerVector index (npts);
+    // Create parallel worker
+    OnePointIndex one_pt_indx (vtx, vty, ptx, pty, nxy, index);
+
+    RcppParallel::parallelFor (0, npts, one_pt_indx);
+
+    return index;
+}
 
 //' rcpp_points_index
 //'
@@ -222,7 +255,7 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
 
     Rcpp::IntegerVector index (pts.nrow ());
 
-    for (unsigned int i = 0; i < static_cast <unsigned int> (pts.nrow ()); i++) // Rcpp::nrow is int!
+    for (size_t i = 0; i < static_cast <size_t> (pts.nrow ()); i++) // Rcpp::nrow is int!
     {
         double dmin = INFINITE_DOUBLE;
         int jmin = INFINITE_INT;
@@ -240,38 +273,6 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
             Rcpp::Rcout << "---ERROR---" << std::endl;
         index (i) = jmin;
     }
-
-    return index;
-}
-
-//' rcpp_points_index_par
-//'
-//' Get index of nearest vertices to list of points
-//'
-//' @param graph Rcpp::DataFrame containing the graph
-//' @param pts Rcpp::DataFrame containing the routing points
-//'
-//' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
-        Rcpp::DataFrame &pts)
-{
-    Rcpp::NumericVector ptx = pts ["x"];
-    Rcpp::NumericVector pty = pts ["y"];
-
-    Rcpp::NumericVector vtx = xy ["x"];
-    Rcpp::NumericVector vty = xy ["y"];
-
-    size_t n = pts.nrow ();
-
-    Rcpp::IntegerVector index (static_cast <int> (n),
-            Rcpp::IntegerVector::get_na ());
-    // Create parallel worker
-    OnePointIndex one_pt_indx (vtx, vty, ptx, pty, n, index);
-
-    RcppParallel::parallelFor (0, n, one_pt_indx);
 
     return index;
 }

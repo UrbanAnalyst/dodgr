@@ -186,18 +186,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_points_index
-Rcpp::IntegerVector rcpp_points_index(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
-RcppExport SEXP _dodgr_rcpp_points_index(SEXP xySEXP, SEXP ptsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_points_index(xy, pts));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_points_index_par
 Rcpp::IntegerVector rcpp_points_index_par(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
 RcppExport SEXP _dodgr_rcpp_points_index_par(SEXP xySEXP, SEXP ptsSEXP) {
@@ -207,6 +195,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_points_index_par(xy, pts));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_points_index
+Rcpp::IntegerVector rcpp_points_index(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
+RcppExport SEXP _dodgr_rcpp_points_index(SEXP xySEXP, SEXP ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_points_index(xy, pts));
     return rcpp_result_gen;
 END_RCPP
 }
