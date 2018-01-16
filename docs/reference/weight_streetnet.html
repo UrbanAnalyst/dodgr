@@ -98,7 +98,7 @@ moped, motorcycle, motorcar, goods, hgv, psv).</p>
     <tr>
       <th>sf_lines</th>
       <td><p>A street network represented as <code>sf</code> <code>LINESTRING</code>
-objects, typically extracted with <code>get_streetnet</code></p></td>
+objects, typically extracted with <code>dodgr_streetnet</code></p></td>
     </tr>
     <tr>
       <th>wt_profile</th>
@@ -128,7 +128,7 @@ with a column of graph component numbers.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># hampi is included with package as an 'osmdata' sf-formatted street network</span>
 <span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'>weight_streetnet</span> (<span class='no'>hampi</span>)
-<span class='fu'>class</span>(<span class='no'>net</span>) <span class='co'># data.frame</span></div><div class='output co'>#&gt; [1] "data.frame"      "dodgr_streetnet"</div><div class='input'><span class='fu'>dim</span>(<span class='no'>net</span>) <span class='co'># 6096  11; 6096 streets</span></div><div class='output co'>#&gt; [1] 6096   12</div><div class='input'><span class='co'># os_roads_bristol is also included as an sf data.frame, but in a different</span>
+<span class='fu'>class</span>(<span class='no'>net</span>) <span class='co'># data.frame</span></div><div class='output co'>#&gt; [1] "data.frame"      "dodgr_streetnet"</div><div class='input'><span class='fu'>dim</span>(<span class='no'>net</span>) <span class='co'># 6096  11; 6096 streets</span></div><div class='output co'>#&gt; [1] 5845   12</div><div class='input'><span class='co'># os_roads_bristol is also included as an sf data.frame, but in a different</span>
 <span class='co'># format requiring identification of columns and specification of custom</span>
 <span class='co'># weighting scheme.</span>
 <span class='no'>colnm</span> <span class='kw'>&lt;-</span> <span class='st'>"formOfWay"</span>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>merge_directed_flows — merge_directed_flows • dodgr</title>
+<title>dodgr_to_sf — dodgr_to_sf • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,52 +80,43 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>merge_directed_flows</h1>
+    <h1>dodgr_to_sf</h1>
     </div>
 
     
-    <p>The <code>dodgr_flows</code> function returns a column of aggregated flows directed
-along each edge of a graph, so the aggregated flow from vertex A to vertex B
-will not necessarily equal that from B to A, and the total flow in both
-directions will be the sum of flow from A to B plus that from B to A. This
-function converts a directed graph to undirected form through reducing all
-pairs of directed edges to a single edge, and aggregating flows from both
-directions.</p>
+    <p>Convert a <code>dodgr</code> graph as <code>data.frame</code> of all edges into a Simple
+Features (<span class="pkg">sf</span>) object through aggregating edges into <code>LINESTRING</code>
+objects representing longest sequences between all junction nodes.</p>
     
 
-    <pre class="usage"><span class='fu'>merge_directed_flows</span>(<span class='no'>graph</span>)</pre>
+    <pre class="usage"><span class='fu'>dodgr_to_sf</span>(<span class='no'>net</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>graph</th>
-      <td><p>A graph containing a <code>flow</code> column as returned from
-<code>dodgr_flows</code></p></td>
+      <th>net</th>
+      <td><p>A <span class="pkg">dodgr</span> network</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An equivalent graph in which all directed edges have been reduced to
-single, undirected edges, and all directed flows aggregated to undirected
-flows.</p>
+    <p>A Simple Features Collection (<code>sfc</code>) list of <code>LINESTRING</code>
+objects.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>The output of this function corresponds to the edges obtained from
+<code>dodgr_contract_graph</code>. An <span class="pkg">sf</span> <code>data.frame</code> may be created by
+appeding any data from the latter to the <code>sfc</code> output of this function -
+see <span class="pkg">sf</span> for details.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
-<span class='no'>from</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>from_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>to_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>)
-<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='no'>to</span> [!<span class='no'>to</span> <span class='kw'>%in%</span> <span class='no'>from</span>]
-<span class='no'>flows</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span> (<span class='fl'>10</span> * <span class='fu'>runif</span> (<span class='fu'>length</span> (<span class='no'>from</span>) * <span class='fu'>length</span> (<span class='no'>to</span>)),
-                 <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>length</span> (<span class='no'>from</span>))
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_flows.html'>dodgr_flows</a></span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
-<span class='co'># graph then has an additonal 'flows` column of aggregate flows along all</span>
-<span class='co'># edges. These flows are directed, and can be aggregated to equivalent</span>
-<span class='co'># undirected flows on an equivalent undirected graph with:</span>
-<span class='no'>graph_undir</span> <span class='kw'>&lt;-</span> <span class='fu'>merge_directed_flows</span> (<span class='no'>graph</span>)
-<span class='co'># This graph will only include those edges having non-zero flows, and so:</span>
-<span class='fu'>nrow</span> (<span class='no'>graph</span>); <span class='fu'>nrow</span> (<span class='no'>graph_undir</span>) <span class='co'># the latter is much smaller</span></div><div class='output co'>#&gt; [1] 5845</div><div class='output co'>#&gt; [1] 562</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>hw</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
+<span class='no'>xy</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_to_sf</span> (<span class='no'>hw</span>)
+<span class='fu'>dim</span> (<span class='no'>hw</span>) <span class='co'># 5,845 edges</span></div><div class='output co'>#&gt; [1] 5845   12</div><div class='input'><span class='fu'>length</span> (<span class='no'>xy</span>) <span class='co'># 682 aggregated linestrings aggregated from those edges</span></div><div class='output co'>#&gt; [1] 682</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -133,6 +124,8 @@ flows.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

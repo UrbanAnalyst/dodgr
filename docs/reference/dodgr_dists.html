@@ -88,7 +88,7 @@
     
 
     <pre class="usage"><span class='fu'>dodgr_dists</span>(<span class='no'>graph</span>, <span class='no'>from</span>, <span class='no'>to</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"bicycle"</span>, <span class='kw'>expand</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>heap</span> <span class='kw'>=</span> <span class='st'>"BHeap"</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -127,6 +127,11 @@ Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
 (<code>TriHeapExt</code>, and 2-3 Heap (<code>Heap23</code>).</p></td>
     </tr>
     <tr>
+      <th>parallel</th>
+      <td><p>If <code>TRUE</code>, perform routing calculation in parallel (see
+details)</p></td>
+    </tr>
+    <tr>
       <th>quiet</th>
       <td><p>If <code>FALSE</code>, display progress messages on screen.</p></td>
     </tr>
@@ -160,6 +165,10 @@ precisely matching node numbers or names given in <code>graph$from</code> or
 between all points specified in <code>from</code>. If neither <code>from</code> nor
 <code>to</code> are specified, pairwise distances are calculated between all nodes
 in <code>graph</code>.</p>
+<p>Calculations in parallel (<code>parallel = TRUE</code>) ought very generally be
+advantageous. For small graphs, Calculating distances in parallel is likely
+to offer relatively little gain in speed, but increases from parallel
+computation will generally markedly increase with increasing graph sizes.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

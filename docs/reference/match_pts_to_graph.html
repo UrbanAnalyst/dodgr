@@ -99,7 +99,8 @@
     </tr>
     <tr>
       <th>xy</th>
-      <td><p>coordinates of points to be matched to the vertices</p></td>
+      <td><p>coordinates of points to be matched to the vertices, either as
+matrix or <span class="pkg">sf</span>-formatted <code>data.frame</code>.</p></td>
     </tr>
     </table>
     
@@ -118,9 +119,9 @@
                   <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'>min</span> (<span class='no'>verts</span>$<span class='no'>y</span>) + <span class='fu'>runif</span> (<span class='no'>npts</span>) * <span class='fu'>diff</span> (<span class='fu'>range</span> (<span class='no'>verts</span>$<span class='no'>y</span>))
                   )
 <span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='fu'>match_pts_to_graph</span> (<span class='no'>verts</span>, <span class='no'>xy</span>)
-<span class='no'>pts</span> <span class='co'># an index into verts</span></div><div class='output co'>#&gt;  [1] 758 586 579 502 539 591 748 235 422 579</div><div class='input'><span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span>$<span class='no'>id</span> [<span class='no'>pts</span>]
-<span class='no'>pts</span> <span class='co'># names of those vertices</span></div><div class='output co'>#&gt;  [1] "1388482047" "3544918756" "3544918709" "1161117452" "1691496412"
-#&gt;  [6] "3544918772" "1388483694" "339574188"  "1161117548" "3544918709"</div></pre>
+<span class='no'>pts</span> <span class='co'># an index into verts</span></div><div class='output co'>#&gt;  [1] 759 587 580 503 540 592 749 236 423 580</div><div class='input'><span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span>$<span class='no'>id</span> [<span class='no'>pts</span>]
+<span class='no'>pts</span> <span class='co'># names of those vertices</span></div><div class='output co'>#&gt;  [1] "1204772890" "3544918757" "3544918711" "1691495677" "677638828" 
+#&gt;  [6] "3544918777" "1388483029" "339574189"  "1357430213" "3544918711"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

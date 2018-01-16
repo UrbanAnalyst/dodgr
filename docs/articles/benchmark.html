@@ -60,7 +60,7 @@
       <h1>dodgr benchmark</h1>
                         <h4 class="author">Andreas Petutschnig</h4>
             
-            <h4 class="date">2017-11-10</h4>
+            <h4 class="date">2018-01-16</h4>
           </div>
 
     
@@ -112,36 +112,36 @@ num_vertices &lt;-<span class="st"> </span><span class="kw">unlist</span> (<span
                                 <span class="kw">nrow</span> (<span class="kw"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> (i))))
 <span class="kw">data.frame</span> (num_edges, num_vertices, <span class="dt">ratio =</span> num_edges <span class="op">/</span><span class="st"> </span>num_vertices)</code></pre></div>
 <pre><code>##    num_edges num_vertices      ratio
-## 1          7            3   2.333333
+## 1          7            4   1.750000
 ## 2        817           81  10.086420
-## 3      23473          748  31.381016
+## 3      23473          755  31.090066
 ## 4     125409          184 681.570652
-## 5        178           36   4.944444
-## 6        209           36   5.805556
-## 7        215           36   5.972222
-## 8        177           38   4.657895
-## 9        125           22   5.681818
-## 10       100           22   4.545455
-## 11        82           23   3.565217
-## 12       221           38   5.815789
-## 13       400           45   8.888889
-## 14       220           34   6.470588
-## 15        53           18   2.944444
-## 16       356           53   6.716981
-## 17      2137          127  16.826772
-## 18      2106          127  16.582677
-## 19       640           70   9.142857
-## 20       631           70   9.014286
-## 21       915           68  13.455882
-## 22       916           68  13.470588
-## 23      1491           96  15.531250
-## 24      1492           96  15.541667
+## 5        178           37   4.810811
+## 6        209           37   5.648649
+## 7        215           37   5.810811
+## 8        177           39   4.538462
+## 9        125           24   5.208333
+## 10       100           24   4.166667
+## 11        82           24   3.416667
+## 12       221           39   5.666667
+## 13       400           46   8.695652
+## 14       220           35   6.285714
+## 15        53           19   2.789474
+## 16       356           54   6.592593
+## 17      2137          128  16.695312
+## 18      2106          128  16.453125
+## 19       640           71   9.014085
+## 20       631           71   8.887324
+## 21       915           69  13.260870
+## 22       916           69  13.275362
+## 23      1491           97  15.371134
+## 24      1492           97  15.381443
 ## 25      6300         1316   4.787234
-## 26        78           26   3.000000
-## 27        18            9   2.000000
+## 26        78           34   2.294118
+## 27        18           10   1.800000
 ## 28       463           45  10.288889
 ## 29     32424           75 432.320000
-## 30     11855         2230   5.316143</code></pre>
+## 30     11855         2617   4.529996</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">benchmarks &lt;-<span class="st"> </span><span class="kw">lapply</span> (all_graphs, <span class="cf">function</span> (i)
                       <span class="kw"><a href="../reference/compare_heaps.html">compare_heaps</a></span> (i, <span class="dt">nverts =</span> <span class="dv">100</span>, <span class="dt">replications =</span> <span class="dv">10</span>))
 <span class="kw">saveRDS</span> (benchmarks, <span class="dt">file =</span> <span class="st">"benchmark_data.rds"</span>)</code></pre></div>

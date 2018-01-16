@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dodgr_sample — dodgr_sample • dodgr</title>
+<title>dodgr_flowmap — dodgr_flowmap • dodgr</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -80,57 +80,48 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>dodgr_sample</h1>
+    <h1>dodgr_flowmap</h1>
     </div>
 
     
-    <p>Sample a random but connected sub-component of a graph</p>
+    <p>Map the output of <a href='dodgr_flows.html'>dodgr_flows</a></p>
     
 
-    <pre class="usage"><span class='fu'>dodgr_sample</span>(<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
+    <pre class="usage"><span class='fu'>dodgr_flowmap</span>(<span class='no'>net</span>, <span class='kw'>bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>linescale</span> <span class='kw'>=</span> <span class='fl'>5</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>graph</th>
-      <td><p>A flat table of graph edges. Must contain columns labelled
-<code>from</code> and <code>to</code>, or <code>start</code> and <code>stop</code>. May also contain
-similarly labelled columns of spatial coordinates (for example
-<code>from_x</code>) or <code>stop_lon</code>).</p></td>
+      <th>net</th>
+      <td><p>A street network with a <code>flow</code> column obtained from
+<code>dodgr_flows</code></p></td>
     </tr>
     <tr>
-      <th>nverts</th>
-      <td><p>Number of vertices to sample</p></td>
+      <th>bbox</th>
+      <td><p>If given, scale the map to this bbox, otherwise use entire extend
+of <code>net</code></p></td>
+    </tr>
+    <tr>
+      <th>linescale</th>
+      <td><p>Maximal thickness of plotted lines</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A connected sub-component of <code>graph</code></p>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>Graphs may occassionally have <code>nverts + 1</code> vertices, rather than
-the requested <code>nverts</code>.</p>
+    <p><code>net</code> should be first passed through <code>merge_directed_flows</code>
+prior to plotting, otherwise lines for different directions will be overlaid.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># 5,742</span></div><div class='output co'>#&gt; [1] 5845</div><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'>dodgr_sample</span> (<span class='no'>graph</span>, <span class='kw'>nverts</span> <span class='kw'>=</span> <span class='fl'>200</span>)
-<span class='fu'>nrow</span> (<span class='no'>graph</span>) <span class='co'># generally around 400 edges</span></div><div class='output co'>#&gt; [1] 397</div><div class='input'><span class='fu'>nrow</span> (<span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>graph</span>)) <span class='co'># 200</span></div><div class='output co'>#&gt; [1] 200</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#note">Note</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>
