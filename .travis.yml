@@ -14,9 +14,9 @@ matrix:
           r: release
           dist: trusty # 14.04
           env: R_CODECOV=true
-        - os: linux
-          r: devel
-          dist: trusty
+          #- os: linux
+          #r: devel
+          #dist: trusty
         - os: linux
           r: oldrel
           dist: trusty
@@ -24,6 +24,9 @@ matrix:
           #r: release
           #- os: osx
           #r: devel
+
+# r-devel temporarily switched off; see
+# https://www.mail-archive.com/r-devel@r-project.org/msg38248.html
 
 notifications:
   email:
