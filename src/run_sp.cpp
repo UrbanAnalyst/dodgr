@@ -349,7 +349,8 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
                 }
             }
             std::reverse (onePath.begin (), onePath.end ());
-            res1 [vi] = onePath;
+            if (onePath.size () > 1)
+                res1 [vi] = onePath;
         }
         res [v] = res1;
     }

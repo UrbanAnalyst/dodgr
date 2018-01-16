@@ -31,7 +31,7 @@ test_that("paths", {
     # edge lists should all have one less item than vertex lists
     lens2 <- lens2 [which (lens > 0)]
     lens <- lens [which (lens > 0)]
-    #expect_true (all (lens - lens2 == 1))
+    expect_true (all (lens - lens2 == 1))
 })
 
 test_that("flows", {
