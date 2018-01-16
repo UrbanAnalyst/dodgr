@@ -182,7 +182,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
-#' @param aggregate_all If \code{TRUE}, flows are aggregate from each origin
+#' @param aggregate_all If \code{TRUE}, flows are aggregated from each origin
 #' (\code{from} point) to \strong{ALL} other points according to an exponential
 #' decay from points of origin.
 #' @param k Width coefficient of exponential decay for \code{aggregate_all =
@@ -193,10 +193,16 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
 #' @param quiet If \code{FALSE}, display progress messages on screen.
+#' @param parallel If \code{TRUE}, perform parallel calculation of flows (see
+#' Details)
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
 #' @note If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
 #' only the first column of \code{flows} is used.
+#'
+#' @note Parallel computation requires initial construction of very large
+#' matrices which may not fit in memory. Setting \code{parallel = FALSE} should
+#' avoid this issue in most cases.
 #'
 #' @export
 #' @examples
@@ -215,7 +221,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
                          contract = FALSE, aggregate_all = FALSE, k = 2,
-                         heap = 'BHeap', quiet = TRUE)
+                         heap = 'BHeap', quiet = TRUE, parallel = FALSE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -265,10 +271,20 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
     if (!aggregate_all)
-        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
-                                            from_index, to_index,
-                                            flows, heap)
-    else
+    {
+        if (parallel)
+        {
+            f <- rcpp_flows_aggregate_par (graph2, vert_map,
+                                           from_index, to_index,
+                                           flows, heap)
+            graph$flow <- rowSums (f)
+        } else
+        {
+            graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
+                                                from_index, to_index,
+                                                flows, heap)
+        }
+    } else
         graph$flow <- rcpp_flows_disperse (graph2, vert_map,
                                            from_index, k,
                                            flows, heap)

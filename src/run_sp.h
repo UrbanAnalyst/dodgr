@@ -74,6 +74,13 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
         Rcpp::NumericMatrix flows,
         std::string heap_type);
 
+Rcpp::NumericMatrix rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        Rcpp::NumericMatrix flows,
+        std::string heap_type);
+
 Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,

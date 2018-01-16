@@ -422,7 +422,6 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
         {
             if (fromi [v] != toi [vi]) // Exclude self-flows
             {
-                std::vector <unsigned int> onePath;
                 double flow_ij = flows (v, vi);
                 if (w [toi [vi]] < INFINITE_DOUBLE)
                 {
@@ -454,6 +453,147 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
     } // end for v over nfrom
 
     return (aggregate_flows);
+}
+
+struct OneFlow : public RcppParallel::Worker
+{
+    RcppParallel::RVector <int> dp_fromi;
+    Rcpp::IntegerVector toi;
+    Rcpp::NumericMatrix flows;
+    std::vector <std::string> vert_name;
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    size_t nverts;
+
+    std::shared_ptr <DGraph> g;
+    std::string heap_type;
+
+    RcppParallel::RMatrix <double> fout;
+
+    // constructor
+    OneFlow (
+            const Rcpp::IntegerVector fromi,
+            const Rcpp::IntegerVector toi,
+            const Rcpp::NumericMatrix flows,
+            const std::vector <std::string>  vert_name,
+            const std::unordered_map <std::string, unsigned int> verts_to_edge_map,
+            const size_t nverts,
+            const std::shared_ptr <DGraph> g,
+            const std::string & heap_type,
+            Rcpp::NumericMatrix fout) :
+        dp_fromi (fromi), toi (toi), flows (flows), vert_name (vert_name),
+        verts_to_edge_map (verts_to_edge_map),
+        nverts (nverts), g (g), heap_type (heap_type), fout (fout)
+    {
+    }
+
+    // Parallel function operator
+    void operator() (std::size_t begin, std::size_t end)
+    {
+        std::shared_ptr<Dijkstra> dijkstra =
+            std::make_shared <Dijkstra> (nverts,
+                    *getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <int> prev (nverts);
+
+        for (std::size_t i = begin; i < end; i++)
+        {
+            // These have to be reserved within the parallel operator function!
+            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+
+            dijkstra->run (d, w, prev,
+                    static_cast <unsigned int> (dp_fromi [i]));
+            for (size_t j = 0; j < toi.size (); j++)
+            {
+                if (dp_fromi [i] != toi [j]) // Exclude self-flows
+                {
+                    double flow_ij = flows (i, j);
+                    if (w [toi [j]] < INFINITE_DOUBLE)
+                    {
+                        int target = toi [j];
+                        while (target < INFINITE_INT)
+                        {
+                            if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                            {
+                                std::string v2 = "f" +
+                                    vert_name [static_cast <size_t> (prev [target])] +
+                                    "t" + vert_name [static_cast <size_t> (target)];
+                                fout (verts_to_edge_map.at (v2), i * toi.size () + j) = flow_ij;
+                            }
+
+                            target = prev [target];
+                            // Only allocate that flow from origin vertex v to all
+                            // previous vertices up until the target vi
+                            if (target < 0 || target == dp_fromi [i])
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+                                   
+};
+
+//' rcpp_flows_aggregate
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param toi Index into vert_map_in of vertex numbers
+//'
+//' @note The flow data to be used for aggregation is a matrix mapping flows
+//' betwen each pair of from and to points.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericMatrix rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        Rcpp::NumericMatrix flows,
+        std::string heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = toi.size ();
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::vector <std::string> vert_name = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, unsigned int> vert_map_i;
+    size_t nverts = make_vert_map (vert_map_in, vert_name,
+            vert_indx, vert_map_i);
+
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
+    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
+
+    //Rcpp::NumericVector na_vec = Rcpp::NumericVector (nedges * nfrom * nto,
+    //        Rcpp::NumericVector::get_na ());
+    Rcpp::NumericMatrix fout (static_cast <int> (nedges),
+            static_cast <int> (nfrom * nto)); // 0-filled
+
+    // Create parallel worker
+    OneFlow one_flow (fromi, toi, flows, vert_name, verts_to_edge_map,
+            nverts, g, heap_type, fout);
+
+    RcppParallel::parallelFor (0, nfrom, one_flow);
+
+    return (fout);
 }
 
 //' rcpp_flows_disperse

@@ -213,6 +213,22 @@ rcpp_flows_aggregate <- function(graph, vert_map_in, fromi, toi, flows, heap_typ
     .Call(`_dodgr_rcpp_flows_aggregate`, graph, vert_map_in, fromi, toi, flows, heap_type)
 }
 
+#' rcpp_flows_aggregate
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param toi Index into vert_map_in of vertex numbers
+#'
+#' @note The flow data to be used for aggregation is a matrix mapping flows
+#' betwen each pair of from and to points.
+#'
+#' @noRd
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
+    .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi, flows, heap_type)
+}
+
 #' rcpp_flows_disperse
 #'
 #' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all

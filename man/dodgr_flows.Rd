@@ -6,7 +6,7 @@
 \usage{
 dodgr_flows(graph, from, to, flows, wt_profile = "bicycle",
   contract = FALSE, aggregate_all = FALSE, k = 2, heap = "BHeap",
-  quiet = TRUE)
+  quiet = TRUE, parallel = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -28,7 +28,7 @@ horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
 
-\item{aggregate_all}{If \code{TRUE}, flows are aggregate from each origin
+\item{aggregate_all}{If \code{TRUE}, flows are aggregated from each origin
 (\code{from} point) to \strong{ALL} other points according to an exponential
 decay from points of origin.}
 
@@ -42,6 +42,8 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
+
+\item{parallel}{If \code{TRUE}, perform parallel calculation of flows}
 }
 \value{
 Modified version of graph with additonal \code{flow} column added.
