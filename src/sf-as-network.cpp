@@ -28,8 +28,11 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     std::map <std::string, double> profile;
     Rcpp::StringVector hw = pr [1];
     Rcpp::NumericVector val = pr [2];
-    for (int i = 0; i != hw.size (); i ++)
-        profile.insert (std::make_pair (std::string (hw [i]), val [i]));
+    if (hw.size () > 1)
+    {
+        for (int i = 0; i != hw.size (); i ++)
+            profile.insert (std::make_pair (std::string (hw [i]), val [i]));
+    }
 
     Rcpp::CharacterVector nms = sf_lines.attr ("names");
     if (nms [nms.size () - 1] != "geometry")
@@ -67,7 +70,17 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     }
 
     Rcpp::List geoms = sf_lines [nms.size () - 1];
-    std::vector <std::string> way_names = geoms.attr ("names");
+
+    std::vector <std::string> att_names = geoms.attributeNames ();
+    bool has_names = false;
+    for (std::vector <std::string>::iterator it = att_names.begin ();
+            it != att_names.end (); it++)
+        if (*it == "names")
+            has_names = true;
+    std::vector <std::string> way_names;
+    if (has_names)
+        way_names = Rcpp::as <std::vector <std::string>> (geoms.attr ("names"));
+
     std::vector <bool> isOneWay (static_cast <size_t> (geoms.length ()));
     std::fill (isOneWay.begin (), isOneWay.end (), false);
     // Get dimension of matrix
@@ -82,11 +95,11 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         if (ngeoms < ow.size ())
         {
             if (!(ow [ngeoms] == "yes" || ow [ngeoms] == "-1"))
-            {
-                nrows += rows;
                 isOneWay [ngeoms] = true;
-            }
-        }
+            else
+                nrows += rows;
+        } else if (ow.size () == 0)
+            nrows += rows;
         ngeoms ++;
     }
 
@@ -101,16 +114,24 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     {
         Rcpp::checkUserInterrupt ();
         Rcpp::NumericMatrix gi = (*g);
-        std::string hway = std::string (highway [ngeoms]);
-        double hw_factor = profile [hway];
-        if (hw_factor == 0.0) hw_factor = 1e-5;
-        hw_factor = 1.0 / hw_factor;
+        std::string hway;
+        double hw_factor = 1.0;
+        if (profile.size () > 0)
+        {
+            hway = std::string (highway [ngeoms]);
+            hw_factor = profile [hway];
+            if (hw_factor == 0.0) hw_factor = 1e-5;
+            hw_factor = 1.0 / hw_factor;
+        }
 
         Rcpp::List ginames = gi.attr ("dimnames");
         Rcpp::CharacterVector rnms;
         if (ginames.length () > 0)
-            rnms = ginames [0];
-        else
+        {
+            if (!Rf_isNull (ginames [0]))
+                rnms = ginames [0];
+        }
+        if (rnms.size () == 0)
         {
             rnms = Rcpp::CharacterVector (gi.nrow ());
             for (int i = 0; i < gi.nrow (); i ++)
@@ -133,9 +154,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             idmat (nrows, 0) = rnms (i-1);
             idmat (nrows, 1) = rnms (i);
             idmat (nrows, 2) = hway;
-            idmat (nrows, 3) = way_names [ngeoms];
+            if (has_names)
+                idmat (nrows, 3) = way_names [ngeoms];
             nrows ++;
-            if (isOneWay [ngeoms])
+            if (!isOneWay [ngeoms])
             {
                 nmat (nrows, 0) = gi (i, 0);
                 nmat (nrows, 1) = gi (i, 1);
@@ -146,7 +168,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                 idmat (nrows, 0) = rnms (i);
                 idmat (nrows, 1) = rnms (i-1);
                 idmat (nrows, 2) = hway;
-                idmat (nrows, 3) = way_names [ngeoms];
+                if (has_names)
+                    idmat (nrows, 3) = way_names [ngeoms];
                 nrows ++;
             }
         }

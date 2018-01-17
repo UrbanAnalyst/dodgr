@@ -11,8 +11,10 @@
 #' @note \code{net} should be first passed through \code{merge_directed_flows}
 #' prior to plotting, otherwise lines for different directions will be overlaid.
 #' @export
-dodgr_flowmap <- function (net, bbox = NULL, linescale = 5)
+dodgr_flowmap <- function (net, bbox = NULL, linescale = 1)
 {
+    if (!"flow" %in% names (net))
+        net$flow <- 1
     fmax <- max (net$flow)
     if (is.null (bbox))
         bbox <- c (min (net$from_lon), min (net$from_lat),
@@ -30,5 +32,5 @@ dodgr_flowmap <- function (net, bbox = NULL, linescale = 5)
     cols <- cols [ceiling (net$flow * ncols)]
 
     with (net, segments (from_lon, from_lat, to_lon, to_lat,
-                            col = cols, lwd = 10 * net$flow))
+                            col = cols, lwd = linescale * net$flow))
 }

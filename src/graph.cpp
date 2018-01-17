@@ -119,6 +119,7 @@ unsigned int identify_graph_components (vertex_map_t &v,
     unsigned int compnum = 0;
     while (all_verts.size () > 0)
     {
+        Rcpp::checkUserInterrupt ();
         vertex_id_t vt = (*nbs_todo.begin ());
         all_verts.erase (vt);
 

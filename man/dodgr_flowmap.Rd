@@ -4,7 +4,7 @@
 \alias{dodgr_flowmap}
 \title{dodgr_flowmap}
 \usage{
-dodgr_flowmap(net, bbox = NULL, linescale = 5)
+dodgr_flowmap(net, bbox = NULL, linescale = 1)
 }
 \arguments{
 \item{net}{A street network with a \code{flow} column obtained from

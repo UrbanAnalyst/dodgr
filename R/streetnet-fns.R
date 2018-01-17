@@ -113,9 +113,11 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 {
     if (!is (sf_lines, "sf"))
         stop ('sf_lines must be class "sf"')
-    if (!all (c ("geometry", type_col, id_col) %in% names (sf_lines)))
-        stop (paste0 ('sf_lines must be class "sf" and ',
-                      'have highway and geometry columns'))
+    #if (!all (c ("geometry", type_col, id_col) %in% names (sf_lines)))
+    #    stop (paste0 ('sf_lines must be class "sf" and ',
+    #                  'have highway and geometry columns'))
+    if (!"geometry" %in% names (sf_lines))
+        stop (paste0 ('sf_lines must be class "sf" and have a geometry column'))
 
     if (type_col != "highway")
         names (sf_lines) [which (names (sf_lines) == type_col)] <- "highway"
@@ -133,15 +135,16 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         profiles <- dodgr::weighting_profiles
         wt_profile <- profiles [profiles$name == wt_profile, ]
         wt_profile$value <- wt_profile$value / 100
-    } else if (is.numeric (wt_profile) & !is.null (names (wt_profile)))
+    } else if (is.numeric (wt_profile))
     {
         nms <- names (wt_profile)
+        if (is.null (nms))
+            nms <- NA
         wt_profile <- data.frame (name = "custom",
                                   way = nms,
                                   value = wt_profile)
     } else
         stop ("Custom named profiles must be vectors with named values")
-
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
     graph <- data.frame (edge_id = seq (nrow (dat$character_values)),
@@ -157,6 +160,35 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
                          way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
                          )
+    if (all (graph$highway == ""))
+        graph$highway <- NULL
+    if (all (graph$way_id == ""))
+        graph$way_id <- NULL
+
+    # If original geometries did not have rownames (meaning it's not from
+    # osmdata), then reassign unique vertex from/to IDs based on coordinates
+    if (is.null (rownames (as.matrix (sf_lines$geometry [[1]]))))
+    {
+        # Find unique vertices by coorindates along:
+        xy <- data.frame (x = c (graph$from_lon, graph$to_lon),
+                          y = c (graph$from_lat, graph$to_lat))
+        indx <- which (!duplicated (xy))
+        ids <- seq (indx) - 1 # 0-indexed
+        xy_indx <- xy [indx, ]
+
+        # Then match coordinates to those unique values are replace IDs
+        xy_from <- graph [c ("from_lon", "from_lat")]
+        join_indx <- which (outer (xy_from$from_lon, xy_indx$x, "==") &
+                            outer (xy_from$from_lat, xy_indx$y, "=="),
+                        arr.ind = TRUE)
+        graph$from_id [join_indx [, 1]] <- join_indx [, 2]
+
+        xy_to <- graph [c ("to_lon", "to_lat")]
+        join_indx <- which (outer (xy_to$to_lon, xy_indx$x, "==") &
+                            outer (xy_to$to_lat, xy_indx$y, "=="),
+                        arr.ind = TRUE)
+        graph$to_id [join_indx [, 1]] <- join_indx [, 2]
+    }
 
     # get component numbers for each edge
     class (graph) <- c (class (graph), "dodgr_streetnet")
