@@ -26,6 +26,7 @@ Imports:
     RcppParallel
 Suggests:
     devtools,
+    ggplot2,
     igraphdata,
     knitr,
     purrr,
