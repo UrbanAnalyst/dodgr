@@ -83,11 +83,12 @@ struct OneDist : public RcppParallel::Worker
 
             dijkstra->run (d, w, prev,
                     static_cast <unsigned int> (dp_fromi [i]));
-            for (size_t j = 0; j < toi.size (); j++)
+            for (long int j = 0; j < toi.size (); j++)
             {
-                if (w [toi [j]] < INFINITE_DOUBLE)
+                if (w [static_cast <size_t> (toi [j])] < INFINITE_DOUBLE)
                 {
-                    dout (i, j) = d [toi [j]];
+                    dout (i, static_cast <size_t> (j)) =
+                        d [static_cast <size_t> (toi [j])];
                 }
             }
         }
@@ -125,8 +126,7 @@ size_t get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
             id_vec = vert_map_in ["id"];
         toi = id_vec;
     }
-    size_t nfrom = fromi.size ();
-    return nfrom;
+    return static_cast <size_t> (fromi.size ());
 }
 
 size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
@@ -137,8 +137,7 @@ size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
         id_vec = vert_map_in ["id"];
         fromi = id_vec;
     }
-    size_t nfrom = fromi.size ();
-    return nfrom;
+    return static_cast <size_t> (fromi.size ());
 }
 
 // Flows from the dijkstra output are reallocated based on matching vertex
@@ -178,7 +177,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = toi.size ();
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -203,7 +202,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     // Create parallel worker
     OneDist one_dist (fromi, toi, nverts, g, heap_type, dout);
 
-    RcppParallel::parallelFor (0, fromi.length (), one_dist);
+    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
+            one_dist);
     
     return (dout);
 }
@@ -220,7 +220,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = toi.size ();
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -263,7 +263,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         {
             if (toi [vi] < INFINITE_INT)
             {
-                dout (v, vi) = d [toi [vi]];
+                dout (v, vi) = d [static_cast <size_t> (toi [vi])];
             }
         }
     }
@@ -296,7 +296,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = toi.size ();
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -335,15 +335,15 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             std::vector <unsigned int> onePath;
-            if (w [toi [vi]] < INFINITE_DOUBLE)
+            if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
             {
-                int target = toi [vi];
+                int target = toi [vi]; // target can be -1!
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
                     onePath.push_back (static_cast <unsigned int> (target + 1));
-                    target = prev [target];
+                    target = prev [static_cast <size_t> (target)];
                     if (target < 0 || target == fromi [v])
                         break;
                 }
@@ -379,7 +379,7 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = toi.size ();
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -423,23 +423,25 @@ Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
             if (fromi [v] != toi [vi]) // Exclude self-flows
             {
                 double flow_ij = flows (v, vi);
-                if (w [toi [vi]] < INFINITE_DOUBLE)
+                if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
                 {
                     // target values are int indices into vert_map_in, which means
                     // corresponding vertex IDs can be taken directly from
                     // vert_name
-                    int target = toi [vi];
+                    int target = toi [vi]; // can equal -1!
                     while (target < INFINITE_INT)
                     {
-                        if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                        if (prev [static_cast <size_t> (target)] >= 0 &&
+                                prev [static_cast <size_t> (target)] < INFINITE_INT)
                         {
+                            size_t tst = static_cast <size_t> (target);
                             std::string v2 = "f" +
-                                vert_name [static_cast <size_t> (prev [target])] +
-                                "t" + vert_name [static_cast <size_t> (target)];
+                                vert_name [static_cast <size_t> (prev [tst])] +
+                                "t" + vert_name [static_cast <size_t> (tst)];
                             aggregate_flows [verts_to_edge_map.at (v2)] += flow_ij;
                         }
 
-                        target = prev [target];
+                        target = prev [static_cast <size_t> (target)];
                         // Only allocate that flow from origin vertex v to all
                         // previous vertices up until the target vi
                         if (target < 0 || target == fromi [v])
@@ -504,25 +506,29 @@ struct OneFlow : public RcppParallel::Worker
 
             dijkstra->run (d, w, prev,
                     static_cast <unsigned int> (dp_fromi [i]));
-            for (size_t j = 0; j < toi.size (); j++)
+            for (size_t j = 0; j < static_cast <size_t> (toi.size ()); j++)
             {
-                if (dp_fromi [i] != toi [j]) // Exclude self-flows
+                long int ltj = static_cast <long int> (j);
+                if (dp_fromi [i] != toi [static_cast <long int> (j)]) // Exclude self-flows
                 {
                     double flow_ij = flows (i, j);
-                    if (w [toi [j]] < INFINITE_DOUBLE)
+                    if (w [static_cast <size_t> (toi [ltj])] < INFINITE_DOUBLE)
                     {
-                        int target = toi [j];
+                        int target = toi [ltj];
                         while (target < INFINITE_INT)
                         {
-                            if (prev [target] >= 0 && prev [target] < INFINITE_INT)
+                            size_t stt = static_cast <size_t> (target);
+                            if (prev [stt] >= 0 && prev [stt] < INFINITE_INT)
                             {
                                 std::string v2 = "f" +
-                                    vert_name [static_cast <size_t> (prev [target])] +
-                                    "t" + vert_name [static_cast <size_t> (target)];
-                                fout (verts_to_edge_map.at (v2), i * toi.size () + j) = flow_ij;
+                                    vert_name [static_cast <size_t> (prev [stt])] +
+                                    "t" + vert_name [stt];
+                                fout (verts_to_edge_map.at (v2),
+                                        i * static_cast <size_t> (toi.size ()) +
+                                        j) = flow_ij;
                             }
 
-                            target = prev [target];
+                            target = prev [stt];
                             // Only allocate that flow from origin vertex v to all
                             // previous vertices up until the target vi
                             if (target < 0 || target == dp_fromi [i])
@@ -560,7 +566,7 @@ Rcpp::NumericMatrix rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = toi.size ();
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -668,7 +674,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
             {
                 // NOTE: Critically important that these are in the right order!
                 std::string vert_to = vert_name [vi],
-                    vert_from = vert_name [prev [vi]];
+                    vert_from = vert_name [static_cast <size_t> (prev [vi])];
                 std::string two_verts = "f" + vert_from + "t" + vert_to;
                 if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
                     Rcpp::stop ("vertex pair forms no known edge");
@@ -750,7 +756,8 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
-    Rcpp::NumericMatrix SI (nodes.size (), nodes.size ());
+    const int nodes_size = static_cast <const int> (nodes.size ());
+    Rcpp::NumericMatrix SI (nodes_size, nodes_size);
     for (unsigned int v = 0; v < nnodes; v++)
     {
         Rcpp::checkUserInterrupt ();
@@ -764,7 +771,8 @@ Rcpp::NumericMatrix rcpp_spatial_interaction (const Rcpp::DataFrame graph,
         {
             // Doesn't matter if d [] == INFINITE_INT; and dens(v) is const so
             // can be ignored here
-            const double tempd = dens (vi) * exp (-d [nodes [vi]] / k);
+            const double tempd = dens (vi) *
+                exp (-d [static_cast <size_t> (nodes [vi])] / k);
             SI (v, vi) = tempd;
             flowsums += tempd;
         }
@@ -847,14 +855,16 @@ Rcpp::NumericVector rcpp_one_spatial_interaction (const Rcpp::DataFrame graph,
     std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
     std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-    dijkstra->run (d, w, prev, static_cast <unsigned int> (nodes [i]));
+    dijkstra->run (d, w, prev,
+            static_cast <unsigned int> (nodes [static_cast <long int> (i)]));
 
     double flowsums = 0.0;
     for (unsigned int vi = 0; vi < nnodes; vi++)
     {
         // Doesn't matter if d [] == INFINITE_INT; and dens(v) is const so
         // can be ignored here
-        const double tempd = dens (vi) * exp (-d [nodes [vi]] / k);
+        const double tempd = dens (vi) *
+            exp (-d [static_cast <unsigned long int> (nodes [vi])] / k);
         SI (vi) = tempd;
         flowsums += tempd;
     }

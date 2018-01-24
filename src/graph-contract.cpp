@@ -279,7 +279,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         edgeid_vec (nedges);
     Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges);
 
-    unsigned int map_size = 0; // size of edge map contracted -> original
+    size_t map_size = 0; // size of edge map contracted -> original
     unsigned int edge_count = 0;
     for (auto e = edge_map_contracted.begin ();
             e != edge_map_contracted.end (); ++e)

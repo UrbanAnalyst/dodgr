@@ -27,7 +27,7 @@ DGraph::~DGraph()
 // length of vertices
 unsigned int DGraph::nVertices() const
 {
-  return m_vertices.size();
+  return static_cast <unsigned int> (m_vertices.size());
 }
 
 const std::vector<DGraphVertex>& DGraph::vertices() const

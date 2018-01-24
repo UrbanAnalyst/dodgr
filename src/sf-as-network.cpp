@@ -40,7 +40,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     int one_way_index = -1;
     int one_way_bicycle_index = -1;
     int highway_index = -1;
-    for (unsigned int i = 0; i < nms.size (); i++)
+    for (R_xlen_t i = 0; i < nms.size (); i++)
     {
         if (nms [i] == "oneway")
             one_way_index = static_cast <int> (i);
@@ -62,7 +62,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     {
         if (ow.size () == owb.size ())
         {
-            for (unsigned int i = 0; i != ow.size (); ++ i)
+            for (R_xlen_t i = 0; i != ow.size (); ++ i)
                 if (ow [i] == "NA" && owb [i] != "NA")
                     ow [i] = owb [i];
         } else if (owb.size () > ow.size ())
@@ -79,7 +79,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             has_names = true;
     std::vector <std::string> way_names;
     if (has_names)
-        way_names = Rcpp::as <std::vector <std::string>> (geoms.attr ("names"));
+        way_names = Rcpp::as <std::vector <std::string> > (geoms.attr ("names"));
 
     std::vector <bool> isOneWay (static_cast <size_t> (geoms.length ()));
     std::fill (isOneWay.begin (), isOneWay.end (), false);
@@ -205,12 +205,13 @@ struct OnePointIndex : public RcppParallel::Worker
     {
         for (std::size_t i = begin; i < end; i++)
         {
+            long int li = static_cast <long int> (i);
             double dmin = INFINITE_DOUBLE;
             int jmin = INFINITE_INT;
-            for (int j = 0; j < nxy; j++)
+            for (int j = 0; j < static_cast <int> (nxy); j++)
             {
-                double dij = (xy_x [j] - pt_x [i]) * (xy_x [j] - pt_x [i]) +
-                    (xy_y [j] - pt_y [i]) * (xy_y [j] - pt_y [i]);
+                double dij = (xy_x [j] - pt_x [li]) * (xy_x [j] - pt_x [li]) +
+                    (xy_y [j] - pt_y [li]) * (xy_y [j] - pt_y [li]);
                 if (dij < dmin)
                 {
                     dmin = dij;
@@ -278,7 +279,7 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
 
     Rcpp::IntegerVector index (pts.nrow ());
 
-    for (size_t i = 0; i < static_cast <size_t> (pts.nrow ()); i++) // Rcpp::nrow is int!
+    for (long int i = 0; i < static_cast <long int> (pts.nrow ()); i++) // Rcpp::nrow is int!
     {
         double dmin = INFINITE_DOUBLE;
         int jmin = INFINITE_INT;
@@ -294,7 +295,7 @@ Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
         }
         if (jmin == INFINITE_INT)
             Rcpp::Rcout << "---ERROR---" << std::endl;
-        index (i) = jmin;
+        index (static_cast <size_t> (i)) = jmin;
     }
 
     return index;
