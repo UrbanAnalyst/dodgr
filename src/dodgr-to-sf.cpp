@@ -6,7 +6,8 @@ size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
         const Rcpp::CharacterVector &new_edges)
 {
     new_edge_name_set.clear ();
-    for (size_t i = 0; i < new_edges.size (); i++)
+    // Rcpp::CharacterVector requires long int index type
+    for (long int i = 0; i < new_edges.size (); i++)
     {
         new_edge_name_set.emplace (static_cast <std::string> (new_edges [i]));
     }
@@ -23,7 +24,7 @@ void make_edge_name_vec (const size_t n,
     new_edge_name_vec.resize (n);
     new_edge_name_vec [0] = static_cast <std::string> (new_edges [0]);
     size_t count = 0;
-    for (size_t i = 1; i < new_edges.size (); i++)
+    for (long int i = 1; i < new_edges.size (); i++)
     {
         std::string new_edge_i = static_cast <std::string> (new_edges [i]);
         if (new_edge_i != new_edge_name_vec [count])
@@ -41,7 +42,7 @@ size_t get_edgevec_sizes (const size_t nedges,
     edgevec_sizes.clear ();
     edgevec_sizes.resize (nedges);
     size_t count = 1, edgenum = 0;
-    for (size_t i = 1; i < new_edges.size (); i++)
+    for (long int i = 1; i < new_edges.size (); i++)
     {
         if (new_edges [i] == new_edges [i - 1])
             count++;
@@ -79,10 +80,11 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
     std::vector <std::string> from_node, to_node;
     from_node.resize (edgevec_sizes [edgenum]);
     to_node.resize (edgevec_sizes [edgenum]);
-    size_t the_edge = atoi (old_edges [0]) - 1; // it's 1-indexed!
+    // old_edges is 1-indexed!
+    long int the_edge = static_cast <long int> (atoi (old_edges [0])) - 1;
     from_node [0] = static_cast <std::string> (idf_r [the_edge]);
     to_node [0] = static_cast <std::string> (idt_r [the_edge]);
-    for (size_t i = 1; i < new_edges.size (); i++)
+    for (long int i = 1; i < new_edges.size (); i++)
     {
         if (new_edges [i] != new_edges [i - 1])
         {
@@ -95,7 +97,7 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
             to_node.resize (edgevec_sizes [edgenum]);
             count = 0;
         }
-        size_t the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
+        the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
         from_node [count] = static_cast <std::string> (idf_r [the_edge]);
         to_node [count++] = static_cast <std::string> (idt_r [the_edge]);
     }
@@ -113,7 +115,7 @@ void order_vert_sequences (Rcpp::List &edge_sequences,
         std::unordered_map <std::string,
                             std::vector <std::string> > &full_to_edge_map)
 {
-    const size_t nedges = edge_sequences.size ();
+    const size_t nedges = static_cast <size_t> (edge_sequences.size ());
     for (size_t i = 0; i < nedges; i++)
     {
         Rcpp::checkUserInterrupt ();
@@ -152,7 +154,7 @@ void order_vert_sequences (Rcpp::List &edge_sequences,
         }
         idmap_rev.clear ();
 
-        edge_sequences [i] = id;
+        edge_sequences [static_cast <long int> (i)] = id;
     }
 }
 
@@ -162,7 +164,7 @@ size_t count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
         std::unordered_set <std::string> &new_edge_name_set)
 {
     size_t edge_count = 0;
-    for (size_t i = 0; i < contr_edges.size (); i++)
+    for (long int i = 0; i < contr_edges.size (); i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
                     (contr_edges [i])) == new_edge_name_set.end ())
@@ -188,7 +190,7 @@ void append_nc_edges (const size_t nc_edge_count,
     Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
             idt_r_c = graph_contr ["to_id"],
             contr_edges = graph_contr ["edge_id"];
-    for (size_t i = 0; i < graph_contr.nrow (); i++)
+    for (long int i = 0; i < graph_contr.nrow (); i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
                     (contr_edges [i])) == new_edge_name_set.end ())
@@ -197,23 +199,24 @@ void append_nc_edges (const size_t nc_edge_count,
             Rcpp::CharacterVector idvec (2);
             idvec [0] = idf_r_c [i];
             idvec [1] = idt_r_c [i];
-            edge_sequences_new [count++] = idvec;
+            edge_sequences_new [static_cast <long int> (count++)] = idvec;
         }
     }
     // Then just join the two edge_sequence Lists together, along with vectors
     // of edge names
-    const size_t total_edges = edge_sequences_contr.size () + nc_edge_count;
+    const size_t total_edges = static_cast <size_t> (edge_sequences_contr.size ()) +
+        nc_edge_count;
     all_edge_names.resize (total_edges);
-    for (size_t i = 0; i < edge_sequences_contr.size (); i++)
-    {
+    // These two have different indexing types:
+    for (size_t i = 0; i < static_cast <size_t> (edge_sequences_contr.size ()); i++)
         all_edge_names [i] = new_edge_name_vec [i];
+    for (long int i = 0; i < edge_sequences_contr.size (); i++)
         edge_sequences_all [i] = edge_sequences_contr [i];
-    }
-    for (size_t i = 0; i < edge_sequences_new.size (); i++)
-    {
-        all_edge_names [edge_sequences_contr.size () + i] = old_edge_names [i];
+    for (size_t i = 0; i < static_cast <size_t> (edge_sequences_new.size ()); i++)
+        all_edge_names [static_cast <size_t> (edge_sequences_contr.size ()) + i] =
+            old_edge_names [i];
+    for (long int i = 0; i < edge_sequences_new.size (); i++)
         edge_sequences_all [edge_sequences_contr.size () + i] = edge_sequences_new [i];
-    }
 }
 
 // from osmdata/src/get-bbox.cpp
@@ -245,7 +248,7 @@ void xy_to_sf (const Rcpp::DataFrame &graph_full,
         const std::vector <std::string> &all_edge_names,
         Rcpp::List &res)
 {
-    const size_t total_edges = res.size ();
+    const size_t total_edges = static_cast <size_t> (res.size ());
 
     Rcpp::CharacterVector idf_r = graph_full ["from_id"],
             idt_r = graph_full ["to_id"];
@@ -256,7 +259,7 @@ void xy_to_sf (const Rcpp::DataFrame &graph_full,
             yt = graph_full ["to_lat"];
 
     std::unordered_map <std::string, size_t> edge_num_map;
-    for (size_t i = 0; i < idf_r.size (); i++)
+    for (long int i = 0; i < idf_r.size (); i++)
     {
         std::string idft = static_cast <std::string> (idf_r [i]) + "-" +
             static_cast <std::string> (idt_r [i]);
@@ -267,13 +270,13 @@ void xy_to_sf (const Rcpp::DataFrame &graph_full,
            ymin = INFINITE_DOUBLE, ymax = -INFINITE_DOUBLE;
     for (size_t i = 0; i < total_edges; i++)
     {
-        Rcpp::CharacterVector idvec = edge_sequences [i];
+        Rcpp::CharacterVector idvec = edge_sequences [static_cast <long int> (i)];
         Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
         // Fill first edge
         std::string id0 = static_cast <std::string> (idvec [0]),
             id1 = static_cast <std::string> (idvec [1]);
         std::string id01 = id0 + "-" + id1;
-        size_t j = edge_num_map.find (id01)->second;
+        long int j = static_cast <long int> (edge_num_map.find (id01)->second);
         x [0] = xf [j];
         y [0] = yf [j];
         x [1] = xt [j];
@@ -281,19 +284,19 @@ void xy_to_sf (const Rcpp::DataFrame &graph_full,
         // Then just remaining "to" values
         idvec.erase (0);
         idvec.erase (0);
-        size_t count = 2;
+        long int count = 2;
         while (idvec.size () > 0)
         {
             id0 = id1;
             id1 = static_cast <std::string> (idvec [0]);
             id01 = id0 + "-" + id1;
-            j = edge_num_map.find (id01)->second;
+            j = static_cast <long int> (edge_num_map.find (id01)->second);
             x [count] = xt [j];
             y [count] = yt [j];
             count++;
             idvec.erase (0);
         }
-        Rcpp::NumericMatrix mat (x.size (), 2);
+        Rcpp::NumericMatrix mat (static_cast <const int> (x.size ()), 2);
         mat (Rcpp::_, 0) = x;
         mat (Rcpp::_, 1) = y;
         xmin = std::min (xmin, static_cast <double> (Rcpp::min (x)));
@@ -312,7 +315,7 @@ void xy_to_sf (const Rcpp::DataFrame &graph_full,
     res.attr ("class") = Rcpp::CharacterVector::create ("sfc_LINESTRING", "sfc");
     res.attr ("precision") = 0.0;
     res.attr ("bbox") = rcpp_get_bbox_sf (xmin, ymin, xmax, ymax);
-    Rcpp::List crs = Rcpp::List::create ((int) 4326, osm_p4s);
+    Rcpp::List crs = Rcpp::List::create (static_cast <int> (4326), osm_p4s);
     crs.attr ("names") = Rcpp::CharacterVector::create ("epsg", "proj4string");
     crs.attr ("class") = "crs";
     res.attr ("crs") = crs;
