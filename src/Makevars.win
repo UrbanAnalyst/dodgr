@@ -1,8 +1,8 @@
 CXX_STD = CXX11
 PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
 
-OBJECTS = heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
+OBJECTS = RcppExports.o heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
     heaps/triheap.o heaps/triheap_ext.o \
-    dgraph.o dijkstra.o dodgr-to-sf.o graph.o run_sp.o sf-as-network.o
+    dgraph.o dijkstra.o dodgr_init.o dodgr-to-sf.o graph.o run_sp.o sf-as-network.o
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
               -e "RcppParallel::RcppParallelLibs()")
