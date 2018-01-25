@@ -1,7 +1,7 @@
-XX_STD = CXX11
+CXX_STD = CXX11
 PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
 
-PKG_LIBS = heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
+OBJECTS = heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
     heaps/triheap.o heaps/triheap_ext.o
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
               -e "RcppParallel::RcppParallelLibs()")
