@@ -84,13 +84,13 @@
     </div>
 
     
-    <p>The <code>dodgr_flows</code> function returns a column of aggregated flows directed
-along each edge of a graph, so the aggregated flow from vertex A to vertex B
-will not necessarily equal that from B to A, and the total flow in both
-directions will be the sum of flow from A to B plus that from B to A. This
-function converts a directed graph to undirected form through reducing all
-pairs of directed edges to a single edge, and aggregating flows from both
-directions.</p>
+    <p>The <a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a> and <a href='dodgr_flows_disperse.html'>dodgr_flows_disperse</a> functions
+return a column of aggregated flows directed along each edge of a graph, so
+the aggregated flow from vertex A to vertex B will not necessarily equal that
+from B to A, and the total flow in both directions will be the sum of flow
+from A to B plus that from B to A. This function converts a directed graph to
+undirected form through reducing all pairs of directed edges to a single
+edge, and aggregating flows from both directions.</p>
     
 
     <pre class="usage"><span class='fu'>merge_directed_flows</span>(<span class='no'>graph</span>)</pre>
@@ -101,7 +101,7 @@ directions.</p>
     <tr>
       <th>graph</th>
       <td><p>A graph containing a <code>flow</code> column as returned from
-<code>dodgr_flows</code></p></td>
+<a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a> or <a href='dodgr_flows_disperse.html'>dodgr_flows_disperse</a></p></td>
     </tr>
     </table>
     
@@ -119,13 +119,13 @@ flows.</p>
 <span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='no'>to</span> [!<span class='no'>to</span> <span class='kw'>%in%</span> <span class='no'>from</span>]
 <span class='no'>flows</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span> (<span class='fl'>10</span> * <span class='fu'>runif</span> (<span class='fu'>length</span> (<span class='no'>from</span>) * <span class='fu'>length</span> (<span class='no'>to</span>)),
                  <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>length</span> (<span class='no'>from</span>))
-<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_flows.html'>dodgr_flows</a></span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a></span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
 <span class='co'># graph then has an additonal 'flows` column of aggregate flows along all</span>
 <span class='co'># edges. These flows are directed, and can be aggregated to equivalent</span>
 <span class='co'># undirected flows on an equivalent undirected graph with:</span>
 <span class='no'>graph_undir</span> <span class='kw'>&lt;-</span> <span class='fu'>merge_directed_flows</span> (<span class='no'>graph</span>)
 <span class='co'># This graph will only include those edges having non-zero flows, and so:</span>
-<span class='fu'>nrow</span> (<span class='no'>graph</span>); <span class='fu'>nrow</span> (<span class='no'>graph_undir</span>) <span class='co'># the latter is much smaller</span></div><div class='output co'>#&gt; [1] 5845</div><div class='output co'>#&gt; [1] 562</div></pre>
+<span class='fu'>nrow</span> (<span class='no'>graph</span>); <span class='fu'>nrow</span> (<span class='no'>graph_undir</span>) <span class='co'># the latter is much smaller</span></div><div class='output co'>#&gt; [1] 2939</div><div class='output co'>#&gt; [1] 50</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

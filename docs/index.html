@@ -67,7 +67,6 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#dodgr-distances-on-directed-graphs-in-r" class="anchor"></a>dodgr: Distances on Directed Graphs in R</h1></div>
 <p>R package for calculating pairwise distances on dual-weighted directed graphs using Priority Queue Shortest Paths. Dual-weighted directed graphs are directed graphs with two sets of weights so that <code>weight1(A-&gt;B) != weight1(B-&gt;A)</code>—the directed property—and <code>weight2(A-&gt;B) != weight1(A-&gt;B)</code>—the dual property. <code>dodgr</code> calculates shortest paths according to one weight, while distances along paths are calculating using the other weight. A canonical example of a dual-weighted directed graph is a street network to be used for routing. Routes are usually calculated by weighting different kinds of streets or ways according to a particular mode of transport, while the desired output is a direct, unweighted distance.</p>
-<p>The shortest path algorithm relies on priority queue code adapted from original code by Shane Saunders available here <a href="http://www.cosc.canterbury.ac.nz/tad.takaoka/alg/spalgs/spalgs.html" class="uri">http://www.cosc.canterbury.ac.nz/tad.takaoka/alg/spalgs/spalgs.html</a></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -92,9 +91,31 @@ d &lt;-<span class="st"> </span><span class="kw"><a href="reference/dodgr_dists.
 <span class="co">#&gt; Time difference of 9.473597 secs</span>
 <span class="kw">range</span> (d, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; [1]  0.00000 16.64285</span></code></pre></div>
-<p>This will automatically download the street network (using <a href="https://cran.r-project.org/package=osmdata"><code>osmdata</code></a>), and even then calculating distances between 1,000 points can be done in around 10 seconds.</p>
+<p>This will automatically download the street network (using <a href="https://cran.r-project.org/package=osmdata"><code>osmdata</code></a>), and even then calculating distances between 1,000 points – that’s 1,000,000 pairwise distances! – can be done in around 10 seconds.</p>
+<div id="other-functions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-functions" class="anchor"></a>Other Functions</h3>
+<p>The other main functions of <code>dodgr</code> are <code>dodgr_paths</code>, to return the actual paths between pairs of vertices, and <code>dodgr_flows</code> to aggregate flows as routed throughout a network according to sets of start and end points (origins and destinations), and associated densities or numbers travelling between each of these.</p>
+</div>
+<div id="the-dodgr-graph-structure" class="section level3">
+<h3 class="hasAnchor">
+<a href="#the-dodgr-graph-structure" class="anchor"></a>The <code>dodgr</code> graph structure</h3>
 <p>A graph or network in <code>dodgr</code> is represented as a flat table (<code>data.frame</code>, <code>tibble</code>, <code>data.table</code>, whatever) of minimally four columns: <code>from</code>, <code>to</code>, <code>weight</code>, and <code>distance</code>. The first two can be of arbitrary form (<code>numeric</code> or <code>character</code>); <code>weight</code> is used to evaluate the shortest paths, and the desired distances are evaluated by summing the values of <code>distance</code> along those paths. For a street network example, <code>weight</code> will generally be the actual distance multiplied by a priority weighting for a given mode of transport and type of way, while <code>distance</code> will be the pysical distance.</p>
+<p><code>dodgr</code> includes the conversion functions:</p>
+<ol style="list-style-type: decimal">
+<li>
+<code>dodgr_to_sf</code> to convert spatial <code>dodgr</code> graphs into Simple Features format used by the <a href="https://cran.r-project.org/package=sf"><code>sf</code> package</a>.</li>
+<li>
+<code>dodgr_to_igraph</code> to convert (not necessarily spatial) <code>dodgr</code> graphs into <a href="https://cran.r-project.org/package=igraph"><code>igraph</code></a> format (not yet implemented); and</li>
+<li>
+<code>dodgr_to_tidygraph</code> to convert (not necessarily spatial) <code>dodgr</code> graphs into <a href="https://cran.r-project.org/package=tidygraph"><code>tidygraph</code></a> format (not yet implemented).</li>
+</ol>
+</div>
+<div id="further-detail" class="section level3">
+<h3 class="hasAnchor">
+<a href="#further-detail" class="anchor"></a>Further detail</h3>
 <p>For more detail, see the <a href="https://ATFutures/dodgr/articles/dodgr.html">main package vignette</a>, along with a second vignette detailing <a href="https://ATFutures/dodgr/articles/benchmark.html">benchmark timings</a>, showing that under many circumstances, <code>dodgr</code> performs considerably faster than equivalent routines from the <code>igraph</code> package.</p>
+</div>
 </div>
 </div>
 </div>
