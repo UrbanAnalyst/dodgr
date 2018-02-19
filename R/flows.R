@@ -181,6 +181,15 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
 #' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' from <- sample (graph$from_id, size = 10)
+#' dens <- rep (1, length (from)) # Uniform densities
+#' graph <- dodgr_flows_disperse (graph, from = from, dens = dens)
+#' # graph then has an additonal 'flows` column of aggregate flows along all
+#' # edges. These flows are directed, and can be aggregated to equivalent
+#' # undirected flows on an equivalent undirected graph with:
+#' graph_undir <- merge_directed_flows (graph)
 dodgr_flows_disperse <- function (graph, from, dens, wt_profile = "bicycle",
                          contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE)
 {
