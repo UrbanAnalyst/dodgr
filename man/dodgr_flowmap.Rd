@@ -8,7 +8,7 @@ dodgr_flowmap(net, bbox = NULL, linescale = 1)
 }
 \arguments{
 \item{net}{A street network with a \code{flow} column obtained from
-\code{dodgr_flows}}
+\link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}}
 
 \item{bbox}{If given, scale the map to this bbox, otherwise use entire extend
 of \code{net}}
@@ -16,7 +16,7 @@ of \code{net}}
 \item{linescale}{Maximal thickness of plotted lines}
 }
 \description{
-Map the output of \link{dodgr_flows}
+Map the output of \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 }
 \note{
 \code{net} should be first passed through \code{merge_directed_flows}

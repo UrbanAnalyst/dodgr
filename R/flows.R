@@ -41,7 +41,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
     return (graph_full)
 }
 
-#' dodgr_flows
+#' dodgr_flows_aggregate
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
 #' between all pairs of \code{from} and \code{to} points.
@@ -59,12 +59,6 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
-#' @param aggregate_all If \code{TRUE}, flows are aggregated from each origin
-#' (\code{from} point) to \strong{ALL} other points according to an exponential
-#' decay from points of origin.
-#' @param k Width coefficient of exponential decay for \code{aggregate_all =
-#' TRUE}, with distance decay defined as \code{exp(-d/k)}. If value of
-#' \code{k<0} is given, a standard logistic polynomial will be used.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -89,16 +83,16 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' to <- to [!to %in% from]
 #' flows <- matrix (10 * runif (length (from) * length (to)),
 #'                  nrow = length (from))
-#' graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+#' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
-                         contract = FALSE, aggregate_all = FALSE, k = 2,
-                         heap = 'BHeap', quiet = TRUE, parallel = FALSE)
+dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
+                                   "bicycle", contract = FALSE, heap = 'BHeap',
+                                   quiet = TRUE, parallel = FALSE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -134,10 +128,8 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
-    #from_id <- index_id$id
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
     to_index <- index_id$index - 1 # 0-based
-    #to_id <- index_id$id
 
     if (!is.matrix (flows))
         flows <- as.matrix (flows)
@@ -147,24 +139,114 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    if (!aggregate_all)
+    if (parallel)
     {
-        if (parallel)
-        {
-            f <- rcpp_flows_aggregate_par (graph2, vert_map,
-                                           from_index, to_index,
-                                           flows, heap)
-            graph$flow <- rowSums (f)
-        } else
-        {
-            graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
-                                                from_index, to_index,
-                                                flows, heap)
-        }
+        f <- rcpp_flows_aggregate_par (graph2, vert_map,
+                                       from_index, to_index,
+                                       flows, heap)
+        graph$flow <- rowSums (f)
     } else
-        graph$flow <- rcpp_flows_disperse (graph2, vert_map,
-                                           from_index, k,
-                                           flows, heap)
+    {
+        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
+                                            from_index, to_index,
+                                            flows, heap)
+    }
+
+    if (contract) # map contracted flows back onto full graph
+        graph <- uncontract_graph (graph, edge_map, graph_full)
+
+    return (graph)
+}
+
+#' dodgr_flows_disperse
+#'
+#' Disperse flows throughout a network based on a input vectors of origin points
+#' and associated densities
+#'
+#' @param graph \code{data.frame} or equivalent object representing the network
+#' graph (see Details)
+#' @param from Vector or matrix of points **from** which route distances are to
+#' be calculated (see Details)
+#' @param to Vector or matrix of points **to** which route distances are to be
+#' calculated (see Details)
+#' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
+#' \code{ncol(flows)==length(to)}.
+#' @param wt_profile Name of weighting profile for street networks (one of foot,
+#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' @param contract If \code{TRUE}, calculate flows on contracted graph before
+#' mapping them back on to the original full graph (recommended as this will
+#' generally be much faster).
+#' @param k Width coefficient of exponential decay defined as \code{exp(-d/k)}.
+#' If value of \code{k<0} is given, a standard logistic polynomial will be used.
+#' @param heap Type of heap to use in priority queue. Options include
+#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
+#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
+#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
+#' @param quiet If \code{FALSE}, display progress messages on screen.
+#' @param parallel If \code{TRUE}, perform parallel calculation of flows (see
+#' Details)
+#' @return Modified version of graph with additonal \code{flow} column added.
+#'
+#' @note If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
+#' only the first column of \code{flows} is used.
+#'
+#' @note Parallel computation requires initial construction of very large
+#' matrices which may not fit in memory. Setting \code{parallel = FALSE} should
+#' avoid this issue in most cases.
+#'
+#' @export
+dodgr_flows_disperse <- function (graph, from, to, flows, wt_profile = "bicycle",
+                         contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE,
+                         parallel = FALSE)
+{
+    if (missing (graph) & (!missing (from) | !missing (to)))
+        graph <- graph_from_pts (from, to, expand = 0.1,
+                                 wt_profile = wt_profile, quiet = quiet)
+
+    if ("flow" %in% names (graph))
+        warning ("graph already has a 'flow' column; ",
+                  "this will be overwritten")
+
+    if (any (is.na (flows))) {
+        flows [is.na (flows)] <- 0
+    }
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
+
+    # change from and to just to check conformity
+    if (!missing (from))
+        from <- nodes_arg_to_pts (from, graph)
+    if (!missing (to))
+        to <- nodes_arg_to_pts (to, graph)
+
+    if (contract)
+    {
+        graph <- contract_graph_with_pts (graph, from, to)
+        graph_full <- graph$graph_full
+        edge_map <- graph$edge_map
+        graph <- graph$graph
+    }
+
+    gr_cols <- dodgr_graph_cols (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
+
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index - 1 # 0-based
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index - 1 # 0-based
+
+    if (!is.matrix (flows))
+        flows <- as.matrix (flows)
+
+    graph2 <- convert_graph (graph, gr_cols)
+
+    if (!quiet)
+        message ("\nAggregating flows ... ", appendLF = FALSE)
+
+    graph$flow <- rcpp_flows_disperse (graph2, vert_map,
+                                       from_index, k,
+                                       flows, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
@@ -174,16 +256,16 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
 
 #' merge_directed_flows
 #'
-#' The \code{dodgr_flows} function returns a column of aggregated flows directed
-#' along each edge of a graph, so the aggregated flow from vertex A to vertex B
-#' will not necessarily equal that from B to A, and the total flow in both
-#' directions will be the sum of flow from A to B plus that from B to A. This
-#' function converts a directed graph to undirected form through reducing all
-#' pairs of directed edges to a single edge, and aggregating flows from both
-#' directions.
+#' The \link{dodgr_flows_aggregate} and \link{dodgr_flows_disperse} functions
+#' return a column of aggregated flows directed along each edge of a graph, so
+#' the aggregated flow from vertex A to vertex B will not necessarily equal that
+#' from B to A, and the total flow in both directions will be the sum of flow
+#' from A to B plus that from B to A. This function converts a directed graph to
+#' undirected form through reducing all pairs of directed edges to a single
+#' edge, and aggregating flows from both directions.
 #'
 #' @param graph A graph containing a \code{flow} column as returned from
-#' \code{dodgr_flows}
+#' \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 #' @return An equivalent graph in which all directed edges have been reduced to
 #' single, undirected edges, and all directed flows aggregated to undirected
 #' flows.
@@ -195,7 +277,7 @@ dodgr_flows <- function (graph, from, to, flows, wt_profile = "bicycle",
 #' to <- to [!to %in% from]
 #' flows <- matrix (10 * runif (length (from) * length (to)),
 #'                  nrow = length (from))
-#' graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+#' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:

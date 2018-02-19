@@ -76,7 +76,7 @@ rcpp_contract_graph <- function(graph, vertlist_in) {
 #' Merge flows in directed graph to form aggregate undirected flows, and return
 #' a corresponding undirected graph useful for visualisation.
 #'
-#' @param graph The result of a call to \code{dodgr_flows}
+#' @param graph The result of a call to \code{dodgr_flows_aggregate/disperse}
 #' @return A single vector of aggregate flows with non-zero values only for
 #' those edges to be retained in the directed graph.
 #'

@@ -8,7 +8,7 @@ merge_directed_flows(graph)
 }
 \arguments{
 \item{graph}{A graph containing a \code{flow} column as returned from
-\code{dodgr_flows}}
+\link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}}
 }
 \value{
 An equivalent graph in which all directed edges have been reduced to
@@ -16,13 +16,13 @@ single, undirected edges, and all directed flows aggregated to undirected
 flows.
 }
 \description{
-The \code{dodgr_flows} function returns a column of aggregated flows directed
-along each edge of a graph, so the aggregated flow from vertex A to vertex B
-will not necessarily equal that from B to A, and the total flow in both
-directions will be the sum of flow from A to B plus that from B to A. This
-function converts a directed graph to undirected form through reducing all
-pairs of directed edges to a single edge, and aggregating flows from both
-directions.
+The \link{dodgr_flows_aggregate} and \link{dodgr_flows_disperse} functions
+return a column of aggregated flows directed along each edge of a graph, so
+the aggregated flow from vertex A to vertex B will not necessarily equal that
+from B to A, and the total flow in both directions will be the sum of flow
+from A to B plus that from B to A. This function converts a directed graph to
+undirected form through reducing all pairs of directed edges to a single
+edge, and aggregating flows from both directions.
 }
 \examples{
 graph <- weight_streetnet (hampi)
@@ -31,7 +31,7 @@ to <- sample (graph$to_id, size = 5)
 to <- to [!to \%in\% from]
 flows <- matrix (10 * runif (length (from) * length (to)),
                  nrow = length (from))
-graph <- dodgr_flows (graph, from = from, to = to, flows = flows)
+graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows` column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:

@@ -41,7 +41,7 @@ test_that("flows", {
     to <- to [!to %in% from]
     flows <- matrix (10 * runif (length (from) * length (to)),
                      nrow = length (from))
-    graph2 <- dodgr_flows (graph, from = from, to = to, flows = flows)
+    graph2 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
     expect_equal (ncol (graph2) - ncol (graph), 1)
     expect_true (mean (graph2$flow) > 0)
 })

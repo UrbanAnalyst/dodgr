@@ -634,13 +634,13 @@ those calculated on full graphs.
 
 # 7 Aggregated Flows
 
-The final major function of `dodgr` is `dodgr_flows()`, which aggregates
-''flows'' throughout a network from a set of origin (`from`) and destination
-(`to`) points.  Flows commonly arise in origin-destination matrices used in
-transport studies, but may be any kind of generic flows on graphs. A flow matrix
-specifies the flow between each pair of origin and destination points, and the
-`dodgr_flows()` function aggregates all of these flows throughout a network and
-assigns a resultant aggregate flow to each edge.
+The final major function of `dodgr` is `dodgr_flows_aggregate()`, which
+aggregates ''flows'' throughout a network from a set of origin (`from`) and
+destination (`to`) points.  Flows commonly arise in origin-destination matrices
+used in transport studies, but may be any kind of generic flows on graphs. A
+flow matrix specifies the flow between each pair of origin and destination
+points, and the `dodgr_flows_aggregate()` function aggregates all of these flows
+throughout a network and assigns a resultant aggregate flow to each edge.
 
 For a set of `nf` points of origin and `nt` points of destination, flow are
 defined by a simple `nf`-by-`nt` matrix of values, as in the following code:
@@ -651,10 +651,10 @@ to <- sample (graph$to_id, size = 10)
 flows <- matrix (10 * runif (length (from) * length (to)),
                  nrow = length (from))
 ```
-This `flows` matrix is then submitted to `dodgr_flows()`, which simply appends
-an additional column of `flows` to the submitted `graph`:
+This `flows` matrix is then submitted to `dodgr_flows_aggregate()`, which simply
+appends an additional column of `flows` to the submitted `graph`:
 ```{r}
-graph_f <- dodgr_flows (graph, from = from, to = to, flows = flows)
+graph_f <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 head (graph_f)
 ```
 Most flows are zero because they have only been calculated between very few
