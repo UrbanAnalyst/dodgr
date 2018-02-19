@@ -157,39 +157,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_spatial_interaction
-Rcpp::NumericMatrix rcpp_spatial_interaction(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector nodes, double k, Rcpp::NumericVector dens, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_spatial_interaction(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP nodesSEXP, SEXP kSEXP, SEXP densSEXP, SEXP heap_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type nodes(nodesSEXP);
-    Rcpp::traits::input_parameter< double >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens(densSEXP);
-    Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_spatial_interaction(graph, vert_map_in, nodes, k, dens, heap_type));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpp_one_spatial_interaction
-Rcpp::NumericVector rcpp_one_spatial_interaction(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector nodes, double k, size_t i, Rcpp::NumericVector dens, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_one_spatial_interaction(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP nodesSEXP, SEXP kSEXP, SEXP iSEXP, SEXP densSEXP, SEXP heap_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type nodes(nodesSEXP);
-    Rcpp::traits::input_parameter< double >::type k(kSEXP);
-    Rcpp::traits::input_parameter< size_t >::type i(iSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens(densSEXP);
-    Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_one_spatial_interaction(graph, vert_map_in, nodes, k, i, dens, heap_type));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_sf_as_network
 Rcpp::List rcpp_sf_as_network(const Rcpp::List& sf_lines, const Rcpp::DataFrame& pr);
 RcppExport SEXP _dodgr_rcpp_sf_as_network(SEXP sf_linesSEXP, SEXP prSEXP) {
