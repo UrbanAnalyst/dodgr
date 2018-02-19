@@ -45,9 +45,6 @@ Aggregate flows throughout a network based on an input matrix of flows
 between all pairs of \code{from} and \code{to} points.
 }
 \note{
-If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
-only the first column of \code{flows} is used.
-
 Parallel computation requires initial construction of very large
 matrices which may not fit in memory. Setting \code{parallel = FALSE} should
 avoid this issue in most cases.

@@ -4,9 +4,8 @@
 \alias{dodgr_flows_disperse}
 \title{dodgr_flows_disperse}
 \usage{
-dodgr_flows_disperse(graph, from, to, flows, wt_profile = "bicycle",
-  contract = FALSE, k = 2, heap = "BHeap", quiet = TRUE,
-  parallel = FALSE)
+dodgr_flows_disperse(graph, from, dens, wt_profile = "bicycle",
+  contract = FALSE, k = 2, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -15,11 +14,7 @@ graph (see Details)}
 \item{from}{Vector or matrix of points **from** which route distances are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which route distances are to be
-calculated (see Details)}
-
-\item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
-\code{ncol(flows)==length(to)}.}
+\item{dens}{Vectors of densities correponsing to the \code{from} points}
 
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
@@ -28,8 +23,9 @@ horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
 
-\item{k}{Width coefficient of exponential decay defined as \code{exp(-d/k)}.
-If value of \code{k<0} is given, a standard logistic polynomial will be used.}
+\item{k}{Width coefficient of exponential diffusion function defined as
+\code{exp(-d/k)}.  If value of \code{k<0} is given, a standard logistic
+polynomial will be used.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -37,9 +33,6 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
-
-\item{parallel}{If \code{TRUE}, perform parallel calculation of flows (see
-Details)}
 }
 \value{
 Modified version of graph with additonal \code{flow} column added.
@@ -47,12 +40,4 @@ Modified version of graph with additonal \code{flow} column added.
 \description{
 Disperse flows throughout a network based on a input vectors of origin points
 and associated densities
-}
-\note{
-If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
-only the first column of \code{flows} is used.
-
-Parallel computation requires initial construction of very large
-matrices which may not fit in memory. Setting \code{parallel = FALSE} should
-avoid this issue in most cases.
 }

@@ -68,9 +68,6 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' Details)
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
-#' @note If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
-#' only the first column of \code{flows} is used.
-#'
 #' @note Parallel computation requires initial construction of very large
 #' matrices which may not fit in memory. Setting \code{parallel = FALSE} should
 #' avoid this issue in most cases.
@@ -167,62 +164,47 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which route distances are to
 #' be calculated (see Details)
-#' @param to Vector or matrix of points **to** which route distances are to be
-#' calculated (see Details)
-#' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
-#' \code{ncol(flows)==length(to)}.
+#' @param dens Vectors of densities correponsing to the \code{from} points
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
-#' @param k Width coefficient of exponential decay defined as \code{exp(-d/k)}.
-#' If value of \code{k<0} is given, a standard logistic polynomial will be used.
+#' @param k Width coefficient of exponential diffusion function defined as
+#' \code{exp(-d/k)}.  If value of \code{k<0} is given, a standard logistic
+#' polynomial will be used.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
 #' @param quiet If \code{FALSE}, display progress messages on screen.
-#' @param parallel If \code{TRUE}, perform parallel calculation of flows (see
-#' Details)
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
-#' @note If \code{aggregate_all = TRUE}, then \code{to} points are ignored, and
-#' only the first column of \code{flows} is used.
-#'
-#' @note Parallel computation requires initial construction of very large
-#' matrices which may not fit in memory. Setting \code{parallel = FALSE} should
-#' avoid this issue in most cases.
-#'
 #' @export
-dodgr_flows_disperse <- function (graph, from, to, flows, wt_profile = "bicycle",
-                         contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE,
-                         parallel = FALSE)
+dodgr_flows_disperse <- function (graph, from, dens, wt_profile = "bicycle",
+                         contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE)
 {
-    if (missing (graph) & (!missing (from) | !missing (to)))
-        graph <- graph_from_pts (from, to, expand = 0.1,
+    if (missing (graph) & !missing (from))
+        graph <- graph_from_pts (from, from, expand = 0.1,
                                  wt_profile = wt_profile, quiet = quiet)
 
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
 
-    if (any (is.na (flows))) {
-        flows [is.na (flows)] <- 0
+    if (any (is.na (dens))) {
+        dens [is.na (dens)] <- 0
     }
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
 
-    # change from and to just to check conformity
     if (!missing (from))
         from <- nodes_arg_to_pts (from, graph)
-    if (!missing (to))
-        to <- nodes_arg_to_pts (to, graph)
 
     if (contract)
     {
-        graph <- contract_graph_with_pts (graph, from, to)
+        graph <- contract_graph_with_pts (graph, from, from)
         graph_full <- graph$graph_full
         edge_map <- graph$edge_map
         graph <- graph$graph
@@ -233,20 +215,17 @@ dodgr_flows_disperse <- function (graph, from, to, flows, wt_profile = "bicycle"
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index - 1 # 0-based
 
-    if (!is.matrix (flows))
-        flows <- as.matrix (flows)
+    if (!is.matrix (dens))
+        dens <- as.matrix (dens)
 
     graph2 <- convert_graph (graph, gr_cols)
 
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    graph$flow <- rcpp_flows_disperse (graph2, vert_map,
-                                       from_index, k,
-                                       flows, heap)
+    graph$flow <- rcpp_flows_disperse (graph2, vert_map, from_index,
+                                       k, dens, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
