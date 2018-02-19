@@ -16,7 +16,10 @@ objects.
 \description{
 Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
 Features (\pkg{sf}) object through aggregating edges into \code{LINESTRING}
-objects representing longest sequences between all junction nodes.
+objects representing longest sequences between all junction nodes. The
+resultant objects will generally contain more \code{LINESTRING} objects than
+the original \pkg{sf} object, because the former will be bisected at every
+junction point.
 }
 \note{
 The output of this function corresponds to the edges obtained from
@@ -27,6 +30,7 @@ see \pkg{sf} for details.
 \examples{
 hw <- weight_streetnet (hampi)
 xy <- dodgr_to_sf (hw)
-dim (hw) # 5,845 edges
-length (xy) # 682 aggregated linestrings aggregated from those edges
+dim (hw) # 2,939 edges
+length (xy) # 357 aggregated linestrings aggregated from those edges
+nrow (hampi) # compared to 191 linestrings in original sf object
 }

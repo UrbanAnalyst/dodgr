@@ -102,3 +102,10 @@ test_that("compare heaps", {
         expect_true (ch$elapsed [igr] > min (ch$elapsed))
     }
 })
+
+test_that("dodgr2sf", {
+    hw <- weight_streetnet (hampi)
+    y <- dodgr_to_sf (hw)
+    # y should have more linestrings than the original sf object:
+    expect_true (length (y) > length (hw$geometry))
+})
