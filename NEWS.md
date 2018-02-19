@@ -1,4 +1,4 @@
-# v0.0.3.001
+# v0.1.0
 
 Major changes:
 - New function `dodgr_flowmap` plots maps of flows. Currently only writes .png
@@ -6,9 +6,8 @@ Major changes:
   devices.
 - `dodgr_flows` has option to routes flows from a set of source origins to all
   points in a network, attenuated by distance from those origins.
-- `dodgr_spatial_interaction` implements single-constrained spatial interaction
-  models from a vector of densities (interaction origins, which the function
-  maps to all possible interaction destinations).
+- `dodgr_to_sf` converts a spatially-explicit `dodgr` graph into Simple Features
+  (`sf`) format.
 
 Minor changes:
 - `match_pts_to_graph` now accepts Simple Features (sf) collections of
