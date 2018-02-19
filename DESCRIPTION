@@ -50,5 +50,3 @@ LazyData: true
 URL: https://github.com/ATFutures/dodgr
 BugReports: https://github.com/ATFutures/dodgr/issues
 RoxygenNote: 6.0.1
-Remotes:
-    ropensci/osmdata

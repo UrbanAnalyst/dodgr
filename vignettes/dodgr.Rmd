@@ -637,9 +637,9 @@ those calculated on full graphs.
 The final major functions of `dodgr` are `dodgr_flows_aggregate()` and
 `dodgr_flows_disperse()`.
 
-## 7.1 `dodgr_flows_aggregate()`
+## 7.1 Direct Aggregation
 
-The former of these aggregates ''flows'' throughout a
+The former of the above functions aggregates ''flows'' throughout a
 network from a set of origin (`from`) and destination (`to`) points.  Flows
 commonly arise in origin-destination matrices used in transport studies, but may
 be any kind of generic flows on graphs. A flow matrix specifies the flow between
@@ -668,7 +668,7 @@ points in the graph.
 summary (graph_f$flow)
 ```
 
-## 7.2 `dodgr_flows_disperse()`
+## 7.2 Flow Dispersal
 
 The second function, `dodgr_flows_disperse()`, uses only a vector a origin
 (`from`) points, and aggregates flows as they disperse throughout the network
@@ -705,16 +705,10 @@ original data on vertex coordinates through
 graph <- graph [graph_undir$edge_id, ]
 graph$flow <- graph_undir$flow
 ```
-This graph may then be used to visalise flows, as in the following simple
-example:
-```{r, message = FALSE}
-library (ggplot2)
-ggplot() + labs (x = "longitude", y = "latitude") +
-        geom_segment (data = graph, size = 5 * graph$flow / max (graph$flow),
-                      aes (x = from_lon, y = from_lat,
-                           xend = to_lon, yend = to_lat,
-                           colour = flow, size = flow)) +
-        scale_colour_gradient (low = "lawngreen", high = "dodgerblue")
+This graph may then be used to visalise flows with the `dodgr_flowmap` function:
+```{r}
+graph_f <- graph_f [graph_f$flow > 0, ]
+dodgr_flowmap (graph_f, linescale = 5)
 ```
 
 
