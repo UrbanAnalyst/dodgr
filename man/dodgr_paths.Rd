@@ -21,7 +21,9 @@ calculated (see Details)}
 path, otherwise return corresponding lists of edge numbers from \code{graph}.}
 
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
-horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
+horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
+only used if \code{graph} is not provided, in which case a street network is
+downloaded and correspondingly weighted).}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),

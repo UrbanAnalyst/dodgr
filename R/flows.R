@@ -55,7 +55,9 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
 #' \code{ncol(flows)==length(to)}.
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
-#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
+#' only used if \code{graph} is not provided, in which case a street network is
+#' downloaded and correspondingly weighted).
 #' @param contract If \code{TRUE}, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
