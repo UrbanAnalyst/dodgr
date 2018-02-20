@@ -11,10 +11,10 @@ dodgr_paths(graph, from, to, vertices = TRUE, wt_profile = "bicycle",
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which route distances are to
+\item{from}{Vector or matrix of points **from** which route paths are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which route distances are to be
+\item{to}{Vector or matrix of points **to** which route paths are to be
 calculated (see Details)}
 
 \item{vertices}{If \code{TRUE}, return lists of lists of vertices for each

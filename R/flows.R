@@ -48,9 +48,9 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #'
 #' @param graph \code{data.frame} or equivalent object representing the network
 #' graph (see Details)
-#' @param from Vector or matrix of points **from** which route distances are to
+#' @param from Vector or matrix of points **from** which aggregate flows are to
 #' be calculated (see Details)
-#' @param to Vector or matrix of points **to** which route distances are to be
+#' @param to Vector or matrix of points **to** which aggregate flows are to be
 #' calculated (see Details)
 #' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
 #' \code{ncol(flows)==length(to)}.
@@ -162,8 +162,8 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #'
 #' @param graph \code{data.frame} or equivalent object representing the network
 #' graph (see Details)
-#' @param from Vector or matrix of points **from** which route distances are to
-#' be calculated (see Details)
+#' @param from Vector or matrix of points **from** which aggregate dispersed
+#' flows are to be calculated (see Details)
 #' @param dens Vectors of densities correponsing to the \code{from} points
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).

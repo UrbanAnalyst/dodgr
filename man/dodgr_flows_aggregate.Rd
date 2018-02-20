@@ -11,10 +11,10 @@ dodgr_flows_aggregate(graph, from, to, flows, wt_profile = "bicycle",
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which route distances are to
+\item{from}{Vector or matrix of points **from** which aggregate flows are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which route distances are to be
+\item{to}{Vector or matrix of points **to** which aggregate flows are to be
 calculated (see Details)}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and

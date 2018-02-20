@@ -34,5 +34,7 @@ graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
 graph_undir <- merge_directed_flows (graph)
+\dontrun{
 dodgr_flowmap (graph_undir)
+}
 }

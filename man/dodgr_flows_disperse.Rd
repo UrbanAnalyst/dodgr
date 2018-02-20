@@ -11,8 +11,8 @@ dodgr_flows_disperse(graph, from, dens, wt_profile = "bicycle",
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which route distances are to
-be calculated (see Details)}
+\item{from}{Vector or matrix of points **from** which aggregate dispersed
+flows are to be calculated (see Details)}
 
 \item{dens}{Vectors of densities correponsing to the \code{from} points}
 
