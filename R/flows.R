@@ -131,7 +131,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
     to_index <- index_id$index - 1 # 0-based
 
     if (!is.matrix (flows))
-        flows <- as.matrix (flows)
+        flows <- t (as.matrix (flows))
 
     graph2 <- convert_graph (graph, gr_cols)
 
