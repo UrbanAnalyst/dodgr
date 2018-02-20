@@ -607,15 +607,21 @@ example is,
 dp [[1]] [[1]]
 ```
 ```{r, echo = FALSE}
-n <- 0
-i <- 0
-while (all (n == 0))
+# make sure there are some paths:
+maxlen <- max (unlist (lapply (dp, function (i)
+                               max (unlist (lapply (i, length))))))
+if (maxlen > 0)
 {
-    i <- i + 1
-    n <- which (lapply (dp [[i]], length) > 0)
+    n <- 0
+    i <- 0
+    while (all (n == 0))
+    {
+        i <- i + 1
+        n <- which (lapply (dp [[i]], length) > 0)
+    }
+    j <- n [1]
+    dp [[i]] [[j]]
 }
-j <- n [1]
-dp [[i]] [[j]]
 ```
 For spatial graphs, the coordinates of these paths can be obtained by extracting
 the vertices with `dodgr_vertices()` and matching the vertex IDs:
