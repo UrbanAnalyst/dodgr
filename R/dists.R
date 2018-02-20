@@ -135,7 +135,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     {
         index <- get_pts_index (graph, gr_cols, vert_map, pts)
         if (is.vector (pts) & length (pts == 2) & is.numeric (pts) &
-            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &
+            ( (any (grepl ("x", names (pts), ignore.case = TRUE)) &
              any (grepl ("y", names (pts), ignore.case = TRUE))) |
              (any (grepl ("lon", names (pts), ignore.case = TRUE) &
                    (any (grepl ("lat", names (pts), ignore.case = TRUE)))))))
@@ -150,7 +150,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 
 #' get_id_cols
 #'
-#' Get the ID columns from a matrix or data.frame of from or two points
+#' Get the ID columns from a matrix or data.frame of from or to points
 #' @param pts The \code{from} or \code{to} args passed to \code{dodgr_dists}
 #' @return Character vector of names of points, if they exist in \code{pts}
 #' @noRd

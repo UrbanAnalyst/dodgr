@@ -23,12 +23,13 @@
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
+#' \dontrun{
 #' dodgr_flowmap (graph_undir)
+#' }
 dodgr_flowmap <- function (net, bbox = NULL, linescale = 1)
 {
     if (!"flow" %in% names (net))
         net$flow <- 1
-    fmax <- max (net$flow)
     if (is.null (bbox))
         bbox <- c (min (net$from_lon), min (net$from_lat),
                  max (net$from_lon), max (net$from_lat))
