@@ -135,9 +135,12 @@ test_that ("flowmap", {
                      nrow = length (from))
     graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
     graph_undir <- merge_directed_flows (graph)
-    # just test that is produces a plot
-    png (filename = "junk.png")
-    dodgr_flowmap (graph_undir)
-    a <- dev.off (which = dev.cur ())
-    expect_true (file.remove ("junk.png")) # false if no plot
+    if (nrow (graph_undir) > 0)
+    {
+        # just test that is produces a plot
+        png (filename = "junk.png")
+        dodgr_flowmap (graph_undir)
+        a <- dev.off (which = dev.cur ())
+        expect_true (file.remove ("junk.png")) # false if no plot
+    }
 })
