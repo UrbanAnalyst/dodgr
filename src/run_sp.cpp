@@ -54,14 +54,13 @@ struct OneDist : public RcppParallel::Worker
     // constructor
     OneDist (
             const Rcpp::IntegerVector fromi,
-            const Rcpp::IntegerVector toi,
-            const size_t nverts,
-            const std::shared_ptr <DGraph> g,
-            const std::string & heap_type,
-            Rcpp::NumericMatrix dout) :
-        dp_fromi (fromi), toi (toi), nverts (nverts),
-        g (g), heap_type (heap_type),
-        dout (dout)
+            const Rcpp::IntegerVector toi_in,
+            const size_t nverts_in,
+            const std::shared_ptr <DGraph> g_in,
+            const std::string & heap_type_in,
+            Rcpp::NumericMatrix dout_in) :
+        dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
+        g (g_in), heap_type (heap_type_in), dout (dout_in)
     {
     }
 
@@ -374,31 +373,31 @@ struct OneFlow : public RcppParallel::Worker
     // constructor
     OneFlow (
             const Rcpp::IntegerVector fromi,
-            const Rcpp::IntegerVector toi,
-            const Rcpp::NumericMatrix flows,
-            const std::vector <std::string>  vert_name,
-            const std::unordered_map <std::string, unsigned int> verts_to_edge_map,
-            const size_t nverts,
-            const size_t nedges,
-            const std::string dirtxt,
-            const std::string &heap_type,
-            const std::shared_ptr <DGraph> g) :
-        dp_fromi (fromi), toi (toi), flows (flows), vert_name (vert_name),
-        verts_to_edge_map (verts_to_edge_map),
-        nverts (nverts), nedges (nedges), dirtxt (dirtxt),
-        heap_type (heap_type), g (g)
+            const Rcpp::IntegerVector toi_in,
+            const Rcpp::NumericMatrix flows_in,
+            const std::vector <std::string>  vert_name_in,
+            const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
+            const size_t nverts_in,
+            const size_t nedges_in,
+            const std::string dirtxt_in,
+            const std::string &heap_type_in,
+            const std::shared_ptr <DGraph> g_in) :
+        dp_fromi (fromi), toi (toi_in), flows (flows_in), vert_name (vert_name_in),
+        verts_to_edge_map (verts_to_edge_map_in),
+        nverts (nverts_in), nedges (nedges_in), dirtxt (dirtxt_in),
+        heap_type (heap_type_in), g (g_in)
     {
     }
 
     // Function to generate random file names
-    std::string random_name(int len) {
+    std::string random_name(size_t len) {
         auto randchar = []() -> char
         {
             const char charset[] = \
                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
             const size_t max_index = (sizeof(charset) - 1);
             //return charset [ rand() % max_index ];
-            size_t i = floor (unif_rand () * max_index);
+            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
             return charset [i];
         };
         std::string str (len, 0);
@@ -461,20 +460,14 @@ struct OneFlow : public RcppParallel::Worker
                 }
             }
         } // end for i
-        // dump flowvec to a file
+        // dump flowvec to a file; chance of re-generating same file name is
+        // 61^10, so there's no check for re-use of same
         std::string file_name = dirtxt + "flow_" + random_name (10) + ".dat";
-        // but re-generate if file of that name exists:
-        std::ifstream in_file (file_name); // just for testing existence
-        while (in_file.good ())
-        {
-            file_name = "flow_" + random_name (10) + ".dat";
-            std::ifstream in_file (file_name);
-        }
         std::ofstream out_file;
         out_file.open (file_name, std::ios::binary | std::ios::out);
         out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
         out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                nedges * sizeof (double));
+                static_cast <std::streamsize> (nedges * sizeof (double)));
         out_file.close ();
     } // end parallel function operator
 };
@@ -503,14 +496,14 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
         in_file.read (reinterpret_cast <char *>(&nedges), sizeof (size_t));
         std::vector <double> flows_i (nedges);
         in_file.read (reinterpret_cast <char *>(&flows_i [0]),
-                nedges * sizeof (double));
+                static_cast <std::streamsize> (nedges * sizeof (double)));
         in_file.close ();
 
-        if (nedges != len)
+        if (nedges != static_cast <size_t> (len))
             Rcpp::stop ("aggregate flows have inconsistent sizes");
         
-        for (int i = 0; i < nedges; i++)
-            flows [i] += flows_i [i];
+        for (size_t j = 0; j < nedges; j++)
+            flows [static_cast <long> (j)] += flows_i [j];
     }
     return flows;
 }
