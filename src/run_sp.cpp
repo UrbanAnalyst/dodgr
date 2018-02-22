@@ -644,7 +644,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
                     Rcpp::stop ("vertex pair forms no known edge");
 
                 unsigned int indx = verts_to_edge_map [two_verts];
-                if (d [vi] != INFINITE_DOUBLE)
+                if (d [vi] < INFINITE_DOUBLE)
                 {
                     if (k > 0.0)
                         aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);

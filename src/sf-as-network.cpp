@@ -189,14 +189,14 @@ struct OnePointIndex : public RcppParallel::Worker
 
     // constructor
     OnePointIndex (
-            const Rcpp::NumericVector xy_x,
-            const Rcpp::NumericVector xy_y,
-            const Rcpp::NumericVector pt_x,
-            const Rcpp::NumericVector pt_y,
-            const size_t nxy,
-            Rcpp::IntegerVector index) :
-        xy_x (xy_x), xy_y (xy_y), pt_x (pt_x), pt_y (pt_y),
-        nxy (nxy), index (index)
+            const Rcpp::NumericVector xy_x_in,
+            const Rcpp::NumericVector xy_y_in,
+            const Rcpp::NumericVector pt_x_in,
+            const Rcpp::NumericVector pt_y_in,
+            const size_t nxy_in,
+            Rcpp::IntegerVector index_in) :
+        xy_x (xy_x_in), xy_y (xy_y_in), pt_x (pt_x_in), pt_y (pt_y_in),
+        nxy (nxy_in), index (index_in)
     {
     }
 
