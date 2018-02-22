@@ -197,23 +197,22 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
 }
 
-#' rcpp_flows_aggregate
+#' rcpp_aggregate_files
 #'
-#' @param graph The data.frame holding the graph edges
-#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
-#' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
-#' @param toi Index into vert_map_in of vertex numbers
+#' @param file_names List of fill names of files (that is, with path) provided
+#' from R, coz otherwise this is C++17 with an added library flag.
+#' @param len Length of flows, which is simply the number of edges in the
+#' graph.
 #'
-#' @note The flow data to be used for aggregation is a matrix mapping flows
-#' betwen each pair of from and to points.
+#' Each parallel flow aggregation worker dumps results to a randomly-named
+#' file. This routine reassembles those results into a single aggregate vector.
 #'
 #' @noRd
-rcpp_flows_aggregate <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
-    .Call(`_dodgr_rcpp_flows_aggregate`, graph, vert_map_in, fromi, toi, flows, heap_type)
+rcpp_aggregate_files <- function(file_names, len) {
+    .Call(`_dodgr_rcpp_aggregate_files`, file_names, len)
 }
 
-#' rcpp_flows_aggregate
+#' rcpp_flows_aggregate_par
 #'
 #' @param graph The data.frame holding the graph edges
 #' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
@@ -221,12 +220,16 @@ rcpp_flows_aggregate <- function(graph, vert_map_in, fromi, toi, flows, heap_typ
 #' @param fromi Index into vert_map_in of vertex numbers
 #' @param toi Index into vert_map_in of vertex numbers
 #'
-#' @note The flow data to be used for aggregation is a matrix mapping flows
-#' betwen each pair of from and to points.
+#' @note The parallelisation is achieved by dumping the results of each thread
+#' to a file, with aggregation performed at the end by simply reading back and
+#' aggregating all files. There is no way to aggregate into a single vector
+#' because threads have to be independent. The only danger with this approach
+#' is that multiple threads may generate the same file names, but with names 10
+#' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, heap_type) {
-    .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi, flows, heap_type)
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, dirtxt, heap_type) {
+    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi, flows, dirtxt, heap_type))
 }
 
 #' rcpp_flows_disperse

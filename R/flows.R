@@ -66,13 +66,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 #' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
 #' @param quiet If \code{FALSE}, display progress messages on screen.
-#' @param parallel If \code{TRUE}, perform parallel calculation of flows (see
-#' Details)
 #' @return Modified version of graph with additonal \code{flow} column added.
-#'
-#' @note Parallel computation requires initial construction of very large
-#' matrices which may not fit in memory. Setting \code{parallel = FALSE} should
-#' avoid this issue in most cases.
 #'
 #' @export
 #' @examples
@@ -91,7 +85,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
                                    "bicycle", contract = FALSE, heap = 'BHeap',
-                                   quiet = TRUE, parallel = FALSE)
+                                   quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -138,18 +132,15 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    if (parallel)
-    {
-        f <- rcpp_flows_aggregate_par (graph2, vert_map,
-                                       from_index, to_index,
-                                       flows, heap)
-        graph$flow <- rowSums (f)
-    } else
-    {
-        graph$flow <- rcpp_flows_aggregate (graph2, vert_map,
-                                            from_index, to_index,
-                                            flows, heap)
-    }
+    # parallel results are dumped in tempdir, which is read here with an extra
+    # char to get the terminal dir separator character:
+    dirtxt <- file.path (tempdir (), "a")
+    dirtxt <- substr (dirtxt, 1, nchar (dirtxt) - 1)
+    rcpp_flows_aggregate_par (graph2, vert_map, from_index, to_index,
+                              flows, dirtxt, heap)
+    files <- list.files (tempdir (), pattern = "flow_", full.names = TRUE)
+    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
+    junk <- file.remove (files) # nolint
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

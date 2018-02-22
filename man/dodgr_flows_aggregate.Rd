@@ -5,7 +5,7 @@
 \title{dodgr_flows_aggregate}
 \usage{
 dodgr_flows_aggregate(graph, from, to, flows, wt_profile = "bicycle",
-  contract = FALSE, heap = "BHeap", quiet = TRUE, parallel = FALSE)
+  contract = FALSE, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -35,9 +35,6 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
-
-\item{parallel}{If \code{TRUE}, perform parallel calculation of flows (see
-Details)}
 }
 \value{
 Modified version of graph with additonal \code{flow} column added.
@@ -45,11 +42,6 @@ Modified version of graph with additonal \code{flow} column added.
 \description{
 Aggregate flows throughout a network based on an input matrix of flows
 between all pairs of \code{from} and \code{to} points.
-}
-\note{
-Parallel computation requires initial construction of very large
-matrices which may not fit in memory. Setting \code{parallel = FALSE} should
-avoid this issue in most cases.
 }
 \examples{
 graph <- weight_streetnet (hampi)

@@ -8,10 +8,10 @@
 */
 
 /* .Call calls */
+extern SEXP _dodgr_rcpp_aggregate_files(SEXP, SEXP);
 extern SEXP _dodgr_rcpp_aggregate_to_sf(SEXP, SEXP, SEXP);
 extern SEXP _dodgr_rcpp_contract_graph(SEXP, SEXP);
-extern SEXP _dodgr_rcpp_flows_aggregate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _dodgr_rcpp_flows_aggregate_par(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _dodgr_rcpp_flows_aggregate_par(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _dodgr_rcpp_flows_disperse(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP _dodgr_rcpp_get_component_vector(SEXP);
 extern SEXP _dodgr_rcpp_get_paths(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -24,10 +24,10 @@ extern SEXP _dodgr_rcpp_sample_graph(SEXP, SEXP);
 extern SEXP _dodgr_rcpp_sf_as_network(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_dodgr_rcpp_aggregate_files",      (DL_FUNC) &_dodgr_rcpp_aggregate_files,      2},
     {"_dodgr_rcpp_aggregate_to_sf",      (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf,      3},
     {"_dodgr_rcpp_contract_graph",       (DL_FUNC) &_dodgr_rcpp_contract_graph,       2},
-    {"_dodgr_rcpp_flows_aggregate",      (DL_FUNC) &_dodgr_rcpp_flows_aggregate,      6},
-    {"_dodgr_rcpp_flows_aggregate_par",  (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par,  6},
+    {"_dodgr_rcpp_flows_aggregate_par",  (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par,  7},
     {"_dodgr_rcpp_flows_disperse",       (DL_FUNC) &_dodgr_rcpp_flows_disperse,       6},
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
     {"_dodgr_rcpp_get_paths",            (DL_FUNC) &_dodgr_rcpp_get_paths,            5},

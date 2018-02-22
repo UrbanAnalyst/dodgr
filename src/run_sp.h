@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 #include <algorithm> // std::fill, std::reverse
+#include <iostream>
+#include <fstream>
 
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]
@@ -16,7 +18,6 @@ class Dijkstra;
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
-
 
 //----------------------------
 //----- functions in run_sp.cpp
@@ -67,19 +68,16 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::vector <int> toi,
         std::string heap_type);
 
-Rcpp::NumericVector rcpp_flows_aggregate (const Rcpp::DataFrame graph,
+void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         Rcpp::NumericMatrix flows,
-        std::string heap_type);
+        const std::string dirtxt,
+        const std::string heap_type);
 
-Rcpp::NumericMatrix rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
-        const Rcpp::DataFrame vert_map_in,
-        Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi,
-        Rcpp::NumericMatrix flows,
-        std::string heap_type);
+Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
+        const int len);
 
 Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
