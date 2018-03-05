@@ -35,11 +35,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     }
 
     Rcpp::CharacterVector nms = sf_lines.attr ("names");
-    if (nms [nms.size () - 1] != "geometry")
-        throw std::runtime_error ("sf_lines have no geometry component");
     int one_way_index = -1;
     int one_way_bicycle_index = -1;
     int highway_index = -1;
+    int geom_index = -1;
     for (R_xlen_t i = 0; i < nms.size (); i++)
     {
         if (nms [i] == "oneway")
@@ -48,7 +47,11 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             one_way_bicycle_index = static_cast <int> (i);
         if (nms [i] == "highway")
             highway_index = static_cast <int> (i);
+        if (nms [i] == "geometry")
+            geom_index = static_cast <int> (i);
     }
+    if (geom_index < 0)
+        throw std::runtime_error ("sf_lines have no geometry component");
     Rcpp::CharacterVector ow; // init length = 0
     Rcpp::CharacterVector owb;
     Rcpp::CharacterVector highway;
@@ -69,7 +72,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             ow = owb;
     }
 
-    Rcpp::List geoms = sf_lines [nms.size () - 1];
+    //Rcpp::List geoms = sf_lines [nms.size () - 1];
+    Rcpp::List geoms = sf_lines [geom_index];
 
     std::vector <std::string> att_names = geoms.attributeNames ();
     bool has_names = false;
@@ -103,7 +107,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         ngeoms ++;
     }
 
-    Rcpp::NumericMatrix nmat = Rcpp::NumericMatrix (Rcpp::Dimension (nrows, 6));
+    Rcpp::NumericMatrix nmat = Rcpp::NumericMatrix (Rcpp::Dimension (nrows, 7));
     Rcpp::CharacterMatrix idmat =
         Rcpp::CharacterMatrix (Rcpp::Dimension (nrows, 4));
 
@@ -145,12 +149,13 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         {
             double d = haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
                     gi (i, 1));
-            nmat (nrows, 0) = gi (i-1, 0);
-            nmat (nrows, 1) = gi (i-1, 1);
-            nmat (nrows, 2) = gi (i, 0);
-            nmat (nrows, 3) = gi (i, 1);
-            nmat (nrows, 4) = d;
-            nmat (nrows, 5) = d * hw_factor;
+            nmat (nrows, 0) = ngeoms;
+            nmat (nrows, 1) = gi (i-1, 0);
+            nmat (nrows, 2) = gi (i-1, 1);
+            nmat (nrows, 3) = gi (i, 0);
+            nmat (nrows, 4) = gi (i, 1);
+            nmat (nrows, 5) = d;
+            nmat (nrows, 6) = d * hw_factor;
             idmat (nrows, 0) = rnms (i-1);
             idmat (nrows, 1) = rnms (i);
             idmat (nrows, 2) = hway;
@@ -159,12 +164,13 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             nrows ++;
             if (!isOneWay [ngeoms])
             {
-                nmat (nrows, 0) = gi (i, 0);
-                nmat (nrows, 1) = gi (i, 1);
-                nmat (nrows, 2) = gi (i-1, 0);
-                nmat (nrows, 3) = gi (i-1, 1);
-                nmat (nrows, 4) = d;
-                nmat (nrows, 5) = d * hw_factor;
+                nmat (nrows, 0) = ngeoms;
+                nmat (nrows, 1) = gi (i, 0);
+                nmat (nrows, 2) = gi (i, 1);
+                nmat (nrows, 3) = gi (i-1, 0);
+                nmat (nrows, 4) = gi (i-1, 1);
+                nmat (nrows, 5) = d;
+                nmat (nrows, 6) = d * hw_factor;
                 idmat (nrows, 0) = rnms (i);
                 idmat (nrows, 1) = rnms (i-1);
                 idmat (nrows, 2) = hway;

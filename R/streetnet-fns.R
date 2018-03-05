@@ -89,6 +89,9 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' @param id_col Specify column of the code{sf} \code{data.frame} object which
 #' provides unique identifiers for each highway (default works with
 #' \code{osmdata} objects).
+#' @param keep_cols Vectors of columns from \code{sf_lines} to be kept in the
+#' resultant \code{dodgr} network; vector can be either names or indices of
+#' desired columns.
 #'
 #' @return A \code{data.frame} of edges representing the street network, along
 #' with a column of graph component numbers.
@@ -109,7 +112,8 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #'                          type_col = colnm, id_col = "identifier")
 #' dim (net) # 406 11; 406 streets
 weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
-                              type_col = "highway", id_col = "osm_id")
+                              type_col = "highway", id_col = "osm_id",
+                              keep_cols = NULL)
 {
     if (!is (sf_lines, "sf"))
         stop ('sf_lines must be class "sf"')
@@ -147,15 +151,16 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         stop ("Custom named profiles must be vectors with named values")
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
-    graph <- data.frame (edge_id = seq (nrow (dat$character_values)),
+    graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
+                         edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
-                         from_lon = dat$numeric_values [, 1],
-                         from_lat = dat$numeric_values [, 2],
+                         from_lon = dat$numeric_values [, 2],
+                         from_lat = dat$numeric_values [, 3],
                          to_id = as.character (dat$character_values [, 2]),
-                         to_lon = dat$numeric_values [, 3],
-                         to_lat = dat$numeric_values [, 4],
-                         d = dat$numeric_values [, 5],
-                         d_weighted = dat$numeric_values [, 6],
+                         to_lon = dat$numeric_values [, 4],
+                         to_lat = dat$numeric_values [, 5],
+                         d = dat$numeric_values [, 6],
+                         d_weighted = dat$numeric_values [, 7],
                          highway = as.character (dat$character_values [, 3]),
                          way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
@@ -173,7 +178,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         xy <- data.frame (x = c (graph$from_lon, graph$to_lon),
                           y = c (graph$from_lat, graph$to_lat))
         indx <- which (!duplicated (xy))
-        ids <- seq (indx) - 1 # 0-indexed
+        #ids <- seq (indx) - 1 # 0-indexed
         xy_indx <- xy [indx, ]
 
         # Then match coordinates to those unique values are replace IDs
@@ -193,6 +198,27 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     # get component numbers for each edge
     class (graph) <- c (class (graph), "dodgr_streetnet")
     graph <- dodgr_components (graph)
+
+    # And finally, re-insert keep_cols:
+    if (length (keep_cols) > 0)
+    {
+        keep_names <- NULL
+        if (is.character (keep_cols))
+        {
+            keep_names <- keep_cols
+            keep_cols <- match (keep_cols, names (sf_lines))
+        } else if (is.numeric (keep_cols))
+        {
+            keep_names <- names (sf_lines) [keep_cols]
+        } else
+        {
+            stop ("keep_cols must be either character or numeric")
+        }
+        indx <- match (graph$geom_num, seq (sf_lines$geometry))
+        for (k in seq (keep_names))
+            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
+                                                   drop = TRUE]
+    }
 
     return (graph)
 }

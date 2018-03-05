@@ -37,7 +37,6 @@ dodgr_flowmap <- function (net, bbox = NULL, linescale = 1)
     xlims <- c (bbox [1], bbox [3])
     ylims <- c (bbox [2], bbox [4])
     cols <- colorRampPalette (c ("lawngreen", "red")) (30)
-    plot.new ()
     plot (NULL, xlim = xlims, ylim = ylims, xlab = "lon", ylab = "lat")
     net <- net [which (net$flow > 0), ]
     net$flow <- net$flow / max (net$flow)
