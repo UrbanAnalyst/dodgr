@@ -249,6 +249,10 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 #' nrow (hampi) # compared to 191 linestrings in original sf object
 dodgr_to_sf <- function (net)
 {
+    edge_ids <- NULL
+    if (is (net, "dodgr_merged_flows"))
+        net$edge_id <- seq (nrow (net))
+
     gc <- dodgr_contract_graph (net)
     rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
 }

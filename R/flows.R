@@ -279,5 +279,6 @@ merge_directed_flows <- function (graph)
     indx <- which (flows > 0)
     graph <- graph [indx, , drop = FALSE] #nolint
     graph$flow <- flows [indx]
+    class (graph) <- c (class (graph), "dodgr_merged_flows")
     return (graph)
 }
