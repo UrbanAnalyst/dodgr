@@ -1,3 +1,7 @@
+# v0.1.0.099
+
+- Bug fix with `dodgr_paths` and simple `data.frame`s, thanks to James Smith.
+
 # v0.1.0
 
 Major changes:
