@@ -4,7 +4,7 @@
 \alias{match_pts_to_graph}
 \title{match_pts_to_graph}
 \usage{
-match_pts_to_graph(verts, xy)
+match_pts_to_graph(verts, xy, connected = FALSE)
 }
 \arguments{
 \item{verts}{A \code{data.frame} of vertices obtained from
@@ -12,6 +12,14 @@ match_pts_to_graph(verts, xy)
 
 \item{xy}{coordinates of points to be matched to the vertices, either as
 matrix or \pkg{sf}-formatted \code{data.frame}.}
+
+\item{connected}{Should points be matched to the same (largest) connected
+component of graph? If \code{FALSE} and these points are to be used for a
+\code{dodgr} routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
+\link{dodgr_flows}), then results may not be returned if points are not part
+of the same connected component. On the other hand, forcing them to be part
+of the same connected component may decrease the spatial accuracy of
+matching.}
 }
 \value{
 A vector index into verts

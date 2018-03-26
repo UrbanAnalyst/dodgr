@@ -140,9 +140,15 @@ dodgr_vertices <- function (graph)
                                     graph [[cols [which (nms == "xto")] ]]),
                              y = c (graph [[cols [which (nms == "yfr")] ]],
                                     graph [[cols [which (nms == "yto")] ]]),
+                             component = rep (graph [[cols [which (nms ==
+                                                "component")] ]]),
                              stringsAsFactors = FALSE)
     else
+    {
         verts <- data.frame (id = c (from_id, to_id))
+        if ("component" %in% nms)
+            verts <- cbind (verts, rep (graph$component, 2))
+    }
 
     indx <- which (!duplicated (verts))
     verts <- verts [indx, , drop = FALSE] #nolint

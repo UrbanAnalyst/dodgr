@@ -193,6 +193,13 @@ find_xy_col_simple <- function (dfr)
 #' \code{dodgr_vertices(graph)}.
 #' @param xy coordinates of points to be matched to the vertices, either as
 #' matrix or \pkg{sf}-formatted \code{data.frame}.
+#' @param connected Should points be matched to the same (largest) connected
+#' component of graph? If \code{FALSE} and these points are to be used for a
+#' \code{dodgr} routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
+#' \link{dodgr_flows}), then results may not be returned if points are not part
+#' of the same connected component. On the other hand, forcing them to be part
+#' of the same connected component may decrease the spatial accuracy of
+#' matching.
 #'
 #' @return A vector index into verts
 #' @export
@@ -209,7 +216,7 @@ find_xy_col_simple <- function (dfr)
 #' pts # an index into verts
 #' pts <- verts$id [pts]
 #' pts # names of those vertices
-match_pts_to_graph <- function (verts, xy)
+match_pts_to_graph <- function (verts, xy, connected = FALSE)
 {
     if (!(is.matrix (xy) | is.data.frame (xy)))
         stop ("xy must be a matrix or data.frame")
@@ -217,8 +224,15 @@ match_pts_to_graph <- function (verts, xy)
         if (ncol (xy) != 2)
             stop ("xy must have only two columns")
 
+    indx <- seq (nrow (verts))
+    if (connected)
+    {
+        vertsi <- verts [which (verts$component == 1), ]
+        indx <- match (vertsi$id, verts$id)
+    }
+
     xyi <- find_xy_col_simple (verts)
-    verts <- data.frame (x = verts [, xyi [1]], y = verts [, xyi [2]])
+    verts <- data.frame (x = verts [indx, xyi [1]], y = verts [indx, xyi [2]])
     if (is (xy, "tbl"))
         xy <- data.frame (xy)
     if (is (xy, "sf"))
@@ -237,6 +251,5 @@ match_pts_to_graph <- function (verts, xy)
     }
 
     # rcpp_points_index is 0-indexed, so ...
-    #rcpp_points_index (verts, xy) + 1
-    rcpp_points_index_par (verts, xy) + 1
+    indx [rcpp_points_index_par (verts, xy) + 1]
 }
