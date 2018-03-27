@@ -233,20 +233,22 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 #' junction point.
 #'
 #' @param net A \pkg{dodgr} network
-#' @return A Simple Features Collection (\code{sfc}) list of \code{LINESTRING}
-#' objects.
+#' @return A list containing (1) A \code{data.frame} of data associated with the
+#' `sf` geometries; and (ii) A Simple Features Collection (\code{sfc}) list of
+#' \code{LINESTRING} objects.
 #'
 #' @note The output of this function corresponds to the edges obtained from
 #' \code{dodgr_contract_graph}. An \pkg{sf} \code{data.frame} may be created by
-#' appeding any data from the latter to the \code{sfc} output of this function -
+#' appending any data from the latter to the \code{sfc} output of this function -
 #' see \pkg{sf} for details.
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
 #' xy <- dodgr_to_sf (hw)
-#' dim (hw) # 2,939 edges
-#' length (xy) # 357 aggregated linestrings aggregated from those edges
+#' dim (hw) # 5.845 edges
+#' length (xy$geom) # 682 aggregated linestrings aggregated from those edges
 #' nrow (hampi) # compared to 191 linestrings in original sf object
+#' dim (xy$dat) # same number of rows as there are geometries
 dodgr_to_sf <- function (net)
 {
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
@@ -254,5 +256,19 @@ dodgr_to_sf <- function (net)
     net$edge_id <- seq (nrow (net))
 
     gc <- dodgr_contract_graph (net)
-    rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+    geoms <- rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+
+    # Then match data of `net` potentially including way_id, back on to the
+    # geometries:
+    edge_ids <- gc$graph$edge_id [match (names (geoms), gc$graph$edge_id)]
+    indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
+    indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
+    edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
+    index <- match (edge_ids, net$edge_id)
+    dat <- net [index, ]
+    dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
+    dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
+    dat$d <- dat$d_weighted <- dat$edge_id <- NULL
+
+    return (list (dat = dat, geoms = geoms))
 }

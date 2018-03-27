@@ -10,8 +10,9 @@ dodgr_to_sf(net)
 \item{net}{A \pkg{dodgr} network}
 }
 \value{
-A Simple Features Collection (\code{sfc}) list of \code{LINESTRING}
-objects.
+A list containing (1) A \code{data.frame} of data associated with the
+`sf` geometries; and (ii) A Simple Features Collection (\code{sfc}) list of
+\code{LINESTRING} objects.
 }
 \description{
 Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
@@ -24,13 +25,14 @@ junction point.
 \note{
 The output of this function corresponds to the edges obtained from
 \code{dodgr_contract_graph}. An \pkg{sf} \code{data.frame} may be created by
-appeding any data from the latter to the \code{sfc} output of this function -
+appending any data from the latter to the \code{sfc} output of this function -
 see \pkg{sf} for details.
 }
 \examples{
 hw <- weight_streetnet (hampi)
 xy <- dodgr_to_sf (hw)
-dim (hw) # 2,939 edges
-length (xy) # 357 aggregated linestrings aggregated from those edges
+dim (hw) # 5.845 edges
+length (xy$geom) # 682 aggregated linestrings aggregated from those edges
 nrow (hampi) # compared to 191 linestrings in original sf object
+dim (xy$dat) # same number of rows as there are geometries
 }
