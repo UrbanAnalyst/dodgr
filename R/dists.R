@@ -66,6 +66,35 @@
 #' to <- sample (graph$to_id, size = 50)
 #' d <- dodgr_dists (graph, from = from, to = to)
 #' # d is a 100-by-50 matrix of distances between \code{from} and \code{to}
+#'
+#' \dontrun{
+#' # a more complex street network example, thanks to @chrijo; see
+#' # https://github.com/ATFutures/dodgr/issues/47
+#'
+#' xy <- rbind (c (7.005994, 51.45774), # limbeckerplatz 1 essen germany
+#'              c (7.012874, 51.45041)) # hauptbahnhof essen germany
+#' xy <- data.frame (lon = xy [, 1], lat = xy [, 2])
+#' essen <- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
+#' graph <- weight_streetnet (essen, wt_profile = "foot")
+#' d <- dodgr_dists (graph, from = xy, to = xy)
+#' # First reason why this does not work is because the graph has multiple,
+#' # disconnected components.
+#' table (graph$component)
+#' # reduce to largest connected component, which is always number 1
+#' graph <- graph [which (graph$component == 1), ]
+#' d <- dodgr_dists (graph, from = xy, to = xy)
+#' # should work, but even then note that
+#' table (essen$level)
+#' # There are parts of the network on different building levels (because of
+#' # shopping malls and the like). These may or may not be connected, so it may be
+#' # necessary to filter out particular levels
+#' levs <- paste0 (essen$level) # because sf data are factors
+#' index <- which (! (levs == "-1" | levs == "1")) # for example
+#' library (sf) # needed for following sub-select operation
+#' essen <- essen [index, ]
+#' graph <- weight_streetnet (essen, wt_profile = "foot")
+#' d <- dodgr_dists (graph, from = xy, to = xy)
+#' }
 dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
