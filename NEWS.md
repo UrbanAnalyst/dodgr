@@ -1,6 +1,7 @@
 # v0.1.0.099
 
 - Bug fix with `dodgr_paths` and simple `data.frame`s, thanks to James Smith.
+- Bug fix of former improper handling of one-way edges, thanks to @chrijo.
 - `match_pts_to_graph` has additional `connected` parameter to allow points to
   be matched only to largest connected component.
 
