@@ -98,7 +98,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         nrows += rows;
         if (ngeoms < ow.size ())
         {
-            if (!(ow [ngeoms] == "yes" || ow [ngeoms] == "-1"))
+            //if (!(ow [ngeoms] == "yes" || ow [ngeoms] == "-1"))
+            if (ow [ngeoms] == "yes" || ow [ngeoms] == "true")
                 isOneWay [ngeoms] = true;
             else
                 nrows += rows;
