@@ -1,5 +1,7 @@
 # v0.1.0.099
 
+- Crucial fix of previous typo that made all `dodgr_dist` calculations wrong
+  (Earth's radius is 6371, not 3671!) - thanks to @chrijo
 - Bug fix with `dodgr_paths` and simple `data.frame`s, thanks to James Smith.
 - Bug fix of former improper handling of one-way edges, thanks to @chrijo.
 - `match_pts_to_graph` has additional `connected` parameter to allow points to

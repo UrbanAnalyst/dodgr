@@ -5,6 +5,8 @@
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
 
+const double earth = 6378.137; // value used in geosphere::distHaversine
+
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 const int INFINITE_INT =  std::numeric_limits<int>::max ();
