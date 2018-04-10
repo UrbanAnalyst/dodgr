@@ -193,7 +193,6 @@ map <- osm_basemap (hampi, bg = "gray95") %>%
 library (magrittr)
 ```
 ```{r hampi-osmplotr-to-file, echo = FALSE, eval = FALSE}
-devtools::load_all ("../../osmplotr", export_all = FALSE)
 map <- osm_basemap (hampi, bg = "gray95") %>%
     add_osm_objects (hampi, col = "gray5") %>%
     add_axes () %>%
@@ -255,7 +254,7 @@ length (unique (graph$component))
 ```
 Component numbers can be determined for any types of graph with the
 `dodgr_components()` function. For example, the following lines reduce the
-previous graph to a minmial (non-spatial) structure of four columns, and then
+previous graph to a minimal (non-spatial) structure of four columns, and then
 (re-)calculate a fifth column of `$component`s:
 ```{r hampi-graph-min}
 cols <- c ("edge_id", "from_id", "to_id", "d")
@@ -557,7 +556,7 @@ and relative improvements in efficiency will be even greater for larger graphs.
 ## 5.1 Routing on Contracted Graphs
 
 Routing is often desired between defined points, and these points may
-inadvertedly be removed in graph contraction. The `dodgr_contract_graph()`
+inadvertently be removed in graph contraction. The `dodgr_contract_graph()`
 function accepts an additional argument specifying vertices to keep within the
 contracted graph. This list of vertices must directly match the vertex ID values
 in the graph.
@@ -680,7 +679,7 @@ The second function, `dodgr_flows_disperse()`, uses only a vector a origin
 (`from`) points, and aggregates flows as they disperse throughout the network
 according to a simple exponential model. In place of the matrix of flows
 required by `dodgr_flows_aggregate()`, dispersal requires an equivalent vector
-of densities disersing from all origin (`from`) points. This is illustrated in
+of densities dispersing from all origin (`from`) points. This is illustrated in
 the following code, using the same graph as the previous example.
 ```{r}
 dens <- rep (1, length (from)) # uniform densities
