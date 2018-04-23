@@ -43,6 +43,6 @@ after_success:
       "'src/heaps/heap.h', 'src/heaps/heap_lib.h', 'src/heaps/radixheap.h',"\
       "'src/heaps/radixheap.cpp', 'src/heaps/triheap.h', 'src/heaps/triheap.cpp',"\
       "'src/heaps/triheap_ext.h', 'src/heaps/triheap_ext.cpp', 'src/dgraph.cpp',"\
-      "'R/streetnet-fns.R' = c (1:74), 'R/dists/R' = c (288:318) ))"
+      "'R/streetnet-fns.R' = c (1:74), 'R/dists.R' = c (327:348) ))"
 # R/streetnet-fns 1:74 is dodgr_streetnet
 # R/dists 288:319 is graph_from_pts via dodgr_streetnet
