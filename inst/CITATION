@@ -1,0 +1,16 @@
+citHeader("To cite dodgr in publications use:")
+
+citEntry(entry = "Misc",
+        title        = "dodgr: Distances on Directed Graphs",
+        author       = personList(as.person("Mark Padgham"),
+            as.person("Andreas Petutschnig"),
+            as.person("Robin Lovelace"),
+            as.person("Andrew Smith")),
+        howpublished = "https://cran.r-project.org/package=dodgr",
+        year         = "2018",
+
+        textVersion  =
+        paste("Mark Padgham, Andreas Petutschnig, Robin Lovelace, Andrew Smith (2018).",
+            "dodgr (Distances on Directed Graphs)",
+            "URL https://cran.r-project.org/package=dodgr")
+        )

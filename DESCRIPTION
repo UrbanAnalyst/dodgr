@@ -3,7 +3,7 @@ Title: Distances on Directed Graphs
 Version: 0.1.0.099
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
-    person("Andreas", "Peutschnig", role="aut"),
+    person("Andreas", "Petutschnig", role="aut"),
     person("Robin", "Lovelace", role="ctb"),
     person("Andrew", "Smith", role="ctb"),
     person("Shane", "Saunders", role="cph",
