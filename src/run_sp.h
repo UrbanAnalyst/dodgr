@@ -15,9 +15,9 @@
 class DGraph;
 class Dijkstra;
 
-const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
-const int INFINITE_INT =  std::numeric_limits<int>::max ();
+constexpr float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
+constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
+constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 //----------------------------
 //----- functions in run_sp.cpp
