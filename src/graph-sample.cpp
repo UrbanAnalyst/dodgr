@@ -10,7 +10,7 @@
 //' @return std::vector of 2 elements: [0] with value of largest connected 
 //' component; [1] with random index to one edge that is part of that component.
 //' @noRd
-edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
+edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map)
 {
     // TDOD: FIX edge_id_t type defs here!
@@ -18,7 +18,8 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
     std::random_device rd;
     std::mt19937 rng (rd()); // mersenne twister
 
-    unsigned int largest_component = identify_graph_components (vertices, components);
+    unsigned int largest_component =
+        graph::identify_graph_components (vertices, components);
 
     bool in_largest = false;
     std::uniform_int_distribution <unsigned int> uni0 (0,
@@ -53,7 +54,7 @@ edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
 //' @return Random index to one edge that is part of the largest connected
 //' component.
 //' @noRd
-edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
+edge_id_t graph_sample::sample_one_edge_with_comps (Rcpp::DataFrame graph,
         edge_map_t &edge_map)
 {
     std::random_device rd;
@@ -69,18 +70,19 @@ edge_id_t sample_one_edge_with_comps (Rcpp::DataFrame graph,
     return std::next (edge_map.begin (), e0)->first;
 }
 
-vertex_id_t select_random_vert (Rcpp::DataFrame graph,
+vertex_id_t graph_sample::select_random_vert (Rcpp::DataFrame graph,
         edge_map_t &edge_map, vertex_map_t &vertices)
 {
     vertex_id_t this_vert;
-    if (graph_has_components (graph))
+    if (graph::graph_has_components (graph))
     {
-        edge_id_t e0 = sample_one_edge_with_comps (graph, edge_map);
+        edge_id_t e0 = graph_sample::sample_one_edge_with_comps (graph, edge_map);
         edge_t this_edge = edge_map.find (e0)->second;
         this_vert = this_edge.get_from_vertex ();
     } else
     {
-        edge_component edge_comp = sample_one_edge_no_comps (vertices, edge_map);
+        edge_component edge_comp =
+            graph_sample::sample_one_edge_no_comps (vertices, edge_map);
         edge_t this_edge = edge_map.find (edge_comp.edge)->second; // random edge
         this_vert = this_edge.get_from_vertex ();
     }
@@ -111,14 +113,15 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)
         return edges_out; // return empty vector
 
     std::unordered_map <vertex_id_t, unsigned int> components;
-    unsigned int largest_component = identify_graph_components (vertices, components);
+    unsigned int largest_component =
+        graph::identify_graph_components (vertices, components);
     // simple vert_ids set for quicker random selection:
     std::unordered_set <vertex_id_t> vert_ids;
     for (auto v: vertices)
@@ -131,7 +134,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         nverts_to_sample = static_cast <unsigned int> (vert_ids.size ());
     }
 
-    vertex_id_t this_vert = select_random_vert (graph, edge_map, vertices);
+    vertex_id_t this_vert =
+        graph_sample::select_random_vert (graph, edge_map, vertices);
 
     // Samples are built by randomly tranwing a vertex list, and inspecting
     // edges that extend from it. The only effective way to randomly sample a
@@ -182,7 +186,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
             // likely stuck in some one-way part of graph that can't connect, so
             // reset to another start node
             edgelist.clear ();
-            this_vert = select_random_vert (graph, edge_map, vertices);
+            this_vert =
+                graph_sample::select_random_vert (graph, edge_map, vertices);
             vertlist.clear ();
             vertlist.push_back (this_vert);
             count = 0;

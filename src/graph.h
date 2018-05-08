@@ -121,6 +121,9 @@ typedef std::unordered_map <vertex_id_t,
 //----------------------------
 //----- functions in graph.cpp
 //----------------------------
+
+namespace graph {
+
 void add_to_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
         const edge_id_t eid);
 
@@ -135,11 +138,16 @@ void graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 unsigned int identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, unsigned int> &com);
 
+} // end namespace graph
+
 Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph);
 
 //----------------------------
 //----- functions in graph-sample.cpp
 //----------------------------
+
+namespace graph_sample {
+
 edge_component sample_one_edge_no_comps (vertex_map_t &vertices,
         edge_map_t &edge_map);
 
@@ -152,12 +160,17 @@ vertex_id_t sample_one_vertex (Rcpp::DataFrame graph, vertex_map_t &vertices,
 vertex_id_t select_random_vert (Rcpp::DataFrame graph,
         edge_map_t &edge_map, vertex_map_t &vertices);
 
+} // end namespace graph_sample
+
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample);
 
 //----------------------------
 //----- functions in graph-contract.cpp
 //----------------------------
+
+namespace graph_contract {
+
 edge_id_t get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng);
 
 void get_to_from (const edge_map_t &edge_map,
@@ -180,6 +193,8 @@ bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep);
+
+} // end namespace graph_contract
 
 Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         Rcpp::Nullable <Rcpp::StringVector> &vertlist_in);

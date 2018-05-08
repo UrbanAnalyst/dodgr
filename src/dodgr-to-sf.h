@@ -9,6 +9,8 @@ const int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 const std::string osm_p4s = "+proj=longlat +datum=WGS84 +no_defs";
 
+namespace dodgr_sf {
+
 size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
         const Rcpp::CharacterVector &new_edges);
 void make_edge_name_vec (const size_t n,
@@ -41,12 +43,15 @@ void append_nc_edges (const size_t nc_edge_count,
         const Rcpp::List &edge_sequences_contr,
         std::vector <std::string> &all_edge_names,
         Rcpp::List &edge_sequences_all);
-Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax,
-        double ymin, double ymax);
 void xy_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::List &edge_sequences, 
         const std::vector <std::string> &all_edge_names,
         Rcpp::List &res);
+
+} // end namespace dodgr_sf
+
+Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax,
+        double ymin, double ymax);
 
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map);

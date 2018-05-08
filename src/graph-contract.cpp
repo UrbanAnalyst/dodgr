@@ -1,7 +1,7 @@
 #include "graph.h"
 
 /*
-edge_id_t get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
+edge_id_t graph_contract::get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
 {
     const int range = 1e8;
     std::uniform_int_distribution <unsigned int> unif (0, range);
@@ -22,7 +22,7 @@ edge_id_t get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
 //' **different** values of from and to vertices and edges.
 //'
 //' @noRd
-void get_to_from (const edge_map_t &edge_map,
+void graph_contract::get_to_from (const edge_map_t &edge_map,
         const std::unordered_set <edge_id_t> &edges,
         const std::vector <vertex_id_t> &two_nbs,
         vertex_id_t &vt_from, vertex_id_t &vt_to,
@@ -62,7 +62,7 @@ void get_to_from (const edge_map_t &edge_map,
     }
 }
 
-void contract_one_edge (vert2edge_map_t &vert2edge_map,
+void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
         vertex_map_t &vertex_map, edge_map_t &edge_map,
         const std::unordered_set <edge_id_t> &edgelist,
         const vertex_id_t vtx_id, const vertex_id_t vt_from,
@@ -88,12 +88,12 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
     if (edgelist.find (edge_to_id) != edgelist.end ())
         old_edges.insert (edge_to_id);
 
-    erase_from_v2e_map (vert2edge_map, vtx_id, edge_from_id);
-    erase_from_v2e_map (vert2edge_map, vtx_id, edge_to_id);
-    erase_from_v2e_map (vert2edge_map, vt_from, edge_from_id);
-    erase_from_v2e_map (vert2edge_map, vt_to, edge_to_id);
-    add_to_v2e_map (vert2edge_map, vt_from, new_edge_id);
-    add_to_v2e_map (vert2edge_map, vt_to, new_edge_id);
+    graph::erase_from_v2e_map (vert2edge_map, vtx_id, edge_from_id);
+    graph::erase_from_v2e_map (vert2edge_map, vtx_id, edge_to_id);
+    graph::erase_from_v2e_map (vert2edge_map, vt_from, edge_from_id);
+    graph::erase_from_v2e_map (vert2edge_map, vt_to, edge_to_id);
+    graph::add_to_v2e_map (vert2edge_map, vt_from, new_edge_id);
+    graph::add_to_v2e_map (vert2edge_map, vt_to, new_edge_id);
 
     vertex_t vt = vertex_map [vt_from];
     vt.replace_neighbour (vtx_id, vt_from);
@@ -115,8 +115,8 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
 //' converted graphs, but can be discerned by comparing ratios of weighted to
 //' non-weighted distances.
 //' @noRd
-bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
-        const edge_id_t &e2)
+bool graph_contract::same_hwy_type (const edge_map_t &edge_map,
+        const edge_id_t &e1, const edge_id_t &e2)
 {
     const double tol = 1.0e-6;
 
@@ -129,8 +129,8 @@ bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
 
 // See docs/graph-contraction for explanation of the following code and
 // associated vertex and edge maps.
-void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
-        vert2edge_map_t &vert2edge_map,
+void graph_contract::contract_graph (vertex_map_t &vertex_map,
+        edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep)
 {
     std::unordered_set <vertex_id_t> verts;
@@ -162,7 +162,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             edges_done.emplace (e, false);
 
         new_edge_ids.clear ();
-        //new_edge_ids.push_back (get_new_edge_id (edge_map, rng));
+        //new_edge_ids.push_back (graph_contract::get_new_edge_id (edge_map, rng));
         new_edge_ids.push_back ("a" + std::to_string (maxid++));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
@@ -170,7 +170,7 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         {
             if (edges.size () == 4) // is_intermediate_double as well!
                 new_edge_ids.push_back ("a" + std::to_string (maxid++));
-            //new_edge_ids.push_back (get_new_edge_id (edge_map, rng));
+            //new_edge_ids.push_back (graph_contract::get_new_edge_id (edge_map, rng));
 
             // Get the two adjacent vertices
             std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
@@ -185,10 +185,10 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
             {
                 vertex_id_t vt_from = "", vt_to = "";
                 edge_id_t edge_from_id = "", edge_to_id = "";
-                get_to_from (edge_map, edges, two_nbs,
+                graph_contract::get_to_from (edge_map, edges, two_nbs,
                         vt_from, vt_to, edge_from_id, edge_to_id);
-                hwys_are_same = same_hwy_type (edge_map, edge_from_id,
-                        edge_to_id);
+                hwys_are_same = graph_contract::same_hwy_type (edge_map,
+                        edge_from_id, edge_to_id);
                 if (!hwys_are_same)
                     break;
             }
@@ -198,8 +198,8 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                 // remove intervening vertex:
                 vertex_t vt0 = vertex_map [two_nbs [0]];
                 vertex_t vt1 = vertex_map [two_nbs [1]];
-                // Note that replace neighbour includes bi-directional replacement,
-                // so this works for intermediate_double() too
+                // Note that replace neighbour includes bi-directional
+                // replacement, so this works for intermediate_double() too
                 vt0.replace_neighbour (vtx_id, two_nbs [1]);
                 vt1.replace_neighbour (vtx_id, two_nbs [0]);
                 vertex_map [two_nbs [0]] = vt0;
@@ -214,15 +214,15 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
                     edge_id_t edge_from_id = "", edge_to_id = "";
 
                     // get the from and to edges and vertices
-                    get_to_from (edge_map, edges, two_nbs,
+                    graph_contract::get_to_from (edge_map, edges, two_nbs,
                             vt_from, vt_to, edge_from_id, edge_to_id);
 
                     edges.erase (edge_from_id);
                     edges.erase (edge_to_id);
 
-                    contract_one_edge (vert2edge_map, vertex_map, edge_map,
-                            edgelist, vtx_id, vt_from, vt_to,
-                            edge_from_id, edge_to_id, new_edge_id);
+                    graph_contract::contract_one_edge (vert2edge_map,
+                            vertex_map, edge_map, edgelist, vtx_id, vt_from,
+                            vt_to, edge_from_id, edge_to_id, new_edge_id);
                 }
             }
         }
@@ -264,13 +264,13 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
 
-    contract_graph (vertices_contracted, edge_map_contracted, vert2edge_map,
-            verts_to_keep);
+    graph_contract::contract_graph (vertices_contracted, edge_map_contracted,
+            vert2edge_map, verts_to_keep);
 
     size_t nedges = edge_map_contracted.size ();
 

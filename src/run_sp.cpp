@@ -21,7 +21,7 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 }
 
 
-std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type)
+std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 {
   if (heap_type == "FHeap")
     return std::make_shared <HeapD<FHeap> >();
@@ -69,7 +69,7 @@ struct OneDist : public RcppParallel::Worker
     {
         std::shared_ptr<Dijkstra> dijkstra =
             std::make_shared <Dijkstra> (nverts,
-                    *getHeapImpl (heap_type), g);
+                    *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -96,7 +96,7 @@ struct OneDist : public RcppParallel::Worker
 };
 
 
-size_t make_vert_map (const Rcpp::DataFrame &vert_map_in,
+size_t run_sp::make_vert_map (const Rcpp::DataFrame &vert_map_in,
         const std::vector <std::string> &vert_map_id,
         const std::vector <unsigned int> &vert_map_n,
         std::map <std::string, unsigned int> &vert_map)
@@ -110,7 +110,7 @@ size_t make_vert_map (const Rcpp::DataFrame &vert_map_in,
     return (nverts);
 }
 
-size_t get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
+size_t run_sp::get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
         Rcpp::IntegerVector &fromi, Rcpp::IntegerVector &toi,
         Rcpp::NumericVector &id_vec)
 {
@@ -145,7 +145,7 @@ size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
 // therefore uses two maps, one to hold the ultimate index from vertex
 // pairs, and the other to hold minimal distances. This is used in flow routines
 // only.
-void make_vert_to_edge_maps (const std::vector <std::string> &from,
+void run_sp::make_vert_to_edge_maps (const std::vector <std::string> &from,
         const std::vector <std::string> &to, const std::vector <double> &wt,
         std::unordered_map <std::string, unsigned int> &verts_to_edge_map,
         std::unordered_map <std::string, double> &verts_to_dist_map)
@@ -175,7 +175,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
     size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
@@ -187,7 +187,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = make_vert_map (vert_map_in, vert_map_id,
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
@@ -218,7 +218,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
     size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
@@ -230,14 +230,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = make_vert_map (vert_map_in, vert_map_id,
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
@@ -294,7 +294,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
     size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
@@ -306,14 +306,14 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = make_vert_map (vert_map_in, vert_map_id,
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     std::shared_ptr<Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g);
     
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);
@@ -410,7 +410,7 @@ struct OneFlow : public RcppParallel::Worker
     {
         std::shared_ptr<Dijkstra> dijkstra =
             std::make_shared <Dijkstra> (nverts,
-                    *getHeapImpl (heap_type), g);
+                    *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -534,7 +534,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    const size_t nfrom = get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    const size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
 
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
@@ -546,12 +546,12 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     const std::vector <unsigned int> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
     std::map <std::string, unsigned int> vert_map_i;
-    const size_t nverts = make_vert_map (vert_map_in, vert_name,
+    const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
-    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+    run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
@@ -605,18 +605,18 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     std::vector <unsigned int> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
     std::map <std::string, unsigned int> vert_map_i;
-    size_t nverts = make_vert_map (vert_map_in, vert_name,
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
     std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
-    make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+    run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);

@@ -23,7 +23,8 @@ constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
 //----- functions in run_sp.cpp
 //----------------------------
 
-// ancilliary functions
+namespace run_sp {
+
 std::shared_ptr <HeapDesc> getHeapImpl(const std::string& heap_type);
 
 size_t make_vert_map (const Rcpp::DataFrame &vert_map_in,
@@ -43,7 +44,8 @@ void make_vert_to_edge_maps (const std::vector <std::string> &from,
         std::unordered_map <std::string, unsigned int> &verts_to_edge_map,
         std::unordered_map <std::string, double> &verts_to_dist_map);
 
-// the main functions
+} // end namespace run_sp
+
 Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         std::vector <int> fromi,

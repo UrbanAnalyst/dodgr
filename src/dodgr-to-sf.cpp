@@ -2,7 +2,7 @@
 
 //' Make unordered_set of all new edge names
 //' @noRd
-size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
+size_t dodgr_sf::make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
         const Rcpp::CharacterVector &new_edges)
 {
     new_edge_name_set.clear ();
@@ -16,7 +16,7 @@ size_t make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,
 
 //' Make vector of all new edge names
 //' @noRd
-void make_edge_name_vec (const size_t n,
+void dodgr_sf::make_edge_name_vec (const size_t n,
         const Rcpp::CharacterVector &new_edges,
         std::vector <std::string> &new_edge_name_vec)
 {
@@ -35,7 +35,7 @@ void make_edge_name_vec (const size_t n,
 
 //' Get numbers of old edges corresponding to each contracted edge
 //' @noRd
-size_t get_edgevec_sizes (const size_t nedges,
+size_t dodgr_sf::get_edgevec_sizes (const size_t nedges,
         const Rcpp::CharacterVector &new_edges,
         std::vector <size_t> &edgevec_sizes)
 {
@@ -63,7 +63,7 @@ size_t get_edgevec_sizes (const size_t nedges,
 //' arranged into sequences in the subsequent function,
 //' \code{order_vert_sequences}.
 //' @noRd
-void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
+void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
         const Rcpp::DataFrame &graph_full,
         const Rcpp::CharacterVector &old_edges,
         const Rcpp::CharacterVector &new_edges,
@@ -108,7 +108,7 @@ void get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
     to_node.clear ();
 }
 
-void order_vert_sequences (Rcpp::List &edge_sequences,
+void dodgr_sf::order_vert_sequences (Rcpp::List &edge_sequences,
         std::vector <std::string> &new_edge_names,
         std::unordered_map <std::string,
                             std::vector <std::string> > &full_from_edge_map,
@@ -160,7 +160,7 @@ void order_vert_sequences (Rcpp::List &edge_sequences,
 
 // Count number of non-contracted edges in the contracted graph (non-contracted
 // because they can not be simplified).
-size_t count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
+size_t dodgr_sf::count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
         std::unordered_set <std::string> &new_edge_name_set)
 {
     size_t edge_count = 0;
@@ -176,7 +176,7 @@ size_t count_non_contracted_edges (const Rcpp::CharacterVector &contr_edges,
 }
 
 // Append non-contracted edges to contracted edges in all edge-to-vertex maps
-void append_nc_edges (const size_t nc_edge_count, 
+void dodgr_sf::append_nc_edges (const size_t nc_edge_count, 
         const Rcpp::DataFrame &graph_contr,
         std::unordered_set <std::string> &new_edge_name_set,
         std::vector <std::string> &new_edge_name_vec,
@@ -243,7 +243,7 @@ Rcpp::NumericVector rcpp_get_bbox_sf (double xmin, double xmax, double ymin, dou
 // Convert the Rcpp::List of vertex names to corresponding coordinates,
 // construct matrices of sequential coordinates for each contracted edge, and
 // convert these to sf geometry objects
-void xy_to_sf (const Rcpp::DataFrame &graph_full,
+void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::List &edge_sequences, 
         const std::vector <std::string> &all_edge_names,
         Rcpp::List &res)
@@ -346,12 +346,12 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     // final result
     std::vector <std::string> new_edge_names;
     std::unordered_set <std::string> new_edge_set;
-    const size_t nedges = make_edge_name_set (new_edge_set, new_edges);
-    make_edge_name_vec (nedges, new_edges, new_edge_names);
+    const size_t nedges = dodgr_sf::make_edge_name_set (new_edge_set, new_edges);
+    dodgr_sf::make_edge_name_vec (nedges, new_edges, new_edge_names);
 
     // Then get numbers of original edges for each contracted edge
     std::vector <size_t> edgevec_sizes;
-    size_t check = get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
+    size_t check = dodgr_sf::get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
     if (check != nedges)
         Rcpp::stop ("number of new edges in contracted graph not the right size");
 
@@ -363,31 +363,31 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
      */
     std::unordered_map <std::string,
         std::vector <std::string> > full_from_edge_map, full_to_edge_map;
-    get_edge_to_vert_maps (edgevec_sizes, graph_full, old_edges, new_edges,
+    dodgr_sf::get_edge_to_vert_maps (edgevec_sizes, graph_full, old_edges, new_edges,
             new_edge_names, full_from_edge_map, full_to_edge_map);
     edgevec_sizes.clear ();
 
     Rcpp::List edge_sequences (nedges); // holds final sequences
     // The main work done in this whole file:
-    order_vert_sequences (edge_sequences, new_edge_names, full_from_edge_map,
+    dodgr_sf::order_vert_sequences (edge_sequences, new_edge_names, full_from_edge_map,
             full_to_edge_map);
     full_from_edge_map.clear ();
     full_to_edge_map.clear ();
 
     // Then append the non-contracted edges that are in the contracted graph
-    size_t nc_edge_count = count_non_contracted_edges (contr_edges,
+    size_t nc_edge_count = dodgr_sf::count_non_contracted_edges (contr_edges,
             new_edge_set);
     std::vector <std::string> all_edge_names;
     const size_t total_edges = nedges + nc_edge_count;
     Rcpp::List edge_sequences_all (total_edges);
-    append_nc_edges (nc_edge_count, graph_contr,
+    dodgr_sf::append_nc_edges (nc_edge_count, graph_contr,
             new_edge_set, new_edge_names, edge_sequences,
             all_edge_names, edge_sequences_all);
     new_edge_names.clear ();
     new_edge_set.clear ();
 
     Rcpp::List res (total_edges);
-    xy_to_sf (graph_full, edge_sequences_all, all_edge_names, res);
+    dodgr_sf::xy_to_sf (graph_full, edge_sequences_all, all_edge_names, res);
 
     return res;
 }
