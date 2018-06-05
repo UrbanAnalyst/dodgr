@@ -180,19 +180,15 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         indx <- which (!duplicated (xy))
         #ids <- seq (indx) - 1 # 0-indexed
         xy_indx <- xy [indx, ]
+        xy_indx$indx <- seq (nrow (xy_indx))
 
-        # Then match coordinates to those unique values are replace IDs
-        xy_from <- graph [c ("from_lon", "from_lat")]
-        join_indx <- which (outer (xy_from$from_lon, xy_indx$x, "==") &
-                            outer (xy_from$from_lat, xy_indx$y, "=="),
-                        arr.ind = TRUE)
-        graph$from_id [join_indx [, 1]] <- join_indx [, 2]
-
-        xy_to <- graph [c ("to_lon", "to_lat")]
-        join_indx <- which (outer (xy_to$to_lon, xy_indx$x, "==") &
-                            outer (xy_to$to_lat, xy_indx$y, "=="),
-                        arr.ind = TRUE)
-        graph$to_id [join_indx [, 1]] <- join_indx [, 2]
+        # Then match coordinates to those unique values and replace IDs
+        xy_from <- data.frame (x = graph$from_lon, y = graph$from_lat)
+        xy_from <- merge (xy_from, xy_indx)
+        graph$from_id <- xy_from$indx
+        xy_to <- data.frame (x = graph$to_lon, y = graph$to_lat)
+        xy_to <- merge (xy_to, xy_indx)
+        graph$to_id <- xy_to$indx
     }
 
     # get component numbers for each edge
