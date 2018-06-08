@@ -41,7 +41,7 @@ square matrix of distances between nodes
 Calculate matrix of pair-wise distances between points.
 }
 \note{
-\code{graph} must minimally contain four columns of \code{from},
+\code{graph} must minimally contain three columns of \code{from},
 \code{to}, \code{dist}. If an additional column named \code{weight} or
 \code{wt} is present, shortest paths are calculated according to values
 specified in that column; otherwise according to \code{dist} values. Either

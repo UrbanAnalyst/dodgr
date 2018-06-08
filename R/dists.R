@@ -22,7 +22,7 @@
 #' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
-#' @note \code{graph} must minimally contain four columns of \code{from},
+#' @note \code{graph} must minimally contain three columns of \code{from},
 #' \code{to}, \code{dist}. If an additional column named \code{weight} or
 #' \code{wt} is present, shortest paths are calculated according to values
 #' specified in that column; otherwise according to \code{dist} values. Either
