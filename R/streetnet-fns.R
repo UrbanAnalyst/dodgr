@@ -128,6 +128,11 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     if (id_col != "osm_id")
         names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
 
+    if (!"highway" %in% names (sf_lines))
+        stop ("Please specify type_col to be used for weighting streetnet")
+    if (!"osm_id" %in% names (sf_lines))
+        stop ("Please specifiy id_col to be used to identify streetnet rows")
+
     if (is.null (names (sf_lines$geometry)))
         names (sf_lines$geometry) <- sf_lines$osm_id
 
