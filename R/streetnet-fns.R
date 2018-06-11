@@ -182,13 +182,17 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         xy_indx <- xy [indx, ]
         xy_indx$indx <- seq (nrow (xy_indx))
 
-        # Then match coordinates to those unique values and replace IDs
-        xy_from <- data.frame (x = graph$from_lon, y = graph$from_lat)
-        xy_from <- merge (xy_from, xy_indx)
-        graph$from_id <- xy_from$indx
-        xy_to <- data.frame (x = graph$to_lon, y = graph$to_lat)
+        # Then match coordinates to those unique values and replace IDs. Note
+        # that `merge` does not preserve row order, see:
+        # https://www.r-statistics.com/2012/01/merging-two-data-frame-objects-while-preserving-the-rows-order/
+        xy_from <- data.frame (x = graph$from_lon, y = graph$from_lat,
+                               ord = seq (nrow (graph)))
+        xy_from <- merge (xy_from, xy_indx) # re-sorts rows
+        graph$from_id <- xy_from$indx [order (xy_from$ord)]
+        xy_to <- data.frame (x = graph$to_lon, y = graph$to_lat,
+                             ord = seq (nrow (graph)))
         xy_to <- merge (xy_to, xy_indx)
-        graph$to_id <- xy_to$indx
+        graph$to_id <- xy_to$indx [order (xy_to$ord)]
     }
 
     # get component numbers for each edge
