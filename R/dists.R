@@ -148,6 +148,13 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     return (d)
 }
 
+#' @alias dodgr_dists
+#' @export
+dodgr_distances <- function (...)
+{
+    dodgr_dists (...)
+}
+
 #' get_index_id_cols
 #'
 #' Get an index of \code{pts} matching \code{vert_map}, as well as the
