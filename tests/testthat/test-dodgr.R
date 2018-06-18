@@ -144,3 +144,22 @@ test_that ("flowmap", {
         expect_true (file.remove ("junk.png")) # false if no plot
     }
 })
+
+test_that ("weight_profiles", {
+    graph0 <- weight_streetnet (hampi, wt_profile = "foot")
+    graph1 <- weight_streetnet (hampi, wt_profile = 1)
+    expect_identical (graph0$d, graph1$d)
+    expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
+    wtp <- dodgr::weighting_profiles [dodgr::weighting_profiles == "foot", ]
+    wtp$value <- wtp$value / 100
+    graph3 <- weight_streetnet (hampi, wt_profile = wtp)
+    expect_identical (graph0$d_weighted, graph3$d_weighted)
+
+    wtp$value [wtp$way == "path"] <- 90
+    graph4 <- weight_streetnet (hampi, wt_profile = wtp)
+    expect_true (!identical (graph0$d_weighted, graph4$d_weighted))
+
+    names (wtp) [3] <- "Value"
+    expect_error (graph4 <- weight_streetnet (hampi, wt_profile = wtp),
+                  "Weighting profiles must have")
+})

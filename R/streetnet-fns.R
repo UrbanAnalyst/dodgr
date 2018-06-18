@@ -152,6 +152,13 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         wt_profile <- data.frame (name = "custom",
                                   way = nms,
                                   value = wt_profile)
+    } else if (is.data.frame (wt_profile))
+    {
+        # assert that is has the standard structure
+        if (ncol (wt_profile) != 3 |
+            !identical (names (wt_profile), c ("name", "way", "value")))
+            stop ("Weighting profiles must have three columsn of ",
+                  "(name, way, value); see 'weighting_profiles' for examples")
     } else
         stop ("Custom named profiles must be vectors with named values")
 
