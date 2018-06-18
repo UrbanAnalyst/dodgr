@@ -162,7 +162,8 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     } else
         stop ("Custom named profiles must be vectors with named values")
 
-    sf_lines <- remap_way_types (sf_lines)
+    if (nrow (wt_profile) > 1)
+        sf_lines <- remap_way_types (sf_lines, wt_profile)
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
@@ -238,10 +239,10 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 }
 
 # re-map any OSM 'highway' types with pmatch to standard types
-remap_way_types <- function (sf_lines)
+remap_way_types <- function (sf_lines, wt_profile)
 {
     way_types <- unique (as.character (sf_lines$highway))
-    dodgr_types <- unique (weighting_profiles$way)
+    dodgr_types <- unique (wt_profile$way)
     # clearer to code as a for loop
     for (i in seq (way_types))
     {
@@ -253,6 +254,18 @@ remap_way_types <- function (sf_lines)
                     dodgr_types [pos]
         }
     }
+
+    # re-map some common types
+    indx <- which (sf_lines$highway %in% c ("pedestrian", "footway"))
+    if (length (indx) > 0)
+        sf_lines$highway [indx] <- "path"
+
+    way_types <- unique (as.character (sf_lines$highway))
+    not_in_wt_prof <-way_types [which (!way_types %in% dodgr_types)]
+    if (length (not_in_wt_prof) > 0)
+        message ("The following highway types are presend in data yet ",
+                 "lack corresponding weight_profile values: ",
+                 paste0 (not_in_wt_prof, sep = ", "))
     return (sf_lines)
 }
 
