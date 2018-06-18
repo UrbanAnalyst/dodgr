@@ -155,6 +155,8 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     } else
         stop ("Custom named profiles must be vectors with named values")
 
+    sf_lines <- remap_way_types (sf_lines)
+
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
@@ -226,6 +228,25 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     }
 
     return (graph)
+}
+
+# re-map any OSM 'highway' types with pmatch to standard types
+remap_way_types <- function (sf_lines)
+{
+    way_types <- unique (as.character (sf_lines$highway))
+    dodgr_types <- unique (weighting_profiles$way)
+    # clearer to code as a for loop
+    for (i in seq (way_types))
+    {
+        if (!way_types [i] %in% dodgr_types)
+        {
+            pos <- which (pmatch (dodgr_types, way_types  [i]) > 0)
+            if (length (pos) > 0)
+                sf_lines$highway [sf_lines$highway == way_types [i]] <-
+                    dodgr_types [pos]
+        }
+    }
+    return (sf_lines)
 }
 
 #' dodgr_to_sf
