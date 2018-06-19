@@ -85,43 +85,6 @@ rcpp_merge_flows <- function(graph) {
     .Call(`_dodgr_rcpp_merge_flows`, graph)
 }
 
-#' sample_one_edge_no_comps
-#'
-#' Sample one edge for graph that has no pre-calculated components. Only used
-#' in \code{sample_one_vertex}
-#'
-#' @param edge_map edge_map
-#' @return std::vector of 2 elements: [0] with value of largest connected 
-#' component; [1] with random index to one edge that is part of that component.
-#' @noRd
-NULL
-
-#' sample_one_edge_with_comps
-#'
-#' Sample one edge for graph that has pre-calculated components. Only used in
-#' \code{sample_one_vertex}
-#'
-#' @param edge_map edge_map
-#' @return Random index to one edge that is part of the largest connected
-#' component.
-#' @noRd
-NULL
-
-#' rcpp_sample_graph
-#'
-#' Randomly sample one connected componnent of a graph
-#'
-#' @param graph graph to be processed
-#' @param nverts_to_sample Number of vertices to sample
-#' @param quiet If TRUE, display progress
-#'
-#' @return Smaller sub-set of \code{graph}
-#'
-#' @noRd
-rcpp_sample_graph <- function(graph, nverts_to_sample) {
-    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
-}
-
 #' graph_has_components
 #'
 #' Does a graph have a vector of connected component IDs? Only used in
@@ -161,6 +124,43 @@ NULL
 #' @noRd
 rcpp_get_component_vector <- function(graph) {
     .Call(`_dodgr_rcpp_get_component_vector`, graph)
+}
+
+#' sample_one_edge_no_comps
+#'
+#' Sample one edge for graph that has no pre-calculated components. Only used
+#' in \code{sample_one_vertex}
+#'
+#' @param edge_map edge_map
+#' @return std::vector of 2 elements: [0] with value of largest connected 
+#' component; [1] with random index to one edge that is part of that component.
+#' @noRd
+NULL
+
+#' sample_one_edge_with_comps
+#'
+#' Sample one edge for graph that has pre-calculated components. Only used in
+#' \code{sample_one_vertex}
+#'
+#' @param edge_map edge_map
+#' @return Random index to one edge that is part of the largest connected
+#' component.
+#' @noRd
+NULL
+
+#' rcpp_sample_graph
+#'
+#' Randomly sample one connected componnent of a graph
+#'
+#' @param graph graph to be processed
+#' @param nverts_to_sample Number of vertices to sample
+#' @param quiet If TRUE, display progress
+#'
+#' @return Smaller sub-set of \code{graph}
+#'
+#' @noRd
+rcpp_sample_graph <- function(graph, nverts_to_sample) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
 #' rcpp_get_sp_dists_par
