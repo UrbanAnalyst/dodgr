@@ -262,11 +262,18 @@ remap_way_types <- function (sf_lines, wt_profile)
         sf_lines$highway [indx] <- "path"
 
     way_types <- unique (as.character (sf_lines$highway))
-    not_in_wt_prof <-way_types [which (!way_types %in% dodgr_types)]
+    not_in_wt_prof <- way_types [which (!way_types %in% dodgr_types)]
     if (length (not_in_wt_prof) > 0)
         message ("The following highway types are presend in data yet ",
                  "lack corresponding weight_profile values: ",
                  paste0 (not_in_wt_prof, sep = ", "))
+
+    # remove not_in_wt_prof types. Note that this subsetting strips most sf
+    # attributes, so is not sf-compliant, but that's okay here because this
+    # object is only passed to internal C++ routines,
+    indx <- which (!sf_lines$highway %in% not_in_wt_prof)
+    sf_lines <- sf_lines [indx, ]
+
     return (sf_lines)
 }
 

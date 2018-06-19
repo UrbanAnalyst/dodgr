@@ -8,6 +8,7 @@
 #include <random>
 #include <string> // stoi
 #include <cmath> // round
+#include <math.h> // isnan
 
 const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();

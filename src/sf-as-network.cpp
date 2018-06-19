@@ -127,8 +127,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         {
             hway = std::string (highway [ngeoms]);
             hw_factor = profile [hway];
-            if (hw_factor == 0.0) hw_factor = 1e-5;
-            hw_factor = 1.0 / hw_factor;
+            if (hw_factor > 0.0)
+                hw_factor = 1.0 / hw_factor;
         }
 
         Rcpp::List ginames = gi.attr ("dimnames");
@@ -158,7 +158,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             nmat (nrows, 3) = gi (i, 0);
             nmat (nrows, 4) = gi (i, 1);
             nmat (nrows, 5) = d;
-            nmat (nrows, 6) = d * hw_factor;
+            if (hw_factor > 0.0)
+                nmat (nrows, 6) = d * hw_factor;
+            else
+                nmat (nrows, 6) = -1.0;
             idmat (nrows, 0) = rnms (i-1);
             idmat (nrows, 1) = rnms (i);
             idmat (nrows, 2) = hway;
