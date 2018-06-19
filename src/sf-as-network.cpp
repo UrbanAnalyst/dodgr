@@ -26,8 +26,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         const Rcpp::DataFrame &pr)
 {
     std::map <std::string, double> profile;
-    Rcpp::StringVector hw = pr [1];
-    Rcpp::NumericVector val = pr [2];
+    //Rcpp::StringVector hw = pr [1];
+    //Rcpp::NumericVector val = pr [2];
+    Rcpp::StringVector hw = pr ["way"];
+    Rcpp::NumericVector val = pr ["value"];
     if (hw.size () > 1)
     {
         for (int i = 0; i != hw.size (); i ++)

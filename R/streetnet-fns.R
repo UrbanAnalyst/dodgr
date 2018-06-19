@@ -151,7 +151,8 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
             nms <- NA
         wt_profile <- data.frame (name = "custom",
                                   way = nms,
-                                  value = wt_profile)
+                                  value = wt_profile,
+                                  stringsAsFactors = FALSE)
     } else if (is.data.frame (wt_profile))
     {
         # assert that is has the standard structure
@@ -162,7 +163,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     } else
         stop ("Custom named profiles must be vectors with named values")
 
-    if (nrow (wt_profile) > 1)
+    if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom"))
         sf_lines <- remap_way_types (sf_lines, wt_profile)
 
     dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
@@ -203,11 +204,11 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         xy_from <- data.frame (x = graph$from_lon, y = graph$from_lat,
                                ord = seq (nrow (graph)))
         xy_from <- merge (xy_from, xy_indx) # re-sorts rows
-        graph$from_id <- xy_from$indx [order (xy_from$ord)]
+        graph$from_id <- as.character (xy_from$indx [order (xy_from$ord)])
         xy_to <- data.frame (x = graph$to_lon, y = graph$to_lat,
                              ord = seq (nrow (graph)))
         xy_to <- merge (xy_to, xy_indx)
-        graph$to_id <- xy_to$indx [order (xy_to$ord)]
+        graph$to_id <- as.character (xy_to$indx [order (xy_to$ord)])
     }
 
     # get component numbers for each edge
