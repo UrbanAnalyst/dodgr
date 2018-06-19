@@ -6,6 +6,10 @@ Major changes:
 - `weight_streetnet` function now accepts `data.frame` objects defining
   `wt_profile`, enabling modification and direct re-submission of
   `dodgr::weighting_profiles`
+- `weighting_profiles$value` modified to 0-1 scores rather than previous
+  percentage values.
+- `weight_streetnet` flags any highway types not present in nominated or
+  submitted weighting profile.
 
 Minor changes:
 - Bug fix with `dodgr_paths` and simple `data.frame`s, thanks to James Smith.

@@ -22,3 +22,32 @@ hampi <- hampi [, match (nms, names (hampi))]
 ```{r}
 devtools::use_data (hampi, overwrite = TRUE, compress = 'xz')
 ```
+
+# generate `data/weight_profiles`
+
+```{r}
+library (magrittr)
+theurl <- "https://www.routino.org/xml/routino-profiles.xml"
+#dat <- rvest::html (theurl)
+dat <- rvest::html (theurl) %>%
+    rvest::html_nodes("profile") %>%
+    xml2::as_list ()
+```
+```{r}
+weighting_profiles <- lapply (dat, function (i) {
+                 di <- i$preferences
+                 res <- lapply (di, function (j) 
+                         c (attr (i, "name"),
+                            attr (j, "highway"),
+                            attr (j, "percent")))
+                 do.call (rbind, res)
+          })
+weighting_profiles <- do.call (rbind, weighting_profiles)
+weighting_profiles <- data.frame (name = weighting_profiles [, 1],
+                           way = weighting_profiles [, 2],
+                           value = as.numeric (weighting_profiles [, 3]),
+                           stringsAsFactors = FALSE)
+# change percentage value to 0-1
+weighting_profiles$value <- weighting_profiles$value / 100
+devtools::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
+```

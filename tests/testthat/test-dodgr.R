@@ -151,11 +151,10 @@ test_that ("weight_profiles", {
     expect_identical (graph0$d, graph1$d)
     expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
     wtp <- dodgr::weighting_profiles [dodgr::weighting_profiles == "foot", ]
-    wtp$value <- wtp$value / 100
     graph3 <- weight_streetnet (hampi, wt_profile = wtp)
     expect_identical (graph0$d_weighted, graph3$d_weighted)
 
-    wtp$value [wtp$way == "path"] <- 90
+    wtp$value [wtp$way == "path"] <- 0.9
     graph4 <- weight_streetnet (hampi, wt_profile = wtp)
     expect_true (!identical (graph0$d_weighted, graph4$d_weighted))
 

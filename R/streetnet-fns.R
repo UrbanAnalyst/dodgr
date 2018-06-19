@@ -143,7 +143,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         wt_profile <- match.arg (tolower (wt_profile), prf_names)
         profiles <- dodgr::weighting_profiles
         wt_profile <- profiles [profiles$name == wt_profile, ]
-        wt_profile$value <- wt_profile$value / 100
+        #wt_profile$value <- wt_profile$value / 100
     } else if (is.numeric (wt_profile))
     {
         nms <- names (wt_profile)
