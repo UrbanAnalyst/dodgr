@@ -64,7 +64,8 @@ test_that("flows aggregate", {
 
     graph3 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows,
                                      contract = TRUE)
-    expect_true (all (graph3$flow == graph2$flow))
+    #expect_true (all (graph3$flow == graph2$flow))
+    # That's not true because routing points can be betweeen junctions
 })
 
 test_that ("flows disperse", {
@@ -148,8 +149,11 @@ test_that ("flowmap", {
 test_that ("weight_profiles", {
     graph0 <- weight_streetnet (hampi, wt_profile = "foot")
     graph1 <- weight_streetnet (hampi, wt_profile = 1)
-    expect_identical (graph0$d, graph1$d)
-    expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
+    # hampi has some undefined highway types which should be removed from graph,
+    # giving less rows in streetnet
+    expect_true (nrow (graph0) < nrow (graph1))
+    #expect_identical (graph0$d, graph1$d)
+    #expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
     wtp <- dodgr::weighting_profiles [dodgr::weighting_profiles == "foot", ]
     graph3 <- weight_streetnet (hampi, wt_profile = wtp)
     expect_identical (graph0$d_weighted, graph3$d_weighted)

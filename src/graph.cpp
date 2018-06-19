@@ -87,15 +87,16 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 
         edge_id_t edge_id_str = Rcpp::as <edge_id_t> (edge_id [i]);
 
-        if (weight [i] > 0.0)
-        {
-            edge_t edge = edge_t (from_id, to_id, dist [i], weight [i],
-                    edge_id_str, replacement_edges);
+        double wt = weight [i];
+        if (weight [i] < 0.0)
+            wt = INFINITE_DOUBLE;
 
-            edge_map.emplace (edge_id_str, edge);
-            graph::add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
-            graph::add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
-        }
+        edge_t edge = edge_t (from_id, to_id, dist [i], wt,
+                edge_id_str, replacement_edges);
+
+        edge_map.emplace (edge_id_str, edge);
+        graph::add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
+        graph::add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
     }
 }
 
