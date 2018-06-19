@@ -52,7 +52,7 @@
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
 #'
-#' @export
+#' @export dodgr_dists
 #' @examples
 #' # A simple graph
 #' graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
@@ -148,11 +148,16 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     return (d)
 }
 
-#' @alias dodgr_dists
+#' dodgr_distances
+#'
+#' Alias for \link{dodgr_dists}
+#' @inherit dodgr_dists
 #' @export
-dodgr_distances <- function (...)
+dodgr_distances <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
+                         heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
-    dodgr_dists (...)
+    dodgr_dists (graph, from, to, wt_profile = wt_profile, expand = expand,
+                 heap = heap, parallel = parallel, quiet = quiet)
 }
 
 #' get_index_id_cols
