@@ -52,7 +52,7 @@
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
 #'
-#' @export dodgr_dists
+#' @export 
 #' @examples
 #' # A simple graph
 #' graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
