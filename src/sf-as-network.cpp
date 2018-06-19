@@ -176,7 +176,10 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                 nmat (nrows, 3) = gi (i-1, 0);
                 nmat (nrows, 4) = gi (i-1, 1);
                 nmat (nrows, 5) = d;
-                nmat (nrows, 6) = d * hw_factor;
+                if (hw_factor > 0.0)
+                    nmat (nrows, 6) = d * hw_factor;
+                else
+                    nmat (nrows, 6) = -1.0;
                 idmat (nrows, 0) = rnms (i);
                 idmat (nrows, 1) = rnms (i-1);
                 idmat (nrows, 2) = hway;
