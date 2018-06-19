@@ -6,6 +6,7 @@ Authors@R: c(
     person("Andreas", "Petutschnig", role="aut"),
     person("Robin", "Lovelace", role="ctb"),
     person("Andrew", "Smith", role="ctb"),
+    person("Malcolm", "Morgan", role="ctb"),
     person("Shane", "Saunders", role="cph",
         comment="Original author of included code for priority heaps"))
 Description: Distances on dual-weighted directed graphs using priority-queue
