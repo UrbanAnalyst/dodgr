@@ -143,7 +143,6 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         wt_profile <- match.arg (tolower (wt_profile), prf_names)
         profiles <- dodgr::weighting_profiles
         wt_profile <- profiles [profiles$name == wt_profile, ]
-        #wt_profile$value <- wt_profile$value / 100
     } else if (is.numeric (wt_profile))
     {
         nms <- names (wt_profile)
@@ -181,6 +180,8 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
                          way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
                          )
+    # rcpp_sf_as_network now flags non-routable ways with -1, so:
+    graph$d_weighted [graph$d_weighted < 0] <- NA
     if (all (graph$highway == ""))
         graph$highway <- NULL
     if (all (graph$way_id == ""))
