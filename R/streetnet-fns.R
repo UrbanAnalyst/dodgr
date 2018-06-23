@@ -181,7 +181,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
                          stringsAsFactors = FALSE
                          )
     # rcpp_sf_as_network now flags non-routable ways with -1, so:
-    graph$d_weighted [graph$d_weighted < 0] <- NA
+    graph$d_weighted [graph$d_weighted < 0] <- max (graph$d_weighted) * 1e6
     if (all (graph$highway == ""))
         graph$highway <- NULL
     if (all (graph$way_id == ""))
