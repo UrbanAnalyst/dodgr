@@ -316,15 +316,17 @@ dodgr_to_sf <- function (net)
 
     # Then match data of `net` potentially including way_id, back on to the
     # geometries:
-    edge_ids <- gc$graph$edge_id [match (names (geoms), gc$graph$edge_id)]
-    indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
-    indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
-    edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
-    index <- match (edge_ids, net$edge_id)
-    dat <- net [index, ]
-    dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
-    dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
-    dat$d <- dat$d_weighted <- dat$edge_id <- NULL
+    #edge_ids <- gc$graph$edge_id [match (names (geoms), gc$graph$edge_id)]
+    #indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
+    #indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
+    #edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
+    #index <- match (edge_ids, net$edge_id)
+    #dat <- net [index, ]
+    #dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
+    #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
+    #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
 
-    return (list (dat = dat, geoms = geoms))
+    geoms <- geoms [match (gc$graph$edge_id, names (geoms))]
+
+    return (list (dat = gc$graph, geoms = geoms))
 }
