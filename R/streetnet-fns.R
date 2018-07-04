@@ -266,7 +266,7 @@ remap_way_types <- function (sf_lines, wt_profile)
     way_types <- unique (as.character (sf_lines$highway))
     not_in_wt_prof <- way_types [which (!way_types %in% dodgr_types)]
     if (length (not_in_wt_prof) > 0)
-        message ("The following highway types are presend in data yet ",
+        message ("The following highway types are present in data yet ",
                  "lack corresponding weight_profile values: ",
                  paste0 (not_in_wt_prof, sep = ", "))
 
