@@ -14,6 +14,10 @@
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
 #' only used if \code{graph} is not provided, in which case a street network is
 #' downloaded and correspondingly weighted).
+#' @param pairwise If \code{TRUE}, calculate paths only between the ordered
+#' pairs of \code{from} and \code{to}. In this case, each of these must be the
+#' same length, and the output will contain paths the i-th members of each, and
+#' thus also be of that length.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 #' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -56,8 +60,17 @@
 #' dp <- dodgr_paths (graph, from = from, to = to)
 #' # dp is a list with 100 items, and each of those 100 items has 30 items, each
 #' # of which is a single path listing all vertiex IDs as taken from \code{graph}.
+#'
+#' # it is also possible to calculate paths between pairwise start and end
+#' # points
+#' from <- sample (graph$from_id, size = 5)
+#' to <- sample (graph$to_id, size = 5)
+#' dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
+#' # dp is a list of 5 items, each of which just has a single path between each
+#' # pairwise from and to point.
 dodgr_paths <- function (graph, from, to, vertices = TRUE,
-                         wt_profile = "bicycle", heap = 'BHeap', quiet = TRUE)
+                         wt_profile = "bicycle", pairwise = FALSE,
+                         heap = 'BHeap', quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = 0.1,
@@ -89,7 +102,22 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
-    paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
+    if (pairwise)
+    {
+        if (length (from_index) != length (to_index))
+            stop ("pairwise paths require from and to to have same length")
+        paths <- list ()
+        for (i in seq (from_index))
+        {
+            paths [[i]] <- rcpp_get_paths (graph, vert_map,
+                                           from_index [i], to_index [i],
+                                           heap) [[1]]
+
+        }
+    } else
+    {
+        paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
+    }
 
     # convert 1-based indices back into vertex IDs:
     paths <- lapply (paths, function (i)
@@ -98,8 +126,11 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
     # name path lists
     if (!is.null (from_id) & !is.null (to_id))
     {
-        for (i in seq (from_id))
-            names (paths [[i]]) <- paste0 (from_id [i], "-", to_id)
+        if (!pairwise)
+        {
+            for (i in seq (from_id))
+                names (paths [[i]]) <- paste0 (from_id [i], "-", to_id)
+        }
         names (paths) <- from_id
     }
 

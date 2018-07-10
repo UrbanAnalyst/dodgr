@@ -5,7 +5,7 @@
 \title{dodgr_paths}
 \usage{
 dodgr_paths(graph, from, to, vertices = TRUE, wt_profile = "bicycle",
-  heap = "BHeap", quiet = TRUE)
+  pairwise = FALSE, heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -24,6 +24,11 @@ path, otherwise return corresponding lists of edge numbers from \code{graph}.}
 horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
 only used if \code{graph} is not provided, in which case a street network is
 downloaded and correspondingly weighted).}
+
+\item{pairwise}{If \code{TRUE}, calculate paths only between the ordered
+pairs of \code{from} and \code{to}. In this case, each of these must be the
+same length, and the output will contain paths the i-th members of each, and
+thus also be of that length.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -73,4 +78,12 @@ to <- sample (graph$to_id, size = 50)
 dp <- dodgr_paths (graph, from = from, to = to)
 # dp is a list with 100 items, and each of those 100 items has 30 items, each
 # of which is a single path listing all vertiex IDs as taken from \\code{graph}.
+
+# it is also possible to calculate paths between pairwise start and end
+# points
+from <- sample (graph$from_id, size = 5)
+to <- sample (graph$to_id, size = 5)
+dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
+# dp is a list of 5 items, each of which just has a single path between each
+# pairwise from and to point.
 }
