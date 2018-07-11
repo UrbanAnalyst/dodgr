@@ -134,6 +134,13 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
         names (paths) <- from_id
     }
 
+    # replace length=1 paths with end points only (issue #63). This is much
+    # clearer done with explicit loops, but then excludes pairwise paths.
+    if (!pairwise)
+    {
+        paths <- fill_null_paths (paths, graph)
+    }
+
     if (!vertices)
     {
         # convert vertex IDs to corresponding sequences of edge numbers
@@ -150,5 +157,28 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
                                  } ))
     }
 
+    return (paths)
+}
+
+# paths that have length of 1 are be default returned as NULL; this replaces
+# those with single values of the end point only
+fill_null_paths <- function (paths, graph)
+{
+    lens <- lapply (paths, function (i) vapply (i, length, numeric (1)))
+    v <- dodgr_vertices (graph)
+    for (i in seq (paths))
+    {
+        index <- which (lens [[i]] == 0)
+        index <- index [which (!index == i)]
+        vert_names <- strsplit (names (index), "-")
+        same_comp <- lapply (vert_names, function (j)
+                             identical (v$component [match (j [1], v$id)],
+                                        v$component [match (j [2], v$id)]))
+        for (j in seq (vert_names))
+            if (same_comp [[j]]) # then replace NULL path with end vertex
+            {
+                paths [[i]] [[index [j] ]] <- vert_names [[j]] [2]
+            }
+    }
     return (paths)
 }
