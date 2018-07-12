@@ -10,6 +10,9 @@ Major changes:
   percentage values.
 - `weight_streetnet` flags any highway types not present in nominated or
   submitted weighting profile.
+- `dodgr_paths` now has additional `pairwise` parameter to enable paths only
+  between matched pairs of `from` and `to` points (so returning `n` paths rather
+  than `n^2`), thanks to @mem48.
 
 Minor changes:
 - Added Malcolm Morgan (@mem48; bug-finder extraordinare) as contributor 
