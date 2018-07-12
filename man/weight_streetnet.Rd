@@ -4,8 +4,8 @@
 \alias{weight_streetnet}
 \title{weight_streetnet}
 \usage{
-weight_streetnet(sf_lines, wt_profile = "bicycle", type_col = "highway",
-  id_col = "osm_id", keep_cols = NULL)
+weight_streetnet(sf_lines, wt_profile = "bicycle",
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
 }
 \arguments{
 \item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
