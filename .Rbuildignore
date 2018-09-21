@@ -1,8 +1,8 @@
 ^aaa\.Rmd$
-^README\.*
+^README\.Rmd$
+^README\.html$
 ^README-.*\.png$
 ^\.travis\.yml$
-^README\.md$
 ^makefile$
 ^CONDUCT\.md$
 ^CONTRIBUTING\.md$
