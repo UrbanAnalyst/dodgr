@@ -279,7 +279,7 @@ remap_way_types <- function (sf_lines, wt_profile)
     return (sf_lines)
 }
 
-#' dodgr_to_sf
+#' dodgr_to_sfc
 #'
 #' Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
 #' Features (\pkg{sf}) object through aggregating edges into \code{LINESTRING}
@@ -297,15 +297,16 @@ remap_way_types <- function (sf_lines, wt_profile)
 #' \code{dodgr_contract_graph}. An \pkg{sf} \code{data.frame} may be created by
 #' appending any data from the latter to the \code{sfc} output of this function -
 #' see \pkg{sf} for details.
+#'
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
-#' xy <- dodgr_to_sf (hw)
+#' xy <- dodgr_to_sfc (hw)
 #' dim (hw) # 5.845 edges
 #' length (xy$geom) # 682 aggregated linestrings aggregated from those edges
 #' nrow (hampi) # compared to 191 linestrings in original sf object
 #' dim (xy$dat) # same number of rows as there are geometries
-dodgr_to_sf <- function (net)
+dodgr_to_sfc <- function (net)
 {
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
@@ -329,4 +330,13 @@ dodgr_to_sf <- function (net)
     geoms <- geoms [match (gc$graph$edge_id, names (geoms))]
 
     return (list (dat = gc$graph, geoms = geoms))
+}
+
+#' dodgr_to_sf
+#' @inherit dodgr_to_sfc
+#' @export
+dodgr_to_sf <- function (net)
+{
+    .Deprecated ("dodgr_to_sfc")
+    dodgr_to_sfc (net)
 }

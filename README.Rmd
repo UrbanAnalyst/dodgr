@@ -105,7 +105,7 @@ type of way, while `distance` will be the pysical distance.
 
 `dodgr` includes the conversion functions:
 
-1. `dodgr_to_sf` to convert spatial `dodgr` graphs into Simple Features format
+1. `dodgr_to_sfc` to convert spatial `dodgr` graphs into Simple Features format
    used by the [`sf` package](https://cran.r-project.org/package=sf).
 2. `dodgr_to_igraph` to convert (not necessarily spatial) `dodgr` graphs into
    [`igraph`](https://cran.r-project.org/package=igraph) format (not yet

@@ -13,6 +13,7 @@ Major changes:
 - `dodgr_paths` now has additional `pairwise` parameter to enable paths only
   between matched pairs of `from` and `to` points (so returning `n` paths rather
   than `n^2`), thanks to @mem48.
+- `dodgr_to_sf` deprecated to `dodgr_to_sfc` (#43)
 
 Minor changes:
 - Added Malcolm Morgan (@mem48; bug-finder extraordinare) as contributor 
