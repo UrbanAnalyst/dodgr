@@ -8,8 +8,6 @@ OBJECTS = RcppExports.o dgraph.o dijkstra.o dodgr-to-sf.o dodgr_init.o \
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
               -e "RcppParallel::RcppParallelLibs()")
 
-$(SHLIB): $(PKG_LIBS)
-
 all: $(SHLIB)
 
 clean: rm -f $(OBJECTS)
