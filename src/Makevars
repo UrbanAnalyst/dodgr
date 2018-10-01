@@ -1,7 +1,14 @@
 CXX_STD = CXX11
 PKG_CPPFLAGS=-I.
-PKG_LIBS = heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
+
+OBJECTS = RcppExports.o dgraph.o dijkstra.o dodgr-to-sf.o dodgr_init.o \
+    graph-contract.o graph.o graph-sample.o run_sp.o sf-as-network.o \
+    heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
     heaps/triheap.o heaps/triheap_ext.o
 PKG_LIBS += $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 $(SHLIB): $(PKG_LIBS)
+
+all: $(SHLIB)
+
+clean: rm -f $(OBJECTS)
