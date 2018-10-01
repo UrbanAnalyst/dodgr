@@ -91,7 +91,7 @@ benchmarks <- lapply (all_graphs, function (i)
 saveRDS (benchmarks, file = "benchmark_data.rds")
 ```
 
-```{r}
+```{r, eval = FALSE}
 benchmarks <- readRDS ("benchmark_data.rds")
 elapsed <- unlist (purrr::map (benchmarks, "elapsed"))
 tests <- unlist (purrr::map (benchmarks, "test"))
@@ -113,7 +113,7 @@ bm <- data.frame (num_vertices, num_edges, ratio, Test = tests, elapsed)
 
 Plot runtime versus the ratio of edges to vertices in the graph:
 
-```{r fig.width = 12, fig.height = 8}
+```{r fig.width = 12, fig.height = 8, eval = FALSE}
 library (ggplot2)
 library (RColorBrewer)
 library (scales)
@@ -142,3 +142,4 @@ ggplot (bm_heaps) +
     theme (plot.title = element_text(hjust = 0.5),
                     legend.box.background = element_rect ())
 ```
+![](benchmark-plot.png)
