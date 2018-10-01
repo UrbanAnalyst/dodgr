@@ -37,9 +37,6 @@ You can install `dodgr` from github with:
 devtools::install_github("ATFutures/dodgr")
 ```
 
-    #> Warning in setup_ns_exports(pkg, export_all): Objects listed as exports,
-    #> but not present in namespace: dodgr_to_sf
-
 Usage
 -----
 
@@ -110,8 +107,8 @@ priority weighting for a given mode of transport and type of way, while
 ### Further detail
 
 For more detail, see the [main package
-vignette](https://ATFutures/dodgr/articles/dodgr.html), along with a
-second vignette detailing [benchmark
-timings](https://ATFutures/dodgr/articles/benchmark.html), showing that
-under many circumstances, `dodgr` performs considerably faster than
-equivalent routines from the `igraph` package.
+vignette](https://github.com/ATFutures/dodgr/articles/dodgr.html), along
+with a second vignette detailing [benchmark
+timings](https://github.com/ATFutures/dodgr/articles/benchmark.html),
+showing that under many circumstances, `dodgr` performs considerably
+faster than equivalent routines from the `igraph` package.
