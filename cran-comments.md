@@ -8,7 +8,6 @@ different PKG_CXXFLAGS to src/Makevars (because of Intel TBB).
 
 This submission generates NO notes on:
 * Ubuntu 14.04 (on `travis-ci`): R-release, R-devel
-* OSX: R-release (on `travis-ci`)
 * Windows Visual Studio 2015 (on `appveyor`; `x64`): R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 * Package also checked using `rocker/r-devel-san` with clean results.
