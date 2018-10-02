@@ -1,14 +1,14 @@
 CXX_STD = CXX11
 PKG_CPPFLAGS=-I.
 
-OBJECTS = RcppExports.o dgraph.o dijkstra.o dodgr-to-sf.o dodgr_init.o \
-    graph-contract.o graph.o graph-sample.o run_sp.o sf-as-network.o \
-    heaps/bheap.o heaps/fheap.o heaps/heap23.o heaps/radixheap.o \
-    heaps/triheap.o heaps/triheap_ext.o
+PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 PKG_LIBS += $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
-$(SHLIB): $(PKG_LIBS)
+# Adapted from https://github.com/asardaes/dtwclust
+# Get source files (see https://stackoverflow.com/a/27794283/5793905 but note
+# the quotes)
+CPP_SOURCES = $(shell find . -type f -name '*.cpp')
 
-all: $(SHLIB)
-
-clean: rm -f $(OBJECTS)
+# Change extension (see
+# https://www.gnu.org/software/make/manual/make.html#Text-Functions)
+OBJECTS = $(CPP_SOURCES:.cpp=.o)
