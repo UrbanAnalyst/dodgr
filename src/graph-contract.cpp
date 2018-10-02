@@ -256,7 +256,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
 
     // Get set of all original edge IDs
     std::unordered_set <edge_id_t> original_edges;
-    Rcpp::StringVector edge_id = graph ["id"];
+    Rcpp::StringVector edge_id = graph ["edge_id"];
     for (auto e: edge_id)
         original_edges.emplace (e);
 

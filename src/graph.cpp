@@ -53,7 +53,7 @@ bool graph::graph_has_components (const Rcpp::DataFrame &graph)
 void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
-    Rcpp::StringVector edge_id = gr ["id"];
+    Rcpp::StringVector edge_id = gr ["edge_id"];
     Rcpp::StringVector from = gr ["from"];
     Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];

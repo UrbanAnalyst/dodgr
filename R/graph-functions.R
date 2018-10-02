@@ -36,7 +36,7 @@ dodgr_graph_cols <- function (graph)
         yto <- which (nms == "to_lat")
     } else
     {
-        edge_id <- which (grepl ("edge", nms)) %>% null_to_na ()
+        edge_id <- which (grepl ("edge_id", nms)) %>% null_to_na ()
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
@@ -92,10 +92,10 @@ convert_graph <- function (graph, gr_cols)
 {
     indx <- which (!is.na (gr_cols [1:5]))
     graph <- graph [, gr_cols [1:5] [indx]]
-    names (graph) <- c ("id", "from", "to", "d", "w") [indx]
-    if ("id" %in% names (graph))
-        if (!is.character (graph$id))
-            graph$id <- paste0 (graph$id)
+    names (graph) <- c ("edge_id", "from", "to", "d", "w") [indx]
+    if ("edge_id" %in% names (graph))
+        if (!is.character (graph$edge_id))
+            graph$edge_id <- paste0 (graph$edge_id)
     if (!is.character (graph$from))
         graph$from <- paste0 (graph$from)
     if (!is.character (graph$to))
@@ -180,7 +180,7 @@ dodgr_components <- function (graph)
         graph2 <- convert_graph (graph, gr_cols)
         cns <- rcpp_get_component_vector (graph2)
 
-        indx <- match (graph2$id, cns$edge_id)
+        indx <- match (graph2$edge_id, cns$edge_id)
         component <- cns$edge_component [indx]
         # Then re-number in order to decreasing component size:
         graph$component <- match (component, order (table (component),
