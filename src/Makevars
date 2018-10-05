@@ -4,13 +4,9 @@ PKG_CPPFLAGS=-I.
 PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 PKG_LIBS += $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
-SRC_A = $(heaps/*.cpp)
-SRC_A = $(*.cpp)
-SOURCES = $(SRC_A) $(SRC_B)
+SOURCES = $(wildcard heaps/*.cpp *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: $(SHLIB)
-# The following line has a tab, not spaces:
-# https://github.com/rstudio/httpuv/issues/126
-clean:
-    $(MAKE) --directory=heaps distclean
+
+clean: $(NAME) --directory=heaps distclean
