@@ -1,4 +1,4 @@
-# v0.1.0.099
+# v0.1.1
 
 Major changes:
 - Crucial fix of previous typo that made all `dodgr_dist` calculations wrong
