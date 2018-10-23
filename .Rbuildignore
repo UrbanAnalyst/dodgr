@@ -1,4 +1,4 @@
-^aaa*\.Rmd$
+^aaa*
 ^README\.Rmd$
 ^README\.html$
 ^README-.*\.png$
