@@ -43,11 +43,10 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 struct OneDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    Rcpp::IntegerVector toi;
-    size_t nverts;
-
-    std::shared_ptr <DGraph> g;
-    std::string heap_type;
+    const Rcpp::IntegerVector toi;
+    const size_t nverts;
+    const std::shared_ptr <DGraph> g;
+    const std::string heap_type;
 
     RcppParallel::RMatrix <double> dout;
 
