@@ -1,4 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 [![Build
 Status](https://travis-ci.org/ATFutures/dodgr.svg)](https://travis-ci.org/ATFutures/dodgr)
 [![AppVeyor Build
@@ -6,14 +7,13 @@ Status](https://ci.appveyor.com/api/projects/status/github/ATFutures/dodgr?branc
 [![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/ATFutures/dodgr)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](http://cran.r-project.org/web/packages/dodgr)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](https://cran.r-project.org/package=dodgr)
 [![CRAN
-Downloads](http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](http://cran.r-project.org/package=dodgr)
+Downloads](http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](https://cran.r-project.org/package=dodgr)
 [![CII Best
 Practices](https://bestpractices.coreinfrastructure.org/projects/1396/badge)](https://bestpractices.coreinfrastructure.org/projects/1396)
 
-dodgr: Distances on Directed Graphs in R
-========================================
+# dodgr: Distances on Directed Graphs in R
 
 R package for calculating pairwise distances on dual-weighted directed
 graphs using Priority Queue Shortest Paths. Dual-weighted directed
@@ -27,8 +27,7 @@ Routes are usually calculated by weighting different kinds of streets or
 ways according to a particular mode of transport, while the desired
 output is a direct, unweighted distance.
 
-Installation
-------------
+## Installation
 
 You can install `dodgr` from github with:
 
@@ -37,8 +36,7 @@ You can install `dodgr` from github with:
 devtools::install_github("ATFutures/dodgr")
 ```
 
-Usage
------
+## Usage
 
 The primary function,
 
@@ -69,7 +67,7 @@ range (d, na.rm = TRUE)
 This will automatically download the street network (using
 [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then
 calculating distances between 1,000 points – that’s 1,000,000 pairwise
-distances! – can be done in around 10 seconds.
+distances\! – can be done in around 10 seconds.
 
 ### Other Functions
 
