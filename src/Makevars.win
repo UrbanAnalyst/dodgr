@@ -5,14 +5,15 @@ PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
               -e "RcppParallel::RcppParallelLibs()")
 
-SRC_A = $(heaps/*.cpp)
-SRC_A = $(*.cpp)
-SOURCES = $(SRC_A) $(SRC_B)
-#SOURCES = $(wildcard *.cpp heaps/*.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJ_HEAPS = heaps/bheap.o heaps/fheap.o heaps/heap23.o \
+    heaps/radixheap.o heaps/triheap_ext.o heaps/triheap.o
+OBJ_SRC = dgraph.o dijkstra.o dodgr-to-sf.o graph-contract.o graph.o \
+    graph-sample.o RcppExports.o run_sp.o sf-as-network.o
+OBJECTS = $(OBJ_HEAPS) $(OBJ_SRC)
 
-all: $(SHLIB)
-# The following line has a tab, not spaces:
-# https://github.com/rstudio/httpuv/issues/126
-clean:
-    $(MAKE) --directory=heaps distclean
+.PHONY: all clean
+
+all: $(SHLIB) $(clean)
+
+clean: $(SHLIB)
+	rm -rf $(OBJECTS)
