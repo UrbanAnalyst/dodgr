@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 inst/doc
+aaa\.Rmd*
 # History files
 .Rhistory
 .Rapp.history

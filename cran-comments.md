@@ -1,8 +1,8 @@
 # CRAN notes for dodgr_0.1.1 submission
 
 The only NOTE generated is "GNU make is a SystemRequirements", which is
-unavoidable because this package needs a distinct src/Makevars.win that has
-different PKG_CXXFLAGS to src/Makevars (because of Intel TBB).
+unavoidable because of the need to remove compiled object files in src
+sub-directories.
 
 ## Test environments
 
