@@ -1,5 +1,8 @@
 # CRAN notes for dodgr_0.1.1 submission
 
+We are currently unable to provide a reference in the package Description, but
+hope to have a published manuscript soon, and will update asap thereafter.
+
 ## Notes
 
 This submissions generates the following NOTES on some systems:

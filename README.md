@@ -105,8 +105,8 @@ priority weighting for a given mode of transport and type of way, while
 ### Further detail
 
 For more detail, see the [main package
-vignette](https://github.com/ATFutures/dodgr/articles/dodgr.html), along
+vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), along
 with a second vignette detailing [benchmark
-timings](https://github.com/ATFutures/dodgr/articles/benchmark.html),
+timings](https://atfutures.github.io/dodgr/articles/benchmark.html),
 showing that under many circumstances, `dodgr` performs considerably
 faster than equivalent routines from the `igraph` package.
