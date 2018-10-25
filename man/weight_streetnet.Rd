@@ -57,4 +57,20 @@ names (wts) <- unique (os_roads_bristol [[colnm]])
 net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
                          type_col = colnm, id_col = "identifier")
 dim (net) # 406 11; 406 streets
+
+# An example for a generic (non-OSM) highway, represented as the
+# \\code{routes_fast} object of the \\pkg{stplanr} package, which is a
+# SpatialLinesDataFrame.
+\dontrun{
+library (stplanr)
+# merge all of the 'routes_fast' lines into a single network
+r <- overline (routes_fast, attrib = "length", buff_dist = 1)
+r <- sf::st_as_sf (r)
+# We need to specify both a \\code{type} and \\code{id} column for the
+# \\link{weight_streetnet} function.
+r$type <- 1
+r$id <- seq (nrow (r))
+graph <- weight_streetnet (r, type_col = "type", id_col = "id",
+                           wt_profile = 1)
+}
 }
