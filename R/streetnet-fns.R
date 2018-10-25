@@ -465,12 +465,3 @@ dodgr_to_sfc <- function (net)
 
     return (list (dat = gc$graph, geoms = geoms))
 }
-
-#' dodgr_to_sf
-#' @inherit dodgr_to_sfc
-#' @export
-dodgr_to_sf <- function (net)
-{
-    .Deprecated ("dodgr_to_sfc")
-    dodgr_to_sfc (net)
-}
