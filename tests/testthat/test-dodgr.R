@@ -136,7 +136,6 @@ test_that("compare heaps", {
 
 test_that("dodgr2sf", {
     hw <- weight_streetnet (hampi)
-    expect_warning (dodgr_to_sf (hw), "'dodgr_to_sf' is deprecated")
     y <- dodgr_to_sfc (hw)
     # y should have more linestrings than the original sf object:
     expect_true (length (y) > length (hw$geometry))
