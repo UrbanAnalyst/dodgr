@@ -31,12 +31,44 @@
 #' nrow (graph)
 #' # This will generally have many more rows because most street networks include
 #' # streets that extend considerably beyond the specified bounding box.
+#'
+#' # bbox can also be a polygon:
+#' bb <- osmdata::getbb ("gent belgium") # rectangular bbox
+#' nrow (dodgr_streetnet (bbox = bb)) # 28,742
+#' bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
+#' nrow (dodgr_streetnet (bbox = bb)) # 15,969
+#' # The latter has fewer rows because only edges within polygon are returned
 #' }
 dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 {
+    bbox_poly <- NULL
     if (!missing (bbox))
     {
-        bbox <- osmdata::getbb (bbox)
+        if (is.character (bbox))
+            bbox <- osmdata::getbb (bbox)
+        else if (is.list (bbox))
+        {
+            if (!all (vapply (bbox, is.numeric, logical (1))))
+                stop ("bbox is a list, so items must be numeric ",
+                      "(as in osmdata::getbb (..., format_out = 'polygon'))")
+            (length (bbox) > 1)
+                message ("selecting the first polygon from bbox")
+            bbox_poly <- bbox [[1]]
+            bbox <- t (apply (bbox [[1]], 2, range))
+        } else if (is.numeric (bbox))
+        {
+            if (!inherits (bbox, "matrix"))
+            {
+                if (length (bbox) != 4)
+                    stop ("bbox must have four numeric values")
+                bbox <- rbind (sort (bbox [c (1, 3)]),
+                             sort (bbox [c (2, 4)]))
+            } else if (nrow (bbox) > 2)
+            {
+                bbox_poly <- bbox
+                bbox <- apply (bbox, 2, range)
+            }
+        }
         bbox [1, ] <- bbox [1, ] + c (-expand, expand) * diff (bbox [1, ])
         bbox [2, ] <- bbox [2, ] + c (-expand, expand) * diff (bbox [2, ])
     }
@@ -65,12 +97,14 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
     net <- osmdata::opq (bbox) %>%
                 osmdata::add_osm_feature (key = "highway") %>%
                 osmdata::osmdata_sf (quiet = quiet) %>%
-                osmdata::osm_poly2line () %>%
-                extract2 ("osm_lines")
-    if (nrow (net) == 0)
+                osmdata::osm_poly2line ()
+    if (nrow (net$osm_lines) == 0)
         stop ("Street network unable to be downloaded")
 
-    return (net)
+    if (!is.null (bbox_poly))
+        net <- osmdata::trim_osmdata (net, bbox_poly)
+
+    return (net$osm_lines)
 }
 
 #' weight_streetnet

@@ -3,8 +3,11 @@ Major changes:
 - New function `weight_railway` to weight a network for railway routing.
 
 Minor changes:
+- `dodgr_streetnet` now accepts polygonal `bbox` argument, and uses
+  `osmdata::trim_osmdata` to trim resultant network to within that polygon
+  (issue #50).
 - Extended examples for `weight_streetnet` and dodgr_flows_aggregate` to include
-  a non-OSM example from `stplanr::routes_fast`.
+  a non-OSM example from `stplanr::routes_fast` (issue #45).
 
 
 # v0.1.1
