@@ -169,15 +169,16 @@ find_xy_col_simple <- function (dfr)
     if (is.null (nms))
         nms <- colnames (dfr)
 
+    ix <- iy <- NULL
     if (!is.null (nms))
     {
         ix <- which (grepl ("x", nms, ignore.case = TRUE) |
                      grepl ("lon", nms, ignore.case = TRUE))
         iy <- which (grepl ("y", nms, ignore.case = TRUE) |
                      grepl ("lat", nms, ignore.case = TRUE))
-    } else
+    }
+    if (length (ix) == 0 | length (iy) == 0)
     {
-        # verts always has cols, so this can only happen for dfr = xy
         message ("xy has no named columns; assuming order is x then y")
         ix <- 1
         iy <- 2
