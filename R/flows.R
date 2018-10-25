@@ -98,6 +98,42 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * flow)]
 #' mapview (gsf, color = cols, lwd = 10 * flow)
 #' }
+#'
+#' # An example of flow aggregation across a generic (non-OSM) highway,
+#' # represented as the \code{routes_fast} object of the \pkg{stplanr} package,
+#' # which is a SpatialLinesDataFrame containing commuter densities along
+#' # components of a street network.
+#' \dontrun{
+#' library (stplanr)
+#' # merge all of the 'routes_fast' lines into a single network
+#' r <- overline (routes_fast, attrib = "length", buff_dist = 1)
+#' r <- sf::st_as_sf (r)
+#' # then extract the start and end points of each of the original 'routes_fast'
+#' # lines and use these for routing with \code{dodgr}
+#' l <- lapply (routes_fast@lines, function (i)
+#'              c (sp::coordinates (i) [[1]] [1, ],
+#'                 tail (sp::coordinates (i) [[1]], 1)))
+#' l <- do.call (rbind, l)
+#' xy_start <- l [, 1:2]
+#' xy_end <- l [, 3:4]
+#' # Then just specify a generic OD matrix with uniform values of 1:
+#' flows <- matrix (1, nrow = nrow (l), ncol = nrow (l))
+#' # We need to specify both a \code{type} and \code{id} column for the
+#' # \link{weight_streetnet} function.
+#' r$type <- 1
+#' r$id <- seq (nrow (r))
+#' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
+#'                            wt_profile = 1)
+#' f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end, flows = flows)
+#' # Then merge directed flows and convert to \pkg{sf} for plotting as before:
+#' f <- merge_directed_flows (f)
+#' geoms <- dodgr_to_sfc (f)
+#' gc <- dodgr_contract_graph (f)
+#' gsf <- sf::st_sf (geoms)
+#' gsf$flow <- gc$graph$flow
+#' # sf plot:
+#' plot (gsf ["flow"])
+#' }
 #' @export
 dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
                                    "bicycle", contract = FALSE, heap = 'BHeap',
