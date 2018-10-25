@@ -6,7 +6,7 @@
 
 /* Dijkstra's Algorithm
  * ----------------------------------------------------------------------------
- * Author:  Shane Saunders
+ * Author:  Shane Saunders, modified to dual-weighted graphs by Mark Padgham
  */
 
 /*--- Dijkstra -----------------------------------------------------------*/
@@ -81,7 +81,7 @@ void Dijkstra::run(std::vector<double>& d, std::vector<double>& w, std::vector<i
         while (edge) {
             unsigned int et = edge->target;
 
-            if (!m_s[et]) {
+            if (!m_s [et]) {
                 double wt = w [v] + edge->wt;
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
@@ -92,7 +92,7 @@ void Dijkstra::run(std::vector<double>& d, std::vector<double>& w, std::vector<i
                     }
                     else {
                       m_heap->insert (et, wt);
-                        m_f [et] = true;
+                      m_f [et] = true;
                     }
                 }
             }
