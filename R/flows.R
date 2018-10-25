@@ -68,7 +68,6 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' @param quiet If \code{FALSE}, display progress messages on screen.
 #' @return Modified version of graph with additonal \code{flow} column added.
 #'
-#' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
@@ -83,6 +82,23 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' graph_undir <- merge_directed_flows (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
+#'
+#' # The following code can be used to convert the resultant graph to an `sf`
+#' # object suitable for plotting
+#' \dontrun{
+#' geoms <- dodgr_to_sfc (graph_undir)
+#' gc <- dodgr_contract_graph (graph_undir)
+#' gsf <- sf::st_sf (geoms)
+#' gsf$flow <- gc$graph$flow
+#'
+#' # example of plotting with the 'mapview' package
+#' library (mapview)
+#' flow <- gsf$flow / max (gsf$flow)
+#' ncols <- 30
+#' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * flow)]
+#' mapview (gsf, color = cols, lwd = 10 * flow)
+#' }
+#' @export
 dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
                                    "bicycle", contract = FALSE, heap = 'BHeap',
                                    quiet = TRUE)

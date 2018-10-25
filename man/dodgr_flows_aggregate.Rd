@@ -57,4 +57,20 @@ graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 graph_undir <- merge_directed_flows (graph)
 # This graph will only include those edges having non-zero flows, and so:
 nrow (graph); nrow (graph_undir) # the latter is much smaller
+
+# The following code can be used to convert the resultant graph to an `sf`
+# object suitable for plotting
+\dontrun{
+geoms <- dodgr_to_sfc (graph_undir)
+gc <- dodgr_contract_graph (graph_undir)
+gsf <- sf::st_sf (geoms)
+gsf$flow <- gc$graph$flow
+
+# example of plotting with the 'mapview' package
+library (mapview)
+flow <- gsf$flow / max (gsf$flow)
+ncols <- 30
+cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * flow)]
+mapview (gsf, color = cols, lwd = 10 * flow)
+}
 }
