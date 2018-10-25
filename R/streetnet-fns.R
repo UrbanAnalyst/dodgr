@@ -82,7 +82,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
 #' objects, typically extracted with \code{dodgr_streetnet}
 #' @param wt_profile Name of weighting profile, or vector of values with names
-#' corresponding to names in \code{type_col}
+#' corresponding to names in \code{type_col} (see Details)
 #' @param type_col Specify column of the \code{sf} \code{data.frame} object
 #' which designates different types of highways to be used for weighting
 #' (default works with \code{osmdata} objects).
@@ -95,6 +95,13 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #'
 #' @return A \code{data.frame} of edges representing the street network, along
 #' with a column of graph component numbers.
+#'
+#' @note Names for the \code{wt_profile} parameter are taken from
+#' \link{weighting_profiles}, which is a \code{data.frame} of weights for
+#' different modes of transport. Current modes included there are "bicycle",
+#' "foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
+#' and "wheelchair". Railway routing can be implemented with
+#' the separate function \link{weight_railway}.
 #'
 #' @export
 #' @examples
@@ -138,11 +145,17 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
     if (is.character (wt_profile))
     {
-        prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
-                        "motorcycle", "motorcar", "goods", "hgv", "psv")
-        wt_profile <- match.arg (tolower (wt_profile), prf_names)
-        profiles <- dodgr::weighting_profiles
-        wt_profile <- profiles [profiles$name == wt_profile, ]
+        if (grepl ("rail", wt_profile, ignore.case = TRUE))
+        {
+            stop ("Please use the weight_railway function for railway routing.")
+        } else
+        {
+            prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
+                            "motorcycle", "motorcar", "goods", "hgv", "psv")
+            wt_profile <- match.arg (tolower (wt_profile), prf_names)
+            profiles <- dodgr::weighting_profiles
+            wt_profile <- profiles [profiles$name == wt_profile, ]
+        }
     } else if (is.numeric (wt_profile))
     {
         nms <- names (wt_profile)
@@ -190,27 +203,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
     if (is.null (rownames (as.matrix (sf_lines$geometry [[1]]))))
-    {
-        # Find unique vertices by coorindates along:
-        xy <- data.frame (x = c (graph$from_lon, graph$to_lon),
-                          y = c (graph$from_lat, graph$to_lat))
-        indx <- which (!duplicated (xy))
-        #ids <- seq (indx) - 1 # 0-indexed
-        xy_indx <- xy [indx, ]
-        xy_indx$indx <- seq (nrow (xy_indx))
-
-        # Then match coordinates to those unique values and replace IDs. Note
-        # that `merge` does not preserve row order, see:
-        # https://www.r-statistics.com/2012/01/merging-two-data-frame-objects-while-preserving-the-rows-order/
-        xy_from <- data.frame (x = graph$from_lon, y = graph$from_lat,
-                               ord = seq (nrow (graph)))
-        xy_from <- merge (xy_from, xy_indx) # re-sorts rows
-        graph$from_id <- as.character (xy_from$indx [order (xy_from$ord)])
-        xy_to <- data.frame (x = graph$to_lon, y = graph$to_lat,
-                             ord = seq (nrow (graph)))
-        xy_to <- merge (xy_to, xy_indx)
-        graph$to_id <- as.character (xy_to$indx [order (xy_to$ord)])
-    }
+        graph <- rownames_from_xy (graph)
 
     # get component numbers for each edge
     class (graph) <- c (class (graph), "dodgr_streetnet")
@@ -218,24 +211,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
     # And finally, re-insert keep_cols:
     if (length (keep_cols) > 0)
-    {
-        keep_names <- NULL
-        if (is.character (keep_cols))
-        {
-            keep_names <- keep_cols
-            keep_cols <- match (keep_cols, names (sf_lines))
-        } else if (is.numeric (keep_cols))
-        {
-            keep_names <- names (sf_lines) [keep_cols]
-        } else
-        {
-            stop ("keep_cols must be either character or numeric")
-        }
-        indx <- match (graph$geom_num, seq (sf_lines$geometry))
-        for (k in seq (keep_names))
-            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
-                                                   drop = TRUE]
-    }
+        graph <- reinsert_keep_cols (sf_lines, graph, keep_cols)
 
     return (graph)
 }
@@ -278,6 +254,164 @@ remap_way_types <- function (sf_lines, wt_profile)
 
     return (sf_lines)
 }
+
+rownames_from_xy <- function (graph)
+{
+    # Find unique vertices by coorindates along:
+    xy <- data.frame (x = c (graph$from_lon, graph$to_lon),
+                      y = c (graph$from_lat, graph$to_lat))
+    indx <- which (!duplicated (xy))
+    #ids <- seq (indx) - 1 # 0-indexed
+    xy_indx <- xy [indx, ]
+    xy_indx$indx <- seq (nrow (xy_indx))
+
+    # Then match coordinates to those unique values and replace IDs. Note
+    # that `merge` does not preserve row order, see:
+    # https://www.r-statistics.com/2012/01/merging-two-data-frame-objects-while-preserving-the-rows-order/
+    xy_from <- data.frame (x = graph$from_lon,
+                           y = graph$from_lat,
+                           ord = seq (nrow (graph)))
+    xy_from <- merge (xy_from, xy_indx) # re-sorts rows
+    graph$from_id <- as.character (xy_from$indx [order (xy_from$ord)])
+    xy_to <- data.frame (x = graph$to_lon,
+                         y = graph$to_lat,
+                         ord = seq (nrow (graph)))
+    xy_to <- merge (xy_to, xy_indx)
+    graph$to_id <- as.character (xy_to$indx [order (xy_to$ord)])
+
+    return (graph)
+}
+
+reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
+{
+    keep_names <- NULL
+    if (is.character (keep_cols))
+    {
+        keep_names <- keep_cols
+        keep_cols <- match (keep_cols, names (sf_lines))
+    } else if (is.numeric (keep_cols))
+    {
+        keep_names <- names (sf_lines) [keep_cols]
+    } else
+    {
+        stop ("keep_cols must be either character or numeric")
+    }
+    indx <- match (graph$geom_num, seq (sf_lines$geometry))
+    for (k in seq (keep_names))
+        graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
+                                               drop = TRUE]
+
+    return (graph)
+}
+
+#' weight_railway
+#'
+#' Weight (or re-weight) an \code{sf}-formatted OSM street network for routing
+#' along railways.
+#'
+#' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
+#' objects, typically extracted with \code{dodgr_streetnet}
+#' @param type_col Specify column of the \code{sf} \code{data.frame} object
+#' which designates different types of railways to be used for weighting
+#' (default works with \code{osmdata} objects).
+#' @param id_col Specify column of the code{sf} \code{data.frame} object which
+#' provides unique identifiers for each railway (default works with
+#' \code{osmdata} objects).
+#' @param keep_cols Vectors of columns from \code{sf_lines} to be kept in the
+#' resultant \code{dodgr} network; vector can be either names or indices of
+#' desired columns.
+#' @param excluded Types of railways to exclude from routing.
+#'
+#' @return A \code{data.frame} of edges representing the rail network, along
+#' with a column of graph component numbers.
+#'
+#' @note Default railway weighting is by distance. Other weighting schemes, such
+#' as by maximum speed, can be implemented simply by modifying the
+#' \code{d_weighted} column returned by this function accordingly.
+#'
+#' @examples
+#' \dontrun{
+#' # sample railway extraction with the 'osmdata' package
+#' library (osmdata)
+#' dat <- opq ("shinjuku") %>%
+#'     add_osm_feature (key = "railway") %>%
+#'     osmdata_sf (quiet = FALSE)
+#' graph <- weight_railway (dat$osm_lines)
+#' }
+#' @export
+weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
+                            keep_cols = c ("maxspeed"),
+                            excluded = c ("abandoned", "disused",
+                                          "proposed", "razed"))
+{
+    if (!is (sf_lines, "sf"))
+        stop ('sf_lines must be class "sf"')
+    if (!"geometry" %in% names (sf_lines))
+        stop (paste0 ('sf_lines must be class "sf" and have a geometry column'))
+
+    if (type_col != "railway")
+        names (sf_lines) [which (names (sf_lines) == type_col)] <- "railway"
+    if (id_col != "osm_id")
+        names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
+
+    if (!"railway" %in% names (sf_lines))
+        stop ("Please specify type_col to be used for weighting streetnet")
+    if (!"osm_id" %in% names (sf_lines))
+        stop ("Please specifiy id_col to be used to identify streetnet rows")
+
+    if (is.null (names (sf_lines$geometry)))
+        names (sf_lines$geometry) <- sf_lines$osm_id
+
+
+    sf_lines <- sf_lines [which (!(sf_lines$railway %in% excluded |
+                                   is.na (sf_lines$railway))), ]
+    # routing is based on matching the given profile to the "highway" field of
+    # sf_lines, so:
+    sf_lines$highway <- sf_lines$railway
+
+    wt_profile <- data.frame (name = "custom",
+                              way = unique (sf_lines$highway),
+                              value = 1,
+                              stringsAsFactors = FALSE)
+
+    dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
+    graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
+                         edge_id = seq (nrow (dat$character_values)),
+                         from_id = as.character (dat$character_values [, 1]),
+                         from_lon = dat$numeric_values [, 2],
+                         from_lat = dat$numeric_values [, 3],
+                         to_id = as.character (dat$character_values [, 2]),
+                         to_lon = dat$numeric_values [, 4],
+                         to_lat = dat$numeric_values [, 5],
+                         d = dat$numeric_values [, 6],
+                         d_weighted = dat$numeric_values [, 7],
+                         highway = as.character (dat$character_values [, 3]),
+                         way_id = as.character (dat$character_values [, 4]),
+                         stringsAsFactors = FALSE
+                         )
+    # rcpp_sf_as_network now flags non-routable ways with -1, so:
+    graph$d_weighted [graph$d_weighted < 0] <- .Machine$double.xmax
+    if (all (graph$highway == ""))
+        graph$highway <- NULL
+    if (all (graph$way_id == ""))
+        graph$way_id <- NULL
+
+    # If original geometries did not have rownames (meaning it's not from
+    # osmdata), then reassign unique vertex from/to IDs based on coordinates
+    if (is.null (rownames (as.matrix (sf_lines$geometry [[1]]))))
+        graph <- rownames_from_xy (graph)
+
+    # get component numbers for each edge
+    class (graph) <- c (class (graph), "dodgr_streetnet")
+    graph <- dodgr_components (graph)
+
+    # And finally, re-insert keep_cols:
+    if (length (keep_cols) > 0)
+        graph <- reinsert_keep_cols (sf_lines, graph, keep_cols)
+
+    return (graph)
+}
+
 
 #' dodgr_to_sfc
 #'

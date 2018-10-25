@@ -12,7 +12,7 @@ weight_streetnet(sf_lines, wt_profile = "bicycle",
 objects, typically extracted with \code{dodgr_streetnet}}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names
-corresponding to names in \code{type_col}}
+corresponding to names in \code{type_col} (see Details)}
 
 \item{type_col}{Specify column of the \code{sf} \code{data.frame} object
 which designates different types of highways to be used for weighting
@@ -34,6 +34,14 @@ with a column of graph component numbers.
 Weight (or re-weight) an \code{sf}-formatted OSM street network according to
 a named routino profile, selected from (foot, horse, wheelchair, bicycle,
 moped, motorcycle, motorcar, goods, hgv, psv).
+}
+\note{
+Names for the \code{wt_profile} parameter are taken from
+\link{weighting_profiles}, which is a \code{data.frame} of weights for
+different modes of transport. Current modes included there are "bicycle",
+"foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
+and "wheelchair". Railway routing can be implemented with
+the separate function \link{weight_railway}.
 }
 \examples{
 # hampi is included with package as an 'osmdata' sf-formatted street network
