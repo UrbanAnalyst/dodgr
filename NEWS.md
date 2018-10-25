@@ -1,3 +1,8 @@
+# v0.1.1.099
+Major changes:
+- New function `weight_railway` to weight a network for railway routing.
+
+
 # v0.1.1
 
 Major changes:
