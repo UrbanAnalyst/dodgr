@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="match_pts_to_graph — match_pts_to_graph" />
+
+<meta property="og:description" content="Match spatial points to a spatial graph which contains vertex coordindates" />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +59,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">dodgr</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">dodgr</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.1.99</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -70,6 +86,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,19 +94,23 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>match_pts_to_graph</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ATFutures/dodgr/blob/master/R/graph-functions-misc.R'><code>R/graph-functions-misc.R</code></a></small>
+    <div class="hidden name"><code>match_pts_to_graph.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Match spatial points to a spatial graph which contains vertex coordindates</p>
     
+    </div>
 
-    <pre class="usage"><span class='fu'>match_pts_to_graph</span>(<span class='no'>verts</span>, <span class='no'>xy</span>)</pre>
+    <pre class="usage"><span class='fu'>match_pts_to_graph</span>(<span class='no'>verts</span>, <span class='no'>xy</span>, <span class='kw'>connected</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -102,6 +123,16 @@
       <td><p>coordinates of points to be matched to the vertices, either as
 matrix or <span class="pkg">sf</span>-formatted <code>data.frame</code>.</p></td>
     </tr>
+    <tr>
+      <th>connected</th>
+      <td><p>Should points be matched to the same (largest) connected
+component of graph? If <code>FALSE</code> and these points are to be used for a
+<code>dodgr</code> routine routine (<a href='dodgr_dists.html'>dodgr_dists</a>, <a href='dodgr_paths.html'>dodgr_paths</a>, or
+<a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a>), then results may not be returned if points are
+not part of the same connected component. On the other hand, forcing them to
+be part of the same connected component may decrease the spatial accuracy of
+matching.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -110,8 +141,7 @@ matrix or <span class="pkg">sf</span>-formatted <code>data.frame</code>.</p></td
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"foot"</span>)
-<span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>net</span>)
+    <pre class="examples"><div class='input'><span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>, <span class='kw'>wt_profile</span> <span class='kw'>=</span> <span class='st'>"foot"</span>)</div><div class='output co'>#&gt; <span class='message'>The following highway types are present in data yet lack corresponding weight_profile values: living_street, </span></div><div class='input'><span class='no'>verts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_vertices.html'>dodgr_vertices</a></span> (<span class='no'>net</span>)
 <span class='co'># Then generate some random points to match to graph</span>
 <span class='no'>npts</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>xy</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span> (
@@ -119,9 +149,9 @@ matrix or <span class="pkg">sf</span>-formatted <code>data.frame</code>.</p></td
                   <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'>min</span> (<span class='no'>verts</span>$<span class='no'>y</span>) + <span class='fu'>runif</span> (<span class='no'>npts</span>) * <span class='fu'>diff</span> (<span class='fu'>range</span> (<span class='no'>verts</span>$<span class='no'>y</span>))
                   )
 <span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='fu'>match_pts_to_graph</span> (<span class='no'>verts</span>, <span class='no'>xy</span>)
-<span class='no'>pts</span> <span class='co'># an index into verts</span></div><div class='output co'>#&gt;  [1] 735 564 557 480 517 569 725 223 400 557</div><div class='input'><span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span>$<span class='no'>id</span> [<span class='no'>pts</span>]
-<span class='no'>pts</span> <span class='co'># names of those vertices</span></div><div class='output co'>#&gt;  [1] "1204772890" "3544918757" "3544918711" "1691495677" "677638828" 
-#&gt;  [6] "3544918777" "1388483029" "339574189"  "1357430213" "3544918711"</div></pre>
+<span class='no'>pts</span> <span class='co'># an index into verts</span></div><div class='output co'>#&gt;  [1]  540 1782  768  516  768  760  484  782  727  726</div><div class='input'><span class='no'>pts</span> <span class='kw'>&lt;-</span> <span class='no'>verts</span>$<span class='no'>id</span> [<span class='no'>pts</span>]
+<span class='no'>pts</span> <span class='co'># names of those vertices</span></div><div class='output co'>#&gt;  [1] "677638828"  "2588119056" "1204772855" "1691495727" "1204772855"
+#&gt;  [6] "1204772804" "1161117652" "1204772868" "1412452580" "1388482269"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -138,15 +168,18 @@ matrix or <span class="pkg">sf</span>-formatted <code>data.frame</code>.</p></td
 
       <footer>
       <div class="copyright">
-  <p>Developed by Mark Padgham, Andreas Peutschnig.</p>
+  <p>Developed by Mark Padgham, Andreas Petutschnig.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

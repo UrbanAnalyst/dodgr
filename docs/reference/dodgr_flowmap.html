@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="dodgr_flowmap — dodgr_flowmap" />
+
+<meta property="og:description" content="Map the output of dodgr_flows_aggregate or dodgr_flows_disperse" />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +59,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">dodgr</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">dodgr</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.1.99</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -70,6 +86,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,19 +94,23 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>dodgr_flowmap</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ATFutures/dodgr/blob/master/R/flowmap.R'><code>R/flowmap.R</code></a></small>
+    <div class="hidden name"><code>dodgr_flowmap.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Map the output of <a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a> or <a href='dodgr_flows_disperse.html'>dodgr_flows_disperse</a></p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>dodgr_flowmap</span>(<span class='no'>net</span>, <span class='kw'>bbox</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>linescale</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -114,6 +135,19 @@ of <code>net</code></p></td>
 prior to plotting, otherwise lines for different directions will be overlaid.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='weight_streetnet.html'>weight_streetnet</a></span> (<span class='no'>hampi</span>)</div><div class='output co'>#&gt; <span class='message'>The following highway types are present in data yet lack corresponding weight_profile values: living_street, </span></div><div class='input'><span class='no'>from</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>from_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span> (<span class='no'>graph</span>$<span class='no'>to_id</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+<span class='no'>to</span> <span class='kw'>&lt;-</span> <span class='no'>to</span> [!<span class='no'>to</span> <span class='kw'>%in%</span> <span class='no'>from</span>]
+<span class='no'>flows</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span> (<span class='fl'>10</span> * <span class='fu'>runif</span> (<span class='fu'>length</span> (<span class='no'>from</span>) * <span class='fu'>length</span> (<span class='no'>to</span>)),
+                 <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'>length</span> (<span class='no'>from</span>))
+<span class='no'>graph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='dodgr_flows_aggregate.html'>dodgr_flows_aggregate</a></span> (<span class='no'>graph</span>, <span class='kw'>from</span> <span class='kw'>=</span> <span class='no'>from</span>, <span class='kw'>to</span> <span class='kw'>=</span> <span class='no'>to</span>, <span class='kw'>flows</span> <span class='kw'>=</span> <span class='no'>flows</span>)
+<span class='co'># graph then has an additonal 'flows` column of aggregate flows along all</span>
+<span class='co'># edges. These flows are directed, and can be aggregated to equivalent</span>
+<span class='co'># undirected flows on an equivalent undirected graph with:</span>
+<span class='no'>graph_undir</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='merge_directed_flows.html'>merge_directed_flows</a></span> (<span class='no'>graph</span>)</div><span class='co'># NOT RUN {</span>
+<span class='fu'>dodgr_flowmap</span> (<span class='no'>graph_undir</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -121,22 +155,27 @@ prior to plotting, otherwise lines for different directions will be overlaid.</p
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#note">Note</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Mark Padgham, Andreas Peutschnig.</p>
+  <p>Developed by Mark Padgham, Andreas Petutschnig.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
