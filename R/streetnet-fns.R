@@ -113,7 +113,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' a named routino profile, selected from (foot, horse, wheelchair, bicycle,
 #' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
-#' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
+#' @param x A street network represented as \code{sf} \code{LINESTRING}
 #' objects, typically extracted with \code{dodgr_streetnet}
 #' @param wt_profile Name of weighting profile, or vector of values with names
 #' corresponding to names in \code{type_col} (see Details)
@@ -168,50 +168,64 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
 #'                            wt_profile = 1)
 #' }
-weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
+weight_streetnet <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL)
 {
-    if (!is (sf_lines, "sf"))
-        stop ('sf_lines must be class "sf"')
-    #if (!all (c ("geometry", type_col, id_col) %in% names (sf_lines)))
-    #    stop (paste0 ('sf_lines must be class "sf" and ',
-    #                  'have highway and geometry columns'))
-    if (!"geometry" %in% names (sf_lines))
-        stop (paste0 ('sf_lines must be class "sf" and have a geometry column'))
+    UseMethod ("weight_streetnet")
+}
+
+#' @name weight_streetnet
+#' @export
+weight_streetnet.default <- function (x, wt_profile = "bicycle",
+                              type_col = "highway", id_col = "osm_id",
+                              keep_cols = NULL)
+{
+    stop ("Unknown class")
+}
+
+#' @name weight_streetnet
+#' @export
+weight_streetnet.sf <- function (x, wt_profile = "bicycle",
+                              type_col = "highway", id_col = "osm_id",
+                              keep_cols = NULL)
+{
+    if (!is (x, "sf"))
+        stop ('x must be class "sf"')
+    if (!"geometry" %in% names (x))
+        stop (paste0 ('x must be class "sf" and have a geometry column'))
 
     if (type_col != "highway")
-        names (sf_lines) [which (names (sf_lines) == type_col)] <- "highway"
+        names (x) [which (names (x) == type_col)] <- "highway"
     if (id_col != "osm_id")
-        names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
+        names (x) [which (names (x) == id_col)] <- "osm_id"
 
-    if (!"highway" %in% names (sf_lines) & !is.numeric (wt_profile))
+    if (!"highway" %in% names (x) & !is.numeric (wt_profile))
         stop ("Please specify type_col to be used for weighting streetnet")
-    if (!"osm_id" %in% names (sf_lines))
+    if (!"osm_id" %in% names (x))
     {
-        #stop ("Please specifiy id_col to be used to identify streetnet rows")
-        idcol <- grep ("id", names (sf_lines), ignore.case = TRUE)
+        idcol <- grep ("id", names (x), ignore.case = TRUE)
         if (length (idcol) == 1)
         {
-            message ("Using column ", names (sf_lines) [idcol],
+            message ("Using column ", names (x) [idcol],
                      " as ID column for edges; please specify explicitly if",
                      " a different column should be used.")
-            names (sf_lines) [idcol] <- "osm_id"
+            names (x) [idcol] <- "osm_id"
         } else if (length (idcol) > 1)
         {
             stop ("Multiple potential ID columns: [",
-                  paste0 (names (sf_lines) [icol], collapse = " "),
+                  paste0 (names (x) [idcol], collapse = " "),
                   "]; please explicitly specify one of these.")
         } else if (length (idcol) == 1)
         {
-            message ("sf_lines appears to have no ID column;",
+            message ("x appears to have no ID column;",
                      "sequential edge numbers will be used.")
-            sf_lines$osm_id <- seq (nrow (sf_lines))
+            x$osm_id <- seq (nrow (x))
         }
     }
 
-    if (is.null (names (sf_lines$geometry)))
-        names (sf_lines$geometry) <- sf_lines$osm_id
+    if (is.null (names (x$geometry)))
+        names (x$geometry) <- x$osm_id
 
     if (is.character (wt_profile))
     {
@@ -246,9 +260,9 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
         stop ("Custom named profiles must be vectors with named values")
 
     if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom"))
-        sf_lines <- remap_way_types (sf_lines, wt_profile)
+        x <- remap_way_types (x, wt_profile)
 
-    dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
+    dat <- rcpp_sf_as_network (x, pr = wt_profile)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
@@ -272,7 +286,7 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
-    if (is.null (rownames (as.matrix (sf_lines$geometry [[1]]))))
+    if (is.null (rownames (as.matrix (x$geometry [[1]]))))
         graph <- rownames_from_xy (graph)
 
     # get component numbers for each edge
@@ -281,9 +295,18 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
 
     # And finally, re-insert keep_cols:
     if (length (keep_cols) > 0)
-        graph <- reinsert_keep_cols (sf_lines, graph, keep_cols)
+        graph <- reinsert_keep_cols (x, graph, keep_cols)
 
     return (graph)
+}
+
+#' @name weight_streetnet
+#' @export
+weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
+                              type_col = "highway", id_col = "osm_id",
+                              keep_cols = NULL)
+{
+    stop ("sc method not yet implemented")
 }
 
 # re-map any OSM 'highway' types with pmatch to standard types

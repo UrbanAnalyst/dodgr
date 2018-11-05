@@ -2,13 +2,25 @@
 % Please edit documentation in R/streetnet-fns.R
 \name{weight_streetnet}
 \alias{weight_streetnet}
+\alias{weight_streetnet.default}
+\alias{weight_streetnet.sf}
+\alias{weight_streetnet.sc}
 \title{weight_streetnet}
 \usage{
-weight_streetnet(sf_lines, wt_profile = "bicycle",
+weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
+  id_col = "osm_id", keep_cols = NULL)
+
+\method{weight_streetnet}{default}(x, wt_profile = "bicycle",
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+
+\method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+
+\method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL)
 }
 \arguments{
-\item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
+\item{x}{A street network represented as \code{sf} \code{LINESTRING}
 objects, typically extracted with \code{dodgr_streetnet}}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names

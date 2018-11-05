@@ -1,5 +1,7 @@
 # v0.1.1.099
 Major changes:
+- `weight_streetnet` is now a method, with implementations for objects of
+  classes `.sf` and `.sc`.
 - New function `weight_railway` to weight a network for railway routing.
 
 Minor changes:
