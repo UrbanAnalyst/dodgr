@@ -185,10 +185,30 @@ weight_streetnet <- function (sf_lines, wt_profile = "bicycle",
     if (id_col != "osm_id")
         names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
 
-    if (!"highway" %in% names (sf_lines))
+    if (!"highway" %in% names (sf_lines) & !is.numeric (wt_profile))
         stop ("Please specify type_col to be used for weighting streetnet")
     if (!"osm_id" %in% names (sf_lines))
-        stop ("Please specifiy id_col to be used to identify streetnet rows")
+    {
+        #stop ("Please specifiy id_col to be used to identify streetnet rows")
+        idcol <- grep ("id", names (sf_lines), ignore.case = TRUE)
+        if (length (idcol) == 1)
+        {
+            message ("Using column ", names (sf_lines) [idcol],
+                     " as ID column for edges; please specify explicitly if",
+                     " a different column should be used.")
+            names (sf_lines) [idcol] <- "osm_id"
+        } else if (length (idcol) > 1)
+        {
+            stop ("Multiple potential ID columns: [",
+                  paste0 (names (sf_lines) [icol], collapse = " "),
+                  "]; please explicitly specify one of these.")
+        } else if (length (idcol) == 1)
+        {
+            message ("sf_lines appears to have no ID column;",
+                     "sequential edge numbers will be used.")
+            sf_lines$osm_id <- seq (nrow (sf_lines))
+        }
+    }
 
     if (is.null (names (sf_lines$geometry)))
         names (sf_lines$geometry) <- sf_lines$osm_id
