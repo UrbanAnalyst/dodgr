@@ -36,6 +36,9 @@ You can install `dodgr` from github with:
 devtools::install_github("ATFutures/dodgr")
 ```
 
+### Note on macOS ###
+On macOS, if you need "[gfortran](https://gcc.gnu.org/wiki/GFortranBinaries#MacOS)", you could install "gcc" from [brew](https://brew.sh) or similar package manager, but on brew "gfortran" is included in "gcc". After installing `gcc` you may still have R complaining about `library not found for -lgfortran`. [Others](https://thecoatlessprofessor.com/programming/rcpp-rcpparmadillo-and-os-x-mavericks--lgfortran-and--lquadmath-error/) have written about this issue in detail, we recommend this quick answer on [SO](https://stackoverflow.com/a/29993906/2332101) and adding a line `FLIBS=-L/usr/local/lib/gcc/8/` (given that you installed gcc8) to your `~/.R/Makevars` file for R to be aware of your `gcc` path.
+
 ## Usage
 
 The primary function,
