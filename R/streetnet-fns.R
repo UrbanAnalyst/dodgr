@@ -508,8 +508,10 @@ weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
 
 #' dodgr_to_sfc
 #'
-#' Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
-#' Features (\pkg{sf}) object through aggregating edges into \code{LINESTRING}
+#' Convert a \code{dodgr} graph into a \code{list} composed of
+#' two objects: \code{dat}, a \code{data.frame}; and
+#' \code{geometry}, an \code{sfc} object from the (\pkg{sf}) package.
+#' Works by aggregating edges into \code{LINESTRING}
 #' objects representing longest sequences between all junction nodes. The
 #' resultant objects will generally contain more \code{LINESTRING} objects than
 #' the original \pkg{sf} object, because the former will be bisected at every
@@ -528,11 +530,13 @@ weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
+#' nrow(hw)
 #' xy <- dodgr_to_sfc (hw)
 #' dim (hw) # 5.845 edges
-#' length (xy$geom) # 682 aggregated linestrings aggregated from those edges
-#' nrow (hampi) # compared to 191 linestrings in original sf object
+#' length (xy$geometry) # more linestrings aggregated from those edges
+#' nrow (hampi) # than the 191 linestrings in original sf object
 #' dim (xy$dat) # same number of rows as there are geometries
+#' # sf::st_sf(xy$dat, geometry = xy$geometry, crs = 4326)
 dodgr_to_sfc <- function (net)
 {
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
@@ -540,11 +544,11 @@ dodgr_to_sfc <- function (net)
     net$edge_id <- seq (nrow (net))
 
     gc <- dodgr_contract_graph (net)
-    geoms <- rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+    geometry <- rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
 
     # Then match data of `net` potentially including way_id, back on to the
     # geometries:
-    #edge_ids <- gc$graph$edge_id [match (names (geoms), gc$graph$edge_id)]
+    #edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
     #indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
     #indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
     #edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
@@ -554,7 +558,7 @@ dodgr_to_sfc <- function (net)
     #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
     #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
 
-    geoms <- geoms [match (gc$graph$edge_id, names (geoms))]
+    geometry <- geometry [match (gc$graph$edge_id, names (geometry))]
 
-    return (list (dat = gc$graph, geoms = geoms))
+    return (list (dat = gc$graph, geometry = geometry))
 }

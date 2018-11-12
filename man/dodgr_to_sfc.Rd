@@ -15,8 +15,10 @@ A list containing (1) A \code{data.frame} of data associated with the
 \code{LINESTRING} objects.
 }
 \description{
-Convert a \code{dodgr} graph as \code{data.frame} of all edges into a Simple
-Features (\pkg{sf}) object through aggregating edges into \code{LINESTRING}
+Convert a \code{dodgr} graph into a \code{list} composed of
+two objects: \code{dat}, a \code{data.frame}; and  
+\code{geometry}, an \code{sfc} object from the (\pkg{sf}) package.
+Works by aggregating edges into \code{LINESTRING}
 objects representing longest sequences between all junction nodes. The
 resultant objects will generally contain more \code{LINESTRING} objects than
 the original \pkg{sf} object, because the former will be bisected at every
@@ -30,9 +32,11 @@ see \pkg{sf} for details.
 }
 \examples{
 hw <- weight_streetnet (hampi)
+nrow(hw)
 xy <- dodgr_to_sfc (hw)
 dim (hw) # 5.845 edges
-length (xy$geom) # 682 aggregated linestrings aggregated from those edges
-nrow (hampi) # compared to 191 linestrings in original sf object
+length (xy$geometry) # more linestrings aggregated from those edges
+nrow (hampi) # than the 191 linestrings in original sf object
 dim (xy$dat) # same number of rows as there are geometries
+# sf::st_sf(xy$dat, geometry = xy$geometry, crs = 4326)
 }
