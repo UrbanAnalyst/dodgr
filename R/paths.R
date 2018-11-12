@@ -2,55 +2,55 @@
 #'
 #' Calculate lists of pair-wise shortest paths between points.
 #'
-#' @param graph \code{data.frame} or equivalent object representing the network
+#' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which route paths are to
 #' be calculated (see Details)
 #' @param to Vector or matrix of points **to** which route paths are to be
 #' calculated (see Details)
-#' @param vertices If \code{TRUE}, return lists of lists of vertices for each
-#' path, otherwise return corresponding lists of edge numbers from \code{graph}.
+#' @param vertices If `TRUE`, return lists of lists of vertices for each
+#' path, otherwise return corresponding lists of edge numbers from `graph`.
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-#' only used if \code{graph} is not provided, in which case a street network is
+#' only used if `graph` is not provided, in which case a street network is
 #' downloaded and correspondingly weighted).
-#' @param pairwise If \code{TRUE}, calculate paths only between the ordered
-#' pairs of \code{from} and \code{to}. In this case, each of these must be the
+#' @param pairwise If `TRUE`, calculate paths only between the ordered
+#' pairs of `from` and `to`. In this case, each of these must be the
 #' same length, and the output will contain paths the i-th members of each, and
 #' thus also be of that length.
 #' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
-#' @param quiet If \code{FALSE}, display progress messages on screen.
+#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
+#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param quiet If `FALSE`, display progress messages on screen.
 #' @return List of list of paths tracing all connections between nodes such that
-#' if \code{x <- dodgr_paths (graph, from, to)}, then the path between
-#' \code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}.
+#' if `x <- dodgr_paths (graph, from, to)`, then the path between
+#' `from[i]` and `to[j]` is `x [[i]] [[j]]`.
 #'
-#' @note \code{graph} must minimally contain four columns of \code{from},
-#' \code{to}, \code{dist}. If an additional column named \code{weight} or
-#' \code{wt} is present, shortest paths are calculated according to values
-#' specified in that column; otherwise according to \code{dist} values. Either
-#' way, final distances between \code{from} and \code{to} points are calculated
-#' according to values of \code{dist}. That is, paths between any pair of points
-#' will be calculated according to the minimal total sum of \code{weight}
+#' @note `graph` must minimally contain four columns of `from`,
+#' `to`, `dist`. If an additional column named `weight` or
+#' `wt` is present, shortest paths are calculated according to values
+#' specified in that column; otherwise according to `dist` values. Either
+#' way, final distances between `from` and `to` points are calculated
+#' according to values of `dist`. That is, paths between any pair of points
+#' will be calculated according to the minimal total sum of `weight`
 #' values (if present), while reported distances will be total sums of
-#' \code{dist} values.
+#' `dist` values.
 #'
-#' The \code{from} and \code{to} columns of \code{graph} may be either single
+#' The `from` and `to` columns of `graph` may be either single
 #' columns of numeric or character values specifying the numbers or names of
 #' graph vertices, or combinations to two columns specifying geographical
 #' (longitude and latitude) coordinates. In the latter case, almost any sensible
-#' combination of names will be accepted (for example, \code{fromx, fromy},
-#' \code{from_x, from_y}, or \code{fr_lat, fr_lon}.)
+#' combination of names will be accepted (for example, `fromx, fromy`,
+#' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' \code{from} and \code{to} values can be either two-column matrices of
+#' `from` and `to` values can be either two-column matrices of
 #' equivalent of longitude and latitude coordinates, or else single columns
-#' precisely matching node numbers or names given in \code{graph$from} or
-#' \code{graph$to}. If \code{to} is missing, pairwise distances are calculated
-#' between all points specified in \code{from}. If neither \code{from} nor
-#' \code{to} are specified, pairwise distances are calculated between all nodes
-#' in \code{graph}.
+#' precisely matching node numbers or names given in `graph$from` or
+#' `graph$to`. If `to` is missing, pairwise distances are calculated
+#' between all points specified in `from`. If neither `from` nor
+#' `to` are specified, pairwise distances are calculated between all nodes
+#' in `graph`.
 #'
 #' @export
 #' @examples
@@ -59,7 +59,7 @@
 #' to <- sample (graph$to_id, size = 50)
 #' dp <- dodgr_paths (graph, from = from, to = to)
 #' # dp is a list with 100 items, and each of those 100 items has 30 items, each
-#' # of which is a single path listing all vertiex IDs as taken from \code{graph}.
+#' # of which is a single path listing all vertiex IDs as taken from `graph`.
 #'
 #' # it is also possible to calculate paths between pairwise start and end
 #' # points

@@ -10,12 +10,12 @@ null_to_na <- function (x)
 #' Identify the essential columns of the graph table (data.frame, tibble,
 #' whatever) to be analysed in the C++ routines.
 #'
-#' @param graph A \code{data.frame} containing the edges of the graph
+#' @param graph A `data.frame` containing the edges of the graph
 #' @param components If FALSE, components are not calculated (will generally
 #' result in faster processing).
-#' @return A named vector of column numbers of \code{edge_id}, \code{from},
-#' \code{to}, \code{d}, \code{w}, \code{xfr}, \code{yfr}, \code{xto},
-#' \code{yto}, and \code{component}, some of which may be NA.
+#' @return A named vector of column numbers of `edge_id`, `from`,
+#' `to`, `d`, `w`, `xfr`, `yfr`, `xto`,
+#' `yto`, and `component`, some of which may be NA.
 #'
 #' @noRd
 dodgr_graph_cols <- function (graph)
@@ -110,12 +110,12 @@ convert_graph <- function (graph, gr_cols)
 #' Extract vertices of graph, including spatial coordinates if included
 #'
 #' @param graph A flat table of graph edges. Must contain columns labelled
-#' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
+#' `from` and `to`, or `start` and `stop`. May also contain
 #' similarly labelled columns of spatial coordinates (for example
-#' \code{from_x}) or \code{stop_lon}).
-#' @return A \code{data.frame} of vertices with unique numbers (\code{n}).
+#' `from_x`) or `stop_lon`).
+#' @return A `data.frame` of vertices with unique numbers (`n`).
 #'
-#' @note Values of \code{n} are 0-indexed
+#' @note Values of `n` are 0-indexed
 #'
 #' @export
 #' @examples
@@ -160,11 +160,11 @@ dodgr_vertices <- function (graph)
 
 #' dodgr_components
 #'
-#' Identify connected components of graph and add corresponding \code{component}
-#' column to \code{data.frame}.
+#' Identify connected components of graph and add corresponding `component`
+#' column to `data.frame`.
 #'
-#' @param graph A \code{data.frame} of edges
-#' @return Equivalent graph with additional \code{component} column,
+#' @param graph A `data.frame` of edges
+#' @return Equivalent graph with additional `component` column,
 #' sequentially numbered from 1 = largest component.
 #' @export
 #' @examples
@@ -195,15 +195,15 @@ dodgr_components <- function (graph)
 #' Sample a random but connected sub-component of a graph
 #'
 #' @param graph A flat table of graph edges. Must contain columns labelled
-#' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
+#' `from` and `to`, or `start` and `stop`. May also contain
 #' similarly labelled columns of spatial coordinates (for example
-#' \code{from_x}) or \code{stop_lon}).
+#' `from_x`) or `stop_lon`).
 #' @param nverts Number of vertices to sample
 #'
-#' @return A connected sub-component of \code{graph}
+#' @return A connected sub-component of `graph`
 #'
-#' @note Graphs may occassionally have \code{nverts + 1} vertices, rather than
-#' the requested \code{nverts}.
+#' @note Graphs may occassionally have `nverts + 1` vertices, rather than
+#' the requested `nverts`.
 #'
 #' @export
 #' @examples

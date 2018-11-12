@@ -2,7 +2,7 @@
 #'
 #' Calculate matrix of pair-wise distances between points.
 #'
-#' @param graph \code{data.frame} or equivalent object representing the network
+#' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which route distances are to
 #' be calculated (see Details)
@@ -10,44 +10,44 @@
 #' calculated (see Details)
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
-#' @param expand Only when \code{graph} not given, the multiplicative factor by
+#' @param expand Only when `graph` not given, the multiplicative factor by
 #' which to expand the street network surrounding the points defined by
-#' \code{from} and/or \code{to}.
+#' `from` and/or `to`.
 #' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
-#' @param parallel If \code{TRUE}, perform routing calculation in parallel (see
+#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
+#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param parallel If `TRUE`, perform routing calculation in parallel (see
 #' details)
-#' @param quiet If \code{FALSE}, display progress messages on screen.
+#' @param quiet If `FALSE`, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
-#' @note \code{graph} must minimally contain three columns of \code{from},
-#' \code{to}, \code{dist}. If an additional column named \code{weight} or
-#' \code{wt} is present, shortest paths are calculated according to values
-#' specified in that column; otherwise according to \code{dist} values. Either
-#' way, final distances between \code{from} and \code{to} points are calculated
-#' according to values of \code{dist}. That is, paths between any pair of points
-#' will be calculated according to the minimal total sum of \code{weight}
+#' @note `graph` must minimally contain three columns of `from`,
+#' `to`, `dist`. If an additional column named `weight` or
+#' `wt` is present, shortest paths are calculated according to values
+#' specified in that column; otherwise according to `dist` values. Either
+#' way, final distances between `from` and `to` points are calculated
+#' according to values of `dist`. That is, paths between any pair of points
+#' will be calculated according to the minimal total sum of `weight`
 #' values (if present), while reported distances will be total sums of
-#' \code{dist} values.
+#' `dist` values.
 #'
-#' The \code{from} and \code{to} columns of \code{graph} may be either single
+#' The `from` and `to` columns of `graph` may be either single
 #' columns of numeric or character values specifying the numbers or names of
 #' graph vertices, or combinations to two columns specifying geographical
 #' (longitude and latitude) coordinates. In the latter case, almost any sensible
-#' combination of names will be accepted (for example, \code{fromx, fromy},
-#' \code{from_x, from_y}, or \code{fr_lat, fr_lon}.)
+#' combination of names will be accepted (for example, `fromx, fromy`,
+#' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' \code{from} and \code{to} values can be either two-column matrices of
+#' `from` and `to` values can be either two-column matrices of
 #' equivalent of longitude and latitude coordinates, or else single columns
-#' precisely matching node numbers or names given in \code{graph$from} or
-#' \code{graph$to}. If \code{to} is missing, pairwise distances are calculated
-#' between all points specified in \code{from}. If neither \code{from} nor
-#' \code{to} are specified, pairwise distances are calculated between all nodes
-#' in \code{graph}.
+#' precisely matching node numbers or names given in `graph$from` or
+#' `graph$to`. If `to` is missing, pairwise distances are calculated
+#' between all points specified in `from`. If neither `from` nor
+#' `to` are specified, pairwise distances are calculated between all nodes
+#' in `graph`.
 #'
-#' Calculations in parallel (\code{parallel = TRUE}) ought very generally be
+#' Calculations in parallel (`parallel = TRUE`) ought very generally be
 #' advantageous. For small graphs, Calculating distances in parallel is likely
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
@@ -60,12 +60,12 @@
 #'                      d = c (1, 2, 1, 3, 2, 1, 2, 1))
 #' dodgr_dists (graph)
 #'
-#' # A larger example from the included \code{\link{hampi}} data.
+#' # A larger example from the included [hampi()] data.
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 100)
 #' to <- sample (graph$to_id, size = 50)
 #' d <- dodgr_dists (graph, from = from, to = to)
-#' # d is a 100-by-50 matrix of distances between \code{from} and \code{to}
+#' # d is a 100-by-50 matrix of distances between `from` and `to`
 #'
 #' \dontrun{
 #' # a more complex street network example, thanks to @chrijo; see
@@ -162,11 +162,11 @@ dodgr_distances <- function (graph, from, to, wt_profile = "bicycle", expand = 0
 
 #' get_index_id_cols
 #'
-#' Get an index of \code{pts} matching \code{vert_map}, as well as the
-#' corresonding names of those \code{pts}
+#' Get an index of `pts` matching `vert_map`, as well as the
+#' corresonding names of those `pts`
 #'
-#' @return list of \code{index}, which is 0-based for C++, and corresponding
-#' \code{id} values.
+#' @return list of `index`, which is 0-based for C++, and corresponding
+#' `id` values.
 #' @noRd
 get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 {
@@ -192,8 +192,8 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 #' get_id_cols
 #'
 #' Get the ID columns from a matrix or data.frame of from or to points
-#' @param pts The \code{from} or \code{to} args passed to \code{dodgr_dists}
-#' @return Character vector of names of points, if they exist in \code{pts}
+#' @param pts The `from` or `to` args passed to `dodgr_dists`
+#' @return Character vector of names of points, if they exist in `pts`
 #' @noRd
 get_id_cols <- function (pts)
 {
@@ -229,14 +229,14 @@ make_vert_map <- function (graph, gr_cols)
 
 #' get_pts_index
 #'
-#' Convert \code{from} or \code{to} args of \code{dodgr_dists} to indices into
-#' \code{vert_map}
+#' Convert `from` or `to` args of `dodgr_dists` to indices into
+#' `vert_map`
 #'
-#' @param vert_map Two-column \code{data.frame} of unique vertices and
-#' corresponding IDs, obtained from \code{make_vert_map}
+#' @param vert_map Two-column `data.frame` of unique vertices and
+#' corresponding IDs, obtained from `make_vert_map`
 #' @param xy List of x (longitude) and y (latitude) coordinates of all vertices
-#' in \code{vert_map}
-#' @param pts Either a vector of names, or a matrix or \code{data.frame} of
+#' in `vert_map`
+#' @param pts Either a vector of names, or a matrix or `data.frame` of
 #' arbitrary geographical coordinates for which to get index into vertices of
 #' graph.
 #'
@@ -302,8 +302,8 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
 #' get_heap
 #'
 #' Match the heap arg and convert graph is necessary (for Radix)
-#' @param heap Name of heap as passed to \code{dodgr_dists}
-#' @param graph \code{data.frame} of graph edges
+#' @param heap Name of heap as passed to `dodgr_dists`
+#' @param graph `data.frame` of graph edges
 #' @return List of matched heap arg and potentially converted graph
 #' @noRd
 get_heap <- function (heap, graph)
@@ -328,13 +328,13 @@ get_heap <- function (heap, graph)
 
 #' graph_from_pts
 #'
-#' Download a street network when \code{graph} not passed to \code{dodgr_dists},
+#' Download a street network when `graph` not passed to `dodgr_dists`,
 #' by using the lists of from and to points.
-#' @param from Arg passed to \code{dodgr_dists}
-#' @param to Arg passed to \code{dodgr_dists}
+#' @param from Arg passed to `dodgr_dists`
+#' @param to Arg passed to `dodgr_dists`
 #' @param expand Factor by which street network is to be expanded beyond range
-#' of \code{from} and \code{to} points.
-#' @return Converted graph as \code{data.frame}
+#' of `from` and `to` points.
+#' @return Converted graph as `data.frame`
 #' @noRd
 graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
                             quiet = TRUE)
