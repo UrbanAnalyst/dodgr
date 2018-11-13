@@ -2,13 +2,13 @@
 #'
 #' Map the output of \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 #'
-#' @param net A street network with a \code{flow} column obtained from
+#' @param net A street network with a `flow` column obtained from
 #' \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 #' @param bbox If given, scale the map to this bbox, otherwise use entire extend
-#' of \code{net}
+#' of `net`
 #' @param linescale Maximal thickness of plotted lines
 #'
-#' @note \code{net} should be first passed through \code{merge_directed_flows}
+#' @note `net` should be first passed through `merge_directed_flows`
 #' prior to plotting, otherwise lines for different directions will be overlaid.
 #' @export
 #' @examples

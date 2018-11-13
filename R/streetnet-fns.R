@@ -1,25 +1,25 @@
 #' dodgr_streetnet
 #'
-#' Use the \code{osmdata} package to extract the street network for a given
-#' location. For routing between a given set of points (passed as \code{pts}),
-#' the \code{bbox} argument may be omitted, in which case a bounding box will
-#' be constructed by expanding the range of \code{pts} by the relative amount of
-#' \code{expand}.
+#' Use the `osmdata` package to extract the street network for a given
+#' location. For routing between a given set of points (passed as `pts`),
+#' the `bbox` argument may be omitted, in which case a bounding box will
+#' be constructed by expanding the range of `pts` by the relative amount of
+#' `expand`.
 #'
 #' @param bbox Bounding box as vector or matrix of coordinates, or location
-#' name. Passed to \code{osmdata::getbb}.
+#' name. Passed to `osmdata::getbb`.
 #' @param pts List of points presumably containing spatial coordinates
 #' @param expand Relative factor by which street network should extend beyond
-#' limits defined by pts (only if \code{bbox} not given).
-#' @param quiet If \code{FALSE}, display progress messages
-#' @return A Simple Features (\code{sf}) object with coordinates of all lines in
+#' limits defined by pts (only if `bbox` not given).
+#' @param quiet If `FALSE`, display progress messages
+#' @return A Simple Features (`sf`) object with coordinates of all lines in
 #' the street network.
 #'
 #' @export
 #' @examples
 #' \dontrun{
 #' streetnet <- dodgr_streetnet ("hampi india", expand = 0)
-#' # convert to form needed for \code{dodgr} functions:
+#' # convert to form needed for `dodgr` functions:
 #' graph <- weight_streetnet (streetnet)
 #' nrow (graph) # 5,742 edges
 #' # Alternative ways of extracting street networks by using a small selection of
@@ -109,29 +109,29 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 
 #' weight_streetnet
 #'
-#' Weight (or re-weight) an \code{sf}-formatted OSM street network according to
+#' Weight (or re-weight) an `sf`-formatted OSM street network according to
 #' a named routino profile, selected from (foot, horse, wheelchair, bicycle,
 #' moped, motorcycle, motorcar, goods, hgv, psv).
 #'
-#' @param x A street network represented as \code{sf} \code{LINESTRING}
-#' objects, typically extracted with \code{dodgr_streetnet}
+#' @param x A street network represented as `sf` `LINESTRING`
+#' objects, typically extracted with `dodgr_streetnet`
 #' @param wt_profile Name of weighting profile, or vector of values with names
-#' corresponding to names in \code{type_col} (see Details)
-#' @param type_col Specify column of the \code{sf} \code{data.frame} object
+#' corresponding to names in `type_col` (see Details)
+#' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of highways to be used for weighting
-#' (default works with \code{osmdata} objects).
-#' @param id_col Specify column of the code{sf} \code{data.frame} object which
+#' (default works with `osmdata` objects).
+#' @param id_col Specify column of the code{sf} `data.frame` object which
 #' provides unique identifiers for each highway (default works with
-#' \code{osmdata} objects).
-#' @param keep_cols Vectors of columns from \code{sf_lines} to be kept in the
-#' resultant \code{dodgr} network; vector can be either names or indices of
+#' `osmdata` objects).
+#' @param keep_cols Vectors of columns from `sf_lines` to be kept in the
+#' resultant `dodgr` network; vector can be either names or indices of
 #' desired columns.
 #'
-#' @return A \code{data.frame} of edges representing the street network, along
+#' @return A `data.frame` of edges representing the street network, along
 #' with a column of graph component numbers.
 #'
-#' @note Names for the \code{wt_profile} parameter are taken from
-#' \link{weighting_profiles}, which is a \code{data.frame} of weights for
+#' @note Names for the `wt_profile` parameter are taken from
+#' \link{weighting_profiles}, which is a `data.frame` of weights for
 #' different modes of transport. Current modes included there are "bicycle",
 #' "foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
 #' and "wheelchair". Railway routing can be implemented with
@@ -154,14 +154,14 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' dim (net) # 406 11; 406 streets
 #'
 #' # An example for a generic (non-OSM) highway, represented as the
-#' # \code{routes_fast} object of the \pkg{stplanr} package, which is a
+#' # `routes_fast` object of the \pkg{stplanr} package, which is a
 #' # SpatialLinesDataFrame.
 #' \dontrun{
 #' library (stplanr)
 #' # merge all of the 'routes_fast' lines into a single network
 #' r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 #' r <- sf::st_as_sf (r)
-#' # We need to specify both a \code{type} and \code{id} column for the
+#' # We need to specify both a `type` and `id` column for the
 #' # \link{weight_streetnet} function.
 #' r$type <- 1
 #' r$id <- seq (nrow (r))
@@ -399,28 +399,28 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
 
 #' weight_railway
 #'
-#' Weight (or re-weight) an \code{sf}-formatted OSM street network for routing
+#' Weight (or re-weight) an `sf`-formatted OSM street network for routing
 #' along railways.
 #'
-#' @param sf_lines A street network represented as \code{sf} \code{LINESTRING}
-#' objects, typically extracted with \code{dodgr_streetnet}
-#' @param type_col Specify column of the \code{sf} \code{data.frame} object
+#' @param sf_lines A street network represented as `sf` `LINESTRING`
+#' objects, typically extracted with `dodgr_streetnet`
+#' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of railways to be used for weighting
-#' (default works with \code{osmdata} objects).
-#' @param id_col Specify column of the code{sf} \code{data.frame} object which
+#' (default works with `osmdata` objects).
+#' @param id_col Specify column of the code{sf} `data.frame` object which
 #' provides unique identifiers for each railway (default works with
-#' \code{osmdata} objects).
-#' @param keep_cols Vectors of columns from \code{sf_lines} to be kept in the
-#' resultant \code{dodgr} network; vector can be either names or indices of
+#' `osmdata` objects).
+#' @param keep_cols Vectors of columns from `sf_lines` to be kept in the
+#' resultant `dodgr` network; vector can be either names or indices of
 #' desired columns.
 #' @param excluded Types of railways to exclude from routing.
 #'
-#' @return A \code{data.frame} of edges representing the rail network, along
+#' @return A `data.frame` of edges representing the rail network, along
 #' with a column of graph component numbers.
 #'
 #' @note Default railway weighting is by distance. Other weighting schemes, such
 #' as by maximum speed, can be implemented simply by modifying the
-#' \code{d_weighted} column returned by this function accordingly.
+#' `d_weighted` column returned by this function accordingly.
 #'
 #' @examples
 #' \dontrun{
@@ -508,23 +508,23 @@ weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
 
 #' dodgr_to_sfc
 #'
-#' Convert a \code{dodgr} graph into a \code{list} composed of
-#' two objects: \code{dat}, a \code{data.frame}; and
-#' \code{geometry}, an \code{sfc} object from the (\pkg{sf}) package.
-#' Works by aggregating edges into \code{LINESTRING}
+#' Convert a `dodgr` graph into a `list` composed of
+#' two objects: `dat`, a `data.frame`; and
+#' `geometry`, an `sfc` object from the (\pkg{sf}) package.
+#' Works by aggregating edges into `LINESTRING`
 #' objects representing longest sequences between all junction nodes. The
-#' resultant objects will generally contain more \code{LINESTRING} objects than
+#' resultant objects will generally contain more `LINESTRING` objects than
 #' the original \pkg{sf} object, because the former will be bisected at every
 #' junction point.
 #'
 #' @param net A \pkg{dodgr} network
-#' @return A list containing (1) A \code{data.frame} of data associated with the
-#' `sf` geometries; and (ii) A Simple Features Collection (\code{sfc}) list of
-#' \code{LINESTRING} objects.
+#' @return A list containing (1) A `data.frame` of data associated with the
+#' `sf` geometries; and (ii) A Simple Features Collection (`sfc`) list of
+#' `LINESTRING` objects.
 #'
 #' @note The output of this function corresponds to the edges obtained from
-#' \code{dodgr_contract_graph}. An \pkg{sf} \code{data.frame} may be created by
-#' appending any data from the latter to the \code{sfc} output of this function -
+#' `dodgr_contract_graph`. An \pkg{sf} `data.frame` may be created by
+#' appending any data from the latter to the `sfc` output of this function -
 #' see \pkg{sf} for details.
 #'
 #' @export

@@ -4,15 +4,15 @@
 #' vertices.
 #'
 #' @param graph A flat table of graph edges. Must contain columns labelled
-#' \code{from} and \code{to}, or \code{start} and \code{stop}. May also contain
+#' `from` and `to`, or `start` and `stop`. May also contain
 #' similarly labelled columns of spatial coordinates (for example
-#' \code{from_x}) or \code{stop_lon}).
+#' `from_x`) or `stop_lon`).
 #' @param verts Optional list of vertices to be retained as routing points.
-#' These must match the \code{from_id} and \code{to_id} columns of \code{graph}.
+#' These must match the `from_id` and `to_id` columns of `graph`.
 #'
-#' @return A list of two items: \code{graph} containing contracted version of
-#' the original \code{graph}, converted to a standardised format, and
-#' \code{edge_map}, a two-column matrix mapping all newly contracted edges onto
+#' @return A list of two items: `graph` containing contracted version of
+#' the original `graph`, converted to a standardised format, and
+#' `edge_map`, a two-column matrix mapping all newly contracted edges onto
 #' corresponding edges in original (uncontracted) graph.
 #' @export
 #' @examples

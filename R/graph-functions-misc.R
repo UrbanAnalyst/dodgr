@@ -3,8 +3,8 @@
 #' is_graph_spatial
 #'
 #' Is the graph spatial or not?
-#' @param graph A \code{data.frame} of edges
-#' @return \code{TRUE} is \code{graph} is spatial, otherwise \code{FALSE}
+#' @param graph A `data.frame` of edges
+#' @return `TRUE` is `graph` is spatial, otherwise `FALSE`
 #' @noRd
 is_graph_spatial <- function (graph)
 {
@@ -87,8 +87,8 @@ find_xy_col <- function (graph, indx, x = TRUE)
 
 #' find_spatial_cols
 #'
-#' @return \code{fr_col} and \code{to_col} as vectors of 2 values of \code{x}
-#' then \code{y} coordinates
+#' @return `fr_col` and `to_col` as vectors of 2 values of `x`
+#' then `y` coordinates
 #'
 #' @noRd
 find_spatial_cols <- function (graph)
@@ -159,7 +159,7 @@ find_w_col <- function (graph)
 #'
 #' Find the x and y cols of a simple data.frame of verts of xy points (used only
 #' in match_pts_to_graph).
-#' @param dfr Either the result of \code{dodgr_vertices}, or a \code{data.frame}
+#' @param dfr Either the result of `dodgr_vertices`, or a `data.frame`
 #' or equivalent structure (matrix, \pkg{tibble}) of spatial points.
 #' @return Vector of two values of location of x and y columns
 #' @noRd
@@ -190,13 +190,13 @@ find_xy_col_simple <- function (dfr)
 #'
 #' Match spatial points to a spatial graph which contains vertex coordindates
 #'
-#' @param verts A \code{data.frame} of vertices obtained from
-#' \code{dodgr_vertices(graph)}.
+#' @param verts A `data.frame` of vertices obtained from
+#' `dodgr_vertices(graph)`.
 #' @param xy coordinates of points to be matched to the vertices, either as
-#' matrix or \pkg{sf}-formatted \code{data.frame}.
+#' matrix or \pkg{sf}-formatted `data.frame`.
 #' @param connected Should points be matched to the same (largest) connected
-#' component of graph? If \code{FALSE} and these points are to be used for a
-#' \code{dodgr} routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
+#' component of graph? If `FALSE` and these points are to be used for a
+#' `dodgr` routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
 #' \link{dodgr_flows_aggregate}), then results may not be returned if points are
 #' not part of the same connected component. On the other hand, forcing them to
 #' be part of the same connected component may decrease the spatial accuracy of

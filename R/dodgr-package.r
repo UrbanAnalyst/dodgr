@@ -10,33 +10,33 @@
 #'
 #' @section The Main Function:
 #' \itemize{
-#' \item \code{\link{dodgr_dists}}: Calculate pair-wise distances between
+#' \item [dodgr_dists()]: Calculate pair-wise distances between
 #' specified pairs of points in a graph.
 #' }
 #'
 #' @section Functions to Obtain Graphs:
 #' \itemize{
-#' \item \code{\link{dodgr_streetnet}}: Extract a street network in Simple
-#' Features (\code{sf}) form.
-#' \item \code{\link{weight_streetnet}}: Convert an \code{sf}-formatted street
-#' network to a \code{dodgr} graph through applying specified weights to all
+#' \item [dodgr_streetnet()]: Extract a street network in Simple
+#' Features (`sf`) form.
+#' \item [weight_streetnet()]: Convert an `sf`-formatted street
+#' network to a `dodgr` graph through applying specified weights to all
 #' edges.
 #' }
 #'
 #' @section Functions to Modify Graphs:
 #' \itemize{
-#' \item \code{\link{dodgr_components}}: Number all graph edges according to
+#' \item [dodgr_components()]: Number all graph edges according to
 #' their presence in distinct connected components.
-#' \item \code{\link{dodgr_contract_graph}}: Contract a graph by removing
+#' \item [dodgr_contract_graph()]: Contract a graph by removing
 #' redundant edges.
 #' }
 #'
 #' @section Miscellaneous Functions:
 #' \itemize{
-#' \item \code{\link{dodgr_sample}}: Randomly sample a graph, returning a single
+#' \item [dodgr_sample()]: Randomly sample a graph, returning a single
 #' connected component of a defined number of vertices.
-#' \item \code{\link{dodgr_vertices}}: Extract all vertices of a graph.
-#' \item \code{\link{compare_heaps}}: Compare the performance of different
+#' \item [dodgr_vertices()]: Extract all vertices of a graph.
+#' \item [compare_heaps()]: Compare the performance of different
 #' priority queue heap structures for a given type of graph.
 #' }
 #'
@@ -64,9 +64,9 @@ NULL
 #' @name weighting_profiles
 #' @docType data
 #' @keywords datasets
-#' @format \code{data.frame} with profile names, means of transport and
+#' @format `data.frame` with profile names, means of transport and
 #' weights.
-#' @references \url{https://www.routino.org/xml/routino-profiles.xml}
+#' @references <https://www.routino.org/xml/routino-profiles.xml>
 NULL
 
 #' hampi
@@ -76,7 +76,7 @@ NULL
 #' @name hampi
 #' @docType data
 #' @keywords datasets
-#' @format A Simple Features \code{sf} \code{data.frame} containing the street
+#' @format A Simple Features `sf` `data.frame` containing the street
 #' network of Hampi.
 #'
 #' @note Can be re-created with the following command, which also removes 
@@ -97,11 +97,11 @@ NULL
 #' @name os_roads_bristol
 #' @docType data
 #' @keywords datasets
-#' @format A Simple Features \code{sf} \code{data.frame} representing
+#' @format A Simple Features `sf` `data.frame` representing
 #' motorways in Bristol, UK.
 #'
 #' @note Input data downloaded from 
-#' \url{https://www.ordnancesurvey.co.uk/opendatadownload/products.html}.
+#' <https://www.ordnancesurvey.co.uk/opendatadownload/products.html>.
 #' To download the data from that page click on the tick box next to
 #' 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
 #' the form on the subsequent page.

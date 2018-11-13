@@ -44,29 +44,29 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' dodgr_flows_aggregate
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
-#' between all pairs of \code{from} and \code{to} points.
+#' between all pairs of `from` and `to` points.
 #'
-#' @param graph \code{data.frame} or equivalent object representing the network
+#' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which aggregate flows are to
 #' be calculated (see Details)
 #' @param to Vector or matrix of points **to** which aggregate flows are to be
 #' calculated (see Details)
-#' @param flows Matrix of flows with \code{nrow(flows)==length(from)} and
-#' \code{ncol(flows)==length(to)}.
+#' @param flows Matrix of flows with `nrow(flows)==length(from)` and
+#' `ncol(flows)==length(to)`.
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-#' only used if \code{graph} is not provided, in which case a street network is
+#' only used if `graph` is not provided, in which case a street network is
 #' downloaded and correspondingly weighted).
-#' @param contract If \code{TRUE}, calculate flows on contracted graph before
+#' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
 #' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
-#' @param quiet If \code{FALSE}, display progress messages on screen.
-#' @return Modified version of graph with additonal \code{flow} column added.
+#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
+#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param quiet If `FALSE`, display progress messages on screen.
+#' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -100,7 +100,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' }
 #'
 #' # An example of flow aggregation across a generic (non-OSM) highway,
-#' # represented as the \code{routes_fast} object of the \pkg{stplanr} package,
+#' # represented as the `routes_fast` object of the \pkg{stplanr} package,
 #' # which is a SpatialLinesDataFrame containing commuter densities along
 #' # components of a street network.
 #' \dontrun{
@@ -109,7 +109,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 #' r <- sf::st_as_sf (r)
 #' # then extract the start and end points of each of the original 'routes_fast'
-#' # lines and use these for routing with \code{dodgr}
+#' # lines and use these for routing with `dodgr`
 #' l <- lapply (routes_fast@lines, function (i)
 #'              c (sp::coordinates (i) [[1]] [1, ],
 #'                 tail (sp::coordinates (i) [[1]], 1)))
@@ -118,7 +118,7 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' xy_end <- l [, 3:4]
 #' # Then just specify a generic OD matrix with uniform values of 1:
 #' flows <- matrix (1, nrow = nrow (l), ncol = nrow (l))
-#' # We need to specify both a \code{type} and \code{id} column for the
+#' # We need to specify both a `type` and `id` column for the
 #' # \link{weight_streetnet} function.
 #' r$type <- 1
 #' r$id <- seq (nrow (r))
@@ -205,25 +205,25 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #' Disperse flows throughout a network based on a input vectors of origin points
 #' and associated densities
 #'
-#' @param graph \code{data.frame} or equivalent object representing the network
+#' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which aggregate dispersed
 #' flows are to be calculated (see Details)
-#' @param dens Vectors of densities correponsing to the \code{from} points
+#' @param dens Vectors of densities correponsing to the `from` points
 #' @param wt_profile Name of weighting profile for street networks (one of foot,
 #' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
-#' @param contract If \code{TRUE}, calculate flows on contracted graph before
+#' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
 #' @param k Width coefficient of exponential diffusion function defined as
-#' \code{exp(-d/k)}.  If value of \code{k<0} is given, a standard logistic
+#' `exp(-d/k)`.  If value of `k<0` is given, a standard logistic
 #' polynomial will be used.
 #' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-#' \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-#' (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).
-#' @param quiet If \code{FALSE}, display progress messages on screen.
-#' @return Modified version of graph with additonal \code{flow} column added.
+#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
+#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param quiet If `FALSE`, display progress messages on screen.
+#' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @export
 #' @examples
@@ -297,7 +297,7 @@ dodgr_flows_disperse <- function (graph, from, dens, wt_profile = "bicycle",
 #' undirected form through reducing all pairs of directed edges to a single
 #' edge, and aggregating flows from both directions.
 #'
-#' @param graph A graph containing a \code{flow} column as returned from
+#' @param graph A graph containing a `flow` column as returned from
 #' \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 #' @return An equivalent graph in which all directed edges have been reduced to
 #' single, undirected edges, and all directed flows aggregated to undirected
