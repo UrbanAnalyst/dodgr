@@ -193,6 +193,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     if (!is (x, "sf"))
         stop ('x must be class "sf"')
     geom_column <- get_sf_geom_col (x)
+    attr (x, "sf_column") <- geom_column
 
     if (type_col != "highway")
         names (x) [which (names (x) == type_col)] <- "highway"
