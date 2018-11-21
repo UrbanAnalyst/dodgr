@@ -1,4 +1,4 @@
-context("dodgr")
+context("dodgr graph functions")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
@@ -151,4 +151,19 @@ test_that ("railway", {
     expect_silent (g0 <- weight_railway (hampi, type_col = "highway",
                                          keep_cols = NULL))
     expect_identical (g0$d, g0$d_weighted)
+})
+
+test_that ("points to graph", {
+    bb <- attr (hampi$geometry, "bbox")
+    n <- 100
+    x <- bb [1] + (bb [3] - bb [1]) * runif (n)
+    y <- bb [2] + (bb [4] - bb [2]) * runif (n)
+    pts <- data.frame (x = x, y = y)
+    net <- weight_streetnet (hampi)
+    expect_message (index1 <- match_pts_to_graph (net, pts),
+                    "First argument to match_pts_to_graph should be result of dodgr_vertices")
+
+    v <- dodgr_vertices (net)
+    expect_silent (index2 <- match_pts_to_graph (v, pts))
+    expect_identical (index1, index2)
 })

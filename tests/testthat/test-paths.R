@@ -1,4 +1,4 @@
-context("dodgr")
+context("dodgr_paths")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))

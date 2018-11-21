@@ -222,6 +222,13 @@ find_xy_col_simple <- function (dfr)
 #' pts # names of those vertices
 match_pts_to_graph <- function (verts, xy, connected = FALSE)
 {
+    if (!identical (names (verts), c ("id", "x", "y", "component", "n")))
+    {
+        message ("First argument to match_pts_to_graph should be result of ",
+                 "dodgr_vertices;\npresuming you've submitted the network itself ",
+                 "and will now try extracting the vertices")
+        verts <- dodgr_vertices (verts)
+    }
     if (!(is.matrix (xy) | is.data.frame (xy)))
         stop ("xy must be a matrix or data.frame")
     if (!is (xy, "sf"))
@@ -257,3 +264,14 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE)
     # rcpp_points_index is 0-indexed, so ...
     indx [rcpp_points_index_par (verts, xy) + 1]
 }
+
+#' match_points_to_graph
+#'
+#' Alias for \link{match_points_to_graph}
+#' @inherit match_pts_to_graph
+#' @export
+match_points_to_graph <- function (verts, xy, connected = FALSE)
+{
+    match_pts_to_graph (verts, xy, connected = FALSE)
+}
+
