@@ -190,8 +190,6 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL)
 {
-    if (!is (x, "sf"))
-        stop ('x must be class "sf"')
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
@@ -228,6 +226,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
         names (x [geom_column]) <- x$osm_id
     # Then rename geom_column to "geometry" for the C++ routine
     names (x) [match (geom_column, names (x))] <- "geometry"
+    attr (x, "sf_column") <- "geometry"
 
     if (is.character (wt_profile))
     {
@@ -403,6 +402,7 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     {
         keep_names <- keep_cols
         keep_cols <- match (keep_cols, names (sf_lines))
+        # NA is no keep_cols match 
     } else if (is.numeric (keep_cols))
     {
         keep_names <- names (sf_lines) [keep_cols]
@@ -410,10 +410,19 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     {
         stop ("keep_cols must be either character or numeric")
     }
-    indx <- match (graph$geom_num, seq (sf_lines$geometry))
-    for (k in seq (keep_names))
-        graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
-                                               drop = TRUE]
+    indx <- which (is.na (keep_cols))
+    if (length (indx) > 0)
+        message ("Data has no columns named ",
+                 paste0 (keep_names, collapse = ", "))
+    keep_cols <- keep_cols [!is.na (keep_cols)]
+    if (length (keep_cols) > 0)
+    {
+        indx <- match (graph$geom_num, seq (sf_lines$geometry))
+        if (!is.na (keep_cols))
+            for (k in seq (keep_names))
+                graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
+                                                       drop = TRUE]
+    }
 
     return (graph)
 }
@@ -460,8 +469,8 @@ weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
 {
     if (!is (sf_lines, "sf"))
         stop ('sf_lines must be class "sf"')
-    if (!"geometry" %in% names (sf_lines))
-        stop (paste0 ('sf_lines must be class "sf" and have a geometry column'))
+    geom_column <- get_sf_geom_col (sf_lines)
+    attr (sf_lines, "sf_column") <- geom_column
 
     if (type_col != "railway")
         names (sf_lines) [which (names (sf_lines) == type_col)] <- "railway"
@@ -469,9 +478,9 @@ weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
         names (sf_lines) [which (names (sf_lines) == id_col)] <- "osm_id"
 
     if (!"railway" %in% names (sf_lines))
-        stop ("Please specify type_col to be used for weighting streetnet")
+        stop ("Please specify type_col to be used for weighting railway")
     if (!"osm_id" %in% names (sf_lines))
-        stop ("Please specifiy id_col to be used to identify streetnet rows")
+        stop ("Please specifiy id_col to be used to identify railway rows")
 
     if (is.null (names (sf_lines$geometry)))
         names (sf_lines$geometry) <- sf_lines$osm_id

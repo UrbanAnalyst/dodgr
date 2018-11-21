@@ -147,9 +147,12 @@ find_d_col <- function (graph)
 
 find_w_col <- function (graph)
 {
-    w_col <- which (tolower (substring (names (graph), 1, 1)) == "w" |
-                    tolower (substring (names (graph), 1, 2)) == "dw" |
-                    tolower (substring (names (graph), 1, 3)) == "d_w")
+    w_col <- match (c ("w", "wt"), names (graph))
+    if (all (is.na (w_col)) | length (w_col) != 1)
+        w_col <- grep ("weight", names (graph))
+    if (length (w_col) != 1)
+        w_col <- which (tolower (substring (names (graph), 1, 2)) == "dw" |
+                        tolower (substring (names (graph), 1, 3)) == "d_w")
     if (length (w_col) > 1)
         stop ("Unable to determine weight column in graph")
     return (w_col)

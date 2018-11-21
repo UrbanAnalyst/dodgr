@@ -175,7 +175,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     if (!missing (pts))
     {
         index <- get_pts_index (graph, gr_cols, vert_map, pts)
-        if (is.vector (pts) & length (pts == 2) & is.numeric (pts) &
+        if (length (pts == 2) & is.numeric (pts) &
             ( (any (grepl ("x", names (pts), ignore.case = TRUE)) &
              any (grepl ("y", names (pts), ignore.case = TRUE))) |
              (any (grepl ("lon", names (pts), ignore.case = TRUE) &
@@ -281,7 +281,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
                      grepl ("lat", nms, ignore.case = TRUE))
         if (length (ix) != 1 | length (iy) != 1)
             stop (paste0 ("Unable to determine geographical ",
-                          "coordinates in pts"))
+                          "coordinates in from/to"))
 
         # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
         if (any (is.na (gr_cols [7:10])))
@@ -312,11 +312,12 @@ get_heap <- function (heap, graph)
     heap <- match.arg (arg = heap, choices = heaps)
     if (heap == "Radix")
     {
-        dfr <- min (abs (c (graph$d %% 1, graph$d %% 1 - 1)))
+        indx <- which (graph$d > 0)
+        dfr <- min (abs (c (graph$d [indx] %% 1, graph$d  [indx] %% 1 - 1)))
         if (dfr > 1e-6)
         {
             message (paste0 ("RadixHeap can only be implemented for ",
-                             "integer weights;\nall weights will now be ",
+                             "integer weights; all weights will now be ",
                              "rounded"))
             graph$d <- round (graph$d)
             graph$d_weighted <- round (graph$d_weighted)
