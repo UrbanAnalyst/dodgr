@@ -192,8 +192,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 {
     if (!is (x, "sf"))
         stop ('x must be class "sf"')
-    if (!"geometry" %in% names (x))
-        stop (paste0 ('x must be class "sf" and have a geometry column'))
+    geom_column <- get_sf_geom_col (x)
 
     if (type_col != "highway")
         names (x) [which (names (x) == type_col)] <- "highway"
@@ -224,8 +223,10 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
         }
     }
 
-    if (is.null (names (x$geometry)))
-        names (x$geometry) <- x$osm_id
+    if (is.null (names (x [geom_column])))
+        names (x [geom_column]) <- x$osm_id
+    # Then rename geom_column to "geometry" for the C++ routine
+    names (x) [match (geom_column, names (x))] <- "geometry"
 
     if (is.character (wt_profile))
     {
@@ -346,6 +347,25 @@ remap_way_types <- function (sf_lines, wt_profile)
     sf_lines <- sf_lines [indx, ]
 
     return (sf_lines)
+}
+
+# Return the name of the sf geometry column, which this routines permits to be
+# either anything that greps "geom" (so "geom", "geoms", "geometry"), or else
+# just plain "g". See Issue#66.
+get_sf_geom_col <- function (graph)
+{
+    gcol <- grep ("geom", names (graph))
+    if (length (gcol) > 1)
+        stop ("Unable to determine geometry column from [",
+              paste0 (names (graph) [gcol], collapse = ", "), "]")
+    else if (length (gcol) == 0)
+    {
+        gcol <- match ("g", names (graph))
+        if (is.na (gcol) | length (gcol) != 1)
+            stop ("Unable to determine geometry column")
+    }
+
+    return (names (graph) [gcol])
 }
 
 rownames_from_xy <- function (graph)

@@ -141,6 +141,29 @@ test_that("dodgr2sf", {
     expect_true (length (y) > length (hw$geometry))
 })
 
+test_that("different geometry columns", {
+    h2 <- hampi
+    gcol <- grep ("geometry", names (h2))
+    names (h2) [gcol] <- "g"
+    expect_message (net <- weight_streetnet (h2),
+                    "The following highway types are present")
+    h2 <- hampi
+    names (h2) [gcol] <- "geoms"
+    expect_message (net <- weight_streetnet (h2),
+                    "The following highway types are present")
+    h2 <- hampi
+    names (h2) [gcol] <- "geometry"
+    expect_message (net <- weight_streetnet (h2),
+                    "The following highway types are present")
+    h2 <- hampi
+    names (h2) [gcol] <- "xxx"
+    expect_error (net <- weight_streetnet (h2),
+                    "Unable to determine geometry column")
+
+    h2 <- data.frame (hampi) # remove sf class
+    expect_error (net <- weight_streetnet (h2), "Unknown class")
+})
+
 test_that ("flowmap", {
     graph <- weight_streetnet (hampi)
     from <- sample (graph$from_id, size = 10)
