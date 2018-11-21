@@ -17,7 +17,7 @@ NULL
 #' to each contracted edge. These sets aren't in any particular order, but the
 #' two sets may be used to match the from and to vertices. These sets are then
 #' arranged into sequences in the subsequent function,
-#' `order_vert_sequences`.
+#' \code{order_vert_sequences}.
 #' @noRd
 NULL
 
@@ -28,7 +28,7 @@ NULL
 #' @param graph_full Rcpp::DataFrame containing the **full** graph
 #' @param graph_contr Rcpp::DataFrame containing the **contracted** graph
 #' @param edge_map Rcpp::DataFrame containing the edge map returned from
-#' `dodgr_contract_graph`
+#' \code{dodgr_contract_graph}
 #'
 #' @return Rcpp::List object of `sf::LINESTRING` geoms
 #'
@@ -61,9 +61,9 @@ NULL
 #'
 #' @param graph graph to be processed
 #'
-#' @return `Rcpp::List` containing one `data.frame` with the
-#' contracted graph, one `data.frame` with the original graph and one
-#' `data.frame` containing information about the relating edge ids of the
+#' @return \code{Rcpp::List} containing one \code{data.frame} with the
+#' contracted graph, one \code{data.frame} with the original graph and one
+#' \code{data.frame} containing information about the relating edge ids of the
 #' original and contracted graph.
 #'
 #' @noRd
@@ -76,7 +76,7 @@ rcpp_contract_graph <- function(graph, vertlist_in) {
 #' Merge flows in directed graph to form aggregate undirected flows, and return
 #' a corresponding undirected graph useful for visualisation.
 #'
-#' @param graph The result of a call to `dodgr_flows_aggregate/disperse`
+#' @param graph The result of a call to \code{dodgr_flows_aggregate/disperse}
 #' @return A single vector of aggregate flows with non-zero values only for
 #' those edges to be retained in the directed graph.
 #'
@@ -88,7 +88,7 @@ rcpp_merge_flows <- function(graph) {
 #' sample_one_edge_no_comps
 #'
 #' Sample one edge for graph that has no pre-calculated components. Only used
-#' in `sample_one_vertex`
+#' in \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
 #' @return std::vector of 2 elements: [0] with value of largest connected 
@@ -99,7 +99,7 @@ NULL
 #' sample_one_edge_with_comps
 #'
 #' Sample one edge for graph that has pre-calculated components. Only used in
-#' `sample_one_vertex`
+#' \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
 #' @return Random index to one edge that is part of the largest connected
@@ -115,7 +115,7 @@ NULL
 #' @param nverts_to_sample Number of vertices to sample
 #' @param quiet If TRUE, display progress
 #'
-#' @return Smaller sub-set of `graph`
+#' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
 rcpp_sample_graph <- function(graph, nverts_to_sample) {
@@ -125,7 +125,7 @@ rcpp_sample_graph <- function(graph, nverts_to_sample) {
 #' graph_has_components
 #'
 #' Does a graph have a vector of connected component IDs? Only used in
-#' `sample_one_vertex`
+#' \code{sample_one_vertex}
 #' @noRd
 NULL
 
@@ -142,7 +142,7 @@ NULL
 #'
 #' Identify initial graph components for each **vertex**
 #' Identification for edges is subsequently perrformed with 
-#' `rcpp_get_component_vector`.
+#' \code{rcpp_get_component_vector}.
 #'
 #' @param v unordered_map <vertex_id_t, vertex_t>
 #' @param com component map from each vertex to component numbers
@@ -186,11 +186,11 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' @param toi Index into vert_map_in of vertex numbers
 #'
 #' @note The graph is constructed with 0-indexed vertex numbers contained in
-#' code{vert_map_in}. Both `fromi` and `toi` already map directly
+#' code{vert_map_in}. Both \code{fromi} and \code{toi} already map directly
 #' onto these. The graph has to be constructed by first constructing a
-#' `std::map` object (`vertmap`) for `vert_map_in`, then
-#' translating all `graph["from"/"to"]` values into these indices. This
-#' construction is done in `inst_graph`.
+#' \code{std::map} object (\code{vertmap}) for \code{vert_map_in}, then
+#' translating all \code{graph["from"/"to"]} values into these indices. This
+#' construction is done in \code{inst_graph}.
 #'
 #' @noRd
 rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
@@ -234,7 +234,7 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, dirt
 
 #' rcpp_flows_disperse
 #'
-#' Modified version of `rcpp_aggregate_flows` that aggregates flows to all
+#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
 #' destinations from given set of origins, with flows attenuated by distance from
 #' those origins.
 #'
@@ -243,7 +243,7 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, dirt
 #' index of vertices
 #' @param fromi Index into vert_map_in of vertex numbers
 #' @param k Coefficient of (current proof-of-principle-only) exponential
-#' distance decay function.  If value of `k<0` is given, a standard
+#' distance decay function.  If value of \code{k<0} is given, a standard
 #' logistic polynomial will be used.
 #'
 #' @note The flow data to be used for aggregation is a matrix mapping flows
