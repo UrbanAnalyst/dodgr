@@ -11,10 +11,10 @@ dodgr_distances(graph, from, to, wt_profile = "bicycle", expand = 0,
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which route distances are to
+\item{from}{Vector or matrix of points \strong{from} which route distances are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which route distances are to be
+\item{to}{Vector or matrix of points \strong{to} which route distances are to be
 calculated (see Details)}
 
 \item{wt_profile}{Name of weighting profile for street networks (one of foot,
@@ -47,12 +47,12 @@ graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
                      d = c (1, 2, 1, 3, 2, 1, 2, 1))
 dodgr_dists (graph)
 
-# A larger example from the included \\code{\\link{hampi}} data.
+# A larger example from the included [hampi()] data.
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
 to <- sample (graph$to_id, size = 50)
 d <- dodgr_dists (graph, from = from, to = to)
-# d is a 100-by-50 matrix of distances between \\code{from} and \\code{to}
+# d is a 100-by-50 matrix of distances between `from` and `to`
 
 \dontrun{
 # a more complex street network example, thanks to @chrijo; see

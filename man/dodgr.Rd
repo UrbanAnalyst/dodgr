@@ -17,7 +17,7 @@ direct distances.
 \section{The Main Function}{
 
 \itemize{
-\item \code{\link{dodgr_dists}}: Calculate pair-wise distances between
+\item \code{\link[=dodgr_dists]{dodgr_dists()}}: Calculate pair-wise distances between
 specified pairs of points in a graph.
 }
 }
@@ -25,9 +25,9 @@ specified pairs of points in a graph.
 \section{Functions to Obtain Graphs}{
 
 \itemize{
-\item \code{\link{dodgr_streetnet}}: Extract a street network in Simple
+\item \code{\link[=dodgr_streetnet]{dodgr_streetnet()}}: Extract a street network in Simple
 Features (\code{sf}) form.
-\item \code{\link{weight_streetnet}}: Convert an \code{sf}-formatted street
+\item \code{\link[=weight_streetnet]{weight_streetnet()}}: Convert an \code{sf}-formatted street
 network to a \code{dodgr} graph through applying specified weights to all
 edges.
 }
@@ -36,9 +36,9 @@ edges.
 \section{Functions to Modify Graphs}{
 
 \itemize{
-\item \code{\link{dodgr_components}}: Number all graph edges according to
+\item \code{\link[=dodgr_components]{dodgr_components()}}: Number all graph edges according to
 their presence in distinct connected components.
-\item \code{\link{dodgr_contract_graph}}: Contract a graph by removing
+\item \code{\link[=dodgr_contract_graph]{dodgr_contract_graph()}}: Contract a graph by removing
 redundant edges.
 }
 }
@@ -46,10 +46,10 @@ redundant edges.
 \section{Miscellaneous Functions}{
 
 \itemize{
-\item \code{\link{dodgr_sample}}: Randomly sample a graph, returning a single
+\item \code{\link[=dodgr_sample]{dodgr_sample()}}: Randomly sample a graph, returning a single
 connected component of a defined number of vertices.
-\item \code{\link{dodgr_vertices}}: Extract all vertices of a graph.
-\item \code{\link{compare_heaps}}: Compare the performance of different
+\item \code{\link[=dodgr_vertices]{dodgr_vertices()}}: Extract all vertices of a graph.
+\item \code{\link[=compare_heaps]{compare_heaps()}}: Compare the performance of different
 priority queue heap structures for a given type of graph.
 }
 }

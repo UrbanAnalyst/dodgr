@@ -11,10 +11,10 @@ dodgr_paths(graph, from, to, vertices = TRUE, wt_profile = "bicycle",
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which route paths are to
+\item{from}{Vector or matrix of points \strong{from} which route paths are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which route paths are to be
+\item{to}{Vector or matrix of points \strong{to} which route paths are to be
 calculated (see Details)}
 
 \item{vertices}{If \code{TRUE}, return lists of lists of vertices for each
@@ -77,7 +77,7 @@ from <- sample (graph$from_id, size = 100)
 to <- sample (graph$to_id, size = 50)
 dp <- dodgr_paths (graph, from = from, to = to)
 # dp is a list with 100 items, and each of those 100 items has 30 items, each
-# of which is a single path listing all vertiex IDs as taken from \\code{graph}.
+# of which is a single path listing all vertiex IDs as taken from `graph`.
 
 # it is also possible to calculate paths between pairwise start and end
 # points

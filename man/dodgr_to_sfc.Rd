@@ -11,12 +11,12 @@ dodgr_to_sfc(net)
 }
 \value{
 A list containing (1) A \code{data.frame} of data associated with the
-`sf` geometries; and (ii) A Simple Features Collection (\code{sfc}) list of
+\code{sf} geometries; and (ii) A Simple Features Collection (\code{sfc}) list of
 \code{LINESTRING} objects.
 }
 \description{
 Convert a \code{dodgr} graph into a \code{list} composed of
-two objects: \code{dat}, a \code{data.frame}; and  
+two objects: \code{dat}, a \code{data.frame}; and
 \code{geometry}, an \code{sfc} object from the (\pkg{sf}) package.
 Works by aggregating edges into \code{LINESTRING}
 objects representing longest sequences between all junction nodes. The

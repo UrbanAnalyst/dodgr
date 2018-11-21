@@ -31,7 +31,7 @@ be constructed by expanding the range of \code{pts} by the relative amount of
 \examples{
 \dontrun{
 streetnet <- dodgr_streetnet ("hampi india", expand = 0)
-# convert to form needed for \\code{dodgr} functions:
+# convert to form needed for `dodgr` functions:
 graph <- weight_streetnet (streetnet)
 nrow (graph) # 5,742 edges
 # Alternative ways of extracting street networks by using a small selection of

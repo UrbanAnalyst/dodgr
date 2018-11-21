@@ -11,10 +11,10 @@ dodgr_flows_aggregate(graph, from, to, flows, wt_profile = "bicycle",
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points **from** which aggregate flows are to
+\item{from}{Vector or matrix of points \strong{from} which aggregate flows are to
 be calculated (see Details)}
 
-\item{to}{Vector or matrix of points **to** which aggregate flows are to be
+\item{to}{Vector or matrix of points \strong{to} which aggregate flows are to be
 calculated (see Details)}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
@@ -75,7 +75,7 @@ mapview (gsf, color = cols, lwd = 10 * flow)
 }
 
 # An example of flow aggregation across a generic (non-OSM) highway,
-# represented as the \\code{routes_fast} object of the \\pkg{stplanr} package,
+# represented as the `routes_fast` object of the \\pkg{stplanr} package,
 # which is a SpatialLinesDataFrame containing commuter densities along
 # components of a street network.
 \dontrun{
@@ -84,7 +84,7 @@ library (stplanr)
 r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 r <- sf::st_as_sf (r)
 # then extract the start and end points of each of the original 'routes_fast'
-# lines and use these for routing with \\code{dodgr}
+# lines and use these for routing with `dodgr`
 l <- lapply (routes_fast@lines, function (i)
              c (sp::coordinates (i) [[1]] [1, ],
                 tail (sp::coordinates (i) [[1]], 1)))
@@ -93,7 +93,7 @@ xy_start <- l [, 1:2]
 xy_end <- l [, 3:4]
 # Then just specify a generic OD matrix with uniform values of 1:
 flows <- matrix (1, nrow = nrow (l), ncol = nrow (l))
-# We need to specify both a \\code{type} and \\code{id} column for the
+# We need to specify both a `type` and `id` column for the
 # \\link{weight_streetnet} function.
 r$type <- 1
 r$id <- seq (nrow (r))

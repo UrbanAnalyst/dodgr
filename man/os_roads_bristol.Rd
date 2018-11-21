@@ -10,7 +10,7 @@ motorways in Bristol, UK.}
 A sample street network for Bristol, U.K., from the Ordnance Survey.
 }
 \note{
-Input data downloaded from 
+Input data downloaded from
 \url{https://www.ordnancesurvey.co.uk/opendatadownload/products.html}.
 To download the data from that page click on the tick box next to
 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
