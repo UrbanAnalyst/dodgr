@@ -167,3 +167,58 @@ test_that ("points to graph", {
     expect_silent (index2 <- match_pts_to_graph (v, pts))
     expect_identical (index1, index2)
 })
+
+test_that ("get_id_cols", {
+    m <- 10
+    pts <- cbind (runif (n), runif (n))
+    expect_null (ids <- get_id_cols (pts))
+    rownames (pts) <- seq (n)
+    expect_is (get_id_cols (pts), "character")
+    expect_length (get_id_cols (pts), n)
+
+    pts <- runif (n)
+    expect_null (get_id_cols (pts))
+    names (pts) <- seq (n)
+    expect_is (get_id_cols (pts), "character")
+    expect_length (get_id_cols (pts), n)
+
+    pts <- cbind (runif (n), runif (n), seq (n))
+    expect_null (get_id_cols (pts))
+    colnames (pts) <- c ("a", "b", "id")
+    expect_is (get_id_cols (pts), "numeric")
+    expect_length (get_id_cols (pts), n)
+
+    pts <- data.frame (pts)
+    expect_is (get_id_cols (pts), "numeric")
+    expect_length (get_id_cols (pts), n)
+
+    names (pts) [3] <- "this_is_an_id_here" # "id" is grepped
+    expect_is (get_id_cols (pts), "numeric")
+    expect_length (get_id_cols (pts), n)
+})
+
+test_that ("get_pts_index", {
+    graph <- weight_streetnet (hampi)
+    gr_cols <- dodgr_graph_cols (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
+
+    m <- 10
+    pts <- cbind (runif (n), runif (n))
+    expect_error (get_pts_index (graph, gr_cols, vert_map, pts),
+                  "Unable to determine geographical coordinates in from/to")
+    rownames (pts) <- seq (n)
+    expect_error (get_pts_index (graph, gr_cols, vert_map, pts),
+                  "Unable to determine geographical coordinates in from/to")
+
+    pts <- cbind (runif (n), runif (n), seq (n))
+    colnames (pts) <- c ("a", "b", "id")
+    expect_error (get_pts_index (graph, gr_cols, vert_map, pts),
+                  "Unable to determine geographical coordinates in from/to")
+    colnames (pts) <- c ("x", "y", "id")
+    expect_is (get_pts_index (graph, gr_cols, vert_map, pts), "numeric")
+    expect_length (get_pts_index (graph, gr_cols, vert_map, pts), n)
+
+    pts <- data.frame (pts)
+    expect_is (get_pts_index (graph, gr_cols, vert_map, pts), "numeric")
+    expect_length (get_pts_index (graph, gr_cols, vert_map, pts), n)
+})

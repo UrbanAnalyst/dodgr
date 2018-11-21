@@ -107,6 +107,14 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
+    if (is.na (gr_cols [match ("from", names (gr_cols))]) |
+               is.na (gr_cols [match ("to", names (gr_cols))]))
+    {
+        scols <- find_spatial_cols (graph)
+        graph$from_id <- scols$xy_id$xy_fr_id
+        graph$to_id <- scols$xy_id$xy_to_id
+        gr_cols <- dodgr_graph_cols (graph)
+    }
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
@@ -191,7 +199,9 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 
 #' get_id_cols
 #'
-#' Get the ID columns from a matrix or data.frame of from or to points
+#' Get the ID columns or rownames from a matrix or data.frame of from or to
+#' points
+#'
 #' @param pts The `from` or `to` args passed to `dodgr_dists`
 #' @return Character vector of names of points, if they exist in `pts`
 #' @noRd
@@ -232,10 +242,10 @@ make_vert_map <- function (graph, gr_cols)
 #' Convert `from` or `to` args of `dodgr_dists` to indices into
 #' `vert_map`
 #'
+#' @param graph A dodgr graph
 #' @param vert_map Two-column `data.frame` of unique vertices and
 #' corresponding IDs, obtained from `make_vert_map`
-#' @param xy List of x (longitude) and y (latitude) coordinates of all vertices
-#' in `vert_map`
+#' @param gr_cols Returned from `dodgr_graph_cols()`
 #' @param pts Either a vector of names, or a matrix or `data.frame` of
 #' arbitrary geographical coordinates for which to get index into vertices of
 #' graph.
@@ -283,13 +293,20 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
             stop (paste0 ("Unable to determine geographical ",
                           "coordinates in from/to"))
 
-        # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-        if (any (is.na (gr_cols [7:10])))
+        # gr_cols are (edge_id, from, to, d, w, xfr, yfr, xto, yto, component
+        if (any (is.na (gr_cols [6:9])))
             stop (paste0 ("Cannot determine geographical coordinates ",
                           "against which to match pts"))
 
-        names (pts) [ix] <- "x"
-        names (pts) [iy] <- "y"
+        if (is.data.frame (pts))
+        {
+            names (pts) [ix] <- "x"
+            names (pts) [iy] <- "y"
+        } else
+        {
+            colnames (pts) [ix] <- "x"
+            colnames (pts) [iy] <- "y"
+        }
 
         # Result of rcpp_points_index is 0-indexed for C++
         pts <- rcpp_points_index (dodgr_vertices (graph), pts) + 1

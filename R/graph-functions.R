@@ -26,8 +26,8 @@ dodgr_graph_cols <- function (graph)
     {
         # columns are always identically structured
         edge_id <- which (nms == "edge_id")
-        fr_col <- which (nms == "from_id")
-        to_col <- which (nms == "to_id")
+        fr_col <- which (nms == "from_id") %>% null_to_na ()
+        to_col <- which (nms == "to_id") %>% null_to_na ()
         d_col <- which (nms == "d")
         w_col <- which (nms == "d_weighted")
         xfr <- which (nms == "from_lon")

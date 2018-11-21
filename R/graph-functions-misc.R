@@ -122,9 +122,9 @@ find_spatial_cols <- function (graph)
             xy_to_id <- paste0 (xy_to_id)
     } else # len == 2, so must be only x-y
     {
-        xy_fr_id <- paste0 (graph [, fr_col [1]],
+        xy_fr_id <- paste0 (graph [, fr_col [1]], "-",
                             graph [, fr_col [2]])
-        xy_to_id <- paste0 (graph [, to_col [1]],
+        xy_to_id <- paste0 (graph [, to_col [1]], "-",
                             graph [, to_col [2]])
     }
 

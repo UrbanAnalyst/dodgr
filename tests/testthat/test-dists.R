@@ -35,8 +35,20 @@ test_that("dists", {
     expect_equal (ncol (d), nt)
     expect_true (all (d [!is.na (d)] >= 0))
 
+    # from as vector
     from <- as.numeric (from [1, ])
     names (from) <- c ("x", "y", "id")
+    expect_silent (d <- dodgr_dists (graph, from = from, to = to))
+    from <- as.numeric (from [1:2])
+    expect_silent (d <- dodgr_dists (graph, from = from, to = to))
+
+    # from as matrix
+    from <- cbind (fromx, fromy, 1:nf)
+    colnames (from) <- c ("x", "y", "id")
+    d <- dodgr_dists (graph, from = from, to = to)
+    from <- from [, 1:2]
+    expect_silent (d <- dodgr_dists (graph, from = from, to = to))
+    rownames (from) <- 1:nf
     expect_silent (d <- dodgr_dists (graph, from = from, to = to))
 
     from <- data.frame (x = fromx, y = fromy, id = paste0 ("f", 1:nf))
@@ -44,6 +56,14 @@ test_that("dists", {
     from <- cbind (from, "x2" = from$x)
     expect_error (d <- dodgr_dists (graph, from = from, to = to),
                   "Unable to determine geographical coordinates in from/to")
+
+    #from <- sample (graph$from_id, size = nf)
+    #to <- sample (graph$from_id, size = nt)
+    #graph0 <- graph
+    #graph <- graph0
+    #graph$from_id <- graph$to_id <- NULL
+    #find_spatial_cols (graph)
+
 })
 
 test_that ("heaps", {
