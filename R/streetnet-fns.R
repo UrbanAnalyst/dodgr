@@ -356,9 +356,15 @@ get_sf_geom_col <- function (graph)
 {
     gcol <- grep ("geom", names (graph))
     if (length (gcol) > 1)
-        stop ("Unable to determine geometry column from [",
-              paste0 (names (graph) [gcol], collapse = ", "), "]")
-    else if (length (gcol) == 0)
+    {
+        gnames <- c ("geometry", "geom", "geoms")
+        mg <- match (gnames, names (graph))
+        if (length (which (!is.na (mg))) == 1)
+            gcol <- mg [which (!is.na (mg))]
+        else
+            stop ("Unable to determine geometry column from [",
+                  paste0 (names (graph) [gcol], collapse = ", "), "]")
+    } else if (length (gcol) == 0)
     {
         gcol <- match ("g", names (graph))
         if (is.na (gcol) | length (gcol) != 1)
