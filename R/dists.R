@@ -136,10 +136,23 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
         parallel <- FALSE
     }
 
+    flip <- FALSE
+    if (length (from_index) > length (to_index))
+    {
+        flip <- TRUE
+        graph <- flip_graph (graph)
+        temp <- from_index
+        from_index <- to_index
+        to_index <- temp
+    }
+
     if (parallel)
         d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index, heap)
     else
         d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
+
+    if (flip)
+        d <- t (d)
 
     if (!is.null (from_id))
         rownames (d) <- from_id
@@ -374,5 +387,21 @@ graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
     if (!quiet)
         message ("done")
 
+    return (graph)
+}
+
+#' flip_graph
+#'
+#' Flip from and two vertices of a graph
+#' @noRd
+flip_graph <- function (graph)
+{
+    fr_cols <- c ("from_id", "from_lon", "from_lat")
+    fr_cols <- fr_cols [which (fr_cols %in% names (graph))]
+    to_cols <- c ("to_id", "to_lon", "to_lat")
+    to_cols <- to_cols [which (to_cols %in% names (graph))]
+    fr_temp <- graph [, fr_cols]
+    graph [, fr_cols] <- graph [, to_cols]
+    graph [, to_cols] <- fr_temp
     return (graph)
 }
