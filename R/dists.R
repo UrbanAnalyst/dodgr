@@ -322,7 +322,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         }
 
         # Result of rcpp_points_index is 0-indexed for C++
-        pts <- rcpp_points_index (dodgr_vertices (graph), pts) + 1
+        pts <- rcpp_points_index_par (dodgr_vertices (graph), pts) + 1
         # xy has same order as vert_map
     }
 
