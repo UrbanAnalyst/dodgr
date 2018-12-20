@@ -3,6 +3,7 @@ Major changes:
 - `weight_streetnet` is now a method, with implementations for objects of
   classes `.sf` and `.sc`.
 - New function `weight_railway` to weight a network for railway routing.
+- Various modifications that should result in notable speed gains
 
 Minor changes:
 - `dodgr_streetnet` now accepts polygonal `bbox` argument, and uses

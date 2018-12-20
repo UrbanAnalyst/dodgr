@@ -71,8 +71,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
         }
         bbox [1, ] <- bbox [1, ] + c (-expand, expand) * diff (bbox [1, ])
         bbox [2, ] <- bbox [2, ] + c (-expand, expand) * diff (bbox [2, ])
-    }
-    else if (!missing (pts))
+    } else if (!missing (pts))
     {
         nms <- names (pts)
         if (is.null (nms))
