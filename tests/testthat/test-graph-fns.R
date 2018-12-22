@@ -169,7 +169,7 @@ test_that ("points to graph", {
 })
 
 test_that ("get_id_cols", {
-    m <- 10
+    n <- 10
     pts <- cbind (runif (n), runif (n))
     expect_null (ids <- get_id_cols (pts))
     rownames (pts) <- seq (n)
@@ -202,7 +202,7 @@ test_that ("get_pts_index", {
     gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
 
-    m <- 10
+    n <- 10
     pts <- cbind (runif (n), runif (n))
     expect_error (get_pts_index (graph, gr_cols, vert_map, pts),
                   "Unable to determine geographical coordinates in from/to")
