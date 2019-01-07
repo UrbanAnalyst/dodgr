@@ -80,12 +80,14 @@ test_that ("heaps", {
     expect_message (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"),
                     "Extended TriHeaps can not be calculated in parallel")
     expect_silent (d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23"))
+    expect_silent (d6 <- dodgr_dists (graph, from = from, to = to, heap = "set"))
 
     expect_identical (d0, d1)
     expect_false (identical (d0, d2))
     expect_identical (d0, d3)
     expect_identical (d0, d4)
     expect_identical (d0, d5)
+    expect_identical (d0, d6)
 })
 
 test_that("graph columns", {

@@ -25,7 +25,7 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 {
   if (heap_type == "FHeap")
     return std::make_shared <HeapD<FHeap> >();
-  else if (heap_type == "BHeap")
+  else if (heap_type == "BHeap" || heap_type == "set") // heap not used for set 
     return std::make_shared <HeapD<BHeap> >();
   else if (heap_type == "Heap23")
     return std::make_shared <HeapD<Heap23> >();
@@ -35,7 +35,7 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
     return std::make_shared <HeapD<TriHeapExt> >();
   else if (heap_type == "Radix")
     return std::make_shared <HeapD<RadixHeap> >();
-  else 
+  else
     throw std::runtime_error("invalid heap type: " + heap_type);
 }
 
@@ -79,8 +79,12 @@ struct OneDist : public RcppParallel::Worker
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            dijkstra->run (d, w, prev,
-                    static_cast <unsigned int> (dp_fromi [i]));
+            if (heap_type.find ("set") == std::string::npos)
+                dijkstra->run (d, w, prev,
+                        static_cast <unsigned int> (dp_fromi [i]));
+            else
+                dijkstra->run_set (d, w, prev,
+                        static_cast <unsigned int> (dp_fromi [i]));
             for (long int j = 0; j < toi.size (); j++)
             {
                 if (w [static_cast <size_t> (toi [j])] < INFINITE_DOUBLE)

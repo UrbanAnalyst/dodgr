@@ -338,7 +338,8 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
 #' @noRd
 get_heap <- function (heap, graph)
 {
-    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23")
+    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23",
+                "set")
     heap <- match.arg (arg = heap, choices = heaps)
     if (heap == "Radix")
     {

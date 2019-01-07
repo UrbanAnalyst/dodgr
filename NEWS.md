@@ -4,6 +4,9 @@ Major changes:
   classes `.sf` and `.sc`.
 - New function `weight_railway` to weight a network for railway routing.
 - Various modifications that should result in notable speed gains
+- `dodgr_dists` implements Dijkstra paths with std::set sorting through new
+  option `dodgr_dists(..., heap = "set")` (It's slower than others, but good for
+  sake of completeness).
 
 Minor changes:
 - `dodgr_streetnet` now accepts polygonal `bbox` argument, and uses
