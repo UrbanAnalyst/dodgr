@@ -30,7 +30,7 @@ dodgr_to_igraph <- function (graph)
 #' grapht <- dodgr_to_tidygraph (graph)
 dodgr_to_tidygraph <- function (graph)
 {
-    if (!"tidygraph" %in% rownames (utils::installed.packages()))
+    if (!requireNamespace ("tidygraph"))
         stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.")
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()

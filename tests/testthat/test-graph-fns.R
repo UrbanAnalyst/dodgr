@@ -35,7 +35,12 @@ test_that("compare heaps", {
     # This actually fails on some machines (R oldrel on Windows) so:
     if (test_all)
     {
-        expect_true (ch$elapsed [igr] > min (ch$elapsed))
+        #expect_true (ch$elapsed [igr] > min (ch$elapsed))
+        # TODO: igraph is now faster because of dodgr_to_igraph (#39), which now
+        # constructs a full igraph object with spatial coordinates. This in turn
+        # enables igraph to implement an A* algorithm which is naturally faster
+        # than the standard Dijkstra. TODO: #80
+        expect_true (ch$elapsed [igr] == min (ch$elapsed))
     }
 })
 
