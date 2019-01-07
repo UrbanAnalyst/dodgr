@@ -37,7 +37,8 @@ Suggests:
     rmarkdown,
     roxygen2,
     scales,
-    testthat
+    testthat,
+    tidygraph
 LinkingTo:
     Rcpp,
     RcppParallel

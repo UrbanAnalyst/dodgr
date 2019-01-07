@@ -28,7 +28,7 @@ test_that("contract graph", {
 test_that("compare heaps", {
     graph <- weight_streetnet (hampi)
     ch <- compare_heaps (graph, nverts = 100, replications = 1)
-    expect_equal (nrow (ch), 11)
+    expect_equal (nrow (ch), 12)
     # Test that all dodgr calculations are faster than igraph:
     igr <- which (grepl ("igraph", ch$test))
     #expect_true (ch$elapsed [igr] == max (ch$elapsed))
