@@ -1,7 +1,8 @@
 # CRAN notes for dodgr_0.1.1 submission
 
-We are currently unable to provide a reference in the package Description, but
-hope to have a published manuscript soon, and will update asap thereafter.
+The manuscript accompanying this package has been accepted for publication, but
+has yet to be published and thus still awaits a DOI. The next submission will
+definitely include a reference in the package Description.
 
 ## Notes
 
@@ -24,6 +25,7 @@ warnings on:
 
 ## valgrind memory leak
 
-Testing with "valgrind --tool=memcheck --leak-check=full" reveals one potential
-memory leak of around 2,000 bytes. This is due to RcppParallel and not code
-within this submission; see https://github.com/RcppCore/RcppParallel/issues/81
+Testing with "valgrind --tool=memcheck --leak-check=full" **still** reveals one
+potential memory leak of around 2,000 bytes. This is due to RcppParallel and not
+code within this submission; see
+https://github.com/RcppCore/RcppParallel/issues/81
