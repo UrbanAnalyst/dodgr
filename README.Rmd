@@ -46,15 +46,20 @@ unweighted distance.
 
 ## Installation
 
-You can install `dodgr` from github with:
-
+You can install `dodgr` with:
 ```{r gh-installation, eval = FALSE}
+install.packages("dodgr") # current CRAN version
 # install.packages("devtools")
-devtools::install_github("ATFutures/dodgr")
+devtools::install_github("ATFutures/dodgr") # Development version
 ```
 ```{r load-pqsqpr, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
 ```
+Then load with
+```{r}
+library (dodgr)
+```
+
 
 ## Usage
 
@@ -72,12 +77,13 @@ ylim <- c (40.70347, 40.75354)
 npts <- 1000
 pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
                    y = ylim [1] + runif (npts) * diff (ylim))
-st <- Sys.time ()
-d <- dodgr_dists (from = pts)
-Sys.time () - st
-#> Time difference of 9.473597 secs
+system.time (
+             d <- dodgr_dists (from = pts)
+)
+#>    user  system elapsed
+#> 107.530   0.602  19.418
 range (d, na.rm = TRUE)
-#> [1]  0.00000 16.64285
+#> [1]  0.00000 21.68109
 ```
 This will automatically download the street network (using
 [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then
@@ -108,11 +114,9 @@ type of way, while `distance` will be the pysical distance.
 1. `dodgr_to_sfc` to convert spatial `dodgr` graphs into Simple Features format
    used by the [`sf` package](https://cran.r-project.org/package=sf).
 2. `dodgr_to_igraph` to convert (not necessarily spatial) `dodgr` graphs into
-   [`igraph`](https://cran.r-project.org/package=igraph) format (not yet
-   implemented); and
+   [`igraph`](https://cran.r-project.org/package=igraph) format; and
 3. `dodgr_to_tidygraph` to convert (not necessarily spatial) `dodgr` graphs into
-   [`tidygraph`](https://cran.r-project.org/package=tidygraph) format (not yet
-   implemented).
+   [`tidygraph`](https://cran.r-project.org/package=tidygraph) format.
 
 ### Further detail
 

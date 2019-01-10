@@ -29,15 +29,19 @@ output is a direct, unweighted distance.
 
 ## Installation
 
-You can install `dodgr` from github with:
+You can install `dodgr` with:
 
 ``` r
+install.packages("dodgr") # current CRAN version
 # install.packages("devtools")
-devtools::install_github("ATFutures/dodgr")
+devtools::install_github("ATFutures/dodgr") # Development version
 ```
 
-### Note on macOS ###
-On macOS, if you need "[gfortran](https://gcc.gnu.org/wiki/GFortranBinaries#MacOS)", you could install "gcc" from [brew](https://brew.sh) or similar package manager, but on brew "gfortran" is included in "gcc". After installing `gcc` you may still have R complaining about `library not found for -lgfortran`. [Others](https://thecoatlessprofessor.com/programming/rcpp-rcpparmadillo-and-os-x-mavericks--lgfortran-and--lquadmath-error/) have written about this issue in detail, we recommend this quick answer on [SO](https://stackoverflow.com/a/29993906/2332101) and adding a line `FLIBS=-L/usr/local/lib/gcc/8/` (given that you installed gcc8) to your `~/.R/Makevars` file for R to be aware of your `gcc` path.
+Then load with
+
+``` r
+library (dodgr)
+```
 
 ## Usage
 
@@ -59,12 +63,13 @@ ylim <- c (40.70347, 40.75354)
 npts <- 1000
 pts <- data.frame (x = xlim [1] + runif (npts) * diff (xlim),
                    y = ylim [1] + runif (npts) * diff (ylim))
-st <- Sys.time ()
-d <- dodgr_dists (from = pts)
-Sys.time () - st
-#> Time difference of 9.473597 secs
+system.time (
+             d <- dodgr_dists (from = pts)
+)
+#>    user  system elapsed
+#> 107.530   0.602  19.418
 range (d, na.rm = TRUE)
-#> [1]  0.00000 16.64285
+#> [1]  0.00000 21.68109
 ```
 
 This will automatically download the street network (using
@@ -99,11 +104,10 @@ priority weighting for a given mode of transport and type of way, while
     package](https://cran.r-project.org/package=sf).
 2.  `dodgr_to_igraph` to convert (not necessarily spatial) `dodgr`
     graphs into [`igraph`](https://cran.r-project.org/package=igraph)
-    format (not yet implemented); and
+    format; and
 3.  `dodgr_to_tidygraph` to convert (not necessarily spatial) `dodgr`
     graphs into
-    [`tidygraph`](https://cran.r-project.org/package=tidygraph) format
-    (not yet implemented).
+    [`tidygraph`](https://cran.r-project.org/package=tidygraph) format.
 
 ### Further detail
 
