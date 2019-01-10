@@ -88,7 +88,7 @@ range (d, na.rm = TRUE)
 This will automatically download the street network (using
 [`osmdata`](https://cran.r-project.org/package=osmdata)), and even then
 calculating distances between 1,000 points -- that's 1,000,000 pairwise
-distances! -- can be done in around 10 seconds.
+distances! -- can be done in around 20 seconds.
 
 ### Other Functions
 
