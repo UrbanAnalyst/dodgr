@@ -1,4 +1,7 @@
-# v0.1.1.099
+# v0.1.2.001
+
+
+# v0.1.2
 Major changes:
 - New function `dodgr_to_igraph`
 - `weight_streetnet` is now a method, with implementations for objects of
