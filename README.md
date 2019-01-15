@@ -37,8 +37,8 @@ You can install `dodgr` with:
 
 ``` r
 install.packages("dodgr") # current CRAN version
-# install.packages("devtools")
-devtools::install_github("ATFutures/dodgr") # Development version
+# install.packages("remotes")
+remotes::install_github("ATFutures/dodgr") # Development version
 ```
 
 Then load with

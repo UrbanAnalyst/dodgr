@@ -53,8 +53,8 @@ network dispersal model from a set of origin points only.
 You can install `dodgr` with:
 ```{r gh-installation, eval = FALSE}
 install.packages("dodgr") # current CRAN version
-# install.packages("devtools")
-devtools::install_github("ATFutures/dodgr") # Development version
+# install.packages("remotes")
+remotes::install_github("ATFutures/dodgr") # Development version
 ```
 ```{r load-pqsqpr, echo = FALSE, message = FALSE}
 devtools::load_all (".", export_all = FALSE)
