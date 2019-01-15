@@ -27,6 +27,10 @@ Routes are usually calculated by weighting different kinds of streets or
 ways according to a particular mode of transport, while the desired
 output is a direct, unweighted distance.
 
+But wait, there’s more … `dodgr` can also aggregate flows throughout a
+network through specifying origins, destinations, and flow densities. Or
+even apply a network dispersal model from a set of origin points only.
+
 ## Installation
 
 You can install `dodgr` with:
@@ -45,17 +49,21 @@ library (dodgr)
 
 ## Usage
 
-The primary function,
+The primary functions are,
 
 ``` r
 d <- dodgr_dists (graph = graph, from = pts, to = pts)
+flows <- array (runif (length (pts) ^ 2), dim = rep (length (pts, 2)))
+f <- dodgr_flows_aggregate (graph = graph, from = pts, to = pts, flows = flows)
+f <- dodgr_flows_disperse (graph = graph, from = pts, to = pts,
+                           dens = runif (length (pts)))
 ```
 
-produces a square matrix of distances between all points listed in `pts`
-and routed along the dual-weighted directed network given in `graph`. An
-even simpler usage allows calculation of pair-wise distances between a
-set of geographical coordinates (here, for a sizey chunk of New York
-City):
+The first function, `dodgr_dists()`, produces a square matrix of
+distances between all points listed in `pts` and routed along the
+dual-weighted directed network given in `graph`. An even simpler usage
+allows calculation of pair-wise distances between a set of geographical
+coordinates (here, for a sizey chunk of New York City):
 
 ``` r
 xlim <- c (-74.12931, -73.99214)
@@ -77,13 +85,12 @@ This will automatically download the street network (using
 calculating distances between 1,000 points – that’s 1,000,000 pairwise
 distances\! – can be done in around 20 seconds.
 
-### Other Functions
-
-The other main functions of `dodgr` are `dodgr_paths`, to return the
-actual paths between pairs of vertices, and `dodgr_flows` to aggregate
-flows as routed throughout a network according to sets of start and end
-points (origins and destinations), and associated densities or numbers
-travelling between each of these.
+The second function, `dodgr_flows_aggregate()`, aggregates the densities
+specified in the matrix `flows` between all pairs of `from` and `to`
+points, and returns a modified version of the input network with an
+additional column containing aggregated flows (see below). The
+equivalent function, `dodgr_flows_disperse()`, does an equivalent thing
+for network dispersal models from known points of origin.
 
 ### The `dodgr` graph structure
 
