@@ -1,6 +1,6 @@
 # v0.1.2.001
 Major changes:
-- New function `dodgr_fundamental_cycles`
+- New functions `dodgr_fundamental_cycles` and `dodgr_full_cycles`
 
 
 # v0.1.2

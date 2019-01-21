@@ -7,18 +7,25 @@
 dodgr_fundamental_cycles(graph, vertices = NULL)
 }
 \arguments{
-\item{graph}{\code{data.frame} or equivalent object representing the network
-graph (see Details)}
+\item{graph}{\code{data.frame} or equivalent object representing the contracted
+network graph (see Details).}
 
 \item{vertices}{\code{data.frame} returned from \link{dodgr_vertices}\code{(graph)}. Will
 be calculated if not provided, but it's quicker to pass this if it has
 already been calculated.}
 }
 \value{
-List of cycle paths
+List of cycle paths, in terms of vertex IDs in \code{graph} and, for
+spatial graphs, the corresponding coordinates.
 }
 \description{
 Calculate fundamental cycles in a graph
+}
+\note{
+Calculation of fundamental cycles is VERY computationally demanding,
+and this function should only be executed on CONTRACTED graphs (that is,
+graphs returned from \link{dodgr_contract_graph}). Results for full graphs
+can be obtained with the function \link{dodgr_full_cycles}.
 }
 \examples{
 net <- weight_streetnet (hampi)
