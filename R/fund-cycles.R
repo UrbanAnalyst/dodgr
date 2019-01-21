@@ -30,6 +30,10 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL)
 
     if (is.null (vertices))
         vertices <- dodgr_vertices (graph)
+    if (!"flow" %in% names (graph)) # makes no difference
+        graph$flow <- 1
+    graph <- merge_directed_flows (graph) # uses fast C++ routines
+    graph$flow <- NULL
     graphc <- convert_graph (graph, dodgr_graph_cols (graph))
     res <- rcpp_fundamental_cycles (graphc, vertices)
 
