@@ -6,8 +6,8 @@ PKG_LIBS += $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 OBJ_HEAPS = heaps/bheap.o heaps/fheap.o heaps/heap23.o \
     heaps/radixheap.o heaps/triheap_ext.o heaps/triheap.o
-OBJ_SRC = dgraph.o dijkstra.o dodgr-to-sf.o graph-contract.o graph.o \
-    graph-sample.o RcppExports.o run_sp.o sf-as-network.o
+OBJ_SRC = dgraph.o dijkstra.o dodgr-to-sf.o fund-cycles.o graph-contract.o \
+    graph.o graph-sample.o RcppExports.o run_sp.o sf-as-network.o
 OBJECTS = $(OBJ_HEAPS) $(OBJ_SRC)
 
 .PHONY: all clean

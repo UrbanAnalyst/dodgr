@@ -37,6 +37,11 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
     .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
 }
 
+#' @noRd
+rcpp_fundamental_cycles <- function(graph, verts) {
+    .Call(`_dodgr_rcpp_fundamental_cycles`, graph, verts)
+}
+
 #' get_to_from
 #'
 #' Get one pair of two and from edges and vertices. Main task is to make sure
