@@ -145,7 +145,8 @@ dodgr_vertices <- function (graph)
                              stringsAsFactors = FALSE)
     else
     {
-        verts <- data.frame (id = c (from_id, to_id))
+        verts <- data.frame (id = c (from_id, to_id),
+                             stringsAsFactors = FALSE)
         if ("component" %in% nms)
             verts <- cbind (verts, rep (graph$component, 2))
     }
