@@ -99,8 +99,8 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         # each element of res is a list, so flatten these:
         res <- flatten_list (res)
         # These hash each and remove any duplicated ones:
-        dig <- unlist (lapply (res2, digest::digest))
-        res <- res2 [which (!duplicated (dig))]
+        dig <- unlist (lapply (res, digest::digest))
+        res <- res [which (!duplicated (dig))]
     }
 
     if (is_graph_spatial (graph))
