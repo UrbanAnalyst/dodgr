@@ -19,3 +19,12 @@ the fundamental cycles on that version, and then expands these cycles back
 onto the original graph. This is far more computationally efficient than
 calculating fundamental cycles on a full (non-contracted) graph.
 }
+\examples{
+net <- weight_streetnet (hampi)
+graph <- dodgr_contract_graph (net)$graph
+cyc1 <- dodgr_fundamental_cycles (graph)
+cyc2 <- dodgr_full_cycles (net)
+# cyc2 has same number of cycles, but each one is generally longer, through
+# including all points intermediate to junctions; cyc1 has cycles composed of
+# junction points only.
+}
