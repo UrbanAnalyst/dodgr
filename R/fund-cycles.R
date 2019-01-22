@@ -112,7 +112,7 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
     return (res)
 }
 
-# --------- FUNCTIONS TO BREAK SPATIAL GRAPHS INTO SUB-COMPONENTS ----------
+# ********** FUNCTIONS TO BREAK SPATIAL GRAPHS INTO SUB-COMPONENTS **********
 
 # Initial estimate of how many divisions needed
 get_ndivs <- function (graph, graph_max_size)
@@ -267,4 +267,58 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                                 })
     }
     return (res)
+}
+
+
+
+#' dodgr_sflines_to_poly
+#'
+#' Convert \pkg{sf} `LINESTRING` objects to `POLYGON` objects representing all
+#' fundamental cycles within the `LINESTRING` objects.
+#'
+#' @inheritParams dodgr_fundamental_cycles
+#' @param sflines An \pkg{sf} `LINESTRING` object representing a network.
+#' @return An `sf::sfc` collection of `POLYGON` objects.
+#' @export
+dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
+                                   expand = 0.05)
+{
+    if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf")))
+        stop ("lines must be an object of class 'sf' or 'sfc'")
+    if (!methods::is (sflines [[attr (sflines, "sf_column")]], "sfc_LINESTRING"))
+        stop ("lines must be an 'sfc_LINESTRING' object")
+
+    graph <- weight_streetnet (sflines, wt_profile = 1)
+    x <- dodgr_full_cycles (graph,
+                            graph_max_size = graph_max_size,
+                            expand = expand)
+    polys_to_sfc (x, sflines)
+}
+
+# convert list of polygon coordinates to `sf::sfc` collection
+# code adapted from osmdata/tests/testthat/test-sf-construction.R
+polys_to_sfc <- function (x, sflines)
+{
+    g <- sflines [[attr (sflines, "sf_column")]]
+    crs <- attr (g, "crs")
+
+    xy <- do.call (rbind, x)
+    xvals <- xy [, 2]
+    yvals <- xy [, 3]
+    bb <- structure (rep (NA_real_, 4),
+                     names = c("xmin", "ymin", "xmax", "ymax"))
+    bb [1:4] <- c (min (xvals), min (yvals), max (xvals), max (yvals))
+    class (bb) <- "bbox"
+    attr (bb, "crs") <- crs
+
+    x <- lapply (x, function (i) {
+                     res <- as.matrix (i [, 2:3])
+                     colnames (res) <- NULL
+                     structure (list (res), class = c ("XY", "POLYGON", "sfg")) })
+    attr (x, "n_empty") <- 0
+    attr(x, "precision") <- 0.0
+    class(x) <- c ("sfc_POLYGON", "sfc")
+    attr(x, "bbox") <- bb
+    attr(x, "crs") <- crs
+    x
 }
