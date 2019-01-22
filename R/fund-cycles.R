@@ -229,6 +229,10 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 #' @export
 dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
 {
+    graph$flow <- 1
+    graph <- merge_directed_flows (graph)
+    graph$flow <- NULL
+    #graph <- graph [graph$component == 1, ]
     graphc <- dodgr_contract_graph (graph)
     v <- dodgr_vertices (graphc$graph)
 
@@ -238,19 +242,27 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                                    expand = expand)
 
     from_to <- paste0 (graphc$graph$from_id, "-", graphc$graph$to_id)
+    to_from <- paste0 (graphc$graph$to_id, "-", graphc$graph$from_id)
     ids <- lapply (x, function (i) {
-           idpairs <- paste0 (i$id [-length (i$id)], "-",
-                              to = i$id [-1])
-           edges_c <- graphc$graph$edge_id [match (idpairs, from_to)]
+           idpairs <- paste0 (i$id [-length (i$id)], "-", i$id [-1])
+           # Get the edge pairs that match the idpairs, whether as from->to or
+           # to->from
+           edges_c1 <- graphc$graph$edge_id [match (idpairs, from_to)]
+           edges_c2 <- graphc$graph$edge_id [match (idpairs, to_from)]
+           edges_c <- apply (rbind (edges_c1, edges_c2), 2, function (i)
+                             i [which (!is.na (i))] [1])
            edges_new <- lapply (as.list (edges_c), function (j) {
                     if (j %in% graphc$edge_map$edge_new)
                     {
                         index <- which (graphc$edge_map$edge_new %in% j)
-                        j <- as.numeric (graphc$edge_map$edge_old [index])
-                        if ((graph$from_id [j [1] ] == graph$to_id [utils::tail (j, 1)]) ||
+                        index <- as.numeric (graphc$edge_map$edge_old [index])
+                        j <- match (index, graph$edge_id)
+                        if ((graph$from_id [j [1] ] ==
+                             graph$to_id [utils::tail (j, 1)]) ||
                             (graph$from_id [j [1] ] == graph$to_id [j [2] ]))
                             j <- rev (j)
-                    }
+                    } else
+                        j <- match (j, graph$edge_id)
                     return (as.numeric (j))
                     }) # end edges_new lapply
            unlist (edges_new)
@@ -302,10 +314,9 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
     comps <- table (graph$component)
     comps <- as.numeric (names (comps) [which (comps > 100)])
     x <- list ()
-    for (i in comps)
+    for (i in seq (comps))
     {
-        graphi <- graph [graph$component == i, ]
-        # TODO: dodgr_full_cycles breaks with the following tweak: FIX THAT!
+        graphi <- graph [graph$component == comps [i], ]
         graphi$edge_id <- seq (nrow (graphi))
         x [[i]] <-  dodgr_full_cycles (graphi,
                                        graph_max_size = graph_max_size,
