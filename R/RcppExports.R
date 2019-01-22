@@ -134,11 +134,11 @@ rcpp_sample_graph <- function(graph, nverts_to_sample) {
 #' @noRd
 NULL
 
-#' graph_from_df
+#' @name graph_from_df
 #'
-#' Convert a standard graph data.frame into an object of class graph. Graphs '
-NULL
-
+#' Convert a standard graph data.frame into an object of class graph. Graphs 
+#' are standardised with the function \code{dodgr_convert_graph()$graph}, and
+#' contain only the four columns [from, to, d, w]
 #'
 #' @noRd
 NULL

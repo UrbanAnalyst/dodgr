@@ -43,11 +43,11 @@ bool graph::graph_has_components (const Rcpp::DataFrame &graph)
 }
 
 
-//' graph_from_df
+//' @name graph_from_df
 //'
-//' Convert a standard graph data.frame into an object of class graph. Graphs '
-//are standardised with the function \code{dodgr_convert_graph()$graph}, and
-//contain ' only the four columns [from, to, d, w]
+//' Convert a standard graph data.frame into an object of class graph. Graphs 
+//' are standardised with the function \code{dodgr_convert_graph()$graph}, and
+//' contain only the four columns [from, to, d, w]
 //'
 //' @noRd
 void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
