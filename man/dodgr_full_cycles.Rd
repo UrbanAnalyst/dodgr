@@ -4,11 +4,18 @@
 \alias{dodgr_full_cycles}
 \title{dodgr_full_cycles}
 \usage{
-dodgr_full_cycles(graph)
+dodgr_full_cycles(graph, graph_max_size = 10000, expand = 0.05)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the contracted
 network graph (see Details).}
+
+\item{graph_max_size}{Maximum size submitted to the internal C++ routines as
+a single chunk. Warning: Increasing this may lead to computer meltdown!}
+
+\item{expand}{For large graphs which must be broken into chunks, this factor
+determines the relative overlap between chunks to ensure all cycles are
+captured. (This value should only need to be modified in special cases.)}
 }
 \description{
 Calculate fundamental cycles on a FULL (that is, non-contracted) graph.

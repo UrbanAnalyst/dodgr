@@ -42,7 +42,9 @@ is not at all possible to apply this function to large, non-spatial graphs.)
 Each of these smaller parts will be expanded by the specified amount
 (\code{expand}), and cycles found within. The final result is obtained by
 aggregating all of these cycles and removing any repeated ones arising due to
-overlap in the expanded portions.
+overlap in the expanded portions. Finally, note that this procedure of
+cutting graphs into smaller, computationally manageable sub-graphs provides
+only an approximation and may not yield all fundamental cycles.
 }
 \examples{
 net <- weight_streetnet (hampi)

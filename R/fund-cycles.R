@@ -27,7 +27,9 @@
 #' Each of these smaller parts will be expanded by the specified amount
 #' (`expand`), and cycles found within. The final result is obtained by
 #' aggregating all of these cycles and removing any repeated ones arising due to
-#' overlap in the expanded portions.
+#' overlap in the expanded portions. Finally, note that this procedure of
+#' cutting graphs into smaller, computationally manageable sub-graphs provides
+#' only an approximation and may not yield all fundamental cycles.
 #'
 #' @examples 
 #' net <- weight_streetnet (hampi)
@@ -218,12 +220,15 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 #' # including all points intermediate to junctions; cyc1 has cycles composed of
 #' # junction points only.
 #' @export
-dodgr_full_cycles <- function (graph)
+dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
 {
     graphc <- dodgr_contract_graph (graph)
     v <- dodgr_vertices (graphc$graph)
 
-    x <- dodgr_fundamental_cycles (graphc$graph, vertices = v)
+    x <- dodgr_fundamental_cycles (graphc$graph,
+                                   vertices = v,
+                                   graph_max_size = graph_max_size,
+                                   expand = expand)
 
     from_to <- paste0 (graphc$graph$from_id, "-", graphc$graph$to_id)
     ids <- lapply (x, function (i) {
