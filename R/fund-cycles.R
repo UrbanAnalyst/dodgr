@@ -1,3 +1,12 @@
+# flatten lists of lists to single list
+flatten_list <- function (x)
+{
+    x2 <- list ()
+    for (i in x)
+        x2 <- c (x2, i)
+    return (x2)
+}
+
 #' dodgr_fundamental_cycles
 #'
 #' Calculate fundamental cycles in a graph.
@@ -88,9 +97,7 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         close (pb)
 
         # each element of res is a list, so flatten these:
-        res2 <- list ()
-        for (i in res)
-            res2 <- c (res2, i)
+        res <- flatten_list (res)
         # These hash each and remove any duplicated ones:
         dig <- unlist (lapply (res2, digest::digest))
         res <- res2 [which (!duplicated (dig))]
@@ -289,9 +296,22 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
         stop ("lines must be an 'sfc_LINESTRING' object")
 
     graph <- weight_streetnet (sflines, wt_profile = 1)
-    x <- dodgr_full_cycles (graph,
-                            graph_max_size = graph_max_size,
-                            expand = expand)
+    # Different graph components need to be analysed seperately, and an
+    # arbitrary decision is made here to only consider components with > 100
+    # edges - smaller ones are unlikely to have any cycles.
+    comps <- table (graph$component)
+    comps <- as.numeric (names (comps) [which (comps > 100)])
+    x <- list ()
+    for (i in comps)
+    {
+        graphi <- graph [graph$component == i, ]
+        # TODO: dodgr_full_cycles breaks with the following tweak: FIX THAT!
+        graphi$edge_id <- seq (nrow (graphi))
+        x [[i]] <-  dodgr_full_cycles (graphi,
+                                       graph_max_size = graph_max_size,
+                                       expand = expand)
+    }
+    x <- flatten_list (x)
     polys_to_sfc (x, sflines)
 }
 
