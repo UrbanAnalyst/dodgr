@@ -78,7 +78,7 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         res <- list ()
         for (i in seq (bb_indices))
         {
-            graphi <- graph [bb_indices [[i]], ]
+            graphi <- graphc [bb_indices [[i]], ]
             verti <- dodgr_vertices (graphi)
             res [[i]] <- rcpp_fundamental_cycles (graphi, verts = verti)
             utils::setTxtProgressBar (pb, i / length (bb_indices))
@@ -194,6 +194,8 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
             bb_indices <- get_bb_indices (graph, bb_list)
             lens <- unlist (lapply (bb_indices, length))
         }
+        bb_list [which (lens == 0)] <- NULL
+        bb_indices [which (lens == 0)] <- NULL
     }
     list (bb_list = bb_list, bb_indices = bb_indices)
 }
