@@ -135,15 +135,16 @@ dodgr_vertices <- function (graph)
     if (is.factor (to_id))
         to_id <- paste0 (to_id)
     if (is_graph_spatial (graph))
+    {
         verts <- data.frame (id = c (from_id, to_id),
                              x = c (graph [[cols [which (nms == "xfr")] ]],
                                     graph [[cols [which (nms == "xto")] ]]),
                              y = c (graph [[cols [which (nms == "yfr")] ]],
                                     graph [[cols [which (nms == "yto")] ]]),
-                             component = rep (graph [[cols [which (nms ==
-                                                "component")] ]]),
                              stringsAsFactors = FALSE)
-    else
+        if ("component" %in% nms)
+            verts$component <- graph [[cols [which (nms == "component")] ]]
+    } else
     {
         verts <- data.frame (id = c (from_id, to_id),
                              stringsAsFactors = FALSE)
