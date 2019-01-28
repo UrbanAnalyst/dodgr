@@ -131,7 +131,7 @@ size_t run_sp::get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
     return static_cast <size_t> (fromi.size ());
 }
 
-size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
+size_t run_sp::get_fromi (const Rcpp::DataFrame &vert_map_in,
         Rcpp::IntegerVector &fromi, Rcpp::NumericVector &id_vec)
 {
     if (fromi [0] < 0) // use all vertices
@@ -597,7 +597,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = get_fromi (vert_map_in, fromi, id_vec);
+    size_t nfrom = run_sp::get_fromi (vert_map_in, fromi, id_vec);
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
