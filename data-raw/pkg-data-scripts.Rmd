@@ -49,5 +49,5 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            stringsAsFactors = FALSE)
 # change percentage value to 0-1
 weighting_profiles$value <- weighting_profiles$value / 100
-devtools::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
+usethis::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
 ```
