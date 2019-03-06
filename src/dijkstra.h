@@ -14,17 +14,6 @@ struct DijkstraEdge
     double _wt;
     unsigned int _i;
 
-    /*
-    bool operator < (const DijkstraEdge& rhs) const
-    {
-        return _wt < rhs._wt;
-    }
-    */
-    bool operator == (const DijkstraEdge& rhs) const
-    {
-        return _wt == rhs._wt;
-    }
-
     unsigned int geti () const { return _i;   }
     double getw () const { return _wt;   }
 };
@@ -33,7 +22,10 @@ struct by_wt
 {
     bool operator () (const DijkstraEdge& lhs, const DijkstraEdge& rhs)
     {
-        return lhs._wt < rhs._wt;
+        if (lhs._wt == rhs._wt)
+            return lhs._i < rhs._i;
+        else
+            return lhs._wt < rhs._wt;
     }
 }; 
 
