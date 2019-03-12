@@ -1,8 +1,12 @@
-# v0.1.2.001
+# v0.1.3
 Major changes:
 - New functions `dodgr_fundamental_cycles` and `dodgr_full_cycles`
 - New function `dodgr_sflines_to_poly` to convert `sf` collections of
   `LINESTRING` object into corresponding enclosed `POLYGON` objects.
+
+Minor changes:
+- Bug fix with vignette caused by updates to `tinytex` rendering of `svg`
+- Bug fix for `dodgr_dists (heap = "set")` with integer distances
 
 
 # v0.1.2

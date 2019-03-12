@@ -180,6 +180,8 @@ dodgr_components <- function (graph)
     {
         gr_cols <- dodgr_graph_cols (graph)
         graph2 <- convert_graph (graph, gr_cols)
+        if (is.na (gr_cols [which (names (gr_cols) == "edge_id")]))
+            graph2$edge_id <- seq (nrow (graph2))
         cns <- rcpp_get_component_vector (graph2)
 
         indx <- match (graph2$edge_id, cns$edge_id)
