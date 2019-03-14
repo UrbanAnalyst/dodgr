@@ -117,28 +117,13 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     }
     vert_map <- make_vert_map (graph, gr_cols)
 
-    # TODO: Write a separate fn for this:
-    if (methods::is (from, "character"))
-    {
-        index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-        from_index <- index_id$index - 1 # 0-based
-        from_id <- index_id$id
-    } else (methods::is (from, "integer"))
-    {
-        from_index <- from - 1
-        from_id <- vert_map$id [from]
-    }
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index - 1 # 0-based
+    from_id <- index_id$id
 
-    if (methods::is (to, "character"))
-    {
-        index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-        to_index <- index_id$index - 1 # 0-based
-        to_id <- index_id$id
-    } else (methods::is (to, "integer"))
-    {
-        to_index <- to - 1
-        to_id <- vert_map$id [to]
-    }
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+    to_index <- index_id$index - 1 # 0-based
+    to_id <- index_id$id
 
     graph <- convert_graph (graph, gr_cols)
 
@@ -211,7 +196,15 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     id <- NULL
     if (!missing (pts))
     {
-        index <- get_pts_index (graph, gr_cols, vert_map, pts)
+        if (methods::is (pts, "character") | methods::is (pts, "numeric") |
+            methods::is (pts, "matrix") | methods::is (pts, "data.frame"))
+            index <- get_pts_index (graph, gr_cols, vert_map, pts)
+        else if (methods::is (pts, "integer"))
+            index <- pts
+        else
+            stop ("routing points are of unknown form; must be either ",
+                  "character, matrix, or integer")
+
         if (length (pts == 2) & is.numeric (pts) &
             ( (any (grepl ("x", names (pts), ignore.case = TRUE)) &
              any (grepl ("y", names (pts), ignore.case = TRUE))) |
