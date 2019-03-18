@@ -38,6 +38,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     scales,
+    sf,
     testthat,
     tinytex,
     tidygraph

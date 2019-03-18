@@ -1,3 +1,87 @@
+#' dodgr_to_sf
+#'
+#' Convert a `dodgr` graph into an equivalent \pkg{sf} object.  Works by
+#' aggregating edges into `LINESTRING` objects representing longest sequences
+#' between all junction nodes. The resultant objects will generally contain more
+#' `LINESTRING` objects than the original \pkg{sf} object, because the former
+#' will be bisected at every junction point.
+#'
+#' @param net A \pkg{dodgr} network
+#' @return Equivalent object of class \pkg{sf}.
+#'
+#' @note Requires the \pkg{sf} package to be installed.
+#'
+#' @export
+#' @examples
+#' hw <- weight_streetnet (hampi)
+#' nrow(hw) # 5,729 edges
+#' xy <- dodgr_to_sf (hw)
+#' dim (xy) # 764 edges; 14 attributes
+dodgr_to_sf <- function (net)
+{
+    requireNamespace ("sf")
+    res <- dodgr_to_sfc (net)
+    sf::st_sf (res$dat, geometry = res$geometry, crs = 4326)
+}
+
+#' dodgr_to_sfc
+#'
+#' Convert a `dodgr` graph into a `list` composed of
+#' two objects: `dat`, a `data.frame`; and
+#' `geometry`, an `sfc` object from the (\pkg{sf}) package.
+#' Works by aggregating edges into `LINESTRING`
+#' objects representing longest sequences between all junction nodes. The
+#' resultant objects will generally contain more `LINESTRING` objects than
+#' the original \pkg{sf} object, because the former will be bisected at every
+#' junction point.
+#'
+#' @param net A \pkg{dodgr} network
+#' @return A list containing (1) A `data.frame` of data associated with the
+#' `sf` geometries; and (ii) A Simple Features Collection (`sfc`) list of
+#' `LINESTRING` objects.
+#'
+#' @note The output of this function corresponds to the edges obtained from
+#' `dodgr_contract_graph`. This function does not require the \pkg{sf} package
+#' to be installed; the corresponding function that creates a full \pkg{sf}
+#' object - \link{dodgr_to_sf} does requires \pkg{sf} to be installed.
+#'
+#' @export
+#' @examples
+#' hw <- weight_streetnet (hampi)
+#' nrow(hw)
+#' xy <- dodgr_to_sfc (hw)
+#' dim (hw) # 5.845 edges
+#' length (xy$geometry) # more linestrings aggregated from those edges
+#' nrow (hampi) # than the 191 linestrings in original sf object
+#' dim (xy$dat) # same number of rows as there are geometries
+#' # The dodgr_to_sf function then just implements this final conversion:
+#' # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
+dodgr_to_sfc <- function (net)
+{
+    # force sequential IDs. TODO: Allow non-sequential by replacing indices in
+    # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
+    net$edge_id <- seq (nrow (net))
+
+    gc <- dodgr_contract_graph (net)
+    geometry <- rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+
+    # Then match data of `net` potentially including way_id, back on to the
+    # geometries:
+    #edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
+    #indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
+    #indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
+    #edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
+    #index <- match (edge_ids, net$edge_id)
+    #dat <- net [index, ]
+    #dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
+    #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
+    #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
+
+    geometry <- geometry [match (gc$graph$edge_id, names (geometry))]
+
+    return (list (dat = gc$graph, geometry = geometry))
+}
+
 #' dodgr_to_igraph
 #'
 #' Convert a `dodgr` graph to an \pkg{igraph}.

@@ -3,6 +3,7 @@ Major changes:
 - New functions `dodgr_fundamental_cycles` and `dodgr_full_cycles`
 - New function `dodgr_sflines_to_poly` to convert `sf` collections of
   `LINESTRING` object into corresponding enclosed `POLYGON` objects.
+- New function `dodgr_to_sf` creates full `sf` objects, extending `dodgr_to_sfc`
 
 Minor changes:
 - Bug fix with vignette caused by updates to `tinytex` rendering of `svg`
