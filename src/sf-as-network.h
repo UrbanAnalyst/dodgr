@@ -5,7 +5,7 @@
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
 
-const double earth = 6378.137; // value used in geosphere::distHaversine
+const double earth = 6378.137; // WSG84 definition
 
 constexpr float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
 constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();

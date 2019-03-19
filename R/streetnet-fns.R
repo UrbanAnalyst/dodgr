@@ -126,8 +126,8 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' resultant `dodgr` network; vector can be either names or indices of
 #' desired columns.
 #'
-#' @return A `data.frame` of edges representing the street network, along
-#' with a column of graph component numbers.
+#' @return A `data.frame` of edges representing the street network, with
+#' distances in kilometres, along with a column of graph component numbers.
 #'
 #' @note Names for the `wt_profile` parameter are taken from
 #' \link{weighting_profiles}, which is a `data.frame` of weights for

@@ -39,8 +39,8 @@ resultant \code{dodgr} network; vector can be either names or indices of
 desired columns.}
 }
 \value{
-A \code{data.frame} of edges representing the street network, along
-with a column of graph component numbers.
+A \code{data.frame} of edges representing the street network, with
+distances in kilometres, along with a column of graph component numbers.
 }
 \description{
 Weight (or re-weight) an \code{sf}-formatted OSM street network according to
