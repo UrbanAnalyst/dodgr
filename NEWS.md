@@ -4,6 +4,10 @@ Major changes:
 - New function `dodgr_sflines_to_poly` to convert `sf` collections of
   `LINESTRING` object into corresponding enclosed `POLYGON` objects.
 - New function `dodgr_to_sf` creates full `sf` objects, extending `dodgr_to_sfc`
+- New function `igraph_to_dodgr` converts `igraph` objects into `dodgr` format
+- New function `dodgr_uncontract_graph` to convert from contracted back into
+  original, uncontracted from, including any additional data appended on to
+  contracted graph.
 
 Minor changes:
 - Bug fix with vignette caused by updates to `tinytex` rendering of `svg`
