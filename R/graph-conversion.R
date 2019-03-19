@@ -88,15 +88,30 @@ dodgr_to_sfc <- function (net)
 #'
 #' @param graph A `dodgr` graph
 #'
-#' @return The `igraph` equivalent of the input
+#' @return The `igraph` equivalent of the input. Note that this will \emph{not}
+#' be a weighted-graph
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' graphi <- dodgr_to_igraph (graph)
 dodgr_to_igraph <- function (graph)
 {
+    gr_cols <- dodgr_graph_cols (graph)
+    if (is.na (gr_cols [match ("from", names (gr_cols))]) |
+               is.na (gr_cols [match ("to", names (gr_cols))]))
+    {
+        scols <- find_spatial_cols (graph)
+        graph$from_id <- scols$xy_id$xy_fr_id
+        graph$to_id <- scols$xy_id$xy_to_id
+        gr_cols <- dodgr_graph_cols (graph)
+    }
     v <- dodgr_vertices (graph)
-    graph <- graph [, c (3, 6, 1:2, 4:5, 7:13)]
+    graph <- graph [, gr_cols]
+    gr_cols <- dodgr_graph_cols (graph)
+    # remove edge_id if it exists
+    if (!is.na (gr_cols [1]))
+        graph [[gr_cols [1] ]] <- NULL
+
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
 }
 
