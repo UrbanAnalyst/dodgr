@@ -29,9 +29,6 @@ matrix:
           before_install: ''
           disable_homebrew: true
     allow_failures:
-        - os: linux
-          r: devel
-          dist: trusty
         - os: osx
           r: release
           before_install: ''
