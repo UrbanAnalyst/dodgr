@@ -197,6 +197,8 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' translating all \code{graph["from"/"to"]} values into these indices. This
 #' construction is done in \code{inst_graph}.
 #'
+#' @note Returns 1-indexed values indexing directly into the R input
+#'
 #' @noRd
 rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)

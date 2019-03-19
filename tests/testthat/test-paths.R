@@ -5,8 +5,8 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 
 test_that("paths", {
     graph <- weight_streetnet (hampi)
-    from <- sample (graph$from_id, size = 100)
-    to <- sample (graph$from_id, size = 50)
+    from <- graph$from_id [1:100]
+    to <- graph$to_id [100:150]
     to <- to [!to %in% from]
     dp <- dodgr_paths (graph, from = from, to = to)
     expect_is (dp, "list")
@@ -27,8 +27,8 @@ test_that("paths", {
 
 test_that("pairwise paths", {
     graph <- weight_streetnet (hampi)
-    from <- sample (graph$from_id, size = 10)
-    to <- sample (graph$from_id, size = 10)
+    from <- graph$from_id [1:10]
+    to <- graph$to_id [100:105]
     indx <- which (!to %in% from)
     to <- to [indx]
     from <- from [indx]

@@ -119,10 +119,19 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
         paths <- rcpp_get_paths (graph, vert_map, from_index, to_index, heap)
     }
 
-    # convert 1-based indices back into vertex IDs:
+    # convert 1-based indices back into vertex IDs. Note both paths that can not
+    # be traced and single-step paths are returned from the above as NULL. The
+    # former are retained as NULL, while the following converts the latter to
+    # appropriate start-end vertices.
     paths <- lapply (paths, function (i)
                      lapply (i, function (j)
-                             vert_map$vert [j] ))
+                             {
+                                 if (is.null (j))
+                                     return (j)
+                                 vert_map$vert [j]
+                             }  )   )
+
+
     # name path lists
     if (!is.null (from_id) & !is.null (to_id))
     {
@@ -134,21 +143,14 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
         names (paths) <- from_id
     }
 
-    # replace length=1 paths with end points only (issue #63). This is much
-    # clearer done with explicit loops, but then excludes pairwise paths.
-    if (!pairwise)
-    {
-        paths <- fill_null_paths (paths, graph)
-    }
-
     if (!vertices)
     {
-        # convert vertex IDs to corresponding sequences of edge numbers
         graph_verts <- paste0 ("f", graph$from, "t", graph$to)
 
+        # convert vertex IDs to corresponding sequences of edge numbers
         paths <- lapply (paths, function (i)
                          lapply (i, function (j)
-                                 if (length (j) > 0)
+                                 if (length (j) > 1)
                                  {
                                      indx <- 2:length (j)
                                      pij <- paste0 ("f", j [indx - 1],
@@ -157,28 +159,5 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
                                  } ))
     }
 
-    return (paths)
-}
-
-# paths that have length of 1 are be default returned as NULL; this replaces
-# those with single values of the end point only
-fill_null_paths <- function (paths, graph)
-{
-    lens <- lapply (paths, function (i) vapply (i, length, numeric (1)))
-    v <- dodgr_vertices (graph)
-    for (i in seq (paths))
-    {
-        index <- which (lens [[i]] == 0)
-        index <- index [which (!index == i)]
-        vert_names <- strsplit (names (index), "-")
-        same_comp <- lapply (vert_names, function (j)
-                             identical (v$component [match (j [1], v$id)],
-                                        v$component [match (j [2], v$id)]))
-        for (j in seq (vert_names))
-            if (same_comp [[j]]) # then replace NULL path with end vertex
-            {
-                paths [[i]] [[index [j] ]] <- vert_names [[j]] [2]
-            }
-    }
     return (paths)
 }
