@@ -10,7 +10,8 @@ dodgr_to_igraph(graph)
 \item{graph}{A \code{dodgr} graph}
 }
 \value{
-The \code{igraph} equivalent of the input
+The \code{igraph} equivalent of the input. Note that this will \emph{not}
+be a dual-weighted graph.
 }
 \description{
 Convert a \code{dodgr} graph to an \pkg{igraph}.
@@ -18,4 +19,7 @@ Convert a \code{dodgr} graph to an \pkg{igraph}.
 \examples{
 graph <- weight_streetnet (hampi)
 graphi <- dodgr_to_igraph (graph)
+}
+\seealso{
+\link{igraph_to_dodgr}
 }

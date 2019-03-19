@@ -89,7 +89,10 @@ dodgr_to_sfc <- function (net)
 #' @param graph A `dodgr` graph
 #'
 #' @return The `igraph` equivalent of the input. Note that this will \emph{not}
-#' be a weighted-graph
+#' be a dual-weighted graph.
+#'
+#' @seealso \link{igraph_to_dodgr}
+#'
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -113,6 +116,68 @@ dodgr_to_igraph <- function (graph)
         graph [[gr_cols [1] ]] <- NULL
 
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
+}
+
+#' igraph_to_dodgr
+#'
+#' Convert a \pkg{igraph} network to an equivalent `dodgr` representation.
+#'
+#' @param graph An \pkg{igraph} network
+#'
+#' @return The `dodgr` equivalent of the input.
+#'
+#' @seealso \link{dodgr_to_igraph}
+#'
+#' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' graphi <- dodgr_to_igraph (graph)
+#' graph2 <- igraph_to_dodgr (graphi)
+#' identical (graph2, graph) # FALSE
+igraph_to_dodgr <- function (graph)
+{
+    ei <- igraph::edge_attr (graph)
+    vi <- igraph::vertex_attr (graph)
+    index <- grep ("^lon|^lat|lon$|lat$|^x|^y|x$|y$", names (ei))
+    if (length (index) > 0)
+        ei [index] <- NULL
+    index <- which (names (vi) %in% names (ei))
+    if (length (index) > 0)
+        vi [index] <- NULL
+    vi <- data.frame (do.call (cbind, vi), stringsAsFactors = FALSE)
+
+    res <- data.frame (cbind (igraph::get.edgelist (graph), do.call (cbind, ei)),
+                       stringsAsFactors = FALSE)
+    names (res) [1:2] <- c ("from_id", "to_id")
+
+    nms <- paste0 (names (vi), "_from") [-1]
+    res [, nms] <- vi [match (res$from_id, vi$name), 2:ncol (vi)]
+
+    nms <- paste0 (names (vi), "_to") [-1]
+    res [, nms] <- vi [match (res$to_id, vi$name), 2:ncol (vi)]
+
+    for (i in 3:ncol (res))
+        res [, i] <- convert_col (res, i)
+
+    res <- cbind ("edge_id" = seq (nrow (res)), res)
+
+    return (res)
+}
+
+# Convert columns from character to numeric or integer where those given
+# identical round-trip values (char -> numeric -> char, for example).
+convert_col <- function (x, n = 3)
+{
+    xn <- xnd <- x [, n]
+    cl0 <- class (xn)
+    storage.mode (xnd) <- "numeric"
+    xni <- round (xnd)
+    storage.mode (xni) <- "integer"
+    if (identical (methods::as (xni, cl0), xn))
+        xn <- xni
+    else if (identical (methods::as (xnd, cl0), xn))
+        xn <- xnd
+    return (xn)
 }
 
 

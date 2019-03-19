@@ -297,6 +297,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     if (length (keep_cols) > 0)
         graph <- reinsert_keep_cols (x, graph, keep_cols)
 
+    graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
+
     return (graph)
 }
 

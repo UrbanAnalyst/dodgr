@@ -46,7 +46,11 @@ find_fr_id_col <- function (graph)
                                  c (frx_col, fry_col))]
     }
     if (length (fr_col) != 1)
-        stop ("Unable to determine column with ID of from vertices")
+    {
+        fr_col <- fr_col [grep ("id", names (graph) [fr_col]) ]
+        if (length (fr_col) != 1)
+            stop ("Unable to determine column with ID of from vertices")
+    }
     return (fr_col)
 }
 
@@ -63,7 +67,11 @@ find_to_id_col <- function (graph)
                                  c (tox_col, toy_col))]
     }
     if (length (to_col) != 1)
-        stop ("Unable to determine column with ID of from vertices")
+    {
+        to_col <- to_col [grep ("id", names (graph) [to_col]) ]
+        if (length (to_col) != 1)
+            stop ("Unable to determine column with ID of from vertices")
+    }
     return (to_col)
 }
 
