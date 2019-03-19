@@ -17,9 +17,9 @@
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
-#' nrow (graph) # 5,742
+#' nrow (graph) # 5,729
 #' graph <- dodgr_contract_graph (graph)
-#' nrow (graph$graph) # 2,878
+#' nrow (graph$graph) # 764
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
     if (!is.null (verts))
@@ -94,5 +94,47 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         names (graph_refill) [ci] <- cnm
     }
 
+    dig <- digest::digest (graph_contracted$edge_map)
+    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    saveRDS (graph, file = fname)
+
     return (list (graph = graph_refill, edge_map = graph_contracted$edge_map))
+}
+
+#' dodgr_uncontract_graph
+#'
+#' Revert a contracted graph created with \link{dodgr_contract_graph} back to
+#' the full, uncontracted version. This function is mostly used for the side
+#' effect of mapping any new columnns inserted on to the contracted graph back
+#' on to the original graph, as demonstrated in the example.
+#'
+#' @param graph A list of two items returned from \link{dodgr_contract_graph},
+#' the first ("graph") containing the contracted graph, and the second
+#' ("edge_map") mapping edges in the contracted graph back to those in the
+#' original graph.
+#'
+#' @return A single `data.frame` representing the original, uncontracted graph.
+#' @export
+#' @examples
+#' graph0 <- weight_streetnet (hampi)
+#' nrow (graph0) # 5,729
+#' graph1 <- dodgr_contract_graph (graph0)
+#' nrow (graph1$graph) # 764
+#' graph2 <- dodgr_uncontract_graph (graph1)
+#' nrow (graph2) # 5,729
+#' identical (graph0, graph2) # TRUE
+#' 
+#' # Insert new data on to the contracted graph and uncontract it:
+#' graph1$graph$new_col <- runif (nrow (graph1$graph))
+#' graph3 <- dodgr_uncontract_graph (graph1)
+#' # graph3 is then the uncontracted graph which includes "new_col" as well
+dodgr_uncontract_graph <- function (graph)
+{
+    dig <- digest::digest (graph$edge_map)
+    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    if (!file.exists (fname))
+        stop ("Graph must have been contracted in current R session")
+    graph_full <- readRDS (fname)
+
+    uncontract_graph (graph$graph, graph$edge_map, graph_full)
 }

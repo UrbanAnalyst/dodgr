@@ -19,6 +19,7 @@ Description: Distances on dual-weighted directed graphs using priority-queue
 Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
+    digest,
     igraph,
     magrittr,
     methods,
@@ -29,7 +30,6 @@ Imports:
     RcppParallel
 Suggests:
     devtools,
-    digest,
     ggplot2,
     igraphdata,
     knitr,

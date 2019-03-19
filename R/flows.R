@@ -35,8 +35,17 @@ uncontract_graph <- function (graph, edge_map, graph_full)
     edges <- graph$edge_id [which (!graph$edge_id %in% edge_map$edge_new)]
     indx_to_full <- c (indx_to_full, match (edges, graph_full$edge_id))
     indx_to_contr <- c (indx_to_contr, match (edges, graph$edge_id))
-    graph_full$flow <- 0
-    graph_full$flow [indx_to_full] <- graph$flow [indx_to_contr]
+
+    index <- which (!names (graph) %in% names (graph_full))
+    if (length (index) > 0)
+    {
+        nms <- names (graph) [index]
+        graph_full [nms] <- NA
+        for (n in nms)
+        {
+            graph_full [[n]] [indx_to_full] <- graph [[n]] [indx_to_contr]
+        }
+    }
 
     return (graph_full)
 }

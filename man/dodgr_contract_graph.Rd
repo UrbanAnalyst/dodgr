@@ -27,7 +27,7 @@ vertices.
 }
 \examples{
 graph <- weight_streetnet (hampi)
-nrow (graph) # 5,742
+nrow (graph) # 5,729
 graph <- dodgr_contract_graph (graph)
-nrow (graph$graph) # 2,878
+nrow (graph$graph) # 764
 }

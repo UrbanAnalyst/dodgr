@@ -83,8 +83,6 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         message ("Now computing fundamental cycles by breaking graph with ",
                  nrow (graphc), " edges into ", length (bb_indices),
                  " components ...")
-        if (!requireNamespace ("digest"))
-            stop ("This requires the package digest to be installed.")
         pb <- utils::txtProgressBar (style = 3)
         res <- list ()
         for (i in seq (bb_indices))
