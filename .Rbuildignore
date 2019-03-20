@@ -12,7 +12,6 @@
 ^vignettes/bencharm.Rmd$
 docs/
 data-raw/
-scripts/
 tests/valgrind-script.R$
 tests/valgrind-test.R$
 ^_pkgdown\.yml$
