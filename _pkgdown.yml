@@ -10,27 +10,39 @@ reference:
     - dodgr-package
   - title: The Main Functions
     contents:
-    - dodgr_dists
+    - dodgr_distances
     - dodgr_paths
     - dodgr_flows_aggregate
     - dodgr_flows_disperse
   - title: Functions to Obtain Graphs
     contents:
     - dodgr_streetnet
+    - weight_railway
     - weight_streetnet
     - dodgr_to_sfc
   - title: Functions to Modify Graphs
     contents:
     - dodgr_components
     - dodgr_contract_graph
+    - dodgr_uncontract_graph
+  - title: Functions to Convert Graphs
+    contents:
+    - dodgr_to_igraph
+    - dodgr_to_sf
+    - dodgr_to_sfc
+    - dodgr_to_tidygraph
+    - igraph_to_dodgr
   - title: Miscellaneous Functions
     contents:
-    - dodgr_sample
-    - dodgr_vertices
-    - match_pts_to_graph
     - compare_heaps
-    - merge_directed_flows
     - dodgr_flowmap
+    - dodgr_full_cycles
+    - dodgr_fundamental_cycles
+    - dodgr_sample
+    - dodgr_sflines_to_poly
+    - dodgr_vertices
+    - match_points_to_graph
+    - merge_directed_flows
   - title: Package data
     contents:
     - hampi
