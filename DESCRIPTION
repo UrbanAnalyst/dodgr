@@ -45,8 +45,6 @@ Suggests:
 LinkingTo:
     Rcpp,
     RcppParallel
-Remotes:
-    yihui/tinytex
 SystemRequirements:
     C++11,
     GNU make
