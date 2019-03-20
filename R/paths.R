@@ -155,7 +155,10 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE,
                                      indx <- 2:length (j)
                                      pij <- paste0 ("f", j [indx - 1],
                                                     "t", j [indx])
-                                     match (pij, graph_verts)
+                                     res <- match (pij, graph_verts)
+                                     res <- res [which (!is.na (res))]
+                                     return (if (length (res) == 0) NULL
+                                             else res)
                                  } ))
     }
 
