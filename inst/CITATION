@@ -1,16 +1,17 @@
 citHeader("To cite dodgr in publications use:")
 
-citEntry(entry = "Misc",
-        title        = "dodgr: Distances on Directed Graphs",
-        author       = personList(as.person("Mark Padgham"),
-            as.person("Andreas Petutschnig"),
-            as.person("Robin Lovelace"),
-            as.person("Andrew Smith")),
-        howpublished = "https://cran.r-project.org/package=dodgr",
-        year         = "2018",
+citEntry(entry = "Article",
+        journal = "Transport Findings",
+        doi = "10.32866/6945",
+        publisher = "Network Design Lab",
+        title = "dodgr: An R package for network flow aggregation",
+        author = personList(as.person("Mark Padgham")),
+        year = "2019",
+        month = "2",
 
         textVersion  =
-        paste("Mark Padgham, Andreas Petutschnig, Robin Lovelace, Andrew Smith (2018).",
-            "dodgr (Distances on Directed Graphs)",
-            "URL https://cran.r-project.org/package=dodgr")
+        paste("Mark Padgham (2019)",
+            "dodgr: An R package for network flow aggregation",
+            "Transport Findings, 2(14).",
+            "URL https://doi.org/10.32866/6945")
         )

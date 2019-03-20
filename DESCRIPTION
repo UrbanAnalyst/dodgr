@@ -10,12 +10,12 @@ Authors@R: c(
     person("Shane", "Saunders", role="cph",
         comment="Original author of included code for priority heaps"))
 Description: Distances on dual-weighted directed graphs using priority-queue
-    shortest paths. Weighted directed graphs have weights from A to B which may
-    differ from those from B to A. Dual-weighted directed graphs have two sets
-    of such weights. A canonical example is a street network to be used for
-    routing in which routes are calculated by weighting distances according to
-    the type of way and mode of transport, yet lengths of routes must be
-    calculated from direct distances.
+    shortest paths (Padgham (2019) <doi:10.32866/6945>). Weighted directed
+    graphs have weights from A to B which may differ from those from B to A.
+    Dual-weighted directed graphs have two sets of such weights. A canonical
+    example is a street network to be used for routing in which routes are
+    calculated by weighting distances according to the type of way and mode of
+    transport, yet lengths of routes must be calculated from direct distances.
 Depends: R (>= 3.2.0)
 License: GPL-3
 Imports:
