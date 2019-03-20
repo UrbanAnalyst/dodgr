@@ -58,5 +58,5 @@ notifications:
     on_success: change
     on_failure: change
 
-r_github_packages:
-      - jimhester/covr
+r_packages:
+      - covr
