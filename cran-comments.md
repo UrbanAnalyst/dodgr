@@ -1,8 +1,7 @@
-# CRAN notes for dodgr_0.1.1 submission
+# CRAN notes for dodgr_0.1.3 submission
 
-The manuscript accompanying this package has been accepted for publication, but
-has yet to be published and thus still awaits a DOI. The next submission will
-definitely include a reference in the package Description.
+The description now includes a DOI to the published manuscript accompanying this
+package.
 
 ## Notes
 
@@ -10,8 +9,6 @@ This submissions generates the following NOTES on some systems:
 
 * One possibly invalid URL for a vignette reference, due to jstor preventing
   automated queries. The URL is nevertheless valid.
-* Package size slightly only 5MB, because of large doc and libs directories. I
-  will endeavour to reduce this in future versions.
 * "GNU make is a SystemRequirements", which is unavoidable because of the need
   to remove compiled object files in src sub-directories.
 
