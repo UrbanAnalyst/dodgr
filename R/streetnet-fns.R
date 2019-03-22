@@ -329,8 +329,7 @@ remap_way_types <- function (sf_lines, wt_profile)
     }
 
     # re-map some common types
-    indx <- which (sf_lines$highway %in% c ("pedestrian", "footway",
-                                            "bridleway"))
+    indx <- which (sf_lines$highway %in% c ("pedestrian", "footway"))
     if (length (indx) > 0)
         sf_lines$highway [indx] <- "path"
 
