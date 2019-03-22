@@ -42,21 +42,23 @@ weighting_profiles <- lapply (dat, function (i) {
                             attr (j, "percent")))
                  do.call (rbind, res)
           })
-# Then add living_street to all
+# Then add living_street and bridleway to all profiles
 # https://wiki.openstreetmap.org/wiki/Tag:highway%3Dliving_street
 nms <- sapply (weighting_profiles, function (i) i [1, 1])
-# "foot"        95
-# "horse"       80
-# "wheelchair"  95
-# "bicycle"     95
-# "moped"       60
-# "motorcycle"  50
-# "motorcar"    40
-# "goods"       30
-# "hgv"         30
-# "psv"         30
+#               living_street   bridleway
+# "foot"        95              100
+# "horse"       80              100
+# "wheelchair"  95              50
+# "bicycle"     95              70
+# "moped"       60              0
+# "motorcycle"  50              0
+# "motorcar"    40              0
+# "goods"       30              0
+# "hgv"         30              0
+# "psv"         30              0
 wt_ls <- c (95, 80, 95, 95, 60, 50, 40, 30, 30, 30)
-names (wt_ls) <- nms
+wt_br <- c (100, 100, 50, 70, 0, 0, 0, 0, 0, 0)
+names (wt_ls) <- names (wt_br) <- nms
 weighting_profiles <- lapply (seq (weighting_profiles), function (i)
                               {
                                   wi <- weighting_profiles [[i]]
@@ -65,6 +67,10 @@ weighting_profiles <- lapply (seq (weighting_profiles), function (i)
                                   wi <- rbind (wi, c (nmi, 
                                                       "living_street",
                                                       wti))
+                                  wtb <- wt_br [which (nms == nmi)]
+                                  wi <- rbind (wi, c (nmi, 
+                                                      "bridleway",
+                                                      wtb))
                                   rownames (wi) <- rep ("preference", nrow (wi))
                                   return (wi)
                               })
