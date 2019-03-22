@@ -4,8 +4,7 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
 
 test_that("dists", {
-    expect_message (graph <- weight_streetnet (hampi),
-                    "The following highway types are present in data yet lack")
+    expect_silent (graph <- weight_streetnet (hampi))
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
@@ -91,8 +90,7 @@ test_that ("heaps", {
 })
 
 test_that("graph columns", {
-    expect_message (graph <- weight_streetnet (hampi),
-                    "The following highway types are present in data yet lack")
+    expect_silent (graph <- weight_streetnet (hampi))
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)

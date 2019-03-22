@@ -22,7 +22,7 @@ test_that("cycles_with_max_graph_size", {
                                                    graph_max_size = 1000),
                               "Now computing fundamental cycles")
               expect_is (x, "list")
-              expect_length (x, 66) # more cycles than before!
+              expect_length (x, 49) # more cycles than before!
 
               expect_silent (
                     xf <- dodgr_full_cycles (graph = net, graph_max_size = 1000))

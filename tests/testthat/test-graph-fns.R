@@ -56,18 +56,15 @@ test_that("different geometry columns", {
     gcol <- grep ("geometry", names (h2))
     names (h2) [gcol] <- "g"
     attr (h2, "sf_column") <- "g" # not necessary here but should always be done
-    expect_message (net <- weight_streetnet (h2),
-                    "The following highway types are present")
+    expect_silent (net <- weight_streetnet (h2))
     h2 <- hampi
     names (h2) [gcol] <- "geoms"
     attr (h2, "sf_column") <- "geoms"
-    expect_message (net <- weight_streetnet (h2),
-                    "The following highway types are present")
+    expect_silent (net <- weight_streetnet (h2))
     h2 <- hampi
     names (h2) [gcol] <- "geometry"
     attr (h2, "sf_column") <- "geometry"
-    expect_message (net <- weight_streetnet (h2),
-                    "The following highway types are present")
+    expect_silent (net <- weight_streetnet (h2))
     h2 <- hampi
     names (h2) [gcol] <- "xxx"
     expect_error (net <- weight_streetnet (h2),
@@ -109,9 +106,7 @@ test_that("keep cols", {
 test_that ("weight_profiles", {
     graph0 <- weight_streetnet (hampi, wt_profile = "foot")
     graph1 <- weight_streetnet (hampi, wt_profile = 1)
-    # hampi has some undefined highway types which should be removed from graph,
-    # giving less rows in streetnet
-    expect_true (nrow (graph0) < nrow (graph1))
+    expect_equal (nrow (graph0), nrow (graph1))
     #expect_identical (graph0$d, graph1$d)
     #expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
     wtp <- dodgr::weighting_profiles [dodgr::weighting_profiles == "foot", ]
