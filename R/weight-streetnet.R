@@ -75,6 +75,10 @@ weight_streetnet.default <- function (x, wt_profile = "bicycle",
     stop ("Unknown class")
 }
 
+# ********************************************************************
+# *************************     sf class     ************************* 
+# ********************************************************************
+
 #' @name weight_streetnet
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
@@ -192,15 +196,6 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
 
     return (graph)
-}
-
-#' @name weight_streetnet
-#' @export
-weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
-                              type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL)
-{
-    stop ("sc method not yet implemented")
 }
 
 # re-map any OSM 'highway' types with pmatch to standard types
@@ -324,6 +319,180 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
 
     return (graph)
 }
+
+# ********************************************************************
+# *************************     sc class     ************************* 
+# ********************************************************************
+
+#' @name weight_streetnet
+#' @export
+weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
+                                                        type_col = "highway",
+                                                        id_col = "osm_id",
+                                                        keep_cols = NULL)
+{
+    requireNamespace ("geodist")
+    requireNamespace ("dplyr")
+    check_sc (x)
+
+    extract_sc_edges_xy (x) %>%
+        sc_edge_dist () %>%
+        extract_sc_edges_highways (x) %>%
+        weight_sc_edges (wt_profile) %>%
+        sc_lanes_surface (wt_profile) %>%
+        sc_edge_time (wt_profile)
+}
+
+has_elevation <- function (x)
+{
+    "z_" %in% names (x$vertex)
+}
+
+check_sc <- function (x)
+{
+    if (!"osmdata_sc" %in% class (x))
+        stop ("weight_streetnet currently only works for 'sc'-class objects ",
+              "extracted with osmdata::osmdata_sc.")
+}
+
+# First step of edge extraction: join x and y coordinates
+extract_sc_edges_xy <- function (x)
+{
+    rename0 <- c (.vx0_x = "x_", .vx0_y = "y_", .vx0_z = "z_")
+    rename1 <- c (.vx1_x = "x_", .vx1_y = "y_", .vx1_z = "z_")
+    if (!has_elevation (x))
+    {
+        rename0 <- rename0 [1:2]
+        rename1 <- rename1 [1:2]
+    }
+
+    dplyr::left_join (x$edge, x$vertex, by = c (".vx0" = "vertex_")) %>%
+        dplyr::rename (!!rename0) %>%
+        dplyr::left_join (x$vertex, by = c (".vx1" = "vertex_")) %>%
+        dplyr::rename (!!rename1)
+}
+
+sc_edge_dist <- function (edges)
+{
+    # no visible binding notes:
+    .vx0_z <- .vx1_z <- NULL
+
+    edges$d <- geodist::geodist (edges [, c (".vx0_x", ".vx0_y")],
+                                 edges [, c (".vx1_x", ".vx1_y")], paired = TRUE)
+    dplyr::mutate (edges, "dz" = .vx1_z - .vx0_z) %>%
+        dplyr::select (-c(.vx0_z, .vx1_z))
+}
+
+extract_sc_edges_highways <- function (edges, x)
+{
+    # no visible binding notes:
+    native_ <- key <- `:=` <- value <- NULL
+
+    edges <- dplyr::left_join (edges, x$object_link_edge, by = "edge_") %>%
+        dplyr::select (-native_)
+    keep_types <- c ("highway", "oneway", "oneway:bicycle", "lanes",
+                     "maxspeed", "surface")
+    for (k in keep_types)
+    {
+        objs <- dplyr::filter (x$object, key == k)
+        edges <- dplyr::left_join (edges, objs, by = "object_") %>%
+            dplyr::rename (!!dplyr::quo_name (k) := value) %>%
+            dplyr::select (-key)
+    }
+    # oneway:bicycle doesn't enquote properly, so:
+    i <- grep ("bicycle", names (edges))
+    names (edges) [i] <- "oneway_bicycle"
+
+    # re-map the oneway values to boolean
+    edges$oneway [!edges$oneway %in% c ("no", "yes")] <- "no"
+    edges$oneway <- ifelse (edges$oneway == "no", FALSE, TRUE)
+    edges$oneway_bicycle [!edges$oneway_bicycle %in% c ("no", "yes")] <- "no"
+    edges$oneway_bicycle <- ifelse (edges$oneway_bicycle == "no", FALSE, TRUE)
+
+    return (edges)
+}
+
+weight_sc_edges <- function (edges, wt_profile)
+{
+    # no visible binding notes:
+    value <- d <- NULL
+
+    wp <- dodgr::weighting_profiles
+    wp <- wp [wp$name == wt_profile, c ("way", "value")]
+    dplyr::left_join (edges, wp, by = c ("highway" = "way")) %>%
+        dplyr::filter (!is.na (value)) %>%
+        dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
+        dplyr::select (-value)
+}
+
+# adjust weighted distances according to numbers of lanes and surfaces
+# NOTE: This is currently hard-coded for active transport only, and will not
+# work for anything else
+sc_lanes_surface <- function (edges, wt_profile)
+{
+    # no visible binding notes:
+    lanes <- maxspeed <- surface <- NULL
+
+    if (wt_profile %in% c ("foot", "bicycle"))
+    {
+        lns <- c (4, 5, 6, 7, 8)
+        wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
+        for (i in seq (lns))
+        {
+            index <- which (edges$lanes == lns [i])
+            if (i == length (lns))
+                index <- which (edges$lanes >= lns [i])
+            edges$d_weighted [index] <- edges$d_weighted [index] * (1 + wts [i])
+        }
+
+        srf <- c ("dirt", "grass", "natural")
+        wts <- c (0.1, 0.1, 0.1)
+        for (i in seq (srf))
+        {
+            index <- which (edges$surface == srf [i])
+            edges$d_weighted [index] <- edges$d_weighted [index] * (1 + wts [i])
+        }
+    }
+    edges <- dplyr::select (edges, -c(lanes, maxspeed, surface))
+
+    return (edges)
+}
+
+# Convert weighted distances to time
+# NOTE: This is currently hard-coded for foot and bicycle only, and will not work for
+# anything else. 
+sc_edge_time <- function (edges, wt_profile)
+{
+    if (wt_profile == "foot")
+    {
+        # Uses 
+        # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
+        edges$time = 60 * (edges$d_weighted / 1000) / 5 # 5km per hour
+        index <- which (edges$dz > 0)
+        edges$time [index] <- edges$time [index] + edges$dz [index] / 10
+        edges$dz <- NULL
+    } else if (wt_profile == "bicycle")
+    {
+        # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
+        # http://cycleseven.org/effect-of-hills-on-cycling-effort
+        # The latter argues for a linear relationship with a reduction in speed
+        # of "about 11% for every 1% change in steepness". For 0.01 to translate
+        # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
+        edges$time = 60 * (edges$d_weighted / 1000) / 12 # 12km per hour
+        index <- which (edges$dz > 0)
+        edges$time [index] <- edges$time [index] * 
+                            (1 + 11 * edges$dz [index] / edges$d [index])
+        edges$dz <- NULL
+        # ... TODO: Downhill
+        # http://www.sportsci.org/jour/9804/dps.html
+        # downhill cycling speed ~ sqrt (slope)
+    }
+    return (edges)
+}
+
+# ********************************************************************
+# **********************     weight railway     **********************
+# ********************************************************************
 
 #' weight_railway
 #'
