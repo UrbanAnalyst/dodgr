@@ -379,8 +379,10 @@ sc_edge_dist <- function (edges)
 
     edges$d <- geodist::geodist (edges [, c (".vx0_x", ".vx0_y")],
                                  edges [, c (".vx1_x", ".vx1_y")], paired = TRUE)
-    dplyr::mutate (edges, "dz" = .vx1_z - .vx0_z) %>%
-        dplyr::select (-c(.vx0_z, .vx1_z))
+    if (".vx0_z" %in% names (edges) & ".vx1_z" %in% names (edges))
+        edges <- dplyr::mutate (edges, "dz" = .vx1_z - .vx0_z) %>%
+            dplyr::select (-c(.vx0_z, .vx1_z))
+    return (edges)
 }
 
 extract_sc_edges_highways <- function (edges, x)
@@ -408,6 +410,12 @@ extract_sc_edges_highways <- function (edges, x)
     edges$oneway <- ifelse (edges$oneway == "no", FALSE, TRUE)
     edges$oneway_bicycle [!edges$oneway_bicycle %in% c ("no", "yes")] <- "no"
     edges$oneway_bicycle <- ifelse (edges$oneway_bicycle == "no", FALSE, TRUE)
+
+    # TODO: Do this in convert_graph function
+    # replace NA distances and times
+    #m <- .Machine$double.xmax
+    #edges$d_weighted [is.na (edges$d_weighted)] <- m
+    #edges$time [is.na (edges$time)] <- m
 
     return (edges)
 }
@@ -468,9 +476,12 @@ sc_edge_time <- function (edges, wt_profile)
         # Uses 
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
         edges$time = 60 * (edges$d_weighted / 1000) / 5 # 5km per hour
-        index <- which (edges$dz > 0)
-        edges$time [index] <- edges$time [index] + edges$dz [index] / 10
-        edges$dz <- NULL
+        if ("dz" %in% names (edges))
+        {
+            index <- which (edges$dz > 0)
+            edges$time [index] <- edges$time [index] + edges$dz [index] / 10
+            edges$dz <- NULL
+        }
     } else if (wt_profile == "bicycle")
     {
         # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
@@ -479,10 +490,13 @@ sc_edge_time <- function (edges, wt_profile)
         # of "about 11% for every 1% change in steepness". For 0.01 to translate
         # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
         edges$time = 60 * (edges$d_weighted / 1000) / 12 # 12km per hour
-        index <- which (edges$dz > 0)
-        edges$time [index] <- edges$time [index] * 
-                            (1 + 11 * edges$dz [index] / edges$d [index])
-        edges$dz <- NULL
+        if ("dz" %in% names (edges))
+        {
+            index <- which (edges$dz > 0)
+            edges$time [index] <- edges$time [index] * 
+                (1 + 11 * edges$dz [index] / edges$d [index])
+            edges$dz <- NULL
+        }
         # ... TODO: Downhill
         # http://www.sportsci.org/jour/9804/dps.html
         # downhill cycling speed ~ sqrt (slope)
