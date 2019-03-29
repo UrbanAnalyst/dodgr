@@ -33,7 +33,8 @@ multi-lane vehicular roads are longer than equivalent distances along
 isolated walking paths), yet the desired output remains direct,
 unweighted distances. Accurate calculation of distances on street
 networks requires a dual-weighted representation. In **R**, `dodgr` is
-currently the only package that offers this functionality.
+currently the only package that offers this functionality (without
+excessive data wrangling).
 
 Second, while [`igraph`](https://igraph.org/r) and almost all other
 routing packages are primarily designed for one-to-one routing, `dodgr`
@@ -42,8 +43,10 @@ outperform equivalent packages in large routing tasks.
 
 Third, `dodgr` goes beyond the functionality of comparable packages
 through including routines to aggregate flows throughout a network,
-through specifying origins, destinations, and flow densities. Or even
-apply a network dispersal model from a set of origin points only.
+through specifying origins, destinations, and flow densities between
+each pair of points. Alternatively, flows can be aggregated according to
+a network dispersal model from a set of origin points and associated
+densities, and a user-specified dispersal model.
 
 ## Installation
 
@@ -66,10 +69,10 @@ packageVersion ("dodgr")
 ## Usage: Sample Data and `dodgr` networks
 
 To illustrate functionality, the package includes an example data set
-containing the Open Street Map way network for [Hampi,
+containing the Open Street Map network for [Hampi,
 India](https://www.openstreetmap.org/#map=15/15.3368/76.4601) (a
-primarily pedestrian village in the middle of a very large World
-Heritage zone). These data are in [Simple Features
+primarily pedestrian village in the middle of a large World Heritage
+zone). These data are in [Simple Features
 (`sf`)](https://cran.r-project.org/package=sf) format, as a collection
 of `LINESTRING` objects. `dodgr` represents networks as a simple
 rectangular graph, with each row representing an edge segment between
@@ -78,9 +81,13 @@ equivalent `dodgr` representations with the `weight_streetnet()`
 function:
 
 ``` r
+class (hampi)
+#> [1] "sf"         "data.frame"
 dim (hampi)
 #> [1] 191  15
 graph <- weight_streetnet (hampi, wt_profile = "foot")
+class (graph)
+#> [1] "data.frame"      "dodgr_streetnet"
 dim (graph)
 #> [1] 5845   13
 ```
@@ -142,9 +149,14 @@ distances,
 [`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html),
 accepts two vectors or matrices of routing points as inputs (describing
 origins and destinations), and returns a corresponding matrix of
-pairwise distances. Routing points can, for example, be randomly
-selected from the vertices of a graph. The vertices can in turn be
-extracted with the `dodgr_vertices()` function:
+pairwise distances. If an input graph has columns for both distances and
+weighted distances, the latter are used to determine the effectively
+shortest routes through a network, while actual distances returned are
+sums of actual distances along those routes.
+
+Routing points can, for example, be randomly selected from the vertices
+of a graph. The vertices can in turn be extracted with the
+`dodgr_vertices()` function:
 
 ``` r
 v <- dodgr_vertices (graph)
@@ -221,13 +233,17 @@ Flow aggregation refers to the procedure of routing along multiple ways
 according to specified densities of flow between defined origin and
 destination points, and aggregating flows along each edge of the
 network. The procedure is functionally similar to the above procedure
-for distances, with the addition of a matrix specifying flow densities
-between the input set of origin (`from`) and destination (`to`) points.
-The following example illustrates use with a random “flow
+for distances, with the addition of a matrix specifying pairwise flow
+densities between the input set of origin (`from`) and destination
+(`to`) points. The following example illustrates use with a random “flow
 matrix”:
 
 ``` r
 flows <- array (runif (length (from) * length (to)), dim = c (length (from), length (to)))
+length (from); length (to); dim (flows)
+#> [1] 20
+#> [1] 50
+#> [1] 20 50
 f <- dodgr_flows_aggregate (graph = graph, from = from, to = to, flows = flows)
 ```
 
@@ -241,12 +257,12 @@ head (f)
 
 | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |     flow |
 | --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: | -------: |
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 9.540719 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 0.000000 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 9.540719 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 0.000000 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 9.540719 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 0.000000 |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 |  0.00000 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 12.71036 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 |  0.00000 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 12.71036 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 |  0.00000 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 12.71036 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a

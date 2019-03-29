@@ -48,7 +48,7 @@ pedestrians on multi-lane vehicular roads are longer than equivalent distances
 along isolated walking paths), yet the desired output remains direct, unweighted
 distances. Accurate calculation of distances on street networks requires a
 dual-weighted representation. In **R**, `dodgr` is currently the only package
-that offers this functionality.
+that offers this functionality (without excessive data wrangling).
 
 Second, while [`igraph`](https://igraph.org/r) and almost all other routing
 packages are primarily designed for one-to-one routing, `dodgr` is specifically
@@ -57,8 +57,10 @@ packages in large routing tasks.
 
 Third, `dodgr` goes beyond the functionality of comparable packages through
 including routines to aggregate flows throughout a network, through specifying
-origins, destinations, and flow densities. Or even apply a network dispersal
-model from a set of origin points only.
+origins, destinations, and flow densities between each pair of points.
+Alternatively, flows can be aggregated according to a network dispersal model
+from a set of origin points and associated densities, and a user-specified
+dispersal model.
 
 
 ## Installation
@@ -78,17 +80,19 @@ packageVersion ("dodgr")
 ## Usage: Sample Data and `dodgr` networks
 
 To illustrate functionality, the package includes an example data set containing
-the Open Street Map way network for [Hampi,
+the Open Street Map network for [Hampi,
 India](https://www.openstreetmap.org/#map=15/15.3368/76.4601) (a primarily
-pedestrian village in the middle of a very large World Heritage zone). These
-data are in [Simple Features (`sf`)](https://cran.r-project.org/package=sf)
+pedestrian village in the middle of a large World Heritage zone). These data are
+in [Simple Features (`sf`)](https://cran.r-project.org/package=sf)
 format, as a collection of `LINESTRING` objects. `dodgr` represents networks as
 a simple rectangular graph, with each row representing an edge segment between
 two points or vertices. `sf`-format objects can be converted to equivalent
 `dodgr` representations with the `weight_streetnet()` function:
 ```{r hampi}
+class (hampi)
 dim (hampi)
 graph <- weight_streetnet (hampi, wt_profile = "foot")
+class (graph)
 dim (graph)
 ```
 The `sf`-format network contained `r nrow (hampi)` `LINESTRING` objects, with
@@ -134,7 +138,11 @@ The many-to-many nature of `dodgr` means that the function to calculate
 distances,
 [`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html),
 accepts two vectors or matrices of routing points as inputs (describing origins
-and destinations), and returns a corresponding matrix of pairwise distances.
+and destinations), and returns a corresponding matrix of pairwise distances. If
+an input graph has columns for both distances and weighted distances, the latter
+are used to determine the effectively shortest routes through a network, while
+actual distances returned are sums of actual distances along those routes.
+
 Routing points can, for example, be randomly selected from the vertices of a
 graph. The vertices can in turn be extracted with the `dodgr_vertices()`
 function:
@@ -196,12 +204,13 @@ Flow aggregation refers to the procedure of routing along multiple ways
 according to specified densities of flow between defined origin and destination
 points, and aggregating flows along each edge of the network. The procedure is
 functionally similar to the above procedure for distances, with the addition of
-a matrix specifying flow densities between the input set of origin (`from`) and
-destination (`to`) points. The following example illustrates use with a random
-"flow matrix":
+a matrix specifying pairwise flow densities between the input set of origin
+(`from`) and destination (`to`) points. The following example illustrates use
+with a random "flow matrix":
 
 ```{r flows}
 flows <- array (runif (length (from) * length (to)), dim = c (length (from), length (to)))
+length (from); length (to); dim (flows)
 f <- dodgr_flows_aggregate (graph = graph, from = from, to = to, flows = flows)
 ```
 The result is simply the input `graph` with an additional column quantifying
