@@ -38,9 +38,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:
+    edge_id_col <- gr_cols [[which (names (gr_cols) == "edge_id")]]
     indx_contr <- match (graph_contracted$edge_map$edge_new,
                          graph_contracted$graph$edge_id)
-    indx_orig <- match (graph_contracted$edge_map$edge_old, graph$edge_id)
+    indx_orig <- match (graph_contracted$edge_map$edge_old,
+                        graph [, edge_id_col])
     # Then reduce the latter only to the corresponding first non-repeated values of
     # the former
     indx_orig <- indx_orig [which (!duplicated (indx_contr))]
@@ -80,7 +82,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     # and finally replicate the uncontracted edges of graph in graph_contracted 
-    indx_uncontr <- which (!graph$edge_id %in%
+    indx_uncontr <- which (!graph [, edge_id_col] %in%
                            graph_contracted$edge_map$edge_old)
     graph_refill <- rbind (graph_refill, graph [indx_uncontr, ])
 
