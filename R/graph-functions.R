@@ -21,7 +21,7 @@ null_to_na <- function (x)
 dodgr_graph_cols <- function (graph)
 {
     nms <- names (graph)
-    component <- which (grepl ("comp", nms)) %>% null_to_na ()
+    component <- grep ("comp", nms) %>% null_to_na ()
     if (is (graph, "dodgr_streetnet") & ncol (graph) >= 11)
     {
         # columns are always identically structured
@@ -36,7 +36,7 @@ dodgr_graph_cols <- function (graph)
         yto <- which (nms == "to_lat")
     } else
     {
-        edge_id <- which (grepl ("edge_id", nms)) %>% null_to_na ()
+        edge_id <- grep ("edge_id|edge_$", nms) %>% null_to_na ()
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
