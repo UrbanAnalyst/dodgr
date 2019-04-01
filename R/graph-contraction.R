@@ -22,6 +22,9 @@
 #' nrow (graph$graph) # 764
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     if (!is.null (verts))
     {
         if (!(length (verts) == 1 | is.vector (verts)))
