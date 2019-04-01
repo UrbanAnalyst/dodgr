@@ -56,7 +56,15 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
-        const std::string& heap_type);
+        const std::string& heap_type,
+        bool astar);
+
+Rcpp::NumericMatrix rcpp_get_sp_dists_par_xy (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        const std::string& heap_type,
+        bool astar);
 
 Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

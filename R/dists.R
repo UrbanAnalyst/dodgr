@@ -115,7 +115,8 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
         graph$to_id <- scols$xy_id$xy_to_id
         gr_cols <- dodgr_graph_cols (graph)
     }
-    vert_map <- make_vert_map (graph, gr_cols)
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
@@ -148,8 +149,14 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     }
 
     if (parallel)
-        d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index, heap)
-    else
+    {
+        if (is_spatial)
+            d <- rcpp_get_sp_dists_par_xy (graph, vert_map, from_index, to_index,
+                                           heap)
+        else
+            d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index,
+                                        heap)
+    } else
         d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
 
     if (flip)
@@ -248,15 +255,29 @@ get_id_cols <- function (pts)
 #'
 #' Map unique vertex names to sequential numbers in matrix
 #' @noRd
-make_vert_map <- function (graph, gr_cols)
+make_vert_map <- function (graph, gr_cols, xy = FALSE)
 {
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     verts <- c (paste0 (graph [[gr_cols [2] ]]),
                 paste0 (graph [[gr_cols [3] ]]))
     indx <- which (!duplicated (verts))
-    # Note id has to be 0-indexed:
-    data.frame (vert = paste0 (verts [indx]), id = seq (indx) - 1,
-                stringsAsFactors = FALSE)
+    if (!xy)
+    {
+        # Note id has to be 0-indexed:
+        res <- data.frame (vert = paste0 (verts [indx]),
+                           id = seq (indx) - 1,
+                           stringsAsFactors = FALSE)
+    } else 
+    {
+        verts_x <- c (graph [[gr_cols [6] ]], graph [[gr_cols [8] ]])
+        verts_y <- c (graph [[gr_cols [7] ]], graph [[gr_cols [9] ]])
+        res <- data.frame (vert = paste0 (verts [indx]),
+                           id = seq (indx) - 1,
+                           x = verts_x [indx],
+                           y = verts_y [indx],
+                           stringsAsFactors = FALSE)
+    }
+    return (res)
 }
 
 #' get_pts_index

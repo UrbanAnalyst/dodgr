@@ -58,6 +58,11 @@ class Dijkstra {
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
+        void astar (std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                const std::vector<double>& heur,
+                unsigned int s = 0);
         void run_set (std::vector <double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,

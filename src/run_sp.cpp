@@ -45,8 +45,11 @@ struct OneDist : public RcppParallel::Worker
     RcppParallel::RVector <int> dp_fromi;
     const Rcpp::IntegerVector toi;
     const size_t nverts;
+    const std::vector <double> vx;
+    const std::vector <double> vy;
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
+    bool astar;
 
     RcppParallel::RMatrix <double> dout;
 
@@ -55,11 +58,16 @@ struct OneDist : public RcppParallel::Worker
             const Rcpp::IntegerVector fromi,
             const Rcpp::IntegerVector toi_in,
             const size_t nverts_in,
+            const std::vector <double> vx_in,
+            const std::vector <double> vy_in,
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
+            const bool & astar_in,
             Rcpp::NumericMatrix dout_in) :
         dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
-        g (g_in), heap_type (heap_type_in), dout (dout_in)
+        vx (vx_in), vy (vy_in),
+        g (g_in), heap_type (heap_type_in), astar (astar_in),
+        dout (dout_in)
     {
     }
 
@@ -73,13 +81,25 @@ struct OneDist : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
+        std::vector <double> heuristic (nverts, 0.0);
+
         for (std::size_t i = begin; i < end; i++)
         {
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            if (heap_type.find ("set") == std::string::npos)
+            if (astar)
+            {
+                for (size_t j = 0; j < nverts; j++)
+                {
+                    double dx = vx [j] - vx [dp_fromi [i]],
+                        dy = vy [j] - vy [dp_fromi [i]];
+                    heuristic [j] = sqrt (dx * dx + dy * dy);
+                }
+                dijkstra->astar (d, w, prev, heuristic,
+                        static_cast <unsigned int> (dp_fromi [i]));
+            } else if (heap_type.find ("set") == std::string::npos)
                 dijkstra->run (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
             else
@@ -193,6 +213,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
+    std::vector <double> vx (nverts), vy (nverts);
+
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
@@ -202,7 +224,54 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
     // Create parallel worker
-    OneDist one_dist (fromi, toi, nverts, g, heap_type, dout);
+    OneDist one_dist (fromi, toi, nverts, vx, vy,
+            g, heap_type, false, dout);
+
+    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
+            one_dist);
+    
+    return (dout);
+}
+
+//' rcpp_get_sp_dists_par_xy
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericMatrix rcpp_get_sp_dists_par_xy (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        const std::string& heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    size_t nto = static_cast <size_t> (toi.size ());
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::map <std::string, unsigned int> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    std::vector <double> vx = vert_map_in ["x"];
+    std::vector <double> vy = vert_map_in ["y"];
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+            vert_map_n, vert_map);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
+            Rcpp::NumericVector::get_na ());
+    Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
+            static_cast <int> (nto), na_vec.begin ());
+
+    // Create parallel worker
+    OneDist one_dist (fromi, toi, nverts, vx, vy,
+            g, heap_type, true, dout);
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_dist);
