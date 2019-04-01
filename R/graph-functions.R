@@ -123,6 +123,9 @@ convert_graph <- function (graph, gr_cols)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     cols <- dodgr_graph_cols (graph)
     nms <- names (cols)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)

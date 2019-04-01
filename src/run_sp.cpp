@@ -332,7 +332,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
         {
-            //if (toi [vi] < INFINITE_INT)
             if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
             {
                 dout (v, vi) = d [static_cast <size_t> (toi [vi])];
