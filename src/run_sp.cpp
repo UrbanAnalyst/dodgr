@@ -76,7 +76,7 @@ struct OneDist : public RcppParallel::Worker
     {
         std::shared_ptr<Dijkstra> dijkstra =
             std::make_shared <Dijkstra> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
+                    *run_sp::getHeapImpl (heap_type), g, astar);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -91,14 +91,24 @@ struct OneDist : public RcppParallel::Worker
 
             if (astar)
             {
+                size_t other_side; // opposite side for bi-directional search
+                double dmax = 0.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
                     double dx = vx [j] - vx [dp_fromi [i]],
                         dy = vy [j] - vy [dp_fromi [i]];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
+                    if (heuristic [j] > dmax)
+                    {
+                        dmax = heuristic [j];
+                        other_side = j;
+                    }
                 }
-                dijkstra->astar (d, w, prev, heuristic,
-                        static_cast <unsigned int> (dp_fromi [i]));
+                //dijkstra->astar (d, w, prev, heuristic,
+                //        static_cast <unsigned int> (dp_fromi [i]));
+                dijkstra->astar2 (d, w, prev, heuristic,
+                        static_cast <unsigned int> (dp_fromi [i]),
+                        other_side);
             } else if (heap_type.find ("set") == std::string::npos)
                 dijkstra->run (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
@@ -309,7 +319,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *run_sp::getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g, false);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
@@ -387,7 +397,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     std::shared_ptr<Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *run_sp::getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g, false);
     
     Rcpp::List res (nfrom);
     std::vector<double> w (nverts);
@@ -487,7 +497,7 @@ struct OneFlow : public RcppParallel::Worker
     {
         std::shared_ptr<Dijkstra> dijkstra =
             std::make_shared <Dijkstra> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
+                    *run_sp::getHeapImpl (heap_type), g, false);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -693,7 +703,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *run_sp::getHeapImpl(heap_type), g);
+            *run_sp::getHeapImpl(heap_type), g, false);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);

@@ -46,7 +46,10 @@ class DGraph;    // Graph
 
 class Dijkstra {
     public:
-        Dijkstra(unsigned int n, const HeapDesc& heapD, std::shared_ptr<const DGraph> g);
+        Dijkstra (unsigned int n,
+                const HeapDesc& heapD,
+                std::shared_ptr<const DGraph> g,
+                bool twoheap);
         ~Dijkstra();
         
         // Disable copy/assign as will crash
@@ -62,17 +65,26 @@ class Dijkstra {
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
-                unsigned int s = 0);
+                unsigned int v0);
+        void astar2 (std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                const std::vector<double>& heur,
+                unsigned int v0, unsigned int v1);
         void run_set (std::vector <double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
 
     private:
+        bool _twoheap;
         Heap *m_heap;        // pointer: heap
+        Heap *m_heap_rev;    // for reverse direction in bi-directional search
         // Convert to vector<bool>? (save memory, might be a performace hit though)
-        bool *m_s;           // array: solution set state of vertices
-        bool *m_f;           // array: frontier set state of vertices
+        bool *m_settled;        // array: solution set state of vertices
+        bool *m_open;           // array: frontier set state of vertices
+        bool *m_settled2;       // for bi-directional search
+        bool *m_open2;          // for bi-directional search
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
 
