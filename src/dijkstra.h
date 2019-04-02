@@ -4,6 +4,11 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include <unordered_set> // used in bidirected search
+
+// inf_dbl used only in astar2:
+#include <limits>
+constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 
 /* DijkstraEdge is used for the std::set implementation, everything else is for
  * Shane Saunders's heap sort versions */
@@ -83,7 +88,6 @@ class Dijkstra {
         // Convert to vector<bool>? (save memory, might be a performace hit though)
         bool *m_settled;        // array: solution set state of vertices
         bool *m_open;           // array: frontier set state of vertices
-        bool *m_settled2;       // for bi-directional search
         bool *m_open2;          // for bi-directional search
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    

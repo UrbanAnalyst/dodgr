@@ -35,6 +35,8 @@ class Heap {
         virtual unsigned int nItems() const = 0;
         virtual long int nComps() const = 0;
         virtual void dump() const = 0;
+        // MP: implement getmin fn in BHeap only
+        virtual double getmin() = 0;
 };
 
 class HeapDesc {

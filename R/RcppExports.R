@@ -178,8 +178,8 @@ rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' rcpp_get_sp_dists_par_xy
 #'
 #' @noRd
-rcpp_get_sp_dists_par_xy <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp_dists_par_xy`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_sp_dists_par_xy <- function(graph, vert_map_in, fromi, toi, heap_type, bidirected) {
+    .Call(`_dodgr_rcpp_get_sp_dists_par_xy`, graph, vert_map_in, fromi, toi, heap_type, bidirected)
 }
 
 #' rcpp_get_sp_dists

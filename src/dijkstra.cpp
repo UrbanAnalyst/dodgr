@@ -4,6 +4,8 @@
 
 #include <algorithm> // std::fill
 
+#include <Rcpp.h> // TODO: Delete!
+
 /* Dijkstra's Algorithm
  * ----------------------------------------------------------------------------
  * Author:  Shane Saunders, modified to dual-weighted graphs by Mark Padgham
@@ -22,15 +24,14 @@ Dijkstra::Dijkstra(unsigned int n,
         bool twoheap) 
 {
     m_heap = heapD.newInstance(n);
-    m_heap_rev = heapD.newInstance(n);
     m_settled = new bool[n];
     m_open = new bool[n];
     _twoheap = twoheap;
-    if (twoheap)
-    {
+    //if (_twoheap)
+    //{
+        m_heap_rev = heapD.newInstance(n);
         m_open2 = new bool[n];
-        m_settled2 = new bool[n];
-    }
+    //}
     init(g);
 }
 
@@ -38,13 +39,12 @@ Dijkstra::Dijkstra(unsigned int n,
 Dijkstra::~Dijkstra() {
     delete [] m_settled;
     delete [] m_open;
-    if (_twoheap)
-    {
+    //if (_twoheap)
+    //{
         delete [] m_open2;
-        delete [] m_settled2;
-    }
+        delete m_heap_rev;
+    //}
     delete m_heap;
-    delete m_heap_rev;
 }
 
 /* - init() -
@@ -187,52 +187,114 @@ void Dijkstra::astar2 (std::vector<double>& d,
     std::fill (m_open, m_open + n, false);
     std::fill (m_open2, m_open2 + n, false);
 
-    bool *frontier = new bool [n];
-    std::fill (frontier, frontier + n, false);
+    std::unordered_set <unsigned int> frontier, backward;
 
-    std::vector <double> d_rev (n), w_rev (n);
+    std::vector <double> d_rev (n, INFINITE_DOUBLE), w_rev (n, INFINITE_DOUBLE);
 
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
-    m_heap->insert(v0, heur [v0]);
+    m_heap->insert(v0, heur [v1]);
     m_open [v0] = true;
 
     double dmax = heur [v1];
-    m_heap_rev->insert (v1, dmax - heur [v0]); // = 0
+    m_heap_rev->insert (v1, dmax - heur [v0]); // = heur [v1]
     m_open2 [v1] = true;
+    w_rev [v1] = 0.0;
+    d_rev [v1] = 0.0;
 
-    while (m_heap->nItems() > 0) {
-        unsigned int v = m_heap->deleteMin();
+    while (m_heap->nItems() > 0 && m_heap_rev->nItems() > 0) {
+        //if (m_heap->getmin () <= m_heap_rev->getmin ())
+        if (m_heap->nItems () >= m_heap_rev->nItems ())
+        {
+            unsigned int v = m_heap->deleteMin();
+            m_open [v] = false;
 
-        m_settled [v] = true;
-        m_open [v] = false;
+            if (m_settled [v])
+                frontier.emplace (v);
+            else
+            {
+                m_settled [v] = true;
 
-        edge = vertices [v].outHead;
-        while (edge) {
-            unsigned int et = edge->target;
+                edge = vertices [v].outHead;
+                while (edge) {
+                    unsigned int et = edge->target;
 
-            if (!m_settled [et]) {
-                double wt = w [v] + edge->wt;
-                if (wt < w [et]) {
-                    d [et] = d [v] + edge->dist;
-                    w [et] = wt;
-                    prev [et] = static_cast <int> (v);
-                    if (m_open [et]) {
-                      m_heap->decreaseKey (et, wt + heur [et] - heur [v]);
+                    if (!m_settled [et]) {
+                        double wt = w [v] + edge->wt;
+                        if (wt < w [et]) {
+                            d [et] = d [v] + edge->dist;
+                            w [et] = wt;
+                            prev [et] = static_cast <int> (v);
+                            if (m_open [et]) {
+                                m_heap->decreaseKey (et, wt + heur [et] - heur [v]);
+                            }
+                            else {
+                                m_heap->insert (et, wt + heur [et] - heur [v]);
+                                m_open [et] = true;
+                            }
+                        }
                     }
-                    else {
-                      m_heap->insert (et, wt + heur [et] - heur [v]);
-                      m_open [et] = true;
-                    }
-                }
-            }
 
-            edge = edge->nextOut;
-        } // end while edge
+                    edge = edge->nextOut;
+                } // end while edge
+            } // end else !m_settled
+        } else
+        {
+            unsigned int v = m_heap_rev->deleteMin();
+            m_open2 [v] = false;
+
+            if (m_settled [v])
+            {
+                frontier.emplace (v);
+            } else
+            {
+                m_settled [v] = true;
+                backward.emplace (v);
+
+                edge = vertices [v].inHead;
+                while (edge) {
+                    unsigned int et = edge->source;
+
+                    if (!m_settled [et]) {
+                        double wt = w_rev [v] + edge->wt;
+                        if (wt < w_rev [et]) {
+                            d_rev [et] = d_rev [v] + edge->dist;
+                            w_rev [et] = wt;
+                            prev [et] = static_cast <int> (v);
+                            if (m_open2 [et]) {
+                                m_heap_rev->decreaseKey (et,
+                                        wt + dmax - (heur [et] - heur [v]));
+                            }
+                            else {
+                                m_heap_rev->insert (et,
+                                        wt + dmax - (heur [et] - heur [v]));
+                                m_open2 [et] = true;
+                            }
+                        }
+                    }
+
+                    edge = edge->nextIn;
+                } // end while edge
+            } // end else !m_settled
+        }
     } // end while m_heap->nItems
 
-    delete [] frontier;
+    // Reconstruct all distances from the frontier
+
+    /*
+    for (auto b:backward)
+        for (auto fr:frontier)
+        {
+            double wtemp = w [fr] + w_rev [b];
+            if (wtemp < w [b])
+            {
+                w [b] = wtemp;
+                d [b] = d [fr] + d_rev [b];
+            }
+        }
+    */
+
 }
 
 // Only sightly modified from the above, to use EdgeSet edge_set instead of

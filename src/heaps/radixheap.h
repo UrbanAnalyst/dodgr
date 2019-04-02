@@ -28,6 +28,10 @@ class RadixHeap: public Heap {
         long int nComps() const { return compCount; }
         void dump() const;
 
+        double getmin() {
+            return 0.0; // MP: dummy value not implemented yet
+        }
+
     private:
         void placeNode(unsigned int startBucket, RadixHeapNode *node);
         void insertNode(unsigned int i, RadixHeapNode *node);

@@ -16,7 +16,7 @@ class DGraph;
 class Dijkstra;
 
 constexpr float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
+//constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 //----------------------------
@@ -64,7 +64,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par_xy (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type,
-        bool astar);
+        const bool bidirected);
 
 Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

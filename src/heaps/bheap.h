@@ -50,6 +50,8 @@ class BHeap : public Heap {
         long int nComps() const { return compCount; }
         void dump() const;
 
+        double getmin();
+
         /* extra functions */
         unsigned int min();
 

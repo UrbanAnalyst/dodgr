@@ -131,6 +131,10 @@ class TriHeapExt : public Heap {
 
         void dump() const;
 
+        double getmin() {
+            return 0.0; // MP: dummy value not implemented yet
+        }
+
     private:
         TriHeapExtNode **trees;
         TriHeapExtNode **activeNodes;

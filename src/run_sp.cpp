@@ -50,6 +50,7 @@ struct OneDist : public RcppParallel::Worker
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
     bool astar;
+    bool bidirected;
 
     RcppParallel::RMatrix <double> dout;
 
@@ -63,10 +64,12 @@ struct OneDist : public RcppParallel::Worker
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & astar_in,
+            const bool & bidirected_in,
             Rcpp::NumericMatrix dout_in) :
         dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
         vx (vx_in), vy (vy_in),
-        g (g_in), heap_type (heap_type_in), astar (astar_in),
+        g (g_in), heap_type (heap_type_in),
+        astar (astar_in), bidirected (bidirected_in),
         dout (dout_in)
     {
     }
@@ -104,11 +107,13 @@ struct OneDist : public RcppParallel::Worker
                         other_side = j;
                     }
                 }
-                //dijkstra->astar (d, w, prev, heuristic,
-                //        static_cast <unsigned int> (dp_fromi [i]));
-                dijkstra->astar2 (d, w, prev, heuristic,
-                        static_cast <unsigned int> (dp_fromi [i]),
-                        other_side);
+                if (!bidirected)
+                    dijkstra->astar (d, w, prev, heuristic,
+                            static_cast <unsigned int> (dp_fromi [i]));
+                else
+                    dijkstra->astar2 (d, w, prev, heuristic,
+                            static_cast <unsigned int> (dp_fromi [i]),
+                            other_side);
             } else if (heap_type.find ("set") == std::string::npos)
                 dijkstra->run (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
@@ -235,7 +240,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneDist one_dist (fromi, toi, nverts, vx, vy,
-            g, heap_type, false, dout);
+            g, heap_type, false, false, dout); // f, f = (astar, bidirected)
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_dist);
@@ -251,7 +256,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par_xy (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
-        const std::string& heap_type)
+        const std::string& heap_type,
+        const bool bidirected)
 {
     Rcpp::NumericVector id_vec;
     size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
@@ -281,7 +287,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par_xy (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneDist one_dist (fromi, toi, nverts, vx, vy,
-            g, heap_type, true, dout);
+            g, heap_type, true, bidirected, dout); // true = astar
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_dist);
@@ -312,14 +318,18 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    // TODO: Delete the following 2 lines:
+    std::vector <double> vx = vert_map_in ["x"];
+    std::vector <double> vy = vert_map_in ["y"];
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
-            *run_sp::getHeapImpl(heap_type), g, false);
+    // TODO: Set final true back to false (for "twoheap" param)
+    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (
+            nverts, *run_sp::getHeapImpl(heap_type), g, true);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
@@ -333,13 +343,32 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
             static_cast <int> (nto), na_vec.begin ());
 
+
     for (unsigned int v = 0; v < nfrom; v++)
     {
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        size_t other_side; // opposite side for bi-directional search
+        double dmax = 0.0;
+        std::vector <double> heuristic (nverts, 0.0);
+        for (size_t j = 0; j < nverts; j++)
+        {
+            double dx = vx [j] - vx [fromi [v]],
+                   dy = vy [j] - vy [fromi [v]];
+            heuristic [j] = sqrt (dx * dx + dy * dy);
+            if (heuristic [j] > dmax)
+            {
+                dmax = heuristic [j];
+                other_side = j;
+            }
+        }
+        dijkstra->astar2 (d, w, prev, heuristic,
+                static_cast <unsigned int> (fromi [v]),
+                other_side);
+
+        //dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)

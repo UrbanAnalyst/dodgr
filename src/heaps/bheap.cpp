@@ -48,6 +48,11 @@ unsigned int BHeap::min()
     return a[1].item;
 }
 
+double BHeap::getmin()
+{
+    return a[1].key;
+}
+
 /* --- insert() ---
  * Inserts an item $item$ with associated key value $key$ into the heap.
  */

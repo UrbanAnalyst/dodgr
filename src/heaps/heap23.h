@@ -81,6 +81,10 @@ class Heap23 : public Heap {
 
         void dump() const;
 
+        double getmin() {
+            return 0.0; // MP: dummy value not implemented yet
+        }
+
     private:
         Heap23Node **trees;
         Heap23Node **nodes;
