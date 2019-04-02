@@ -126,37 +126,26 @@ void Dijkstra::astar (std::vector<double>& d,
         const std::vector<double>& heur,
         unsigned int v0)
 {
-    /* indexes, counters, pointers */
     const DGraphEdge *edge;
 
-    /*** initialisation ***/
-
-    /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    /* initialise all vertices as unexplored */
     std::fill (m_settled, m_settled + n, false);
     std::fill (m_open, m_open + n, false);
 
-    /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
-    //m_heap->insert(v0, 0.0);
     m_heap->insert(v0, heur [v0]);
     m_open [v0] = true;
 
-    /* repeatedly update distances from the minimum remaining trigger vertex */
     while (m_heap->nItems() > 0) {
-        /* delete the vertex in frontier that has minimum distance */
         unsigned int v = m_heap->deleteMin();
 
-        /* the selected vertex moves from the frontier to the solution set */
         m_settled [v] = true;
         m_open [v] = false;
 
-        /* explore the OUT set of v */
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
@@ -178,8 +167,8 @@ void Dijkstra::astar (std::vector<double>& d,
             }
 
             edge = edge->nextOut;
-        } /* while */
-    } /* while */
+        } // end while edge
+    } // end while m_heap->nItems
 }
 
 // bi-directional A*
@@ -189,45 +178,36 @@ void Dijkstra::astar2 (std::vector<double>& d,
         const std::vector<double>& heur,
         unsigned int v0, unsigned int v1)
 {
-    /* indexes, counters, pointers */
     const DGraphEdge *edge;
 
-    /*** initialisation ***/
-
-    /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    /* initialise all vertices as unexplored */
     std::fill (m_settled, m_settled + n, false);
     std::fill (m_open, m_open + n, false);
+    std::fill (m_open2, m_open2 + n, false);
 
-    // new vectors for reverse-direction scans
     bool *frontier = new bool [n];
+    std::fill (frontier, frontier + n, false);
+
     std::vector <double> d_rev (n), w_rev (n);
 
-    /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
-    //m_heap->insert(v0, 0.0);
     m_heap->insert(v0, heur [v0]);
     m_open [v0] = true;
 
-    double dmax = *std::max_element (heur.begin (), heur.end ());
-    m_heap_rev->insert (v1, dmax - heur [v1]);
+    double dmax = heur [v1];
+    m_heap_rev->insert (v1, dmax - heur [v0]); // = 0
     m_open2 [v1] = true;
 
-    /* repeatedly update distances from the minimum remaining trigger vertex */
     while (m_heap->nItems() > 0) {
-        /* delete the vertex in frontier that has minimum distance */
         unsigned int v = m_heap->deleteMin();
 
-        /* the selected vertex moves from the frontier to the solution set */
         m_settled [v] = true;
         m_open [v] = false;
 
-        /* explore the OUT set of v */
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
@@ -249,8 +229,8 @@ void Dijkstra::astar2 (std::vector<double>& d,
             }
 
             edge = edge->nextOut;
-        } /* while */
-    } /* while */
+        } // end while edge
+    } // end while m_heap->nItems
 
     delete [] frontier;
 }
@@ -262,20 +242,14 @@ void Dijkstra::run_set (std::vector<double>& d,
         std::vector<int>& prev,
         unsigned int v0)
 {
-    /* indexes, counters, pointers */
     const DGraphEdge *edge;
 
-    /*** initialisation ***/
-
-    /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    /* initialise all vertices as unexplored */
     std::fill (m_settled, m_settled + n, false);
     std::fill (m_open, m_open + n, false);
 
-    /* place v0 into the frontier set with a distance of zero */
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
@@ -284,19 +258,14 @@ void Dijkstra::run_set (std::vector<double>& d,
 
     edge_set.insert (DijkstraEdge (0.0, v0));
 
-    /* repeatedly update distances from the minimum remaining trigger vertex */
     while (edge_set.size () > 0) {
-        /* delete the vertex in frontier that has minimum distance */
         EdgeSet::iterator ei = edge_set.begin();
         unsigned int v = ei->geti();
-        //double weight = ei->getw();
         edge_set.erase (ei);
 
-        /* the selected vertex moves from the frontier to the solution set */
         m_settled [v] = true;
         m_open [v] = false;
 
-        /* explore the OUT set of v */
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
@@ -320,6 +289,6 @@ void Dijkstra::run_set (std::vector<double>& d,
             }
 
             edge = edge->nextOut;
-        } /* while */
-    } /* while */
+        } // end while edge
+    } // end while edge_set.size
 }
