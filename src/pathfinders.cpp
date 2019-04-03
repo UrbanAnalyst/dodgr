@@ -270,6 +270,10 @@ void PathFinder::AStar2 (std::vector<double>& d,
             m_open [v] = false;
             m_closed [v] = true;
 
+            scan_edges (edge, d, w, prev, m_open, m_closed, v,
+                    true, heur, 0.0, false);
+            // Then scan again to check for frontier
+
             if (m_closed_rev [v])
             {
                 frontier.emplace (v);
@@ -327,6 +331,11 @@ void PathFinder::AStar2 (std::vector<double>& d,
             double wtemp = w [fr] + w_rev [b];
             if (wtemp < w [b])
             {
+                if (b == 1148)
+                    Rcpp::Rcout << "w[fr] + w_rev[b] = " << w [fr] << 
+                        " + " << w_rev [b] << " < w [b] = " << w [b] <<
+                        " -> d [" << d [b] << " -> " << d [fr] << " + " <<
+                        d_rev [b] << " = " << d [fr] + d_rev [b] << std::endl;
                 w [b] = wtemp;
                 d [b] = d [fr] + d_rev [b];
             }
