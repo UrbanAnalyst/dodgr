@@ -86,6 +86,18 @@ class PathFinder {
                 const std::vector<double> &heur,
                 const double &dmax,
                 const bool &reverse);
+        void scan_edges (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                bool *m_open_vec,
+                const bool *m_closed_vec,
+                const unsigned int &v0,
+                const bool &use_heur,
+                const std::vector<double> &heur,    // heuristic for A*
+                const double &dmax,                 // used for reverse bidirectional
+                const bool &reverse);               // reverse dir of bidirectional 
 
         void Dijkstra (
                 std::vector<double>& d,
@@ -113,9 +125,9 @@ class PathFinder {
         Heap *m_heap_rev;    // for reverse direction in bi-directional search
         // Convert to vector<bool>? (save memory, might be a performace hit though)
         bool *m_open;           // array: frontier set state of vertices
-        bool *m_open2;          // for bi-directional search
+        bool *m_open_rev;       // for bi-directional search
         bool *m_closed;         // also for bi-dir
-        bool *m_closed2;        // also for bi-dir
+        bool *m_closed_rev;     // also for bi-dir
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
 
