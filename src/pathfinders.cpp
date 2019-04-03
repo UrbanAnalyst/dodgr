@@ -162,8 +162,10 @@ void PathFinder::scan_edges (const DGraphEdge *edge,
             }
             edge = edge->nextOut;
         }
-    } else // reverse direction for bi-directional A*
-    {
+    } else
+    { 
+        // reverse direction for bi-directional A*
+        // The heuristic changes from direct values to dmax - heur
         while (edge) {
             unsigned int et = edge->source;
             if (!m_closed_vec [et])
@@ -331,8 +333,8 @@ void PathFinder::AStar2 (std::vector<double>& d,
         }
 }
 
-// Only sightly modified from the above, to use EdgeSet edge_set instead of
-// m_heap.
+// Dijkstra with C++ std::set, modified from the above to use EdgeSet edge_set
+// instead of m_heap, and so all routines hard-coded here.
 void PathFinder::Dijkstra_set (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
@@ -343,14 +345,8 @@ void PathFinder::Dijkstra_set (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_closed, m_closed + n, false);
-    std::fill (m_open, m_open + n, false);
-
-    w [v0] = 0.0;
-    d [v0] = 0.0;
-    prev [v0] = -1;
+    PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert(v0, 0.0);
-    m_open [v0] = true;
 
     edge_set.insert (DijkstraEdge (0.0, v0));
 
