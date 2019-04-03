@@ -77,8 +77,8 @@ struct OneDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<Dijkstra> dijkstra =
-            std::make_shared <Dijkstra> (nverts,
+        std::shared_ptr<PathFinder> dijkstra =
+            std::make_shared <PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g, astar);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
@@ -328,7 +328,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     // TODO: Set final true back to false (for "twoheap" param)
-    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (
+    std::shared_ptr <PathFinder> dijkstra = std::make_shared <PathFinder> (
             nverts, *run_sp::getHeapImpl(heap_type), g, false);
 
     std::vector<double> w (nverts);
@@ -428,7 +428,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr<Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+    std::shared_ptr<PathFinder> dijkstra = std::make_shared <PathFinder> (nverts,
             *run_sp::getHeapImpl(heap_type), g, false);
     
     Rcpp::List res (nfrom);
@@ -527,8 +527,8 @@ struct OneFlow : public RcppParallel::Worker
     // Parallel function operator
     void operator() (size_t begin, size_t end)
     {
-        std::shared_ptr<Dijkstra> dijkstra =
-            std::make_shared <Dijkstra> (nverts,
+        std::shared_ptr<PathFinder> dijkstra =
+            std::make_shared <PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g, false);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
@@ -734,7 +734,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (nverts,
+    std::shared_ptr <PathFinder> dijkstra = std::make_shared <PathFinder> (nverts,
             *run_sp::getHeapImpl(heap_type), g, false);
 
     Rcpp::List res (nfrom);

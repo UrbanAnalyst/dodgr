@@ -1,5 +1,6 @@
-#ifndef DIJKSTRA_H
-#define DIJKSTRA_H
+#pragma once
+
+// Modified from code by Shane Saunders
 
 #include <vector>
 #include <memory>
@@ -8,6 +9,10 @@
 
 // inf_dbl used only in astar2:
 #include <limits>
+
+#include "dgraph.h"
+
+constexpr double INFINITE_INT =  std::numeric_limits<int>::max ();
 constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 
 /* DijkstraEdge is used for the std::set implementation, everything else is for
@@ -36,32 +41,52 @@ struct by_wt
 
 typedef std::set <DijkstraEdge, by_wt> EdgeSet;
 
-/* Dijkstra's Algorithm
- * ----------------------------------------------------------------------------
- * Author:  Shane Saunders
- */
 
-class Heap;      // Heap
-class HeapDesc;  // Heap descriptor
-class DGraph;    // Graph
+class Heap;
+class HeapDesc;
+class DGraph;
 
-/* --- Dijkstra ---
- * Dijkstra's single-source algorithm.
- */
-
-class Dijkstra {
+class PathFinder {
     public:
-        Dijkstra (unsigned int n,
+        PathFinder (unsigned int n,
                 const HeapDesc& heapD,
                 std::shared_ptr<const DGraph> g,
                 bool twoheap);
-        ~Dijkstra();
+        ~PathFinder();
         
         // Disable copy/assign as will crash
-        Dijkstra(const Dijkstra&) = delete;
-        Dijkstra& operator=(const Dijkstra&) = delete;
+        PathFinder(const PathFinder&) = delete;
+        PathFinder& operator=(const PathFinder&) = delete;
 
         void init (std::shared_ptr<const DGraph> g);
+        void init_arrays (
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                bool *m_open_vec,
+                bool *m_closed_vec,
+                const unsigned int v,
+                const size_t n);
+        void relax (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                bool *m_open_vec,
+                const unsigned int &v0,
+                const unsigned int &target);
+        void relax_heur (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                bool *m_open_vec,
+                const unsigned int &v0,
+                const unsigned int &target,
+                const std::vector<double> &heur,
+                const double &dmax,
+                const bool &reverse);
+
         void run (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
@@ -95,5 +120,3 @@ class Dijkstra {
 
         EdgeSet edge_set;
 };
-
-#endif

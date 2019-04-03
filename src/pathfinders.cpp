@@ -1,24 +1,17 @@
-#include "dijkstra.h"
-#include "dgraph.h"
+#include "pathfinders.h"
 #include "heaps/heap.h"
 
 #include <algorithm> // std::fill
 
 #include <Rcpp.h> // TODO: Delete!
 
-/* Dijkstra's Algorithm
- * ----------------------------------------------------------------------------
- * Author:  Shane Saunders, modified to dual-weighted graphs by Mark Padgham
- */
+// Modified from code by Shane Saunders
 
-/*--- Dijkstra -----------------------------------------------------------*/
-
-/* - Constructor -
- * Allocate the algorithm for use on graphs of n vertices.  The parameter heapD
- * (points to a heap descriptor object) specifies the heap to be used by
- * Dijkstra's algorithm.
- */
-Dijkstra::Dijkstra(unsigned int n,
+// @param n Number of vertices in graph
+// @param heapD The type of heap used
+// @param g A DGraph object
+// @param twoheap If `TRUE`, uses a bi-directional search.
+PathFinder::PathFinder(unsigned int n,
         const HeapDesc& heapD,
         std::shared_ptr<const DGraph> g,
         bool twoheap) 
@@ -36,8 +29,7 @@ Dijkstra::Dijkstra(unsigned int n,
     init(g);
 }
 
-/* - Destructor - */
-Dijkstra::~Dijkstra() {
+PathFinder::~PathFinder() {
     delete [] m_open;
     if (_twoheap)
     {
@@ -49,80 +41,131 @@ Dijkstra::~Dijkstra() {
     delete m_heap;
 }
 
-/* - init() -
- * Initialise the algorithm for use with the graph pointed to by g.
- */
-void Dijkstra::init(std::shared_ptr<const DGraph> g) {
+void PathFinder::init(std::shared_ptr<const DGraph> g) {
     m_graph = g;
 }
 
-/* - run() -
- * Run the algorithm, computing single-source from the starting vertex v0.
- * This assumes that the array d has been initialised with d[v] = INFINITE_DIST
- * for all vertices v != v0.
- */
+void PathFinder::init_arrays (
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<int>& prev,
+        bool *m_open_vec,
+        bool *m_closed_vec,
+        const unsigned int v,
+        const size_t n)
+{
+    w [v] = 0.0;
+    d [v] = 0.0;
+    prev [v] = -1;
+    m_open_vec [v] = true;
 
-void Dijkstra::run (std::vector<double>& d,
+    std::fill (m_open_vec, m_open_vec + n, false);
+    std::fill (m_closed_vec, m_closed_vec + n, false);
+}
+
+void PathFinder::relax (
+        const DGraphEdge *edge,
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<int>& prev,
+        bool *m_open_vec,
+        const unsigned int &v0,
+        const unsigned int &target)
+{
+    double wt = w [v0] + edge->wt;
+    if (wt < w [target]) {
+        d [target] = d [v0] + edge->dist;
+        w [target] = wt;
+        prev [target] = static_cast <int> (v0);
+
+        if (m_open_vec [target]) {
+            m_heap->decreaseKey(target, wt);
+        }
+        else {
+            m_heap->insert (target, wt);
+            m_open_vec [target] = true;
+        }
+    }
+}
+
+void PathFinder::relax_heur (const DGraphEdge *edge,
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<int>& prev,
+        bool *m_open_vec,
+        const unsigned int &v0,
+        const unsigned int &target,
+        const std::vector<double> &heur,    // heuristic for A*
+        const double &dmax,                 // used for reverse bidirectional
+        const bool &reverse)                // reverse dir of bidirectional 
+{
+    double wt = w [v0] + edge->wt;
+    if (wt < w [target]) {
+        d [target] = d [v0] + edge->dist;
+        w [target] = wt;
+        prev [target] = static_cast <int> (v0);
+
+        if (!reverse)
+        {
+            if (m_open_vec [target]) {
+                m_heap->decreaseKey(target, wt + heur [target] - heur [v0]);
+            }
+            else {
+                m_heap->insert (target, wt + heur [target] - heur [v0]);
+                m_open_vec [target] = true;
+            }
+        } else
+        {
+            if (m_open2 [target]) {
+                m_heap_rev->decreaseKey (target,
+                        wt + dmax - (heur [target] - heur [v0]));
+            }
+            else {
+                m_heap_rev->insert (target,
+                        wt + dmax - (heur [target] - heur [v0]));
+                m_open2 [target] = true;
+            }
+        }
+    }
+}
+
+/**********************************************************************
+ ************************  PATH ALGORITHMS    *************************
+ **********************************************************************/
+
+void PathFinder::run (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         unsigned int v0)
 {
-    /* indexes, counters, pointers */
     const DGraphEdge *edge;
 
-    /*** initialisation ***/
-
-    /* optimise access to the data structures allocated for the algorithm */
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    /* initialise all vertices as unexplored */
-    std::fill (m_closed, m_closed + n, false);
-    std::fill (m_open, m_open + n, false);
-
-    /* place v0 into the frontier set with a distance of zero */
-    w [v0] = 0.0;
-    d [v0] = 0.0;
-    prev [v0] = -1;
+    PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert(v0, 0.0);
-    m_open [v0] = true;
 
-    /* repeatedly update distances from the minimum remaining trigger vertex */
     while (m_heap->nItems() > 0) {
-        /* delete the vertex in frontier that has minimum distance */
         unsigned int v = m_heap->deleteMin();
 
-        /* the selected vertex moves from the frontier to the solution set */
         m_closed [v] = true;
         m_open [v] = false;
 
-        /* explore the OUT set of v */
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
 
             if (!m_closed [et]) {
-                double wt = w [v] + edge->wt;
-                if (wt < w [et]) {
-                    d [et] = d [v] + edge->dist;
-                    w [et] = wt;
-                    prev [et] = static_cast <int> (v);
-                    if (m_open [et]) {
-                      m_heap->decreaseKey(et, wt);
-                    }
-                    else {
-                      m_heap->insert (et, wt);
-                      m_open [et] = true;
-                    }
-                }
+                PathFinder::relax (edge, d, w, prev, m_open, v, et);
             }
 
             edge = edge->nextOut;
-        } /* while */
-    } /* while */
+        } // end while edge
+    } // end while nItems > 0
 }
 
-void Dijkstra::astar (std::vector<double>& d,
+void PathFinder::astar (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         const std::vector<double>& heur,
@@ -133,14 +176,8 @@ void Dijkstra::astar (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_closed, m_closed + n, false);
-    std::fill (m_open, m_open + n, false);
-
-    w [v0] = 0.0;
-    d [v0] = 0.0;
-    prev [v0] = -1;
+    PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert(v0, heur [v0]);
-    m_open [v0] = true;
 
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
@@ -153,19 +190,8 @@ void Dijkstra::astar (std::vector<double>& d,
             unsigned int et = edge->target;
 
             if (!m_closed [et]) {
-                double wt = w [v] + edge->wt;
-                if (wt < w [et]) {
-                    d [et] = d [v] + edge->dist;
-                    w [et] = wt;
-                    prev [et] = static_cast <int> (v);
-                    if (m_open [et]) {
-                      m_heap->decreaseKey (et, wt + heur [et] - heur [v]);
-                    }
-                    else {
-                      m_heap->insert (et, wt + heur [et] - heur [v]);
-                      m_open [et] = true;
-                    }
-                }
+                PathFinder::relax_heur (edge, d, w, prev, m_open, v, et, heur,
+                        0.0, false);
             }
 
             edge = edge->nextOut;
@@ -174,7 +200,7 @@ void Dijkstra::astar (std::vector<double>& d,
 }
 
 // bi-directional A*
-void Dijkstra::astar2 (std::vector<double>& d,
+void PathFinder::astar2 (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         const std::vector<double>& heur,
@@ -185,30 +211,18 @@ void Dijkstra::astar2 (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_open, m_open + n, false);
-    std::fill (m_open2, m_open2 + n, false);
-    std::fill (m_closed, m_closed + n, false);
-    std::fill (m_closed2, m_closed2 + n, false);
-
-    std::unordered_set <unsigned int> frontier, backward;
-
-    std::vector <double> d_rev (n, INFINITE_DOUBLE),
-        w_rev (n, INFINITE_DOUBLE),
-        prev_rev (n, INFINITE_DOUBLE);
+    PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
+    std::vector <double> d_rev (n, INFINITE_DOUBLE), w_rev (n, INFINITE_DOUBLE);
+    std::vector <int> prev_rev (n, INFINITE_INT);
+    PathFinder::init_arrays (d_rev, w_rev, prev_rev, m_open2, m_closed2, v1, n);
 
     // m_heap holds heuristic estimates from source v0 to target vertex v1
     // m_heap_rev holds reverse: from target v1 to source v0
-    w [v0] = 0.0;
-    d [v0] = 0.0;
-    prev [v0] = -1;
     m_heap->insert(v0, heur [v1]);
-    m_open [v0] = true;
-
     double dmax = heur [v1];
     m_heap_rev->insert (v1, dmax - heur [v0]); // = heur [v1]
-    m_open2 [v1] = true;
-    w_rev [v1] = 0.0;
-    d_rev [v1] = 0.0;
+
+    std::unordered_set <unsigned int> frontier, backward;
 
     while (m_heap->nItems() > 0 && m_heap_rev->nItems() > 0) {
         //if (m_heap->getmin () <= m_heap_rev->getmin ())
@@ -228,19 +242,8 @@ void Dijkstra::astar2 (std::vector<double>& d,
                     unsigned int et = edge->target;
 
                     if (!m_closed [et]) {
-                        double wt = w [v] + edge->wt;
-                        if (wt < w [et]) {
-                            d [et] = d [v] + edge->dist;
-                            w [et] = wt;
-                            prev [et] = static_cast <int> (v);
-                            if (m_open [et]) {
-                                m_heap->decreaseKey (et, wt + heur [et] - heur [v]);
-                            }
-                            else {
-                                m_heap->insert (et, wt + heur [et] - heur [v]);
-                                m_open [et] = true;
-                            }
-                        }
+                        PathFinder::relax_heur (edge, d, w, prev, m_open, v, et, heur,
+                                0.0, false);
                     }
 
                     edge = edge->nextOut;
@@ -264,21 +267,8 @@ void Dijkstra::astar2 (std::vector<double>& d,
                     unsigned int et = edge->source;
 
                     if (!m_closed2 [et]) {
-                        double wt = w_rev [v] + edge->wt;
-                        if (wt < w_rev [et]) {
-                            d_rev [et] = d_rev [v] + edge->dist;
-                            w_rev [et] = wt;
-                            prev [et] = static_cast <int> (v);
-                            if (m_open2 [et]) {
-                                m_heap_rev->decreaseKey (et,
-                                        wt + dmax - (heur [et] - heur [v]));
-                            }
-                            else {
-                                m_heap_rev->insert (et,
-                                        wt + dmax - (heur [et] - heur [v]));
-                                m_open2 [et] = true;
-                            }
-                        }
+                        PathFinder::relax_heur (edge, d_rev, w_rev, prev_rev,
+                                m_open2, v, et, heur, dmax, true);
                     }
 
                     edge = edge->nextIn;
@@ -315,10 +305,6 @@ void Dijkstra::astar2 (std::vector<double>& d,
             double wtemp = w [fr] + w_rev [b];
             if (wtemp < w [b])
             {
-                if (b == 1148)
-                    Rcpp::Rcout << "d [" << b << "] <- " <<
-                        d [fr] << " + " << d_rev [b] << " = " <<
-                        d [fr] + d_rev [b] << std::endl;
                 w [b] = wtemp;
                 d [b] = d [fr] + d_rev [b];
             }
@@ -327,7 +313,7 @@ void Dijkstra::astar2 (std::vector<double>& d,
 
 // Only sightly modified from the above, to use EdgeSet edge_set instead of
 // m_heap.
-void Dijkstra::run_set (std::vector<double>& d,
+void PathFinder::run_set (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         unsigned int v0)

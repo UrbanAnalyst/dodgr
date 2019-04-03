@@ -10,14 +10,10 @@
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
 
-#include "dijkstra.h"
+#include "pathfinders.h"
 
 class DGraph;
-class Dijkstra;
-
-constexpr float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-//constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
-constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
+class PathFinder;
 
 //----------------------------
 //----- functions in run_sp.cpp
