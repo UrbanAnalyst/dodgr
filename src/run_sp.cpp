@@ -108,10 +108,10 @@ struct OneDist : public RcppParallel::Worker
                     }
                 }
                 if (!bidirected)
-                    pathfinder->astar (d, w, prev, heuristic,
+                    pathfinder->AStar (d, w, prev, heuristic,
                             static_cast <unsigned int> (dp_fromi [i]));
                 else
-                    pathfinder->astar2 (d, w, prev, heuristic,
+                    pathfinder->AStar2 (d, w, prev, heuristic,
                             static_cast <unsigned int> (dp_fromi [i]),
                             other_side);
             } else if (heap_type.find ("set") == std::string::npos)
@@ -366,7 +366,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
                 other_side = j;
             }
         }
-        pathfinder->astar2 (d, w, prev, heuristic,
+        pathfinder->AStar2 (d, w, prev, heuristic,
                 static_cast <unsigned int> (fromi [v]),
                 other_side);
         */

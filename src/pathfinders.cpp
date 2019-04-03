@@ -166,7 +166,7 @@ void PathFinder::Dijkstra (
     } // end while nItems > 0
 }
 
-void PathFinder::astar (std::vector<double>& d,
+void PathFinder::AStar (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         const std::vector<double>& heur,
@@ -201,7 +201,7 @@ void PathFinder::astar (std::vector<double>& d,
 }
 
 // bi-directional A*
-void PathFinder::astar2 (std::vector<double>& d,
+void PathFinder::AStar2 (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         const std::vector<double>& heur,

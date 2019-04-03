@@ -7,7 +7,7 @@
 #include <set>
 #include <unordered_set> // used in bidirected search
 
-// inf_dbl used only in astar2:
+// inf_dbl used only in AStar2:
 #include <limits>
 
 #include "dgraph.h"
@@ -92,12 +92,12 @@ class PathFinder {
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
-        void astar (std::vector<double>& d,
+        void AStar (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
                 unsigned int v0);
-        void astar2 (std::vector<double>& d,
+        void AStar2 (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
