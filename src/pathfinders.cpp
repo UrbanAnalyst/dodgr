@@ -133,7 +133,8 @@ void PathFinder::relax_heur (const DGraphEdge *edge,
  ************************  PATH ALGORITHMS    *************************
  **********************************************************************/
 
-void PathFinder::run (std::vector<double>& d,
+void PathFinder::Dijkstra (
+        std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         unsigned int v0)
@@ -313,7 +314,7 @@ void PathFinder::astar2 (std::vector<double>& d,
 
 // Only sightly modified from the above, to use EdgeSet edge_set instead of
 // m_heap.
-void PathFinder::run_set (std::vector<double>& d,
+void PathFinder::Dijkstra_set (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<int>& prev,
         unsigned int v0)

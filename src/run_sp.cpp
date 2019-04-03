@@ -77,7 +77,7 @@ struct OneDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PathFinder> dijkstra =
+        std::shared_ptr<PathFinder> pathfinder =
             std::make_shared <PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g, astar);
         std::vector <double> w (nverts);
@@ -108,17 +108,17 @@ struct OneDist : public RcppParallel::Worker
                     }
                 }
                 if (!bidirected)
-                    dijkstra->astar (d, w, prev, heuristic,
+                    pathfinder->astar (d, w, prev, heuristic,
                             static_cast <unsigned int> (dp_fromi [i]));
                 else
-                    dijkstra->astar2 (d, w, prev, heuristic,
+                    pathfinder->astar2 (d, w, prev, heuristic,
                             static_cast <unsigned int> (dp_fromi [i]),
                             other_side);
             } else if (heap_type.find ("set") == std::string::npos)
-                dijkstra->run (d, w, prev,
+                pathfinder->Dijkstra (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
             else
-                dijkstra->run_set (d, w, prev,
+                pathfinder->Dijkstra_set (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
             for (long int j = 0; j < toi.size (); j++)
             {
@@ -177,7 +177,7 @@ size_t run_sp::get_fromi (const Rcpp::DataFrame &vert_map_in,
     return static_cast <size_t> (fromi.size ());
 }
 
-// Flows from the dijkstra output are reallocated based on matching vertex
+// Flows from the pathfinder output are reallocated based on matching vertex
 // pairs to edge indices. Note, however, that contracted graphs frequently
 // have duplicate vertex pairs with different distances. The following
 // therefore uses two maps, one to hold the ultimate index from vertex
@@ -328,14 +328,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     // TODO: Set final true back to false (for "twoheap" param)
-    std::shared_ptr <PathFinder> dijkstra = std::make_shared <PathFinder> (
+    std::shared_ptr <PathFinder> pathfinder = std::make_shared <PathFinder> (
             nverts, *run_sp::getHeapImpl(heap_type), g, false);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
     std::vector<int> prev (nverts);
 
-    dijkstra->init (g); // specify the graph
+    pathfinder->init (g); // specify the graph
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
@@ -366,12 +366,12 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
                 other_side = j;
             }
         }
-        dijkstra->astar2 (d, w, prev, heuristic,
+        pathfinder->astar2 (d, w, prev, heuristic,
                 static_cast <unsigned int> (fromi [v]),
                 other_side);
         */
 
-        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
@@ -428,7 +428,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr<PathFinder> dijkstra = std::make_shared <PathFinder> (nverts,
+    std::shared_ptr<PathFinder> pathfinder = std::make_shared <PathFinder> (nverts,
             *run_sp::getHeapImpl(heap_type), g, false);
     
     Rcpp::List res (nfrom);
@@ -436,7 +436,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::vector<double> d (nverts);
     std::vector<int> prev (nverts);
 
-    dijkstra->init (g); // specify the graph
+    pathfinder->init (g); // specify the graph
 
     for (unsigned int v = 0; v < nfrom; v++)
     {
@@ -444,7 +444,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
@@ -527,7 +527,7 @@ struct OneFlow : public RcppParallel::Worker
     // Parallel function operator
     void operator() (size_t begin, size_t end)
     {
-        std::shared_ptr<PathFinder> dijkstra =
+        std::shared_ptr<PathFinder> pathfinder =
             std::make_shared <PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g, false);
         std::vector <double> w (nverts);
@@ -542,7 +542,7 @@ struct OneFlow : public RcppParallel::Worker
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            dijkstra->run (d, w, prev,
+            pathfinder->Dijkstra (d, w, prev,
                     static_cast <unsigned int> (dp_fromi [i]));
             for (size_t j = 0; j < static_cast <size_t> (toi.size ()); j++)
             {
@@ -734,7 +734,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
-    std::shared_ptr <PathFinder> dijkstra = std::make_shared <PathFinder> (nverts,
+    std::shared_ptr <PathFinder> pathfinder = std::make_shared <PathFinder> (nverts,
             *run_sp::getHeapImpl(heap_type), g, false);
 
     Rcpp::List res (nfrom);
@@ -749,7 +749,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
 
         for (unsigned int vi = 0; vi < nverts; vi++)
         {

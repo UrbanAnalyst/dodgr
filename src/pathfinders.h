@@ -87,7 +87,8 @@ class PathFinder {
                 const double &dmax,
                 const bool &reverse);
 
-        void run (std::vector<double>& d,
+        void Dijkstra (
+                std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
@@ -101,7 +102,7 @@ class PathFinder {
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
                 unsigned int v0, unsigned int v1);
-        void run_set (std::vector <double>& d,
+        void Dijkstra_set (std::vector <double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
