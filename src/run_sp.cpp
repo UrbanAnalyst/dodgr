@@ -50,7 +50,6 @@ struct OneDist : public RcppParallel::Worker
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
     bool astar;
-    bool bidirected;
 
     RcppParallel::RMatrix <double> dout;
 
@@ -64,12 +63,10 @@ struct OneDist : public RcppParallel::Worker
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & astar_in,
-            const bool & bidirected_in,
             Rcpp::NumericMatrix dout_in) :
         dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
         vx (vx_in), vy (vy_in),
-        g (g_in), heap_type (heap_type_in),
-        astar (astar_in), bidirected (bidirected_in),
+        g (g_in), heap_type (heap_type_in), astar (astar_in),
         dout (dout_in)
     {
     }
@@ -79,7 +76,7 @@ struct OneDist : public RcppParallel::Worker
     {
         std::shared_ptr<PathFinder> pathfinder =
             std::make_shared <PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g, astar);
+                    *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -107,13 +104,8 @@ struct OneDist : public RcppParallel::Worker
                         other_side = j;
                     }
                 }
-                if (!bidirected)
-                    pathfinder->AStar (d, w, prev, heuristic,
-                            static_cast <unsigned int> (dp_fromi [i]));
-                else
-                    pathfinder->AStar2 (d, w, prev, heuristic,
-                            static_cast <unsigned int> (dp_fromi [i]),
-                            other_side);
+                pathfinder->AStar (d, w, prev, heuristic,
+                        static_cast <unsigned int> (dp_fromi [i]));
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev,
                         static_cast <unsigned int> (dp_fromi [i]));
@@ -245,9 +237,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
     // Create parallel worker
-    // false = bidirected; not currently active
     OneDist one_dist (fromi, toi, nverts, vx, vy,
-            g, heap_type, is_spatial, false, dout);
+            g, heap_type, is_spatial, dout);
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_dist);
@@ -278,18 +269,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    // TODO: Delete the following 2 lines:
-    //std::vector <double> vx = vert_map_in ["x"];
-    //std::vector <double> vy = vert_map_in ["y"];
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    // TODO: Set final true back to false (for "twoheap" param)
     std::shared_ptr <PathFinder> pathfinder = std::make_shared <PathFinder> (
-            nverts, *run_sp::getHeapImpl(heap_type), g, false);
+            nverts, *run_sp::getHeapImpl(heap_type), g);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
@@ -389,7 +376,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     std::shared_ptr<PathFinder> pathfinder = std::make_shared <PathFinder> (nverts,
-            *run_sp::getHeapImpl(heap_type), g, false);
+            *run_sp::getHeapImpl(heap_type), g);
     
     Rcpp::List res (nfrom);
     std::vector<double> w (nverts);
@@ -489,7 +476,7 @@ struct OneFlow : public RcppParallel::Worker
     {
         std::shared_ptr<PathFinder> pathfinder =
             std::make_shared <PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g, false);
+                    *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -695,7 +682,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     std::shared_ptr <PathFinder> pathfinder = std::make_shared <PathFinder> (nverts,
-            *run_sp::getHeapImpl(heap_type), g, false);
+            *run_sp::getHeapImpl(heap_type), g);
 
     Rcpp::List res (nfrom);
     std::vector<double> w(nverts);

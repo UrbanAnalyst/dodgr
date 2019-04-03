@@ -50,8 +50,7 @@ class PathFinder {
     public:
         PathFinder (unsigned int n,
                 const HeapDesc& heapD,
-                std::shared_ptr<const DGraph> g,
-                bool twoheap);
+                std::shared_ptr<const DGraph> g);
         ~PathFinder();
         
         // Disable copy/assign as will crash
@@ -74,18 +73,9 @@ class PathFinder {
                 std::vector<int>& prev,
                 bool *m_open_vec,
                 const unsigned int &v0,
-                const unsigned int &target);
-        void relax_heur (
-                const DGraphEdge *edge,
-                std::vector<double>& d,
-                std::vector<double>& w,
-                std::vector<int>& prev,
-                bool *m_open_vec,
-                const unsigned int &v0,
                 const unsigned int &target,
-                const std::vector<double> &heur,
-                const double &dmax,
-                const bool &reverse);
+                const bool &use_heur,
+                const std::vector<double> &heur);
         void scan_edges (
                 const DGraphEdge *edge,
                 std::vector<double>& d,
@@ -95,9 +85,7 @@ class PathFinder {
                 const bool *m_closed_vec,
                 const unsigned int &v0,
                 const bool &use_heur,
-                const std::vector<double> &heur,    // heuristic for A*
-                const double &dmax,                 // used for reverse bidirectional
-                const bool &reverse);               // reverse dir of bidirectional 
+                const std::vector<double> &heur);    // heuristic for A*
 
         void Dijkstra (
                 std::vector<double>& d,
@@ -109,25 +97,16 @@ class PathFinder {
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
                 unsigned int v0);
-        void AStar2 (std::vector<double>& d,
-                std::vector<double>& w,
-                std::vector<int>& prev,
-                const std::vector<double>& heur,
-                unsigned int v0, unsigned int v1);
         void Dijkstra_set (std::vector <double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int s = 0);
 
     private:
-        bool _twoheap;
         Heap *m_heap;        // pointer: heap
-        Heap *m_heap_rev;    // for reverse direction in bi-directional search
         // Convert to vector<bool>? (save memory, might be a performace hit though)
         bool *m_open;           // array: frontier set state of vertices
-        bool *m_open_rev;       // for bi-directional search
         bool *m_closed;         // also for bi-dir
-        bool *m_closed_rev;     // also for bi-dir
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
 

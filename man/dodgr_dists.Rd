@@ -5,8 +5,7 @@
 \title{dodgr_dists}
 \usage{
 dodgr_dists(graph, from, to, wt_profile = "bicycle", expand = 0,
-  heap = "BHeap", parallel = TRUE, bidirected = FALSE,
-  quiet = TRUE)
+  heap = "BHeap", parallel = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -32,9 +31,6 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 
 \item{parallel}{If \code{TRUE}, perform routing calculation in parallel (see
 details)}
-
-\item{bidirected}{If \code{TRUE}, use bidirectional search (for spatial graphs
-only).}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }

@@ -19,8 +19,6 @@
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
 #' @param parallel If `TRUE`, perform routing calculation in parallel (see
 #' details)
-#' @param bidirected If `TRUE`, use bidirectional search (for spatial graphs
-#' only).
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @return square matrix of distances between nodes
 #'
@@ -98,8 +96,7 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
 dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
-                         heap = 'BHeap', parallel = TRUE, bidirected = FALSE,
-                         quiet = TRUE)
+                         heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
         graph <- graph_from_pts (from, to, expand = expand,
