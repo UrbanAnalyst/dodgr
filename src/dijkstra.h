@@ -86,9 +86,10 @@ class Dijkstra {
         Heap *m_heap;        // pointer: heap
         Heap *m_heap_rev;    // for reverse direction in bi-directional search
         // Convert to vector<bool>? (save memory, might be a performace hit though)
-        bool *m_settled;        // array: solution set state of vertices
         bool *m_open;           // array: frontier set state of vertices
         bool *m_open2;          // for bi-directional search
+        bool *m_closed;         // also for bi-dir
+        bool *m_closed2;        // also for bi-dir
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
 

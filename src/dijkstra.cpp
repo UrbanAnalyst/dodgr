@@ -24,26 +24,28 @@ Dijkstra::Dijkstra(unsigned int n,
         bool twoheap) 
 {
     m_heap = heapD.newInstance(n);
-    m_settled = new bool[n];
+    m_closed = new bool[n];
     m_open = new bool[n];
     _twoheap = twoheap;
-    //if (_twoheap)
-    //{
+    if (_twoheap)
+    {
         m_heap_rev = heapD.newInstance(n);
         m_open2 = new bool[n];
-    //}
+        m_closed2 = new bool[n];
+    }
     init(g);
 }
 
 /* - Destructor - */
 Dijkstra::~Dijkstra() {
-    delete [] m_settled;
     delete [] m_open;
-    //if (_twoheap)
-    //{
+    if (_twoheap)
+    {
         delete [] m_open2;
+        delete [] m_closed;
+        delete [] m_closed2;
         delete m_heap_rev;
-    //}
+    }
     delete m_heap;
 }
 
@@ -75,7 +77,7 @@ void Dijkstra::run (std::vector<double>& d,
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     /* initialise all vertices as unexplored */
-    std::fill (m_settled, m_settled + n, false);
+    std::fill (m_closed, m_closed + n, false);
     std::fill (m_open, m_open + n, false);
 
     /* place v0 into the frontier set with a distance of zero */
@@ -91,7 +93,7 @@ void Dijkstra::run (std::vector<double>& d,
         unsigned int v = m_heap->deleteMin();
 
         /* the selected vertex moves from the frontier to the solution set */
-        m_settled [v] = true;
+        m_closed [v] = true;
         m_open [v] = false;
 
         /* explore the OUT set of v */
@@ -99,7 +101,7 @@ void Dijkstra::run (std::vector<double>& d,
         while (edge) {
             unsigned int et = edge->target;
 
-            if (!m_settled [et]) {
+            if (!m_closed [et]) {
                 double wt = w [v] + edge->wt;
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
@@ -131,7 +133,7 @@ void Dijkstra::astar (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_settled, m_settled + n, false);
+    std::fill (m_closed, m_closed + n, false);
     std::fill (m_open, m_open + n, false);
 
     w [v0] = 0.0;
@@ -143,14 +145,14 @@ void Dijkstra::astar (std::vector<double>& d,
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
 
-        m_settled [v] = true;
+        m_closed [v] = true;
         m_open [v] = false;
 
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
 
-            if (!m_settled [et]) {
+            if (!m_closed [et]) {
                 double wt = w [v] + edge->wt;
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;
@@ -183,14 +185,19 @@ void Dijkstra::astar2 (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_settled, m_settled + n, false);
     std::fill (m_open, m_open + n, false);
     std::fill (m_open2, m_open2 + n, false);
+    std::fill (m_closed, m_closed + n, false);
+    std::fill (m_closed2, m_closed2 + n, false);
 
     std::unordered_set <unsigned int> frontier, backward;
 
-    std::vector <double> d_rev (n, INFINITE_DOUBLE), w_rev (n, INFINITE_DOUBLE);
+    std::vector <double> d_rev (n, INFINITE_DOUBLE),
+        w_rev (n, INFINITE_DOUBLE),
+        prev_rev (n, INFINITE_DOUBLE);
 
+    // m_heap holds heuristic estimates from source v0 to target vertex v1
+    // m_heap_rev holds reverse: from target v1 to source v0
     w [v0] = 0.0;
     d [v0] = 0.0;
     prev [v0] = -1;
@@ -209,18 +216,18 @@ void Dijkstra::astar2 (std::vector<double>& d,
         {
             unsigned int v = m_heap->deleteMin();
             m_open [v] = false;
+            m_closed [v] = true;
 
-            if (m_settled [v])
-                frontier.emplace (v);
-            else
+            if (m_closed2 [v])
             {
-                m_settled [v] = true;
-
+                frontier.emplace (v);
+            } else
+            {
                 edge = vertices [v].outHead;
                 while (edge) {
                     unsigned int et = edge->target;
 
-                    if (!m_settled [et]) {
+                    if (!m_closed [et]) {
                         double wt = w [v] + edge->wt;
                         if (wt < w [et]) {
                             d [et] = d [v] + edge->dist;
@@ -238,25 +245,25 @@ void Dijkstra::astar2 (std::vector<double>& d,
 
                     edge = edge->nextOut;
                 } // end while edge
-            } // end else !m_settled
-        } else
+            } // end else !m_closed2
+        } else // else m_heap_rev.nItems > m_heap.nItems
         {
             unsigned int v = m_heap_rev->deleteMin();
             m_open2 [v] = false;
+            m_closed2 [v] = true;
 
-            if (m_settled [v])
+            backward.emplace (v);
+
+            if (m_closed [v])
             {
-                frontier.emplace (v);
+                //frontier.emplace (v);
             } else
             {
-                m_settled [v] = true;
-                backward.emplace (v);
-
                 edge = vertices [v].inHead;
                 while (edge) {
                     unsigned int et = edge->source;
 
-                    if (!m_settled [et]) {
+                    if (!m_closed2 [et]) {
                         double wt = w_rev [v] + edge->wt;
                         if (wt < w_rev [et]) {
                             d_rev [et] = d_rev [v] + edge->dist;
@@ -276,25 +283,46 @@ void Dijkstra::astar2 (std::vector<double>& d,
 
                     edge = edge->nextIn;
                 } // end while edge
-            } // end else !m_settled
-        }
+            } // end else !m_closed [v]
+        } // end else m_heap_rev.nItems > m_heap.nItems
     } // end while m_heap->nItems
 
-    // Reconstruct all distances from the frontier
-
     /*
-    for (auto b:backward)
-        for (auto fr:frontier)
+    int count1 = 0, count2 = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (m_open [i])
+        {
+            count1++;
+        }
+        if (m_open2 [i])
+        {
+            count2++;
+        }
+    }
+    Rcpp::Rcout << "(f, b) have (" << count1 << ", " << count2 <<
+        ") nodes still open" << std::endl;
+
+    // Reconstruct all distances from the frontier
+    Rcpp::Rcout << "(frontier, backward) = (" << frontier.size () <<
+        ", " << backward.size () << ") / " << n << std::endl;
+    */
+
+    // TODO: This is wrong
+    for (auto fr:frontier)
+        for (auto b:backward)
         {
             double wtemp = w [fr] + w_rev [b];
             if (wtemp < w [b])
             {
+                if (b == 1148)
+                    Rcpp::Rcout << "d [" << b << "] <- " <<
+                        d [fr] << " + " << d_rev [b] << " = " <<
+                        d [fr] + d_rev [b] << std::endl;
                 w [b] = wtemp;
                 d [b] = d [fr] + d_rev [b];
             }
         }
-    */
-
 }
 
 // Only sightly modified from the above, to use EdgeSet edge_set instead of
@@ -309,7 +337,7 @@ void Dijkstra::run_set (std::vector<double>& d,
     const unsigned int n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    std::fill (m_settled, m_settled + n, false);
+    std::fill (m_closed, m_closed + n, false);
     std::fill (m_open, m_open + n, false);
 
     w [v0] = 0.0;
@@ -325,14 +353,14 @@ void Dijkstra::run_set (std::vector<double>& d,
         unsigned int v = ei->geti();
         edge_set.erase (ei);
 
-        m_settled [v] = true;
+        m_closed [v] = true;
         m_open [v] = false;
 
         edge = vertices [v].outHead;
         while (edge) {
             unsigned int et = edge->target;
 
-            if (!m_settled [et]) {
+            if (!m_closed [et]) {
                 double wt = w [v] + edge->wt;
                 if (wt < w [et]) {
                     d [et] = d [v] + edge->dist;

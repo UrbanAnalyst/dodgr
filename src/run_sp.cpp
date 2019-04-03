@@ -319,8 +319,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
     // TODO: Delete the following 2 lines:
-    std::vector <double> vx = vert_map_in ["x"];
-    std::vector <double> vy = vert_map_in ["y"];
+    //std::vector <double> vx = vert_map_in ["x"];
+    //std::vector <double> vy = vert_map_in ["y"];
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
@@ -329,7 +329,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
 
     // TODO: Set final true back to false (for "twoheap" param)
     std::shared_ptr <Dijkstra> dijkstra = std::make_shared <Dijkstra> (
-            nverts, *run_sp::getHeapImpl(heap_type), g, true);
+            nverts, *run_sp::getHeapImpl(heap_type), g, false);
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
@@ -350,6 +350,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
+        // TODO: Delete all of this (it's just for testing)
+        /*
         size_t other_side; // opposite side for bi-directional search
         double dmax = 0.0;
         std::vector <double> heuristic (nverts, 0.0);
@@ -367,8 +369,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         dijkstra->astar2 (d, w, prev, heuristic,
                 static_cast <unsigned int> (fromi [v]),
                 other_side);
+        */
 
-        //dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        dijkstra->run (d, w, prev, static_cast <unsigned int> (fromi [v]));
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)

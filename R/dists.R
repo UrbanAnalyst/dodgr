@@ -98,7 +98,7 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
 dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
-                         heap = 'BHeap', parallel = TRUE, bidirected = TRUE,
+                         heap = 'BHeap', parallel = TRUE, bidirected = FALSE,
                          quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
