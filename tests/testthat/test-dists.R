@@ -76,8 +76,7 @@ test_that ("heaps", {
     expect_message (d2 <- dodgr_dists (graph, from = from, to = to, heap = "Radix"),
                     "RadixHeap can only be implemented for integer weights")
     expect_silent (d3 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeap"))
-    expect_message (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"),
-                    "Extended TriHeaps can not be calculated in parallel")
+    expect_silent (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"))
     expect_silent (d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23"))
     expect_silent (d6 <- dodgr_dists (graph, from = from, to = to, heap = "set"))
 
