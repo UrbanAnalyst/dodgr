@@ -93,6 +93,8 @@ dodgr_to_sfc <- function (net)
 #' Convert a `dodgr` graph to an \pkg{igraph}.
 #'
 #' @param graph A `dodgr` graph
+#' @param weight_column The column of the `dodgr` network to use as the edge
+#' weights in the `igraph` representation.
 #'
 #' @return The `igraph` equivalent of the input. Note that this will \emph{not}
 #' be a dual-weighted graph.
@@ -103,10 +105,12 @@ dodgr_to_sfc <- function (net)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' graphi <- dodgr_to_igraph (graph)
-dodgr_to_igraph <- function (graph)
+dodgr_to_igraph <- function (graph, weight_column = "d")
 {
     if (methods::is (graph, "tbl"))
         graph <- as.data.frame (graph)
+    if (!weight_column %in% names (graph))
+        stop ("graph contains no column named '", weight_column, "'")
 
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols [match ("from", names (gr_cols))]) |
@@ -120,7 +124,7 @@ dodgr_to_igraph <- function (graph)
     v <- dodgr_vertices (graph)
     graph <- graph [, gr_cols]
     gr_cols <- dodgr_graph_cols (graph)
-    names (graph) [which (names (gr_cols) == "d")] <- "weight"
+    names (graph) [which (names (gr_cols) == "weight_column")] <- "weight"
     # remove edge_id if it exists
     if (!is.na (gr_cols [1]))
         graph [[gr_cols [1] ]] <- NULL

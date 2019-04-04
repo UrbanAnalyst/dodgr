@@ -131,8 +131,9 @@ dodgr_dists <- function (graph, from = NULL, to = NULL,
 
     if (parallel & heap == "TriHeapExt")
     {
-        message ("Extended TriHeaps can not be calculated in parallel; ",
-                 "reverting to serial calculation")
+        if (!quiet)
+            message ("Extended TriHeaps can not be calculated in parallel; ",
+                     "reverting to serial calculation")
         parallel <- FALSE
     }
 

@@ -4,10 +4,13 @@
 \alias{dodgr_to_igraph}
 \title{dodgr_to_igraph}
 \usage{
-dodgr_to_igraph(graph)
+dodgr_to_igraph(graph, weight_column = "d")
 }
 \arguments{
 \item{graph}{A \code{dodgr} graph}
+
+\item{weight_column}{The column of the \code{dodgr} network to use as the edge
+weights in the \code{igraph} representation.}
 }
 \value{
 The \code{igraph} equivalent of the input. Note that this will \emph{not}
