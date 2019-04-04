@@ -19,6 +19,9 @@
 #' dim (xy) # 764 edges; 14 attributes
 dodgr_to_sf <- function (net)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     requireNamespace ("sf")
     res <- dodgr_to_sfc (net)
     sf::st_sf (res$dat, geometry = res$geometry, crs = 4326)
@@ -58,6 +61,9 @@ dodgr_to_sf <- function (net)
 #' # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
 dodgr_to_sfc <- function (net)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
     net$edge_id <- seq (nrow (net))
@@ -99,6 +105,9 @@ dodgr_to_sfc <- function (net)
 #' graphi <- dodgr_to_igraph (graph)
 dodgr_to_igraph <- function (graph)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols [match ("from", names (gr_cols))]) |
                is.na (gr_cols [match ("to", names (gr_cols))]))
@@ -196,6 +205,9 @@ dodgr_to_tidygraph <- function (graph)
 {
     if (!requireNamespace ("tidygraph"))
         stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.")
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()
 }
