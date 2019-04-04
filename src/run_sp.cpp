@@ -43,30 +43,31 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 struct OneDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const Rcpp::IntegerVector toi;
+    const std::vector <unsigned int> toi;
     const size_t nverts;
     const std::vector <double> vx;
     const std::vector <double> vy;
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
-    bool astar;
+    bool is_spatial;
 
     RcppParallel::RMatrix <double> dout;
 
     // constructor
     OneDist (
             const Rcpp::IntegerVector fromi,
-            const Rcpp::IntegerVector toi_in,
+            //const Rcpp::IntegerVector toi_in,
+            const std::vector <unsigned int> toi_in,
             const size_t nverts_in,
             const std::vector <double> vx_in,
             const std::vector <double> vy_in,
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
-            const bool & astar_in,
+            const bool & is_spatial_in,
             Rcpp::NumericMatrix dout_in) :
         dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
         vx (vx_in), vy (vy_in),
-        g (g_in), heap_type (heap_type_in), astar (astar_in),
+        g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
         dout (dout_in)
     {
     }
@@ -85,18 +86,19 @@ struct OneDist : public RcppParallel::Worker
 
         for (std::size_t i = begin; i < end; i++)
         {
+            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            if (astar)
+            if (is_spatial)
             {
                 size_t other_side; // opposite side for bi-directional search
                 double dmax = 0.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    double dx = vx [j] - vx [dp_fromi [i]],
-                        dy = vy [j] - vy [dp_fromi [i]];
+                    double dx = vx [j] - vx [from_i],
+                        dy = vy [j] - vy [from_i];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
                     if (heuristic [j] > dmax)
                     {
@@ -104,20 +106,17 @@ struct OneDist : public RcppParallel::Worker
                         other_side = j;
                     }
                 }
-                pathfinder->AStar (d, w, prev, heuristic,
-                        static_cast <unsigned int> (dp_fromi [i]));
+                pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
             } else if (heap_type.find ("set") == std::string::npos)
-                pathfinder->Dijkstra (d, w, prev,
-                        static_cast <unsigned int> (dp_fromi [i]));
+                pathfinder->Dijkstra (d, w, prev, from_i, toi);
             else
-                pathfinder->Dijkstra_set (d, w, prev,
-                        static_cast <unsigned int> (dp_fromi [i]));
-            for (long int j = 0; j < toi.size (); j++)
+                pathfinder->Dijkstra_set (d, w, prev, from_i);
+
+            for (size_t j = 0; j < toi.size (); j++)
             {
-                if (w [static_cast <size_t> (toi [j])] < INFINITE_DOUBLE)
+                if (w [toi [j]] < INFINITE_DOUBLE)
                 {
-                    dout (i, static_cast <size_t> (j)) =
-                        d [static_cast <size_t> (toi [j])];
+                    dout (i, j) = d [toi [j]];
                 }
             }
         }
@@ -201,13 +200,16 @@ void run_sp::make_vert_to_edge_maps (const std::vector <std::string> &from,
 Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi,
+        Rcpp::IntegerVector toi_in,
         const std::string& heap_type,
         const bool is_spatial)
 {
+    std::vector <unsigned int> toi =
+        Rcpp::as <std::vector <unsigned int> > ( toi_in);
+
     Rcpp::NumericVector id_vec;
-    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = static_cast <size_t> (toi.size ());
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi_in, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -253,12 +255,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi,
+        Rcpp::IntegerVector toi_in,
         const std::string& heap_type)
 {
+    std::vector <unsigned int> toi =
+        Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = static_cast <size_t> (toi.size ());
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi_in, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -297,28 +301,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        // TODO: Delete all of this (it's just for testing)
-        /*
-        size_t other_side; // opposite side for bi-directional search
-        double dmax = 0.0;
-        std::vector <double> heuristic (nverts, 0.0);
-        for (size_t j = 0; j < nverts; j++)
-        {
-            double dx = vx [j] - vx [fromi [v]],
-                   dy = vy [j] - vy [fromi [v]];
-            heuristic [j] = sqrt (dx * dx + dy * dy);
-            if (heuristic [j] > dmax)
-            {
-                dmax = heuristic [j];
-                other_side = j;
-            }
-        }
-        pathfinder->AStar2 (d, w, prev, heuristic,
-                static_cast <unsigned int> (fromi [v]),
-                other_side);
-        */
-
-        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev,
+                static_cast <unsigned int> (fromi [v]), toi);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
             if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
@@ -353,12 +337,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
 Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi,
+        Rcpp::IntegerVector toi_in,
         const std::string& heap_type)
 {
+    std::vector <unsigned int> toi =
+        Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
-    size_t nto = static_cast <size_t> (toi.size ());
+    size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi_in, id_vec);
+    size_t nto = toi.size ();
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -391,21 +377,22 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev,
+                static_cast <unsigned int> (fromi [v]), toi);
 
         Rcpp::List res1 (nto);
         for (unsigned int vi = 0; vi < nto; vi++)
         {
-            std::vector <unsigned int> onePath;
-            if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
+            std::vector <int> onePath;
+            if (w [toi [vi]] < INFINITE_DOUBLE)
             {
-                int target = toi [vi]; // target can be -1!
+                int target = toi_in [vi]; // target can be -1!
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
-                    onePath.push_back (static_cast <unsigned int> (target + 1));
-                    target = prev [static_cast <size_t> (target)];
+                    onePath.push_back (target + 1);
+                    target = static_cast <int> (prev [static_cast <unsigned int> (target)]);
                     if (target < 0 || target == fromi [v])
                         break;
                 }
@@ -425,7 +412,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 struct OneFlow : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const Rcpp::IntegerVector toi;
+    const std::vector <unsigned int> toi;
     const Rcpp::NumericMatrix flows;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
@@ -439,7 +426,7 @@ struct OneFlow : public RcppParallel::Worker
     // constructor
     OneFlow (
             const Rcpp::IntegerVector fromi,
-            const Rcpp::IntegerVector toi_in,
+            const std::vector <unsigned int> toi_in,
             const Rcpp::NumericMatrix flows_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
@@ -489,18 +476,17 @@ struct OneFlow : public RcppParallel::Worker
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            pathfinder->Dijkstra (d, w, prev,
-                    static_cast <unsigned int> (dp_fromi [i]));
-            for (size_t j = 0; j < static_cast <size_t> (toi.size ()); j++)
+            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+
+            pathfinder->Dijkstra (d, w, prev, from_i, toi);
+            for (size_t j = 0; j < toi.size (); j++)
             {
-                long int ltj = static_cast <long int> (j);
-                if (dp_fromi [i] != toi [ltj]) // Exclude self-flows
+                if (from_i != toi [j]) // Exclude self-flows
                 {
                     double flow_ij = flows (i, j);
-                    if (w [static_cast <size_t> (toi [ltj])] < INFINITE_DOUBLE &&
-                            flow_ij > 0.0)
+                    if (w [toi [j]] < INFINITE_DOUBLE && flow_ij > 0.0)
                     {
-                        int target = toi [ltj]; // can equal -1
+                        int target = static_cast <int> (toi [j]); // can equal -1
                         while (target < INFINITE_INT)
                         {
                             size_t stt = static_cast <size_t> (target);
@@ -514,7 +500,7 @@ struct OneFlow : public RcppParallel::Worker
                                 flowvec [verts_to_edge_map.at (v2)] += flow_ij;
                             }
 
-                            target = prev [stt];
+                            target = static_cast <int> (prev [stt]);
                             // Only allocate that flow from origin vertex v to all
                             // previous vertices up until the target vi
                             if (target < 0 || target == dp_fromi [i])
@@ -594,13 +580,15 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
 void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi,
+        Rcpp::IntegerVector toi_in,
         const Rcpp::NumericMatrix flows,
         const std::string dirtxt,
         const std::string heap_type)
 {
+    std::vector <unsigned int> toi =
+        Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    const size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi, id_vec);
+    const size_t nfrom = run_sp::get_fromi_toi (vert_map_in, fromi, toi_in, id_vec);
 
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
@@ -689,6 +677,10 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
+    std::vector <unsigned int> toi (nverts);
+    for (unsigned int i = 0; i < nverts; i++)
+        toi [i] = i;
+
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
@@ -696,7 +688,8 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        pathfinder->Dijkstra (d, w, prev, static_cast <unsigned int> (fromi [v]));
+        pathfinder->Dijkstra (d, w, prev,
+                static_cast <unsigned int> (fromi [v]), toi);
 
         for (unsigned int vi = 0; vi < nverts; vi++)
         {

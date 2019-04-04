@@ -42,10 +42,9 @@
 #' `from` and `to` values can be either two-column matrices of
 #' equivalent of longitude and latitude coordinates, or else single columns
 #' precisely matching node numbers or names given in `graph$from` or
-#' `graph$to`. If `to` is missing, pairwise distances are calculated
-#' between all points specified in `from`. If neither `from` nor
-#' `to` are specified, pairwise distances are calculated between all nodes
-#' in `graph`.
+#' `graph$to`. If `to` is `NULL`, pairwise distances are calculated
+#' between all points specified in `from`. If both `from` and `to` are `NULL`,
+#' pairwise distances are calculated between all nodes in `graph`.
 #'
 #' Calculations in parallel (`parallel = TRUE`) ought very generally be
 #' advantageous. For small graphs, Calculating distances in parallel is likely
@@ -95,7 +94,8 @@
 #' graph <- weight_streetnet (essen, wt_profile = "foot")
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
-dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
+dodgr_dists <- function (graph, from = NULL, to = NULL,
+                         wt_profile = "bicycle", expand = 0,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
     if (missing (graph) & (!missing (from) | !missing (to)))
@@ -121,13 +121,8 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index - 1 # 0-based
-    from_id <- index_id$id
-
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index - 1 # 0-based
-    to_id <- index_id$id
+    from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
+    to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
 
     graph <- convert_graph (graph, gr_cols)
 
@@ -142,7 +137,7 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     }
 
     flip <- FALSE
-    if (length (from_index) > length (to_index))
+    if (length (from_index$index) > length (to_index$index))
     {
         flip <- TRUE
         graph <- flip_graph (graph)
@@ -152,22 +147,23 @@ dodgr_dists <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
     }
 
     if (parallel)
-        d <- rcpp_get_sp_dists_par (graph, vert_map, from_index, to_index,
-                                       heap, is_spatial)
+        d <- rcpp_get_sp_dists_par (graph, vert_map, from_index$index,
+                                    to_index$index, heap, is_spatial)
     else
-        d <- rcpp_get_sp_dists (graph, vert_map, from_index, to_index, heap)
+        d <- rcpp_get_sp_dists (graph, vert_map, from_index$index,
+                                to_index$index, heap)
+
+    if (!is.null (from_index$id))
+        rownames (d) <- from_index$id
+    else
+        rownames (d) <- vert_map$vert
+    if (!is.null (to_index$id))
+        colnames (d) <- to_index$id
+    else
+        colnames (d) <- vert_map$vert
 
     if (flip)
         d <- t (d)
-
-    if (!is.null (from_id))
-        rownames (d) <- from_id
-    else
-        rownames (d) <- vert_map$vert
-    if (!is.null (to_id))
-        colnames (d) <- to_id
-    else
-        colnames (d) <- vert_map$vert
 
     if (!quiet)
         message ("done.")
@@ -219,6 +215,23 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
         id <- get_id_cols (pts)
         if (is.null (id))
             id <- vert_map$vert [index] # from_index is 1-based
+    }
+    list (index = index, id = id)
+}
+
+#' get_to_from_index
+#'
+#' @noRd
+get_to_from_index <- function (graph, vert_map, gr_cols, pts)
+{
+    id <- NULL
+    if (is.null (pts))
+        index <- seq (nrow (vert_map)) - 1
+    else
+    {
+        index_id <- get_index_id_cols (graph, gr_cols, vert_map, pts)
+        index <- index_id$index - 1 # 0-based
+        id <- index_id$id
     }
     list (index = index, id = id)
 }

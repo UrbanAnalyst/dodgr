@@ -4,8 +4,8 @@
 \alias{dodgr_dists}
 \title{dodgr_dists}
 \usage{
-dodgr_dists(graph, from, to, wt_profile = "bicycle", expand = 0,
-  heap = "BHeap", parallel = TRUE, quiet = TRUE)
+dodgr_dists(graph, from = NULL, to = NULL, wt_profile = "bicycle",
+  expand = 0, heap = "BHeap", parallel = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -61,10 +61,9 @@ combination of names will be accepted (for example, \code{fromx, fromy},
 \code{from} and \code{to} values can be either two-column matrices of
 equivalent of longitude and latitude coordinates, or else single columns
 precisely matching node numbers or names given in \code{graph$from} or
-\code{graph$to}. If \code{to} is missing, pairwise distances are calculated
-between all points specified in \code{from}. If neither \code{from} nor
-\code{to} are specified, pairwise distances are calculated between all nodes
-in \code{graph}.
+\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated
+between all points specified in \code{from}. If both \code{from} and \code{to} are \code{NULL},
+pairwise distances are calculated between all nodes in \code{graph}.
 
 Calculations in parallel (\code{parallel = TRUE}) ought very generally be
 advantageous. For small graphs, Calculating distances in parallel is likely

@@ -66,16 +66,6 @@ class PathFinder {
                 bool *m_closed_vec,
                 const unsigned int v,
                 const size_t n);
-        void relax (
-                const DGraphEdge *edge,
-                std::vector<double>& d,
-                std::vector<double>& w,
-                std::vector<int>& prev,
-                bool *m_open_vec,
-                const unsigned int &v0,
-                const unsigned int &target,
-                const bool &use_heur,
-                const std::vector<double> &heur);
         void scan_edges (
                 const DGraphEdge *edge,
                 std::vector<double>& d,
@@ -91,16 +81,18 @@ class PathFinder {
                 std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
-                unsigned int s = 0);
+                const unsigned int v0,
+                const std::vector <unsigned int> &to_index);
         void AStar (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 const std::vector<double>& heur,
-                unsigned int v0);
+                const unsigned int v0,
+                const std::vector <unsigned int> &to_index);
         void Dijkstra_set (std::vector <double>& d,
                 std::vector<double>& w,
                 std::vector<int>& prev,
-                unsigned int s = 0);
+                unsigned int v0);
 
     private:
         Heap *m_heap;        // pointer: heap

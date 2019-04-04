@@ -10,11 +10,11 @@ Rcpp::List rcpp_fundamental_cycles (Rcpp::DataFrame graph,
     std::vector <std::string> to = graph ["to"];
 
     std::unordered_map <std::string, size_t> vert_index;
-    for (int i = 0; i < vert_id.size (); i++)
+    for (size_t i = 0; i < vert_id.size (); i++)
         vert_index.emplace (vert_id [i], i);
 
     std::vector <size_t> edge_array (from.size() * 2);
-    for (int i = 0; i < from.size (); i++)
+    for (size_t i = 0; i < from.size (); i++)
     {
         edge_array [i * 2] = vert_index.at (from [i]);
         edge_array [i * 2 + 1] = vert_index.at (to [i]);
@@ -31,7 +31,7 @@ Rcpp::List rcpp_fundamental_cycles (Rcpp::DataFrame graph,
         graph::Graph<std::string>::NodePath path =
             gr.cycleMatrix2nodePath (*cycle_iter);
         std::vector <std::string> pathi (path.size ());
-        int i = 0;
+        size_t i = 0;
         for (const std::string* obj: path)
         {
             pathi [i++] = *obj;

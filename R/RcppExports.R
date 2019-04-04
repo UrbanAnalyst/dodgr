@@ -171,15 +171,15 @@ rcpp_get_component_vector <- function(graph) {
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd
-rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi, heap_type, is_spatial) {
-    .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial)
+rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi_in, heap_type, is_spatial) {
+    .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial)
 }
 
 #' rcpp_get_sp_dists
 #'
 #' @noRd
-rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
 #' rcpp_get_paths
@@ -200,8 +200,8 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi, heap_type) {
 #' @note Returns 1-indexed values indexing directly into the R input
 #'
 #' @noRd
-rcpp_get_paths <- function(graph, vert_map_in, fromi, toi, heap_type) {
-    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi, heap_type)
+rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
 #' rcpp_aggregate_files
@@ -235,8 +235,8 @@ rcpp_aggregate_files <- function(file_names, len) {
 #' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi, flows, dirtxt, heap_type) {
-    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi, flows, dirtxt, heap_type))
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, dirtxt, heap_type) {
+    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, dirtxt, heap_type))
 }
 
 #' rcpp_flows_disperse

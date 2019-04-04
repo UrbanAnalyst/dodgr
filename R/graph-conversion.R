@@ -19,8 +19,8 @@
 #' dim (xy) # 764 edges; 14 attributes
 dodgr_to_sf <- function (net)
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    if (methods::is (net, "tbl"))
+        net <- as.data.frame (net)
 
     requireNamespace ("sf")
     res <- dodgr_to_sfc (net)
@@ -61,8 +61,8 @@ dodgr_to_sf <- function (net)
 #' # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
 dodgr_to_sfc <- function (net)
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    if (methods::is (net, "tbl"))
+        net <- as.data.frame (net)
 
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
