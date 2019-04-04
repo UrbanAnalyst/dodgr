@@ -177,6 +177,9 @@ dodgr_vertices <- function (graph)
 #' graph <- dodgr_components (graph)
 dodgr_components <- function (graph)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     if ("component" %in% names (graph))
         message ("graph already has a component column")
     else
@@ -221,6 +224,9 @@ dodgr_components <- function (graph)
 #' nrow (dodgr_vertices (graph)) # 200
 dodgr_sample <- function (graph, nverts = 1000)
 {
+    if (methods::is (graph, "tbl"))
+        graph <- as.data.frame (graph)
+
     fr <- find_fr_id_col (graph)
     to <- find_to_id_col (graph)
     verts <- unique (c (graph [, fr], graph [, to]))

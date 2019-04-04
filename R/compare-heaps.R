@@ -61,5 +61,6 @@ compare_heaps <- function(graph, nverts = 100, replications = 2)
                                              to = to_id, heap = "set"),
                            d <- igraph::distances (igr, v = from_id, to = to_id,
                                               mode = "out"),
-                           replications = 10, order = "relative")
+                           replications = replications,
+                           order = "relative")
 }
