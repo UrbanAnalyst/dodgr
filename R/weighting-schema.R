@@ -1,6 +1,8 @@
 # traffic lights for pedestrians
 # https://wiki.openstreetmap.org/wiki/Tag:highway%3Dtraffic_signals#Complex_intersections
 
+# nocov start
+
 # return silicate "object" instances -> OSM ways IDs asosicated with given sets
 # of key-val pairs
 get_key_val_pair <- function (x, kv)
@@ -77,3 +79,5 @@ traffic_signal_nodes <- function (x)
 {
     get_key_val_pair_node (x, list (c ("highway", "traffic_signals")))
 }
+
+# nocov end
