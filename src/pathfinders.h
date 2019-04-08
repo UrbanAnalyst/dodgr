@@ -73,9 +73,16 @@ class PathFinder {
                 std::vector<int>& prev,
                 bool *m_open_vec,
                 const bool *m_closed_vec,
+                const unsigned int &v0);
+        void scan_edges_heur ( // with A* heuristic
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<int>& prev,
+                bool *m_open_vec,
+                const bool *m_closed_vec,
                 const unsigned int &v0,
-                const bool &use_heur,
-                const std::vector<double> &heur);    // heuristic for A*
+                const std::vector<double> &heur);
 
         void Dijkstra (
                 std::vector<double>& d,

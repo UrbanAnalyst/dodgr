@@ -55,8 +55,38 @@ void PathFinder::scan_edges (const DGraphEdge *edge,
         std::vector<int>& prev,
         bool *m_open_vec,
         const bool *m_closed_vec,
+        const unsigned int &v0)
+{
+    while (edge) {
+        unsigned int et = edge->target;
+        if (!m_closed_vec [et])
+        {
+            double wt = w [v0] + edge->wt;
+            if (wt < w [et]) {
+                d [et] = d [v0] + edge->dist;
+                w [et] = wt;
+                prev [et] = static_cast <int> (v0);
+
+                if (m_open_vec [et]) {
+                    m_heap->decreaseKey(et, wt);
+                }
+                else {
+                    m_heap->insert (et, wt);
+                    m_open_vec [et] = true;
+                }
+            }
+        }
+        edge = edge->nextOut;
+    }
+}
+
+void PathFinder::scan_edges_heur (const DGraphEdge *edge,
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<int>& prev,
+        bool *m_open_vec,
+        const bool *m_closed_vec,
         const unsigned int &v0,
-        const bool &use_heur,
         const std::vector<double> &heur)    // heuristic for A*
 {
     while (edge) {
@@ -70,16 +100,10 @@ void PathFinder::scan_edges (const DGraphEdge *edge,
                 prev [et] = static_cast <int> (v0);
 
                 if (m_open_vec [et]) {
-                    if (use_heur)
-                        m_heap->decreaseKey(et, wt + heur [et] - heur [v0]);
-                    else
-                        m_heap->decreaseKey(et, wt);
+                    m_heap->decreaseKey(et, wt + heur [et] - heur [v0]);
                 }
                 else {
-                    if (use_heur)
-                        m_heap->insert (et, wt + heur [et] - heur [v0]);
-                    else
-                        m_heap->insert (et, wt);
+                    m_heap->insert (et, wt + heur [et] - heur [v0]);
                     m_open_vec [et] = true;
                 }
             }
@@ -106,7 +130,6 @@ void PathFinder::Dijkstra (
 
     PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert(v0, 0.0);
-    std::vector <double> heur; // dummy not used here
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
@@ -122,8 +145,7 @@ void PathFinder::Dijkstra (
         m_open [v] = false;
 
         edge = vertices [v].outHead;
-        scan_edges (edge, d, w, prev, m_open, m_closed, v,
-                false, heur);
+        scan_edges (edge, d, w, prev, m_open, m_closed, v);
 
         if (is_target [v])
             n_reached++;
@@ -162,8 +184,7 @@ void PathFinder::AStar (std::vector<double>& d,
         m_open [v] = false;
 
         edge = vertices [v].outHead;
-        scan_edges (edge, d, w, prev, m_open, m_closed, v,
-                true, heur);
+        scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, heur);
 
         if (is_target [v])
             n_reached++;
