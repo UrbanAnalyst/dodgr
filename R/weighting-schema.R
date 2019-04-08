@@ -77,7 +77,10 @@ traffic_light_objs_ped <- function (x)
 # Get all OSM node IDs that are traffic lights from osmdata_sc object x
 traffic_signal_nodes <- function (x)
 {
-    get_key_val_pair_node (x, list (c ("highway", "traffic_signals")))
+    x1 <- get_key_val_pair_node (x, list (c ("highway", "traffic_signals")))
+    x2 <- get_key_val_pair_node (x, list (c ("highway", "crossing"),
+                                          c ("crossing", "traffic_signals")))
+    unique (c (x1, x2))
 }
 
 # nocov end

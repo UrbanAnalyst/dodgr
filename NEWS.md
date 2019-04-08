@@ -1,4 +1,4 @@
-# v0.1.3.001
+# v0.1.3.002
 Major changes:
 - weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
 
