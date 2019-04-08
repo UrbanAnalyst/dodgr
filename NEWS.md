@@ -1,3 +1,10 @@
+# v0.1.3.001
+Major changes:
+- weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
+
+Minor changes:
+- Bug fix with dodgr_to_igraph to create proper *weighted* igraph
+
 # v0.1.3
 Major changes:
 - New functions `dodgr_fundamental_cycles` and `dodgr_full_cycles`
