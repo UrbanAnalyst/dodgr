@@ -86,7 +86,18 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            way = weighting_profiles [, 2],
                            value = as.numeric (weighting_profiles [, 3]),
                            stringsAsFactors = FALSE)
+
+# Then add waiting times at traffic lights in seconds
+nms <- paste0 ("lights_", unique (weighting_profiles$name))
+lights <- data.frame ("name" = nms,
+                      "way" = rep ("traffic_lights",
+                                   length (nms)),
+                      "value" = rep (30, length (names)),
+                      stringsAsFactors = FALSE)
+weighting_profiles <- rbind (weighting_profiles, lights)
+
 # change percentage value to 0-1
-weighting_profiles$value <- weighting_profiles$value / 100
+index <- which (!grepl ("lights_", weighting_profiles$name))
+weighting_profiles$value [index] <- weighting_profiles$value [index] / 100
 usethis::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
 ```

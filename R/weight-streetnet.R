@@ -466,7 +466,7 @@ sc_lanes_surface <- function (edges, wt_profile)
     return (edges)
 }
 
-# Convert weighted distances to time
+# Convert weighted distances in metres to time in seconds
 # NOTE: This is currently hard-coded for foot and bicycle only, and will not work for
 # anything else. 
 sc_edge_time <- function (edges, wt_profile)
@@ -475,13 +475,15 @@ sc_edge_time <- function (edges, wt_profile)
     {
         # Uses 
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
-        edges$time = 60 * (edges$d_weighted / 1000) / 5 # 5km per hour
+        edges$time = 3600 * (edges$d_weighted / 1000) / 5 # 5km per hour
         if ("dz" %in% names (edges))
         {
             index <- which (edges$dz > 0)
             edges$time [index] <- edges$time [index] + edges$dz [index] / 10
             edges$dz <- NULL
         }
+
+        # add waiting times at traffic lights
     } else if (wt_profile == "bicycle")
     {
         # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
@@ -489,7 +491,7 @@ sc_edge_time <- function (edges, wt_profile)
         # The latter argues for a linear relationship with a reduction in speed
         # of "about 11% for every 1% change in steepness". For 0.01 to translate
         # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
-        edges$time = 60 * (edges$d_weighted / 1000) / 12 # 12km per hour
+        edges$time = 3600 * (edges$d_weighted / 1000) / 12 # 12km per hour
         if ("dz" %in% names (edges))
         {
             index <- which (edges$dz > 0)
