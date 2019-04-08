@@ -340,7 +340,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         extract_sc_edges_highways (x) %>%
         weight_sc_edges (wt_profile) %>%
         sc_lanes_surface (wt_profile) %>%
-        sc_edge_time (wt_profile)
+        sc_edge_time (wt_profile, x)
 }
 
 has_elevation <- function (x)
@@ -469,7 +469,7 @@ sc_lanes_surface <- function (edges, wt_profile)
 # Convert weighted distances in metres to time in seconds
 # NOTE: This is currently hard-coded for foot and bicycle only, and will not work for
 # anything else. 
-sc_edge_time <- function (edges, wt_profile)
+sc_edge_time <- function (edges, wt_profile, x)
 {
     if (wt_profile == "foot")
     {
@@ -484,6 +484,14 @@ sc_edge_time <- function (edges, wt_profile)
         }
 
         # add waiting times at traffic lights
+        wp <- dodgr::weighting_profiles
+        wait <- wp$value [wp$name == paste0 ("lights_", wt_profile)]
+
+        crossings <- traffic_light_objs_ped (x) # way IDs
+        objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
+        oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
+        index <- match (oles$edge_, edges$edge_)
+        edges$time [index] <- edges$time [index] + wait
     } else if (wt_profile == "bicycle")
     {
         # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
