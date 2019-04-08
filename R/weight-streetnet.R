@@ -471,6 +471,9 @@ sc_lanes_surface <- function (edges, wt_profile)
 # anything else. 
 sc_edge_time <- function (edges, wt_profile, x)
 {
+    # no visible binding messages:
+    object_ <- NULL
+
     if (wt_profile == "foot")
     {
         # Uses 

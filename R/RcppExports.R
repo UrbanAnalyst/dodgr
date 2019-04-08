@@ -168,6 +168,13 @@ rcpp_get_component_vector <- function(graph) {
     .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
+#' rcpp_route_times
+#'
+#' @noRd
+rcpp_route_times <- function(graph) {
+    .Call(`_dodgr_rcpp_route_times`, graph)
+}
+
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd
