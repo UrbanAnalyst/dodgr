@@ -32,15 +32,11 @@ test_that("compare heaps", {
     # Test that all dodgr calculations are faster than igraph:
     igr <- which (grepl ("igraph", ch$test))
     #expect_true (ch$elapsed [igr] == max (ch$elapsed))
-    # This actually fails on some machines (R oldrel on Windows) so:
+    # This actually fails on some machines (R oldrel on Windows) because elapsed
+    # times are sometimes all very small *and equal*, so is turned off:
     if (test_all)
     {
         #expect_true (ch$elapsed [igr] > min (ch$elapsed))
-        # TODO: igraph is now faster because of dodgr_to_igraph (#39), which now
-        # constructs a full igraph object with spatial coordinates. This in turn
-        # enables igraph to implement an A* algorithm which is naturally faster
-        # than the standard Dijkstra. TODO: #80
-        #expect_true (ch$elapsed [igr] == min (ch$elapsed))
     }
 })
 

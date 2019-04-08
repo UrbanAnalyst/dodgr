@@ -24,6 +24,8 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 {
     if (methods::is (graph, "tbl"))
         graph <- as.data.frame (graph)
+    if (nrow (graph) == 0)
+        stop ("graph is empty")
 
     if (!is.null (verts))
     {

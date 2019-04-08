@@ -234,7 +234,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     {
         gr_cols <- dodgr_graph_cols (graph)
         graph2 <- convert_graph (graph, gr_cols)
-        indx <- match (rcpp_sample_graph (graph2, nverts), graph$edge_id)
+        indx <- match (rcpp_sample_graph (graph2, nverts), graph2$edge_id)
         graph <- graph [sort (indx), ]
     }
 
