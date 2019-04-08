@@ -33,5 +33,5 @@ fair comparisons, run only once or re-start the current R session.
 }
 \examples{
 graph <- weight_streetnet (hampi)
-compare_heaps (graph, nverts = 100, replications = 1)
+compare_heaps (graph, nverts = 1000, replications = 1)
 }
