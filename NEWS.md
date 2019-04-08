@@ -4,6 +4,7 @@ Major changes:
 
 Minor changes:
 - Bug fix with dodgr_to_igraph to create proper *weighted* igraph
+- Add "footway" to weighting_profiles
 
 # v0.1.3
 Major changes:

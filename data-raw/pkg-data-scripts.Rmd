@@ -42,23 +42,24 @@ weighting_profiles <- lapply (dat, function (i) {
                             attr (j, "percent")))
                  do.call (rbind, res)
           })
-# Then add living_street and bridleway to all profiles
+# Then add living_street, bridleway, and footway to all profiles
 # https://wiki.openstreetmap.org/wiki/Tag:highway%3Dliving_street
 nms <- sapply (weighting_profiles, function (i) i [1, 1])
-#               living_street   bridleway
-# "foot"        95              100
-# "horse"       80              100
-# "wheelchair"  95              50
-# "bicycle"     95              70
-# "moped"       60              0
-# "motorcycle"  50              0
-# "motorcar"    40              0
-# "goods"       30              0
-# "hgv"         30              0
-# "psv"         30              0
-wt_ls <- c (95, 80, 95, 95, 60, 50, 40, 30, 30, 30)
-wt_br <- c (100, 100, 50, 70, 0, 0, 0, 0, 0, 0)
-names (wt_ls) <- names (wt_br) <- nms
+#               living_street   footway     bridleway
+# "foot"        95              100         100
+# "horse"       80              100         100
+# "wheelchair"  95              100         50
+# "bicycle"     95              90          70
+# "moped"       60              0           0
+# "motorcycle"  50              0           0
+# "motorcar"    40              0           0
+# "goods"       30              0           0
+# "hgv"         30              0           0
+# "psv"         30              0           0
+wt_ls <- c (95, 80, 95, 95, 60, 50, 40, 30, 30, 30) # living street
+wt_br <- c (100, 100, 50, 70, 0, 0, 0, 0, 0, 0) # bridleway
+wt_fw <- c (100, 100, 100, 90, 0, 0, 0, 0, 0, 0) # bridleway
+names (wt_ls) <- names (wt_br) <- names (wt_fw) <- nms
 weighting_profiles <- lapply (seq (weighting_profiles), function (i)
                               {
                                   wi <- weighting_profiles [[i]]
@@ -71,6 +72,11 @@ weighting_profiles <- lapply (seq (weighting_profiles), function (i)
                                   wi <- rbind (wi, c (nmi, 
                                                       "bridleway",
                                                       wtb))
+                                  wtf <- wt_fw [which (nms == nmi)]
+                                  wi <- rbind (wi, c (nmi, 
+                                                      "footway",
+                                                      wtf))
+
                                   rownames (wi) <- rep ("preference", nrow (wi))
                                   return (wi)
                               })
