@@ -87,12 +87,17 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            value = as.numeric (weighting_profiles [, 3]),
                            stringsAsFactors = FALSE)
 
-# Then add waiting times at traffic lights in seconds
+# Then add waiting times at traffic lights in seconds, with value of 48s taken from
+# http://dx.doi.org/10.1016/j.trb.2013.02.002
+# see also National Assoc. City Transportation Officials guidelines:
+# https://nacto.org/publication/urban-street-design-guide/intersection-design-elements/traffic-signals/signal-cycle-lengths/
+# recommended "Short cycle length" of 60-90 secons
+wait_time <- 48
 nms <- paste0 ("lights_", unique (weighting_profiles$name))
 lights <- data.frame ("name" = nms,
                       "way" = rep ("traffic_lights",
                                    length (nms)),
-                      "value" = rep (30, length (names)),
+                      "value" = rep (wait_time, length (names)),
                       stringsAsFactors = FALSE)
 weighting_profiles <- rbind (weighting_profiles, lights)
 
