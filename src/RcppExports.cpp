@@ -77,7 +77,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_route_times
-Rcpp::NumericMatrix rcpp_route_times(const Rcpp::DataFrame graph);
+Rcpp::DataFrame rcpp_route_times(const Rcpp::DataFrame graph);
 RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
