@@ -490,11 +490,19 @@ sc_edge_time <- function (edges, wt_profile, x)
         wp <- dodgr::weighting_profiles
         wait <- wp$value [wp$name == paste0 ("lights_", wt_profile)]
 
+        # first for intersections marked as crossings
         crossings <- traffic_light_objs_ped (x) # way IDs
         objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
         oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
         index <- match (oles$edge_, edges$edge_)
         edges$time [index] <- edges$time [index] + wait
+
+        # then all others with nodes simply marked as traffic lights - match
+        # those to *start* nodes and simply add the waiting time
+        nodes <- traffic_signal_nodes (x)
+        index2 <- which (edges$.vx0 %in% nodes &
+                         !edges$.vx0 %in% edges$.vx0 [index])
+        edges$time [index2] <- edges$time [index2] + wait
     } else if (wt_profile == "bicycle")
     {
         # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
