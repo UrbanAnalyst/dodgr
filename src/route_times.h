@@ -82,5 +82,5 @@ Rcpp::DataFrame new_graph (const Rcpp::DataFrame &graph,
 
 } // end namespace
 
-Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
+Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
         bool ignore_oneway, bool left_side, int turn_penalty);

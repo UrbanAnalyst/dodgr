@@ -285,7 +285,7 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
+Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
         bool ignore_oneway, bool left_side, int turn_penalty)
 {
     std::unordered_map <std::string, std::pair <RTEdgeSet, RTEdgeSet> > the_edges;
@@ -295,8 +295,15 @@ Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 
-    Rcpp::DataFrame res = routetimes::new_graph (graph, junctions,
+    Rcpp::DataFrame new_graph = routetimes::new_graph (graph, junctions,
             turn_penalty);
 
-    return res;
+    Rcpp::CharacterVector edges_rm_vec (edges_to_remove.size ());
+    int i = 0;
+    for (auto e: edges_to_remove)
+        edges_rm_vec (i++) = e;
+
+    return Rcpp::List::create (
+            Rcpp::Named ("graph") = new_graph,
+            Rcpp::Named ("edges_to_remove") = edges_rm_vec);
 }

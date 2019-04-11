@@ -77,7 +77,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_route_times
-Rcpp::DataFrame rcpp_route_times(const Rcpp::DataFrame graph, bool ignore_oneway, bool left_side, int turn_penalty);
+Rcpp::List rcpp_route_times(const Rcpp::DataFrame graph, bool ignore_oneway, bool left_side, int turn_penalty);
 RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP, SEXP ignore_onewaySEXP, SEXP left_sideSEXP, SEXP turn_penaltySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
