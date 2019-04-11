@@ -12,42 +12,72 @@ struct OneNode {
 };
 
 struct OneEdge {
-    std::string start, end, id;
-    double x0, y0, x1, y1;
+    std::string v0, v1, edge;
+    double x, y;
+};
+
+struct OneCompoundEdge {
+    std::string v0, v1, edge0, edge1;
     bool penalty;
 };
 
-struct Junction {
-    std::string in, centre, out;
-    bool penalty;
+// ordering function to sort OneEdge structs in clockwise order, for which x and
+// y values pre-converted by subtracting the centre values.
+// https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+struct clockwise_sort
+{
+    bool operator () (const OneEdge &a, const OneEdge &b)
+    {
+        if (a.x >= 0.0 && b.x < 0.0)
+            return true;
+        if (a.x < 0.0 && b.x >= 0)
+            return false;
+        if (a.x == 0.0 && b.x == 0.0)
+        {
+            if (a.y >= 0.0 || b.y >= 0.0)
+                return a.y > b.y;
+            return b.y > a.y;
+        }
+
+        double det = a.x * b.y - a.y * b.x;
+        if (det < 0)
+            return true;
+        if (det > 0)
+            return false;
+
+        double d1 = a.x * a.x + a.y * a.y;
+        double d2 = b.x * b.x + b.y * b.y;
+        return d1 > d2;
+    }
 };
+
+typedef std::set <OneEdge, clockwise_sort> RTEdgeSet;
 
 namespace routetimes {
 
-bool isLess (OneNode a, OneNode b);
+void fill_edges (const Rcpp::DataFrame &graph,
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::unordered_set <std::string> &edges_to_remove,
+        bool ignore_oneway);
 
 void replace_one_map_edge (
-        std::unordered_map <std::string, std::vector <std::string> > &the_edges,
-        std::string key, std::string value);
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::string key, OneEdge edge, bool incoming);
 
 void erase_non_junctions (
-        std::unordered_map <std::string, std::vector <std::string> > &the_edges);
-
-void fill_edges (const Rcpp::DataFrame &graph,
-        std::unordered_map <std::string, double> &x0,
-        std::unordered_map <std::string, double> &y0,
-        std::unordered_map <std::string, std::vector <std::string> > &out_edges);
-
-void sort_edges (
-        const std::unordered_map <std::string, std::vector <std::string> > &edges_in,
-        std::unordered_map <std::string, std::vector <std::string> > &edges_sorted,
-        const std::unordered_map <std::string, double> &x0,
-        const std::unordered_map <std::string, double> &y0);
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::unordered_set <std::string> &edges_to_remove);
 
 void replace_junctions (
-        const std::unordered_map <std::string, std::vector <std::string> > &edges,
-        std::vector <Junction> junctions,
+        const std::unordered_map <std::string,
+                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::vector <OneCompoundEdge> &junctions,
         bool left_side);
+
+void new_graph (graph, junctions);
 
 } // end namespace
 

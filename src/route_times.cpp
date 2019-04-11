@@ -1,225 +1,214 @@
-
 #include "route_times.h"
 
+/* This code add time penalties for turning across oncoming traffic in
+ * insersections. Works by sorting all outgoing edges in a clockwise direction,
+ * and applying penalties to edges with sorted indices >= 2. (Right-side travel
+ * simply reverses indices to effectively be anti-clockwise. Incoming edges are
+ * also sorted, but sort order is not used.) Implements the following steps:
+ *
+ * 1. The `fill_edges` function creates unordered_map between centre vertices of
+ *    junctions and a `std::pair <RTEdgeSet, RTEdgeSet>` of (incoming, outgoing)
+ *    vertices, where `RTEdgeSet = std::set <OneEdge, clockwise_sort>`. This
+ *    function also fills an unordered_set of `edges_to_remove`, which are all
+ *    original outgoing edges from junction vertices.
+ * 2. The `replace_junctions` function scans through that map and creates new
+ *    edges connecting the incoming vertex to the outgoing vertex in each
+ *    direction, and applies penalties to all edges with sorted order > 2.
+ */
 
-// https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
-
-// x and y values pre-converted by subtracting the centre values
-bool routetimes::isLess (OneNode a, OneNode b)
-{
-    if (a.x >= 0.0 && b.x < 0.0)
-        return true;
-    if (a.x < 0.0 && b.x >= 0)
-        return false;
-    if (a.x == 0.0 && b.x == 0.0)
-    {
-        if (a.y >= 0.0 || b.y >= 0.0)
-            return a.y > b.y;
-        return b.y > a.y;
-    }
-
-    double det = a.x * b.y - a.y * b.x;
-    if (det < 0)
-        return true;
-    if (det > 0)
-        return false;
-
-    double d1 = a.x * a.x + a.y * a.y;
-    double d2 = b.x * b.x + b.y * b.y;
-    return d1 > d2;
-}
-
-void routetimes::replace_one_map_edge (
-        std::unordered_map <std::string, std::vector <std::string> > &the_edges,
-        std::string key, std::string value)
-{
-    std::vector <std::string> edges;
-    if (the_edges.find (key) != the_edges.end ())
-    {
-        edges = the_edges.at (key);
-        the_edges.erase (key);
-    }
-    edges.push_back (value);
-    the_edges.emplace (key, edges);
-}
-
-void routetimes::erase_non_junctions (
-        std::unordered_map <std::string, std::vector <std::string> > &the_edges)
-{
-    // A junction has 2 or more out_edges / in_edges, but presume that flow in
-    // and out of 1->2 junctions is regulated by lights, and that only proper
-    // cross-junctions (1->3) incur additional waiting times:
-    const int min_edges = 3;
-
-    std::unordered_set <std::string> removes;
-    for (auto e: the_edges)
-        if (e.second.size () < min_edges)
-            removes.emplace (e.first);
-    for (auto r: removes)
-        the_edges.erase (r);
-}
 
 void routetimes::fill_edges (const Rcpp::DataFrame &graph,
-        std::unordered_map <std::string, double> &x0,
-        std::unordered_map <std::string, double> &y0,
-        std::unordered_map <std::string, std::vector <std::string> > &out_edges)
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::unordered_set <std::string> &edges_to_remove,
+        bool ignore_oneway)
 {
     std::vector <std::string> vx0 = graph [".vx0"],
-                              vx1 = graph [".vx1"];
+                              vx1 = graph [".vx1"],
+                              edge_ = graph ["edge_"];
     std::vector <double> vx0_x = graph [".vx0_x"],
                          vx0_y = graph [".vx0_y"],
                          vx1_x = graph [".vx1_x"],
                          vx1_y = graph [".vx1_y"];
+    std::vector <bool> oneway = graph ["oneway"];
 
     const int n = graph.nrow ();
 
     for (int i = 0; i < n; i++)
     {
-        x0.emplace (vx0 [i], vx0_x [i]);
-        x0.emplace (vx1 [i], vx1_x [i]);
-        y0.emplace (vx0 [i], vx0_y [i]);
-        y0.emplace (vx1 [i], vx1_y [i]);
+        OneEdge edge;
+        edge.v0 = vx0 [i];
+        edge.v1 = vx1 [i];
+        edge.edge = edge_ [i];
+        edge.x = vx1_x [i] - vx0_x [i];
+        edge.y = vx1_y [i] - vx0_y [i];
 
-        routetimes::replace_one_map_edge (out_edges, vx0 [i], vx1 [i]);
+        // the incoming edge:
+        routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, true);
+        // the outgoing edge:
+        routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, false);
+        // TODO: oneway_bicycle tag, although this is hardly used
+        if (ignore_oneway || !oneway [i])
+        {
+            routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, false);
+            routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, true);
+        }
     }
 
-    erase_non_junctions (out_edges);
+    erase_non_junctions (the_edges, edges_to_remove);
 }
 
-// clockwise sorting of edges
-void routetimes::sort_edges (
-        const std::unordered_map <std::string, std::vector <std::string> > &edges_in,
-        std::unordered_map <std::string, std::vector <std::string> > &edges_sorted,
-        const std::unordered_map <std::string, double> &x0,
-        const std::unordered_map <std::string, double> &y0)
+void routetimes::replace_one_map_edge (
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::string key, OneEdge edge, bool incoming)
 {
-    for (auto e: edges_in)
+    std::pair <RTEdgeSet, RTEdgeSet> edge_set;
+    if (the_edges.find (key) != the_edges.end ())
     {
-        std::vector <std::string> edge_set = e.second;
-        std::vector <OneNode> nodes (edge_set.size ());
-        size_t count = 0;
-        bool chk = true;
-        for (auto ei: edge_set)
-        {
-            OneNode n;
-            if (x0.find (ei) == x0.end () || y0.find (ei) == y0.end ())
-                chk = false;
-            else
-            {
-                n.x = x0.at (ei);
-                n.y = y0.at (ei);
-                n.id = ei;
-                nodes [count++] = n;
-            }
-        }
-        if (!chk)
-            continue;
-
-        std::sort (nodes.begin (), nodes.end (), routetimes::isLess);
-        std::vector <std::string> sorted_edges (nodes.size ());
-        count = 0;
-        for (auto n: nodes)
-            sorted_edges [count++] = n.id;
-        edges_sorted.emplace (e.first, sorted_edges);
+        edge_set = the_edges.at (key);
+        the_edges.erase (key);
     }
+    if (incoming)
+        edge_set.first.emplace (edge);
+    else
+        edge_set.second.emplace (edge);
+    
+    the_edges.emplace (key, edge_set);
+}
+
+/* Remove all edge items with < 3 outgoing edges. A junction has 2 or more
+ * out_edges / in_edges, but presume that flow in and out of 1->2 junctions is
+ * regulated by lights, and that only proper cross-junctions (1->3) incur
+ * additional waiting times. The result: min_edges = 4
+ */
+void routetimes::erase_non_junctions (
+        std::unordered_map <std::string,
+                            std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::unordered_set <std::string> &edges_to_remove)
+{
+    const int min_edges = 4;
+
+    std::unordered_set <std::string> removes;
+    for (auto e: the_edges)
+    {
+        if (e.second.second.size () < min_edges) // set of outgoing edges
+            removes.emplace (e.first);
+        else
+        {
+            for (auto r: e.second.second) // RTEdgeSet
+                edges_to_remove.emplace (r.edge);
+        }
+    }
+    for (auto r: removes)
+        the_edges.erase (r);
 }
 
 /* Replace junction mid-points with direct connections from in -> 0 -> out with
- * (in, out) pairs and a binary flag for turning penalty. Each juction in input
- * edges has key = centre, values = clockwise-sorted out vertices. These are
- * replaced with a bunch of standard pairs subsituting single (in->centre) with
- * all combinations of (in->out) and binary flag for turning penalty.  edges_in
- * are sorted version created in sort_edges
+ * (in, out) pairs and a binary flag for turning penalty.
  */
 void routetimes::replace_junctions (
-        const std::unordered_map <std::string, std::vector <std::string> > &edges,
-        std::vector <Junction> junctions,
+        const std::unordered_map <std::string,
+                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::vector <OneCompoundEdge> &junctions,
         bool left_side)
 {
+    // Estimate size of resultant vector - this will usually be an over-estimate
+    // because any one-way streets will yield less than this number of
+    // combinations in in/out edges.
     size_t count = 0;
-    for (auto e: edges)
-        count += e.second.size () * (e.second.size () - 1);
+    for (auto e: the_edges)
+        count += e.second.second.size () * (e.second.second.size () - 1);
     junctions.resize (count);
     count = 0;
 
-    for (auto e: edges)
+    for (auto e: the_edges)
     {
-        // iterate over each outgoing edge, treating that as incoming and
-        // establishing penalties for all other ongoing.
-        int ei_pos = 0;
-        for (auto ei: e.second) 
+        // iterate over each incoming edge, and establish penalties for all
+        // other ongoing.
+        for (auto ei: e.second.first)  // incoming edge
         {
-            std::unordered_map <std::string, int> edge_map;
-            int ej_pos = 0;
-            for (auto ej: e.second)
-                if (ej != ei)
+            std::unordered_map <std::string, size_t> out_edges;
+            size_t i = 0;
+            for (auto ej: e.second.second) // outgoing edge
+                if (ej.edge != ei.edge)
                 {
-                    int dir = ej_pos++ - ei_pos;
-                    if (dir < 0)
-                        dir += e.second.size () - 1;
-                    /* dir then counts clockwise from 0 = first left turn up to
-                     * e.second.size () for last right turn. Penalties can then
-                     * be applied to any (dir > 1). For right-side driving,
-                     * these dir values are simply reversed: */
-                    if (!left_side)
-                        dir = e.second.size () - 1 - dir;
-                    Junction j;
-                    j.in = ei;
-                    j.centre = e.first;
-                    j.out = ej;
-                    j.penalty = false;
-                    if (dir > 1)
-                        j.penalty = true;
-                    count++;
+                    out_edges.emplace (ej.edge, i++);
+                }
+            // For right-side travel, simply reverse the clockwise sequence of
+            // values, to give anti-clockwise sequential counts:
+            if (!left_side)
+                for (auto oe: out_edges)
+                {
+                    out_edges [oe.first] = out_edges.size () - oe.second;
+                }
+
+            // Then use those out_edges to construct new edge lists:
+            for (auto ej: e.second.second) // outgoing edge
+                if (out_edges.find (ej.edge) != out_edges.end ())
+                {
+                    OneCompoundEdge edge;
+                    edge.v0 = ei.v0;
+                    edge.v1 = ej.v1;
+                    edge.edge0 = ei.edge;
+                    edge.edge1 = ej.edge;
+                    edge.penalty = false;
+                    if (out_edges.at (ej.edge) > 2)
+                        edge.penalty = true;
+                    junctions [count++] = edge;
                 }
         }
     }
+    junctions.resize (count - 1);
+}
+
+void routetimes::new_graph (graph, junctions)
+{
 }
 
 //' rcpp_route_times
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph, bool left_side)
+Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
+        bool ignore_oneway, bool left_side)
 {
-    std::unordered_map <std::string, double> x0, y0;
-    // these must all be vectors because the IDs are arbitrarily sorted in
-    // clockwise order around the junction point.
-    std::unordered_map <std::string, std::vector <std::string> >
-        out_edges, out_edges_sorted;
+    std::unordered_map <std::string, std::pair <RTEdgeSet, RTEdgeSet> > the_edges;
+    std::unordered_set <std::string> edges_to_remove;
 
-    routetimes::fill_edges (graph, x0, y0, out_edges);
-    routetimes::sort_edges (out_edges, out_edges_sorted, x0, y0);
-    std::vector <Junction> junctions;
-    routetimes::replace_junctions (out_edges_sorted, junctions, left_side);
+    routetimes::fill_edges (graph, the_edges, edges_to_remove, ignore_oneway);
+    std::vector <OneCompoundEdge> junctions;
+    routetimes::replace_junctions (the_edges, junctions, left_side);
 
-    // dummy values to demonstrate that routetimes::isLess works:
-    const size_t len = 6;
-    std::vector <OneNode> x (len);
-    OneNode n;
+    routetimes::new_graph (graph, junctions);
 
-    n.x = 1.0;  n.y = -3.0;     n.id = "1";     x [0] = n;
-    n.x = 0.0;  n.y = 1.0;      n.id = "2";     x [1] = n;
-    n.x = -1.0; n.y = 2.0;      n.id = "3";     x [2] = n;
-    n.x = 2.0;  n.y = -0.5;     n.id = "4";     x [3] = n;
-    n.x = 3.0;  n.y = 1.5;      n.id = "5";     x [4] = n;
-    n.x = -2.5; n.y = -0.7;     n.id = "6";     x [5] = n;
+    // dummy values to demonstrate that clockwise sorting works.
+    RTEdgeSet x;
+    OneEdge e;
 
-    std::sort (x.begin (), x.end (), routetimes::isLess);
+    e.x = 1.0;  e.y = -3.0;     e.v0 = "0"; e.v1 = "1";    x.emplace (e);
+    e.x = 0.0;  e.y = 1.0;      e.v0 = "0"; e.v1 = "2";    x.emplace (e);
+    e.x = -1.0; e.y = 2.0;      e.v0 = "0"; e.v1 = "3";    x.emplace (e);
+    e.x = 2.0;  e.y = -0.5;     e.v0 = "0"; e.v1 = "4";    x.emplace (e);
+    e.x = 3.0;  e.y = 1.5;      e.v0 = "0"; e.v1 = "5";    x.emplace (e);
+    e.x = -2.5; e.y = -0.7;     e.v0 = "0"; e.v1 = "6";    x.emplace (e);
 
+    const size_t len = x.size ();
     Rcpp::NumericVector xout (len), yout (len);
-    Rcpp::CharacterVector idout (len);
+    Rcpp::CharacterVector v0 (len), v1 (len);
     int count = 0;
     for (auto i: x)
     {
         xout [count] = i.x;
         yout [count] = i.y;
-        idout [count++] = i.id;
+        v0 [count] = i.v0;
+        v1 [count++] = i.v1;
     }
     Rcpp::DataFrame res = Rcpp::DataFrame::create (
             Rcpp::Named ("x") = xout,
             Rcpp::Named ("y") = yout,
-            Rcpp::Named ("id") = idout,
+            Rcpp::Named ("v0") = v0,
+            Rcpp::Named ("v1") = v1,
             Rcpp::_["stringsAsFactors"] = false);
 
     return res;
