@@ -43,13 +43,20 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         edge.x = vx1_x [i] - vx0_x [i];
         edge.y = vx1_y [i] - vx0_y [i];
 
-        // the incoming edge:
+        // the incoming edge: vx0->vx1 with key = vx1
         routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, true);
-        // the outgoing edge:
+        // the outgoing edge: vx0->vx1 with key = vx0
         routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, false);
         // TODO: oneway_bicycle tag, although this is hardly used
         if (ignore_oneway || !oneway [i])
         {
+            // reverse edge:
+            edge.v0 = vx1 [i];
+            edge.v1 = vx0 [i];
+            double x = edge.x;
+            edge.x = edge.y;
+            edge.y = x;
+
             routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, false);
             routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, true);
         }
@@ -159,15 +166,13 @@ void routetimes::replace_junctions (
                 }
         }
     }
+
     junctions.resize (count - 1);
 }
 
 // This is hard-coded for weight_streetnet.sc structure
 Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph, 
-        const std::unordered_map <std::string,
-                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-                            std::vector <OneCompoundEdge> &junctions,
-                            int turn_penalty)
+        std::vector <OneCompoundEdge> &junctions, int turn_penalty)
 {
     std::unordered_map <std::string, double> map_x, map_y, map_d, map_dw, map_time;
     std::unordered_map <std::string, std::string> map_object, map_highway;
@@ -182,17 +187,22 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
                          vx0_y = graph [".vx0_y"],
                          vx1_x = graph [".vx1_x"],
                          vx1_y = graph [".vx1_y"],
-                         d = graph [".vx1_y"],
-                         dw = graph [".vx1_y"],
-                         time = graph [".vx1_y"];
+                         d = graph ["d"],
+                         dw = graph ["d_weighted"],
+                         time = graph ["time"];
     std::vector <bool> oneway = graph ["oneway"],
                        oneway_bicycle = graph ["oneway_bicycle"];
 
+    std::unordered_set <std::string> edge_set;
+    for (auto j: junctions)
+    {
+        edge_set.emplace (j.edge0);
+        edge_set.emplace (j.edge1);
+    }
 
     for (size_t i = 0; i < static_cast <size_t> (graph.nrow ()); i++)
     {
-        if (the_edges.find (vx0 [i]) != the_edges.end () ||
-                the_edges.find (vx1 [i]) != the_edges.end ())
+        if (edge_set.find (edge_ [i]) != edge_set.end ())
         {
             map_x.emplace (vx0 [i], vx0_x [i]);
             map_y.emplace (vx0 [i], vx0_y [i]);
@@ -285,8 +295,8 @@ Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 
-    Rcpp::DataFrame res =
-        routetimes::new_graph (graph, the_edges, junctions, turn_penalty);
+    Rcpp::DataFrame res = routetimes::new_graph (graph, junctions,
+            turn_penalty);
 
     return res;
 }

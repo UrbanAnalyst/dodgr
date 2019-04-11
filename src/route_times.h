@@ -78,10 +78,7 @@ void replace_junctions (
         bool left_side);
 
 Rcpp::DataFrame new_graph (const Rcpp::DataFrame &graph, 
-        const std::unordered_map <std::string,
-                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::vector <OneCompoundEdge> &junctions,
-        int turn_penalty);
+        std::vector <OneCompoundEdge> &junctions, int turn_penalty);
 
 } // end namespace
 
