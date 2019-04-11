@@ -162,8 +162,113 @@ void routetimes::replace_junctions (
     junctions.resize (count - 1);
 }
 
-void routetimes::new_graph (graph, junctions)
+// This is hard-coded for weight_streetnet.sc structure
+Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph, 
+        const std::unordered_map <std::string,
+                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+                            std::vector <OneCompoundEdge> &junctions,
+                            int turn_penalty)
 {
+    std::unordered_map <std::string, double> map_x, map_y, map_d, map_dw, map_time;
+    std::unordered_map <std::string, std::string> map_object, map_highway;
+    std::unordered_map <std::string, bool> map_oneway, map_oneway_bicycle;
+
+    std::vector <std::string> vx0 = graph [".vx0"],
+                              vx1 = graph [".vx1"],
+                              edge_ = graph ["edge_"],
+                              object = graph ["object_"],
+                              highway = graph ["highway"];
+    std::vector <double> vx0_x = graph [".vx0_x"],
+                         vx0_y = graph [".vx0_y"],
+                         vx1_x = graph [".vx1_x"],
+                         vx1_y = graph [".vx1_y"],
+                         d = graph [".vx1_y"],
+                         dw = graph [".vx1_y"],
+                         time = graph [".vx1_y"];
+    std::vector <bool> oneway = graph ["oneway"],
+                       oneway_bicycle = graph ["oneway_bicycle"];
+
+
+    for (size_t i = 0; i < static_cast <size_t> (graph.nrow ()); i++)
+    {
+        if (the_edges.find (vx0 [i]) != the_edges.end () ||
+                the_edges.find (vx1 [i]) != the_edges.end ())
+        {
+            map_x.emplace (vx0 [i], vx0_x [i]);
+            map_y.emplace (vx0 [i], vx0_y [i]);
+            map_x.emplace (vx1 [i], vx1_x [i]);
+            map_y.emplace (vx1 [i], vx1_y [i]);
+
+            map_d.emplace (edge_ [i], d [i]);
+            map_dw.emplace (edge_ [i], dw [i]);
+            map_time.emplace (edge_ [i], time [i]);
+
+            map_object.emplace (edge_ [i], object [i]);
+            map_highway.emplace (edge_ [i], highway [i]);
+            map_oneway.emplace (edge_ [i], oneway [i]);
+            map_oneway_bicycle.emplace (edge_ [i], oneway_bicycle [i]);
+        }
+    }
+
+    const size_t n = junctions.size ();
+    std::vector <std::string> vx0_out (n),
+                              vx1_out (n),
+                              edge_out (n),
+                              object_out (n),
+                              highway_out (n);
+    std::vector <double> vx0_x_out (n),
+                         vx0_y_out (n),
+                         vx1_x_out (n),
+                         vx1_y_out (n),
+                         d_out (n),
+                         dw_out (n),
+                         time_out (n);
+    std::vector <bool> oneway_out (n),
+                       oneway_bicycle_out (n);
+
+    for (size_t i = 0; i < n; i++)
+    {
+        vx0_out [i] = junctions [i].v0;
+        vx0_x_out [i] = map_x.at (junctions [i].v0);
+        vx0_y_out [i] = map_y.at (junctions [i].v0);
+        vx1_out [i] = junctions [i].v1;
+        vx1_x_out [i] = map_x.at (junctions [i].v1);
+        vx1_y_out [i] = map_y.at (junctions [i].v1);
+
+        // Map all others to properties of out edge:
+        object_out [i] = map_object.at (junctions [i].edge1);
+        highway_out [i] = map_highway.at (junctions [i].edge1);
+        oneway_out [i] = map_oneway.at (junctions [i].edge1);
+        oneway_bicycle_out [i] = map_oneway_bicycle.at (junctions [i].edge1);
+
+        d_out [i] = map_d.at (junctions [i].edge0) + 
+                    map_d.at (junctions [i].edge1);
+        dw_out [i] = map_dw.at (junctions [i].edge0) + 
+                     map_dw.at (junctions [i].edge1);
+        time_out [i] = map_time.at (junctions [i].edge0) +
+                       map_time.at (junctions [i].edge1);
+        if (junctions [i].penalty)
+            time_out [i] += turn_penalty;
+    }
+
+    Rcpp::DataFrame res = Rcpp::DataFrame::create (
+            Rcpp::Named (".vx0") = vx0_out,
+            Rcpp::Named (".vx1") = vx1_out,
+            Rcpp::Named ("edge_") = edge_out, // empty here
+            Rcpp::Named (".vx0_x") = vx0_x_out,
+            Rcpp::Named (".vx0_y") = vx0_y_out,
+            Rcpp::Named (".vx1_x") = vx1_x_out,
+            Rcpp::Named (".vx1_y") = vx1_y_out,
+            Rcpp::Named ("d") = d_out,
+            Rcpp::Named ("object_") = object_out,
+            Rcpp::Named ("highway") = highway_out,
+            Rcpp::Named ("oneway") = oneway_out,
+            Rcpp::Named ("oneway_bicycle") = oneway_bicycle_out,
+            Rcpp::Named ("d_weighted") = dw_out,
+            Rcpp::Named ("time") = time_out,
+            Rcpp::_["stringsAsFactors"] = false);
+
+    return res;
 }
 
 //' rcpp_route_times
@@ -171,7 +276,7 @@ void routetimes::new_graph (graph, junctions)
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
-        bool ignore_oneway, bool left_side)
+        bool ignore_oneway, bool left_side, int turn_penalty)
 {
     std::unordered_map <std::string, std::pair <RTEdgeSet, RTEdgeSet> > the_edges;
     std::unordered_set <std::string> edges_to_remove;
@@ -180,36 +285,8 @@ Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 
-    routetimes::new_graph (graph, junctions);
-
-    // dummy values to demonstrate that clockwise sorting works.
-    RTEdgeSet x;
-    OneEdge e;
-
-    e.x = 1.0;  e.y = -3.0;     e.v0 = "0"; e.v1 = "1";    x.emplace (e);
-    e.x = 0.0;  e.y = 1.0;      e.v0 = "0"; e.v1 = "2";    x.emplace (e);
-    e.x = -1.0; e.y = 2.0;      e.v0 = "0"; e.v1 = "3";    x.emplace (e);
-    e.x = 2.0;  e.y = -0.5;     e.v0 = "0"; e.v1 = "4";    x.emplace (e);
-    e.x = 3.0;  e.y = 1.5;      e.v0 = "0"; e.v1 = "5";    x.emplace (e);
-    e.x = -2.5; e.y = -0.7;     e.v0 = "0"; e.v1 = "6";    x.emplace (e);
-
-    const size_t len = x.size ();
-    Rcpp::NumericVector xout (len), yout (len);
-    Rcpp::CharacterVector v0 (len), v1 (len);
-    int count = 0;
-    for (auto i: x)
-    {
-        xout [count] = i.x;
-        yout [count] = i.y;
-        v0 [count] = i.v0;
-        v1 [count++] = i.v1;
-    }
-    Rcpp::DataFrame res = Rcpp::DataFrame::create (
-            Rcpp::Named ("x") = xout,
-            Rcpp::Named ("y") = yout,
-            Rcpp::Named ("v0") = v0,
-            Rcpp::Named ("v1") = v1,
-            Rcpp::_["stringsAsFactors"] = false);
+    Rcpp::DataFrame res =
+        routetimes::new_graph (graph, the_edges, junctions, turn_penalty);
 
     return res;
 }

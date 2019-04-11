@@ -77,8 +77,13 @@ void replace_junctions (
         std::vector <OneCompoundEdge> &junctions,
         bool left_side);
 
-void new_graph (graph, junctions);
+Rcpp::DataFrame new_graph (const Rcpp::DataFrame &graph, 
+        const std::unordered_map <std::string,
+                                  std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
+        std::vector <OneCompoundEdge> &junctions,
+        int turn_penalty);
 
 } // end namespace
 
-Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph);
+Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph,
+        bool ignore_oneway, bool left_side, int turn_penalty);
