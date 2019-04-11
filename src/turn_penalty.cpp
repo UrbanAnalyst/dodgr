@@ -1,4 +1,4 @@
-#include "route_times.h"
+#include "turn_penalty.h"
 
 /* This code add time penalties for turning across oncoming traffic in
  * insersections. Works by sorting all outgoing edges in a clockwise direction,

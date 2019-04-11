@@ -168,13 +168,6 @@ rcpp_get_component_vector <- function(graph) {
     .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
-#' rcpp_route_times
-#'
-#' @noRd
-rcpp_route_times <- function(graph, ignore_oneway, left_side, turn_penalty) {
-    .Call(`_dodgr_rcpp_route_times`, graph, ignore_oneway, left_side, turn_penalty)
-}
-
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd
@@ -308,5 +301,12 @@ rcpp_points_index_par <- function(xy, pts) {
 #' @noRd
 rcpp_points_index <- function(xy, pts) {
     .Call(`_dodgr_rcpp_points_index`, xy, pts)
+}
+
+#' rcpp_route_times
+#'
+#' @noRd
+rcpp_route_times <- function(graph, ignore_oneway, left_side, turn_penalty) {
+    .Call(`_dodgr_rcpp_route_times`, graph, ignore_oneway, left_side, turn_penalty)
 }
 
