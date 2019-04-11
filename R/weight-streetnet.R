@@ -525,6 +525,16 @@ sc_edge_time <- function (edges, wt_profile, x)
     return (edges)
 }
 
+rm_duplicated_edges <- function (graph)
+{
+    index <- cbind (which (duplicated (graph [, c (".vx0", ".vx1")])),
+                    which (duplicated (graph [, c (".vx0", ".vx1")], fromLast = TRUE)))
+    removes <- apply (index, 1, function (i)
+                      ifelse (graph$time [i [1] ] > graph$time [i [2] ],
+                              i [1], i [2]))
+    graph [!seq (nrow (graph)) %in% removes, ]
+}
+
 # ********************************************************************
 # **********************     weight railway     **********************
 # ********************************************************************
