@@ -62,8 +62,7 @@ void routetimes::erase_non_junctions (
 void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         std::unordered_map <std::string, double> &x0,
         std::unordered_map <std::string, double> &y0,
-        std::unordered_map <std::string, std::vector <std::string> > &out_edges,
-        std::unordered_map <std::string, std::vector <std::string> > &in_edges)
+        std::unordered_map <std::string, std::vector <std::string> > &out_edges)
 {
     std::vector <std::string> vx0 = graph [".vx0"],
                               vx1 = graph [".vx1"];
@@ -82,12 +81,9 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         y0.emplace (vx1 [i], vx1_y [i]);
 
         routetimes::replace_one_map_edge (out_edges, vx0 [i], vx1 [i]);
-        routetimes::replace_one_map_edge (in_edges, vx1 [i], vx0 [i]);
     }
 
     erase_non_junctions (out_edges);
-    erase_non_junctions (in_edges);
-
 }
 
 // clockwise sorting of edges
@@ -128,21 +124,74 @@ void routetimes::sort_edges (
     }
 }
 
+/* Replace junction mid-points with direct connections from in -> 0 -> out with
+ * (in, out) pairs and a binary flag for turning penalty. Each juction in input
+ * edges has key = centre, values = clockwise-sorted out vertices. These are
+ * replaced with a bunch of standard pairs subsituting single (in->centre) with
+ * all combinations of (in->out) and binary flag for turning penalty.  edges_in
+ * are sorted version created in sort_edges
+ */
+void routetimes::replace_junctions (
+        const std::unordered_map <std::string, std::vector <std::string> > &edges,
+        std::vector <Junction> junctions,
+        bool left_side)
+{
+    size_t count = 0;
+    for (auto e: edges)
+        count += e.second.size () * (e.second.size () - 1);
+    junctions.resize (count);
+    count = 0;
+
+    for (auto e: edges)
+    {
+        // iterate over each outgoing edge, treating that as incoming and
+        // establishing penalties for all other ongoing.
+        int ei_pos = 0;
+        for (auto ei: e.second) 
+        {
+            std::unordered_map <std::string, int> edge_map;
+            int ej_pos = 0;
+            for (auto ej: e.second)
+                if (ej != ei)
+                {
+                    int dir = ej_pos++ - ei_pos;
+                    if (dir < 0)
+                        dir += e.second.size () - 1;
+                    /* dir then counts clockwise from 0 = first left turn up to
+                     * e.second.size () for last right turn. Penalties can then
+                     * be applied to any (dir > 1). For right-side driving,
+                     * these dir values are simply reversed: */
+                    if (!left_side)
+                        dir = e.second.size () - 1 - dir;
+                    Junction j;
+                    j.in = ei;
+                    j.centre = e.first;
+                    j.out = ej;
+                    j.penalty = false;
+                    if (dir > 1)
+                        j.penalty = true;
+                    count++;
+                }
+        }
+    }
+}
+
 //' rcpp_route_times
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph)
+Rcpp::DataFrame rcpp_route_times (const Rcpp::DataFrame graph, bool left_side)
 {
     std::unordered_map <std::string, double> x0, y0;
     // these must all be vectors because the IDs are arbitrarily sorted in
     // clockwise order around the junction point.
     std::unordered_map <std::string, std::vector <std::string> >
-        out_edges, in_edges, out_edges_sorted, in_edges_sorted;
+        out_edges, out_edges_sorted;
 
-    routetimes::fill_edges (graph, x0, y0, out_edges, in_edges);
+    routetimes::fill_edges (graph, x0, y0, out_edges);
     routetimes::sort_edges (out_edges, out_edges_sorted, x0, y0);
-    routetimes::sort_edges (in_edges, in_edges_sorted, x0, y0);
+    std::vector <Junction> junctions;
+    routetimes::replace_junctions (out_edges_sorted, junctions, left_side);
 
     // dummy values to demonstrate that routetimes::isLess works:
     const size_t len = 6;

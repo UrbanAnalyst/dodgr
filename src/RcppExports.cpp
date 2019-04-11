@@ -77,13 +77,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_route_times
-Rcpp::DataFrame rcpp_route_times(const Rcpp::DataFrame graph);
-RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP) {
+Rcpp::DataFrame rcpp_route_times(const Rcpp::DataFrame graph, bool left_side);
+RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP, SEXP left_sideSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_route_times(graph));
+    Rcpp::traits::input_parameter< bool >::type left_side(left_sideSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_route_times(graph, left_side));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -221,7 +222,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_merge_flows", (DL_FUNC) &_dodgr_rcpp_merge_flows, 1},
     {"_dodgr_rcpp_sample_graph", (DL_FUNC) &_dodgr_rcpp_sample_graph, 2},
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
-    {"_dodgr_rcpp_route_times", (DL_FUNC) &_dodgr_rcpp_route_times, 1},
+    {"_dodgr_rcpp_route_times", (DL_FUNC) &_dodgr_rcpp_route_times, 2},
     {"_dodgr_rcpp_get_sp_dists_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_par, 6},
     {"_dodgr_rcpp_get_sp_dists", (DL_FUNC) &_dodgr_rcpp_get_sp_dists, 5},
     {"_dodgr_rcpp_get_paths", (DL_FUNC) &_dodgr_rcpp_get_paths, 5},
