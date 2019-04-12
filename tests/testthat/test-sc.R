@@ -78,7 +78,7 @@ test_that("SC", {
               #expect_silent (net_sf <- weight_streetnet (hampi))
 })
 
-test_that("dodgr_times" {
+test_that("dodgr_times", {
               expect_silent (hsc <- sf_to_sc (hampi))
               expect_silent (net_sc <- weight_streetnet (hsc))
               expect_error (d <- dodgr_times (net_sc),
