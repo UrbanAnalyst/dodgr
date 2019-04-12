@@ -15,6 +15,9 @@
 dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap',
                          left_side = FALSE, turn_penalty = 10) 
 {
+    if (is.null (from) | is.null (to))
+        stop ("both from and to must be specified.")
+
     attr (graph, "left_side") <- left_side
     attr (graph, "turn_penalty") <- turn_penalty
     hash <- digest::digest (graph)
