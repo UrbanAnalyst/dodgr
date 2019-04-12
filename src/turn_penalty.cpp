@@ -9,8 +9,7 @@
  * 1. The `fill_edges` function creates unordered_map between centre vertices of
  *    junctions and a `std::pair <RTEdgeSet, RTEdgeSet>` of (incoming, outgoing)
  *    vertices, where `RTEdgeSet = std::set <OneEdge, clockwise_sort>`. This
- *    function also fills an unordered_set of `edges_to_remove`, which are all
- *    original outgoing edges from junction vertices.
+ *    function also fills an unordered_set of `junction_vertices`.
  * 2. The `replace_junctions` function scans through that map and creates new
  *    edges connecting the incoming vertex to the outgoing vertex in each
  *    direction, and applies penalties to all edges with sorted order > 2.
@@ -20,7 +19,7 @@
 void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove)
+        std::unordered_set <std::string> &junction_vertices)
 {
     std::vector <std::string> vx0 = graph [".vx0"],
                               vx1 = graph [".vx1"],
@@ -48,7 +47,7 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, false);
     }
 
-    erase_non_junctions (the_edges, edges_to_remove);
+    erase_non_junctions (the_edges, junction_vertices);
 }
 
 void routetimes::replace_one_map_edge (
@@ -78,7 +77,7 @@ void routetimes::replace_one_map_edge (
 void routetimes::erase_non_junctions (
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove)
+        std::unordered_set <std::string> &junction_vertices)
 {
     const int min_edges = 4;
 
@@ -90,7 +89,7 @@ void routetimes::erase_non_junctions (
         else
         {
             for (auto r: e.second.second) // RTEdgeSet
-                edges_to_remove.emplace (r.edge);
+                junction_vertices.emplace (r.v0);
         }
     }
     for (auto r: removes)
@@ -283,21 +282,21 @@ Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
         bool left_side, int turn_penalty)
 {
     std::unordered_map <std::string, std::pair <RTEdgeSet, RTEdgeSet> > the_edges;
-    std::unordered_set <std::string> edges_to_remove;
+    std::unordered_set <std::string> junction_vertices;
 
-    routetimes::fill_edges (graph, the_edges, edges_to_remove);
+    routetimes::fill_edges (graph, the_edges, junction_vertices);
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 
     Rcpp::DataFrame new_graph = routetimes::new_graph (graph, junctions,
             turn_penalty);
 
-    Rcpp::CharacterVector edges_rm_vec (edges_to_remove.size ());
+    Rcpp::CharacterVector junction_vec (junction_vertices.size ());
     int i = 0;
-    for (auto e: edges_to_remove)
-        edges_rm_vec (i++) = e;
+    for (auto j: junction_vertices)
+        junction_vec (i++) = j;
 
     return Rcpp::List::create (
             Rcpp::Named ("graph") = new_graph,
-            Rcpp::Named ("edges_to_remove") = edges_rm_vec);
+            Rcpp::Named ("junction_vertices") = junction_vec);
 }

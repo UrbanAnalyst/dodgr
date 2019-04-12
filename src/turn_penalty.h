@@ -6,11 +6,6 @@
 // [[Rcpp::depends(RcppParallel)]]
 #include <RcppParallel.h>
 
-struct OneNode {
-    double x, y;
-    std::string id;
-};
-
 struct OneEdge {
     std::string v0, v1, edge;
     double x, y;
@@ -58,7 +53,7 @@ namespace routetimes {
 void fill_edges (const Rcpp::DataFrame &graph,
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove);
+        std::unordered_set <std::string> &junction_vertices);
 
 void replace_one_map_edge (
         std::unordered_map <std::string,
@@ -68,7 +63,7 @@ void replace_one_map_edge (
 void erase_non_junctions (
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove);
+        std::unordered_set <std::string> &junction_vertices);
 
 void replace_junctions (
         const std::unordered_map <std::string,

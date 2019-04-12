@@ -6,33 +6,48 @@
 #' @param graph A `dodgr` network returned from the \link{weight_streetnet}
 #' function using a network obtained with the \pkg{osmdata} `osmdata_sc`
 #' function.
-#' @param ignore_oneway Only if `travel_time = TRUE`, a `TRUE` value allows
-#' travel \emph{against} the permitted direction of oneway streets.
-#' @param left_side Only if `travel_time = TRUE`, a `TRUE` value indicates
-#' traffic that travels on the left side of the street; `FALSE` for the right
-#' side.
+#' @param left_side A `TRUE` value indicates traffic that travels on the left
+#' side of the street; `FALSE` for the right side.
 #' @param turn_penalty Time penalty in seconds for turning across oncoming
 #' traffic.
 #'
 #' @export 
 dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap',
-                         ignore_oneway = FALSE, left_side = FALSE,
-                         turn_penalty = 45) 
+                         left_side = FALSE, turn_penalty = 45) 
 {
+    attr (graph, "left_side") <- left_side
+    attr (graph, "turn_penalty") <- turn_penalty
     hash <- digest::digest (graph)
     prefix <- "routetimes"
+    # The cached object is not the graph itself, rather just the new bit routing
+    # across junctions according to turn angles:
     if (is_graph_cached (hash, prefix))
     {
-        graph <- retrieve_cached_graph (hash, prefix)
+        res <- retrieve_cached_graph (hash, prefix)
     } else
     {
-        res <- rcpp_route_times (graph, ignore_oneway, left_side, turn_penalty)
-        graph <- rbind (graph, res$graph)
-        graph$d <- graph$d_weighted <- graph$time
-        graph$time <- NULL
-        cache_graph (graph, hash, prefix)
+        res <- rcpp_route_times (graph, left_side, turn_penalty)
+        cache_graph (res, hash, prefix)
     }
-    dodgr_dists (graph, from, to, heap)
+
+    # The junction vertices can still be used as routing points, but need to
+    # be disconnected from the replacement turning-angle junctions. This is
+    # done by seperately renaming the incoming and outgoing versions:
+    index <- which (graph$.vx0 %in% res$junction_vertices)
+    v_start <- graph$.vx0 [index]
+    graph$.vx0 [index] <- paste0 (graph$.vx0 [index], "_start")
+    index <- which (graph$.vx1 %in% res$junction_vertices)
+    v_end <- graph$.vx1 [index]
+    graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
+
+    graph <- rbind (graph, res$graph)
+    graph$d <- graph$d_weighted <- graph$time
+    graph$time <- NULL
+
+    from [from %in% v_start] <- paste0 (from [from %in% v_start], "_start")
+    to [to %in% v_end] <- paste0 (to [to %in% v_end], "_end")
+
+    dodgr_dists (graph, from, to, heap = heap)
 }
 
 is_graph_cached <- function (hash, prefix)
