@@ -26,7 +26,6 @@ dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap',
         graph <- retrieve_cached_graph (hash, prefix)
     } else
     {
-        graph <- rm_duplicated_edges (graph)
         res <- rcpp_route_times (graph, ignore_oneway, left_side, turn_penalty)
         graph <- rbind (graph, res$graph)
         graph$d <- graph$d_weighted <- graph$time

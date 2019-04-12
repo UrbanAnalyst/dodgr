@@ -315,7 +315,7 @@ rcpp_points_index <- function(xy, pts) {
 #' rcpp_route_times
 #'
 #' @noRd
-rcpp_route_times <- function(graph, ignore_oneway, left_side, turn_penalty) {
-    .Call(`_dodgr_rcpp_route_times`, graph, ignore_oneway, left_side, turn_penalty)
+rcpp_route_times <- function(graph, left_side, turn_penalty) {
+    .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
 

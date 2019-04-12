@@ -20,8 +20,7 @@
 void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove,
-        bool ignore_oneway)
+        std::unordered_set <std::string> &edges_to_remove)
 {
     std::vector <std::string> vx0 = graph [".vx0"],
                               vx1 = graph [".vx1"],
@@ -47,19 +46,6 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
         routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, true);
         // the outgoing edge: vx0->vx1 with key = vx0
         routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, false);
-        // TODO: oneway_bicycle tag, although this is hardly used
-        if (ignore_oneway || !oneway [i])
-        {
-            // reverse edge:
-            edge.v0 = vx1 [i];
-            edge.v1 = vx0 [i];
-            double x = edge.x;
-            edge.x = edge.y;
-            edge.y = x;
-
-            routetimes::replace_one_map_edge (the_edges, vx1 [i], edge, false);
-            routetimes::replace_one_map_edge (the_edges, vx0 [i], edge, true);
-        }
     }
 
     erase_non_junctions (the_edges, edges_to_remove);
@@ -120,15 +106,25 @@ void routetimes::replace_junctions (
         std::vector <OneCompoundEdge> &junctions,
         bool left_side)
 {
-    // Estimate size of resultant vector - this will usually be an over-estimate
-    // because any one-way streets will yield less than this number of
-    // combinations in in/out edges.
-    size_t count = 0;
+    // Estimate size of resultant vector - this is not simply n * (n - 1),
+    // because one way streeets mean in-edges aren't always the same as out, so
+    // numbers have to be explicitly counted.
+    size_t n_junctions = 0;
     for (auto e: the_edges)
-        count += e.second.second.size () * (e.second.second.size () - 1);
-    junctions.resize (count);
-    count = 0;
+        for (auto ei: e.second.first)  // incoming edge
+        {
+            std::unordered_set <std::string> out_edges;
+            for (auto ej: e.second.second) // outgoing edge
+                if (ej.edge != ei.edge)
+                    out_edges.emplace (ej.edge);
 
+            for (auto ej: e.second.second)
+                if (out_edges.find (ej.edge) != out_edges.end ())
+                    n_junctions++;
+        }
+    junctions.resize (n_junctions);
+
+    size_t count = 0;
     for (auto e: the_edges)
     {
         // iterate over each incoming edge, and establish penalties for all
@@ -166,8 +162,6 @@ void routetimes::replace_junctions (
                 }
         }
     }
-
-    junctions.resize (count - 1);
 }
 
 // This is hard-coded for weight_streetnet.sc structure
@@ -286,12 +280,12 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
-        bool ignore_oneway, bool left_side, int turn_penalty)
+        bool left_side, int turn_penalty)
 {
     std::unordered_map <std::string, std::pair <RTEdgeSet, RTEdgeSet> > the_edges;
     std::unordered_set <std::string> edges_to_remove;
 
-    routetimes::fill_edges (graph, the_edges, edges_to_remove, ignore_oneway);
+    routetimes::fill_edges (graph, the_edges, edges_to_remove);
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 

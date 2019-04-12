@@ -215,16 +215,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_route_times
-Rcpp::List rcpp_route_times(const Rcpp::DataFrame graph, bool ignore_oneway, bool left_side, int turn_penalty);
-RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP, SEXP ignore_onewaySEXP, SEXP left_sideSEXP, SEXP turn_penaltySEXP) {
+Rcpp::List rcpp_route_times(const Rcpp::DataFrame graph, bool left_side, int turn_penalty);
+RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP, SEXP left_sideSEXP, SEXP turn_penaltySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< bool >::type ignore_oneway(ignore_onewaySEXP);
     Rcpp::traits::input_parameter< bool >::type left_side(left_sideSEXP);
     Rcpp::traits::input_parameter< int >::type turn_penalty(turn_penaltySEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_route_times(graph, ignore_oneway, left_side, turn_penalty));
+    rcpp_result_gen = Rcpp::wrap(rcpp_route_times(graph, left_side, turn_penalty));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -246,7 +245,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_sf_as_network", (DL_FUNC) &_dodgr_rcpp_sf_as_network, 2},
     {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
     {"_dodgr_rcpp_points_index", (DL_FUNC) &_dodgr_rcpp_points_index, 2},
-    {"_dodgr_rcpp_route_times", (DL_FUNC) &_dodgr_rcpp_route_times, 4},
+    {"_dodgr_rcpp_route_times", (DL_FUNC) &_dodgr_rcpp_route_times, 3},
     {NULL, NULL, 0}
 };
 

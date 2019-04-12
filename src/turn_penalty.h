@@ -58,8 +58,7 @@ namespace routetimes {
 void fill_edges (const Rcpp::DataFrame &graph,
         std::unordered_map <std::string,
                             std::pair <RTEdgeSet, RTEdgeSet> > &the_edges,
-        std::unordered_set <std::string> &edges_to_remove,
-        bool ignore_oneway);
+        std::unordered_set <std::string> &edges_to_remove);
 
 void replace_one_map_edge (
         std::unordered_map <std::string,
@@ -83,4 +82,4 @@ Rcpp::DataFrame new_graph (const Rcpp::DataFrame &graph,
 } // end namespace
 
 Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
-        bool ignore_oneway, bool left_side, int turn_penalty);
+        bool left_side, int turn_penalty);
