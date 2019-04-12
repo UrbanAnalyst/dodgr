@@ -13,7 +13,7 @@
 #'
 #' @export 
 dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap',
-                         left_side = FALSE, turn_penalty = 45) 
+                         left_side = FALSE, turn_penalty = 10) 
 {
     attr (graph, "left_side") <- left_side
     attr (graph, "turn_penalty") <- turn_penalty

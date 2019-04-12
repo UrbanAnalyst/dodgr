@@ -5,7 +5,7 @@
 \title{dodgr_times}
 \usage{
 dodgr_times(graph, from = NULL, to = NULL, heap = "BHeap",
-  ignore_oneway = FALSE, left_side = FALSE, turn_penalty = 45)
+  left_side = FALSE, turn_penalty = 10)
 }
 \arguments{
 \item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}
@@ -23,12 +23,8 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 
-\item{ignore_oneway}{Only if \code{travel_time = TRUE}, a \code{TRUE} value allows
-travel \emph{against} the permitted direction of oneway streets.}
-
-\item{left_side}{Only if \code{travel_time = TRUE}, a \code{TRUE} value indicates
-traffic that travels on the left side of the street; \code{FALSE} for the right
-side.}
+\item{left_side}{A \code{TRUE} value indicates traffic that travels on the left
+side of the street; \code{FALSE} for the right side.}
 
 \item{turn_penalty}{Time penalty in seconds for turning across oncoming
 traffic.}
