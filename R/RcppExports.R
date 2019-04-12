@@ -261,6 +261,15 @@ rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) 
     .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, heap_type)
 }
 
+#' rcpp_gen_hash
+#'
+#' Efficient generation of long sequences of hash keys
+#'
+#' @noRd
+rcpp_gen_hash <- function(n, hash_len) {
+    .Call(`_dodgr_rcpp_gen_hash`, n, hash_len)
+}
+
 #' rcpp_sf_as_network
 #'
 #' Return OSM data from Simple Features format input

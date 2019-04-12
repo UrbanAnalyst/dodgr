@@ -8,16 +8,19 @@
 \title{weight_streetnet}
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
-  id_col = "osm_id", keep_cols = NULL)
+  id_col = "osm_id", keep_cols = NULL, ignore_oneway = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  ignore_oneway = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  ignore_oneway = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  ignore_oneway = FALSE)
 }
 \arguments{
 \item{x}{A street network represented as \code{sf} \code{LINESTRING}
@@ -37,6 +40,10 @@ provides unique identifiers for each highway (default works with
 \item{keep_cols}{Vectors of columns from \code{sf_lines} to be kept in the
 resultant \code{dodgr} network; vector can be either names or indices of
 desired columns.}
+
+\item{ignore_oneway}{A \code{TRUE} value allows travel \emph{against} the
+permitted direction of oneway streets. (Only implemented for \code{SC}-class
+objects generated with the \pkg{osmdata} function \code{osmdata_sc}.)}
 }
 \value{
 A \code{data.frame} of edges representing the street network, with

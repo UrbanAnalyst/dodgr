@@ -166,6 +166,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_gen_hash
+Rcpp::CharacterVector rcpp_gen_hash(const int n, const int hash_len);
+RcppExport SEXP _dodgr_rcpp_gen_hash(SEXP nSEXP, SEXP hash_lenSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const int >::type hash_len(hash_lenSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_gen_hash(n, hash_len));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_sf_as_network
 Rcpp::List rcpp_sf_as_network(const Rcpp::List& sf_lines, const Rcpp::DataFrame& pr);
 RcppExport SEXP _dodgr_rcpp_sf_as_network(SEXP sf_linesSEXP, SEXP prSEXP) {
@@ -230,6 +242,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 7},
     {"_dodgr_rcpp_flows_disperse", (DL_FUNC) &_dodgr_rcpp_flows_disperse, 6},
+    {"_dodgr_rcpp_gen_hash", (DL_FUNC) &_dodgr_rcpp_gen_hash, 2},
     {"_dodgr_rcpp_sf_as_network", (DL_FUNC) &_dodgr_rcpp_sf_as_network, 2},
     {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
     {"_dodgr_rcpp_points_index", (DL_FUNC) &_dodgr_rcpp_points_index, 2},
