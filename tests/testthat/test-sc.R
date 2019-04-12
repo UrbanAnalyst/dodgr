@@ -87,7 +87,8 @@ test_that("dodgr_times" {
               from <- sample (v$id, 100)
               to <- sample (v$id, 100)
               d1 <- dodgr_dists (net_sc, from = from, to = to)
-              d2 <- dodgr_times (net_sc, from = from, to = to)
+              d2 <- dodgr_times (net_sc, from = from, to = to,
+                                 turn_penalty = 10)
               r2 <- cor (as.numeric (d1), as.numeric (d2),
                          use = "pairwise.complete.obs")
               expect_true (r2 < 1)
