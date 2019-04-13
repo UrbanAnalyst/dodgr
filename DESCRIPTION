@@ -29,7 +29,6 @@ Imports:
     Rcpp (>= 0.12.6),
     RcppParallel
 Suggests:
-    devtools,
     dplyr,
     geodist,
     ggplot2,
@@ -42,7 +41,6 @@ Suggests:
     scales,
     sf,
     testthat,
-    tinytex,
     tidygraph
 LinkingTo:
     Rcpp,

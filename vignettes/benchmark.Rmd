@@ -9,13 +9,13 @@ output:
         number_sections: true
         theme: flatly
 vignette: >
-  %\VignetteIndexEntry{2 benchmark}
+  %\VignetteIndexEntry{3 benchmark}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo = FALSE, message = FALSE}
-devtools::load_all (".", export_all = FALSE)
+library (dodgr)
 ```
 
 # Introduction

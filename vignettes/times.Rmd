@@ -1,0 +1,27 @@
+---
+title: "dodgr_times"
+author: "Mark Padgham"
+date: "`r Sys.Date()`"
+bibliography: dodgr.bib
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: false
+        theme: flatly
+header-includes: 
+    - \usepackage{tikz}
+    - \usetikzlibrary{arrows}
+vignette: >
+  %\VignetteIndexEntry{2 dodgr_times}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r pkg-load, echo = FALSE, message = FALSE}
+library (dodgr)
+```
+
+# 1 The `dodgr_times` function
+
+... coming soon ...

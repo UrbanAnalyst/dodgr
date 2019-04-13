@@ -19,7 +19,7 @@ vignette: >
 ---
 
 ```{r pkg-load, echo = FALSE, message = FALSE}
-devtools::load_all (".", export_all = FALSE)
+library (dodgr)
 ```
 
 # 1 Background: Directed Graphs
