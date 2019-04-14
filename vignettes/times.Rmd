@@ -1,5 +1,5 @@
 ---
-title: "dodgr_times"
+title: "Street network weighting and dodgr_times"
 author: "Mark Padgham"
 date: "`r Sys.Date()`"
 bibliography: dodgr.bib

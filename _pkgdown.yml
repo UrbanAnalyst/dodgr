@@ -11,6 +11,7 @@ reference:
   - title: The Main Functions
     contents:
     - dodgr_distances
+    - dodgr_times
     - dodgr_paths
     - dodgr_flows_aggregate
     - dodgr_flows_disperse
@@ -53,6 +54,7 @@ articles:
   - title: The dodgr package
     contents:
     - dodgr
+    - times
     - benchmark
 
 navbar:
