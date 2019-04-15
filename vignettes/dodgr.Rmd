@@ -277,13 +277,25 @@ distance of each segment by a weighting factor reflecting the type of highway.
 As demonstrated above, this can be done easily within `dodgr` with the
 `weight_streetnet()` function, which applies the named weighting profiles included
 with the `dodgr` package to OpenStreetMap networks extracted with the
-[`osmdata`](https://cran.r-project.org/package=osmdata) package. Each profile
-assigns weights to each distinct type of highway.
+[`osmdata`](https://cran.r-project.org/package=osmdata) package.
+
+This function uses the internal data `dodgr::weighting_profiles`, which is a
+list of three items:
+
+1. `weighting_profiles`;
+2. `surface_speeds`; and
+3. `penalties`
+
+Most of these data are used to calculate routing times with the `dodgr_times`
+function, as detailed in an additional vignette. The only aspects relevant for
+distances are the profiles themselves, which assign preferential weights to each
+distinct type of highway.
 ```{r weighting-profiles}
-names (weighting_profiles)
-class (weighting_profiles)
-unique (weighting_profiles$name)
-weighting_profiles [weighting_profiles$name == "foot", ]
+wp <- weighting_profiles$weighting_profiles
+names (wp)
+class (wp)
+unique (wp$name)
+wp [wp$name == "foot", ]
 ```
 Each profile is defined by a series of percentage weights quantifying
 highway-type preferences for a particular mode of travel.  The distinct types of

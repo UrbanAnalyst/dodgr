@@ -17,9 +17,6 @@
 #' @param keep_cols Vectors of columns from `sf_lines` to be kept in the
 #' resultant `dodgr` network; vector can be either names or indices of
 #' desired columns.
-#' @param ignore_oneway A `TRUE` value allows travel \emph{against} the
-#' permitted direction of oneway streets. (Only implemented for `SC`-class
-#' objects generated with the \pkg{osmdata} function `osmdata_sc`.)
 #'
 #' @return A `data.frame` of edges representing the street network, with
 #' distances in kilometres, along with a column of graph component numbers.
@@ -64,8 +61,7 @@
 #' }
 weight_streetnet <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL,
-                              ignore_oneway = FALSE)
+                              keep_cols = NULL)
 {
     UseMethod ("weight_streetnet")
 }
@@ -74,8 +70,7 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL,
-                              ignore_oneway = FALSE)
+                              keep_cols = NULL)
 {
     stop ("Unknown class")
 }
@@ -88,8 +83,7 @@ weight_streetnet.default <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL,
-                              ignore_oneway = FALSE)
+                              keep_cols = NULL)
 {
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
@@ -334,8 +328,7 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
 weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
                                                         type_col = "highway",
                                                         id_col = "osm_id",
-                                                        keep_cols = NULL,
-                                                        ignore_oneway = FALSE)
+                                                        keep_cols = NULL)
 {
     requireNamespace ("geodist")
     requireNamespace ("dplyr")
@@ -348,7 +341,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         sc_lanes_surface (wt_profile) %>%
         sc_edge_time (wt_profile, x) %>%
         rm_duplicated_edges () %>%
-        sc_duplicate_edges (wt_profile, ignore_oneway)
+        sc_duplicate_edges (wt_profile)
 }
 
 has_elevation <- function (x)
@@ -545,13 +538,11 @@ rm_duplicated_edges <- function (graph)
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated
 # for non-oneway
-sc_duplicate_edges <- function (x, wt_profile, ignore_oneway = FALSE)
+sc_duplicate_edges <- function (x, wt_profile)
 {
     oneway_modes <-  c ("motorcycle", "motorcar", "goods", "hgv", "psv")
 
-    if (ignore_oneway)
-        index <- seq (nrow (x))
-    else if (wt_profile %in% c( "bicycle", "moped"))
+    if (wt_profile %in% c( "bicycle", "moped"))
         index <- which (!x$oneway_bicycle)
     else if (wt_profile %in% oneway_modes)
         index <- which (!x$oneway)
