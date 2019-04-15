@@ -22,8 +22,12 @@
 #' nrow (graph$graph) # 764
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
+    classes <- class (graph)
     if (methods::is (graph, "tbl"))
+    {
         graph <- as.data.frame (graph)
+        classes <- classes [!grepl ("tbl", classes)]
+    }
     if (nrow (graph) == 0)
         stop ("graph is empty")
 
@@ -104,6 +108,8 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     dig <- digest::digest (graph_contracted$edge_map)
     fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
     saveRDS (graph, file = fname)
+
+    class (graph_refill) <- classes
 
     return (list (graph = graph_refill, edge_map = graph_contracted$edge_map))
 }

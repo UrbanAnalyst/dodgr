@@ -334,7 +334,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
     requireNamespace ("dplyr")
     check_sc (x)
 
-    extract_sc_edges_xy (x) %>%
+    graph <- extract_sc_edges_xy (x) %>%
         sc_edge_dist () %>%
         extract_sc_edges_highways (x) %>%
         weight_sc_edges (wt_profile) %>%
@@ -342,6 +342,9 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         sc_edge_time (wt_profile, x) %>%
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
+
+    class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
+    return (graph)
 }
 
 has_elevation <- function (x)
