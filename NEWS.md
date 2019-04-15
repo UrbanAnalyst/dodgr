@@ -1,5 +1,11 @@
 # v0.1.3.002
 Major changes:
+- New `dodgr_times` function to calculate journey times, including differential
+  speeds and penalties for intersections and traffic lights.
+- `dodgr::weighting_profiles` data changed from single `data.frame` to list with
+  additional parameters determining speeds and time penalties for `dodgr_times`
+  function; former `data.frame` is now
+  `dodgr::weighting_profiles$weighting_profiles`.
 - weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
 
 Minor changes:
