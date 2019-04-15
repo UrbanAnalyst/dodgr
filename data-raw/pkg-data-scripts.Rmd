@@ -162,30 +162,29 @@ w$speeds [w$name == "motorcar" & w$way == "service"] <- 15
 weighting_profiles <- w
 ```
 
-surface speeds:
+surface speeds as proportions of full speed:
 ```{r}
-s <- rbind (c ("bicycle", "surface", "asphalt", 15), # default speed
-            c ("bicycle", "cobblestone", "flattened", 10),
-            c ("bicycle", "surface", "paving_stones", 10),
-            c ("bicycle", "surface", "compacted", 10),
-            c ("bicycle", "surface", "cobblestone", 6),
-            c ("bicycle", "surface", "unpaved", 6),
-            c ("bicycle", "surface", "fine_gravel", 6),
-            c ("bicycle", "surface", "gravel", 6),
-            c ("bicycle", "surface", "pebblestone", 6),
-            c ("bicycle", "surface", "ground", 6),
-            c ("bicycle", "surface", "dirt", 6),
-            c ("bicycle", "surface", "earth", 6),
-            c ("bicycle", "surface", "grass", 6),
-            c ("bicycle", "surface", "mud", 3),
-            c ("bicycle", "surface", "sand", 3),
-            c ("bicycle", "surface", "sett", 10),
+s <- rbind (c ("bicycle", "cobblestone", "flattened", 0.75),
+            c ("bicycle", "surface", "paving_stones", 0.75),
+            c ("bicycle", "surface", "compacted", 0.75),
+            c ("bicycle", "surface", "cobblestone", 0.4),
+            c ("bicycle", "surface", "unpaved", 0.4),
+            c ("bicycle", "surface", "fine_gravel", 0.4),
+            c ("bicycle", "surface", "gravel", 0.4),
+            c ("bicycle", "surface", "pebblestone", 0.4),
+            c ("bicycle", "surface", "ground", 0.4),
+            c ("bicycle", "surface", "dirt", 0.4),
+            c ("bicycle", "surface", "earth", 0.4),
+            c ("bicycle", "surface", "grass", 0.4),
+            c ("bicycle", "surface", "mud", 0.2),
+            c ("bicycle", "surface", "sand", 0.2),
+            c ("bicycle", "surface", "sett", 0.75),
 
-            c ("foot", "surface", "fine_gravel", 3.75),
-            c ("foot", "surface", "gravel", 3.75),
-            c ("foot", "surface", "pebblestone", 3.75),
-            c ("foot", "surface", "mud", 2.5),
-            c ("foot", "surface", "sand", 2.5))
+            c ("foot", "surface", "fine_gravel", 0.75),
+            c ("foot", "surface", "gravel", 0.75),
+            c ("foot", "surface", "pebblestone", 0.75),
+            c ("foot", "surface", "mud", 0.5),
+            c ("foot", "surface", "sand", 0.5))
 surface_speeds <- data.frame ("name" = s [, 1],
                               "key" = s [, 2],
                               "value" = s [, 3],
