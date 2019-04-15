@@ -17,6 +17,10 @@
 #' @param keep_cols Vectors of columns from `sf_lines` to be kept in the
 #' resultant `dodgr` network; vector can be either names or indices of
 #' desired columns.
+#' @param times Weight network for routing according to \emph{times} rather than
+#' \emph{distances} (see Note).
+#' @param left_side Does traffic travel on the left side of the road (`TRUE`) or
+#' the right side (`FALSE`)?
 #'
 #' @return A `data.frame` of edges representing the street network, with
 #' distances in kilometres, along with a column of graph component numbers.
@@ -27,6 +31,17 @@
 #' "foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
 #' and "wheelchair". Railway routing can be implemented with
 #' the separate function \link{weight_railway}.
+#'
+#' @note Graphs weighted for time-based routing (that is, with `times = TRUE`)
+#' are fundementally different from the default for distance-based routing.
+#' Distances in the latter case are \emph{shortest} distances weighted for
+#' the particular mode of transport specified in `wt_profile`. Time-based
+#' routing requires additional calcualtion of turn angles (along with
+#' differential speeds along different kinds of ways), represented by additional
+#' edges describing turns of different angles through each intersetion. The
+#' result of `weight_streetnet(..., times = TRUE)` should thus \emph{only} be
+#' used to submit to the \link{dodgr_times} function, and not for any other
+#' `dodgr` functions nor forms of network analysis.
 #'
 #' @export
 #' @examples
@@ -61,7 +76,8 @@
 #' }
 weight_streetnet <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL)
+                              keep_cols = NULL, times = FALSE,
+                              left_side = FALSE)
 {
     UseMethod ("weight_streetnet")
 }
@@ -70,7 +86,8 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL)
+                              keep_cols = NULL, times = FALSE,
+                              left_side = FALSE)
 {
     stop ("Unknown class")
 }
@@ -83,8 +100,12 @@ weight_streetnet.default <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL)
+                              keep_cols = NULL, times = FALSE,
+                              left_side = FALSE)
 {
+    if (times)
+        stop ("Time-based weighting only currently implemented for street network",
+              " data generated with the `osmdata::osmdata_sc()` function.")
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
@@ -328,7 +349,9 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
 weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
                                                         type_col = "highway",
                                                         id_col = "osm_id",
-                                                        keep_cols = NULL)
+                                                        keep_cols = NULL,
+                                                        times = FALSE,
+                                                        left_side = FALSE)
 {
     requireNamespace ("geodist")
     requireNamespace ("dplyr")
@@ -336,12 +359,17 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     graph <- extract_sc_edges_xy (x) %>%
         sc_edge_dist () %>%
-        extract_sc_edges_highways (x) %>%
+        extract_sc_edges_highways (x, wt_profile) %>%
         weight_sc_edges (wt_profile) %>%
         sc_lanes_surface (wt_profile) %>%
         sc_edge_time (wt_profile, x) %>%
+        sc_traffic_lights (wt_profile, x) %>%
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
+
+    if (times)
+    {
+    }
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
     return (graph)
@@ -389,15 +417,22 @@ sc_edge_dist <- function (edges)
     return (edges)
 }
 
-extract_sc_edges_highways <- function (edges, x)
+extract_sc_edges_highways <- function (edges, x, wt_profile,
+    keep_types = c ("highway", "oneway", "oneway:bicycle", "lanes",
+                    "maxspeed"))
 {
     # no visible binding notes:
     native_ <- key <- `:=` <- value <- NULL
 
+    surface <- dodgr::weighting_profiles$surface_speeds
+    surface <- surface [surface$name == wt_profile, ]
+    if (nrow (surface) > 0)
+    {
+        keep_types <- c (keep_types, unique (surface$key))
+    }
+
     edges <- dplyr::left_join (edges, x$object_link_edge, by = "edge_") %>%
         dplyr::select (-native_)
-    keep_types <- c ("highway", "oneway", "oneway:bicycle", "lanes",
-                     "maxspeed", "surface")
     for (k in keep_types)
     {
         objs <- dplyr::filter (x$object, key == k)
@@ -447,6 +482,7 @@ sc_lanes_surface <- function (edges, wt_profile)
 
     if (wt_profile %in% c ("foot", "bicycle"))
     {
+        # increase weighted distance according to numbers of lanes
         lns <- c (4, 5, 6, 7, 8)
         wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
         for (i in seq (lns))
@@ -456,28 +492,56 @@ sc_lanes_surface <- function (edges, wt_profile)
                 index <- which (edges$lanes >= lns [i])
             edges$d_weighted [index] <- edges$d_weighted [index] * (1 + wts [i])
         }
-
-        srf <- c ("dirt", "grass", "natural")
-        wts <- c (0.1, 0.1, 0.1)
-        for (i in seq (srf))
-        {
-            index <- which (edges$surface == srf [i])
-            edges$d_weighted [index] <- edges$d_weighted [index] * (1 + wts [i])
-        }
     }
-    edges <- dplyr::select (edges, -c(lanes, maxspeed, surface))
+
+    if ("lanes" %in% names (edges)) edges$lanes <- NULL
+    if ("maxspeed" %in% names (edges)) edges$maxspeed <- NULL
+    #edges <- dplyr::select (edges, -c(lanes, maxspeed))
 
     return (edges)
 }
 
 # Convert weighted distances in metres to time in seconds
-# NOTE: This is currently hard-coded for foot and bicycle only, and will not work for
-# anything else. 
 sc_edge_time <- function (edges, wt_profile, x)
 {
     # no visible binding messages:
     object_ <- NULL
 
+    edges$time <- NA_real_
+
+    # General times based on speed profile
+    w <- dodgr::weighting_profiles$weighting_profiles
+    w <- w [w$name == wt_profile, ]
+    # speeds are in km/h, but distances are in m. speeds in km/s = s / 3600,
+    # and speeds in m/s = s * 1000 / 3600
+    for (i in seq (nrow (w)))
+    {
+        speed_m_per_s <- w$speeds [i] * 1000 / 3600 # m/h -> m/s
+        index <- which (edges$highway == w$way [i])
+        edges$time [index] <- edges$d [index] / speed_m_per_s
+    }
+
+    if (wt_profile %in% c ("foot", "bicycle"))
+    {
+        if ("dz" %in% names (edges))
+            edges <- times_by_incline (edges, wt_profile)
+
+        speeds <- dodgr::weighting_profiles$surface_speeds
+        speeds <- speeds [speeds$name == wt_profile, ]
+        for (i in seq (nrow (speeds)))
+        {
+            index <- which (edges [[speeds$key [i] ]] ==
+                            edges [[speeds$value [i] ]])
+            if (length (index) > 0)
+                edges$time [index] <- edges$time [index] / speeds$speed [i]
+        }
+    }
+
+    return (edges)
+}
+
+times_by_incline <- function (edges, wt_profile)
+{
     if (wt_profile == "foot")
     {
         # Uses 
@@ -490,23 +554,6 @@ sc_edge_time <- function (edges, wt_profile, x)
             edges$dz <- NULL
         }
 
-        # add waiting times at traffic lights
-        wp <- dodgr::weighting_profiles$weighting_profiles
-        wait <- wp$value [wp$name == paste0 ("lights_", wt_profile)]
-
-        # first for intersections marked as crossings
-        crossings <- traffic_light_objs_ped (x) # way IDs
-        objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
-        oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
-        index <- match (oles$edge_, edges$edge_)
-        edges$time [index] <- edges$time [index] + wait
-
-        # then all others with nodes simply marked as traffic lights - match
-        # those to *start* nodes and simply add the waiting time
-        nodes <- traffic_signal_nodes (x)
-        index2 <- which (edges$.vx0 %in% nodes &
-                         !edges$.vx0 %in% edges$.vx0 [index])
-        edges$time [index2] <- edges$time [index2] + wait
     } else if (wt_profile == "bicycle")
     {
         # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
@@ -526,6 +573,30 @@ sc_edge_time <- function (edges, wt_profile, x)
         # http://www.sportsci.org/jour/9804/dps.html
         # downhill cycling speed ~ sqrt (slope)
     }
+}
+
+sc_traffic_lights <- function (edges, wt_profile, x)
+{
+    # no visible binding NOTES:
+    object_ <- NULL
+
+    w <- dodgr::weighting_profiles$penalties
+    wait <- w$traffic_lights [w$name == wt_profile]
+
+    # first for intersections marked as crossings
+    crossings <- traffic_light_objs_ped (x) # way IDs
+    objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
+    oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
+    index <- match (oles$edge_, edges$edge_)
+    edges$time [index] <- edges$time [index] + wait
+
+    # then all others with nodes simply marked as traffic lights - match
+    # those to *start* nodes and simply add the waiting time
+    nodes <- traffic_signal_nodes (x)
+    index2 <- which (edges$.vx0 %in% nodes &
+                     !edges$.vx0 %in% edges$.vx0 [index])
+    edges$time [index2] <- edges$time [index2] + wait
+    
     return (edges)
 }
 
@@ -545,6 +616,7 @@ sc_duplicate_edges <- function (x, wt_profile)
 {
     oneway_modes <-  c ("motorcycle", "motorcar", "goods", "hgv", "psv")
 
+    index <- seq (nrow (x))
     if (wt_profile %in% c( "bicycle", "moped"))
         index <- which (!x$oneway_bicycle)
     else if (wt_profile %in% oneway_modes)

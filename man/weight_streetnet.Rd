@@ -8,16 +8,20 @@
 \title{weight_streetnet}
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
-  id_col = "osm_id", keep_cols = NULL)
+  id_col = "osm_id", keep_cols = NULL, times = FALSE,
+  left_side = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL)
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  times = FALSE, left_side = FALSE)
 }
 \arguments{
 \item{x}{A street network represented as \code{sf} \code{LINESTRING}
@@ -37,6 +41,12 @@ provides unique identifiers for each highway (default works with
 \item{keep_cols}{Vectors of columns from \code{sf_lines} to be kept in the
 resultant \code{dodgr} network; vector can be either names or indices of
 desired columns.}
+
+\item{times}{Weight network for routing according to \emph{times} rather than
+\emph{distances} (see Note).}
+
+\item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
+the right side (\code{FALSE})?}
 }
 \value{
 A \code{data.frame} of edges representing the street network, with
@@ -54,6 +64,17 @@ different modes of transport. Current modes included there are "bicycle",
 "foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
 and "wheelchair". Railway routing can be implemented with
 the separate function \link{weight_railway}.
+
+Graphs weighted for time-based routing (that is, with \code{times = TRUE})
+are fundementally different from the default for distance-based routing.
+Distances in the latter case are \emph{shortest} distances weighted for
+the particular mode of transport specified in \code{wt_profile}. Time-based
+routing requires additional calcualtion of turn angles (along with
+differential speeds along different kinds of ways), represented by additional
+edges describing turns of different angles through each intersetion. The
+result of \code{weight_streetnet(..., times = TRUE)} should thus \emph{only} be
+used to submit to the \link{dodgr_times} function, and not for any other
+\code{dodgr} functions nor forms of network analysis.
 }
 \examples{
 # hampi is included with package as an 'osmdata' sf-formatted street network

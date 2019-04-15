@@ -28,6 +28,9 @@ get_key_val_pair_node <- function (x, kv)
     # no visible binding notes:
     key <- value <- vertex_ <- NULL
 
+    if (is.null (x$nodes))
+        return (NULL)
+
     xo <- lapply (kv, function (i)
                   dplyr::filter (x$nodes, key == i [1], value == i [2]) %>%
                       dplyr::select (vertex_) %>%

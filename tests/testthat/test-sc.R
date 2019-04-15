@@ -58,7 +58,8 @@ sf_to_sc <- function (x)
                           stringsAsFactors = FALSE)
     object <- object [order (object$object_), ]
 
-    res <- list (object = object,
+    res <- list (nodes = NULL,
+                 object = object,
                  object_link_edge = object_link_edge,
                  edge = edge,
                  vertex = pts)
@@ -92,5 +93,5 @@ test_that("dodgr_times", {
               r2 <- cor (as.numeric (d1), as.numeric (d2),
                          use = "pairwise.complete.obs")
               expect_true (r2 < 1)
-              expect_true (r2 > 0.99)
+              expect_true (r2 > 0.95)
 })

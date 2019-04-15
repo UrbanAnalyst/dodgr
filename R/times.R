@@ -45,7 +45,13 @@ dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap',
         v_end <- graph$.vx1 [index]
         graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
 
-        graph <- rbind (graph, res$graph)
+        # pad out extra columns of res to match any extra in original graph
+        resbind <- data.frame (array (NA,
+                        dim = c (nrow (res$graph), ncol (graph))))
+        names (resbind) <- names (graph)
+        resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
+
+        graph <- rbind (graph, resbind)
 
         from [from %in% v_start] <- paste0 (from [from %in% v_start], "_start")
         to [to %in% v_end] <- paste0 (to [to %in% v_end], "_end")
