@@ -25,11 +25,13 @@ devtools::use_data (hampi, overwrite = TRUE, compress = 'xz')
 
 # generate `data/weight_profiles`
 
+additional values from OSRM profiles at
+https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/
+
 ```{r}
 library (magrittr)
 theurl <- "https://www.routino.org/xml/routino-profiles.xml"
-#dat <- rvest::html (theurl)
-dat <- rvest::html (theurl) %>%
+dat <- xml2::read_html (theurl) %>%
     rvest::html_nodes("profile") %>%
     xml2::as_list ()
 ```
@@ -45,6 +47,7 @@ weighting_profiles <- lapply (dat, function (i) {
 # Then add living_street, bridleway, and footway to all profiles
 # https://wiki.openstreetmap.org/wiki/Tag:highway%3Dliving_street
 nms <- sapply (weighting_profiles, function (i) i [1, 1])
+
 #               living_street   footway     bridleway
 # "foot"        95              100         100
 # "horse"       80              100         100
@@ -56,29 +59,35 @@ nms <- sapply (weighting_profiles, function (i) i [1, 1])
 # "goods"       30              0           0
 # "hgv"         30              0           0
 # "psv"         30              0           0
+
 wt_ls <- c (95, 80, 95, 95, 60, 50, 40, 30, 30, 30) # living street
 wt_br <- c (100, 100, 50, 70, 0, 0, 0, 0, 0, 0) # bridleway
 wt_fw <- c (100, 100, 100, 90, 0, 0, 0, 0, 0, 0) # bridleway
 names (wt_ls) <- names (wt_br) <- names (wt_fw) <- nms
-weighting_profiles <- lapply (seq (weighting_profiles), function (i)
-                              {
-                                  wi <- weighting_profiles [[i]]
-                                  nmi <- wi [1, 1]
-                                  wti <- wt_ls [which (nms == nmi)]
-                                  wi <- rbind (wi, c (nmi, 
-                                                      "living_street",
-                                                      wti))
-                                  wtb <- wt_br [which (nms == nmi)]
-                                  wi <- rbind (wi, c (nmi, 
-                                                      "bridleway",
-                                                      wtb))
-                                  wtf <- wt_fw [which (nms == nmi)]
-                                  wi <- rbind (wi, c (nmi, 
-                                                      "footway",
-                                                      wtf))
+newrows <- data.frame ("living_street" = wt_ls,
+                       "bridleway" = wt_br,
+                       "footway" = wt_fw)
+weighting_profiles <- lapply (weighting_profiles, function (i) {
+            newdat <- t (newrows [rownames (newrows) == i [1, 1], ])
+            newdat <- cbind (i [seq (ncol (newrows)), 1],
+                             rownames (newdat),
+                             newdat [, 1])
+            rbind (i, newdat)
+                       })
 
-                                  rownames (wi) <- rep ("preference", nrow (wi))
-                                  return (wi)
+# plus all of the "link" types defaulting to same as parent entities
+links <- c ("motorway", "trunk", "primary", "secondary", "tertiary")
+nms <- paste0 (links, "_link")
+weighting_profiles <- lapply (weighting_profiles, function (i)
+                              {
+                                  index <- match (links, i [, 2])
+                                  newrows <- cbind (i [index, 1],
+                                                    nms,
+                                                    i [index, 3])
+                                  res <- rbind (i, newrows)
+                                  rownames (res) <- rep ("preference",
+                                                         nrow (res))
+                                  return (res)
                               })
 
 weighting_profiles <- do.call (rbind, weighting_profiles)
@@ -86,23 +95,153 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            way = weighting_profiles [, 2],
                            value = as.numeric (weighting_profiles [, 3]),
                            stringsAsFactors = FALSE)
+```
 
-# Then add waiting times at traffic lights in seconds, with value of 48s taken from
-# http://dx.doi.org/10.1016/j.trb.2013.02.002
-# see also National Assoc. City Transportation Officials guidelines:
-# https://nacto.org/publication/urban-street-design-guide/intersection-design-elements/traffic-signals/signal-cycle-lengths/
-# recommended "Short cycle length" of 60-90 secons
-wait_time <- 48
-nms <- paste0 ("lights_", unique (weighting_profiles$name))
-lights <- data.frame ("name" = nms,
-                      "way" = rep ("traffic_lights",
-                                   length (nms)),
-                      "value" = rep (wait_time, length (names)),
-                      stringsAsFactors = FALSE)
-weighting_profiles <- rbind (weighting_profiles, lights)
+### maxspeed column + traffic light and turn penalties
 
+Values adopted from the OSRM profiles, all in km / hr
+
+maxspeeds:
+```{r}
+w <- weighting_profiles
+w$speeds <- NA
+w$speeds [w$name == "bicycle"] <- 15
+w$speeds [w$name == "bicycle" & w$way == "primary"] <- 7.5
+w$speeds [w$name == "bicycle" & w$way == "secondary"] <- 12
+w$speeds [w$name == "bicycle" & w$way == "tertiary"] <- 12
+w$speeds [w$name == "bicycle" & w$way == "primary_link"] <- 7.5
+w$speeds [w$name == "bicycle" & w$way == "secondary_link"] <- 9.75
+w$speeds [w$name == "bicycle" & w$way == "tertiary_link"] <- 12
+w$speeds [w$name == "bicycle" & w$way == "track"] <- 12
+w$speeds [w$name == "bicycle" & w$way == "path"] <- 12
+
+w$speeds [w$name == "foot"] <- 5
+
+w$speeds [w$name == "wheelchair"] <- 5
+
+w$speeds [w$name == "horse"] <- 6.4
+
+w$speeds [w$name == "motorcar"] <- 36
+w$speeds [w$name == "motorcar" & w$way == "motorway"] <- 90
+w$speeds [w$name == "motorcar" & w$way == "motorway_link"] <- 45
+w$speeds [w$name == "motorcar" & w$way == "trunk"] <- 85
+w$speeds [w$name == "motorcar" & w$way == "trunk_link"] <- 40
+w$speeds [w$name == "motorcar" & w$way == "primary"] <- 65
+w$speeds [w$name == "motorcar" & w$way == "primary_link"] <- 30
+w$speeds [w$name == "motorcar" & w$way == "secondary"] <- 55
+w$speeds [w$name == "motorcar" & w$way == "secondary_link"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "tertiary"] <- 40
+w$speeds [w$name == "motorcar" & w$way == "tertiary_link"] <- 20
+w$speeds [w$name == "motorcar" & w$way == "unclassified"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "residential"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "living_street"] <- 10
+w$speeds [w$name == "motorcar" & w$way == "service"] <- 15
+
+# Then just repeat those for all other motorized modes:
+w$speeds [w$name == "motorcycle"] <- w$speeds [w$name == "motorcar"]
+w$speeds [w$name == "goods"] <- w$speeds [w$name == "motorcar"]
+w$speeds [w$name == "hgv"] <- w$speeds [w$name == "motorcar"]
+w$speeds [w$name == "psv"] <- w$speeds [w$name == "motorcar"]
+
+w$speeds [w$name == "moped"] <- 50
+w$speeds [w$name == "moped" & w$way == "motorway"] <- 50
+w$speeds [w$name == "motorcar" & w$way == "motorway_link"] <- 50
+w$speeds [w$name == "motorcar" & w$way == "trunk"] <- 50
+w$speeds [w$name == "motorcar" & w$way == "trunk_link"] <- 40
+w$speeds [w$name == "motorcar" & w$way == "primary"] <- 50
+w$speeds [w$name == "motorcar" & w$way == "primary_link"] <- 30
+w$speeds [w$name == "motorcar" & w$way == "secondary"] <- 50
+w$speeds [w$name == "motorcar" & w$way == "secondary_link"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "tertiary"] <- 40
+w$speeds [w$name == "motorcar" & w$way == "tertiary_link"] <- 20
+w$speeds [w$name == "motorcar" & w$way == "unclassified"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "residential"] <- 25
+w$speeds [w$name == "motorcar" & w$way == "living_street"] <- 10
+w$speeds [w$name == "motorcar" & w$way == "service"] <- 15
+
+weighting_profiles <- w
+```
+
+surface speeds:
+```{r}
+s <- rbind (c ("bike", "surface", "asphalt", 15), # default speed
+            c ("bike", "cobblestone", "flattened", 10),
+            c ("bike", "surface", "paving_stones", 10),
+            c ("bike", "surface", "compacted", 10),
+            c ("bike", "surface", "cobblestone", 6),
+            c ("bike", "surface", "unpaved", 6),
+            c ("bike", "surface", "fine_gravel", 6),
+            c ("bike", "surface", "gravel", 6),
+            c ("bike", "surface", "pebblestone", 6),
+            c ("bike", "surface", "ground", 6),
+            c ("bike", "surface", "dirt", 6),
+            c ("bike", "surface", "earth", 6),
+            c ("bike", "surface", "grass", 6),
+            c ("bike", "surface", "mud", 3),
+            c ("bike", "surface", "sand", 3),
+            c ("bike", "surface", "sett", 10),
+
+            c ("walk", "surface", "fine_gravel", 3.75),
+            c ("walk", "surface", "gravel", 3.75),
+            c ("walk", "surface", "pebblestone", 3.75),
+            c ("walk", "surface", "mud", 2.5),
+            c ("walk", "surface", "sand", 2.5))
+surface_speeds <- data.frame ("name" = s [, 1],
+                              "key" = s [, 2],
+                              "value" = s [, 3],
+                              "speed" = s [, 4],
+                              stringsAsFactors = FALSE)
+                              
+```
+
+speeds on other ways (not implemented)
+```{r, eval = FALSE}
+bike_walking <- 4
+bike_walking_steps <- 2
+```
+
+traffic light and turn penalties. These are calculated in OSRM based on turn
+angles. The `dodgr` algorithm uses turn ordering across traffic, and so only
+needs to implement a fixed traffic light waiting time cost. The equivalent
+values can be obtained from the OSRM profiles with a turn angle of 0 as:
+```{r traffic-light-penalties, eval = FALSE}
+traffic_light_penalty <- 2
+turn_duration = traffic_light_penalty
+turn_bias <- 1.075 # car
+turn_duration <- turn_duration + 6.5 / turn_bias # = 8
+
+# for both bike and car:
+turn_duration <- traffic_light_penalty # = 2
+```
+
+```{r}
+nms <- c ("foot", "horse", "wheelchair", "bicycle", "moped", "motorcycle",
+          "motorcar", "goods", "hgv", "psv")
+traffic_lights <- rep (8, length (nms))
+traffic_lights [nms %in% c ("foot", "wheelchair", "bicycle")] <- 2
+turn_penalty <- rep (7.5, length (nms))
+turn_penalty [nms %in% c ("foot", "horse", "wheelchar")] <- 0
+turn_penalty [nms == "bicycle"] <- 6
+penalties <- data.frame ("name" = nms,
+                         "traffic_lights" = traffic_lights,
+                         "turn" = turn_penalty,
+                         stringsAsFactors = FALSE)
+```
+
+Note that the following link describes waiting times at traffic lights with an
+average value of 40s:
+http://dx.doi.org/10.1016/j.trb.2013.02.002
+see also National Assoc. City Transportation Officials guidelines:
+https://nacto.org/publication/urban-street-design-guide/intersection-design-elements/traffic-signals/signal-cycle-lengths/
+recommended "Short cycle length" of 60-90 seconds
+
+### save the data:
+
+```{r}
 # change percentage value to 0-1
-index <- which (!grepl ("lights_", weighting_profiles$name))
-weighting_profiles$value [index] <- weighting_profiles$value [index] / 100
+weighting_profiles$value <- weighting_profiles$value / 100
+weighting_profiles <- list ("weighting_profiles" = weighting_profiles,
+                            "surface_speeds" = surface_speeds,
+                            "penalties" = penalties)
 usethis::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
 ```

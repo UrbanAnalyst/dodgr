@@ -139,7 +139,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
                             "motorcycle", "motorcar", "goods", "hgv", "psv")
             wt_profile <- match.arg (tolower (wt_profile), prf_names)
-            profiles <- dodgr::weighting_profiles
+            profiles <- dodgr::weighting_profiles$weighting_profiles
             wt_profile <- profiles [profiles$name == wt_profile, ]
         }
     } else if (is.numeric (wt_profile))
@@ -154,8 +154,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     } else if (is.data.frame (wt_profile))
     {
         # assert that is has the standard structure
-        if (ncol (wt_profile) != 3 |
-            !identical (names (wt_profile), c ("name", "way", "value")))
+        if (!all (c ("name", "way", "value") %in% names (wt_profile)))
             stop ("Weighting profiles must have three columsn of ",
                   "(name, way, value); see 'weighting_profiles' for examples")
     } else
@@ -434,7 +433,7 @@ weight_sc_edges <- function (edges, wt_profile)
     # no visible binding notes:
     value <- d <- NULL
 
-    wp <- dodgr::weighting_profiles
+    wp <- dodgr::weighting_profiles$weighting_profiles
     wp <- wp [wp$name == wt_profile, c ("way", "value")]
     dplyr::left_join (edges, wp, by = c ("highway" = "way")) %>%
         dplyr::filter (!is.na (value)) %>%
@@ -496,7 +495,7 @@ sc_edge_time <- function (edges, wt_profile, x)
         }
 
         # add waiting times at traffic lights
-        wp <- dodgr::weighting_profiles
+        wp <- dodgr::weighting_profiles$weighting_profiles
         wait <- wp$value [wp$name == paste0 ("lights_", wt_profile)]
 
         # first for intersections marked as crossings

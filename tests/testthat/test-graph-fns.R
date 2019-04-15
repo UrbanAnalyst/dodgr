@@ -105,16 +105,17 @@ test_that ("weight_profiles", {
     expect_equal (nrow (graph0), nrow (graph1))
     #expect_identical (graph0$d, graph1$d)
     #expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
-    wtp <- dodgr::weighting_profiles [dodgr::weighting_profiles == "foot", ]
-    graph3 <- weight_streetnet (hampi, wt_profile = wtp)
+    wp <- dodgr::weighting_profiles$weighting_profiles
+    wpf <- wp [wp$name == "foot", ]
+    graph3 <- weight_streetnet (hampi, wt_profile = wpf)
     expect_identical (graph0$d_weighted, graph3$d_weighted)
 
-    wtp$value [wtp$way == "path"] <- 0.9
-    graph4 <- weight_streetnet (hampi, wt_profile = wtp)
+    wpf$value [wpf$way == "path"] <- 0.9
+    graph4 <- weight_streetnet (hampi, wt_profile = wpf)
     expect_true (!identical (graph0$d_weighted, graph4$d_weighted))
 
-    names (wtp) [3] <- "Value"
-    expect_error (graph4 <- weight_streetnet (hampi, wt_profile = wtp),
+    names (wpf) [3] <- "Value"
+    expect_error (graph4 <- weight_streetnet (hampi, wt_profile = wpf),
                   "Weighting profiles must have")
 
     g0 <- weight_streetnet (hampi)
