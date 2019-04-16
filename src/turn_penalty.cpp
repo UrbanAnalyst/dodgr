@@ -167,6 +167,8 @@ void routetimes::replace_junctions (
 Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph, 
         std::vector <OneCompoundEdge> &junctions, int turn_penalty)
 {
+    const size_t hash_len = 10; // for new edge IDs
+
     std::unordered_map <std::string, double> map_x, map_y, map_d, map_dw, map_time;
     std::unordered_map <std::string, std::string> map_object, map_highway;
     std::unordered_map <std::string, bool> map_oneway, map_oneway_bicycle;
@@ -237,6 +239,7 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
         vx1_out [i] = junctions [i].v1;
         vx1_x_out [i] = map_x.at (junctions [i].v1);
         vx1_y_out [i] = map_y.at (junctions [i].v1);
+        edge_out [i] = sc::random_id (hash_len);
 
         // Map all others to properties of out edge:
         object_out [i] = map_object.at (junctions [i].edge1);

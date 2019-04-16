@@ -82,14 +82,11 @@ test_that("SC", {
 test_that("dodgr_times", {
               expect_silent (hsc <- sf_to_sc (hampi))
               expect_silent (net_sc <- weight_streetnet (hsc))
-              expect_error (d <- dodgr_times (net_sc),
-                            "both from and to must be specified")
               v <- dodgr_vertices (net_sc)
               from <- sample (v$id, 100)
               to <- sample (v$id, 100)
               d1 <- dodgr_dists (net_sc, from = from, to = to)
-              d2 <- dodgr_times (net_sc, from = from, to = to,
-                                 turn_penalty = 10)
+              d2 <- dodgr_times (net_sc, from = from, to = to)
               r2 <- cor (as.numeric (d1), as.numeric (d2),
                          use = "pairwise.complete.obs")
               expect_true (r2 < 1)

@@ -264,6 +264,12 @@ swap_cols <- function (x, cola, colb)
     return (x)
 }
 
+get_turn_penalty <- function (wt_profile)
+{
+    p <- dodgr::weighting_profiles$penalties
+    p$turn [p$name == wt_profile]
+}
+
 
 # traffic lights for pedestrians
 # https://wiki.openstreetmap.org/wiki/Tag:highway%3Dtraffic_signals#Complex_intersections
@@ -349,4 +355,28 @@ traffic_signal_nodes <- function (x)
     x2 <- get_key_val_pair_node (x, list (c ("highway", "crossing"),
                                           c ("crossing", "traffic_signals")))
     unique (c (x1, x2))
+}
+
+join_junctions_to_graph <- function (graph, wt_profile, left_side = FALSE)
+{
+    turn_penalty <- get_turn_penalty (wt_profile)
+    resbind <- NULL
+    if (turn_penalty > 0)
+    {
+        res <- rcpp_route_times (graph, left_side, turn_penalty)
+
+        index <- which (graph$.vx0 %in% res$junction_vertices)
+        v_start <- graph$.vx0 [index]
+        graph$.vx0 [index] <- paste0 (graph$.vx0 [index], "_start")
+        index <- which (graph$.vx1 %in% res$junction_vertices)
+        v_end <- graph$.vx1 [index]
+        graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
+
+        # pad out extra columns of res to match any extra in original graph
+        resbind <- data.frame (array (NA, dim = c (nrow (res$graph), ncol (graph))))
+        names (resbind) <- names (graph)
+        resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
+    }
+
+    rbind (graph, resbind)
 }

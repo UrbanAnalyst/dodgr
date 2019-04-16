@@ -4,8 +4,7 @@
 \alias{dodgr_times}
 \title{dodgr_times}
 \usage{
-dodgr_times(graph, from = NULL, to = NULL, heap = "BHeap",
-  left_side = FALSE, turn_penalty = 10)
+dodgr_times(graph, from = NULL, to = NULL, heap = "BHeap")
 }
 \arguments{
 \item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}
@@ -22,12 +21,6 @@ calculated (see Details)}
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
-
-\item{left_side}{A \code{TRUE} value indicates traffic that travels on the left
-side of the street; \code{FALSE} for the right side.}
-
-\item{turn_penalty}{Time penalty in seconds for turning across oncoming
-traffic.}
 }
 \value{
 square matrix of distances between nodes

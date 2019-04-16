@@ -22,7 +22,7 @@ is_graph_spatial <- function (graph)
 #' @noRd
 find_fr_col <- function (graph)
 {
-    grep ("fr|^sta|.vx0", names (graph), ignore.case = TRUE)
+    grep ("^fr|^sta|.vx0", names (graph), ignore.case = TRUE)
 }
 
 #' Get graph columns containing the to vertex
@@ -30,7 +30,7 @@ find_fr_col <- function (graph)
 #' @noRd
 find_to_col <- function (graph)
 {
-    grep ("to|^sto|.vx1", names (graph), ignore.case = TRUE)
+    grep ("^to|^sto|.vx1", names (graph), ignore.case = TRUE)
 }
 
 #' Get single graph column containing the ID of the from vertex

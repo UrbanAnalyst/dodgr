@@ -215,6 +215,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
 
+    attr (graph, "turn_penalty") <- FALSE
+
     return (graph)
 }
 
@@ -369,8 +371,12 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
 
+    attr (graph, "turn_penalty") <- FALSE
+
     if (times)
     {
+        graph <- join_junctions_to_graph (graph, wt_profile, left_side)
+        attr (graph, "turn_penalty") <- TRUE
     }
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")

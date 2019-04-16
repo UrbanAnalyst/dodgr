@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sc-as-network.h"
+
 #include <vector>
 
 #include <Rcpp.h>
