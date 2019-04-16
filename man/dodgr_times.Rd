@@ -9,7 +9,7 @@ dodgr_times(graph, from = NULL, to = NULL, heap = "BHeap")
 \arguments{
 \item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}
 function using a network obtained with the \pkg{osmdata} \code{osmdata_sc}
-function.}
+function, possibly contracted with \link{dodgr_contract_graph}.}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
 be calculated (see Details)}

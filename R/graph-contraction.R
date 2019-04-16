@@ -105,7 +105,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
     saveRDS (graph, file = fname)
 
-    class (graph_refill) <- classes
+    class (graph_refill) <- c (classes, "dodgr_contracted")
 
     return (list (graph = graph_refill, edge_map = graph_contracted$edge_map))
 }

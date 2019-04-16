@@ -91,4 +91,20 @@ test_that("dodgr_times", {
                          use = "pairwise.complete.obs")
               expect_true (r2 < 1)
               expect_true (r2 > 0.95)
+
+              expect_silent (net_sc2 <- weight_streetnet (hsc, times = TRUE))
+              # net_sc2 includes compound junctions used to calculate turn
+              # angles, so:
+              expect_true (nrow (net_sc2) > nrow (net_sc))
+              v0 <- net_sc2$.vx0 [grep ("_start", net_sc2$.vx0)]
+              v0 <- gsub ("_start", "", v0)
+              v1 <- net_sc2$.vx1 [grep ("_end", net_sc2$.vx1)]
+              v1 <- gsub ("_end", "", v1)
+              from [from %in% v0] <- paste0 (from [from %in% v0], "_start")
+              to [to %in% v1] <- paste0 (to [to %in% v1], "_end")
+              d3 <- dodgr_times (net_sc2, from = from, to = to)
+              r2 <- cor (as.numeric (d2), as.numeric (d3),
+                         use = "pairwise.complete.obs")
+              expect_true (r2 < 1)
+              expect_true (r2 > 0.99)
 })
