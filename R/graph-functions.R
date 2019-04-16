@@ -104,6 +104,17 @@ convert_graph <- function (graph, gr_cols)
     return (graph)
 }
 
+tbl_to_df <- function (graph)
+{
+    if (methods::is (graph, "tbl"))
+    {
+        classes <- class (graph) [!grepl ("tbl", class (graph))]
+        graph <- as.data.frame (graph)
+        class (graph) <- classes
+    }
+    return (graph)
+}
+
 
 
 #' dodgr_vertices
@@ -124,8 +135,7 @@ convert_graph <- function (graph, gr_cols)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    graph <- tbl_to_df (graph)
 
     cols <- dodgr_graph_cols (graph)
     nms <- names (cols)
@@ -178,8 +188,7 @@ dodgr_vertices <- function (graph)
 #' graph <- dodgr_components (graph)
 dodgr_components <- function (graph)
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    graph <- tbl_to_df (graph)
 
     if ("component" %in% names (graph))
         message ("graph already has a component column")
@@ -225,8 +234,8 @@ dodgr_components <- function (graph)
 #' nrow (dodgr_vertices (graph)) # 200
 dodgr_sample <- function (graph, nverts = 1000)
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    classes <- class (graph)
+    graph <- tbl_to_df (graph)
 
     fr <- find_fr_id_col (graph)
     to <- find_to_id_col (graph)
@@ -239,5 +248,6 @@ dodgr_sample <- function (graph, nverts = 1000)
         graph <- graph [sort (indx), ]
     }
 
+    class (graph) <- classes
     return (graph)
 }

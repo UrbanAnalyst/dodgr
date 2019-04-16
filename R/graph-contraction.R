@@ -23,11 +23,7 @@
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
     classes <- class (graph)
-    if (methods::is (graph, "tbl"))
-    {
-        graph <- as.data.frame (graph)
-        classes <- classes [!grepl ("tbl", classes)]
-    }
+    graph <- tbl_to_df (graph)
     if (nrow (graph) == 0)
         stop ("graph is empty")
 

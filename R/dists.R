@@ -102,8 +102,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL,
         graph <- graph_from_pts (from, to, expand = expand,
                                  wt_profile = wt_profile, quiet = quiet)
 
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
