@@ -33,10 +33,6 @@ dodgr_contract_graph <- function (graph, verts = NULL)
             stop ("verts must be a single value or a vector of vertex IDs")
         if (!is.character (verts))
             verts <- paste0 (verts)
-        # Vertices in turn-penalty junctions are re-labelled, and these also
-        # need to be kept
-        if (attr (graph, "turn_penalty"))
-            verts <- c (verts, paste0 (verts, "_start"), paste0 (verts, "_end"))
         verts <- verts [which (verts %in% dodgr_vertices (graph)$id)]
     }
 
