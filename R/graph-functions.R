@@ -69,9 +69,13 @@ dodgr_graph_cols <- function (graph)
         }
     }
 
+    time_col <- grep ("time", nms)
+    if (length (time_col) != 1)
+        time_col <- NA
+
     # This is NOT a list because it's much easier to pass as vector to C++
-    ret <- c (edge_id, fr_col, to_col, d_col, w_col, xfr, yfr, xto, yto)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w",
+    ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col, xfr, yfr, xto, yto)
+    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time",
                       "xfr", "yfr", "xto", "yto")
     if (!is.na (component))
     {

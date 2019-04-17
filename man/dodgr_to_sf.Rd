@@ -4,10 +4,10 @@
 \alias{dodgr_to_sf}
 \title{dodgr_to_sf}
 \usage{
-dodgr_to_sf(net)
+dodgr_to_sf(graph)
 }
 \arguments{
-\item{net}{A \pkg{dodgr} network}
+\item{graph}{A \code{dodgr} graph}
 }
 \value{
 Equivalent object of class \pkg{sf}.

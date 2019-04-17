@@ -347,8 +347,8 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
             stop (paste0 ("Unable to determine geographical ",
                           "coordinates in from/to"))
 
-        # gr_cols are (edge_id, from, to, d, w, xfr, yfr, xto, yto, component
-        if (any (is.na (gr_cols [6:9])))
+        index <- match (c ("xfr", "yfr", "xto", "yto"), names (gr_cols))
+        if (any (is.na (gr_cols [index])))
             stop (paste0 ("Cannot determine geographical coordinates ",
                           "against which to match pts"))
 

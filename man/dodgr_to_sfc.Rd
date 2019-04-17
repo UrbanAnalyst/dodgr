@@ -4,10 +4,10 @@
 \alias{dodgr_to_sfc}
 \title{dodgr_to_sfc}
 \usage{
-dodgr_to_sfc(net)
+dodgr_to_sfc(graph)
 }
 \arguments{
-\item{net}{A \pkg{dodgr} network}
+\item{graph}{A \code{dodgr} graph}
 }
 \value{
 A list containing (1) A \code{data.frame} of data associated with the

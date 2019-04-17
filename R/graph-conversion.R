@@ -6,7 +6,7 @@
 #' `LINESTRING` objects than the original \pkg{sf} object, because the former
 #' will be bisected at every junction point.
 #'
-#' @param net A \pkg{dodgr} network
+#' @param graph A `dodgr` graph
 #' @return Equivalent object of class \pkg{sf}.
 #'
 #' @note Requires the \pkg{sf} package to be installed.
@@ -17,13 +17,12 @@
 #' nrow(hw) # 5,729 edges
 #' xy <- dodgr_to_sf (hw)
 #' dim (xy) # 764 edges; 14 attributes
-dodgr_to_sf <- function (net)
+dodgr_to_sf <- function (graph)
 {
-    if (methods::is (net, "tbl"))
-        net <- as.data.frame (net)
+    graph <- tbl_to_df (graph)
 
     requireNamespace ("sf")
-    res <- dodgr_to_sfc (net)
+    res <- dodgr_to_sfc (graph)
     sf::st_sf (res$dat, geometry = res$geometry, crs = 4326)
 }
 
@@ -38,7 +37,7 @@ dodgr_to_sf <- function (net)
 #' the original \pkg{sf} object, because the former will be bisected at every
 #' junction point.
 #'
-#' @param net A \pkg{dodgr} network
+#' @param graph A `dodgr` graph
 #' @return A list containing (1) A `data.frame` of data associated with the
 #' `sf` geometries; and (ii) A Simple Features Collection (`sfc`) list of
 #' `LINESTRING` objects.
@@ -59,26 +58,25 @@ dodgr_to_sf <- function (net)
 #' dim (xy$dat) # same number of rows as there are geometries
 #' # The dodgr_to_sf function then just implements this final conversion:
 #' # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
-dodgr_to_sfc <- function (net)
+dodgr_to_sfc <- function (graph)
 {
-    if (methods::is (net, "tbl"))
-        net <- as.data.frame (net)
+    graph <- tbl_to_df (graph)
 
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
-    net$edge_id <- seq (nrow (net))
+    graph$edge_id <- seq (nrow (graph))
 
-    gc <- dodgr_contract_graph (net)
-    geometry <- rcpp_aggregate_to_sf (net, gc$graph, gc$edge_map)
+    gc <- dodgr_contract_graph (graph)
+    geometry <- rcpp_aggregate_to_sf (graph, gc$graph, gc$edge_map)
 
-    # Then match data of `net` potentially including way_id, back on to the
+    # Then match data of `graph` potentially including way_id, back on to the
     # geometries:
     #edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
     #indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
     #indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
     #edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
-    #index <- match (edge_ids, net$edge_id)
-    #dat <- net [index, ]
+    #index <- match (edge_ids, graph$edge_id)
+    #dat <- graph [index, ]
     #dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
     #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
     #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
@@ -107,8 +105,7 @@ dodgr_to_sfc <- function (net)
 #' graphi <- dodgr_to_igraph (graph)
 dodgr_to_igraph <- function (graph, weight_column = "d")
 {
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
+    graph <- tbl_to_df (graph)
     if (!weight_column %in% names (graph))
         stop ("graph contains no column named '", weight_column, "'")
 
@@ -122,12 +119,12 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
         gr_cols <- dodgr_graph_cols (graph)
     }
     v <- dodgr_vertices (graph)
-    graph <- graph [, gr_cols]
+    graph <- graph [, gr_cols [!is.na (gr_cols)]]
     gr_cols <- dodgr_graph_cols (graph)
     names (graph) [which (names (gr_cols) == weight_column)] <- "weight"
     # remove edge_id if it exists
-    if (!is.na (gr_cols [1]))
-        graph [[gr_cols [1] ]] <- NULL
+    if (!is.na (gr_cols [names (gr_cols) == "edge_id"]))
+        graph [[gr_cols [names (gr_cols) == "edge_id"] ]] <- NULL
 
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
 }
@@ -210,8 +207,6 @@ dodgr_to_tidygraph <- function (graph)
 {
     if (!requireNamespace ("tidygraph"))
         stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.")
-    if (methods::is (graph, "tbl"))
-        graph <- as.data.frame (graph)
 
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()
