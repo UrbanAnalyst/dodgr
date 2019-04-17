@@ -95,17 +95,25 @@ dodgr_graph_cols <- function (graph)
 #' @noRd
 convert_graph <- function (graph, gr_cols)
 {
-    indx <- which (!is.na (gr_cols [1:5]))
-    graph <- graph [, gr_cols [1:5] [indx]]
-    names (graph) <- c ("edge_id", "from", "to", "d", "w") [indx]
+    keep_cols <- c ("edge_id", "from", "to", "d", "w", "time")
+    index <- match (keep_cols, names (gr_cols))
+    keep_names <- keep_cols [!is.na (index) & !is.na (gr_cols [index])]
+    index <- index [!is.na (index) & !is.na (gr_cols [index])]
+    graph <- graph [, gr_cols [index]]
+    names (graph) <- keep_names
+
     if ("edge_id" %in% names (graph))
-        if (!is.character (graph$edge_id))
-            graph$edge_id <- paste0 (graph$edge_id)
-    if (!is.character (graph$from))
-        graph$from <- paste0 (graph$from)
-    if (!is.character (graph$to))
-        graph$to <- paste0 (graph$to)
+        graph$edge_id <- convert_to_char (graph$edge_id)
+    graph$from <- convert_to_char (graph$from)
+    graph$to <- convert_to_char (graph$to)
+
     return (graph)
+}
+
+convert_to_char <- function (x)
+{
+    if (!is.character (x)) x <- paste0 (x)
+    return (x)
 }
 
 tbl_to_df <- function (graph)

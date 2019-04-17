@@ -91,6 +91,7 @@ struct edge_t
     public:
         double dist;
         double weight;
+        double time;
         bool replaced_by_compact;
 
         vertex_id_t get_from_vertex () { return from; }
@@ -105,9 +106,11 @@ struct edge_t
             replaced_by_compact = false;
             this -> to = to_id;
             this -> from = from_id;
-            this -> dist = this -> weight = weights_in [0];
+            this -> dist = this -> weight = this -> time = weights_in [0];
             if (weights_in.size () > 1)
                 this -> weight = weights_in [1];
+            if (weights_in.size () > 2)
+                this -> time = weights_in [2];
             this -> id = id_in;
             this -> old_edges.insert (replacement_edges.begin (),
                     replacement_edges.end ());

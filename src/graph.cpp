@@ -58,6 +58,15 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
     Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];
     Rcpp::NumericVector weight = gr ["w"];
+    Rcpp::StringVector colnames = gr.attr ("names");
+    bool has_times = false;
+    Rcpp::NumericVector time;
+    if (gr.ncol () == 6)
+    {
+        has_times = true;
+        time = gr ["time"];
+        Rcpp::Rcout << "has time" << std::endl;
+    }
 
     std::set <edge_id_t> replacement_edges; // all empty here
 
@@ -91,12 +100,14 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         if (weight [i] < 0.0)
             wt = INFINITE_DOUBLE;
 
-        std::vector <double> weights = {dist [i], wt};
+        std::vector <double> weights;
+        if (!has_times)
+            weights = {dist [i], wt};
+        else
+            weights = {dist [i], wt, time [i]};
 
         edge_t edge = edge_t (from_id, to_id, weights,
                 edge_id_str, replacement_edges);
-        //edge_t edge = edge_t (from_id, to_id, dist [i], wt,
-        //        edge_id_str, replacement_edges);
 
         edge_map.emplace (edge_id_str, edge);
         graph::add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
