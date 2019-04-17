@@ -269,8 +269,8 @@ get_id_cols <- function (pts)
 make_vert_map <- function (graph, gr_cols, xy = FALSE)
 {
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    verts <- c (paste0 (graph [[gr_cols [2] ]]),
-                paste0 (graph [[gr_cols [3] ]]))
+    verts <- c (paste0 (graph [[which (names (gr_cols) == "from")]]),
+                paste0 (graph [[which (names (gr_cols) == "to")]]))
     indx <- which (!duplicated (verts))
     if (!xy)
     {
@@ -280,8 +280,10 @@ make_vert_map <- function (graph, gr_cols, xy = FALSE)
                            stringsAsFactors = FALSE)
     } else 
     {
-        verts_x <- c (graph [[gr_cols [6] ]], graph [[gr_cols [8] ]])
-        verts_y <- c (graph [[gr_cols [7] ]], graph [[gr_cols [9] ]])
+        verts_x <- c (graph [[gr_cols [which (names (gr_cols) == "xfr")] ]],
+                      graph [[gr_cols [which (names (gr_cols) == "xto")] ]])
+        verts_y <- c (graph [[gr_cols [which (names (gr_cols) == "yfr")] ]],
+                      graph [[gr_cols [which (names (gr_cols) == "yto")] ]])
         res <- data.frame (vert = paste0 (verts [indx]),
                            id = seq (indx) - 1,
                            x = verts_x [indx],

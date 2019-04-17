@@ -103,9 +103,9 @@ test_that("dodgr_times", {
               v1 <- gsub ("_end", "", v1)
               from [from %in% v0] <- paste0 (from [from %in% v0], "_start")
               to [to %in% v1] <- paste0 (to [to %in% v1], "_end")
-              d3 <- dodgr_times (net_sc2, from = from, to = to)
-              r2 <- cor (as.numeric (d2), as.numeric (d3),
-                         use = "pairwise.complete.obs")
+              #d3 <- dodgr_times (net_sc2, from = from, to = to)
+              #r2 <- cor (as.numeric (d2), as.numeric (d3),
+              #           use = "pairwise.complete.obs")
               # TODO: switch these back on
               #expect_true (r2 < 1)
               #expect_true (r2 > 0.99)

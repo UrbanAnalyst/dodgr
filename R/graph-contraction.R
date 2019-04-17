@@ -51,9 +51,10 @@ dodgr_contract_graph <- function (graph, verts = NULL)
                          graph_contracted$graph$edge_id)
     indx_orig <- match (graph_contracted$edge_map$edge_old,
                         graph [, edge_id_col])
-    # Then reduce the latter only to the corresponding first non-repeated values of
-    # the former
+    # Then reduce the latter only to the corresponding first non-repeated values
+    # of the former.
     indx_orig <- indx_orig [which (!duplicated (indx_contr))]
+
     indx_contr <- unique (indx_contr)
     graph_refill <- graph [indx_orig, ]
     graph_refill [, edge_id_col ] <- graph_contracted$graph$edge_id [indx_contr]
