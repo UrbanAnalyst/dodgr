@@ -104,7 +104,8 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
 
     edge_map.erase (edge_from_id);
     edge_map.erase (edge_to_id);
-    edge_t new_edge = edge_t (vt_from, vt_to, d, w, new_edge_id, old_edges);
+    std::vector <double> wts = {d, w};
+    edge_t new_edge = edge_t (vt_from, vt_to, wts, new_edge_id, old_edges);
     edge_map.emplace (new_edge_id, new_edge);
 }
 

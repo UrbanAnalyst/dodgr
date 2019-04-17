@@ -27,13 +27,16 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     if (nrow (graph) == 0)
         stop ("graph is empty")
 
+    v <- dodgr_vertices (graph)
+    junctions <- get_junction_vertices (v)
+
     if (!is.null (verts))
     {
         if (!(length (verts) == 1 | is.vector (verts)))
             stop ("verts must be a single value or a vector of vertex IDs")
         if (!is.character (verts))
             verts <- paste0 (verts)
-        verts <- verts [which (verts %in% dodgr_vertices (graph)$id)]
+        verts <- verts [which (verts %in% v$id)]
     }
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -107,7 +110,17 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 
     class (graph_refill) <- c (classes, "dodgr_contracted")
 
-    return (list (graph = graph_refill, edge_map = graph_contracted$edge_map))
+    return (list (graph = graph_refill,
+                  edge_map = graph_contracted$edge_map,
+                  junctions = junctions))
+}
+
+# get junction vertices of graphs which have been re-routed for turn angles.
+# These all have either "_start" or "_end" appended to vertex names
+# v is result of `dodgr_vertices` functions.
+get_junction_vertices <- function (v)
+{
+    gsub ("_start|_end", "", v$id [grep ("_start|_end", v$id)])
 }
 
 #' dodgr_uncontract_graph

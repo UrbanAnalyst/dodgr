@@ -91,8 +91,12 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         if (weight [i] < 0.0)
             wt = INFINITE_DOUBLE;
 
-        edge_t edge = edge_t (from_id, to_id, dist [i], wt,
+        std::vector <double> weights = {dist [i], wt};
+
+        edge_t edge = edge_t (from_id, to_id, weights,
                 edge_id_str, replacement_edges);
+        //edge_t edge = edge_t (from_id, to_id, dist [i], wt,
+        //        edge_id_str, replacement_edges);
 
         edge_map.emplace (edge_id_str, edge);
         graph::add_to_v2e_map (vert2edge_map, from_id, edge_id_str);

@@ -99,14 +99,15 @@ struct edge_t
         std::set <edge_id_t> get_old_edges () { return old_edges; }
 
         edge_t (vertex_id_t from_id, vertex_id_t to_id,
-                double dist_in, double weight_in, edge_id_t id_in,
+                std::vector <double> weights_in, edge_id_t id_in,
                 std::set <edge_id_t> replacement_edges)
         {
             replaced_by_compact = false;
             this -> to = to_id;
             this -> from = from_id;
-            this -> dist = dist_in;
-            this -> weight = weight_in;
+            this -> dist = this -> weight = weights_in [0];
+            if (weights_in.size () > 1)
+                this -> weight = weights_in [1];
             this -> id = id_in;
             this -> old_edges.insert (replacement_edges.begin (),
                     replacement_edges.end ());
