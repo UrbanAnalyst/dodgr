@@ -50,7 +50,7 @@ bool graph::graph_has_components (const Rcpp::DataFrame &graph)
 //' contain only the four columns [from, to, d, w]
 //'
 //' @noRd
-void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
+bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map)
 {
     Rcpp::StringVector edge_id = gr ["edge_id"];
@@ -65,7 +65,6 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
     {
         has_times = true;
         time = gr ["time"];
-        Rcpp::Rcout << "has time" << std::endl;
     }
 
     std::set <edge_id_t> replacement_edges; // all empty here
@@ -113,6 +112,8 @@ void graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         graph::add_to_v2e_map (vert2edge_map, from_id, edge_id_str);
         graph::add_to_v2e_map (vert2edge_map, to_id, edge_id_str);
     }
+
+    return has_times;
 }
 
 //' identify_graph_components
@@ -193,7 +194,8 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    bool has_times = graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    has_times = false; // rm unused variable warning
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     unsigned int largest_component =

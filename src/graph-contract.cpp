@@ -68,12 +68,16 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
         const vertex_id_t vtx_id, const vertex_id_t vt_from,
         const vertex_id_t vt_to,
         const edge_id_t edge_from_id, const edge_id_t edge_to_id,
-        const edge_id_t new_edge_id)
+        const edge_id_t new_edge_id,
+        bool has_times)
 {
     edge_t edge_from = edge_map.find (edge_from_id)->second,
            edge_to = edge_map.find (edge_to_id)->second;
     double d = edge_from.dist + edge_to.dist,
-          w = edge_from.weight + edge_to.weight;
+          w = edge_from.weight + edge_to.weight,
+          time;
+    if (has_times)
+        time = edge_from.time + edge_to.time;
 
     std::set <edge_id_t> old_edges,
         old_edges_fr = edge_from.get_old_edges (),
@@ -104,7 +108,11 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
 
     edge_map.erase (edge_from_id);
     edge_map.erase (edge_to_id);
-    std::vector <double> wts = {d, w};
+    std::vector <double> wts;
+    if (!has_times)
+        wts = {d, w};
+    else
+        wts = {d, w, time};
     edge_t new_edge = edge_t (vt_from, vt_to, wts, new_edge_id, old_edges);
     edge_map.emplace (new_edge_id, new_edge);
 }
@@ -132,7 +140,8 @@ bool graph_contract::same_hwy_type (const edge_map_t &edge_map,
 // associated vertex and edge maps.
 void graph_contract::contract_graph (vertex_map_t &vertex_map,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map,
-        std::unordered_set <vertex_id_t> verts_to_keep)
+        std::unordered_set <vertex_id_t> verts_to_keep,
+        bool has_times)
 {
     std::unordered_set <vertex_id_t> verts;
     for (auto v: vertex_map)
@@ -223,7 +232,8 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
 
                     graph_contract::contract_one_edge (vert2edge_map,
                             vertex_map, edge_map, edgelist, vtx_id, vt_from,
-                            vt_to, edge_from_id, edge_to_id, new_edge_id);
+                            vt_to, edge_from_id, edge_to_id, new_edge_id,
+                            has_times);
                 }
             }
         }
@@ -265,20 +275,21 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
 
-    graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
+    bool has_times = graph::graph_from_df (graph, vertices, edge_map, vert2edge_map);
 
     vertex_map_t vertices_contracted = vertices;
     edge_map_t edge_map_contracted = edge_map;
 
     graph_contract::contract_graph (vertices_contracted, edge_map_contracted,
-            vert2edge_map, verts_to_keep);
+            vert2edge_map, verts_to_keep, has_times);
 
     size_t nedges = edge_map_contracted.size ();
 
     // These vectors are all for the contracted graph:
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
         edgeid_vec (nedges);
-    Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges);
+    Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges),
+        time_vec (nedges);
 
     size_t map_size = 0; // size of edge map contracted -> original
     unsigned int edge_count = 0;
@@ -294,6 +305,9 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         to_vec (edge_count) = to;
         dist_vec (edge_count) = e->second.dist;
         weight_vec (edge_count) = e->second.weight;
+        if (has_times)
+            time_vec (edge_count) = e->second.time;
+
         edgeid_vec (edge_count) = e->second.getID ();
 
         edge_count++;
@@ -319,13 +333,24 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         }
     }
 
-    Rcpp::DataFrame contracted = Rcpp::DataFrame::create (
-            Rcpp::Named ("edge_id") = edgeid_vec,
-            Rcpp::Named ("from") = from_vec,
-            Rcpp::Named ("to") = to_vec,
-            Rcpp::Named ("d") = dist_vec,
-            Rcpp::Named ("w") = weight_vec,
-            Rcpp::_["stringsAsFactors"] = false);
+    Rcpp::DataFrame contracted;
+    if (!has_times)
+        contracted = Rcpp::DataFrame::create (
+                Rcpp::Named ("edge_id") = edgeid_vec,
+                Rcpp::Named ("from") = from_vec,
+                Rcpp::Named ("to") = to_vec,
+                Rcpp::Named ("d") = dist_vec,
+                Rcpp::Named ("w") = weight_vec,
+                Rcpp::_["stringsAsFactors"] = false);
+    else
+        contracted = Rcpp::DataFrame::create (
+                Rcpp::Named ("edge_id") = edgeid_vec,
+                Rcpp::Named ("from") = from_vec,
+                Rcpp::Named ("to") = to_vec,
+                Rcpp::Named ("d") = dist_vec,
+                Rcpp::Named ("w") = weight_vec,
+                Rcpp::Named ("time") = time_vec,
+                Rcpp::_["stringsAsFactors"] = false);
 
     Rcpp::DataFrame edges_new2old = Rcpp::DataFrame::create (
             Rcpp::Named ("edge_new") = edge_map_new,

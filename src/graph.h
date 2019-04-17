@@ -137,7 +137,7 @@ void erase_from_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
 
 bool graph_has_components (const Rcpp::DataFrame &graph);
 
-void graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
+bool graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
 unsigned int identify_graph_components (vertex_map_t &v,
@@ -190,14 +190,16 @@ void contract_one_edge (vert2edge_map_t &vert2edge_map,
         const vertex_id_t vtx_id, const vertex_id_t vt_from,
         const vertex_id_t vt_to,
         const edge_id_t edge_from_id, const edge_id_t edge_to_id,
-        const edge_id_t new_edge_id);
+        const edge_id_t new_edge_id,
+        bool has_times);
 
 bool same_hwy_type (const edge_map_t &edge_map, const edge_id_t &e1,
         const edge_id_t &e2);
 
 void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         vert2edge_map_t &vert2edge_map,
-        std::unordered_set <vertex_id_t> verts_to_keep);
+        std::unordered_set <vertex_id_t> verts_to_keep,
+        bool has_times);
 
 } // end namespace graph_contract
 
