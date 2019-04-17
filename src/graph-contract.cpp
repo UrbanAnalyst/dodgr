@@ -73,9 +73,9 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
 {
     edge_t edge_from = edge_map.find (edge_from_id)->second,
            edge_to = edge_map.find (edge_to_id)->second;
-    double d = edge_from.dist + edge_to.dist,
-          w = edge_from.weight + edge_to.weight,
-          time;
+    double time,
+           d = edge_from.dist + edge_to.dist,
+           w = edge_from.weight + edge_to.weight;
     if (has_times)
         time = edge_from.time + edge_to.time;
 

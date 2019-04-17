@@ -12,9 +12,7 @@ dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap')
 {
     graph <- tbl_to_df (graph)
 
-    #graph$d <- graph$d_weighted <- graph$time
-    #graph$d <- graph$time
-    graph$time <- NULL
+    graph$d <- graph$time
 
     dodgr_dists (graph, from, to, heap = heap)
 }

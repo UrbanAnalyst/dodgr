@@ -56,11 +56,18 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     indx_orig <- indx_orig [which (!duplicated (indx_contr))]
     indx_contr <- unique (indx_contr)
     graph_refill <- graph [indx_orig, ]
-    graph_refill [, gr_cols [1] ] <- graph_contracted$graph$edge_id [indx_contr]
-    graph_refill [, gr_cols [2] ] <- graph_contracted$graph$from [indx_contr]
-    graph_refill [, gr_cols [3] ] <- graph_contracted$graph$to [indx_contr]
-    graph_refill [, gr_cols [4] ] <- graph_contracted$graph$d [indx_contr]
-    graph_refill [, gr_cols [5] ] <- graph_contracted$graph$w [indx_contr]
+    graph_refill [, edge_id_col ] <- graph_contracted$graph$edge_id [indx_contr]
+    fr_col <- gr_cols [names (gr_cols) == "from"]
+    to_col <- gr_cols [names (gr_cols) == "to"]
+    d_col <- gr_cols [names (gr_cols) == "d"]
+    w_col <- gr_cols [names (gr_cols) == "w"]
+    t_col <- gr_cols [names (gr_cols) == "time"]
+    graph_refill [, fr_col ] <- graph_contracted$graph$from [indx_contr]
+    graph_refill [, to_col ] <- graph_contracted$graph$to [indx_contr]
+    graph_refill [, d_col ] <- graph_contracted$graph$d [indx_contr]
+    graph_refill [, w_col ] <- graph_contracted$graph$w [indx_contr]
+    if (!is.na (t_col))
+        graph_refill [, t_col ] <- graph_contracted$graph$time [indx_contr]
 
     # Then re-insert spatial coordinates
     if (is_graph_spatial (graph))
