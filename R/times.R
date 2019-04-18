@@ -10,11 +10,11 @@
 #' @export 
 dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap')
 {
+    graph <- tbl_to_df (graph)
+
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols$time))
         stop ("graph has no time column")
-
-    graph <- tbl_to_df (graph)
 
     graph [[gr_cols$d]] <- graph [[gr_cols$time]]
 
