@@ -67,7 +67,6 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
     } else
     {
         ndivs <- get_ndivs (graph, graph_max_size)
-        expand <- 0.05
         bb_list <- get_bb_list (bb, ndivs, expand = expand)
         bb_data <- subdivide_bb (graph, bb_list, graph_max_size, expand)
         bb_indices <- bb_data$bb_indices
@@ -130,10 +129,10 @@ get_ndivs <- function (graph, graph_max_size)
 get_graph_bb <- function (graph)
 {
     gr_cols <- dodgr_graph_cols (graph)
-    from_lon <- graph [, gr_cols [which (names (gr_cols) == "xfr")] ]
-    from_lat <- graph [, gr_cols [which (names (gr_cols) == "yfr")] ]
-    to_lon <- graph [, gr_cols [which (names (gr_cols) == "xto")] ]
-    to_lat <- graph [, gr_cols [which (names (gr_cols) == "yto")] ]
+    from_lon <- graph [, gr_cols$xfr]
+    from_lat <- graph [, gr_cols$yfr]
+    to_lon <- graph [, gr_cols$xto]
+    to_lat <- graph [, gr_cols$yto]
     apply (cbind (c (from_lon, to_lon), c (from_lat, to_lat)), 2, range)
 }
 
@@ -270,7 +269,7 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     # of the sequence on to close the polygon
     gr_cols <- dodgr_graph_cols (graph) # (from, to) = [, 2:3]
     res <- lapply (ids, function (i)
-                   graph [c (i, i [1]), gr_cols [2]] )
+                   graph [c (i, i [1]), gr_cols$from] )
 
     if (is_graph_spatial (graph))
     {

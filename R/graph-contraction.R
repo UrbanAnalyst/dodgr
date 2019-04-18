@@ -46,29 +46,23 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:
-    edge_id_col <- gr_cols [[which (names (gr_cols) == "edge_id")]]
     indx_contr <- match (graph_contracted$edge_map$edge_new,
                          graph_contracted$graph$edge_id)
     indx_orig <- match (graph_contracted$edge_map$edge_old,
-                        graph [, edge_id_col])
+                        graph [, gr_cols$edge_id])
     # Then reduce the latter only to the corresponding first non-repeated values
     # of the former.
     indx_orig <- indx_orig [which (!duplicated (indx_contr))]
 
     indx_contr <- unique (indx_contr)
     graph_refill <- graph [indx_orig, ]
-    graph_refill [, edge_id_col ] <- graph_contracted$graph$edge_id [indx_contr]
-    fr_col <- gr_cols [names (gr_cols) == "from"]
-    to_col <- gr_cols [names (gr_cols) == "to"]
-    d_col <- gr_cols [names (gr_cols) == "d"]
-    w_col <- gr_cols [names (gr_cols) == "w"]
-    t_col <- gr_cols [names (gr_cols) == "time"]
-    graph_refill [, fr_col ] <- graph_contracted$graph$from [indx_contr]
-    graph_refill [, to_col ] <- graph_contracted$graph$to [indx_contr]
-    graph_refill [, d_col ] <- graph_contracted$graph$d [indx_contr]
-    graph_refill [, w_col ] <- graph_contracted$graph$w [indx_contr]
-    if (!is.na (t_col))
-        graph_refill [, t_col ] <- graph_contracted$graph$time [indx_contr]
+    graph_refill [, gr_cols$edge_id] <- graph_contracted$graph$edge_id [indx_contr]
+    graph_refill [, gr_cols$from] <- graph_contracted$graph$from [indx_contr]
+    graph_refill [, gr_cols$to] <- graph_contracted$graph$to [indx_contr]
+    graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
+    graph_refill [, gr_cols$w] <- graph_contracted$graph$w [indx_contr]
+    if (!is.na (gr_cols$time))
+        graph_refill [, gr_cols$time] <- graph_contracted$graph$time [indx_contr]
 
     # Then re-insert spatial coordinates
     if (is_graph_spatial (graph))
@@ -90,7 +84,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         #    indx <- match (graph_contracted$graph$edge_id,
         #                   graph_contracted$edge_map$edge_new)
         #    indx <- graph_contracted$edge_map$edge_old [indx]
-        #    indx <- match (indx, graph [, gr_cols [1] ])
+        #    indx <- match (indx, graph [, gr_cols$edge_id ])
         #    indx2 <- which (!is.na (indx))
         #    indx <- indx [indx2]
         #    graph_refill$way_id [indx2] <- graph$way_id [indx]
@@ -98,7 +92,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     # and finally replicate the uncontracted edges of graph in graph_contracted 
-    indx_uncontr <- which (!graph [, edge_id_col] %in%
+    indx_uncontr <- which (!graph [, gr_cols$edge_id] %in%
                            graph_contracted$edge_map$edge_old)
     graph_refill <- rbind (graph_refill, graph [indx_uncontr, ])
 

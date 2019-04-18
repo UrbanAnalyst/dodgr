@@ -110,8 +110,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
         stop ("graph contains no column named '", weight_column, "'")
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols [match ("from", names (gr_cols))]) |
-               is.na (gr_cols [match ("to", names (gr_cols))]))
+    if (is.na (gr_cols$from) | is.na (gr_cols$to))
     {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
@@ -119,12 +118,12 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
         gr_cols <- dodgr_graph_cols (graph)
     }
     v <- dodgr_vertices (graph)
-    graph <- graph [, gr_cols [!is.na (gr_cols)]]
+    graph <- graph [, do.call (c, gr_cols [!is.na (gr_cols)])]
     gr_cols <- dodgr_graph_cols (graph)
     names (graph) [which (names (gr_cols) == weight_column)] <- "weight"
     # remove edge_id if it exists
-    if (!is.na (gr_cols [names (gr_cols) == "edge_id"]))
-        graph [[gr_cols [names (gr_cols) == "edge_id"] ]] <- NULL
+    if (!is.na (gr_cols$edge_id))
+        graph [[gr_cols$edge_id]] <- NULL
 
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
 }

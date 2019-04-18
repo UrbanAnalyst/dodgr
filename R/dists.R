@@ -109,8 +109,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols [match ("from", names (gr_cols))]) |
-               is.na (gr_cols [match ("to", names (gr_cols))]))
+    if (is.na (gr_cols$from) | is.na (gr_cols$to))
     {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
@@ -269,8 +268,7 @@ get_id_cols <- function (pts)
 make_vert_map <- function (graph, gr_cols, xy = FALSE)
 {
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    verts <- c (paste0 (graph [[gr_cols [names (gr_cols) == "from"] ]]),
-                paste0 (graph [[gr_cols [names (gr_cols) == "to"] ]]))
+    verts <- c (paste0 (graph [[gr_cols$from]]), paste0 (graph [[gr_cols$to]]))
     indx <- which (!duplicated (verts))
     if (!xy)
     {
@@ -280,10 +278,8 @@ make_vert_map <- function (graph, gr_cols, xy = FALSE)
                            stringsAsFactors = FALSE)
     } else 
     {
-        verts_x <- c (graph [[gr_cols [names (gr_cols) == "xfr"] ]],
-                      graph [[gr_cols [names (gr_cols) == "xto"] ]])
-        verts_y <- c (graph [[gr_cols [names (gr_cols) == "yfr"] ]],
-                      graph [[gr_cols [names (gr_cols) == "yto"] ]])
+        verts_x <- c (graph [[gr_cols$xfr]], graph [[gr_cols$xto]])
+        verts_y <- c (graph [[gr_cols$yfr]], graph [[gr_cols$yto]])
         res <- data.frame (vert = paste0 (verts [indx]),
                            id = seq (indx) - 1,
                            x = verts_x [indx],
