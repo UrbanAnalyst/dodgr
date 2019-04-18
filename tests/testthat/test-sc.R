@@ -75,27 +75,34 @@ test_that("SC", {
               expect_silent (net_sc <- weight_streetnet (hsc))
               expect_is (net_sc, "data.frame")
               expect_true (nrow (net_sc) > 0)
-              # This should give same #rows, but doesn't - TODO: Fix
-              #expect_silent (net_sf <- weight_streetnet (hampi))
+
+              net_sf <- weight_streetnet (hampi)
+              # The SC version is sanitised by, for example, removing duplicate
+              # edges, so is a more compact graph:
+              expect_true (nrow (net_sf) > nrow (net_sc))
+              v_sc <- dodgr_vertices (net_sc)
+              v_sf <- dodgr_vertices (net_sf)
+              expect_true (nrow (v_sf) > nrow (v_sc))
 })
 
 test_that("dodgr_times", {
+              # dists and times should be strongly correlated:
               expect_silent (hsc <- sf_to_sc (hampi))
               expect_silent (net_sc <- weight_streetnet (hsc))
               v <- dodgr_vertices (net_sc)
+              set.seed (1)
               from <- sample (v$id, 100)
               to <- sample (v$id, 100)
-              d1 <- dodgr_dists (net_sc, from = from, to = to)
-              d2 <- dodgr_times (net_sc, from = from, to = to)
-              r2 <- cor (as.numeric (d1), as.numeric (d2),
+              d <- dodgr_dists (net_sc, from = from, to = to)
+              t1 <- dodgr_times (net_sc, from = from, to = to)
+              r2 <- cor (as.numeric (d), as.numeric (t1),
                          use = "pairwise.complete.obs")
-              # TODO: switch these back on
-              #expect_true (r2 < 1)
-              #expect_true (r2 > 0.95)
+              expect_true (r2 < 1)
+              expect_true (r2 > 0.95)
 
+              # calculate times with turning angles, such that resultant network
+              # includes compound junction edges
               expect_silent (net_sc2 <- weight_streetnet (hsc, times = TRUE))
-              # net_sc2 includes compound junctions used to calculate turn
-              # angles, so:
               expect_true (nrow (net_sc2) > nrow (net_sc))
               v0 <- net_sc2$.vx0 [grep ("_start", net_sc2$.vx0)]
               v0 <- gsub ("_start", "", v0)
@@ -103,10 +110,21 @@ test_that("dodgr_times", {
               v1 <- gsub ("_end", "", v1)
               from [from %in% v0] <- paste0 (from [from %in% v0], "_start")
               to [to %in% v1] <- paste0 (to [to %in% v1], "_end")
-              #d3 <- dodgr_times (net_sc2, from = from, to = to)
-              #r2 <- cor (as.numeric (d2), as.numeric (d3),
-              #           use = "pairwise.complete.obs")
-              # TODO: switch these back on
-              #expect_true (r2 < 1)
-              #expect_true (r2 > 0.99)
+              t2 <- dodgr_times (net_sc2, from = from, to = to)
+              r2 <- cor (as.numeric (t1), as.numeric (t2),
+                         use = "pairwise.complete.obs")
+              expect_true (r2 < 1)
+              expect_true (r2 > 0.99)
+
+              # times with contracted graph should be identical:
+              net_sc2_c <- dodgr_contract_graph (net_sc2)
+              v <- dodgr_vertices (net_sc2_c$graph)
+              set.seed (1)
+              from <- sample (v$id, 100)
+              to <- sample (v$id, 100)
+              d <- dodgr_dists (net_sc2, from = from, to = to)
+              t1 <- dodgr_times (net_sc2, from = from, to = to)
+              t2 <- dodgr_times (net_sc2_c$graph, from = from, to = to)
+              dtime <- max (abs (t1 - t2), na.rm = TRUE)
+              expect_true (dtime < 1e-6)
 })

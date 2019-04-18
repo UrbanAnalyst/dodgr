@@ -10,9 +10,13 @@
 #' @export 
 dodgr_times <- function (graph, from = NULL, to = NULL, heap = 'BHeap')
 {
+    gr_cols <- dodgr_graph_cols (graph)
+    if (is.na (gr_cols$time))
+        stop ("graph has no time column")
+
     graph <- tbl_to_df (graph)
 
-    graph$d <- graph$time
+    graph [[gr_cols$d]] <- graph [[gr_cols$time]]
 
     dodgr_dists (graph, from, to, heap = heap)
 }
