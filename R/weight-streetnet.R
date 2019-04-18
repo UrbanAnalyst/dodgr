@@ -93,6 +93,13 @@ weight_streetnet.default <- function (x, wt_profile = "bicycle",
 }
 
 # ********************************************************************
+# ***********************   generic variables   ***********************
+# ********************************************************************
+
+way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
+                       "maxspeed")
+
+# ********************************************************************
 # *************************     sf class     ************************* 
 # ********************************************************************
 
@@ -151,10 +158,11 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             stop ("Please use the weight_railway function for railway routing.")
         } else
         {
-            prf_names <- c ("foot", "horse", "wheelchair", "bicycle", "moped",
-                            "motorcycle", "motorcar", "goods", "hgv", "psv")
-            wt_profile <- match.arg (tolower (wt_profile), prf_names)
             profiles <- dodgr::weighting_profiles$weighting_profiles
+            prf_names <- unique (profiles$name)
+            # foot, horse, wheelchair, bicycle, moped, 
+            # motorcycle, motorcar, goods, hgv, psv
+            wt_profile <- match.arg (tolower (wt_profile), prf_names)
             wt_profile <- profiles [profiles$name == wt_profile, ]
         }
     } else if (is.numeric (wt_profile))
@@ -361,13 +369,13 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
     requireNamespace ("dplyr")
     check_sc (x)
 
-    graph <- extract_sc_edges_xy (x) %>%
-        sc_edge_dist () %>%
-        extract_sc_edges_highways (x, wt_profile) %>%
-        weight_sc_edges (wt_profile) %>%
-        sc_lanes_surface (wt_profile) %>%
-        sc_edge_time (wt_profile, x) %>%
-        sc_traffic_lights (wt_profile, x) %>%
+    graph <- extract_sc_edges_xy (x) %>%        # vert, edge IDs + coordinates
+        sc_edge_dist () %>%                             # append dist
+        extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
+        weight_sc_edges (wt_profile) %>%                # add d_weighted col
+        sc_lanes_surface (wt_profile) %>%               # modify d_weighted
+        sc_edge_time (wt_profile, x) %>%                # add time
+        sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
 

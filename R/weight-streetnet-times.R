@@ -44,8 +44,7 @@ sc_edge_dist <- function (edges)
 }
 
 extract_sc_edges_highways <- function (edges, x, wt_profile,
-    keep_types = c ("highway", "oneway", "oneway:bicycle", "lanes",
-                    "maxspeed"))
+    keep_types = way_types_to_keep)
 {
     # no visible binding notes:
     native_ <- key <- `:=` <- value <- NULL
