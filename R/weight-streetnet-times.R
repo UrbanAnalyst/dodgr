@@ -65,15 +65,8 @@ extract_sc_edges_highways <- function (edges, x, wt_profile,
             dplyr::rename (!!dplyr::quo_name (k) := value) %>%
             dplyr::select (-key)
     }
-    # oneway:bicycle doesn't enquote properly, so:
-    i <- grep ("bicycle", names (edges))
-    names (edges) [i] <- "oneway_bicycle"
 
-    # re-map the oneway values to boolean
-    edges$oneway [!edges$oneway %in% c ("no", "yes")] <- "no"
-    edges$oneway <- ifelse (edges$oneway == "no", FALSE, TRUE)
-    edges$oneway_bicycle [!edges$oneway_bicycle %in% c ("no", "yes")] <- "no"
-    edges$oneway_bicycle <- ifelse (edges$oneway_bicycle == "no", FALSE, TRUE)
+    edges <- convert_hw_types_to_bool (edges)
 
     # TODO: Do this in convert_graph function
     # replace NA distances and times
@@ -82,6 +75,19 @@ extract_sc_edges_highways <- function (edges, x, wt_profile,
     #edges$time [is.na (edges$time)] <- m
 
     return (edges)
+}
+
+convert_hw_types_to_bool <- function (graph)
+{
+    # oneway:bicycle doesn't enquote properly, so:
+    names (graph) [grep ("bicycle", names (graph))] <- "oneway_bicycle"
+
+    # re-map the oneway values to boolean
+    graph$oneway [!graph$oneway %in% c ("no", "yes")] <- "no"
+    graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
+    graph$oneway_bicycle [!graph$oneway_bicycle %in% c ("no", "yes")] <- "no"
+    graph$oneway_bicycle <- ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
+    return (graph)
 }
 
 weight_sc_edges <- function (edges, wt_profile)
