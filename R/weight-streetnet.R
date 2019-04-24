@@ -160,6 +160,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     names (x) [match (geom_column, names (x))] <- "geometry"
     attr (x, "sf_column") <- "geometry"
 
+    wt_profile_name <- NULL
     if (is.character (wt_profile))
     {
         if (grepl ("rail", wt_profile, ignore.case = TRUE))
@@ -167,6 +168,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             stop ("Please use the weight_railway function for railway routing.")
         } else
         {
+            wt_profile_name <- wt_profile
             profiles <- dodgr::weighting_profiles$weighting_profiles
             prf_names <- unique (profiles$name)
             # foot, horse, wheelchair, bicycle, moped, 
@@ -230,6 +232,9 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
 
     graph <- add_extra_sf_columns (graph, x)
+    if (!is.null (wt_profile_name))
+        graph <- wt_lanes_surface (graph, wt_profile_name) %>%
+            calc_edge_time (wt_profile_name)
 
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE

@@ -231,6 +231,28 @@ sc_traffic_lights <- function (graph, wt_profile, x)
     return (graph)
 }
 
+sf_traffic_lights <- function (graph, wt_profile, x)
+{
+    w <- dodgr::weighting_profiles$penalties
+    wait <- w$traffic_lights [w$name == wt_profile]
+
+    # first for intersections marked as crossings
+    crossings <- traffic_light_objs_ped (x) # way IDs
+    objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
+    oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
+    index <- match (oles$edge_, graph$edge_)
+    graph$time [index] <- graph$time [index] + wait
+
+    # then all others with nodes simply marked as traffic lights - match
+    # those to *start* nodes and simply add the waiting time
+    nodes <- traffic_signal_nodes (x)
+    index2 <- which (graph$.vx0 %in% nodes &
+                     !graph$.vx0 %in% graph$.vx0 [index])
+    graph$time [index2] <- graph$time [index2] + wait
+    
+    return (graph)
+}
+
 rm_duplicated_edges <- function (graph)
 {
     index <- cbind (which (duplicated (graph [, c (".vx0", ".vx1")])),

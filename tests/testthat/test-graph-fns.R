@@ -80,8 +80,8 @@ test_that("no geom rownames", {
     h2$geometry <- g0
     hw1 <- weight_streetnet (h2)
     expect_true (!identical (h2, hw1))
-    expect_equal (ncol (hw0), 19) # has way_id column
-    expect_equal (ncol (hw1), 12) # no way_id, no extra OSM columns
+    expect_equal (ncol (hw0), 18) # has way_id column
+    expect_equal (ncol (hw1), 13) # no way_id, no extra OSM columns
     indx0 <- which (!names (hw0) %in%
                     c ("from_id", "to_id", "way_id", "component",
                        "oneway", "oneway_bicycle", "lanes", "maxspeed",
@@ -95,9 +95,9 @@ test_that("no geom rownames", {
 
 test_that("keep cols", {
     hw0 <- weight_streetnet (hampi)
-    expect_equal (ncol (hw0), 19)
+    expect_equal (ncol (hw0), 18)
     hw1 <- weight_streetnet (hampi, keep_cols = "foot")
-    expect_equal (ncol (hw1), 20)
+    expect_equal (ncol (hw1), 19)
     expect_true ("foot" %in% names (hw1))
     expect_false ("foot" %in% names (hw0))
 })
