@@ -30,20 +30,20 @@ extract_sc_edges_xy <- function (x)
         dplyr::rename (!!rename1)
 }
 
-sc_edge_dist <- function (edges)
+sc_edge_dist <- function (graph)
 {
     # no visible binding notes:
     .vx0_z <- .vx1_z <- NULL
 
-    edges$d <- geodist::geodist (edges [, c (".vx0_x", ".vx0_y")],
-                                 edges [, c (".vx1_x", ".vx1_y")], paired = TRUE)
-    if (".vx0_z" %in% names (edges) & ".vx1_z" %in% names (edges))
-        edges <- dplyr::mutate (edges, "dz" = .vx1_z - .vx0_z) %>%
+    graph$d <- geodist::geodist (graph [, c (".vx0_x", ".vx0_y")],
+                                 graph [, c (".vx1_x", ".vx1_y")], paired = TRUE)
+    if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph))
+        graph <- dplyr::mutate (graph, "dz" = .vx1_z - .vx0_z) %>%
             dplyr::select (-c(.vx0_z, .vx1_z))
-    return (edges)
+    return (graph)
 }
 
-extract_sc_edges_highways <- function (edges, x, wt_profile,
+extract_sc_edges_highways <- function (graph, x, wt_profile,
     keep_types = way_types_to_keep)
 {
     # no visible binding notes:
@@ -56,25 +56,25 @@ extract_sc_edges_highways <- function (edges, x, wt_profile,
         keep_types <- c (keep_types, unique (surface$key))
     }
 
-    edges <- dplyr::left_join (edges, x$object_link_edge, by = "edge_") %>%
+    graph <- dplyr::left_join (graph, x$object_link_edge, by = "edge_") %>%
         dplyr::select (-native_)
     for (k in keep_types)
     {
         objs <- dplyr::filter (x$object, key == k)
-        edges <- dplyr::left_join (edges, objs, by = "object_") %>%
+        graph <- dplyr::left_join (graph, objs, by = "object_") %>%
             dplyr::rename (!!dplyr::quo_name (k) := value) %>%
             dplyr::select (-key)
     }
 
-    edges <- convert_hw_types_to_bool (edges)
+    graph <- convert_hw_types_to_bool (graph)
 
     # TODO: Do this in convert_graph function
     # replace NA distances and times
     #m <- .Machine$double.xmax
-    #edges$d_weighted [is.na (edges$d_weighted)] <- m
-    #edges$time [is.na (edges$time)] <- m
+    #graph$d_weighted [is.na (graph$d_weighted)] <- m
+    #graph$time [is.na (graph$time)] <- m
 
-    return (edges)
+    return (graph)
 }
 
 convert_hw_types_to_bool <- function (graph)
@@ -90,14 +90,14 @@ convert_hw_types_to_bool <- function (graph)
     return (graph)
 }
 
-weight_sc_edges <- function (edges, wt_profile)
+weight_sc_edges <- function (graph, wt_profile)
 {
     # no visible binding notes:
     value <- d <- NULL
 
     wp <- dodgr::weighting_profiles$weighting_profiles
     wp <- wp [wp$name == wt_profile, c ("way", "value")]
-    dplyr::left_join (edges, wp, by = c ("highway" = "way")) %>%
+    dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
         dplyr::select (-value)
@@ -106,7 +106,7 @@ weight_sc_edges <- function (edges, wt_profile)
 # adjust weighted distances according to numbers of lanes and surfaces
 # NOTE: This is currently hard-coded for active transport only, and will not
 # work for anything else
-sc_lanes_surface <- function (edges, wt_profile)
+wt_lanes_surface <- function (graph, wt_profile)
 {
     # no visible binding notes:
     lanes <- maxspeed <- surface <- NULL
@@ -118,27 +118,27 @@ sc_lanes_surface <- function (edges, wt_profile)
         wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
         for (i in seq (lns))
         {
-            index <- which (edges$lanes == lns [i])
+            index <- which (graph$lanes == lns [i])
             if (i == length (lns))
-                index <- which (edges$lanes >= lns [i])
-            edges$d_weighted [index] <- edges$d_weighted [index] * (1 + wts [i])
+                index <- which (graph$lanes >= lns [i])
+            graph$d_weighted [index] <- graph$d_weighted [index] * (1 + wts [i])
         }
     }
 
-    if ("lanes" %in% names (edges)) edges$lanes <- NULL
-    if ("maxspeed" %in% names (edges)) edges$maxspeed <- NULL
-    #edges <- dplyr::select (edges, -c(lanes, maxspeed))
+    if ("lanes" %in% names (graph)) graph$lanes <- NULL
+    if ("maxspeed" %in% names (graph)) graph$maxspeed <- NULL
+    #graph <- dplyr::select (graph, -c(lanes, maxspeed))
 
-    return (edges)
+    return (graph)
 }
 
 # Convert weighted distances in metres to time in seconds
-sc_edge_time <- function (edges, wt_profile, x)
+sc_edge_time <- function (graph, wt_profile, x)
 {
     # no visible binding messages:
     object_ <- NULL
 
-    edges$time <- NA_real_
+    graph$time <- NA_real_
 
     # General times based on speed profile
     w <- dodgr::weighting_profiles$weighting_profiles
@@ -148,41 +148,41 @@ sc_edge_time <- function (edges, wt_profile, x)
     for (i in seq (nrow (w)))
     {
         speed_m_per_s <- w$speeds [i] * 1000 / 3600 # m/h -> m/s
-        index <- which (edges$highway == w$way [i])
-        edges$time [index] <- edges$d [index] / speed_m_per_s
+        index <- which (graph$highway == w$way [i])
+        graph$time [index] <- graph$d [index] / speed_m_per_s
     }
 
     if (wt_profile %in% c ("foot", "bicycle"))
     {
-        if ("dz" %in% names (edges))
-            edges <- times_by_incline (edges, wt_profile)
+        if ("dz" %in% names (graph))
+            graph <- times_by_incline (graph, wt_profile)
 
         speeds <- dodgr::weighting_profiles$surface_speeds
         speeds <- speeds [speeds$name == wt_profile, ]
         for (i in seq (nrow (speeds)))
         {
-            index <- which (edges [[speeds$key [i] ]] ==
-                            edges [[speeds$value [i] ]])
+            index <- which (graph [[speeds$key [i] ]] ==
+                            graph [[speeds$value [i] ]])
             if (length (index) > 0)
-                edges$time [index] <- edges$time [index] / speeds$speed [i]
+                graph$time [index] <- graph$time [index] / speeds$speed [i]
         }
     }
 
-    return (edges)
+    return (graph)
 }
 
-times_by_incline <- function (edges, wt_profile)
+times_by_incline <- function (graph, wt_profile)
 {
     if (wt_profile == "foot")
     {
         # Uses 
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
-        edges$time = 3600 * (edges$d_weighted / 1000) / 5 # 5km per hour
-        if ("dz" %in% names (edges))
+        graph$time = 3600 * (graph$d_weighted / 1000) / 5 # 5km per hour
+        if ("dz" %in% names (graph))
         {
-            index <- which (edges$dz > 0)
-            edges$time [index] <- edges$time [index] + edges$dz [index] / 10
-            edges$dz <- NULL
+            index <- which (graph$dz > 0)
+            graph$time [index] <- graph$time [index] + graph$dz [index] / 10
+            graph$dz <- NULL
         }
 
     } else if (wt_profile == "bicycle")
@@ -192,13 +192,13 @@ times_by_incline <- function (edges, wt_profile)
         # The latter argues for a linear relationship with a reduction in speed
         # of "about 11% for every 1% change in steepness". For 0.01 to translate
         # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
-        edges$time = 3600 * (edges$d_weighted / 1000) / 12 # 12km per hour
-        if ("dz" %in% names (edges))
+        graph$time = 3600 * (graph$d_weighted / 1000) / 12 # 12km per hour
+        if ("dz" %in% names (graph))
         {
-            index <- which (edges$dz > 0)
-            edges$time [index] <- edges$time [index] * 
-                (1 + 11 * edges$dz [index] / edges$d [index])
-            edges$dz <- NULL
+            index <- which (graph$dz > 0)
+            graph$time [index] <- graph$time [index] * 
+                (1 + 11 * graph$dz [index] / graph$d [index])
+            graph$dz <- NULL
         }
         # ... TODO: Downhill
         # http://www.sportsci.org/jour/9804/dps.html
@@ -206,7 +206,7 @@ times_by_incline <- function (edges, wt_profile)
     }
 }
 
-sc_traffic_lights <- function (edges, wt_profile, x)
+sc_traffic_lights <- function (graph, wt_profile, x)
 {
     # no visible binding NOTES:
     object_ <- NULL
@@ -218,17 +218,17 @@ sc_traffic_lights <- function (edges, wt_profile, x)
     crossings <- traffic_light_objs_ped (x) # way IDs
     objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
     oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
-    index <- match (oles$edge_, edges$edge_)
-    edges$time [index] <- edges$time [index] + wait
+    index <- match (oles$edge_, graph$edge_)
+    graph$time [index] <- graph$time [index] + wait
 
     # then all others with nodes simply marked as traffic lights - match
     # those to *start* nodes and simply add the waiting time
     nodes <- traffic_signal_nodes (x)
-    index2 <- which (edges$.vx0 %in% nodes &
-                     !edges$.vx0 %in% edges$.vx0 [index])
-    edges$time [index2] <- edges$time [index2] + wait
+    index2 <- which (graph$.vx0 %in% nodes &
+                     !graph$.vx0 %in% graph$.vx0 [index])
+    graph$time [index2] <- graph$time [index2] + wait
     
-    return (edges)
+    return (graph)
 }
 
 rm_duplicated_edges <- function (graph)

@@ -187,7 +187,6 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
         x <- remap_way_types (x, wt_profile)
 
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
-    classes <- class (graph)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
@@ -223,7 +222,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph <- add_extra_sf_columns (graph, x)
 
-    class (graph) <- c (classes, "dodgr_streetnet")
+    class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
     return (graph)
@@ -413,7 +412,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         sc_edge_dist () %>%                             # append dist
         extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
         weight_sc_edges (wt_profile) %>%                # add d_weighted col
-        sc_lanes_surface (wt_profile) %>%               # modify d_weighted
+        wt_lanes_surface (wt_profile) %>%               # modify d_weighted
         sc_edge_time (wt_profile, x) %>%                # add time
         sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
