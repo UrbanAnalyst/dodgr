@@ -9,23 +9,25 @@
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
   id_col = "osm_id", keep_cols = NULL, times = FALSE,
-  left_side = FALSE)
+  left_side = FALSE, osm_points = NULL)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  times = FALSE, left_side = FALSE, osm_points = NULL)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  times = FALSE, left_side = FALSE, osm_points = NULL)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  times = FALSE, left_side = FALSE, osm_points = NULL)
 }
 \arguments{
-\item{x}{A street network represented as \code{sf} \code{LINESTRING}
-objects, typically extracted with \code{dodgr_streetnet}}
+\item{x}{A street network represented either as \code{sf} \code{LINESTRING}
+objects, typically extracted with \code{dodgr_streetnet}, or as an \code{SC}
+(\code{silicate}) object typically extracted with the \pkg{osmdata} function
+\code{osmdata_sc}.}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names
 corresponding to names in \code{type_col} (see Details)}
@@ -34,28 +36,33 @@ corresponding to names in \code{type_col} (see Details)}
 which designates different types of highways to be used for weighting
 (default works with \code{osmdata} objects).}
 
-\item{id_col}{Specify column of the code{sf} \code{data.frame} object which
-provides unique identifiers for each highway (default works with
-\code{osmdata} objects).}
+\item{id_col}{For \code{sf}-formatted data only: Specify column of the code{sf}
+\code{data.frame} object which provides unique identifiers for each highway
+(default works with \code{osmdata} objects).}
 
-\item{keep_cols}{Vectors of columns from \code{sf_lines} to be kept in the
-resultant \code{dodgr} network; vector can be either names or indices of
-desired columns.}
+\item{keep_cols}{For \code{sf}-formatted data only: Vectors of columns from \code{x} to
+be kept in the resultant \code{dodgr} network; vector can be either names or
+indices of desired columns.}
 
 \item{times}{Weight network for routing according to \emph{times} rather than
 \emph{distances} (see Note).}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
-the right side (\code{FALSE})?}
+the right side (\code{FALSE})? - affects times only.}
+
+\item{osm_points}{For \code{sf}-formatted data from Open Street Map, the points
+associated with the \code{LINESTRING} objects, \code{x} - for \code{osmdata} objects, \code{x} is
+simply \code{osm_lines}, while \code{points} is \code{osm_points}. Needed only to calculate
+time delays at traffic lights.}
 }
 \value{
 A \code{data.frame} of edges representing the street network, with
 distances in kilometres, along with a column of graph component numbers.
 }
 \description{
-Weight (or re-weight) an \code{sf}-formatted OSM street network according to
-a named routino profile, selected from (foot, horse, wheelchair, bicycle,
-moped, motorcycle, motorcar, goods, hgv, psv).
+Weight (or re-weight) an \pkg{sf} or \code{SC} (\code{silicate})-formatted OSM street
+network according to a named routino profile, selected from (foot, horse,
+wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
@@ -66,12 +73,12 @@ and "wheelchair". Railway routing can be implemented with
 the separate function \link{weight_railway}.
 
 Graphs weighted for time-based routing (that is, with \code{times = TRUE})
-are fundementally different from the default for distance-based routing.
+are fundamentally different from the default for distance-based routing.
 Distances in the latter case are \emph{shortest} distances weighted for
 the particular mode of transport specified in \code{wt_profile}. Time-based
-routing requires additional calcualtion of turn angles (along with
+routing requires additional calculation of turn angles (along with
 differential speeds along different kinds of ways), represented by additional
-edges describing turns of different angles through each intersetion. The
+edges describing turns of different angles through each intersection. The
 result of \code{weight_streetnet(..., times = TRUE)} should thus \emph{only} be
 used to submit to the \link{dodgr_times} function, and not for any other
 \code{dodgr} functions nor forms of network analysis.
