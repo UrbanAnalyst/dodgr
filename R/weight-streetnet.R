@@ -223,6 +223,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
 
+    graph <- add_extra_sf_columns (graph, x)
+
     attr (graph, "turn_penalty") <- FALSE
 
     return (graph)
@@ -348,6 +350,42 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     }
 
     return (graph)
+}
+
+add_extra_sf_columns <- function (graph, x)
+{
+    hi <- match ("highway", names (graph))
+    if (is.na (hi))
+    {
+        hi <- ncol (graph)
+        index2 <- NULL
+    } else
+        index2 <- (hi + 1):ncol (graph)
+
+    keep_types = c ("oneway", "oneway:bicycle", "lanes",
+                    "maxspeed", "surface", "cobblestone")
+    keep_df <- array (NA_character_,
+                      dim = c (nrow (graph), length (keep_types)))
+    nms <- c (names (graph) [1:hi], keep_types, names (graph) [index2])
+    graph <- cbind (graph [, 1:hi],
+                    data.frame (keep_df, stringsAsFactors = FALSE),
+                    graph [, index2])
+    names (graph) <- nms
+
+    row_index <- match (graph$way_id, x$osm_id)
+    col_index_x <- match (keep_types, names (x))
+    keep_types <- keep_types [which (!is.na (col_index_x))]
+    col_index_x <- col_index_x [which (!is.na (col_index_x))]
+    col_index_graph <- match (keep_types, names (graph))
+
+    x [[attr (x, "sf_column")]] <- NULL
+    x <- data.frame (x, stringsAsFactors = FALSE)
+    # that still sometimes produces factors, so:
+    for (i in seq (ncol (x)))
+        x [, i] <- paste0 (x [, i])
+    graph [, col_index_graph] <- x [row_index, col_index_x]
+
+    convert_hw_types_to_bool (graph)
 }
 
 # ********************************************************************
