@@ -81,14 +81,16 @@ test_that("no geom rownames", {
     hw1 <- weight_streetnet (h2)
     expect_true (!identical (h2, hw1))
     expect_equal (ncol (hw0), 19) # has way_id column
-    expect_equal (ncol (hw1), 18) # no way_id
-    indx0 <- which (!names (hw0) %in% c ("from_id", "to_id", "way_id", "component"))
+    expect_equal (ncol (hw1), 12) # no way_id, no extra OSM columns
+    indx0 <- which (!names (hw0) %in%
+                    c ("from_id", "to_id", "way_id", "component",
+                       "oneway", "oneway_bicycle", "lanes", "maxspeed",
+                       "surface", "cobblestone"))
     indx1 <- which (!names (hw1) %in% c ("from_id", "to_id", "component"))
-    #expect_identical (hw0 [, indx0], hw1 [, indx1])
+    expect_identical (hw0 [, indx0], hw1 [, indx1])
     # components are not identical because ones of equal size are assigned
     # random numbers, but all other columns remain identical:
     # geom_num, edge_id, lon/lat values, d, d_weighted, and highway
-    # TODO: Fix this text and turn back on!
 })
 
 test_that("keep cols", {

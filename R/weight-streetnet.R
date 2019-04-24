@@ -187,6 +187,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
         x <- remap_way_types (x, wt_profile)
 
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
+    classes <- class (graph)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
@@ -213,11 +214,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     if (is.null (rownames (as.matrix (x$geometry [[1]]))))
         graph <- rownames_from_xy (graph)
 
-    # get component numbers for each edge
-    class (graph) <- c (class (graph), "dodgr_streetnet")
     graph <- dodgr_components (graph)
 
-    # And finally, re-insert keep_cols:
     if (length (keep_cols) > 0)
         graph <- reinsert_keep_cols (x, graph, keep_cols)
 
@@ -225,6 +223,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph <- add_extra_sf_columns (graph, x)
 
+    class (graph) <- c (classes, "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
     return (graph)
@@ -354,6 +353,9 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
 
 add_extra_sf_columns <- function (graph, x)
 {
+    if (!"way_id" %in% names (graph)) # only works for OSM data
+        return (graph)
+
     hi <- match ("highway", names (graph))
     if (is.na (hi))
     {
