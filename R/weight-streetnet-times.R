@@ -133,7 +133,7 @@ wt_lanes_surface <- function (graph, wt_profile)
 }
 
 # Convert weighted distances in metres to time in seconds
-sc_edge_time <- function (graph, wt_profile, x)
+calc_edge_time <- function (graph, wt_profile)
 {
     # no visible binding messages:
     object_ <- NULL

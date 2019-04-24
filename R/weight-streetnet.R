@@ -413,7 +413,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
         weight_sc_edges (wt_profile) %>%                # add d_weighted col
         wt_lanes_surface (wt_profile) %>%               # modify d_weighted
-        sc_edge_time (wt_profile, x) %>%                # add time
+        sc_edge_time (wt_profile) %>%                   # add time
         sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
