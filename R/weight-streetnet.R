@@ -23,20 +23,22 @@
 #' \emph{distances} (see Note).
 #' @param left_side Does traffic travel on the left side of the road (`TRUE`) or
 #' the right side (`FALSE`)? - affects times only.
-#' @param osm_points For `sf`-formatted data from Open Street Map, the points
-#' associated with the `LINESTRING` objects, `x` - for `osmdata` objects, `x` is
-#' simply `osm_lines`, while `points` is `osm_points`. Needed only to calculate
-#' time delays at traffic lights.
 #'
 #' @return A `data.frame` of edges representing the street network, with
-#' distances in kilometres, along with a column of graph component numbers.
+#' distances in metres and times in seconds, along with a column of graph
+#' component numbers. Times for \pkg{sf}-formatted street networks are only
+#' approximate, and do not take into account traffic lights, turn angles, or
+#' elevation changes. Times for \pkg{sc}-formatted street networks take into
+#' account all of these factors, with elevation changes automatically taken into
+#' account for networks generated with the \pkg{osmdata} function
+#' `osm_elevation()`.
 #'
 #' @note Names for the `wt_profile` parameter are taken from
-#' \link{weighting_profiles}, which is a `data.frame` of weights for
-#' different modes of transport. Current modes included there are "bicycle",
-#' "foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
-#' and "wheelchair". Railway routing can be implemented with
-#' the separate function \link{weight_railway}.
+#' \link{weighting_profiles}, which is a list including a `data.frame` also
+#' called `weighting_profiles` of weights for different modes of transport.
+#' Current modes included there are "bicycle", "foot", "goods", "hgv", "horse",
+#' "moped", "motorcar", "motorcycle", "psv", and "wheelchair". Railway routing
+#' can be implemented with the separate function \link{weight_railway}.
 #'
 #' @note Graphs weighted for time-based routing (that is, with `times = TRUE`)
 #' are fundamentally different from the default for distance-based routing.
@@ -83,8 +85,7 @@
 weight_streetnet <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, times = FALSE,
-                              left_side = FALSE,
-                              osm_points = NULL)
+                              left_side = FALSE)
 {
     UseMethod ("weight_streetnet")
 }
@@ -94,8 +95,7 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, times = FALSE,
-                              left_side = FALSE,
-                              osm_points = NULL)
+                              left_side = FALSE)
 {
     stop ("Unknown class")
 }
@@ -116,8 +116,7 @@ way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, times = FALSE,
-                              left_side = FALSE,
-                              osm_points = NULL)
+                              left_side = FALSE)
 {
     if (times)
         stop ("Time-based weighting only currently implemented for street network",
@@ -416,8 +415,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
                                                         id_col = "osm_id",
                                                         keep_cols = NULL,
                                                         times = FALSE,
-                                                        left_side = FALSE,
-                                                        osm_points = NULL)
+                                                        left_side = FALSE)
 {
     requireNamespace ("geodist")
     requireNamespace ("dplyr")
@@ -428,7 +426,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
         weight_sc_edges (wt_profile) %>%                # add d_weighted col
         wt_lanes_surface (wt_profile) %>%               # modify d_weighted
-        calc_edge_time (wt_profile) %>%                   # add time
+        calc_edge_time (wt_profile) %>%                 # add time
         sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)

@@ -9,19 +9,19 @@
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
   id_col = "osm_id", keep_cols = NULL, times = FALSE,
-  left_side = FALSE, osm_points = NULL)
+  left_side = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE, osm_points = NULL)
+  times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE, osm_points = NULL)
+  times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
   type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE, osm_points = NULL)
+  times = FALSE, left_side = FALSE)
 }
 \arguments{
 \item{x}{A street network represented either as \code{sf} \code{LINESTRING}
@@ -49,15 +49,16 @@ indices of desired columns.}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
 the right side (\code{FALSE})? - affects times only.}
-
-\item{osm_points}{For \code{sf}-formatted data from Open Street Map, the points
-associated with the \code{LINESTRING} objects, \code{x} - for \code{osmdata} objects, \code{x} is
-simply \code{osm_lines}, while \code{points} is \code{osm_points}. Needed only to calculate
-time delays at traffic lights.}
 }
 \value{
 A \code{data.frame} of edges representing the street network, with
-distances in kilometres, along with a column of graph component numbers.
+distances in metres and times in seconds, along with a column of graph
+component numbers. Times for \pkg{sf}-formatted street networks are only
+approximate, and do not take into account traffic lights, turn angles, or
+elevation changes. Times for \pkg{sc}-formatted street networks take into
+account all of these factors, with elevation changes automatically taken into
+account for networks generated with the \pkg{osmdata} function
+\code{osm_elevation()}.
 }
 \description{
 Weight (or re-weight) an \pkg{sf} or \code{SC} (\code{silicate})-formatted OSM street
@@ -66,11 +67,11 @@ wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
-\link{weighting_profiles}, which is a \code{data.frame} of weights for
-different modes of transport. Current modes included there are "bicycle",
-"foot", "goods", "hgv", "horse", "moped", "motorcar", "motorcycle", "psv",
-and "wheelchair". Railway routing can be implemented with
-the separate function \link{weight_railway}.
+\link{weighting_profiles}, which is a list including a \code{data.frame} also
+called \code{weighting_profiles} of weights for different modes of transport.
+Current modes included there are "bicycle", "foot", "goods", "hgv", "horse",
+"moped", "motorcar", "motorcycle", "psv", and "wheelchair". Railway routing
+can be implemented with the separate function \link{weight_railway}.
 
 Graphs weighted for time-based routing (that is, with \code{times = TRUE})
 are fundamentally different from the default for distance-based routing.

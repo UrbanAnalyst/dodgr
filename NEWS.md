@@ -1,12 +1,14 @@
-# v0.1.3.002
+# v0.1.3.003
 Major changes:
+- `weight_streetnet` function now returns edge times for all Open Street Map
+  networks extracted with the `osmdata` package.
+- weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
 - New `dodgr_times` function to calculate journey times, including differential
   speeds and penalties for intersections and traffic lights.
 - `dodgr::weighting_profiles` data changed from single `data.frame` to list with
   additional parameters determining speeds and time penalties for `dodgr_times`
   function; former `data.frame` is now
   `dodgr::weighting_profiles$weighting_profiles`.
-- weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
 
 Minor changes:
 - Bug fix with dodgr_to_igraph to create proper *weighted* igraph

@@ -215,37 +215,18 @@ sc_traffic_lights <- function (graph, wt_profile, x)
     wait <- w$traffic_lights [w$name == wt_profile]
 
     # first for intersections marked as crossings
-    crossings <- traffic_light_objs_ped (x) # way IDs
+    crossings <- traffic_light_objs (x) # way IDs
     objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
     oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
-    index <- match (oles$edge_, graph$edge_)
+    # Then the actual nodes with the traffic lights
+    nodes <- traffic_signal_nodes (x)
+    # Increment waiting times for edges ending at those nodes 
+    index <- which (graph$edge_ %in% oles$edge_ &
+                    graph$.vx1 %in% nodes)
     graph$time [index] <- graph$time [index] + wait
 
     # then all others with nodes simply marked as traffic lights - match
     # those to *start* nodes and simply add the waiting time
-    nodes <- traffic_signal_nodes (x)
-    index2 <- which (graph$.vx0 %in% nodes &
-                     !graph$.vx0 %in% graph$.vx0 [index])
-    graph$time [index2] <- graph$time [index2] + wait
-    
-    return (graph)
-}
-
-sf_traffic_lights <- function (graph, wt_profile, x)
-{
-    w <- dodgr::weighting_profiles$penalties
-    wait <- w$traffic_lights [w$name == wt_profile]
-
-    # first for intersections marked as crossings
-    crossings <- traffic_light_objs_ped (x) # way IDs
-    objs <- x$object %>% dplyr::filter (object_ %in% crossings$crossings)
-    oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
-    index <- match (oles$edge_, graph$edge_)
-    graph$time [index] <- graph$time [index] + wait
-
-    # then all others with nodes simply marked as traffic lights - match
-    # those to *start* nodes and simply add the waiting time
-    nodes <- traffic_signal_nodes (x)
     index2 <- which (graph$.vx0 %in% nodes &
                      !graph$.vx0 %in% graph$.vx0 [index])
     graph$time [index2] <- graph$time [index2] + wait
@@ -310,8 +291,8 @@ get_key_val_pair <- function (x, kv)
 
     xo <- lapply (kv, function (i)
                   dplyr::filter (x$object, key == i [1], value == i [2]) %>%
-                      dplyr::select (object_) %>%
-                      dplyr::pull (object_))
+                  dplyr::select (object_) %>%
+                  dplyr::pull (object_))
     xo <- table (do.call (c, xo))
 
     res <- NULL
@@ -331,13 +312,13 @@ get_key_val_pair_node <- function (x, kv)
 
     xo <- lapply (kv, function (i)
                   dplyr::filter (x$nodes, key == i [1], value == i [2]) %>%
-                      dplyr::select (vertex_) %>%
-                      dplyr::pull (vertex_))
+                  dplyr::select (vertex_) %>%
+                  dplyr::pull (vertex_))
     unique (unlist (xo))
 }
 
 # Get all OSM way IDs associated with traffic lights from osmdata_sc object x
-traffic_light_objs_ped <- function (x)
+traffic_light_objs <- function (x)
 {
     # 1. Traffic signal without intersection (e.g. before bridge), no pedestrian
     # crossing
