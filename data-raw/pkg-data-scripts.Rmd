@@ -103,63 +103,18 @@ Values adopted from the OSRM profiles, all in km / hr
 
 maxspeeds:
 ```{r}
-w <- weighting_profiles
-w$speeds <- NA
-w$speeds [w$name == "bicycle"] <- 15
-w$speeds [w$name == "bicycle" & w$way == "primary"] <- 7.5
-w$speeds [w$name == "bicycle" & w$way == "secondary"] <- 12
-w$speeds [w$name == "bicycle" & w$way == "tertiary"] <- 12
-w$speeds [w$name == "bicycle" & w$way == "primary_link"] <- 7.5
-w$speeds [w$name == "bicycle" & w$way == "secondary_link"] <- 9.75
-w$speeds [w$name == "bicycle" & w$way == "tertiary_link"] <- 12
-w$speeds [w$name == "bicycle" & w$way == "track"] <- 12
-w$speeds [w$name == "bicycle" & w$way == "path"] <- 12
-
-w$speeds [w$name == "foot"] <- 5
-
-w$speeds [w$name == "wheelchair"] <- 5
-
-w$speeds [w$name == "horse"] <- 6.4
-
-w$speeds [w$name == "motorcar"] <- 36
-w$speeds [w$name == "motorcar" & w$way == "motorway"] <- 90
-w$speeds [w$name == "motorcar" & w$way == "motorway_link"] <- 45
-w$speeds [w$name == "motorcar" & w$way == "trunk"] <- 85
-w$speeds [w$name == "motorcar" & w$way == "trunk_link"] <- 40
-w$speeds [w$name == "motorcar" & w$way == "primary"] <- 65
-w$speeds [w$name == "motorcar" & w$way == "primary_link"] <- 30
-w$speeds [w$name == "motorcar" & w$way == "secondary"] <- 55
-w$speeds [w$name == "motorcar" & w$way == "secondary_link"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "tertiary"] <- 40
-w$speeds [w$name == "motorcar" & w$way == "tertiary_link"] <- 20
-w$speeds [w$name == "motorcar" & w$way == "unclassified"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "residential"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "living_street"] <- 10
-w$speeds [w$name == "motorcar" & w$way == "service"] <- 15
-
-# Then just repeat those for all other motorized modes:
-w$speeds [w$name == "motorcycle"] <- w$speeds [w$name == "motorcar"]
-w$speeds [w$name == "goods"] <- w$speeds [w$name == "motorcar"]
-w$speeds [w$name == "hgv"] <- w$speeds [w$name == "motorcar"]
-w$speeds [w$name == "psv"] <- w$speeds [w$name == "motorcar"]
-
-w$speeds [w$name == "moped"] <- 50
-w$speeds [w$name == "moped" & w$way == "motorway"] <- 50
-w$speeds [w$name == "motorcar" & w$way == "motorway_link"] <- 50
-w$speeds [w$name == "motorcar" & w$way == "trunk"] <- 50
-w$speeds [w$name == "motorcar" & w$way == "trunk_link"] <- 40
-w$speeds [w$name == "motorcar" & w$way == "primary"] <- 50
-w$speeds [w$name == "motorcar" & w$way == "primary_link"] <- 30
-w$speeds [w$name == "motorcar" & w$way == "secondary"] <- 50
-w$speeds [w$name == "motorcar" & w$way == "secondary_link"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "tertiary"] <- 40
-w$speeds [w$name == "motorcar" & w$way == "tertiary_link"] <- 20
-w$speeds [w$name == "motorcar" & w$way == "unclassified"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "residential"] <- 25
-w$speeds [w$name == "motorcar" & w$way == "living_street"] <- 10
-w$speeds [w$name == "motorcar" & w$way == "service"] <- 15
-
-weighting_profiles <- w
+speeds <- rbind (c ("bicycle", 15),
+                 c ("foot", 5),
+                 c ("wheelchair", 5),
+                 c ("horse", 6.4),
+                 c ("moped", 26),
+                 c ("motorcar", 36),
+                 c ("motorcycle", 36),
+                 c ("goods", 36),
+                 c ("hgv", 36),
+                 c ("psv", 36))
+speeds <- data.frame ("name" = speeds [, 1],
+                      "speed" = as.numeric (speeds [, 2]))
 ```
 
 surface speeds as proportions of full speed:
@@ -240,6 +195,7 @@ recommended "Short cycle length" of 60-90 seconds
 # change percentage value to 0-1
 weighting_profiles$value <- weighting_profiles$value / 100
 weighting_profiles <- list ("weighting_profiles" = weighting_profiles,
+                            "speeds" = speeds,
                             "surface_speeds" = surface_speeds,
                             "penalties" = penalties)
 usethis::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')

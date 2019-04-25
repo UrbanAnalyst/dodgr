@@ -147,7 +147,8 @@ calc_edge_time <- function (graph, wt_profile)
     # and speeds in m/s = s * 1000 / 3600
     for (i in seq (nrow (w)))
     {
-        speed_m_per_s <- w$speeds [i] * 1000 / 3600 # m/h -> m/s
+        s <- dodgr::weighting_profiles$speeds
+        speed_m_per_s <- s$speed [s$name == wt_profile] * 1000 / 3600 # m/h -> m/s
         index <- which (graph$highway == w$way [i])
         graph$time [index] <- graph$d [index] / speed_m_per_s
     }

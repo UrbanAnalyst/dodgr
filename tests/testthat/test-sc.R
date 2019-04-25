@@ -97,8 +97,8 @@ test_that("dodgr_times", {
               t1 <- dodgr_times (net_sc, from = from, to = to)
               r2 <- cor (as.numeric (d), as.numeric (t1),
                          use = "pairwise.complete.obs")
-              expect_true (r2 < 1)
-              expect_true (r2 > 0.95)
+              expect_true (r2 == 1)
+              # with no turn angles, the should be just scaled versions
 
               # calculate times with turning angles, such that resultant network
               # includes compound junction edges

@@ -60,14 +60,14 @@ NULL
 #'
 #' Collection of weighting profiles used to adjust the routing process to
 #' different means of transport. Modified from data taken from the Routino
-#' project, with additional rows at end of table for waiting times in seconds at
-#' traffic lights.
+#' project, with additional tables for average speeds, dependence of speed on
+#' type of surface, and waiting times in seconds at traffic lights.
 #'
 #' @name weighting_profiles
 #' @docType data
 #' @keywords datasets
-#' @format `data.frame` with profile names, means of transport and
-#' weights.
+#' @format List of `data.frame` objects with profile names, means of transport
+#' and weights.
 #' @references <https://www.routino.org/xml/routino-profiles.xml>
 NULL
 
