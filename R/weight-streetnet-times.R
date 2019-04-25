@@ -204,6 +204,7 @@ times_by_incline <- function (graph, wt_profile)
         # http://www.sportsci.org/jour/9804/dps.html
         # downhill cycling speed ~ sqrt (slope)
     }
+    return (graph)
 }
 
 sc_traffic_lights <- function (graph, wt_profile, x)

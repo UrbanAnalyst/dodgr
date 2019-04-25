@@ -1,8 +1,7 @@
 ---
-title: "Street network weighting and dodgr_times"
+title: "Street networks and time-based routing"
 author: "Mark Padgham"
 date: "`r Sys.Date()`"
-bibliography: dodgr.bib
 output: 
     html_document:
         toc: true
@@ -22,6 +21,11 @@ vignette: >
 library (dodgr)
 ```
 
-# 1 The `dodgr_times` function
+# 1 Street Networks and Time-Based Routing
 
-... coming soon ...
+This vignette describes the use of the `dodgr` package for routing through
+street networks, specifically for Open Street Map (OSM) networks extracted with
+the [`osmdata` package](https://github.com/ropensci/osmdata), or via the `dodgr`
+function
+[`dodgr_streetnet()`](https://atfutures.github.io/dodgr/reference/dodgr_streetnet.html).
+
