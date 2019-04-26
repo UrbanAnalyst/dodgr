@@ -106,6 +106,7 @@ find_xy_col <- function (graph, indx, x = TRUE)
 #' @noRd
 find_spatial_cols <- function (graph)
 {
+    graph <- tbl_to_df (graph)
 
     fr_col <- find_fr_col (graph)
     to_col <- find_to_col (graph)
@@ -149,6 +150,7 @@ find_spatial_cols <- function (graph)
 find_d_col <- function (graph)
 {
     d_col <- which (tolower (substring (names (graph), 1, 1)) == "d" &
+                    tolower (substring (names (graph), 1, 2)) != "dz" &
                     tolower (substring (names (graph), 2, 2)) != "w" &
                     tolower (substring (names (graph), 2, 2)) != "_")
     if (length (d_col) != 1)

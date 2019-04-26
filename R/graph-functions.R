@@ -50,6 +50,7 @@ dodgr_graph_cols <- function (graph)
         if (is_graph_spatial (graph))
         {
             spcols <- find_spatial_cols (graph)
+            graph <- tbl_to_df (graph)
 
             if (!(all (apply (graph [, spcols$fr_col], 2, is.numeric)) |
                   all (apply (graph [, spcols$to_tol], 2, is.numeric))))
@@ -69,7 +70,11 @@ dodgr_graph_cols <- function (graph)
 
     time_col <- grep ("time", nms)
     if (length (time_col) != 1)
-        time_col <- NA
+    {
+        time_col <- grep ("time$", nms)
+        if (length (time_col) != 1)
+            time_col <- NA
+    }
 
     ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col,
               xfr, yfr, xto, yto, component)

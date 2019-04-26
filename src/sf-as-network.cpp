@@ -1,7 +1,7 @@
 #include "sf-as-network.h"
 
 // Haversine great circle distance between two points
-double haversine (double x1, double y1, double x2, double y2)
+double sf::haversine (double x1, double y1, double x2, double y2)
 {
     double xd = (x2 - x1) * M_PI / 180.0;
     double yd = (y2 - y1) * M_PI / 180.0;
@@ -18,16 +18,27 @@ double haversine (double x1, double y1, double x2, double y2)
 //' @param sf_lines An sf collection of LINESTRING objects
 //' @param pr Rcpp::DataFrame containing the weighting profile
 //'
-//' @return Rcpp::List objects of OSM data
+//' @return Rcpp::List objects of OSM data, one matrix of numeric and one of
+//' character values. The former contain 7 columns:
+//' 1. sf geom index
+//' 2. from longitude
+//' 3. from latitude
+//' 4. to longitude
+//' 5. to latitude
+//' 6. distance
+//' 7. weighted_distance
+//' The character value matrix  has 4 columns of:
+//' 1. from ID
+//' 2. to ID
+//' 3. highway type
+//' 4. OSM way ID
 //'
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         const Rcpp::DataFrame &pr)
 {
-    std::map <std::string, double> profile;
-    //Rcpp::StringVector hw = pr [1];
-    //Rcpp::NumericVector val = pr [2];
+    std::unordered_map <std::string, double> profile;
     Rcpp::StringVector hw = pr ["way"];
     Rcpp::NumericVector val = pr ["value"];
     if (hw.size () > 1)
@@ -38,15 +49,12 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
 
     Rcpp::CharacterVector nms = sf_lines.attr ("names");
     int one_way_index = -1;
-    int one_way_bicycle_index = -1;
     int highway_index = -1;
     int geom_index = -1;
     for (R_xlen_t i = 0; i < nms.size (); i++)
     {
         if (nms [i] == "oneway")
             one_way_index = static_cast <int> (i);
-        if (nms [i] == "oneway.bicycle")
-            one_way_bicycle_index = static_cast <int> (i);
         if (nms [i] == "highway")
             highway_index = static_cast <int> (i);
         if (nms [i] == "geometry")
@@ -54,27 +62,18 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     }
     if (geom_index < 0)
         throw std::runtime_error ("sf_lines have no geometry component");
+
     Rcpp::CharacterVector ow; // init length = 0
-    Rcpp::CharacterVector owb;
     Rcpp::CharacterVector highway;
+    bool has_oneway = false;
     if (one_way_index >= 0)
+    {
         ow = sf_lines [one_way_index];
-    if (one_way_bicycle_index >= 0)
-        owb = sf_lines [one_way_bicycle_index];
+        has_oneway = true;
+    }
     if (highway_index >= 0)
         highway = sf_lines [highway_index];
-    if (ow.size () > 0)
-    {
-        if (ow.size () == owb.size ())
-        {
-            for (R_xlen_t i = 0; i != ow.size (); ++ i)
-                if (ow [i] == "NA" && owb [i] != "NA")
-                    ow [i] = owb [i];
-        } else if (owb.size () > ow.size ())
-            ow = owb;
-    }
 
-    //Rcpp::List geoms = sf_lines [nms.size () - 1];
     Rcpp::List geoms = sf_lines [geom_index];
 
     std::vector <std::string> att_names = geoms.attributeNames ();
@@ -98,14 +97,12 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         Rcpp::NumericMatrix gi = (*g);
         size_t rows = static_cast <size_t> (gi.nrow () - 1);
         nrows += rows;
-        if (ngeoms < static_cast <unsigned int> (ow.size ()))
-        {
-            //if (!(ow [ngeoms] == "yes" || ow [ngeoms] == "-1"))
-            if (ow [ngeoms] == "yes" || ow [ngeoms] == "true")
-                isOneWay [ngeoms] = true;
-            else
-                nrows += rows;
-        } else if (ow.size () == 0)
+        if (has_oneway && (
+                    ow [ngeoms] == "yes" || ow [ngeoms] == "true" ||
+                    ow [ngeoms] == "Yes" || ow [ngeoms] == "True" ||
+                    ow [ngeoms] == "YES" || ow [ngeoms] == "TRUE"))
+            isOneWay [ngeoms] = true;
+        else
             nrows += rows;
         ngeoms ++;
     }
@@ -150,42 +147,17 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         for (unsigned int i = 1;
                 i < static_cast <unsigned int> (gi.nrow ()); i ++)
         {
-            double d = haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
+            double d = sf::haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
                     gi (i, 1));
-            nmat (nrows, 0) = ngeoms;
-            nmat (nrows, 1) = gi (i-1, 0);
-            nmat (nrows, 2) = gi (i-1, 1);
-            nmat (nrows, 3) = gi (i, 0);
-            nmat (nrows, 4) = gi (i, 1);
-            nmat (nrows, 5) = d;
-            if (hw_factor > 0.0)
-                nmat (nrows, 6) = d * hw_factor;
-            else
-                nmat (nrows, 6) = -1.0;
-            idmat (nrows, 0) = rnms (i-1);
-            idmat (nrows, 1) = rnms (i);
-            idmat (nrows, 2) = hway;
-            if (has_names)
-                idmat (nrows, 3) = way_names [ngeoms];
-            nrows ++;
+            sf::fill_one_row (ngeoms, gi, rnms, d, hw_factor, hway,
+                    has_names, way_names, i, nrows, false, nmat, idmat);
+            nrows++;
+
             if (!isOneWay [ngeoms])
             {
-                nmat (nrows, 0) = ngeoms;
-                nmat (nrows, 1) = gi (i, 0);
-                nmat (nrows, 2) = gi (i, 1);
-                nmat (nrows, 3) = gi (i-1, 0);
-                nmat (nrows, 4) = gi (i-1, 1);
-                nmat (nrows, 5) = d;
-                if (hw_factor > 0.0)
-                    nmat (nrows, 6) = d * hw_factor;
-                else
-                    nmat (nrows, 6) = -1.0;
-                idmat (nrows, 0) = rnms (i);
-                idmat (nrows, 1) = rnms (i-1);
-                idmat (nrows, 2) = hway;
-                if (has_names)
-                    idmat (nrows, 3) = way_names [ngeoms];
-                nrows ++;
+                sf::fill_one_row (ngeoms, gi, rnms, d, hw_factor, hway,
+                        has_names, way_names, i, nrows, true, nmat, idmat);
+                nrows++;
             }
         }
         ngeoms ++;
@@ -194,6 +166,39 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     return Rcpp::List::create (
             Rcpp::Named ("numeric_values") = nmat,
             Rcpp::Named ("character_values") = idmat);
+}
+
+void sf::fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
+        const Rcpp::CharacterVector &rnms,
+        const double &d, const double &hw_factor,
+        const std::string &hway, const bool &has_names,
+        const std::vector <std::string> &way_names,
+        const size_t &grownum, const size_t &rownum, const bool &reverse,
+        Rcpp::NumericMatrix &nmat, Rcpp::CharacterMatrix &idmat)
+{
+    size_t i_min_1 = grownum - 1, i = grownum;
+    if (reverse)
+    {
+        i_min_1 = grownum;
+        i = grownum - 1;
+    }
+
+    nmat (rownum, 0) = ngeoms;
+    nmat (rownum, 1) = gi (i_min_1, 0);
+    nmat (rownum, 2) = gi (i_min_1, 1);
+    nmat (rownum, 3) = gi (i, 0);
+    nmat (rownum, 4) = gi (i, 1);
+    nmat (rownum, 5) = d;
+    if (hw_factor > 0.0)
+        nmat (rownum, 6) = d * hw_factor;
+    else
+        nmat (rownum, 6) = -1.0;
+
+    idmat (rownum, 0) = rnms (i_min_1);
+    idmat (rownum, 1) = rnms (i);
+    idmat (rownum, 2) = hway;
+    if (has_names)
+        idmat (rownum, 3) = way_names [ngeoms];
 }
 
 struct OnePointIndex : public RcppParallel::Worker

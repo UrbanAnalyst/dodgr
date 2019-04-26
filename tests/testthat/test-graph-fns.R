@@ -80,13 +80,12 @@ test_that("no geom rownames", {
     h2$geometry <- g0
     hw1 <- weight_streetnet (h2)
     expect_true (!identical (h2, hw1))
-    expect_equal (ncol (hw0), 18) # has way_id column
-    expect_equal (ncol (hw1), 13) # no way_id, no extra OSM columns
-    indx0 <- which (!names (hw0) %in%
-                    c ("from_id", "to_id", "way_id", "component",
-                       "oneway", "oneway_bicycle", "lanes", "maxspeed",
-                       "surface", "cobblestone"))
-    indx1 <- which (!names (hw1) %in% c ("from_id", "to_id", "component"))
+    expect_equal (ncol (hw0), 15) # has way_id column
+    expect_equal (ncol (hw1), 14) # no way_id
+    indx0 <- which (!names (hw0) %in% c ("from_id", "to_id", "way_id",
+                                         "component", "time", "time_weighted"))
+    indx1 <- which (!names (hw1) %in% c ("from_id", "to_id", "way_id",
+                                         "component", "time", "time_weighted"))
     expect_identical (hw0 [, indx0], hw1 [, indx1])
     # components are not identical because ones of equal size are assigned
     # random numbers, but all other columns remain identical:
@@ -95,9 +94,9 @@ test_that("no geom rownames", {
 
 test_that("keep cols", {
     hw0 <- weight_streetnet (hampi)
-    expect_equal (ncol (hw0), 18)
+    expect_equal (ncol (hw0), 15)
     hw1 <- weight_streetnet (hampi, keep_cols = "foot")
-    expect_equal (ncol (hw1), 19)
+    expect_equal (ncol (hw1), 16)
     expect_true ("foot" %in% names (hw1))
     expect_false ("foot" %in% names (hw0))
 })

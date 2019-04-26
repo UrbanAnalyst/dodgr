@@ -103,87 +103,122 @@ weight_sc_edges <- function (graph, wt_profile)
         dplyr::select (-value)
 }
 
-# adjust weighted distances according to numbers of lanes and surfaces
-# NOTE: This is currently hard-coded for active transport only, and will not
-# work for anything else
-wt_lanes_surface <- function (graph, wt_profile)
+# Set maximum speed for each edge.
+set_maxspeed <- function (graph, wt_profile)
 {
-    # no visible binding notes:
-    lanes <- maxspeed <- surface <- NULL
+    if (!"maxspeed" %in% names (graph))
+        graph$maxspeed <- NA_real_
+    if (!"highway" %in% names (graph))
+        return (graph)
 
-    if (wt_profile %in% c ("foot", "bicycle"))
+    ms_numeric <- rep (NA_real_, nrow (graph))
+    index <- grep ("mph", graph$maxspeed)
+    ms_numeric [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
+                                            graph$maxspeed [index]))
+    ms_numeric [index] <- ms_numeric [index] * 1.609344
+    index <- seq (nrow (graph)) [!(seq (nrow (graph)) %in% index)]
+    ms_numeric [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
+                                            graph$maxspeed [index]))
+    graph$maxspeed <- ms_numeric
+
+    wp <- dodgr::weighting_profiles$weighting_profiles
+    wp <- wp [wp$name == wt_profile, ]
+
+    wp_index <- match (graph$highway, wp$way)
+    graph_index <- which (!is.na (wp_index))
+    wp_index <- wp_index [graph_index]
+    maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
+    maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
+    graph$maxspeed <- apply (maxspeed, 1, function (i) 
+                             ifelse (all (is.na (i)),
+                                     NA_real_,
+                                     min (i, na.rm = TRUE)))
+
+    if (wt_profile %in% c ("horse", "wheelchair") |
+        !"surface" %in% names (graph))
+        return (graph)
+
+    s <- dodgr::weighting_profiles$surface_speeds
+    s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
+    surf_vals <- unique (graph$surface [graph$surface != "NA"])
+    surf_speeds <- s$max_speed [match (surf_vals, s$value)]
+    surf_vals <- surf_vals [!is.na (surf_speeds)]
+    surf_speeds <- surf_speeds [!is.na (surf_speeds)]
+
+    surf_index <- match (graph$surface, surf_vals)
+    graph_index <- which (!is.na (surf_index))
+    surf_index <- surf_index [graph_index]
+    maxspeed <- cbind (as.numeric (graph$maxspeed),
+                       rep (NA_real_, nrow (graph)))
+    maxspeed [graph_index, 2] <- surf_speeds [surf_index]
+    graph$maxspeed <- apply (maxspeed, 1, function (i) 
+                             ifelse (all (is.na (i)),
+                                     NA_real_,
+                                     min (i, na.rm = TRUE)))
+
+    graph$surface <- NULL
+    
+    return (graph)
+}
+
+# adjust weighted distances according to numbers of lanes 
+weight_by_num_lanes <- function (graph, wt_profile)
+{
+    # only weight these profiles:
+    profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
+    if (!(wt_profile %in% profile_names | "lanes" %in% names (graph)))
+        return (graph)
+
+    lns <- c (4, 5, 6, 7, 8)
+    wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
+    for (i in seq (lns))
     {
-        # increase weighted distance according to numbers of lanes
-        lns <- c (4, 5, 6, 7, 8)
-        wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
-        for (i in seq (lns))
-        {
-            index <- which (graph$lanes == lns [i])
-            if (i == length (lns))
-                index <- which (graph$lanes >= lns [i])
-            graph$d_weighted [index] <- graph$d_weighted [index] * (1 + wts [i])
-        }
+        index <- which (graph$lanes == lns [i])
+        if (i == length (lns))
+            index <- which (graph$lanes >= lns [i])
+        graph$d_weighted [index] <- graph$d_weighted [index] * (1 + wts [i])
     }
 
-    if ("lanes" %in% names (graph)) graph$lanes <- NULL
-    if ("maxspeed" %in% names (graph)) graph$maxspeed <- NULL
-    #graph <- dplyr::select (graph, -c(lanes, maxspeed))
+    graph$lanes <- NULL
 
     return (graph)
 }
 
-# Convert weighted distances in metres to time in seconds
+# Convert distances in metres to time in seconds. Up to this point, distances
+# have been weighted for type of way (via
+# weighting_profiles$weighting_profiles), and there is a maxspeed column
+# reflecting profile values plus effect of different surfaces.
+# The time is distance scaled by maxspeed, and time_weighted is d_weighted
+# scaled by maxspeed
 calc_edge_time <- function (graph, wt_profile)
 {
-    # no visible binding messages:
-    object_ <- NULL
+    gr_cols <- dodgr_graph_cols (graph)
+    speed_m_per_s <- graph$maxspeed * 1000 / 3600 # maxspeeds are km/hr
+    graph$time <- graph [[gr_cols$d]] / speed_m_per_s
+    graph$time_weighted <- graph [[gr_cols$w]] / speed_m_per_s
 
-    graph$time <- NA_real_
-
-    # General times based on speed profile
-    w <- dodgr::weighting_profiles$weighting_profiles
-    w <- w [w$name == wt_profile, ]
-    # speeds are in km/h, but distances are in m. speeds in km/s = s / 3600,
-    # and speeds in m/s = s * 1000 / 3600
-    for (i in seq (nrow (w)))
+    if ("dz" %in% names (graph) & wt_profile %in% c ("foot", "bicycle"))
     {
-        s <- dodgr::weighting_profiles$speeds
-        speed_m_per_s <- s$speed [s$name == wt_profile] * 1000 / 3600 # m/h -> m/s
-        index <- which (graph$highway == w$way [i])
-        graph$time [index] <- graph$d [index] / speed_m_per_s
-    }
-
-    if (wt_profile %in% c ("foot", "bicycle"))
-    {
-        if ("dz" %in% names (graph))
             graph <- times_by_incline (graph, wt_profile)
-
-        speeds <- dodgr::weighting_profiles$surface_speeds
-        speeds <- speeds [speeds$name == wt_profile, ]
-        for (i in seq (nrow (speeds)))
-        {
-            index <- which (graph [[speeds$key [i] ]] ==
-                            graph [[speeds$value [i] ]])
-            if (length (index) > 0)
-                graph$time [index] <- graph$time [index] / speeds$speed [i]
-        }
     }
+    graph$maxspeed <- NULL
 
     return (graph)
 }
 
+# increase both real and weighted times according to elevation increases:
 times_by_incline <- function (graph, wt_profile)
 {
     if (wt_profile == "foot")
     {
         # Uses 
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
-        graph$time = 3600 * (graph$d_weighted / 1000) / 5 # 5km per hour
         if ("dz" %in% names (graph))
         {
             index <- which (graph$dz > 0)
             graph$time [index] <- graph$time [index] + graph$dz [index] / 10
-            graph$dz <- NULL
+            graph$time_weighted [index] <- graph$time_weighted [index] +
+                graph$dz [index] / 10
         }
 
     } else if (wt_profile == "bicycle")
@@ -193,13 +228,13 @@ times_by_incline <- function (graph, wt_profile)
         # The latter argues for a linear relationship with a reduction in speed
         # of "about 11% for every 1% change in steepness". For 0.01 to translate
         # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
-        graph$time = 3600 * (graph$d_weighted / 1000) / 12 # 12km per hour
         if ("dz" %in% names (graph))
         {
             index <- which (graph$dz > 0)
             graph$time [index] <- graph$time [index] * 
                 (1 + 11 * graph$dz [index] / graph$d [index])
-            graph$dz <- NULL
+            graph$time_weighted [index] <- graph$time_weighted [index] * 
+                (1 + 11 * graph$dz [index] / graph$d [index])
         }
         # ... TODO: Downhill
         # http://www.sportsci.org/jour/9804/dps.html
@@ -238,6 +273,11 @@ sc_traffic_lights <- function (graph, wt_profile, x)
 
 rm_duplicated_edges <- function (graph)
 {
+    gr_cols <- dodgr_graph_cols (graph)
+    ft <- graph [, c (gr_cols$from, gr_cols$to)]
+    index <- cbind (which (duplicated (ft)),
+                    which (duplicated (ft, fromLast = TRUE)))
+
     index <- cbind (which (duplicated (graph [, c (".vx0", ".vx1")])),
                     which (duplicated (graph [, c (".vx0", ".vx1")], fromLast = TRUE)))
     removes <- apply (index, 1, function (i)

@@ -167,6 +167,13 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             stop ("Please use the weight_railway function for railway routing.")
         } else
         {
+            if (wt_profile == "bicycle" & "oneway" %in% names (x))
+            {
+                if ("oneway.bicycle" %in% names (x))
+                    x$oneway <- x [["oneway.bicycle"]]
+                else if ("oneway:bicycle" %in% names (x))
+                    x$oneway <- x [["oneway:bicycle"]]
+            }
             wt_profile_name <- wt_profile
             profiles <- dodgr::weighting_profiles$weighting_profiles
             prf_names <- unique (profiles$name)
@@ -232,7 +239,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph <- add_extra_sf_columns (graph, x)
     if (!is.null (wt_profile_name))
-        graph <- wt_lanes_surface (graph, wt_profile_name) %>%
+        graph <- set_maxspeed (graph, wt_profile_name) %>%
+            weight_by_num_lanes (wt_profile_name) %>%
             calc_edge_time (wt_profile_name)
 
     class (graph) <- c (class (graph), "dodgr_streetnet")
@@ -373,11 +381,12 @@ add_extra_sf_columns <- function (graph, x)
     {
         hi <- ncol (graph)
         index2 <- NULL
-    } else
+    } else if (hi == ncol (graph))
+        index2 <- NULL
+    else
         index2 <- (hi + 1):ncol (graph)
 
-    keep_types = c ("oneway", "oneway:bicycle", "lanes",
-                    "maxspeed", "surface", "cobblestone")
+    keep_types = c ("lanes", "maxspeed", "surface")
     keep_df <- array (NA_character_,
                       dim = c (nrow (graph), length (keep_types)))
     nms <- c (names (graph) [1:hi], keep_types, names (graph) [index2])
@@ -399,7 +408,7 @@ add_extra_sf_columns <- function (graph, x)
         x [, i] <- paste0 (x [, i])
     graph [, col_index_graph] <- x [row_index, col_index_x]
 
-    convert_hw_types_to_bool (graph)
+    return (graph)
 }
 
 # ********************************************************************
@@ -425,7 +434,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         sc_edge_dist () %>%                             # append dist
         extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
         weight_sc_edges (wt_profile) %>%                # add d_weighted col
-        wt_lanes_surface (wt_profile) %>%               # modify d_weighted
+        set_maxspeed (wt_profile) %>%                   # modify d_weighted
         calc_edge_time (wt_profile) %>%                 # add time
         sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
@@ -436,7 +445,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
     if (times)
     {
         graph <- join_junctions_to_graph (graph, wt_profile, left_side)
-        graph$d_weighted <- graph$time
+        graph$d_weighted <- graph$time_weighted
         attr (graph, "turn_penalty") <- get_turn_penalty (wt_profile)
     }
 

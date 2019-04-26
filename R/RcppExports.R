@@ -277,7 +277,20 @@ rcpp_gen_hash <- function(n, hash_len) {
 #' @param sf_lines An sf collection of LINESTRING objects
 #' @param pr Rcpp::DataFrame containing the weighting profile
 #'
-#' @return Rcpp::List objects of OSM data
+#' @return Rcpp::List objects of OSM data, one matrix of numeric and one of
+#' character values. The former contain 7 columns:
+#' 1. sf geom index
+#' 2. from longitude
+#' 3. from latitude
+#' 4. to longitude
+#' 5. to latitude
+#' 6. distance
+#' 7. weighted_distance
+#' The character value matrix  has 4 columns of:
+#' 1. from ID
+#' 2. to ID
+#' 3. highway type
+#' 4. OSM way ID
 #'
 #' @noRd
 rcpp_sf_as_network <- function(sf_lines, pr) {

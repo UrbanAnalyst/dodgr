@@ -35,6 +35,9 @@ dat <- xml2::read_html (theurl) %>%
     rvest::html_nodes("profile") %>%
     xml2::as_list ()
 ```
+
+### initial routino profiles
+
 ```{r}
 weighting_profiles <- lapply (dat, function (i) {
                  di <- i$preferences
@@ -97,67 +100,156 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            stringsAsFactors = FALSE)
 ```
 
-### maxspeed column + traffic light and turn penalties
+### speeds from OSRM
 
-Values adopted from the OSRM profiles, all in km / hr
-
-maxspeeds:
 ```{r}
-speeds <- rbind (c ("bicycle", 15),
-                 c ("foot", 5),
-                 c ("wheelchair", 5),
-                 c ("horse", 6.4),
-                 c ("moped", 26),
-                 c ("motorcar", 36),
-                 c ("motorcycle", 36),
-                 c ("goods", 36),
-                 c ("hgv", 36),
-                 c ("psv", 36))
-speeds <- data.frame ("name" = speeds [, 1],
-                      "speed" = as.numeric (speeds [, 2]))
+ways <- weighting_profiles$way [weighting_profiles$name == "foot"]
+speeds <- rep (NA, length (ways))
+weighting_profiles$max_speed <- NA_real_
+# car, from
+# https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/car.lua
+speeds [ways == "motorway"]         <- 90
+speeds [ways == "trunk"]            <- 85
+speeds [ways == "primary"]          <- 65
+speeds [ways == "secondary"]        <- 55
+speeds [ways == "tertiary"]         <- 40
+speeds [ways == "unclassified"]     <- 25
+speeds [ways == "residential"]      <- 25
+speeds [ways == "service"]          <- 15
+speeds [ways == "track"]            <- NA_real_
+speeds [ways == "cycleway"]         <- NA_real_
+speeds [ways == "path"]             <- NA_real_
+speeds [ways == "steps"]            <- NA_real_
+speeds [ways == "ferry"]            <- NA_real_
+speeds [ways == "living_street"]    <- 10
+speeds [ways == "bridleway"]        <- NA_real_
+speeds [ways == "footway"]          <- NA_real_
+speeds [ways == "motorway_link"]    <- 45
+speeds [ways == "trunk_link"]       <- 40
+speeds [ways == "primary_link"]     <- 30
+speeds [ways == "secondary_link"]   <- 25
+speeds [ways == "tertiary_link"]    <- 20
+
+weighting_profiles$max_speed [weighting_profiles$name == "motorcar"] <- speeds
+weighting_profiles$max_speed [weighting_profiles$name == "goods"] <- speeds
+weighting_profiles$max_speed [weighting_profiles$name == "hgv"] <- speeds
+weighting_profiles$max_speed [weighting_profiles$name == "psv"] <- speeds
+weighting_profiles$max_speed [weighting_profiles$name == "motorcycle"] <- speeds
+
+# moped; simply reduce max speeds to 50
+speeds [speeds > 50] <- 50
+weighting_profiles$max_speed [weighting_profiles$name == "moped"] <- speeds
+
+# bicycle, from 
+# https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/bicycle.lua
+speeds <- rep (15, length (ways))
+speeds [ways == "motorway"]         <- NA_real_
+speeds [ways == "trunk"]            <- NA_real_
+speeds [ways == "motorway_link"]    <- NA_real_
+speeds [ways == "trunk_link"]       <- NA_real_
+speeds [ways == "track"]            <- 12
+speeds [ways == "path"]             <- 12
+speeds [ways == "steps"]            <- 4
+speeds [ways == "bridleway"]        <- 8
+speeds [ways == "footway"]          <- 4
+weighting_profiles$max_speed [weighting_profiles$name == "bicycle"] <- speeds
+
+# wheelchair
+speeds <- rep (5, length (ways))
+speeds [ways == "motorway"]         <- NA_real_
+speeds [ways == "trunk"]            <- NA_real_
+speeds [ways == "motorway_link"]    <- NA_real_
+speeds [ways == "trunk_link"]       <- NA_real_
+speeds [ways == "track"]            <- 2
+speeds [ways == "steps"]            <- NA_real_
+speeds [ways == "bridleway"]        <- NA_real_
+speeds [ways == "footway"]          <- 4
+weighting_profiles$max_speed [weighting_profiles$name == "wheelchair"] <- speeds
+
+# horse
+speeds <- rep (6.4, length (ways))
+speeds [ways == "motorway"]         <- NA_real_
+speeds [ways == "trunk"]            <- NA_real_
+speeds [ways == "motorway_link"]    <- NA_real_
+speeds [ways == "trunk_link"]       <- NA_real_
+speeds [ways == "steps"]            <- 2
+weighting_profiles$max_speed [weighting_profiles$name == "horse"] <- speeds
+
+# foot
+speeds <- rep (5, length (ways))
+speeds [ways == "motorway"]         <- NA_real_
+speeds [ways == "trunk"]            <- NA_real_
+speeds [ways == "motorway_link"]    <- NA_real_
+speeds [ways == "trunk_link"]       <- NA_real_
+speeds [ways == "steps"]            <- 2
+weighting_profiles$max_speed [weighting_profiles$name == "foot"] <- speeds
 ```
 
-surface speeds as proportions of full speed:
-```{r}
-s <- rbind (c ("bicycle", "cobblestone", "flattened", 0.75),
-            c ("bicycle", "surface", "paving_stones", 0.75),
-            c ("bicycle", "surface", "compacted", 0.75),
-            c ("bicycle", "surface", "cobblestone", 0.4),
-            c ("bicycle", "surface", "unpaved", 0.4),
-            c ("bicycle", "surface", "fine_gravel", 0.4),
-            c ("bicycle", "surface", "gravel", 0.4),
-            c ("bicycle", "surface", "pebblestone", 0.4),
-            c ("bicycle", "surface", "ground", 0.4),
-            c ("bicycle", "surface", "dirt", 0.4),
-            c ("bicycle", "surface", "earth", 0.4),
-            c ("bicycle", "surface", "grass", 0.4),
-            c ("bicycle", "surface", "mud", 0.2),
-            c ("bicycle", "surface", "sand", 0.2),
-            c ("bicycle", "surface", "sett", 0.75),
 
-            c ("foot", "surface", "fine_gravel", 0.75),
-            c ("foot", "surface", "gravel", 0.75),
-            c ("foot", "surface", "pebblestone", 0.75),
-            c ("foot", "surface", "mud", 0.5),
-            c ("foot", "surface", "sand", 0.5))
+### Surfaces
+
+Max speeds for different kinds of surfaces, from OSRM
+https://github.com/Project-OSRM/osrm-backend/tree/master/profiles
+```{r}
+s <- rbind (c ("motorcar", "surface", "cement", 80),
+            c ("motorcar", "surface", "compacted", 80),
+            c ("motorcar", "surface", "fine_gravel", 80),
+            c ("motorcar", "surface", "paving_stones", 60),
+            c ("motorcar", "surface", "metal", 60),
+            c ("motorcar", "surface", "bricks", 60),
+            c ("motorcar", "surface", "grass", 40),
+            c ("motorcar", "surface", "wood", 40),
+            c ("motorcar", "surface", "sett", 40),
+            c ("motorcar", "surface", "grass_paver", 40),
+            c ("motorcar", "surface", "gravel", 40),
+            c ("motorcar", "surface", "unpaved", 40),
+            c ("motorcar", "surface", "ground", 40),
+            c ("motorcar", "surface", "dirt", 40),
+            c ("motorcar", "surface", "pebblestone", 40),
+            c ("motorcar", "surface", "tartan", 40),
+            c ("motorcar", "surface", "cobblestone", 30),
+            c ("motorcar", "surface", "clay", 30),
+            c ("motorcar", "surface", "earth", 20),
+            c ("motorcar", "surface", "stone", 20),
+            c ("motorcar", "surface", "rocky", 20),
+            c ("motorcar", "surface", "sand", 20),
+            c ("motorcar", "surface", "mud", 10),
+
+            c ("bicycle", "surface", "cobblestone:flattened", 10),
+            c ("bicycle", "surface", "paving_stones", 10),
+            c ("bicycle", "surface", "compacted", 10),
+            c ("bicycle", "surface", "cobblestone", 6),
+            c ("bicycle", "surface", "unpaved", 6),
+            c ("bicycle", "surface", "fine_gravel", 6),
+            c ("bicycle", "surface", "gravel", 6),
+            c ("bicycle", "surface", "pebblestone", 6),
+            c ("bicycle", "surface", "ground", 6),
+            c ("bicycle", "surface", "dirt", 6),
+            c ("bicycle", "surface", "earth", 6),
+            c ("bicycle", "surface", "grass", 6),
+            c ("bicycle", "surface", "mud", 3),
+            c ("bicycle", "surface", "sand", 3),
+            c ("bicycle", "surface", "sett", 10),
+
+            c ("foot", "surface", "fine_gravel", 4),
+            c ("foot", "surface", "gravel", 4),
+            c ("foot", "surface", "pebblestone", 4),
+            c ("foot", "surface", "mud", 2),
+            c ("foot", "surface", "sand", 2))
 surface_speeds <- data.frame ("name" = s [, 1],
                               "key" = s [, 2],
                               "value" = s [, 3],
-                              "speed" = s [, 4],
+                              "max_speed" = as.numeric (s [, 4]),
                               stringsAsFactors = FALSE)
                               
 ```
 
-speeds on other ways (not implemented)
-```{r, eval = FALSE}
-bike_walking <- 4
-bike_walking_steps <- 2
-```
+### traffic light and turn penalties
 
-traffic light and turn penalties. These are calculated in OSRM based on turn
-angles. The `dodgr` algorithm uses turn ordering across traffic, and so only
-needs to implement a fixed traffic light waiting time cost. The equivalent
-values can be obtained from the OSRM profiles with a turn angle of 0 as:
+These are calculated in OSRM based on turn angles. The `dodgr` algorithm uses
+turn ordering across traffic, and so only needs to implement a fixed traffic
+light waiting time cost. The equivalent values can be obtained from the OSRM
+profiles with a turn angle of 0 as:
 ```{r traffic-light-penalties, eval = FALSE}
 traffic_light_penalty <- 2
 turn_duration = traffic_light_penalty
@@ -169,8 +261,9 @@ turn_duration <- traffic_light_penalty # = 2
 ```
 
 ```{r}
-nms <- c ("foot", "horse", "wheelchair", "bicycle", "moped", "motorcycle",
-          "motorcar", "goods", "hgv", "psv")
+nms <- unique (weighting_profiles$name)
+#nms <- c ("foot", "horse", "wheelchair", "bicycle", "moped", "motorcycle",
+#          "motorcar", "goods", "hgv", "psv")
 traffic_lights <- rep (8, length (nms))
 traffic_lights [nms %in% c ("foot", "wheelchair", "bicycle")] <- 2
 turn_penalty <- rep (7.5, length (nms))
@@ -195,7 +288,6 @@ recommended "Short cycle length" of 60-90 seconds
 # change percentage value to 0-1
 weighting_profiles$value <- weighting_profiles$value / 100
 weighting_profiles <- list ("weighting_profiles" = weighting_profiles,
-                            "speeds" = speeds,
                             "surface_speeds" = surface_speeds,
                             "penalties" = penalties)
 usethis::use_data (weighting_profiles, overwrite = TRUE, compress = 'xz')
