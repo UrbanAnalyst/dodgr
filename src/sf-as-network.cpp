@@ -41,11 +41,12 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     std::unordered_map <std::string, double> profile;
     Rcpp::StringVector hw = pr ["way"];
     Rcpp::NumericVector val = pr ["value"];
-    if (hw.size () > 1)
+    if (hw.size () > 1) // single NA -> 0-length RcppVector
     {
         for (int i = 0; i != hw.size (); i ++)
             profile.insert (std::make_pair (std::string (hw [i]), val [i]));
-    }
+    } 
+
 
     Rcpp::CharacterVector nms = sf_lines.attr ("names");
     int one_way_index = -1;

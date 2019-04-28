@@ -244,8 +244,12 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             calc_edge_time (wt_profile_name)
 
     gr_cols <- dodgr_graph_cols (graph)
-    graph <- graph [which (!is.na (graph [[gr_cols$w]]) |
-                           !is.na (graph [[gr_cols$time]])), ]
+    cols <- c (gr_cols$w, gr_cols$time) [!is.na (c (gr_cols$w, gr_cols$time))]
+    grc <- graph [, cols]
+    if (length (cols) > 1)
+        grc <- rowSums (grc, na.rm = TRUE)
+    index <- which (!is.na (grc))
+    graph <- graph [index, ]
 
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
