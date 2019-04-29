@@ -98,6 +98,10 @@ weighting_profiles <- data.frame (name = weighting_profiles [, 1],
                            way = weighting_profiles [, 2],
                            value = as.numeric (weighting_profiles [, 3]),
                            stringsAsFactors = FALSE)
+
+# bike: steps is set to 0, but here increased to 50; foot:steps = 80
+weighting_profiles$value [weighting_profiles$name == "bicycle" &
+                          weighting_profiles$way == "steps"] <- 50
 ```
 
 ### speeds from OSRM
