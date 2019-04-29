@@ -28,7 +28,6 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
                          vx0_y = graph [".vx0_y"],
                          vx1_x = graph [".vx1_x"],
                          vx1_y = graph [".vx1_y"];
-    std::vector <bool> oneway = graph ["oneway"];
 
     const int n = graph.nrow ();
 
@@ -172,7 +171,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
     std::unordered_map <std::string, double> map_x, map_y, map_d, map_dw,
         map_time, map_timew;
     std::unordered_map <std::string, std::string> map_object, map_highway;
-    std::unordered_map <std::string, bool> map_oneway, map_oneway_bicycle;
 
     std::vector <std::string> vx0 = graph [".vx0"],
                               vx1 = graph [".vx1"],
@@ -187,7 +185,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
                          dw = graph ["d_weighted"],
                          time = graph ["time"],
                          timew = graph ["time_weighted"];
-    std::vector <bool> oneway = graph ["oneway"];
 
     std::unordered_set <std::string> edge_set;
     for (auto j: junctions)
@@ -212,7 +209,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
 
             map_object.emplace (edge_ [i], object [i]);
             map_highway.emplace (edge_ [i], highway [i]);
-            map_oneway.emplace (edge_ [i], oneway [i]);
         }
     }
 
@@ -230,7 +226,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
                          dw_out (n),
                          time_out (n),
                          timew_out (n);
-    std::vector <bool> oneway_out (n);
 
     for (size_t i = 0; i < n; i++)
     {
@@ -245,7 +240,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
         // Map all others to properties of out edge:
         object_out [i] = map_object.at (junctions [i].edge1);
         highway_out [i] = map_highway.at (junctions [i].edge1);
-        oneway_out [i] = map_oneway.at (junctions [i].edge1);
 
         d_out [i] = map_d.at (junctions [i].edge0) + 
                     map_d.at (junctions [i].edge1);
@@ -273,7 +267,6 @@ Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph,
             Rcpp::Named ("d") = d_out,
             Rcpp::Named ("object_") = object_out,
             Rcpp::Named ("highway") = highway_out,
-            Rcpp::Named ("oneway") = oneway_out,
             Rcpp::Named ("d_weighted") = dw_out,
             Rcpp::Named ("time") = time_out,
             Rcpp::Named ("time_weighted") = timew_out,

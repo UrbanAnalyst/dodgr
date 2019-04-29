@@ -9,6 +9,9 @@ Major changes:
   additional parameters determining speeds and time penalties for `dodgr_times`
   function; former `data.frame` is now
   `dodgr::weighting_profiles$weighting_profiles`.
+- New function `write_dodgr_wt_profile` writes full profile to local `.json`
+  file for editing and subsequent use via
+  `weight_streetnet(wt_profile_file=<local_file_name.json>)`.
 
 Minor changes:
 - Bug fix with dodgr_to_igraph to create proper *weighted* igraph

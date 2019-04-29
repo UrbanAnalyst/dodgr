@@ -33,6 +33,7 @@ Suggests:
     geodist,
     ggplot2,
     igraphdata,
+    jsonlite,
     knitr,
     purrr,
     RColorBrewer,

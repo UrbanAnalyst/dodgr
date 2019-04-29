@@ -7,21 +7,21 @@
 \alias{weight_streetnet.sc}
 \title{weight_streetnet}
 \usage{
-weight_streetnet(x, wt_profile = "bicycle", type_col = "highway",
-  id_col = "osm_id", keep_cols = NULL, times = FALSE,
-  left_side = FALSE)
+weight_streetnet(x, wt_profile = "bicycle", wt_profile_file = NULL,
+  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
+  times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
+  keep_cols = NULL, times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
+  keep_cols = NULL, times = FALSE, left_side = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
+  keep_cols = NULL, times = FALSE, left_side = FALSE)
 }
 \arguments{
 \item{x}{A street network represented either as \code{sf} \code{LINESTRING}
@@ -31,6 +31,10 @@ objects, typically extracted with \code{dodgr_streetnet}, or as an \code{SC}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names
 corresponding to names in \code{type_col} (see Details)}
+
+\item{wt_profile_file}{Name of locally-stored, \code{.json}-formatted version of
+\code{dodgr::weighting_profiles}, created with \link{write_dodgr_wt_profile}, and
+modified as desired.}
 
 \item{type_col}{Specify column of the \code{sf} \code{data.frame} object
 which designates different types of highways to be used for weighting
@@ -69,9 +73,13 @@ wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 Names for the \code{wt_profile} parameter are taken from
 \link{weighting_profiles}, which is a list including a \code{data.frame} also
 called \code{weighting_profiles} of weights for different modes of transport.
-Current modes included there are "bicycle", "foot", "goods", "hgv", "horse",
-"moped", "motorcar", "motorcycle", "psv", and "wheelchair". Railway routing
-can be implemented with the separate function \link{weight_railway}.
+Values for \code{wt_profile} are taken from current modes included there, which
+are "bicycle", "foot", "goods", "hgv", "horse", "moped", "motorcar",
+"motorcycle", "psv", and "wheelchair". Railway routing can be implemented
+with the separate function \link{weight_railway}. Alternatively, the entire
+\code{weighting_profile} structures can be written to a local \code{.json}-formatted
+file with \link{write_dodgr_wt_profile}, the values edited as desired, and
+the name of this file passed as the \code{wt_profile_file} parameter.
 
 Graphs weighted for time-based routing (that is, with \code{times = TRUE})
 are fundamentally different from the default for distance-based routing.

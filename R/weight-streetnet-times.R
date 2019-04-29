@@ -43,22 +43,21 @@ sc_edge_dist <- function (graph)
     return (graph)
 }
 
-extract_sc_edges_highways <- function (graph, x, wt_profile,
-    keep_types = way_types_to_keep)
+extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
+                                       keep_cols)
 {
     # no visible binding notes:
     native_ <- key <- `:=` <- value <- NULL
 
-    surface <- dodgr::weighting_profiles$surface_speeds
-    surface <- surface [surface$name == wt_profile, ]
+    surface <- get_surface_speeds (wt_profile, wt_profile_file)
     if (nrow (surface) > 0)
     {
-        keep_types <- c (keep_types, unique (surface$key))
+        keep_cols <- c (keep_cols, unique (surface$key))
     }
 
     graph <- dplyr::left_join (graph, x$object_link_edge, by = "edge_") %>%
         dplyr::select (-native_)
-    for (k in keep_types)
+    for (k in keep_cols)
     {
         objs <- dplyr::filter (x$object, key == k)
         graph <- dplyr::left_join (graph, objs, by = "object_") %>%
@@ -66,15 +65,7 @@ extract_sc_edges_highways <- function (graph, x, wt_profile,
             dplyr::select (-key)
     }
 
-    graph <- convert_hw_types_to_bool (graph)
-
-    # TODO: Do this in convert_graph function
-    # replace NA distances and times
-    #m <- .Machine$double.xmax
-    #graph$d_weighted [is.na (graph$d_weighted)] <- m
-    #graph$time [is.na (graph$time)] <- m
-
-    return (graph)
+    convert_hw_types_to_bool (graph)
 }
 
 convert_hw_types_to_bool <- function (graph)
@@ -90,13 +81,13 @@ convert_hw_types_to_bool <- function (graph)
     return (graph)
 }
 
-weight_sc_edges <- function (graph, wt_profile)
+weight_sc_edges <- function (graph, wt_profile, wt_profile_file)
 {
     # no visible binding notes:
     value <- d <- NULL
 
-    wp <- dodgr::weighting_profiles$weighting_profiles
-    wp <- wp [wp$name == wt_profile, c ("way", "value")]
+    wp <- get_profile (wt_profile, wt_profile_file)
+    wp <- wp [, c ("way", "value")]
     dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
@@ -104,7 +95,7 @@ weight_sc_edges <- function (graph, wt_profile)
 }
 
 # Set maximum speed for each edge.
-set_maxspeed <- function (graph, wt_profile)
+set_maxspeed <- function (graph, wt_profile, wt_profile_file)
 {
     if (!"maxspeed" %in% names (graph))
         graph$maxspeed <- NA_real_
@@ -121,8 +112,7 @@ set_maxspeed <- function (graph, wt_profile)
                                             graph$maxspeed [index]))
     graph$maxspeed <- ms_numeric
 
-    wp <- dodgr::weighting_profiles$weighting_profiles
-    wp <- wp [wp$name == wt_profile, ]
+    wp <- get_profile (wt_profile, wt_profile_file)
 
     wp_index <- match (graph$highway, wp$way)
     graph_index <- which (!is.na (wp_index))
@@ -144,7 +134,7 @@ set_maxspeed <- function (graph, wt_profile)
         !"surface" %in% names (graph))
         return (graph)
 
-    s <- dodgr::weighting_profiles$surface_speeds
+    s <- get_surface_speeds (wt_profile, wt_profile_file)
     s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
     surf_vals <- unique (graph$surface [graph$surface != "NA"])
     surf_speeds <- s$max_speed [match (surf_vals, s$value)]
@@ -249,13 +239,12 @@ times_by_incline <- function (graph, wt_profile)
     return (graph)
 }
 
-sc_traffic_lights <- function (graph, wt_profile, x)
+sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
 {
     # no visible binding NOTES:
     object_ <- NULL
 
-    w <- dodgr::weighting_profiles$penalties
-    wait <- w$traffic_lights [w$name == wt_profile]
+    wait <- get_turn_penalties (wt_profile, wt_profile_file)$traffic_lights
 
     # first for intersections marked as crossings
     crossings <- traffic_light_objs (x) # way IDs
@@ -313,7 +302,11 @@ sc_duplicate_edges <- function (x, wt_profile)
     xnew <- swap_cols (xnew, ".vx0_x", ".vx1_x")
     xnew <- swap_cols (xnew, ".vx0_y", ".vx1_y")
     xnew$edge_ <- rcpp_gen_hash (nrow (xnew), 10)
-    rbind (x, xnew)
+
+    res <- rbind (x, xnew)
+    res$oneway <- NULL
+
+    return (res)
 }
 
 swap_cols <- function (x, cola, colb)
@@ -324,11 +317,6 @@ swap_cols <- function (x, cola, colb)
     return (x)
 }
 
-get_turn_penalty <- function (wt_profile)
-{
-    p <- dodgr::weighting_profiles$penalties
-    p$turn [p$name == wt_profile]
-}
 
 
 # traffic lights for pedestrians
@@ -417,9 +405,10 @@ traffic_signal_nodes <- function (x)
     unique (c (x1, x2))
 }
 
-join_junctions_to_graph <- function (graph, wt_profile, left_side = FALSE)
+join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
+                                     left_side = FALSE)
 {
-    turn_penalty <- get_turn_penalty (wt_profile)
+    turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
     resbind <- NULL
     if (turn_penalty > 0)
     {

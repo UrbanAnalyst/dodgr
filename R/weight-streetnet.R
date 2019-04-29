@@ -10,6 +10,9 @@
 #' `osmdata_sc`.
 #' @param wt_profile Name of weighting profile, or vector of values with names
 #' corresponding to names in `type_col` (see Details)
+#' @param wt_profile_file Name of locally-stored, `.json`-formatted version of
+#' `dodgr::weighting_profiles`, created with \link{write_dodgr_wt_profile}, and
+#' modified as desired.
 #' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of highways to be used for weighting
 #' (default works with `osmdata` objects).
@@ -36,9 +39,13 @@
 #' @note Names for the `wt_profile` parameter are taken from
 #' \link{weighting_profiles}, which is a list including a `data.frame` also
 #' called `weighting_profiles` of weights for different modes of transport.
-#' Current modes included there are "bicycle", "foot", "goods", "hgv", "horse",
-#' "moped", "motorcar", "motorcycle", "psv", and "wheelchair". Railway routing
-#' can be implemented with the separate function \link{weight_railway}.
+#' Values for `wt_profile` are taken from current modes included there, which
+#' are "bicycle", "foot", "goods", "hgv", "horse", "moped", "motorcar",
+#' "motorcycle", "psv", and "wheelchair". Railway routing can be implemented
+#' with the separate function \link{weight_railway}. Alternatively, the entire
+#' `weighting_profile` structures can be written to a local `.json`-formatted
+#' file with \link{write_dodgr_wt_profile}, the values edited as desired, and
+#' the name of this file passed as the `wt_profile_file` parameter.
 #'
 #' @note Graphs weighted for time-based routing (that is, with `times = TRUE`)
 #' are fundamentally different from the default for distance-based routing.
@@ -83,6 +90,7 @@
 #'                            wt_profile = 1)
 #' }
 weight_streetnet <- function (x, wt_profile = "bicycle",
+                              wt_profile_file = NULL,
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, times = FALSE,
                               left_side = FALSE)
@@ -93,6 +101,7 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 #' @name weight_streetnet
 #' @export
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
+                              wt_profile_file = NULL,
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, times = FALSE,
                               left_side = FALSE)
@@ -114,9 +123,10 @@ way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
 #' @name weight_streetnet
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
-                              type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL, times = FALSE,
-                              left_side = FALSE)
+                                 wt_profile_file = NULL,
+                                 type_col = "highway", id_col = "osm_id",
+                                 keep_cols = NULL, times = FALSE,
+                                 left_side = FALSE)
 {
     if (times)
         stop ("Time-based weighting only currently implemented for street network",
@@ -175,12 +185,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                     x$oneway <- x [["oneway:bicycle"]]
             }
             wt_profile_name <- wt_profile
-            profiles <- dodgr::weighting_profiles$weighting_profiles
-            prf_names <- unique (profiles$name)
-            # foot, horse, wheelchair, bicycle, moped, 
-            # motorcycle, motorcar, goods, hgv, psv
-            wt_profile <- match.arg (tolower (wt_profile), prf_names)
-            wt_profile <- profiles [profiles$name == wt_profile, ]
+            wt_profile <- get_profile (wt_profile_name, wt_profile_file)
         }
     } else if (is.numeric (wt_profile))
     {
@@ -237,7 +242,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     graph <- add_extra_sf_columns (graph, x)
     if (!is.null (wt_profile_name))
-        graph <- set_maxspeed (graph, wt_profile_name) %>%
+        graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file) %>%
             weight_by_num_lanes (wt_profile_name) %>%
             calc_edge_time (wt_profile_name)
 
@@ -421,6 +426,7 @@ add_extra_sf_columns <- function (graph, x)
 #' @name weight_streetnet
 #' @export
 weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
+                                                        wt_profile_file = NULL,
                                                         type_col = "highway",
                                                         id_col = "osm_id",
                                                         keep_cols = NULL,
@@ -431,14 +437,21 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
     requireNamespace ("dplyr")
     check_sc (x)
 
-    graph <- extract_sc_edges_xy (x) %>%        # vert, edge IDs + coordinates
+    graph <- extract_sc_edges_xy (x) %>%                # vert, edge IDs + coordinates
         sc_edge_dist () %>%                             # append dist
-        extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
-        weight_sc_edges (wt_profile) %>%                # add d_weighted col
-        set_maxspeed (wt_profile) %>%                   # modify d_weighted
+        extract_sc_edges_highways (x,
+                                   wt_profile,
+                                   wt_profile_file,
+                                   way_types_to_keep) %>% # highway key-val pairs
+        weight_sc_edges (wt_profile,
+                         wt_profile_file) %>%           # add d_weighted col
+        set_maxspeed (wt_profile,
+                      wt_profile_file) %>%              # modify d_weighted
         weight_by_num_lanes (wt_profile) %>%
         calc_edge_time (wt_profile) %>%                 # add time
-        sc_traffic_lights (wt_profile, x) %>%           # modify time
+        sc_traffic_lights (x,
+                           wt_profile,
+                           wt_profile_file) %>%         # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
 
@@ -449,9 +462,11 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     if (times)
     {
-        graph <- join_junctions_to_graph (graph, wt_profile, left_side)
+        graph <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
+                                          left_side)
         graph$d_weighted <- graph$time_weighted
-        attr (graph, "turn_penalty") <- get_turn_penalty (wt_profile)
+        attr (graph, "turn_penalty") <- 
+            get_turn_penalties (wt_profile, wt_profile_file)$turn
     }
 
     gr_cols <- dodgr_graph_cols (graph)
