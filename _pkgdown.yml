@@ -44,6 +44,7 @@ reference:
     - dodgr_vertices
     - match_points_to_graph
     - merge_directed_flows
+    - write_dodgr_wt_profile
   - title: Package data
     contents:
     - hampi
