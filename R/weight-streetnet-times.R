@@ -134,6 +134,12 @@ set_maxspeed <- function (graph, wt_profile)
                                      NA_real_,
                                      min (i, na.rm = TRUE)))
 
+    na_highways <- wp$way [which (is.na (wp$max_speed))]
+    graph$maxspeed [graph$highway %in% na_highways] <- NA
+    gr_cols <- dodgr_graph_cols (graph)
+    # Also set weighted distance for all these to NA:
+    graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA
+
     if (wt_profile %in% c ("horse", "wheelchair") |
         !"surface" %in% names (graph))
         return (graph)
@@ -290,12 +296,16 @@ rm_duplicated_edges <- function (graph)
 # for non-oneway
 sc_duplicate_edges <- function (x, wt_profile)
 {
-    oneway_modes <-  c ("motorcycle", "motorcar", "goods", "hgv", "psv")
+    oneway_modes <-  c ("bicycle", "moped", "motorcycle", "motorcar", "goods",
+                        "hgv", "psv")
 
     index <- seq (nrow (x))
-    if (wt_profile %in% c( "bicycle", "moped"))
-        index <- which (!x$oneway_bicycle)
-    else if (wt_profile %in% oneway_modes)
+    if (wt_profile == "bicycle" & "oneway_bicycle" %in% names (x))
+    {
+        x$oneway <- x$oneway_bicycle
+        x$oneway_bicycle <- NULL
+    }
+    if (wt_profile %in% oneway_modes)
         index <- which (!x$oneway)
 
     xnew <- x [index, ]

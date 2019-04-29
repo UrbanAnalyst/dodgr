@@ -218,8 +218,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                          way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
                          )
-    # rcpp_sf_as_network now flags non-routable ways with -1, so:
-    graph$d_weighted [graph$d_weighted < 0] <- .Machine$double.xmax
+    # rcpp_sf_as_network flags non-routable ways with -1, so:
+    graph$d_weighted [graph$d_weighted < 0] <- NA
     if (all (graph$highway == ""))
         graph$highway <- NULL
     if (all (graph$way_id == ""))
@@ -235,8 +235,6 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     if (length (keep_cols) > 0)
         graph <- reinsert_keep_cols (x, graph, keep_cols)
 
-    graph$d_weighted [graph$d_weighted == .Machine$double.xmax] <- NA
-
     graph <- add_extra_sf_columns (graph, x)
     if (!is.null (wt_profile_name))
         graph <- set_maxspeed (graph, wt_profile_name) %>%
@@ -244,12 +242,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             calc_edge_time (wt_profile_name)
 
     gr_cols <- dodgr_graph_cols (graph)
-    cols <- c (gr_cols$w, gr_cols$time) [!is.na (c (gr_cols$w, gr_cols$time))]
-    grc <- graph [, cols]
-    if (length (cols) > 1)
-        grc <- rowSums (grc, na.rm = TRUE)
-    index <- which (!is.na (grc))
-    graph <- graph [index, ]
+    graph <- graph [which (!is.na (graph [[gr_cols$w]])), ]
 
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
@@ -443,10 +436,14 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
         extract_sc_edges_highways (x, wt_profile) %>%   # highway key-val pairs
         weight_sc_edges (wt_profile) %>%                # add d_weighted col
         set_maxspeed (wt_profile) %>%                   # modify d_weighted
+        weight_by_num_lanes (wt_profile) %>%
         calc_edge_time (wt_profile) %>%                 # add time
         sc_traffic_lights (wt_profile, x) %>%           # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
+
+    gr_cols <- dodgr_graph_cols (graph)
+    graph <- graph [which (!is.na (graph [[gr_cols$w]])), ]
 
     attr (graph, "turn_penalty") <- 0
 
