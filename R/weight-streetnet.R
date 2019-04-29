@@ -91,9 +91,9 @@
 #' }
 weight_streetnet <- function (x, wt_profile = "bicycle",
                               wt_profile_file = NULL,
+                              times = FALSE,
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL, times = FALSE,
-                              left_side = FALSE)
+                              keep_cols = NULL, left_side = FALSE)
 {
     UseMethod ("weight_streetnet")
 }
@@ -102,9 +102,9 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
                               wt_profile_file = NULL,
+                              times = FALSE,
                               type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL, times = FALSE,
-                              left_side = FALSE)
+                              keep_cols = NULL, left_side = FALSE)
 {
     stop ("Unknown class")
 }
@@ -124,9 +124,9 @@ way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                                  wt_profile_file = NULL,
+                                 times = FALSE,
                                  type_col = "highway", id_col = "osm_id",
-                                 keep_cols = NULL, times = FALSE,
-                                 left_side = FALSE)
+                                 keep_cols = NULL, left_side = FALSE)
 {
     if (times)
         stop ("Time-based weighting only currently implemented for street network",
@@ -427,10 +427,10 @@ add_extra_sf_columns <- function (graph, x)
 #' @export
 weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
                                                         wt_profile_file = NULL,
+                                                        times = FALSE,
                                                         type_col = "highway",
                                                         id_col = "osm_id",
                                                         keep_cols = NULL,
-                                                        times = FALSE,
                                                         left_side = FALSE)
 {
     requireNamespace ("geodist")

@@ -8,20 +8,20 @@
 \title{weight_streetnet}
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", wt_profile_file = NULL,
-  type_col = "highway", id_col = "osm_id", keep_cols = NULL,
-  times = FALSE, left_side = FALSE)
+  times = FALSE, type_col = "highway", id_col = "osm_id",
+  keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
-  keep_cols = NULL, times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, times = FALSE, type_col = "highway",
+  id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
-  keep_cols = NULL, times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, times = FALSE, type_col = "highway",
+  id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, type_col = "highway", id_col = "osm_id",
-  keep_cols = NULL, times = FALSE, left_side = FALSE)
+  wt_profile_file = NULL, times = FALSE, type_col = "highway",
+  id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 }
 \arguments{
 \item{x}{A street network represented either as \code{sf} \code{LINESTRING}
@@ -36,6 +36,9 @@ corresponding to names in \code{type_col} (see Details)}
 \code{dodgr::weighting_profiles}, created with \link{write_dodgr_wt_profile}, and
 modified as desired.}
 
+\item{times}{Weight network for routing according to \emph{times} rather than
+\emph{distances} (see Note).}
+
 \item{type_col}{Specify column of the \code{sf} \code{data.frame} object
 which designates different types of highways to be used for weighting
 (default works with \code{osmdata} objects).}
@@ -47,9 +50,6 @@ which designates different types of highways to be used for weighting
 \item{keep_cols}{For \code{sf}-formatted data only: Vectors of columns from \code{x} to
 be kept in the resultant \code{dodgr} network; vector can be either names or
 indices of desired columns.}
-
-\item{times}{Weight network for routing according to \emph{times} rather than
-\emph{distances} (see Note).}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
 the right side (\code{FALSE})? - affects times only.}
