@@ -63,10 +63,6 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' calculated (see Details)
 #' @param flows Matrix of flows with `nrow(flows)==length(from)` and
 #' `ncol(flows)==length(to)`.
-#' @param wt_profile Name of weighting profile for street networks (one of foot,
-#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-#' only used if `graph` is not provided, in which case a street network is
-#' downloaded and correspondingly weighted).
 #' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
@@ -144,14 +140,9 @@ uncontract_graph <- function (graph, edge_map, graph_full)
 #' plot (gsf ["flow"])
 #' }
 #' @export
-dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
-                                   "bicycle", contract = FALSE, heap = 'BHeap',
-                                   quiet = TRUE)
+dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
+                                   heap = 'BHeap', quiet = TRUE)
 {
-    if (missing (graph) & (!missing (from) | !missing (to)))
-        graph <- graph_from_pts (from, to, expand = 0.1,
-                                 wt_profile = wt_profile, quiet = quiet)
-
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
@@ -219,8 +210,6 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #' @param from Vector or matrix of points **from** which aggregate dispersed
 #' flows are to be calculated (see Details)
 #' @param dens Vectors of densities correponsing to the `from` points
-#' @param wt_profile Name of weighting profile for street networks (one of foot,
-#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
@@ -244,13 +233,9 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, wt_profile =
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
-dodgr_flows_disperse <- function (graph, from, dens, wt_profile = "bicycle",
+dodgr_flows_disperse <- function (graph, from, dens,
                          contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE)
 {
-    if (missing (graph) & !missing (from))
-        graph <- graph_from_pts (from, from, expand = 0.1,
-                                 wt_profile = wt_profile, quiet = quiet)
-
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")

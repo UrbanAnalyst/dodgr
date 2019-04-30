@@ -4,8 +4,8 @@
 \alias{dodgr_flows_aggregate}
 \title{dodgr_flows_aggregate}
 \usage{
-dodgr_flows_aggregate(graph, from, to, flows, wt_profile = "bicycle",
-  contract = FALSE, heap = "BHeap", quiet = TRUE)
+dodgr_flows_aggregate(graph, from, to, flows, contract = FALSE,
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -19,11 +19,6 @@ calculated (see Details)}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
 \code{ncol(flows)==length(to)}.}
-
-\item{wt_profile}{Name of weighting profile for street networks (one of foot,
-horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-only used if \code{graph} is not provided, in which case a street network is
-downloaded and correspondingly weighted).}
 
 \item{contract}{If \code{TRUE}, calculate flows on contracted graph before
 mapping them back on to the original full graph (recommended as this will

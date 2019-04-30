@@ -4,8 +4,8 @@
 \alias{dodgr_paths}
 \title{dodgr_paths}
 \usage{
-dodgr_paths(graph, from, to, vertices = TRUE, wt_profile = "bicycle",
-  pairwise = FALSE, heap = "BHeap", quiet = TRUE)
+dodgr_paths(graph, from, to, vertices = TRUE, pairwise = FALSE,
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -19,11 +19,6 @@ calculated (see Details)}
 
 \item{vertices}{If \code{TRUE}, return lists of lists of vertices for each
 path, otherwise return corresponding lists of edge numbers from \code{graph}.}
-
-\item{wt_profile}{Name of weighting profile for street networks (one of foot,
-horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-only used if \code{graph} is not provided, in which case a street network is
-downloaded and correspondingly weighted).}
 
 \item{pairwise}{If \code{TRUE}, calculate paths only between the ordered
 pairs of \code{from} and \code{to}. In this case, each of these must be the

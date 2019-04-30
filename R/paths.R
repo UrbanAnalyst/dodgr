@@ -10,10 +10,6 @@
 #' calculated (see Details)
 #' @param vertices If `TRUE`, return lists of lists of vertices for each
 #' path, otherwise return corresponding lists of edge numbers from `graph`.
-#' @param wt_profile Name of weighting profile for street networks (one of foot,
-#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv;
-#' only used if `graph` is not provided, in which case a street network is
-#' downloaded and correspondingly weighted).
 #' @param pairwise If `TRUE`, calculate paths only between the ordered
 #' pairs of `from` and `to`. In this case, each of these must be the
 #' same length, and the output will contain paths the i-th members of each, and
@@ -68,14 +64,9 @@
 #' dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
 #' # dp is a list of 5 items, each of which just has a single path between each
 #' # pairwise from and to point.
-dodgr_paths <- function (graph, from, to, vertices = TRUE,
-                         wt_profile = "bicycle", pairwise = FALSE,
+dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
                          heap = 'BHeap', quiet = TRUE)
 {
-    if (missing (graph) & (!missing (from) | !missing (to)))
-        graph <- graph_from_pts (from, to, expand = 0.1,
-                                 wt_profile = wt_profile, quiet = quiet)
-
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph

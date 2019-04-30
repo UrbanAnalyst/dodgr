@@ -8,11 +8,6 @@
 #' be calculated (see Details)
 #' @param to Vector or matrix of points **to** which route distances are to be
 #' calculated (see Details)
-#' @param wt_profile Name of weighting profile for street networks (one of foot,
-#' horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
-#' @param expand Only when `graph` not given, the multiplicative factor by
-#' which to expand the street network surrounding the points defined by
-#' `from` and/or `to`.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -95,13 +90,8 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
 dodgr_dists <- function (graph, from = NULL, to = NULL,
-                         wt_profile = "bicycle", expand = 0,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
-    if (missing (graph) & (!missing (from) | !missing (to)))
-        graph <- graph_from_pts (from, to, expand = expand,
-                                 wt_profile = wt_profile, quiet = quiet)
-
     graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
@@ -175,10 +165,10 @@ dodgr_dists <- function (graph, from = NULL, to = NULL,
 #' Alias for \link{dodgr_dists}
 #' @inherit dodgr_dists
 #' @export
-dodgr_distances <- function (graph, from, to, wt_profile = "bicycle", expand = 0,
+dodgr_distances <- function (graph, from, to,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
-    dodgr_dists (graph, from, to, wt_profile = wt_profile, expand = expand,
+    dodgr_dists (graph, from, to,
                  heap = heap, parallel = parallel, quiet = quiet)
 }
 

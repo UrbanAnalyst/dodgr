@@ -1,4 +1,4 @@
-# v0.1.3.003
+# v0.1.3.004
 Major changes:
 - `weight_streetnet` function now returns edge times for all Open Street Map
   networks extracted with the `osmdata` package.
@@ -12,6 +12,10 @@ Major changes:
 - New function `write_dodgr_wt_profile` writes full profile to local `.json`
   file for editing and subsequent use via
   `weight_streetnet(wt_profile_file=<local_file_name.json>)`.
+- `dodgr_dists()`, `dodgr_paths()`, and `dodgr_flows()` can no longer be used
+  to automatically download street networks, thus former parameters
+  `wt_profile` and `expand` have been removed; networks must be explicitly
+  downloaded with `dodgr_streetnet()`.
 
 Minor changes:
 - Bug fix with dodgr_to_igraph to create proper *weighted* igraph

@@ -4,8 +4,8 @@
 \alias{dodgr_flows_disperse}
 \title{dodgr_flows_disperse}
 \usage{
-dodgr_flows_disperse(graph, from, dens, wt_profile = "bicycle",
-  contract = FALSE, k = 2, heap = "BHeap", quiet = TRUE)
+dodgr_flows_disperse(graph, from, dens, contract = FALSE, k = 2,
+  heap = "BHeap", quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -15,9 +15,6 @@ graph (see Details)}
 flows are to be calculated (see Details)}
 
 \item{dens}{Vectors of densities correponsing to the \code{from} points}
-
-\item{wt_profile}{Name of weighting profile for street networks (one of foot,
-horse, wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).}
 
 \item{contract}{If \code{TRUE}, calculate flows on contracted graph before
 mapping them back on to the original full graph (recommended as this will
