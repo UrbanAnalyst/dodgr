@@ -9,7 +9,6 @@ test_that("streetnet bbox", {
               expect_equal (nrow (bb$bbox), 2)
               expect_equal (nrow (bb$bbox_poly), n / 2)
 
-              bbox <- list (bbox)
               expect_message (bb2 <- process_bbox (list (bbox), NULL, 0),
                               "selecting the first polygon from bbox")
               #expect_identical (bb, bb2)
