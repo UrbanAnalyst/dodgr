@@ -3,11 +3,13 @@
 #' Calculate matrix of pair-wise distances between points.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
-#' graph (see Details)
+#' graph (see Notes)
 #' @param from Vector or matrix of points **from** which route distances are to
-#' be calculated (see Details)
+#' be calculated (see Notes)
 #' @param to Vector or matrix of points **to** which route distances are to be
-#' calculated (see Details)
+#' calculated (see Notes)
+#' @param shortest If `FALSE`, calculate distances along the \emph{fastest}
+#' rather than shortest routes (see Notes).
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -22,10 +24,18 @@
 #' `wt` is present, shortest paths are calculated according to values
 #' specified in that column; otherwise according to `dist` values. Either
 #' way, final distances between `from` and `to` points are calculated
-#' according to values of `dist`. That is, paths between any pair of points
-#' will be calculated according to the minimal total sum of `weight`
-#' values (if present), while reported distances will be total sums of
-#' `dist` values.
+#' by default according to values of `dist`. That is, paths between any pair of
+#' points will be calculated according to the minimal total sum of `weight`
+#' values (if present), while reported distances will be total sums of `dist`
+#' values.
+#'
+#' For street networks produced with \link{weight_streetnet}, distances may also
+#' be calculated along the \emph{fastest} routes with the `shortest = FALSE`
+#' option. Graphs must in this case have columns of `time` and `time_weighted`.
+#' Note that the fastest routes will only be approximate when derived from
+#' \pkg{sf}-format data generated with the \pkg{osmdata} function
+#' `osmdata_sf()`, and will be much more accurate when derived from `sc`-format
+#' data generated with `osmdata_sc()`. See \link{weight_streetnet} for details.
 #'
 #' The `from` and `to` columns of `graph` may be either single
 #' columns of numeric or character values specifying the numbers or names of
@@ -42,7 +52,7 @@
 #' pairwise distances are calculated between all nodes in `graph`.
 #'
 #' Calculations in parallel (`parallel = TRUE`) ought very generally be
-#' advantageous. For small graphs, Calculating distances in parallel is likely
+#' advantageous. For small graphs, calculating distances in parallel is likely
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
 #'
@@ -82,11 +92,11 @@
 #' # There are parts of the network on different building levels (because of
 #' # shopping malls and the like). These may or may not be connected, so it may be
 #' # necessary to filter out particular levels
-#' levs <- paste0 (essen$level) # because sf data are factors
 #' index <- which (! (levs == "-1" | levs == "1")) # for example
 #' library (sf) # needed for following sub-select operation
 #' essen <- essen [index, ]
 #' graph <- weight_streetnet (essen, wt_profile = "foot")
+#' graph <- graph [which (graph$component == 1), ]
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
 dodgr_dists <- function (graph, from = NULL, to = NULL,

@@ -12,10 +12,10 @@ function using a network obtained with the \pkg{osmdata} \code{osmdata_sc}
 function, possibly contracted with \link{dodgr_contract_graph}.}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
-be calculated (see Details)}
+be calculated (see Notes)}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
-calculated (see Details)}
+calculated (see Notes)}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -63,11 +63,11 @@ table (essen$level)
 # There are parts of the network on different building levels (because of
 # shopping malls and the like). These may or may not be connected, so it may be
 # necessary to filter out particular levels
-levs <- paste0 (essen$level) # because sf data are factors
 index <- which (! (levs == "-1" | levs == "1")) # for example
 library (sf) # needed for following sub-select operation
 essen <- essen [index, ]
 graph <- weight_streetnet (essen, wt_profile = "foot")
+graph <- graph [which (graph$component == 1), ]
 d <- dodgr_dists (graph, from = xy, to = xy)
 }
 }

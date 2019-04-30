@@ -9,13 +9,13 @@ dodgr_dists(graph, from = NULL, to = NULL, heap = "BHeap",
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
-graph (see Details)}
+graph (see Notes)}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
-be calculated (see Details)}
+be calculated (see Notes)}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
-calculated (see Details)}
+calculated (see Notes)}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -26,6 +26,9 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 details)}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
+
+\item{shortest}{If \code{FALSE}, calculate distances along the \emph{fastest}
+rather than shortest routes (see Notes).}
 }
 \value{
 square matrix of distances between nodes
@@ -39,10 +42,18 @@ Calculate matrix of pair-wise distances between points.
 \code{wt} is present, shortest paths are calculated according to values
 specified in that column; otherwise according to \code{dist} values. Either
 way, final distances between \code{from} and \code{to} points are calculated
-according to values of \code{dist}. That is, paths between any pair of points
-will be calculated according to the minimal total sum of \code{weight}
-values (if present), while reported distances will be total sums of
-\code{dist} values.
+by default according to values of \code{dist}. That is, paths between any pair of
+points will be calculated according to the minimal total sum of \code{weight}
+values (if present), while reported distances will be total sums of \code{dist}
+values.
+
+For street networks produced with \link{weight_streetnet}, distances may also
+be calculated along the \emph{fastest} routes with the \code{shortest = FALSE}
+option. Graphs must in this case have columns of \code{time} and \code{time_weighted}.
+Note that the fastest routes will only be approximate when derived from
+\pkg{sf}-format data generated with the \pkg{osmdata} function
+\code{osmdata_sf()}, and will be much more accurate when derived from \code{sc}-format
+data generated with \code{osmdata_sc()}. See \link{weight_streetnet} for details.
 
 The \code{from} and \code{to} columns of \code{graph} may be either single
 columns of numeric or character values specifying the numbers or names of
@@ -59,7 +70,7 @@ between all points specified in \code{from}. If both \code{from} and \code{to} a
 pairwise distances are calculated between all nodes in \code{graph}.
 
 Calculations in parallel (\code{parallel = TRUE}) ought very generally be
-advantageous. For small graphs, Calculating distances in parallel is likely
+advantageous. For small graphs, calculating distances in parallel is likely
 to offer relatively little gain in speed, but increases from parallel
 computation will generally markedly increase with increasing graph sizes.
 }
@@ -98,11 +109,11 @@ table (essen$level)
 # There are parts of the network on different building levels (because of
 # shopping malls and the like). These may or may not be connected, so it may be
 # necessary to filter out particular levels
-levs <- paste0 (essen$level) # because sf data are factors
 index <- which (! (levs == "-1" | levs == "1")) # for example
 library (sf) # needed for following sub-select operation
 essen <- essen [index, ]
 graph <- weight_streetnet (essen, wt_profile = "foot")
+graph <- graph [which (graph$component == 1), ]
 d <- dodgr_dists (graph, from = xy, to = xy)
 }
 }
