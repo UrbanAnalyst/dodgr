@@ -75,10 +75,17 @@ dodgr_graph_cols <- function (graph)
         if (length (time_col) != 1)
             time_col <- NA
     }
+    timew_col <- grep ("time_w|timew|tw", nms)
+    if (length (timew_col) != 1)
+    {
+        timew_col <- grep ("time_w|timew|^tw", nms)
+        if (length (timew_col) != 1)
+            timew_col <- NA
+    }
 
-    ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col,
+    ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col, timew_col,
               xfr, yfr, xto, yto, component)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time",
+    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time", "time_weighted",
                       "xfr", "yfr", "xto", "yto", "component")
     class (ret) <- c (class (ret), "graph_columns")
 

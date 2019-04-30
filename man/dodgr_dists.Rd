@@ -4,8 +4,8 @@
 \alias{dodgr_dists}
 \title{dodgr_dists}
 \usage{
-dodgr_dists(graph, from = NULL, to = NULL, heap = "BHeap",
-  parallel = TRUE, quiet = TRUE)
+dodgr_dists(graph, from = NULL, to = NULL, shortest = TRUE,
+  heap = "BHeap", parallel = TRUE, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -17,6 +17,9 @@ be calculated (see Notes)}
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
 calculated (see Notes)}
 
+\item{shortest}{If \code{FALSE}, calculate distances along the \emph{fastest}
+rather than shortest routes (see Notes).}
+
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
@@ -26,9 +29,6 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 details)}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
-
-\item{shortest}{If \code{FALSE}, calculate distances along the \emph{fastest}
-rather than shortest routes (see Notes).}
 }
 \value{
 square matrix of distances between nodes

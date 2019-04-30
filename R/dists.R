@@ -99,7 +99,7 @@
 #' graph <- graph [which (graph$component == 1), ]
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
-dodgr_dists <- function (graph, from = NULL, to = NULL,
+dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
     graph <- tbl_to_df (graph)
@@ -121,6 +121,14 @@ dodgr_dists <- function (graph, from = NULL, to = NULL,
 
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+
+    if (!shortest)
+    {
+        if (is.na (gr_cols$time_weighted))
+            stop ("Graph does not contain a weighted time column from ",
+                  "which to calculate fastest paths.")
+        graph [[gr_cols$w]] <- graph [[gr_cols$time_weighted]]
+    }
 
     graph <- convert_graph (graph, gr_cols)
 

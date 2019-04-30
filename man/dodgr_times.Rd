@@ -4,7 +4,8 @@
 \alias{dodgr_times}
 \title{dodgr_times}
 \usage{
-dodgr_times(graph, from = NULL, to = NULL, heap = "BHeap")
+dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE,
+  heap = "BHeap")
 }
 \arguments{
 \item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}
@@ -16,6 +17,9 @@ be calculated (see Notes)}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
 calculated (see Notes)}
+
+\item{shortest}{If \code{TRUE}, calculate times along the \emph{shortest} rather
+than fastest paths.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
