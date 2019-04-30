@@ -41,6 +41,43 @@
 #' }
 dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 {
+    bb <- process_bbox (bbox)
+
+    # osm_poly2line merges all street polygons with the line ones
+    net <- osmdata::opq (bb$bbox) %>%
+                osmdata::add_osm_feature (key = "highway") %>%
+                osmdata::osmdata_sf (quiet = quiet) %>%
+                osmdata::osm_poly2line ()
+    if (nrow (net$osm_lines) == 0)
+        stop ("Street network unable to be downloaded")
+
+    if (!is.null (bb$bbox_poly))
+        net <- osmdata::trim_osmdata (net, bb$bbox_poly)
+
+    return (net$osm_lines)
+}
+
+#' dodgr_streetnet_sc
+#'
+#' Use the `osmdata` package to extract the street network for a given
+#' location and return it in `SC`-format. For routing between a given set of
+#' points (passed as `pts`), the `bbox` argument may be omitted, in which case a
+#' bounding box will be constructed by expanding the range of `pts` by the
+#' relative amount of `expand`.
+#'
+#' @inherit dodgr_streetnet
+#' @export
+dodgr_streetnet_sc <- function (bbox, pts, expand = 0.05, quiet = TRUE)
+{
+    bb <- process_bbox (bbox)
+
+    osmdata::opq (bb$bbox) %>%
+        osmdata::add_osm_feature (key = "highway") %>%
+        osmdata::osmdata_sc (quiet = quiet)
+}
+
+process_bbox <- function (bbox, pts, expand)
+{
     bbox_poly <- NULL
     if (!missing (bbox))
     {
@@ -92,16 +129,5 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
     } else
         stop ('Either bbox or pts must be specified.')
 
-    # osm_poly2line merges all street polygons with the line ones
-    net <- osmdata::opq (bbox) %>%
-                osmdata::add_osm_feature (key = "highway") %>%
-                osmdata::osmdata_sf (quiet = quiet) %>%
-                osmdata::osm_poly2line ()
-    if (nrow (net$osm_lines) == 0)
-        stop ("Street network unable to be downloaded")
-
-    if (!is.null (bbox_poly))
-        net <- osmdata::trim_osmdata (net, bbox_poly)
-
-    return (net$osm_lines)
+    list (bbox = bbox, bbox_poly = bbox_poly)
 }

@@ -5,9 +5,8 @@
 #' bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #'
 #' @param x A street network represented either as `sf` `LINESTRING`
-#' objects, typically extracted with `dodgr_streetnet`, or as an `SC`
-#' (`silicate`) object typically extracted with the \pkg{osmdata} function
-#' `osmdata_sc`.
+#' objects, typically extracted with \link{dodgr_streetnet}, or as an `SC`
+#' (`silicate`) object typically extracted with the \link{dodgr_streetnet_sc}.
 #' @param wt_profile Name of weighting profile, or vector of values with names
 #' corresponding to names in `type_col` (see Details)
 #' @param wt_profile_file Name of locally-stored, `.json`-formatted version of
@@ -57,7 +56,7 @@
 #' used to submit to the \link{dodgr_times} function, and not for any other
 #' `dodgr` functions nor forms of network analysis.
 #'
-#' @seealso \link{write_dodgr_profile}, \link{dodgr_times}
+#' @seealso \link{write_dodgr_wt_profile}, \link{dodgr_times}
 #'
 #' @export
 #' @examples

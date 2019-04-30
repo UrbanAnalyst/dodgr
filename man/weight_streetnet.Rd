@@ -25,9 +25,8 @@ weight_streetnet(x, wt_profile = "bicycle", wt_profile_file = NULL,
 }
 \arguments{
 \item{x}{A street network represented either as \code{sf} \code{LINESTRING}
-objects, typically extracted with \code{dodgr_streetnet}, or as an \code{SC}
-(\code{silicate}) object typically extracted with the \pkg{osmdata} function
-\code{osmdata_sc}.}
+objects, typically extracted with \link{dodgr_streetnet}, or as an \code{SC}
+(\code{silicate}) object typically extracted with the \link{dodgr_streetnet_sc}.}
 
 \item{wt_profile}{Name of weighting profile, or vector of values with names
 corresponding to names in \code{type_col} (see Details)}
@@ -47,9 +46,8 @@ which designates different types of highways to be used for weighting
 \code{data.frame} object which provides unique identifiers for each highway
 (default works with \code{osmdata} objects).}
 
-\item{keep_cols}{For \code{sf}-formatted data only: Vectors of columns from \code{x} to
-be kept in the resultant \code{dodgr} network; vector can be either names or
-indices of desired columns.}
+\item{keep_cols}{Vectors of columns from \code{x} to be kept in the resultant
+\code{dodgr} network; vector can be either names or indices of desired columns.}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
 the right side (\code{FALSE})? - affects times only.}
@@ -124,5 +122,5 @@ graph <- weight_streetnet (r, type_col = "type", id_col = "id",
 }
 }
 \seealso{
-\link{write_dodgr_profile}, \link{dodgr_times}
+\link{write_dodgr_wt_profile}, \link{dodgr_times}
 }
