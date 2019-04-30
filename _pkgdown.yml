@@ -20,7 +20,6 @@ reference:
     - dodgr_streetnet
     - weight_railway
     - weight_streetnet
-    - dodgr_to_sfc
   - title: Functions to Modify Graphs
     contents:
     - dodgr_components

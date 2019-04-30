@@ -17,3 +17,6 @@ TRUE if writing succussful.
 Write the \code{dodgr} street network weighting profiles to a local
 \code{.json}-formatted file for manual editing and subsequent re-reading.
 }
+\seealso{
+\link{weight_streetnet}
+}

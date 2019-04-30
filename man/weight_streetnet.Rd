@@ -66,8 +66,8 @@ account for networks generated with the \pkg{osmdata} function
 }
 \description{
 Weight (or re-weight) an \pkg{sf} or \code{SC} (\code{silicate})-formatted OSM street
-network according to a named routino profile, selected from (foot, horse,
-wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+network according to a named profile, selected from (foot, horse, wheelchair,
+bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
@@ -122,4 +122,7 @@ r$id <- seq (nrow (r))
 graph <- weight_streetnet (r, type_col = "type", id_col = "id",
                            wt_profile = 1)
 }
+}
+\seealso{
+\link{write_dodgr_profile}, \link{dodgr_times}
 }

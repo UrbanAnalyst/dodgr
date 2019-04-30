@@ -6,6 +6,7 @@
 #' @param file Full name (including path) of file to which to write. The `.json`
 #' suffix will be automatically appended.
 #' @return TRUE if writing succussful.
+#' @seealso \link{weight_streetnet}
 #' @export
 write_dodgr_wt_profile <- function (file = NULL)
 {

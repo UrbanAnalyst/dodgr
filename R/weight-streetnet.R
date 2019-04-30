@@ -1,8 +1,8 @@
 #' weight_streetnet
 #'
 #' Weight (or re-weight) an \pkg{sf} or `SC` (`silicate`)-formatted OSM street
-#' network according to a named routino profile, selected from (foot, horse,
-#' wheelchair, bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+#' network according to a named profile, selected from (foot, horse, wheelchair,
+#' bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
 #'
 #' @param x A street network represented either as `sf` `LINESTRING`
 #' objects, typically extracted with `dodgr_streetnet`, or as an `SC`
@@ -19,9 +19,8 @@
 #' @param id_col For `sf`-formatted data only: Specify column of the code{sf}
 #' `data.frame` object which provides unique identifiers for each highway
 #' (default works with `osmdata` objects).
-#' @param keep_cols For `sf`-formatted data only: Vectors of columns from `x` to
-#' be kept in the resultant `dodgr` network; vector can be either names or
-#' indices of desired columns.
+#' @param keep_cols Vectors of columns from `x` to be kept in the resultant
+#' `dodgr` network; vector can be either names or indices of desired columns.
 #' @param times Weight network for routing according to \emph{times} rather than
 #' \emph{distances} (see Note).
 #' @param left_side Does traffic travel on the left side of the road (`TRUE`) or
@@ -57,6 +56,8 @@
 #' result of `weight_streetnet(..., times = TRUE)` should thus \emph{only} be
 #' used to submit to the \link{dodgr_times} function, and not for any other
 #' `dodgr` functions nor forms of network analysis.
+#'
+#' @seealso \link{write_dodgr_profile}, \link{dodgr_times}
 #'
 #' @export
 #' @examples
