@@ -91,7 +91,7 @@ process_bbox <- function (bbox, pts, expand)
             (length (bbox) > 1)
                 message ("selecting the first polygon from bbox")
             bbox_poly <- bbox [[1]]
-            bbox <- t (apply (bbox [[1]], 2, range))
+            bbox <- apply (bbox [[1]], 2, range)
         } else if (is.numeric (bbox))
         {
             if (!inherits (bbox, "matrix"))
@@ -99,7 +99,7 @@ process_bbox <- function (bbox, pts, expand)
                 if (length (bbox) != 4)
                     stop ("bbox must have four numeric values")
                 bbox <- rbind (sort (bbox [c (1, 3)]),
-                             sort (bbox [c (2, 4)]))
+                               sort (bbox [c (2, 4)]))
             } else if (nrow (bbox) > 2)
             {
                 bbox_poly <- bbox

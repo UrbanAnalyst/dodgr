@@ -11,7 +11,5 @@ test_that("streetnet bbox", {
 
               expect_message (bb2 <- process_bbox (list (bbox), NULL, 0),
                               "selecting the first polygon from bbox")
-              #expect_identical (bb, bb2)
-              # TODO: They should be identical - fix!
+              expect_identical (bb, bb2)
 })
-
