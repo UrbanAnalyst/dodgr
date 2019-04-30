@@ -464,7 +464,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
     {
         graph <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                           left_side)
-        graph$d_weighted <- graph$time_weighted
+        #graph$d_weighted <- graph$time_weighted
         attr (graph, "turn_penalty") <- 
             get_turn_penalties (wt_profile, wt_profile_file)$turn
     }
