@@ -29,10 +29,15 @@ dodgr_graph_cols <- function (graph)
         to_col <- which (nms == "to_id") %>% null_to_na ()
         d_col <- which (nms == "d")
         w_col <- which (nms == "d_weighted")
+
         xfr <- which (nms == "from_lon")
+        if (length (xfr) == 0) xfr <- NA
         yfr <- which (nms == "from_lat")
+        if (length (yfr) == 0) yfr <- NA
         xto <- which (nms == "to_lon")
+        if (length (xto) == 0) xto <- NA
         yto <- which (nms == "to_lat")
+        if (length (yto) == 0) yto <- NA
     } else
     {
         edge_id <- grep ("edge_id|edge_$", nms) %>% null_to_na ()

@@ -78,13 +78,18 @@ test_that ("heaps", {
     expect_silent (d3 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeap"))
     expect_silent (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"))
     expect_silent (d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23"))
-    expect_silent (d6 <- dodgr_dists (graph, from = from, to = to, heap = "set"))
 
     expect_identical (d0, d1)
     expect_false (identical (d0, d2))
     expect_identical (d0, d3)
     expect_identical (d0, d4)
     expect_identical (d0, d5)
+
+    # std::set is only applied to non-spatial graphs:
+    graph$from_lon <- graph$from_lat <- graph$to_lon <- graph$to_lat <- NULL
+    expect_silent (d6 <- dodgr_dists (graph, from = from, to = to, heap = "set"))
+
+
     expect_identical (d0, d6)
 })
 

@@ -17,6 +17,8 @@ test_that("components", {
     graph$component <- NULL
     graph <- dodgr_components (graph)
     expect_identical (comp, graph$component)
+    comp <- graph$component
+    expect_identical (comp, graph$component)
 })
 
 test_that("contract graph", {
