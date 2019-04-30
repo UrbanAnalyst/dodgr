@@ -61,8 +61,12 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     graph_refill [, gr_cols$to] <- graph_contracted$graph$to [indx_contr]
     graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
     graph_refill [, gr_cols$w] <- graph_contracted$graph$w [indx_contr]
-    if (!is.na (gr_cols$time))
+    if (!is.na (gr_cols$time) & !is.na (gr_cols$time_weighted))
+    {
         graph_refill [, gr_cols$time] <- graph_contracted$graph$time [indx_contr]
+        graph_refill [, gr_cols$time_weighted] <-
+            graph_contracted$graph$timew [indx_contr]
+    }
 
     # Then re-insert spatial coordinates
     if (is_graph_spatial (graph))

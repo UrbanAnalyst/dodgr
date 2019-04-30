@@ -101,7 +101,7 @@ dodgr_graph_cols <- function (graph)
 #' @noRd
 convert_graph <- function (graph, gr_cols)
 {
-    keep_cols <- c ("edge_id", "from", "to", "d", "w", "time")
+    keep_cols <- c ("edge_id", "from", "to", "d", "w", "time", "time_weighted")
     index <- do.call (c, gr_cols [keep_cols])
     index <- index [!is.na (index)]
     graph <- graph [, index]
@@ -111,6 +111,9 @@ convert_graph <- function (graph, gr_cols)
         graph$edge_id <- convert_to_char (graph$edge_id)
     graph$from <- convert_to_char (graph$from)
     graph$to <- convert_to_char (graph$to)
+
+    if (!"time_weighted" %in% names (graph))
+        graph$time_weighted <- graph$time
 
     return (graph)
 }

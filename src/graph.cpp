@@ -60,11 +60,12 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
     Rcpp::NumericVector weight = gr ["w"];
     Rcpp::StringVector colnames = gr.attr ("names");
     bool has_times = false;
-    Rcpp::NumericVector time;
-    if (gr.ncol () == 6)
+    Rcpp::NumericVector time, timew;
+    if (gr.ncol () == 7)
     {
         has_times = true;
         time = gr ["time"];
+        timew = gr ["time_weighted"];
     }
 
     std::set <edge_id_t> replacement_edges; // all empty here
@@ -103,7 +104,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         if (!has_times)
             weights = {dist [i], wt};
         else
-            weights = {dist [i], wt, time [i]};
+            weights = {dist [i], wt, time [i], timew [i]};
 
         edge_t edge = edge_t (from_id, to_id, weights,
                 edge_id_str, replacement_edges);

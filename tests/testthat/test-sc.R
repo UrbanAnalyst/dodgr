@@ -115,6 +115,8 @@ test_that("dodgr_times", {
                          use = "pairwise.complete.obs")
               expect_true (r2 < 1)
               expect_true (r2 > 0.95)
+              # These times should be longer:
+              expect_true (mean (t2 - t1, na.rm = TRUE) > 0)
 
               # times with contracted graph should be identical:
               net_sc2_c <- dodgr_contract_graph (net_sc2)
@@ -122,7 +124,7 @@ test_that("dodgr_times", {
               set.seed (1)
               from <- sample (v$id, 100)
               to <- sample (v$id, 100)
-              d <- dodgr_dists (net_sc2, from = from, to = to)
+
               t1 <- dodgr_times (net_sc2, from = from, to = to)
               t2 <- dodgr_times (net_sc2_c$graph, from = from, to = to)
               dtime <- max (abs (t1 - t2), na.rm = TRUE)

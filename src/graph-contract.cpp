@@ -73,11 +73,14 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
 {
     edge_t edge_from = edge_map.find (edge_from_id)->second,
            edge_to = edge_map.find (edge_to_id)->second;
-    double time,
+    double time, timew,
            d = edge_from.dist + edge_to.dist,
            w = edge_from.weight + edge_to.weight;
     if (has_times)
+    {
         time = edge_from.time + edge_to.time;
+        timew = edge_from.timew + edge_to.timew;
+    }
 
     std::set <edge_id_t> old_edges,
         old_edges_fr = edge_from.get_old_edges (),
@@ -112,7 +115,7 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
     if (!has_times)
         wts = {d, w};
     else
-        wts = {d, w, time};
+        wts = {d, w, time, timew};
     edge_t new_edge = edge_t (vt_from, vt_to, wts, new_edge_id, old_edges);
     edge_map.emplace (new_edge_id, new_edge);
 }
@@ -289,7 +292,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     Rcpp::StringVector from_vec (nedges), to_vec (nedges),
         edgeid_vec (nedges);
     Rcpp::NumericVector dist_vec (nedges), weight_vec (nedges),
-        time_vec (nedges);
+        time_vec (nedges), timew_vec (nedges);
 
     size_t map_size = 0; // size of edge map contracted -> original
     unsigned int edge_count = 0;
@@ -306,7 +309,10 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         dist_vec (edge_count) = e->second.dist;
         weight_vec (edge_count) = e->second.weight;
         if (has_times)
+        {
             time_vec (edge_count) = e->second.time;
+            timew_vec (edge_count) = e->second.timew;
+        }
 
         edgeid_vec (edge_count) = e->second.getID ();
 
@@ -350,6 +356,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
                 Rcpp::Named ("d") = dist_vec,
                 Rcpp::Named ("w") = weight_vec,
                 Rcpp::Named ("time") = time_vec,
+                Rcpp::Named ("timew") = timew_vec,
                 Rcpp::_["stringsAsFactors"] = false);
 
     Rcpp::DataFrame edges_new2old = Rcpp::DataFrame::create (
