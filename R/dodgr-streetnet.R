@@ -1,3 +1,5 @@
+# nocov start
+
 #' dodgr_streetnet
 #'
 #' Use the `osmdata` package to extract the street network for a given
@@ -76,13 +78,15 @@ dodgr_streetnet_sc <- function (bbox, pts, expand = 0.05, quiet = TRUE)
         osmdata::osmdata_sc (quiet = quiet)
 }
 
+# nocov end
+
 process_bbox <- function (bbox, pts, expand)
 {
     bbox_poly <- NULL
     if (!missing (bbox))
     {
         if (is.character (bbox))
-            bbox <- osmdata::getbb (bbox)
+            bbox <- osmdata::getbb (bbox) # nocov
         else if (is.list (bbox))
         {
             if (!all (vapply (bbox, is.numeric, logical (1))))
@@ -118,7 +122,7 @@ process_bbox <- function (bbox, pts, expand)
         coly <- which (grepl ("y", nms, ignore.case = TRUE) |
                        grepl ("lat", nms, ignore.case = TRUE))
         if (! (length (colx) == 1 | length (coly) == 1))
-            stop ("Can not unambiguous determine coordinates in graph")
+            stop ("Can not unambiguously determine coordinates in graph")
 
         x <- range (pts [, colx])
         x <- x + c (-expand, expand) * diff (x)

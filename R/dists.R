@@ -405,6 +405,8 @@ get_heap <- function (heap, graph)
     list (heap = heap, graph = graph)
 }
 
+# nocov start
+
 #' graph_from_pts
 #'
 #' Download a street network when `graph` not passed to `dodgr_dists`,
@@ -437,6 +439,8 @@ graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
 
     return (graph)
 }
+
+# nocov end
 
 #' flip_graph
 #'
