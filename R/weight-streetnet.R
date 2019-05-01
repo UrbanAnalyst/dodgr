@@ -155,7 +155,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
             stop ("Multiple potential ID columns: [",
                   paste0 (names (x) [idcol], collapse = " "),
                   "]; please explicitly specify one of these.")
-        } else if (length (idcol) == 1)
+        } else if (length (idcol) == 0)
         {
             message ("x appears to have no ID column;",
                      "sequential edge numbers will be used.")

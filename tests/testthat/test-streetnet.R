@@ -43,3 +43,32 @@ test_that ("streetnet pts", {
               # -> as.vector (t (bb2$bbox))
               expect_identical (bb2_bb, bb$bbox)
 })
+
+test_that ("streetnet times", {
+               expect_error (graph <- weight_streetnet (hampi, times = TRUE),
+                             paste0 ("Time-based weighting only currently ",
+                                     "implemented for street network data ",
+                                     "generated with"))
+               expect_silent (graph <- weight_streetnet (hampi))
+               h <- hampi
+               names (h) [names (h) == "osm_id"] <- "id"
+               expect_silent (graph2 <- weight_streetnet (h, id_col = "id"))
+               expect_identical (graph, graph2)
+
+               h$id <- NULL
+               expect_message (graph3 <- weight_streetnet (h),
+                               "Using column width as ID column for edges")
+
+               h <- hampi
+               names (h$geometry) <- NULL
+               graph4 <- weight_streetnet (h)
+               expect_identical (graph$edge_id, seq (nrow (graph)))
+
+               h$oneway_bicycle <- h$oneway
+               graph5 <- weight_streetnet (h)
+               expect_identical (graph5, graph4)
+
+               expect_error (weight_streetnet (hampi,
+                                               wt_profile = list (1)),
+                             "Custom named profiles must be vectors")
+})
