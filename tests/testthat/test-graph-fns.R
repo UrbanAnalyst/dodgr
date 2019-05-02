@@ -167,6 +167,61 @@ test_that ("points to graph", {
     v <- dodgr_vertices (net)
     expect_silent (index2 <- match_pts_to_graph (v, pts))
     expect_identical (index1, index2)
+
+    colnames (pts) <- NULL
+    expect_message (index3 <- match_pts_to_graph (v, pts),
+                    "xy has no named columns; assuming order is x then y")
+    expect_identical (index1, index3)
+
+    pts <- data.frame (x = x, y = y, x2 = x)
+    expect_error (index4 <- match_pts_to_graph (v, list (pts)),
+                  "xy must be a matrix or data.frame")
+    expect_error (index4 <- match_pts_to_graph (v, pts),
+                  "xy must have only two columns")
+
+    pts <- data.frame (x = x, y = y)
+    expect_silent (index4 <- match_pts_to_graph (v, pts, connected = TRUE))
+    expect_true (!identical (index1, index4))
+
+    class (pts) <- c (class (pts), "tbl")
+    expect_silent (index5 <- match_pts_to_graph (v, pts, connected = TRUE))
+    expect_identical (index4, index5)
+
+    pts <- sf::st_as_sf (pts, coords = c (1, 2), crs = 4326)
+    expect_silent (index6 <- match_pts_to_graph (v, pts, connected = TRUE))
+    expect_identical (index4, index6)
+    expect_silent (index7 <- match_points_to_graph (v, pts, connected = TRUE))
+    expect_identical (index4, index7)
+})
+
+test_that ("graph columns", {
+    graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
+    nf <- 100
+    nt <- 50
+    from <- sample (graph$from_id, size = nf)
+    to <- sample (graph$from_id, size = nt)
+    d <- dodgr_dists (graph, from = from, to = to)
+    graph$from_id2 <- graph$from_id
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to determine column with ID of from vertices")
+    graph$from_id2 <- NULL
+    graph$to_id2 <- graph$to_id
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to determine column with ID of to vertices")
+
+    graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
+    graph$from_lat <- NULL
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to determine coordinate columns of graph")
+
+    graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
+    graph$d2 <- graph$d
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to determine distance column in graph")
+    graph$d2 <- NULL
+    graph$d_wt <- graph$d_weighted
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to determine weight column in graph")
 })
 
 test_that ("get_id_cols", {

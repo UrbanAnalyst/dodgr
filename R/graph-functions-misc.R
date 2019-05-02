@@ -70,7 +70,7 @@ find_to_id_col <- function (graph)
     {
         to_col <- to_col [grep ("id|vx", names (graph) [to_col]) ]
         if (length (to_col) != 1)
-            stop ("Unable to determine column with ID of from vertices")
+            stop ("Unable to determine column with ID of to vertices")
     }
     return (to_col)
 }
@@ -134,6 +134,8 @@ find_spatial_cols <- function (graph)
             xy_to_id <- paste0 (xy_to_id)
     } else # len == 2, so must be only x-y
     {
+        if (length (grep ("lon|lat|x|y", names (graph) [fr_col])) != 2)
+            stop ("Unable to determine coordinate columns of graph")
         xy_fr_id <- paste0 (graph [, fr_col [1]], "-",
                             graph [, fr_col [2]])
         xy_to_id <- paste0 (graph [, to_col [1]], "-",
@@ -285,6 +287,6 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE)
 #' @export
 match_points_to_graph <- function (verts, xy, connected = FALSE)
 {
-    match_pts_to_graph (verts, xy, connected = FALSE)
+    match_pts_to_graph (verts, xy, connected = connected)
 }
 

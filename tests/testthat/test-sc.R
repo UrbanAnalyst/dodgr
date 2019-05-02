@@ -83,6 +83,19 @@ test_that("SC", {
               v_sc <- dodgr_vertices (net_sc)
               v_sf <- dodgr_vertices (net_sf)
               expect_true (nrow (v_sf) > nrow (v_sc))
+
+              class (hsc) <- class (hsc) [!class (hsc) %in% "osmdata_sc"]
+              expect_error (net_sc <- weight_streetnet (hsc),
+                            paste0 ("weight_streetnet currently only works for ",
+                                    "'sc'-class objects extracted with"))
+})
+
+test_that ("elevation", {
+               expect_silent (hsc <- sf_to_sc (hampi))
+               expect_silent (net_sc <- weight_streetnet (hsc))
+               hsc$vertex$z_ <- runif (nrow (hsc$vertex)) * 10
+               expect_silent (net_sc2 <- weight_streetnet (hsc))
+               expect_true (ncol (net_sc2) == (ncol (net_sc) + 1))
 })
 
 test_that("dodgr_times", {
