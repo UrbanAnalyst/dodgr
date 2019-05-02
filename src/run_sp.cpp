@@ -93,7 +93,6 @@ struct OneDist : public RcppParallel::Worker
 
             if (is_spatial)
             {
-                size_t other_side; // opposite side for bi-directional search
                 double dmax = 0.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
@@ -101,10 +100,7 @@ struct OneDist : public RcppParallel::Worker
                         dy = vy [j] - vy [from_i];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
                     if (heuristic [j] > dmax)
-                    {
                         dmax = heuristic [j];
-                        other_side = j;
-                    }
                 }
                 pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
             } else if (heap_type.find ("set") == std::string::npos)
