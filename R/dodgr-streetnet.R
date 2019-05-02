@@ -71,7 +71,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #' @export
 dodgr_streetnet_sc <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 {
-    bb <- process_bbox (bbox)
+    bb <- process_bbox (bbox, pts, expand)
 
     osmdata::opq (bb$bbox) %>%
         osmdata::add_osm_feature (key = "highway") %>%

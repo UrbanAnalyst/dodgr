@@ -183,10 +183,10 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 #' Alias for \link{dodgr_dists}
 #' @inherit dodgr_dists
 #' @export
-dodgr_distances <- function (graph, from, to,
+dodgr_distances <- function (graph, from = NULL, to = NULL, shortest = TRUE,
                          heap = 'BHeap', parallel = TRUE, quiet = TRUE)
 {
-    dodgr_dists (graph, from, to,
+    dodgr_dists (graph, from, to, shortest = shortest,
                  heap = heap, parallel = parallel, quiet = quiet)
 }
 

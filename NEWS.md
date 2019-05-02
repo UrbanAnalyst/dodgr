@@ -1,5 +1,6 @@
 # v0.1.3.004
 Major changes:
+* New vignette on street networks and time-based routing
 - `weight_streetnet` function now returns edge times for all Open Street Map
   networks extracted with the `osmdata` package.
 - weight_streetnet now accepts `SC` format data from `osmdata::osmdata_sc()`
