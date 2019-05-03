@@ -45,8 +45,8 @@ test_that ("streetnet pts", {
 })
 
 test_that ("streetnet times", {
-               expect_error (graph <- weight_streetnet (hampi, times = TRUE),
-                             paste0 ("Time-based weighting only currently ",
+               expect_error (graph <- weight_streetnet (hampi, turn_angle = TRUE),
+                             paste0 ("Turn-angle calculations only currently ",
                                      "implemented for street network data ",
                                      "generated with"))
                expect_silent (graph <- weight_streetnet (hampi))

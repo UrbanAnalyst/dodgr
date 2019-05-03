@@ -115,7 +115,7 @@ test_that("dodgr_times", {
 
               # calculate times with turning angles, such that resultant network
               # includes compound junction edges
-              expect_silent (net_sc2 <- weight_streetnet (hsc, times = TRUE))
+              expect_silent (net_sc2 <- weight_streetnet (hsc, turn_angle = TRUE))
               expect_true (nrow (net_sc2) > nrow (net_sc))
               v0 <- net_sc2$.vx0 [grep ("_start", net_sc2$.vx0)]
               v0 <- gsub ("_start", "", v0)

@@ -20,10 +20,11 @@
 #' (default works with `osmdata` objects).
 #' @param keep_cols Vectors of columns from `x` to be kept in the resultant
 #' `dodgr` network; vector can be either names or indices of desired columns.
-#' @param times Weight network for routing according to \emph{times} rather than
-#' \emph{distances} (see Note).
+#' @param turn_angle Weight edges times by turning angles at intersections (see
+#' Note).
 #' @param left_side Does traffic travel on the left side of the road (`TRUE`) or
-#' the right side (`FALSE`)? - affects times only.
+#' the right side (`FALSE`)? - only has effect on turn angle calculations for
+#' edge times.
 #'
 #' @return A `data.frame` of edges representing the street network, with
 #' distances in metres and times in seconds, along with a column of graph
@@ -45,16 +46,13 @@
 #' file with \link{write_dodgr_wt_profile}, the values edited as desired, and
 #' the name of this file passed as the `wt_profile_file` parameter.
 #'
-#' @note Graphs weighted for time-based routing (that is, with `times = TRUE`)
-#' are fundamentally different from the default for distance-based routing.
-#' Distances in the latter case are \emph{shortest} distances weighted for
-#' the particular mode of transport specified in `wt_profile`. Time-based
-#' routing requires additional calculation of turn angles (along with
-#' differential speeds along different kinds of ways), represented by additional
-#' edges describing turns of different angles through each intersection. The
-#' result of `weight_streetnet(..., times = TRUE)` should thus \emph{only} be
-#' used to submit to the \link{dodgr_times} function, and not for any other
-#' `dodgr` functions nor forms of network analysis.
+#' @note Calculating edge times to account for turn angles (that is, with
+#' `turn_angle = TRUE`) involves calculating the temporal delay involving in
+#' turning across oncoming traffic. Resultant graphs are fundamentally different
+#' from the default for distance-based routing. The result of
+#' `weight_streetnet(..., turn_angle = TRUE)` should thus \emph{only} be used to
+#' submit to the \link{dodgr_times} function, and not for any other `dodgr`
+#' functions nor forms of network analysis.
 #'
 #' @seealso \link{write_dodgr_wt_profile}, \link{dodgr_times}
 #'
@@ -91,7 +89,7 @@
 #' }
 weight_streetnet <- function (x, wt_profile = "bicycle",
                               wt_profile_file = NULL,
-                              times = FALSE,
+                              turn_angle = FALSE,
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, left_side = FALSE)
 {
@@ -102,7 +100,7 @@ weight_streetnet <- function (x, wt_profile = "bicycle",
 #' @export
 weight_streetnet.default <- function (x, wt_profile = "bicycle",
                               wt_profile_file = NULL,
-                              times = FALSE,
+                              turn_angle = FALSE,
                               type_col = "highway", id_col = "osm_id",
                               keep_cols = NULL, left_side = FALSE)
 {
@@ -124,13 +122,13 @@ way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
 #' @export
 weight_streetnet.sf <- function (x, wt_profile = "bicycle",
                                  wt_profile_file = NULL,
-                                 times = FALSE,
+                                 turn_angle = FALSE,
                                  type_col = "highway", id_col = "osm_id",
                                  keep_cols = NULL, left_side = FALSE)
 {
-    if (times)
-        stop ("Time-based weighting only currently implemented for street network",
-              " data generated with the `osmdata::osmdata_sc()` function.")
+    if (turn_angle)
+        stop ("Turn-angle calculations only currently implemented for street ",
+              "network data generated with the `osmdata::osmdata_sc()` function.")
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
@@ -427,7 +425,7 @@ add_extra_sf_columns <- function (graph, x)
 #' @export
 weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle",
                                                         wt_profile_file = NULL,
-                                                        times = FALSE,
+                                                        turn_angle = FALSE,
                                                         type_col = "highway",
                                                         id_col = "osm_id",
                                                         keep_cols = NULL,
@@ -460,7 +458,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     attr (graph, "turn_penalty") <- 0
 
-    if (times)
+    if (turn_angle)
     {
         graph <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                           left_side)

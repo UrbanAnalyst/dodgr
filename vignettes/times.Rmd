@@ -104,7 +104,8 @@ The two most important parameters in this function are:
 1. `wt_profile`, a character string generally specifying a mode of transport
    (generally one of "bicycle", "foot", "goods", "hgv", "horse", "moped",
    "motorcar", "motorcycle", "psv", or "wheelchair"); and
-2. `times`, specifying whether the graph is to be weighted for time-based routing.
+2. `turn_angle`, specifying whether edge times should include delays associated
+   with turning across oncoming traffic.
 
 The first of these options is described further in the following sub-section.
 The second option has no effect for
@@ -152,13 +153,13 @@ Weighting for time-based routing thus not only introduces new "compound" edges,
 but also requires re-labelling junction vertices, through appending either
 "\_start" or "\_end". Recommended practice for routing in such cases is to
 select routing vertices (origins and destinations) from a standard weighted
-graph (that is, one generated with `times = FALSE`), and then to modify these
-routing vertices as illustrated in the following example:
+graph (that is, one generated with `turn_angle = FALSE`), and then to modify
+these routing vertices as illustrated in the following example:
 
 ```{r streetnet_times, eval = FALSE}
 dat_sc <- dodgr_streetnet_sc ("ogbomosho nigeria")
 graph <- weight_streetnet (dat_sc, wt_profile = "bicycle")
-graph_t <- weight_streetnet (dat_sc, wt_profile = "bicycle", times = TRUE)
+graph_t <- weight_streetnet (dat_sc, wt_profile = "bicycle", turn_angle = TRUE)
 nrow (graph); nrow (graph_t)
 ```
 ```{r streetnet_times-out1, echo = FALSE}
