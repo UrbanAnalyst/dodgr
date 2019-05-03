@@ -15,6 +15,12 @@
 constexpr double INFINITE_INT =  std::numeric_limits<int>::max ();
 constexpr double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
 
+class Heap;
+class HeapDesc;
+class DGraph;
+
+namespace PF{
+
 /* DijkstraEdge is used for the std::set implementation, everything else is for
  * Shane Saunders's heap sort versions */
 struct DijkstraEdge
@@ -41,10 +47,6 @@ struct by_wt
 
 typedef std::set <DijkstraEdge, by_wt> EdgeSet;
 
-
-class Heap;
-class HeapDesc;
-class DGraph;
 
 class PathFinder {
     public:
@@ -111,3 +113,5 @@ class PathFinder {
 
         EdgeSet edge_set;
 };
+
+} // end namespace PF
