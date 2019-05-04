@@ -17,11 +17,12 @@ Practices](https://bestpractices.coreinfrastructure.org/projects/1396/badge)](ht
 
 R package for efficient calculation of many-to-many pairwise distances
 on dual-weighted directed graphs, and for aggregation of flows
-throughout networks.
+throughout networks. Includes loads of functions dedicate to routing
+through street networks.
 
 ## What’s so special?
 
-Three aspects. First, while other packages exist for calculating
+Four aspects. First, while other packages exist for calculating
 distances on directed graphs, notably [`igraph`](https://igraph.org/r),
 even this otherwise fabulous package does not (readily) permit analysis
 of *dual-weighted* graphs. Dual-weighted graphs have two sets of weights
@@ -48,6 +49,12 @@ each pair of points. Alternatively, flows can be aggregated according to
 a network dispersal model from a set of origin points and associated
 densities, and a user-specified dispersal model.
 
+Fourth and finally, `dodgr` implements highly realistic and
+fully-customisable profiles for routing through street networks with
+various modes of transport. Routing can include such factors as waiting
+times at traffic lights, delays for turning across oncoming traffic, and
+the effects of elevation on both cyclists and pedestrians.
+
 ## Installation
 
 You can install `dodgr` with:
@@ -63,7 +70,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.1.3.1'
+#> [1] '0.1.3.3'
 ```
 
 ## Usage: Sample Data and `dodgr` networks
@@ -89,28 +96,27 @@ graph <- weight_streetnet (hampi, wt_profile = "foot")
 class (graph)
 #> [1] "data.frame"      "dodgr_streetnet"
 dim (graph)
-#> [1] 5845   13
+#> [1] 5845   15
 ```
 
 The `sf`-format network contained 191 `LINESTRING` objects, with the
 `weight_streetnet()` function decomposing these into 5,845 distinct
 edges, indicating that the `sf` representation had around 31 edges or
 segments in each `LINESTRING` object. The `dodgr` network then looks
-like
-this:
+like this:
 
 ``` r
 head (graph)
 ```
 
-| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |
-| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: |
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 |
+| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |      time | time\_weighted |
+| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: | --------: | -------------: |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 0.0953584 |      0.1059537 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 0.0953584 |      0.1059537 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 0.0063998 |      0.0071109 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 0.0063998 |      0.0071109 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 0.0067151 |      0.0074612 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 0.0067151 |      0.0074612 |
 
 The `geom_num` column maps directly onto the sequence of `LINESTRING`
 objects within the `sf`-formatted data. The `highway` column is taken
@@ -123,36 +129,42 @@ largest; and so on).
 Note that the `d_weighted` values are often greater than the geometric
 distances, `d`. In the example shown, `service` highways are not ideal
 for pedestrians, and so weighted distances are slightly greater than
-actual distances. Compare this
-with:
+actual distances. Compare this with:
 
 ``` r
 head (graph [graph$highway == "path", ])
 ```
 
-|    | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |
-| -- | --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: |
-| 47 |         2 |       47 | 338905220  |  76.47398 |  15.31224 | 338907543  | 76.47405 | 15.31241 | 0.0197040 |   0.0197040 | path    | 30643853 |         1 |
-| 48 |         2 |       48 | 338907543  |  76.47405 |  15.31241 | 338905220  | 76.47398 | 15.31224 | 0.0197040 |   0.0197040 | path    | 30643853 |         1 |
-| 49 |         2 |       49 | 338907543  |  76.47405 |  15.31241 | 2398957585 | 76.47410 | 15.31259 | 0.0213917 |   0.0213917 | path    | 30643853 |         1 |
-| 50 |         2 |       50 | 2398957585 |  76.47410 |  15.31259 | 338907543  | 76.47405 | 15.31241 | 0.0213917 |   0.0213917 | path    | 30643853 |         1 |
-| 51 |         2 |       51 | 2398957585 |  76.47410 |  15.31259 | 338907597  | 76.47413 | 15.31279 | 0.0221521 |   0.0221521 | path    | 30643853 |         1 |
-| 52 |         2 |       52 | 338907597  |  76.47413 |  15.31279 | 2398957585 | 76.47410 | 15.31259 | 0.0221521 |   0.0221521 | path    | 30643853 |         1 |
+|    | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |      time | time\_weighted |
+| -- | --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: | --------: | -------------: |
+| 47 |         2 |       47 | 338905220  |  76.47398 |  15.31224 | 338907543  | 76.47405 | 15.31241 | 0.0197040 |   0.0197040 | path    | 30643853 |         1 | 0.0354672 |      0.0354672 |
+| 48 |         2 |       48 | 338907543  |  76.47405 |  15.31241 | 338905220  | 76.47398 | 15.31224 | 0.0197040 |   0.0197040 | path    | 30643853 |         1 | 0.0354672 |      0.0354672 |
+| 49 |         2 |       49 | 338907543  |  76.47405 |  15.31241 | 2398957585 | 76.47410 | 15.31259 | 0.0213917 |   0.0213917 | path    | 30643853 |         1 | 0.0385051 |      0.0385051 |
+| 50 |         2 |       50 | 2398957585 |  76.47410 |  15.31259 | 338907543  | 76.47405 | 15.31241 | 0.0213917 |   0.0213917 | path    | 30643853 |         1 | 0.0385051 |      0.0385051 |
+| 51 |         2 |       51 | 2398957585 |  76.47410 |  15.31259 | 338907597  | 76.47413 | 15.31279 | 0.0221521 |   0.0221521 | path    | 30643853 |         1 | 0.0398737 |      0.0398737 |
+| 52 |         2 |       52 | 338907597  |  76.47413 |  15.31279 | 2398957585 | 76.47410 | 15.31259 | 0.0221521 |   0.0221521 | path    | 30643853 |         1 | 0.0398737 |      0.0398737 |
 
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
 
-## Usage: Distances
+## Usage: Distances and Times
 
 The many-to-many nature of `dodgr` means that the function to calculate
 distances,
-[`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html),
-accepts two vectors or matrices of routing points as inputs (describing
-origins and destinations), and returns a corresponding matrix of
-pairwise distances. If an input graph has columns for both distances and
-weighted distances, the latter are used to determine the effectively
-shortest routes through a network, while actual distances returned are
-sums of actual distances along those routes.
+[`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html)
+or, for street networks, times,
+[`dodgr_times()`](https://atfutures.github.io/dodgr/reference/dodgr_times.html)
+or, for street networks, times, accepts two vectors or matrices of
+routing points as inputs (describing origins and destinations), and
+returns a corresponding matrix of pairwise distances. If an input graph
+has columns for both distances and weighted distances, and/or times and
+weighted times, the weighted versions are used to determine the
+effectively shortest or fastest routes through a network, while actual
+distances or times are summed along the routes to calculate final
+values. It is of course also possible to calculate distances along
+fastest routes, times along shortest routes, or any combination thereof,
+as detailed in the package vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html).
 
 Routing points can, for example, be randomly selected from the vertices
 of a graph. The vertices can in turn be extracted with the
@@ -210,8 +222,7 @@ nrow (graph)
 ```
 
 or by explicitly using the `match_points_to_graph()` function with the
-option `connected =
-TRUE`:
+option `connected = TRUE`:
 
 ``` r
 from <- match_points_to_graph (v, cbind (from_x, from_y), connected = TRUE)
@@ -248,26 +259,24 @@ f <- dodgr_flows_aggregate (graph = graph, from = from, to = to, flows = flows)
 ```
 
 The result is simply the input `graph` with an additional column
-quantifying the aggregate flows along each
-edge:
+quantifying the aggregate flows along each edge:
 
 ``` r
 head (f)
 ```
 
-| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |     flow |
-| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: | -------: |
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 |  0.00000 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 12.71036 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 |  0.00000 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 12.71036 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 |  0.00000 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 12.71036 |
+| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |         d | d\_weighted | highway | way\_id  | component |      time | time\_weighted |     flow |
+| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | --------: | ----------: | :------ | :------- | --------: | --------: | -------------: | -------: |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 0.0953584 |      0.1059537 | 65.52914 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 0.1324422 |   0.1471580 | service | 28565950 |         1 | 0.0953584 |      0.1059537 | 60.62822 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 0.0063998 |      0.0071109 | 65.52914 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 | 0.0088887 |   0.0098763 | service | 28565950 |         1 | 0.0063998 |      0.0071109 | 60.62822 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 0.0067151 |      0.0074612 | 65.52914 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 | 0.0093265 |   0.0103628 | service | 28565950 |         1 | 0.0067151 |      0.0074612 | 60.62822 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
-graph is
-dispersive:
+graph is dispersive:
 
 ``` r
 f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (from)))
@@ -276,8 +285,10 @@ f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (fro
 ## Further detail
 
 For more detail, see the [main package
-vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), along
-with a second vignette detailing [benchmark
+vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), the
+second vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html), and a
+third vignette detailing [benchmark
 timings](https://atfutures.github.io/dodgr/articles/benchmark.html),
 showing that under many circumstances, `dodgr` performs considerably
 faster than equivalent routines from the `igraph` package.

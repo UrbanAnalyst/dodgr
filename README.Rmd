@@ -33,11 +33,13 @@ knitr::opts_chunk$set(
 # dodgr: Distances on Directed Graphs in R
 
 R package for efficient calculation of many-to-many pairwise distances on
-dual-weighted directed graphs, and for aggregation of flows throughout networks.
+dual-weighted directed graphs, and for aggregation of flows throughout
+networks. Includes loads of functions dedicate to routing through street
+networks.
 
 ## What's so special?
 
-Three aspects. First, while other packages exist for calculating distances on
+Four aspects. First, while other packages exist for calculating distances on
 directed graphs, notably [`igraph`](https://igraph.org/r), even this otherwise
 fabulous package does not (readily) permit analysis of *dual-weighted* graphs.
 Dual-weighted graphs have two sets of weights for each edge, so routing can be
@@ -45,10 +47,10 @@ evaluated with one set of weights, while distances can be calculated with the
 other.  A canonical example is a street network, where *weighted distances* are
 assigned depending on mode of transport (for example, weighted distances for
 pedestrians on multi-lane vehicular roads are longer than equivalent distances
-along isolated walking paths), yet the desired output remains direct, unweighted
-distances. Accurate calculation of distances on street networks requires a
-dual-weighted representation. In **R**, `dodgr` is currently the only package
-that offers this functionality (without excessive data wrangling).
+along isolated walking paths), yet the desired output remains direct,
+unweighted distances. Accurate calculation of distances on street networks
+requires a dual-weighted representation. In **R**, `dodgr` is currently the
+only package that offers this functionality (without excessive data wrangling).
 
 Second, while [`igraph`](https://igraph.org/r) and almost all other routing
 packages are primarily designed for one-to-one routing, `dodgr` is specifically
@@ -61,6 +63,12 @@ origins, destinations, and flow densities between each pair of points.
 Alternatively, flows can be aggregated according to a network dispersal model
 from a set of origin points and associated densities, and a user-specified
 dispersal model.
+
+Fourth and finally, `dodgr` implements highly realistic and fully-customisable
+profiles for routing through street networks with various modes of transport.
+Routing can include such factors as waiting times at traffic lights, delays for
+turning across oncoming traffic, and the effects of elevation on both cyclists
+and pedestrians.
 
 
 ## Installation
@@ -79,12 +87,12 @@ packageVersion ("dodgr")
 
 ## Usage: Sample Data and `dodgr` networks
 
-To illustrate functionality, the package includes an example data set containing
-the Open Street Map network for [Hampi,
+To illustrate functionality, the package includes an example data set
+containing the Open Street Map network for [Hampi,
 India](https://www.openstreetmap.org/#map=15/15.3368/76.4601) (a primarily
-pedestrian village in the middle of a large World Heritage zone). These data are
-in [Simple Features (`sf`)](https://cran.r-project.org/package=sf)
-format, as a collection of `LINESTRING` objects. `dodgr` represents networks as
+pedestrian village in the middle of a large World Heritage zone). These data
+are in [Simple Features (`sf`)](https://cran.r-project.org/package=sf) format,
+as a collection of `LINESTRING` objects. `dodgr` represents networks as
 a simple rectangular graph, with each row representing an edge segment between
 two points or vertices. `sf`-format objects can be converted to equivalent
 `dodgr` representations with the `weight_streetnet()` function:
@@ -132,16 +140,23 @@ to actual distances.
 
 
 
-## Usage: Distances
+## Usage: Distances and Times
 
 The many-to-many nature of `dodgr` means that the function to calculate
 distances,
-[`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html),
-accepts two vectors or matrices of routing points as inputs (describing origins
-and destinations), and returns a corresponding matrix of pairwise distances. If
-an input graph has columns for both distances and weighted distances, the latter
-are used to determine the effectively shortest routes through a network, while
-actual distances returned are sums of actual distances along those routes.
+[`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html)
+or, for street networks, times,
+[`dodgr_times()`](https://atfutures.github.io/dodgr/reference/dodgr_times.html)
+or, for street networks, times, accepts two vectors or matrices of routing
+points as inputs (describing origins and destinations), and returns
+a corresponding matrix of pairwise distances. If an input graph has columns for
+both distances and weighted distances, and/or times and weighted times, the
+weighted versions are used to determine the effectively shortest or fastest
+routes through a network, while actual distances or times are summed along the
+routes to calculate final values. It is of course also possible to calculate
+distances along fastest routes, times along shortest routes, or any combination
+thereof, as detailed in the package vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html).
 
 Routing points can, for example, be randomly selected from the vertices of a
 graph. The vertices can in turn be extracted with the `dodgr_vertices()`
@@ -232,9 +247,11 @@ f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (fro
 
 ## Further detail
 
-For more detail, see the
-[main package vignette](https://atfutures.github.io/dodgr/articles/dodgr.html),
-along with a second vignette detailing
-[benchmark timings](https://atfutures.github.io/dodgr/articles/benchmark.html),
-showing that under many circumstances, `dodgr` performs considerably faster than
+For more detail, see the [main package
+vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), the second
+vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html), and a third
+vignette detailing [benchmark
+timings](https://atfutures.github.io/dodgr/articles/benchmark.html), showing
+that under many circumstances, `dodgr` performs considerably faster than
 equivalent routines from the `igraph` package.
