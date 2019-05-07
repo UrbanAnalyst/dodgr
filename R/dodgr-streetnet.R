@@ -43,7 +43,7 @@
 #' }
 dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 {
-    bb <- process_bbox (bbox)
+    bb <- process_bbox (bbox, pts, expand)
 
     # osm_poly2line merges all street polygons with the line ones
     net <- osmdata::opq (bb$bbox) %>%
