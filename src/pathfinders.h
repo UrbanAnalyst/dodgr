@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include <cmath> // fabs
 #include <unordered_set> // used in bidirected search
 
 // inf_dbl used only in AStar2:
@@ -38,7 +39,7 @@ struct by_wt
 {
     bool operator () (const DijkstraEdge& lhs, const DijkstraEdge& rhs)
     {
-        if (lhs._wt == rhs._wt)
+        if (fabs (lhs._wt - rhs._wt) < 1.0e-12)
             return lhs._i < rhs._i;
         else
             return lhs._wt < rhs._wt;

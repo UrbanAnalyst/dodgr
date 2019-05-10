@@ -29,9 +29,9 @@ void routetimes::fill_edges (const Rcpp::DataFrame &graph,
                          vx1_x = graph [".vx1_x"],
                          vx1_y = graph [".vx1_y"];
 
-    const int n = graph.nrow ();
+    const size_t n = static_cast <size_t> (graph.nrow ());
 
-    for (int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
         OneEdge edge;
         edge.v0 = vx0 [i];
@@ -293,7 +293,7 @@ Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
             turn_penalty);
 
     Rcpp::CharacterVector junction_vec (junction_vertices.size ());
-    int i = 0;
+    size_t i = 0;
     for (auto j: junction_vertices)
         junction_vec (i++) = j;
 
