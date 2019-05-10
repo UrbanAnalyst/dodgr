@@ -1,4 +1,4 @@
-# v0.1.3.004
+# v0.1.4
 Major changes:
 * New vignette on street networks and time-based routing
 - `weight_streetnet` function now returns edge times for all Open Street Map
