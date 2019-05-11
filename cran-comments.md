@@ -1,7 +1,4 @@
-# CRAN notes for dodgr_0.1.3 submission
-
-The description now includes a DOI to the published manuscript accompanying this
-package.
+# CRAN notes for dodgr_0.1.4 submission
 
 ## Notes
 
@@ -11,6 +8,10 @@ This submissions generates the following NOTES on some systems:
   automated queries. The URL is nevertheless valid.
 * "GNU make is a SystemRequirements", which is unavoidable because of the need
   to remove compiled object files in src sub-directories.
+
+The submission also fails on win-builder R 3.5.3 (old-rel)with a fail on
+install because "Error : package 'osmdata' was installed by an R version with
+different internals; it needs to be reinstalled for use with this R version".
 
 ## Test environments
 
