@@ -2,7 +2,7 @@
 #define FHEAP_H
 /* File fheap.h - Fibonacci Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ *  Mark Padgham, adapted from code by Shane Saunders
  */
 #include "heap.h"  /* Defines the base class for heaps. */
 

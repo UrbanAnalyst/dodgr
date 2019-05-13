@@ -2,7 +2,7 @@
 #define TRIHEAP_EXT_H
 /* File triheap_ext.h - Extended Trinomial Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ * Mark Padgham, adapted from code by Shane Saunders
  */
 #include "heap.h"  /* Defines the universal Heap class. */
 

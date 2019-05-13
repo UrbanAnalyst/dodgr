@@ -1,6 +1,6 @@
 /* File fheap.c - Fibonacci Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ * Mark Padgham, adapted from code by Shane Saunders
  */
 #include <cstdlib>
 #include <cmath>

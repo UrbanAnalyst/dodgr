@@ -2,7 +2,7 @@
 #define HEAP23_H
 /* File heap23.h - 2-3 Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ *  Mark Padgham, adapted from code by Shane Saunders
  */
 #include "heap.h"  /* Defines the base class for heaps. */
 

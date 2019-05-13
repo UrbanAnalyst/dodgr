@@ -2,7 +2,7 @@
 #define HEAP23_2_H
 /* File heap23.h - 2-3 Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ *  Mark Padgham, adapted from code by Shane Saunders
  */
 
 /* This implementation uses a node-pair structure. */

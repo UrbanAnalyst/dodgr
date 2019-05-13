@@ -1,6 +1,6 @@
 /* File triheap.h - Trinomial Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ * Mark Padgham, adapted from code by Shane Saunders
  */
 
 /* This version is implemented using the node-pair pointer structure; that is,

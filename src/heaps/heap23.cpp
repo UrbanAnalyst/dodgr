@@ -1,6 +1,6 @@
 /* File heap23.c - 2-3 Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ * Mark Padgham, adapted from code by Shane Saunders
  */
 
 /* This version is implemented using the same pointer structure as a Fibonacci

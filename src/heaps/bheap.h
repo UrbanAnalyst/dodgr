@@ -2,7 +2,7 @@
 #define BHEAP_H
 /* File bheap.h - Binary Heap
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ *  Mark Padgham, adapted from code by Shane Saunders
  */
 #include "heap.h"  /* Defines the base class for heaps. */
 
@@ -22,6 +22,12 @@ class BHeapNode {
     public:
         unsigned int item;
         double key;
+};
+
+class BHeapNodeInt {
+    public:
+        unsigned int item;
+        int key;
 };
 
 /* --- BHeap ---
@@ -57,6 +63,39 @@ class BHeap : public Heap {
 
     private:
         BHeapNode *a;
+        unsigned int *aPos;
+        unsigned int itemCount;    
+        long int compCount;    
+
+        void siftUp(unsigned int p, unsigned int q);
+};
+
+class BHeapInt : public HeapInt {
+    public:
+        BHeapInt(unsigned int n);
+        ~BHeapInt();
+
+        void deleteItem(unsigned int item);
+        unsigned int deleteMin() {
+            unsigned int v;
+            v = min();
+            deleteItem(v);
+            return v;
+        }
+        void insert(unsigned int item, int key);
+        void decreaseKey(unsigned int item, int newKey);
+        unsigned int nItems() const { return itemCount; }
+
+        long int nComps() const { return compCount; }
+        void dump() const;
+
+        int getmin();
+
+        /* extra functions */
+        unsigned int min();
+
+    private:
+        BHeapNodeInt *a;
         unsigned int *aPos;
         unsigned int itemCount;    
         long int compCount;    

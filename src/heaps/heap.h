@@ -2,7 +2,7 @@
 #define HEAP_H
 /* File heap.h - Abstract Base Class for Heaps
  * ----------------------------------------------------------------------------
- *  Shane Saunders
+ *  Mark Padgham, adapted from code by Shane Saunders
  */
 
 #include <stdexcept> // runtime_error
@@ -37,6 +37,19 @@ class Heap {
         virtual void dump() const = 0;
         // MP: implement getmin fn in BHeap only
         virtual double getmin() = 0;
+};
+
+// This is easier than templating, and is only used for a single implementation
+// of BHeap for path aggregation and centrality
+class HeapInt {
+    public:
+        virtual ~HeapInt(){}
+        virtual unsigned int deleteMin() = 0;
+        virtual void insert(unsigned int item, int key) = 0;
+        virtual void decreaseKey(unsigned int item, int newKey) = 0;
+        virtual unsigned int nItems() const = 0;
+        virtual long int nComps() const = 0;
+        virtual int getmin() = 0;
 };
 
 class HeapDesc {
