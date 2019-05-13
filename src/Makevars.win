@@ -5,7 +5,7 @@ PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
               -e "RcppParallel::RcppParallelLibs()")
 
-OBJ_HEAPS = heaps/bheap.o heaps/bheap_int.o heaps/fheap.o heaps/heap23.o \
+OBJ_HEAPS = heaps/bheap.o heaps/fheap.o heaps/heap23.o \
     heaps/radixheap.o heaps/triheap_ext.o heaps/triheap.o
 OBJ_SRC = dgraph.o pathfinders.o dodgr-to-sf.o fund-cycles.o graph-contract.o \
     graph.o graph-sample.o RcppExports.o run_sp.o \
