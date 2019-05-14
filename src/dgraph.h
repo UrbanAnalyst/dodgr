@@ -5,7 +5,7 @@
 #include <limits>
 /* Directed Graphs
  * ----------------------------------------------------------------------------
- * Author:  Shane Saunders
+ * Author: Mark Padgham, modified from code by Shane Saunders
  */
 
 
