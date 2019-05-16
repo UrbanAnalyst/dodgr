@@ -20,8 +20,8 @@ dodgr_graph_cols <- function (graph)
 {
     nms <- names (graph)
     component <- grep ("comp", nms) %>% null_to_na ()
-    if (is (graph, "dodgr_streetnet") & 
-        !is (graph, "dodgr_streetnet_sc") & ncol (graph) >= 11)
+    if (methods::is (graph, "dodgr_streetnet") & 
+        !methods::is (graph, "dodgr_streetnet_sc") & ncol (graph) >= 11)
     {
         # columns are always identically structured
         edge_id <- which (nms == "edge_id")
