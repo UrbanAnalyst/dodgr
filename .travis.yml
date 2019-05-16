@@ -6,7 +6,6 @@ cache: packages
 matrix:
     include:
         - r: release
-          dist: trusty # 14.04
           after_success: 
             Rscript -e "covr::codecov(line_exclusions = list('src/heaps/bheap.cpp',"\
                 "'src/heaps/bheap.h','src/heaps/fheap.h', 'src/heaps/fheap.cpp',"\
@@ -20,9 +19,7 @@ matrix:
               script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
               skip_cleanup: true
         - r: devel
-          dist: trusty
         - r: oldrel
-          dist: trusty
         - os: osx
           r: release
           before_install: ''
