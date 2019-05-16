@@ -64,7 +64,8 @@ dodgr_to_sfc <- function (graph)
 
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
-    graph$edge_id <- seq (nrow (graph))
+    gr_cols <- dodgr_graph_cols (graph)
+    graph [[gr_cols$edge_id]] <- seq (nrow (graph))
 
     gc <- dodgr_contract_graph (graph)
     geometry <- rcpp_aggregate_to_sf (graph, gc$graph, gc$edge_map)
@@ -81,7 +82,7 @@ dodgr_to_sfc <- function (graph)
     #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
     #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
 
-    geometry <- geometry [match (gc$graph$edge_id, names (geometry))]
+    geometry <- geometry [match (gc$graph [[gr_cols$edge_id]], names (geometry))]
 
     return (list (dat = gc$graph, geometry = geometry))
 }
