@@ -5,7 +5,7 @@ null_to_na <- function (x)
     return (x)
 }
 
-#' get_graph_cols
+#' dodgr_graph_cols
 #'
 #' Identify the essential columns of the graph table (data.frame, tibble,
 #' whatever) to be analysed in the C++ routines.
