@@ -67,6 +67,16 @@ dodgr_to_sfc <- function (graph)
     gr_cols <- dodgr_graph_cols (graph)
     graph [[gr_cols$edge_id]] <- seq (nrow (graph))
 
+    # hard-code column names for Rcpp routine:
+    names (graph) [gr_cols$edge_id] <- "edge_id"
+    names (graph) [gr_cols$from] <- "from_id"
+    names (graph) [gr_cols$to] <- "to_id"
+
+    names (graph) [gr_cols$xfr] <- "from_lon"
+    names (graph) [gr_cols$yfr] <- "from_lat"
+    names (graph) [gr_cols$xto] <- "to_lon"
+    names (graph) [gr_cols$yto] <- "to_lat"
+
     gc <- dodgr_contract_graph (graph)
     geometry <- rcpp_aggregate_to_sf (graph, gc$graph, gc$edge_map)
 
