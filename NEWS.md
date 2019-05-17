@@ -1,3 +1,8 @@
+# v0.1.4.001
+
+Minor changes:
+- Fix some bugs in max speed calculations for weight_streetnet
+
 # v0.1.4
 Major changes:
 * New vignette on street networks and time-based routing

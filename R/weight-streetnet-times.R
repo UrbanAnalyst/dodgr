@@ -102,16 +102,31 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     if (!"highway" %in% names (graph))
         return (graph)
 
-    ms_numeric <- rep (NA_real_, nrow (graph))
+    maxspeed <- rep (NA_real_, nrow (graph))
     index <- grep ("mph", graph$maxspeed)
-    ms_numeric [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
+    maxspeed [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
                                             graph$maxspeed [index]))
-    ms_numeric [index] <- ms_numeric [index] * 1.609344
-    index <- seq (nrow (graph)) [!(seq (nrow (graph)) %in% index)]
-    ms_numeric [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
-                                            graph$maxspeed [index]))
-    graph$maxspeed <- ms_numeric
+    maxspeed [index] <- maxspeed [index] * 1.609344
 
+    index <- seq (nrow (graph)) [!(seq (nrow (graph)) %in% index)]
+    maxspeed_char <- graph$maxspeed [index] # character string
+    # some maxspeeds have two values, where the 1st is generally the "default"
+    # value. This gsub extracts those only:
+    maxspeed_char <- gsub ("[[:punct:]].*$", "", maxspeed_char)
+    # some (mostly Austria and Germany) have "maxspeed:walk" for living streets.
+    # This has no numeric value, but is replaced here with 10km/h
+    maxspeed_char <- gsub ("walk", "10", maxspeed_char)
+    maxspeed_char <- gsub ("none", NA, maxspeed_char)
+    index2 <- which (!(is.na (maxspeed_char) | maxspeed_char == ""))
+
+    maxspeed_numeric <- rep (NA_real_, length (index))
+    maxspeed_numeric [index2] <- as.numeric (maxspeed_char [index2])
+    maxspeed [index] <- maxspeed_numeric
+
+    graph$maxspeed <- maxspeed
+    # Those are the OSM values, which must then be combined with values
+    # determined from the specified profile. The lowest value is ultimately
+    # chosen.
     wp <- get_profile (wt_profile, wt_profile_file)
 
     wp_index <- match (graph$highway, wp$way)
@@ -125,15 +140,16 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
                                      min (i, na.rm = TRUE)))
 
     na_highways <- wp$way [which (is.na (wp$max_speed))]
-    graph$maxspeed [graph$highway %in% na_highways] <- NA
+    graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
     gr_cols <- dodgr_graph_cols (graph)
     # Also set weighted distance for all these to NA:
-    graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA
+    graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") |
         !"surface" %in% names (graph))
         return (graph)
 
+    # And then repeat for max speeds according to surface profiles
     s <- get_surface_speeds (wt_profile, wt_profile_file)
     s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
     surf_vals <- unique (graph$surface [graph$surface != "NA"])
