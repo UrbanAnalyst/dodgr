@@ -88,6 +88,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file)
 
     wp <- get_profile (wt_profile, wt_profile_file)
     wp <- wp [, c ("way", "value")]
+
     dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%

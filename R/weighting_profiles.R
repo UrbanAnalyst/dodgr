@@ -42,7 +42,7 @@ read_dodgr_wt_profile <- function (file = NULL)
 }
 
 
-get_profiles <- function (wt_profile, file = NULL)
+get_profiles <- function (file = NULL)
 {
     if (is.null (file))
         wp <- dodgr::weighting_profiles
@@ -53,24 +53,32 @@ get_profiles <- function (wt_profile, file = NULL)
 
 get_profile <- function (wt_profile, file = NULL)
 {
-    wp <- get_profiles (wt_profile, file)
-
-    profiles <- wp$weighting_profiles
+    profiles <- get_profiles (file)$weighting_profiles
     prf_names <- unique (profiles$name)
-    # foot, horse, wheelchair, bicycle, moped, 
-    # motorcycle, motorcar, goods, hgv, psv
-    wt_profile <- match.arg (tolower (wt_profile), prf_names)
-    profiles [profiles$name == wt_profile, ]
+    if (is.numeric (wt_profile))
+    {
+        wp <- profiles [profiles$name == "foot", ]
+        wp$name <- "custom"
+        wp$value <- wt_profile
+        wp$max_speed <- 10
+    } else
+    {
+        # foot, horse, wheelchair, bicycle, moped, 
+        # motorcycle, motorcar, goods, hgv, psv
+        wt_profile <- match.arg (tolower (wt_profile), prf_names)
+        wp <- profiles [profiles$name == wt_profile, ]
+    }
+    return (wp)
 }
 
 get_surface_speeds <- function (wt_profile, file = NULL)
 {
-    s <- get_profiles (wt_profile, file)$surface_speeds
+    s <- get_profiles (file)$surface_speeds
     s [s$name == wt_profile, ]
 }
 
 get_turn_penalties <- function (wt_profile, file = NULL)
 {
-    tp <- get_profiles (wt_profile, file)$penalties
+    tp <- get_profiles (file)$penalties
     tp [tp$name == wt_profile, ]
 }
