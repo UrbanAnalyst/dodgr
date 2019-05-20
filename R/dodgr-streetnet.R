@@ -23,7 +23,7 @@
 #' streetnet <- dodgr_streetnet ("hampi india", expand = 0)
 #' # convert to form needed for `dodgr` functions:
 #' graph <- weight_streetnet (streetnet)
-#' nrow (graph) # 5,742 edges
+#' nrow (graph) # around 5,900 edges
 #' # Alternative ways of extracting street networks by using a small selection of
 #' # graph vertices to define bounding box:
 #' verts <- dodgr_vertices (graph)
@@ -36,12 +36,12 @@
 #'
 #' # bbox can also be a polygon:
 #' bb <- osmdata::getbb ("gent belgium") # rectangular bbox
-#' nrow (dodgr_streetnet (bbox = bb)) # 28,742
+#' nrow (dodgr_streetnet (bbox = bb)) # around 30,000
 #' bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
 #' nrow (dodgr_streetnet (bbox = bb)) # 15,969
 #' # The latter has fewer rows because only edges within polygon are returned
 #' }
-dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
+dodgr_streetnet <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 {
     bb <- process_bbox (bbox, pts, expand)
 
@@ -69,7 +69,7 @@ dodgr_streetnet <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 #'
 #' @inherit dodgr_streetnet
 #' @export
-dodgr_streetnet_sc <- function (bbox, pts, expand = 0.05, quiet = TRUE)
+dodgr_streetnet_sc <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 {
     bb <- process_bbox (bbox, pts, expand)
 
@@ -80,7 +80,7 @@ dodgr_streetnet_sc <- function (bbox, pts, expand = 0.05, quiet = TRUE)
 
 # nocov end
 
-process_bbox <- function (bbox, pts, expand)
+process_bbox <- function (bbox, pts = NULL, expand = 0.05)
 {
     bbox_poly <- NULL
     if (!missing (bbox))
@@ -92,7 +92,7 @@ process_bbox <- function (bbox, pts, expand)
             if (!all (vapply (bbox, is.numeric, logical (1))))
                 stop ("bbox is a list, so items must be numeric ",
                       "(as in osmdata::getbb (..., format_out = 'polygon'))")
-            (length (bbox) > 1)
+            if (length (bbox) > 1)
                 message ("selecting the first polygon from bbox")
             bbox_poly <- bbox [[1]]
             bbox <- apply (bbox [[1]], 2, range)
@@ -110,8 +110,8 @@ process_bbox <- function (bbox, pts, expand)
                 bbox <- apply (bbox, 2, range)
             }
         }
-        bbox [1, ] <- bbox [1, ] + c (-expand, expand) * diff (bbox [1, ])
-        bbox [2, ] <- bbox [2, ] + c (-expand, expand) * diff (bbox [2, ])
+        bbox [, 1] <- bbox [, 1] + c (-expand, expand) * diff (bbox [, 1])
+        bbox [, 2] <- bbox [, 2] + c (-expand, expand) * diff (bbox [, 2])
     } else if (!missing (pts))
     {
         nms <- names (pts)

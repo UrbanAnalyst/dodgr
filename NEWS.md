@@ -2,6 +2,7 @@
 
 Minor changes:
 - Fix some bugs in max speed calculations for weight_streetnet
+* Fix bug with polygonal bbox in dodgr_streetnet()
 
 # v0.1.4
 Major changes:
