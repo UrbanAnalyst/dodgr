@@ -250,6 +250,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
+    cache_graph (graph)
+
     return (graph)
 }
 
@@ -415,6 +417,36 @@ add_extra_sf_columns <- function (graph, x)
     return (graph)
 }
 
+cache_graph <- function (graph)
+{
+    dig <- digest::digest (graph)
+    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    saveRDS (graph, fname)
+
+    td <- tempdir ()
+    fname_c <- file.path (td, paste0 ("graphc_", dig, ".Rds"))
+
+    x <- c ("library (dodgr)",
+            paste0 ("graph <- readRDS ('", fname, "')"),
+            "graphc <- dodgr_contract_graph (graph)",
+            paste0 ("saveRDS (graphc, '", fname_c, "')"),
+            "dig <- digest::digest (graphc$edge_map)",
+            paste0 ("fname <- paste0 ('edge_map_', dig, '.Rds')"),
+            paste0 ("fname <- file.path ('", td, "', fname)"),
+            paste0 ("chk <- file.copy ('", fname, "', fname)"))
+
+    fname <- file.path (tempdir (), "dodgr_contract_graph.R")
+    writeLines (x, con = fname)
+
+    if (.Platform$OS.type == "windows")
+        cmd <- paste ("$(R_HOME)/bin$(R_ARCH_BIN)/Rterm", fname)
+    else
+        cmd <- paste ("$(R_HOME)/bin/Rscript", fname)
+
+    tryCatch (chk <- system (command = cmd, wait = FALSE),
+              error = function (e) NULL)
+}
+
 # ********************************************************************
 # *************************     sc class     ************************* 
 # ********************************************************************
@@ -472,6 +504,9 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
                            !is.na (graph [[gr_cols$time]])), ]
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
+
+    cache_graph (graph)
+
     return (graph)
 }
 

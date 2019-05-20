@@ -22,13 +22,10 @@
 #' nrow (graph$graph) # 764
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
-    classes <- class (graph)
-    graph <- tbl_to_df (graph)
     if (nrow (graph) == 0)
-        stop ("graph is empty")
+        stop ("graph is empty") # nocov
 
     v <- dodgr_vertices (graph)
-    junctions <- get_junction_vertices (v)
 
     if (!is.null (verts))
     {
@@ -38,6 +35,26 @@ dodgr_contract_graph <- function (graph, verts = NULL)
             verts <- paste0 (verts)
         verts <- verts [which (verts %in% v$id)]
     }
+
+    graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
+
+    return (graph_contracted)
+}
+
+# get junction vertices of graphs which have been re-routed for turn angles.
+# These all have either "_start" or "_end" appended to vertex names
+# v is result of `dodgr_vertices` functions.
+get_junction_vertices <- function (v)
+{
+    gsub ("_start|_end", "", v$id [grep ("_start|_end", v$id)])
+}
+
+dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
+{
+    classes <- class (graph)
+    graph <- tbl_to_df (graph)
+
+    junctions <- get_junction_vertices (v)
 
     gr_cols <- dodgr_graph_cols (graph)
     graph2 <- convert_graph (graph, gr_cols)
@@ -110,23 +127,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         names (graph_refill) [ci] <- cnm
     }
 
-    dig <- digest::digest (graph_contracted$edge_map)
-    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
-    saveRDS (graph, file = fname)
-
     class (graph_refill) <- c (classes, "dodgr_contracted")
 
     return (list (graph = graph_refill,
                   edge_map = graph_contracted$edge_map,
                   junctions = junctions))
-}
-
-# get junction vertices of graphs which have been re-routed for turn angles.
-# These all have either "_start" or "_end" appended to vertex names
-# v is result of `dodgr_vertices` functions.
-get_junction_vertices <- function (v)
-{
-    gsub ("_start|_end", "", v$id [grep ("_start|_end", v$id)])
 }
 
 #' dodgr_uncontract_graph
@@ -159,7 +164,7 @@ get_junction_vertices <- function (v)
 dodgr_uncontract_graph <- function (graph)
 {
     dig <- digest::digest (graph$edge_map)
-    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    fname <- file.path (tempdir (), paste0 ("edge_map_", dig, ".Rds"))
     if (!file.exists (fname))
         stop ("Graph must have been contracted in current R session")
     graph_full <- readRDS (fname)
