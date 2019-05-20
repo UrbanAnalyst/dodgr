@@ -425,22 +425,27 @@ cache_graph <- function (graph)
 
     td <- tempdir ()
     fname_c <- file.path (td, paste0 ("graphc_", dig, ".Rds"))
+
+    faaa <- file.path (tempdir (), "caching_graph.aaa")
+    writeLines ("aaa", con = faaa)
     
-    x <- c ("library (dodgr)",
-            paste0 ("graph <- readRDS ('", fname, "')"),
-            "graphc <- dodgr_contract_graph (graph)",
+    x <- c (paste0 ("graph <- readRDS ('", fname, "')"),
+            "graphc <- dodgr::dodgr_contract_graph (graph)",
             paste0 ("saveRDS (graphc, '", fname_c, "')"),
             "dig <- digest::digest (graphc$edge_map)",
             paste0 ("fname <- paste0 ('edge_map_', dig, '.Rds')"),
             paste0 ("fname <- file.path ('", td, "', fname)"),
-            paste0 ("chk <- file.copy ('", fname, "', fname)"))
+            paste0 ("chk <- file.copy ('", fname, "', fname)"),
+            paste0 ("chk <- file.remove ('", faaa, "')"))
 
     fname <- file.path (tempdir (), "dodgr_contract_graph.R")
     writeLines (x, con = fname)
 
     if (.Platform$OS.type == "windows")
+    {
         cmd <- file.path (R.home ("bin"), "Rscript.exe")
-    else
+        cmd <- gsub ("\\\\", "/", cmd)
+    } else
         cmd <- file.path (R.home ("bin"), "Rscript")
     cmd <- paste (cmd, fname)
 

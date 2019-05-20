@@ -36,7 +36,22 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         verts <- verts [which (verts %in% v$id)]
     }
 
-    graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
+    dig <- digest::digest (graph)
+    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+
+    count <- 0
+    while (file.exists (file.path (tempdir (), "caching_graph.aaa")))
+    {
+        Sys.sleep (1)
+        count <- count + 1
+        if (count > 30)
+            break
+    }
+
+    if (file.exists (fname))
+        graph_contracted <- readRDS (fname)
+    else
+        graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
 
     return (graph_contracted)
 }
