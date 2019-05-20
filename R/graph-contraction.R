@@ -37,7 +37,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     dig <- digest::digest (graph)
-    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    fname <- file.path (tempdir (), paste0 ("graphc_", dig, ".Rds"))
 
     count <- 0
     while (file.exists (file.path (tempdir (), "caching_graph.aaa")))
