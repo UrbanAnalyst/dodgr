@@ -71,7 +71,7 @@ table (essen$level)
 # There are parts of the network on different building levels (because of
 # shopping malls and the like). These may or may not be connected, so it may be
 # necessary to filter out particular levels
-index <- which (! (levs == "-1" | levs == "1")) # for example
+index <- which (! (essen$level == "-1" | essen$level == "1")) # for example
 library (sf) # needed for following sub-select operation
 essen <- essen [index, ]
 graph <- weight_streetnet (essen, wt_profile = "foot")

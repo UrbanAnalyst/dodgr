@@ -118,7 +118,10 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     # This has no numeric value, but is replaced here with 10km/h
     maxspeed_char <- gsub ("walk", "10", maxspeed_char)
     maxspeed_char <- gsub ("none", NA, maxspeed_char)
-    index2 <- which (!(is.na (maxspeed_char) | maxspeed_char == ""))
+    index2 <- which (!(is.na (maxspeed_char) |
+                       maxspeed_char == "" |
+                       maxspeed_char == "NA"))
+    index2 <- index2 [which (!grepl ("[[:alpha:]]", maxspeed_char [index2]))]
 
     maxspeed_numeric <- rep (NA_real_, length (index))
     maxspeed_numeric [index2] <- as.numeric (maxspeed_char [index2])

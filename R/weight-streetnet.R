@@ -429,28 +429,22 @@ cache_graph <- function (graph)
     faaa <- file.path (tempdir (), "caching_graph.aaa")
     writeLines ("aaa", con = faaa)
     
-    x <- c (paste0 ("graph <- readRDS ('", fname, "')"),
-            "graphc <- dodgr::dodgr_contract_graph (graph)",
-            paste0 ("saveRDS (graphc, '", fname_c, "')"),
-            "dig <- digest::digest (graphc$edge_map)",
-            paste0 ("fname <- paste0 ('edge_map_', dig, '.Rds')"),
-            paste0 ("fname <- file.path ('", td, "', fname)"),
-            paste0 ("chk <- file.copy ('", fname, "', fname)"),
-            paste0 ("chk <- file.remove ('", faaa, "')"))
-
-    fname <- file.path (tempdir (), "dodgr_contract_graph.R")
-    writeLines (x, con = fname)
-
-    if (.Platform$OS.type == "windows")
+    f <- function (graph, dig, td)
     {
-        cmd <- file.path (R.home ("bin"), "Rscript.exe")
-        cmd <- gsub ("\\\\", "/", cmd)
-    } else
-        cmd <- file.path (R.home ("bin"), "Rscript")
-    cmd <- paste (cmd, fname)
+        fname <- file.path (td, paste0 ("graph_", dig, ".Rds"))
+        graph <- readRDS (fname)
+        graphc <- dodgr::dodgr_contract_graph (graph)
+        fname_c <- file.path (td, paste0 ("graphc_", dig, ".Rds"))
+        saveRDS (graphc, fname_c)
+        dig_e <- digest::digest (graphc$edge_map)
+        fname_e <- file.path (td, paste0 ("edge_map_", dig_e, ".Rds"))
+        chk <- file.copy (fname, fname_e)
+        chk <- file.remove (file.path (td, "caching_graph.aaa"))
+    }
 
-    tryCatch (chk <- system (command = cmd, wait = FALSE),
-              error = function (e) NULL)
+    sink (file = file.path (tempdir (), "Rout.txt"))
+    callr::r_bg (f, list (graph, dig, td))
+    sink ()
 }
 
 # ********************************************************************
