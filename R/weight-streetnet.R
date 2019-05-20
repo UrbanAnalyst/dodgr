@@ -425,7 +425,7 @@ cache_graph <- function (graph)
 
     td <- tempdir ()
     fname_c <- file.path (td, paste0 ("graphc_", dig, ".Rds"))
-
+    
     x <- c ("library (dodgr)",
             paste0 ("graph <- readRDS ('", fname, "')"),
             "graphc <- dodgr_contract_graph (graph)",
@@ -439,9 +439,10 @@ cache_graph <- function (graph)
     writeLines (x, con = fname)
 
     if (.Platform$OS.type == "windows")
-        cmd <- paste ("$(R_HOME)/bin$(R_ARCH_BIN)/Rterm", fname)
+        cmd <- file.path (R.home ("bin"), "Rscript.exe")
     else
-        cmd <- paste ("$(R_HOME)/bin/Rscript", fname)
+        cmd <- file.path (R.home ("bin"), "Rscript")
+    cmd <- paste (cmd, fname)
 
     tryCatch (chk <- system (command = cmd, wait = FALSE),
               error = function (e) NULL)
