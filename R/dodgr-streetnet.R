@@ -38,7 +38,7 @@
 #' bb <- osmdata::getbb ("gent belgium") # rectangular bbox
 #' nrow (dodgr_streetnet (bbox = bb)) # around 30,000
 #' bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
-#' nrow (dodgr_streetnet (bbox = bb)) # 15,969
+#' nrow (dodgr_streetnet (bbox = bb)) # around 17,000
 #' # The latter has fewer rows because only edges within polygon are returned
 #' }
 dodgr_streetnet <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
@@ -110,6 +110,9 @@ process_bbox <- function (bbox, pts = NULL, expand = 0.05)
                 bbox <- apply (bbox, 2, range)
             }
         }
+        if (identical (rownames (bbox), c ("x", "y")) |
+            identical (colnames (bbox), c ("min", "max")))
+            bbox <- t (bbox)
         bbox [, 1] <- bbox [, 1] + c (-expand, expand) * diff (bbox [, 1])
         bbox [, 2] <- bbox [, 2] + c (-expand, expand) * diff (bbox [, 2])
     } else if (!missing (pts))

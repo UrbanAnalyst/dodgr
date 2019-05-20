@@ -4,7 +4,7 @@
 \alias{dodgr_streetnet}
 \title{dodgr_streetnet}
 \usage{
-dodgr_streetnet(bbox, pts, expand = 0.05, quiet = TRUE)
+dodgr_streetnet(bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 }
 \arguments{
 \item{bbox}{Bounding box as vector or matrix of coordinates, or location
@@ -33,7 +33,7 @@ be constructed by expanding the range of \code{pts} by the relative amount of
 streetnet <- dodgr_streetnet ("hampi india", expand = 0)
 # convert to form needed for `dodgr` functions:
 graph <- weight_streetnet (streetnet)
-nrow (graph) # 5,742 edges
+nrow (graph) # around 5,900 edges
 # Alternative ways of extracting street networks by using a small selection of
 # graph vertices to define bounding box:
 verts <- dodgr_vertices (graph)
@@ -46,9 +46,9 @@ nrow (graph)
 
 # bbox can also be a polygon:
 bb <- osmdata::getbb ("gent belgium") # rectangular bbox
-nrow (dodgr_streetnet (bbox = bb)) # 28,742
+nrow (dodgr_streetnet (bbox = bb)) # around 30,000
 bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
-nrow (dodgr_streetnet (bbox = bb)) # 15,969
+nrow (dodgr_streetnet (bbox = bb)) # around 17,000
 # The latter has fewer rows because only edges within polygon are returned
 }
 }
