@@ -476,9 +476,9 @@ cache_graph <- function (graph)
         cmd <- gsub ("\\", "/", cmd, fixed = TRUE)
     } else
         cmd <- file.path (R.home ("bin"), "Rscript")
-    cmd <- paste (cmd, fname)
+    #cmd <- paste (cmd, fname)
 
-    tryCatch (chk <- system (command = cmd, wait = FALSE),
+    tryCatch (chk <- system2 (command = cmd, args = fname, wait = FALSE),
               error = function (e) NULL)
 }
 
