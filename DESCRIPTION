@@ -26,7 +26,6 @@ Imports:
     methods,
     osmdata,
     rbenchmark,
-    sp,
     Rcpp (>= 0.12.6),
     RcppParallel
 Suggests:

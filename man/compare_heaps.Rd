@@ -16,7 +16,7 @@ non-numeric value is given, the whole graph will be used.}
 \item{replications}{Number of replications to be used in comparison}
 }
 \value{
-Result of \code{rbenachmar::benchmark} comparison in
+Result of \code{rbenchmark::benchmark} comparison in
 \code{data.frame} form.
 }
 \description{

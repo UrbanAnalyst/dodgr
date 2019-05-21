@@ -11,7 +11,7 @@
 #' @param nverts Number of vertices used to generate random sub-graph. If a
 #' non-numeric value is given, the whole graph will be used.
 #' @param replications Number of replications to be used in comparison
-#' @return Result of `rbenachmar::benchmark` comparison in
+#' @return Result of `rbenchmark::benchmark` comparison in
 #' `data.frame` form.
 #'
 #' @note \pkg{igraph} caches intermediate results of graph processing, so
