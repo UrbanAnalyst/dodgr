@@ -13,8 +13,7 @@ test_that("streetnet bbox", {
               bb2 <- process_bbox (bbox2, NULL, 0)
               expect_identical (bb$bbox, bb2$bbox)
 
-              expect_message (bb2 <- process_bbox (list (bbox), NULL, 0),
-                              "selecting the first polygon from bbox")
+              expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
               expect_identical (bb, bb2)
 
               bbox <- list (matrix (letters [ceiling (runif (n) * 26)],
