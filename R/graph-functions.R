@@ -160,6 +160,21 @@ tbl_to_df <- function (graph)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
+    dig <- digest::digest (graph)
+    fname <- file.path (tempdir (), paste0 ("verts_", dig, ".Rds"))
+    if (file.exists (fname))
+        verts <- readRDS (fname)
+    else
+    {
+        verts <- dodgr_vertices_internal (graph)
+        saveRDS (verts, fname)
+    }
+
+    return (verts)
+}
+
+dodgr_vertices_internal <- function (graph)
+{
     graph <- tbl_to_df (graph)
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -191,6 +206,7 @@ dodgr_vertices <- function (graph)
             verts$component <- graph [[gr_cols$component]]
     }
 
+    # The next line is the time-killer here, which is why this is cached
     indx <- which (!duplicated (verts))
     verts <- verts [indx, , drop = FALSE] #nolint
     verts$n <- seq (nrow (verts)) - 1
