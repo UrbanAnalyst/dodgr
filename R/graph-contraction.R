@@ -36,7 +36,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         verts <- verts [which (verts %in% v$id)]
     }
 
-    dig <- digest::digest (graph)
+    dig <- digest::digest (list (graph, verts))
     fname <- file.path (tempdir (), paste0 ("graphc_", dig, ".Rds"))
 
     count <- 0
