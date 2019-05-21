@@ -417,13 +417,23 @@ add_extra_sf_columns <- function (graph, x)
     return (graph)
 }
 
+# cache on initial construction with weight_streetnet. This pre-calculates and
+# caches the contracted graph *with no additional intermediate vertices* (that
+# is, the result of `dodgr_contract_graph (graph, verts = NULL)`). Later calls
+# with explicit additional vertices will generate different hashes and so will
+# be re-contracted and cached directly in `dodgr_contract_graph`.
+#
+# A copy of the original (full) graph is also copied to a file named with the
+# hash of the edge map. This is needed for graph uncontraction, so that just the
+# contracted graph and edge map can be submitted, the original graph re-loaded,
+# and the uncontracted version returned.
 cache_graph <- function (graph)
 {
     dig <- digest::digest (graph)
     fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
     saveRDS (graph, fname)
 
-    dig_c <- digest::digest (list (graph, NULL))
+    dig_c <- digest::digest (list (graph, NULL)) # NULL for no vertices
     td <- tempdir ()
     fname_c <- file.path (td, paste0 ("graphc_", dig_c, ".Rds"))
 
@@ -453,7 +463,7 @@ cache_graph <- function (graph)
             "dig <- digest::digest (graphc$edge_map)",
             paste0 ("fname <- paste0 ('edge_map_', dig, '.Rds')"),
             paste0 ("fname <- file.path ('", td, "', fname)"),
-            paste0 ("chk <- file.copy ('", fname, "', fname)"),
+            paste0 ("chk <- file.copy ('", fname, "', fname, overwrite = TRUE)"),
             paste0 ("if (file.exists ('", faaa,
                     "')) invisible (file.remove ('", faaa, "'))"))
 
@@ -463,7 +473,7 @@ cache_graph <- function (graph)
     if (.Platform$OS.type == "windows")
     {
         cmd <- file.path (R.home ("bin"), "Rscript.exe")
-        cmd <- gsub ("\\\\", "/", cmd)
+        cmd <- gsub ("\\", "/", cmd, fixed = TRUE)
     } else
         cmd <- file.path (R.home ("bin"), "Rscript")
     cmd <- paste (cmd, fname)

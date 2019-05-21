@@ -51,7 +51,14 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     if (file.exists (fname))
         graph_contracted <- readRDS (fname)
     else
+    {
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
+        saveRDS (graph_contracted, fname)
+        dig_e <- digest::digest (graph_contracted$edge_map)
+        fname_e <- file.path (tempdir (), paste0 ("edge_map_", dig_e, ".Rds"))
+        if (file.exists (fname))
+            chk <- file.copy (fname, fname_e, overwrite = TRUE)
+    }
 
     return (graph_contracted)
 }
