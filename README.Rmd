@@ -34,12 +34,13 @@ knitr::opts_chunk$set(
 
 R package for efficient calculation of many-to-many pairwise distances on
 dual-weighted directed graphs, for aggregation of flows throughout
-networks, and for highly realistic routing through street networks.
+networks, and for highly realistic routing through street networks (time-based
+routing considering incline, turn-angles, surface quality, everything).
 
 ## What's so special?
 
 Four aspects. First, while other packages exist for calculating distances on
-directed graphs, notably [`igraph`](https://igraph.org/r), even this otherwise
+directed graphs, notably [`igraph`](https://igraph.org/r), even that otherwise
 fabulous package does not (readily) permit analysis of *dual-weighted* graphs.
 Dual-weighted graphs have two sets of weights for each edge, so routing can be
 evaluated with one set of weights, while distances can be calculated with the
@@ -64,10 +65,10 @@ from a set of origin points and associated densities, and a user-specified
 dispersal model.
 
 Fourth and finally, `dodgr` implements highly realistic and fully-customisable
-profiles for routing through street networks with various modes of transport.
-Routing can include such factors as waiting times at traffic lights, delays for
-turning across oncoming traffic, and the effects of elevation on both cyclists
-and pedestrians.
+profiles for routing through street networks with various modes of transport,
+and using either distance- or time-based routing. Routing can include such
+factors as waiting times at traffic lights, delays for turning across oncoming
+traffic, and the effects of elevation on both cyclists and pedestrians.
 
 
 ## Installation
