@@ -73,7 +73,7 @@ void replace_junctions (
         std::vector <OneCompoundEdge> &junctions,
         bool left_side);
 
-Rcpp::DataFrame new_graph (const Rcpp::DataFrame &graph, 
+Rcpp::DataFrame expand_edges (const Rcpp::DataFrame &graph, 
         std::vector <OneCompoundEdge> &junctions, int turn_penalty);
 
 } // end namespace

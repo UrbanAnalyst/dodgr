@@ -1,6 +1,6 @@
 #include "turn_penalty.h"
 
-/* This code add time penalties for turning across oncoming traffic in
+/* This code adds time penalties for turning across oncoming traffic in
  * insersections. Works by sorting all outgoing edges in a clockwise direction,
  * and applying penalties to edges with sorted indices >= 2. (Right-side travel
  * simply reverses indices to effectively be anti-clockwise. Incoming edges are
@@ -163,7 +163,7 @@ void routetimes::replace_junctions (
 }
 
 // This is hard-coded for weight_streetnet.sc structure
-Rcpp::DataFrame routetimes::new_graph (const Rcpp::DataFrame &graph, 
+Rcpp::DataFrame routetimes::expand_edges (const Rcpp::DataFrame &graph, 
         std::vector <OneCompoundEdge> &junctions, int turn_penalty)
 {
     const size_t hash_len = 10; // for new edge IDs
@@ -289,8 +289,8 @@ Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
     std::vector <OneCompoundEdge> junctions;
     routetimes::replace_junctions (the_edges, junctions, left_side);
 
-    Rcpp::DataFrame new_graph = routetimes::new_graph (graph, junctions,
-            turn_penalty);
+    Rcpp::DataFrame expanded_graph = routetimes::expand_edges (graph,
+            junctions, turn_penalty);
 
     Rcpp::CharacterVector junction_vec (junction_vertices.size ());
     size_t i = 0;
@@ -298,6 +298,6 @@ Rcpp::List rcpp_route_times (const Rcpp::DataFrame graph,
         junction_vec (i++) = j;
 
     return Rcpp::List::create (
-            Rcpp::Named ("graph") = new_graph,
+            Rcpp::Named ("graph") = expanded_graph,
             Rcpp::Named ("junction_vertices") = junction_vec);
 }
