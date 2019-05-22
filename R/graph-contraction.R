@@ -39,15 +39,6 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     dig <- digest::digest (list (graph, verts))
     fname <- file.path (tempdir (), paste0 ("graphc_", dig, ".Rds"))
 
-    count <- 0
-    while (file.exists (file.path (tempdir (), "caching_graph.aaa")))
-    {
-        Sys.sleep (1)
-        count <- count + 1
-        if (count > 30)
-            break
-    }
-
     if (file.exists (fname))
         graph_contracted <- readRDS (fname)
     else
@@ -59,6 +50,9 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         if (file.exists (fname))
             chk <- file.copy (fname, fname_e, overwrite = TRUE)
     }
+
+    # copy the processx R6 object associated with caching the original graph:
+    attr (graph_contracted, "px") <- attr (graph, "px")
 
     return (graph_contracted)
 }
@@ -172,11 +166,11 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 #' @export
 #' @examples
 #' graph0 <- weight_streetnet (hampi)
-#' nrow (graph0) # 5,729
+#' nrow (graph0) # 5,845
 #' graph1 <- dodgr_contract_graph (graph0)
-#' nrow (graph1$graph) # 764
+#' nrow (graph1$graph) # 686
 #' graph2 <- dodgr_uncontract_graph (graph1)
-#' nrow (graph2) # 5,729
+#' nrow (graph2) # 5,845
 #' identical (graph0, graph2) # TRUE
 #' 
 #' # Insert new data on to the contracted graph and uncontract it:
@@ -185,10 +179,15 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 #' # graph3 is then the uncontracted graph which includes "new_col" as well
 dodgr_uncontract_graph <- function (graph)
 {
+    px <- attr (graph, "px") # processx R6 object
+    while (px$is_alive ())
+        px$wait ()
+
     dig <- digest::digest (graph$edge_map)
     fname <- file.path (tempdir (), paste0 ("edge_map_", dig, ".Rds"))
     if (!file.exists (fname))
         stop ("Graph must have been contracted in current R session")
+
     graph_full <- readRDS (fname)
 
     uncontract_graph (graph$graph, graph$edge_map, graph_full)

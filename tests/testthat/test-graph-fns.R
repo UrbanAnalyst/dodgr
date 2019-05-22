@@ -128,6 +128,8 @@ test_that ("weight_profiles", {
     expect_error (weight_streetnet (hampi2),
                   "Please specify type_col to be used for weighting streetnet")
     g1 <- weight_streetnet (hampi2, type_col = "waytype")
+    attr (g0, "px") <- NULL
+    attr (g1, "px") <- NULL
     expect_identical (g0, g1)
     names (hampi2) [grep ("osm_id", names (hampi2))] <- "key"
     expect_message (weight_streetnet (hampi2, type_col = "waytype"),
@@ -138,6 +140,8 @@ test_that ("weight_profiles", {
     names (hampi2) [grep ("width", names (hampi2))] <- "w"
     expect_message (g1 <- weight_streetnet (hampi2, type_col = "waytype"),
                   "Using column id as ID column for edges")
+    attr (g0, "px") <- NULL
+    attr (g1, "px") <- NULL
     expect_identical (g0, g1)
 })
 

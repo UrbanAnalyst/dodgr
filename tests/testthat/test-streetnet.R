@@ -52,6 +52,8 @@ test_that ("streetnet times", {
                h <- hampi
                names (h) [names (h) == "osm_id"] <- "id"
                expect_silent (graph2 <- weight_streetnet (h, id_col = "id"))
+               attr (graph, "px") <- NULL
+               attr (graph2, "px") <- NULL
                expect_identical (graph, graph2)
 
                h$id <- NULL
@@ -65,6 +67,8 @@ test_that ("streetnet times", {
 
                h$oneway_bicycle <- h$oneway
                graph5 <- weight_streetnet (h)
+               attr (graph4, "px") <- NULL
+               attr (graph5, "px") <- NULL
                expect_identical (graph5, graph4)
 
                expect_error (weight_streetnet (hampi,

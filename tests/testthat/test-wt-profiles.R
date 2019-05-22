@@ -15,6 +15,8 @@ test_that ("local wt_profile", {
         n0 <- weight_streetnet (hampi, wt_profile = "foot")
         n1 <- weight_streetnet (hampi, wt_profile = "foot",
                               wt_profile_file = f)
+        attr (n0, "px") <- NULL
+        attr (n1, "px") <- NULL
         expect_identical (n0, n1)
 
         w <- dodgr::weighting_profiles
