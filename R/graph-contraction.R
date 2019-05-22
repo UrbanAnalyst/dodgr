@@ -46,15 +46,19 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         verts <- verts [which (verts %in% v$id)]
     }
 
-    dig <- digest::digest (list (graph, verts))
-    fname <- file.path (tempdir (), paste0 ("graphc_", dig, ".Rds"))
+    dig <- digest::digest (graph)
+    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
+    dig_c <- digest::digest (list (graph, verts))
+    fname_c <- file.path (tempdir (), paste0 ("graphc_", dig_c, ".Rds"))
 
-    if (file.exists (fname))
-        graph_contracted <- readRDS (fname)
+    if (file.exists (fname_c))
+        graph_contracted <- readRDS (fname_c)
     else
     {
+        if (!file.exists (fname))
+            saveRDS (graph, fname)
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
-        saveRDS (graph_contracted, fname)
+        saveRDS (graph_contracted, fname_c)
         dig_e <- digest::digest (graph_contracted$edge_map)
         fname_e <- file.path (tempdir (), paste0 ("edge_map_", dig_e, ".Rds"))
         if (file.exists (fname))
