@@ -26,11 +26,13 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         stop ("graph is empty") # nocov
 
     # px is the R6 processx object for initial caching
+    px <- NULL
     if ("px" %in% names (attributes (graph)))
     {
         px <- attr (graph, "px")
         while (px$is_alive ())
             px$wait ()
+        attr (graph, "px") <- NULL # remove to re-calculate original hash
     }
 
     v <- dodgr_vertices (graph)
@@ -60,8 +62,8 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     }
 
     # copy the processx R6 object associated with caching the original graph:
-    if ("px" %in% names (attributes (graph)))
-        attr (graph_contracted, "px") <- attr (graph, "px")
+    if (!is.null (px))
+        attr (graph_contracted, "px") <- px
 
     return (graph_contracted)
 }

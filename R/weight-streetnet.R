@@ -457,12 +457,12 @@ cache_graph <- function (graph)
     td <- tempdir ()
     fname_c <- file.path (td, paste0 ("graphc_", dig_c, ".Rds"))
 
-    f <- function (graph, dig, td)
+    f <- function (graph, dig, dig_c, td)
     {
         fname <- file.path (td, paste0 ("graph_", dig, ".Rds"))
         graph <- readRDS (fname)
         graphc <- dodgr::dodgr_contract_graph (graph)
-        fname_c <- file.path (td, paste0 ("graphc_", dig, ".Rds"))
+        fname_c <- file.path (td, paste0 ("graphc_", dig_c, ".Rds"))
         saveRDS (graphc, fname_c)
         dig_e <- digest::digest (graphc$edge_map)
         fname_e <- file.path (td, paste0 ("edge_map_", dig_e, ".Rds"))
@@ -470,7 +470,7 @@ cache_graph <- function (graph)
     }
 
     sink (file = file.path (tempdir (), "Rout.txt"))
-    res <- callr::r_bg (f, list (graph, dig, td))
+    res <- callr::r_bg (f, list (graph, dig, dig_c, td))
     sink ()
 
     return (res) # R6 processx object
