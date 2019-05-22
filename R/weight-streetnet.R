@@ -132,34 +132,9 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
-    if (type_col != "highway")
-        names (x) [which (names (x) == type_col)] <- "highway"
-    if (id_col != "osm_id")
-        names (x) [which (names (x) == id_col)] <- "osm_id"
-
-    if (!"highway" %in% names (x) & !is.numeric (wt_profile))
-        stop ("Please specify type_col to be used for weighting streetnet")
-    if (!"osm_id" %in% names (x))
-    {
-        idcol <- grep ("id", names (x), ignore.case = TRUE)
-        if (length (idcol) == 1)
-        {
-            message ("Using column ", names (x) [idcol],
-                     " as ID column for edges; please specify explicitly if",
-                     " a different column should be used.")
-            names (x) [idcol] <- "osm_id"
-        } else if (length (idcol) > 1)
-        {
-            stop ("Multiple potential ID columns: [",
-                  paste0 (names (x) [idcol], collapse = " "),
-                  "]; please explicitly specify one of these.")
-        } else if (length (idcol) == 0)
-        {
-            message ("x appears to have no ID column;",
-                     "sequential edge numbers will be used.")
-            x$osm_id <- seq (nrow (x))
-        }
-    }
+    x <- change_col_names (x, type_col, "highway")
+    x <- change_col_names (x, id_col, "osm_id")
+    x <- check_highway_osmid (x, wt_profile)
 
     if (is.null (names (x [geom_column])))
         names (x [geom_column]) <- x$osm_id
@@ -167,42 +142,9 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     names (x) [match (geom_column, names (x))] <- "geometry"
     attr (x, "sf_column") <- "geometry"
 
-    wt_profile_name <- NULL
-    if (is.character (wt_profile))
-    {
-        if (grepl ("rail", wt_profile, ignore.case = TRUE))
-        {
-            stop ("Please use the weight_railway function for railway routing.")
-        } else
-        {
-            if (wt_profile == "bicycle" & "oneway" %in% names (x))
-            {
-                if ("oneway.bicycle" %in% names (x))
-                    x$oneway <- x [["oneway.bicycle"]]
-                else if ("oneway:bicycle" %in% names (x))
-                    x$oneway <- x [["oneway:bicycle"]]
-            }
-            wt_profile_name <- wt_profile
-            wt_profile <- get_profile (wt_profile_name, wt_profile_file)
-        }
-    } else if (is.numeric (wt_profile))
-    {
-        nms <- names (wt_profile)
-        if (is.null (nms))
-            nms <- NA
-        wt_profile <- data.frame (name = "custom",
-                                  way = nms,
-                                  value = wt_profile,
-                                  stringsAsFactors = FALSE)
-    } else if (is.data.frame (wt_profile))
-    {
-        # assert that is has the standard structure
-        if (!all (c ("name", "way", "value") %in% names (wt_profile)))
-            stop ("Weighting profiles must have three columsn of ",
-                  "(name, way, value); see 'weighting_profiles' for examples")
-    } else
-        stop ("Custom named profiles must be vectors with named values")
-
+    wp <- get_wt_profile (x, wt_profile, wt_profile_file)
+    wt_profile <- wp$wt_profile
+    wt_profile_name <- wp$wt_profile_name
     if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom"))
         x <- remap_way_types (x, wt_profile)
 
@@ -253,6 +195,84 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     attr (graph, "px") <- cache_graph (graph)
 
     return (graph)
+}
+
+# changed type_col and id_col to expected values of "highway" and "osm_id"
+change_col_names <- function (x, colvar, expected)
+{
+    if (colvar != expected)
+        names (x) [which (names (x) == colvar)] <- expected
+    return (x)
+}
+
+check_highway_osmid <- function (x, wt_profile)
+{
+    if (!"highway" %in% names (x) & !is.numeric (wt_profile))
+        stop ("Please specify type_col to be used for weighting streetnet") # nocov
+    if (!"osm_id" %in% names (x))
+    {
+        idcol <- grep ("id", names (x), ignore.case = TRUE)
+        if (length (idcol) == 1)
+        {
+            message ("Using column ", names (x) [idcol],
+                     " as ID column for edges; please specify explicitly if",
+                     " a different column should be used.")
+            names (x) [idcol] <- "osm_id"
+        } else if (length (idcol) > 1)
+        {
+            stop ("Multiple potential ID columns: [",
+                  paste0 (names (x) [idcol], collapse = " "),
+                  "]; please explicitly specify one of these.")
+        } else if (length (idcol) == 0)
+        {
+            message ("x appears to have no ID column;",
+                     "sequential edge numbers will be used.")
+            x$osm_id <- seq (nrow (x))
+        }
+    }
+
+    return (x)
+}
+
+get_wt_profile <- function (x, wt_profile, wt_profile_file)
+{
+    wt_profile_name <- NULL
+    if (is.character (wt_profile))
+    {
+        if (grepl ("rail", wt_profile, ignore.case = TRUE))
+        {
+            stop ("Please use the weight_railway function for railway routing.")
+        } else
+        {
+            if (wt_profile == "bicycle" & "oneway" %in% names (x))
+            {
+                if ("oneway.bicycle" %in% names (x))
+                    x$oneway <- x [["oneway.bicycle"]]
+                else if ("oneway:bicycle" %in% names (x))
+                    x$oneway <- x [["oneway:bicycle"]]
+            }
+            wt_profile_name <- wt_profile
+            wt_profile <- get_profile (wt_profile_name, wt_profile_file)
+        }
+    } else if (is.numeric (wt_profile))
+    {
+        nms <- names (wt_profile)
+        if (is.null (nms))
+            nms <- NA
+        wt_profile <- data.frame (name = "custom",
+                                  way = nms,
+                                  value = wt_profile,
+                                  stringsAsFactors = FALSE)
+    } else if (is.data.frame (wt_profile))
+    {
+        # assert that is has the standard structure
+        if (!all (c ("name", "way", "value") %in% names (wt_profile)))
+            stop ("Weighting profiles must have three columsn of ",
+                  "(name, way, value); see 'weighting_profiles' for examples")
+    } else
+        stop ("Custom named profiles must be vectors with named values")
+
+    list (wt_profile = wt_profile, wt_profile_name = wt_profile_name)
 }
 
 # re-map any OSM 'highway' types with pmatch to standard types
@@ -514,7 +534,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
 
-    cache_graph (graph)
+    attr (graph, "px") <- cache_graph (graph)
 
     return (graph)
 }
