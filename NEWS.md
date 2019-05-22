@@ -1,5 +1,8 @@
 # v0.1.4.001
 
+Major changes:
+- Graph contraction is cached in the background (via `callr` package)
+
 Minor changes:
 - Fix some bugs in max speed calculations for weight_streetnet
 * Fix bug with polygonal bbox in dodgr_streetnet()
