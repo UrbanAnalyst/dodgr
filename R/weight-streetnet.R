@@ -521,9 +521,11 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     if (turn_angle)
     {
-        graph <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
+        res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                           left_side)
-        #graph$d_weighted <- graph$time_weighted
+        # res has the expanded graph as well as an edge map from new
+        # cross-junction edges to old single edges. This is cached below:
+        graph <- res$graph
         attr (graph, "turn_penalty") <- 
             get_turn_penalties (wt_profile, wt_profile_file)$turn
     }
@@ -533,6 +535,14 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
                            !is.na (graph [[gr_cols$time]])), ]
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
+
+    if (turn_angle)
+    {
+        dig <- digest::digest (graph)
+        fname <- file.path (tempdir (), paste0 ("edge_contractions_",
+                                                dig, ".Rds"))
+        saveRDS (res$edge_map, fname)
+    }
 
     attr (graph, "px") <- cache_graph (graph)
 

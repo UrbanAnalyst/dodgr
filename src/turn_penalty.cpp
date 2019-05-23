@@ -217,7 +217,9 @@ Rcpp::DataFrame routetimes::expand_edges (const Rcpp::DataFrame &graph,
                               vx1_out (n),
                               edge_out (n),
                               object_out (n),
-                              highway_out (n);
+                              highway_out (n),
+                              old_edge_in (n),
+                              old_edge_out (n);
     std::vector <double> vx0_x_out (n),
                          vx0_y_out (n),
                          vx1_x_out (n),
@@ -235,7 +237,9 @@ Rcpp::DataFrame routetimes::expand_edges (const Rcpp::DataFrame &graph,
         vx1_out [i] = junctions [i].v1;
         vx1_x_out [i] = map_x.at (junctions [i].v1);
         vx1_y_out [i] = map_y.at (junctions [i].v1);
-        edge_out [i] = sc::random_id (hash_len);
+        edge_out [i] = "j_" + sc::random_id (hash_len);
+        old_edge_in [i] = junctions [i].edge0;
+        old_edge_out [i] = junctions [i].edge1;
 
         // Map all others to properties of out edge:
         object_out [i] = map_object.at (junctions [i].edge1);
@@ -270,6 +274,8 @@ Rcpp::DataFrame routetimes::expand_edges (const Rcpp::DataFrame &graph,
             Rcpp::Named ("d_weighted") = dw_out,
             Rcpp::Named ("time") = time_out,
             Rcpp::Named ("time_weighted") = timew_out,
+            Rcpp::Named ("old_edge_in") = old_edge_in,
+            Rcpp::Named ("old_edge_out") = old_edge_out,
             Rcpp::_["stringsAsFactors"] = false);
 
     return res;

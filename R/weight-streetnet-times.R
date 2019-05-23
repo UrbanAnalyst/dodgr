@@ -429,10 +429,15 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
                                      left_side = FALSE)
 {
     turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
-    resbind <- NULL
+    resbind <- edge_map <- NULL
     if (turn_penalty > 0)
     {
         res <- rcpp_route_times (graph, left_side, turn_penalty)
+        edge_map <- data.frame ("edge" = res$graph$edge_,
+                                "e_in" = res$graph$old_edge_in,
+                                "e_out" = res$graph$old_edge_out,
+                                stringsAsFactors = FALSE)
+        res$graph$old_edge_in <- res$graph$old_edge_out <- NULL
 
         index <- which (graph$.vx0 %in% res$junction_vertices)
         v_start <- graph$.vx0 [index]
@@ -445,7 +450,7 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         resbind <- data.frame (array (NA, dim = c (nrow (res$graph), ncol (graph))))
         names (resbind) <- names (graph)
         resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
+        graph <- rbind (graph, resbind)
     }
-
-    rbind (graph, resbind)
+    list (graph = graph, edge_map = edge_map)
 }
