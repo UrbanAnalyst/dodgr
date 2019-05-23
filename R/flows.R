@@ -25,33 +25,6 @@ contract_graph_with_pts <- function (graph, from, to)
     return (graph)
 }
 
-# map contracted flows back onto full graph
-uncontract_graph <- function (graph, edge_map, graph_full)
-{
-    gr_cols <- dodgr_graph_cols (graph_full)
-    indx_to_full <- match (edge_map$edge_old, graph_full [[gr_cols$edge_id]])
-    indx_to_contr <- match (edge_map$edge_new, graph [[gr_cols$edge_id]])
-    # edge_map only has the contracted edges; flows from the original
-    # non-contracted edges also need to be inserted
-    edges <- graph [[gr_cols$edge_id]] [which (!graph [[gr_cols$edge_id]] %in%
-                                               edge_map$edge_new)]
-    indx_to_full <- c (indx_to_full, match (edges, graph_full [[gr_cols$edge_id]]))
-    indx_to_contr <- c (indx_to_contr, match (edges, graph [[gr_cols$edge_id]]))
-
-    index <- which (!names (graph) %in% names (graph_full))
-    if (length (index) > 0)
-    {
-        nms <- names (graph) [index]
-        graph_full [nms] <- NA
-        for (n in nms)
-        {
-            graph_full [[n]] [indx_to_full] <- graph [[n]] [indx_to_contr]
-        }
-    }
-
-    return (graph_full)
-}
-
 #' dodgr_flows_aggregate
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
