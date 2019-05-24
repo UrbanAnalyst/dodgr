@@ -9,7 +9,7 @@ test_that("streetnet bbox", {
               expect_equal (nrow (bb$bbox), 2)
               expect_equal (nrow (bb$bbox_poly), n)
 
-              bbox2 <- as.vector (apply (bbox, 2, range))
+              bbox2 <- apply (bbox, 2, range)
               bb2 <- process_bbox (bbox2, NULL, 0)
               expect_identical (bb$bbox, bb2$bbox)
 
