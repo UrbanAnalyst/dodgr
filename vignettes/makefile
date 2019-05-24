@@ -1,4 +1,4 @@
-LFILE = times
+LFILE = dodgr
 
 all: knith
 #all: knith open 

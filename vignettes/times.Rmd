@@ -176,7 +176,7 @@ edges (through appending `_start` and `_end` to vertex names), and so may not be
 used for routing. Instead, routing points should be taken from the contracted version of the original graph.
 ```{r streetnet-vertices, eval = FALSE}
 graphc <- dodgr_contract_graph (graph) # not graph_t!
-v <- dodgr_vertices (graphc$graph)
+v <- dodgr_vertices (graphc)
 n <- 100 # number of desired vertices
 from <- sample (v$id, size = n)
 to <- sample (v$id, size = n)
@@ -198,7 +198,7 @@ And those may then be used to calculate time-based routes on `graph`. As usual,
 it will generally be quicker to first contract the graph prior to routing.
 ```{r routing, eval = FALSE}
 graph_tc <- dodgr_contract_graph (graph_t)
-nrow (graph_tc$graph); nrow (graph_t)
+nrow (graph_tc); nrow (graph_t)
 ```
 ```{r routing-out, echo = FALSE}
 c (35808, 176160)
