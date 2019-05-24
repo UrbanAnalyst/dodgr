@@ -17,9 +17,9 @@
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
-#' nrow (graph) # 5,729
+#' nrow (graph) # 5,845
 #' graph <- dodgr_contract_graph (graph)
-#' nrow (graph$graph) # 764
+#' nrow (graph) # 686
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
     if (nrow (graph) == 0)
@@ -46,30 +46,40 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         verts <- verts [which (verts %in% v$id)]
     }
 
-    dig <- digest::digest (graph)
-    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
-    dig_c <- digest::digest (list (graph, verts))
-    fname_c <- file.path (tempdir (), paste0 ("graphc_", dig_c, ".Rds"))
+    # weight_streetnet caches contracted equivalent with `verts = NULL` using
+    # the original graph hash. If versions are subsequently created with
+    # non-NULL verts, they are cached with
+    # `hash = digest (list (graph, verts))`.
+    hash <- get_hash (graph)
+    hashc <- get_hashc (graph, verts) # == hash if `is.null (verts)`
+
+    fname_c <- file.path (tempdir (), paste0 ("graphc_", hashc, ".Rds"))
 
     if (file.exists (fname_c))
-        graph_contracted <- readRDS (fname_c)
-    else
     {
+        graph_contracted <- list (graph = readRDS (fname_c))
+    } else
+    {
+        fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
         if (!file.exists (fname))
             saveRDS (graph, fname)
+
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
-        saveRDS (graph_contracted, fname_c)
-        dig_e <- digest::digest (graph_contracted$edge_map)
-        fname_e <- file.path (tempdir (), paste0 ("edge_map_", dig_e, ".Rds"))
-        if (file.exists (fname))
-            chk <- file.copy (fname, fname_e, overwrite = TRUE)
+        saveRDS (graph_contracted$graph, fname_c)
+        fname_e <- file.path (tempdir (), paste0 ("edge_map_", hashc, ".Rds"))
+        saveRDS (graph_contracted$edge_map, fname_e)
+        fname_j <- file.path (tempdir (), paste0 ("junctions_", hashc, ".Rds"))
+        saveRDS (graph_contracted$junctions, fname_j)
     }
+
+    attr (graph_contracted$graph, "hash") <- hash
+    attr (graph_contracted$graph, "hashc") <- hashc
 
     # copy the processx R6 object associated with caching the original graph:
     if (!is.null (px))
-        attr (graph_contracted, "px") <- px
+        attr (graph_contracted$graph, "px") <- px
 
-    return (graph_contracted)
+    return (graph_contracted$graph)
 }
 
 # get junction vertices of graphs which have been re-routed for turn angles.
@@ -183,29 +193,31 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 #' graph0 <- weight_streetnet (hampi)
 #' nrow (graph0) # 5,845
 #' graph1 <- dodgr_contract_graph (graph0)
-#' nrow (graph1$graph) # 686
+#' nrow (graph1) # 686
 #' graph2 <- dodgr_uncontract_graph (graph1)
 #' nrow (graph2) # 5,845
-#' identical (graph0, graph2) # TRUE
 #' 
 #' # Insert new data on to the contracted graph and uncontract it:
-#' graph1$graph$new_col <- runif (nrow (graph1$graph))
+#' graph1$new_col <- runif (nrow (graph1))
 #' graph3 <- dodgr_uncontract_graph (graph1)
 #' # graph3 is then the uncontracted graph which includes "new_col" as well
+#' dim (graph0); dim (graph3)
 dodgr_uncontract_graph <- function (graph)
 {
     px <- attr (graph, "px") # processx R6 object
     while (px$is_alive ())
         px$wait ()
 
-    dig <- digest::digest (graph$edge_map)
-    fname <- file.path (tempdir (), paste0 ("edge_map_", dig, ".Rds"))
+    edge_map <- get_edge_map (graph)
+
+    hash <- get_hash (graph)
+    fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
     if (!file.exists (fname))
         stop ("Graph must have been contracted in current R session")
 
     graph_full <- readRDS (fname)
 
-    uncontract_graph (graph$graph, graph$edge_map, graph_full)
+    uncontract_graph (graph, edge_map, graph_full)
 }
 
 # map contracted graph with flows (or whatever else) back onto full graph

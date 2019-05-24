@@ -20,9 +20,7 @@ contract_graph_with_pts <- function (graph, from, to)
     if (!missing (to))
         pts <- c (pts, to)
     graph_full <- graph
-    graph <- dodgr_contract_graph (graph, unique (pts))
-    graph$graph_full <- graph_full
-    return (graph)
+    dodgr_contract_graph (graph, unique (pts))
 }
 
 #' dodgr_flows_aggregate
@@ -69,7 +67,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' geoms <- dodgr_to_sfc (graph_undir)
 #' gc <- dodgr_contract_graph (graph_undir)
 #' gsf <- sf::st_sf (geoms)
-#' gsf$flow <- gc$graph$flow
+#' gsf$flow <- gc$flow
 #'
 #' # example of plotting with the 'mapview' package
 #' library (mapview)
@@ -110,7 +108,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' geoms <- dodgr_to_sfc (f)
 #' gc <- dodgr_contract_graph (f)
 #' gsf <- sf::st_sf (geoms)
-#' gsf$flow <- gc$graph$flow
+#' gsf$flow <- gc$flow
 #' # sf plot:
 #' plot (gsf ["flow"])
 #' }
@@ -137,10 +135,13 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 
     if (contract)
     {
+        graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
-        graph_full <- graph$graph_full
-        edge_map <- graph$edge_map
-        graph <- graph$graph
+        hash <- get_hash (graph)
+        fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
+        if (!file.exists (fname_e))
+            stop ("something went wrong extracting the edge_map ... ")
+        edge_map <- readRDS (fname_e)
     }
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -227,11 +228,15 @@ dodgr_flows_disperse <- function (graph, from, dens,
 
     if (contract)
     {
-        graph <- contract_graph_with_pts (graph, from, from)
-        graph_full <- graph$graph_full
-        edge_map <- graph$edge_map
-        graph <- graph$graph
+        graph_full <- graph
+        graph <- contract_graph_with_pts (graph, from)
+        hash <- get_hash (graph)
+        fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
+        if (!file.exists (fname_e))
+            stop ("something went wrong extracting the edge_map ... ")
+        edge_map <- readRDS (fname_e)
     }
+
 
     gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
@@ -301,5 +306,9 @@ merge_directed_flows <- function (graph)
     graph <- graph [indx, , drop = FALSE] #nolint
     graph$flow <- flows [indx]
     class (graph) <- c (class (graph), "dodgr_merged_flows")
+
+    hash <- digest::digest (graph)
+    attr (graph, "hash") <- hash
+
     return (graph)
 }

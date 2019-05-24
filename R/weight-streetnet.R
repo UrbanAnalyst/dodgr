@@ -192,7 +192,9 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
-    attr (graph, "px") <- cache_graph (graph)
+    hash <- digest::digest (graph)
+    attr (graph, "hash") <- hash
+    attr (graph, "px") <- cache_graph (graph, hash)
 
     return (graph)
 }
@@ -437,45 +439,6 @@ add_extra_sf_columns <- function (graph, x)
     return (graph)
 }
 
-# cache on initial construction with weight_streetnet. This pre-calculates and
-# caches the contracted graph *with no additional intermediate vertices* (that
-# is, the result of `dodgr_contract_graph (graph, verts = NULL)`). Later calls
-# with explicit additional vertices will generate different hashes and so will
-# be re-contracted and cached directly in `dodgr_contract_graph`.
-#
-# A copy of the original (full) graph is also copied to a file named with the
-# hash of the edge map. This is needed for graph uncontraction, so that just the
-# contracted graph and edge map can be submitted, the original graph re-loaded,
-# and the uncontracted version returned.
-cache_graph <- function (graph)
-{
-    dig <- digest::digest (graph)
-    fname <- file.path (tempdir (), paste0 ("graph_", dig, ".Rds"))
-    saveRDS (graph, fname)
-
-    dig_c <- digest::digest (list (graph, NULL)) # NULL for no vertices
-    td <- tempdir ()
-    fname_c <- file.path (td, paste0 ("graphc_", dig_c, ".Rds"))
-
-    f <- function (graph, dig, dig_c, td)
-    {
-        fname <- file.path (td, paste0 ("graph_", dig, ".Rds"))
-        graph <- readRDS (fname)
-        graphc <- dodgr::dodgr_contract_graph (graph)
-        fname_c <- file.path (td, paste0 ("graphc_", dig_c, ".Rds"))
-        saveRDS (graphc, fname_c)
-        dig_e <- digest::digest (graphc$edge_map)
-        fname_e <- file.path (td, paste0 ("edge_map_", dig_e, ".Rds"))
-        chk <- file.copy (fname, fname_e, overwrite = TRUE)
-    }
-
-    sink (file = file.path (tempdir (), "Rout.txt"))
-    res <- callr::r_bg (f, list (graph, dig, dig_c, td))
-    sink ()
-
-    return (res) # R6 processx object
-}
-
 # ********************************************************************
 # *************************     sc class     ************************* 
 # ********************************************************************
@@ -538,13 +501,16 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     if (turn_angle)
     {
-        dig <- digest::digest (graph)
+        hash <- digest::digest (graph)
         fname <- file.path (tempdir (), paste0 ("edge_contractions_",
-                                                dig, ".Rds"))
-        saveRDS (res$edge_map, fname)
+                                                hash, ".Rds"))
+        obj <- res$edge_map
+        saveRDS (obj, fname)
     }
 
-    attr (graph, "px") <- cache_graph (graph)
+    hash <- digest::digest (graph)
+    attr (graph, "hash") <- hash
+    attr (graph, "px") <- cache_graph (graph, hash)
 
     return (graph)
 }

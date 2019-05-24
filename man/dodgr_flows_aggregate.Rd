@@ -59,7 +59,7 @@ nrow (graph); nrow (graph_undir) # the latter is much smaller
 geoms <- dodgr_to_sfc (graph_undir)
 gc <- dodgr_contract_graph (graph_undir)
 gsf <- sf::st_sf (geoms)
-gsf$flow <- gc$graph$flow
+gsf$flow <- gc$flow
 
 # example of plotting with the 'mapview' package
 library (mapview)
@@ -100,7 +100,7 @@ f <- merge_directed_flows (f)
 geoms <- dodgr_to_sfc (f)
 gc <- dodgr_contract_graph (f)
 gsf <- sf::st_sf (geoms)
-gsf$flow <- gc$graph$flow
+gsf$flow <- gc$flow
 # sf plot:
 plot (gsf ["flow"])
 }

@@ -1,10 +1,3 @@
-null_to_na <- function (x)
-{
-    if (length (x) == 0)
-        x <- NA
-    return (x)
-}
-
 #' dodgr_graph_cols
 #'
 #' Identify the essential columns of the graph table (data.frame, tibble,
@@ -160,8 +153,9 @@ tbl_to_df <- function (graph)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
-    dig <- digest::digest (graph)
-    fname <- file.path (tempdir (), paste0 ("verts_", dig, ".Rds"))
+    hash <- get_hash (graph) 
+
+    fname <- file.path (tempdir (), paste0 ("verts_", hash, ".Rds"))
     if (file.exists (fname))
         verts <- readRDS (fname)
     else
@@ -290,5 +284,6 @@ dodgr_sample <- function (graph, nverts = 1000)
     }
 
     class (graph) <- classes
+    attr (graph, "hash") <- digest::digest (graph)
     return (graph)
 }

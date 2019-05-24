@@ -48,7 +48,7 @@ only an approximation and may not yield all fundamental cycles.
 }
 \examples{
 net <- weight_streetnet (hampi)
-graph <- dodgr_contract_graph (net)$graph
+graph <- dodgr_contract_graph (net)
 verts <- dodgr_vertices (graph)
 cyc <- dodgr_fundamental_cycles (graph, verts)
 }

@@ -78,7 +78,8 @@ dodgr_to_sfc <- function (graph)
     names (graph) [gr_cols$yto] <- "to_lat"
 
     gc <- dodgr_contract_graph (graph)
-    geometry <- rcpp_aggregate_to_sf (graph, gc$graph, gc$edge_map)
+    edge_map <- get_edge_map (gc)
+    geometry <- rcpp_aggregate_to_sf (graph, gc, edge_map)
 
     # Then match data of `graph` potentially including way_id, back on to the
     # geometries:
@@ -92,9 +93,9 @@ dodgr_to_sfc <- function (graph)
     #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
     #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
 
-    geometry <- geometry [match (gc$graph [[gr_cols$edge_id]], names (geometry))]
+    geometry <- geometry [match (gc [[gr_cols$edge_id]], names (geometry))]
 
-    return (list (dat = gc$graph, geometry = geometry))
+    return (list (dat = gc, geometry = geometry))
 }
 
 #' dodgr_to_igraph

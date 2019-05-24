@@ -42,7 +42,7 @@ flatten_list <- function (x)
 #'
 #' @examples 
 #' net <- weight_streetnet (hampi)
-#' graph <- dodgr_contract_graph (net)$graph
+#' graph <- dodgr_contract_graph (net)
 #' verts <- dodgr_vertices (graph)
 #' cyc <- dodgr_fundamental_cycles (graph, verts)
 #' @export 
@@ -217,7 +217,7 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 #'
 #' @examples 
 #' net <- weight_streetnet (hampi)
-#' graph <- dodgr_contract_graph (net)$graph
+#' graph <- dodgr_contract_graph (net)
 #' cyc1 <- dodgr_fundamental_cycles (graph)
 #' cyc2 <- dodgr_full_cycles (net)
 #' # cyc2 has same number of cycles, but each one is generally longer, through
@@ -231,28 +231,35 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     graph$flow <- NULL
     #graph <- graph [graph$component == 1, ]
     graphc <- dodgr_contract_graph (graph)
-    v <- dodgr_vertices (graphc$graph)
+    v <- dodgr_vertices (graphc)
 
-    x <- dodgr_fundamental_cycles (graphc$graph,
+    #edge_map <- get_edge_map (graphc) # TODO: Implement this
+    hash <- get_hash (graphc)
+    fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
+    if (!file.exists (fname_e))
+        stop ("something unexpected went wrong extracting the edge map")
+    edge_map <- readRDS (fname_e)
+
+    x <- dodgr_fundamental_cycles (graphc,
                                    vertices = v,
                                    graph_max_size = graph_max_size,
                                    expand = expand)
 
-    from_to <- paste0 (graphc$graph$from_id, "-", graphc$graph$to_id)
-    to_from <- paste0 (graphc$graph$to_id, "-", graphc$graph$from_id)
+    from_to <- paste0 (graphc$from_id, "-", graphc$to_id)
+    to_from <- paste0 (graphc$to_id, "-", graphc$from_id)
     ids <- lapply (x, function (i) {
            idpairs <- paste0 (i$id [-length (i$id)], "-", i$id [-1])
            # Get the edge pairs that match the idpairs, whether as from->to or
            # to->from
-           edges_c1 <- graphc$graph$edge_id [match (idpairs, from_to)]
-           edges_c2 <- graphc$graph$edge_id [match (idpairs, to_from)]
+           edges_c1 <- graphc$edge_id [match (idpairs, from_to)]
+           edges_c2 <- graphc$edge_id [match (idpairs, to_from)]
            edges_c <- apply (rbind (edges_c1, edges_c2), 2, function (i)
                              i [which (!is.na (i))] [1])
            edges_new <- lapply (as.list (edges_c), function (j) {
-                    if (j %in% graphc$edge_map$edge_new)
+                    if (j %in% edge_map$edge_new)
                     {
-                        index <- which (graphc$edge_map$edge_new %in% j)
-                        index <- as.numeric (graphc$edge_map$edge_old [index])
+                        index <- which (edge_map$edge_new %in% j)
+                        index <- as.numeric (edge_map$edge_old [index])
                         j <- match (index, graph$edge_id)
                         if ((graph$from_id [j [1] ] ==
                              graph$to_id [utils::tail (j, 1)]) ||
@@ -315,6 +322,7 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
     {
         graphi <- graph [graph$component == comps [i], ]
         graphi$edge_id <- seq (nrow (graphi))
+        attr (graphi, "hash") <- NULL
         x [[i]] <-  dodgr_full_cycles (graphi,
                                        graph_max_size = graph_max_size,
                                        expand = expand)
