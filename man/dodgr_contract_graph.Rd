@@ -13,7 +13,7 @@ similarly labelled columns of spatial coordinates (for example
 \code{from_x}) or \code{stop_lon}).}
 
 \item{verts}{Optional list of vertices to be retained as routing points.
-These must match the \code{from_id} and \code{to_id} columns of \code{graph}.}
+These must match the \code{from} and \code{to} columns of \code{graph}.}
 }
 \value{
 A list of two items: \code{graph} containing contracted version of

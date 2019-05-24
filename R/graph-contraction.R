@@ -8,7 +8,7 @@
 #' similarly labelled columns of spatial coordinates (for example
 #' `from_x`) or `stop_lon`).
 #' @param verts Optional list of vertices to be retained as routing points.
-#' These must match the `from_id` and `to_id` columns of `graph`.
+#' These must match the `from` and `to` columns of `graph`.
 #'
 #' @return A list of two items: `graph` containing contracted version of
 #' the original `graph`, converted to a standardised format, and
