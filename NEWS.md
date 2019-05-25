@@ -1,7 +1,11 @@
-# v0.1.4.001
+# v0.1.4.003
 
 Major changes:
-- Graph contraction is cached in the background (via `callr` package)
+- Lots of intermediate processes now executed and cached as background
+  processes (via `callr` package).
+- `dodgr_contract_graph` returns the contracted graph only, instead of former
+  version which return list of `graph` and `edge_map` (the `edge_map` is cached
+  and re-loaded when needed for graph uncontraction).
 
 Minor changes:
 - Fix some bugs in max speed calculations for weight_streetnet
