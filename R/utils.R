@@ -11,7 +11,10 @@ get_hash <- function (graph)
                          "hashc", "hash")
     hash <- attr (graph, hash_name)
     if (is.null (hash))
-        hash <- digest::digest (graph)
+    {
+        gr_cols <- dodgr_graph_cols (graph)
+        hash <- digest::digest (graph [[gr_cols$edge_id]])
+    }
     return (hash)
 }
 
@@ -19,12 +22,18 @@ get_hashc <- function (graph, verts = NULL)
 {
     hash <- attr (graph, "hash")
     if (is.null (hash))
-        hash <- digest::digest (graph)
+    {
+        gr_cols <- dodgr_graph_cols (graph)
+        hash <- digest::digest (graph [[gr_cols$edge_id]])
+    }
 
     if (is.null (verts))
         hashc <- hash
     else
-        hashc <- digest::digest (list (graph, verts))
+    {
+        gr_cols <- dodgr_graph_cols (graph)
+        hashc <- digest::digest (list (graph [[gr_cols$edge_id]], verts))
+    }
     return (hashc)
 }
 

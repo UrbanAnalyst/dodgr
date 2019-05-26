@@ -153,7 +153,7 @@ tbl_to_df <- function (graph)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
-    hash <- get_hash (graph) 
+    hash <- get_hash (graph)
 
     fname <- file.path (tempdir (), paste0 ("verts_", hash, ".Rds"))
     if (file.exists (fname))
@@ -275,15 +275,15 @@ dodgr_sample <- function (graph, nverts = 1000)
     fr <- find_fr_id_col (graph)
     to <- find_to_id_col (graph)
     verts <- unique (c (graph [, fr], graph [, to]))
+    gr_cols <- dodgr_graph_cols (graph)
     if (length (verts) > nverts)
     {
-        gr_cols <- dodgr_graph_cols (graph)
         graph2 <- convert_graph (graph, gr_cols)
         indx <- match (rcpp_sample_graph (graph2, nverts), graph2$edge_id)
         graph <- graph [sort (indx), ]
     }
 
     class (graph) <- classes
-    attr (graph, "hash") <- digest::digest (graph)
+    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
     return (graph)
 }

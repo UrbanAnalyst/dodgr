@@ -192,7 +192,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
-    hash <- digest::digest (graph)
+    hash <- digest::digest (graph [[gr_cols$edge_id]])
     attr (graph, "hash") <- hash
     attr (graph, "px") <- cache_graph (graph, hash)
 
@@ -501,14 +501,14 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     if (turn_angle)
     {
-        hash <- digest::digest (graph)
+        hash <- digest::digest (graph [[gr_cols$edge_id]])
         fname <- file.path (tempdir (), paste0 ("edge_contractions_",
                                                 hash, ".Rds"))
         obj <- res$edge_map
         saveRDS (obj, fname)
     }
 
-    hash <- digest::digest (graph)
+    hash <- digest::digest (graph [[gr_cols$edge_id]])
     attr (graph, "hash") <- hash
     attr (graph, "px") <- cache_graph (graph, hash)
 
