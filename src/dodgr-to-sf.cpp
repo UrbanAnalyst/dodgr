@@ -353,7 +353,7 @@ Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
     std::vector <size_t> edgevec_sizes;
     size_t check = dodgr_sf::get_edgevec_sizes (nedges, new_edges, edgevec_sizes);
     if (check != nedges)
-        Rcpp::stop ("number of new edges in contracted graph not the right size");
+        Rcpp::stop ("number of new edges in contracted graph not the right size"); // # nocov
 
     /* Map contracted edge ids onto corresponding pairs of from and to vertices.
      * The first vertex of a sequence won't be necessarily at the start of a

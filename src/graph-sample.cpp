@@ -35,7 +35,7 @@ edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
         if (components [this_vert] == largest_component)
             in_largest = true;
         if (e0 >= edge_map.size ())
-            e0 = 0;
+            e0 = 0; // # nocov
     }
 
     edge_component edge_comp;
@@ -118,7 +118,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
 
     Rcpp::StringVector edges_out;
     if (vertices.size () <= nverts_to_sample)
-        return edges_out; // return empty vector
+        return edges_out; // return empty vector # nocov
 
     std::unordered_map <vertex_id_t, unsigned int> components;
     unsigned int largest_component =
@@ -130,9 +130,9 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
             vert_ids.emplace (v.first);
     if (vert_ids.size () < nverts_to_sample)
     {
-        Rcpp::Rcout << "Largest connected component only has " <<
-            vert_ids.size () << " vertices" << std::endl;
-        nverts_to_sample = static_cast <unsigned int> (vert_ids.size ());
+        Rcpp::Rcout << "Largest connected component only has " <<         // # nocov
+            vert_ids.size () << " vertices" << std::endl;                 // # nocov
+        nverts_to_sample = static_cast <unsigned int> (vert_ids.size ()); // # nocov
     }
 
     vertex_id_t this_vert =
