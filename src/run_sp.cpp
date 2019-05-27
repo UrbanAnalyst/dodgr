@@ -450,7 +450,7 @@ struct OneFlow : public RcppParallel::Worker
             //return charset [ rand() % max_index ];
             size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
             return charset [i];
-        };
+        }; // # nocov
         std::string str (len, 0);
         std::generate_n (str.begin(), len, randchar);
         return str;
@@ -550,7 +550,7 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
         in_file.close ();
 
         if (nedges != static_cast <size_t> (len))
-            Rcpp::stop ("aggregate flows have inconsistent sizes");
+            Rcpp::stop ("aggregate flows have inconsistent sizes"); // # nocov
         
         for (size_t j = 0; j < nedges; j++)
             flows [static_cast <long> (j)] += flows_i [j];
@@ -699,7 +699,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
                     vert_from = vert_name [static_cast <size_t> (prev [vi])];
                 std::string two_verts = "f" + vert_from + "t" + vert_to;
                 if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
-                    Rcpp::stop ("vertex pair forms no known edge");
+                    Rcpp::stop ("vertex pair forms no known edge"); // # nocov
 
                 unsigned int indx = verts_to_edge_map [two_verts];
                 if (d [vi] < INFINITE_DOUBLE)
@@ -708,11 +708,13 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
                         aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);
                     else // standard logistic polynomial for UK cycling models
                     {
+                        // # nocov start
                         double lp = -3.894 + (-0.5872 * d [vi]) +
                             (1.832 * sqrt (d [vi])) +
                             (0.007956 * d [vi] * d [vi]);
                         aggregate_flows [indx] += flows (v, 0) *
                             exp (lp) / (1.0 + exp (lp));
+                        // # nocov end
                     }
                 }
             }

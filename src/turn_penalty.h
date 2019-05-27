@@ -31,9 +31,11 @@ struct clockwise_sort
             return false;
         if (a.x == 0.0 && b.x == 0.0)
         {
+            // # nocov start
             if (a.y >= 0.0 || b.y >= 0.0)
                 return a.y > b.y;
             return b.y > a.y;
+            // # nocov end
         }
 
         double det = a.x * b.y - a.y * b.x;

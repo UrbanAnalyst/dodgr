@@ -65,6 +65,41 @@ test_that("dists", {
 
 })
 
+test_that("all dists", {
+    graph <- weight_streetnet (hampi)
+    graph <- graph [graph$component == 2, ]
+    expect_silent (d <- dodgr_dists (graph))
+    v <- dodgr_vertices (graph)
+    expect_equal (nrow (d), ncol (d))
+    expect_equal (nrow (d), nrow (v))
+})
+
+test_that("dists with no edge ids", {
+    graph <- weight_streetnet (hampi)
+    nf <- 100
+    nt <- 50
+    from <- sample (graph$from_id, size = nf)
+    to <- sample (graph$from_id, size = nt)
+    expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
+
+    # from/to as coordinates only:
+    v <- dodgr_vertices (graph)
+    from <- v [match (from, v$id), c ("x", "y")]
+    to <- v [match (to, v$id), c ("x", "y")]
+    expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
+    identical (as.vector (d0), as.vector (d1))
+
+    # remove from_id/to_id from graph. Now coordinates will be matched on to
+    # **first** occurrence in dodgr_vertices, which may not be actual one, so
+    # distances won't necessarily be equal
+    graph$from_id <- graph$to_id <- NULL
+    expect_silent (d2 <- dodgr_distances (graph, from = from, to = to))
+    r <- cor (as.vector (d0), as.vector (d2), use = "pairwise.complete.obs")
+    if (test_all)
+        expect_true (r < 1)
+    expect_true (r > 0.99)
+})
+
 test_that ("heaps", {
     graph <- weight_streetnet (hampi)
     nf <- 100
@@ -79,7 +114,14 @@ test_that ("heaps", {
                     "RadixHeap can only be implemented for integer weights")
     expect_silent (d3 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeap"))
     expect_silent (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"))
+    # This is a compound message that starts "Calculating shortest paths ..."
+    # and then "Extended TriHeaps can not be calculated in parallel
+    # That can't be tested, so just generic expect_message here
+    expect_message (d4a <- dodgr_dists (graph, from = from, to = to,
+                                        heap = "TriHeapExt", quiet = FALSE))
     expect_silent (d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23"))
+
+    d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt", quiet = FALSE)
 
     expect_identical (d0, d1)
     expect_false (identical (d0, d2))

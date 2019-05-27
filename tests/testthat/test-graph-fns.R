@@ -24,8 +24,7 @@ test_that("sample graph", {
     expect_true (nrow (v) == nverts)
 
     d2 <- mean (geodist::geodist (v))
-    if (test_all)
-        expect_true (d2 > d)
+    #expect_true (d2 > d) # that's not reliably true, but almost always
 })
 
 test_that("components", {
