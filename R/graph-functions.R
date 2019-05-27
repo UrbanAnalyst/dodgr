@@ -153,6 +153,15 @@ tbl_to_df <- function (graph)
 #' v <- dodgr_vertices (graph)
 dodgr_vertices <- function (graph)
 {
+    # vertices are calculated as background process, so wait if that's not
+    # finished.
+    if ("px" %in% names (attributes (graph)))
+    {
+        px <- attr (graph, "px")
+        while (px$is_alive ())
+            px$wait ()
+    }
+
     hash <- get_hash (graph)
 
     nm <- ifelse (methods::is (graph, "dodgr_contracted"), "vertsc_", "verts_")
