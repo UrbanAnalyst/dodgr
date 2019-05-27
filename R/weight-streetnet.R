@@ -213,7 +213,7 @@ check_highway_osmid <- function (x, wt_profile)
         stop ("Please specify type_col to be used for weighting streetnet") # nocov
     if (!"osm_id" %in% names (x))
     {
-        idcol <- grep ("id", names (x), ignore.case = TRUE)
+        idcol <- grep ("^id|id$", names (x), ignore.case = TRUE)
         if (length (idcol) == 1)
         {
             message ("Using column ", names (x) [idcol],
@@ -227,7 +227,7 @@ check_highway_osmid <- function (x, wt_profile)
                   "]; please explicitly specify one of these.")
         } else if (length (idcol) == 0)
         {
-            message ("x appears to have no ID column;",
+            message ("x appears to have no ID column; ",
                      "sequential edge numbers will be used.")
             x$osm_id <- seq (nrow (x))
         }
