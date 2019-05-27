@@ -43,6 +43,13 @@ test_that("contract graph", {
     expect_true (nrow (graph_c) < nrow (graph))
 })
 
+test_that("uncontract graph", {
+    graph <- weight_streetnet (hampi)
+    graph_c <- dodgr_contract_graph (graph)
+    graph2 <- dodgr_uncontract_graph (graph_c)
+    expect_identical (graph, graph2)
+})
+
 test_that("compare heaps", {
     graph <- weight_streetnet (hampi)
     ch <- compare_heaps (graph, nverts = 100, replications = 1)
