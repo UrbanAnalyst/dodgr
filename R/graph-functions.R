@@ -155,7 +155,8 @@ dodgr_vertices <- function (graph)
 {
     hash <- get_hash (graph)
 
-    fname <- file.path (tempdir (), paste0 ("verts_", hash, ".Rds"))
+    nm <- ifelse (methods::is (graph, "dodgr_contracted"), "vertsc_", "verts_")
+    fname <- file.path (tempdir (), paste0 (nm, hash, ".Rds"))
     if (file.exists (fname))
         verts <- readRDS (fname)
     else

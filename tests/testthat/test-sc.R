@@ -79,8 +79,8 @@ test_that("dodgr_times", {
               from <- sample (v$id, 100)
               to <- sample (v$id, 100)
 
-              #t1 <- dodgr_times (net_sc2, from = from, to = to)
-              #t2 <- dodgr_times (net_sc2_c, from = from, to = to)
-              #dtime <- max (abs (t1 - t2), na.rm = TRUE)
-              #expect_true (dtime < 1e-6)
+              t1 <- dodgr_times (net_sc2, from = from, to = to)
+              t2 <- dodgr_times (net_sc2_c, from = from, to = to)
+              dtime <- max (abs (t1 - t2), na.rm = TRUE)
+              expect_true (dtime < 1e-6)
 })

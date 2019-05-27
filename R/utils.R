@@ -63,12 +63,20 @@ cache_graph <- function (graph, hash)
     td <- tempdir ()
     f <- function (graph, hash, td)
     {
+        verts <- dodgr::dodgr_vertices (graph)
+        fname_v <- file.path (td, paste0 ("verts_", hash, ".Rds"))
+        saveRDS (verts, fname_v)
+
         fname <- file.path (td, paste0 ("graph_", hash, ".Rds"))
         saveRDS (graph, fname)
         graphc <- dodgr::dodgr_contract_graph (graph)
         # same hash -> contracted with **NO** additional vertices
         fname_c <- file.path (td, paste0 ("graphc_", hash, ".Rds"))
         saveRDS (graphc, fname_c)
+
+        verts <- dodgr::dodgr_vertices (graphc)
+        fname_v <- file.path (td, paste0 ("vertsc_", hash, ".Rds"))
+        saveRDS (verts, fname_v)
 
         fname_e <- paste0 ("edge_map_", hash, ".Rds")
         fname_e_fr <- file.path (tempdir (), fname_e)
