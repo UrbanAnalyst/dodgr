@@ -71,6 +71,8 @@ test_that ("heaps", {
     nt <- 50
     from <- sample (graph$from_id, size = nf)
     to <- sample (graph$from_id, size = nt)
+    expect_error (dodgr_dists (graph, from = from, to = to, heap = "wrong heap"),
+                  "'arg' should be one of")
     expect_silent (d0 <- dodgr_dists (graph, from = from, to = to, heap = "BHeap"))
     expect_silent (d1 <- dodgr_dists (graph, from = from, to = to, heap = "FHeap"))
     expect_message (d2 <- dodgr_dists (graph, from = from, to = to, heap = "Radix"),
@@ -88,9 +90,10 @@ test_that ("heaps", {
     # std::set is only applied to non-spatial graphs:
     graph$from_lon <- graph$from_lat <- graph$to_lon <- graph$to_lat <- NULL
     expect_silent (d6 <- dodgr_dists (graph, from = from, to = to, heap = "set"))
-
+    expect_silent (d7 <- dodgr_dists (graph, from = from, to = to, heap = "BHeap"))
 
     expect_identical (d0, d6)
+    expect_identical (d0, d7)
 })
 
 test_that("graph columns", {

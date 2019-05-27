@@ -5,10 +5,27 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 
 test_that("sample graph", {
     graph <- weight_streetnet (hampi)
-    graph_s <- dodgr_sample (graph, nverts = 100)
+    set.seed (1)
+    nverts <- 100
+    graph_s <- dodgr_sample (graph, nverts = nverts)
     expect_true (nrow (graph_s) < nrow (graph))
     v <- dodgr_vertices (graph_s)
-    expect_true (nrow (v) == 100)
+    expect_true (nrow (v) == nverts)
+
+    # that sample is only of largest component, so the subsequent code removing
+    # component should generate longer distances
+    d <- mean (geodist::geodist (v))
+
+    graph$component <- NULL
+    set.seed (1)
+    graph_s2 <- dodgr_sample (graph, nverts = nverts)
+    expect_true (nrow (graph_s2) < nrow (graph))
+    v <- dodgr_vertices (graph_s2)
+    expect_true (nrow (v) == nverts)
+
+    d2 <- mean (geodist::geodist (v))
+    if (test_all)
+        expect_true (d2 > d)
 })
 
 test_that("components", {
