@@ -83,8 +83,9 @@ test_that ("streetnet times", {
                expect_identical (graph, graph2)
 
                h$id <- NULL
-               expect_message (graph3 <- weight_streetnet (h),
-                               "Using column width as ID column for edges")
+               msg <- paste ("x appears to have no ID column;",
+                             "sequential edge numbers will be used.")
+               expect_message (graph3 <- weight_streetnet (h), msg)
 
                h <- hampi
                names (h$geometry) <- NULL
