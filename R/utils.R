@@ -58,11 +58,12 @@ get_edge_map <- function (graph)
 # hash of the edge map. This is needed for graph uncontraction, so that just the
 # contracted graph and edge map can be submitted, the original graph re-loaded,
 # and the uncontracted version returned.
-cache_graph <- function (graph, hash)
+cache_graph <- function (graph)
 {
     td <- tempdir ()
-    f <- function (graph, hash, td)
+    f <- function (graph, td)
     {
+        hash <- attr (graph, "hash")
         verts <- dodgr::dodgr_vertices (graph)
         fname_v <- file.path (td, paste0 ("verts_", hash, ".Rds"))
         saveRDS (verts, fname_v)
@@ -92,7 +93,7 @@ cache_graph <- function (graph, hash)
     }
 
     sink (file = file.path (tempdir (), "Rout.txt"))
-    res <- callr::r_bg (f, list (graph, hash, td))
+    res <- callr::r_bg (f, list (graph, td))
     sink ()
 
     return (res) # R6 processx object
