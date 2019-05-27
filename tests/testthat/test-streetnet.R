@@ -43,6 +43,32 @@ test_that ("streetnet pts", {
               expect_identical (bb2_bb, bb$bbox)
 })
 
+test_that ("streetnet minus osm_id", {
+    h <- hampi
+    h$osm_id <- NULL
+    expect_message (graph <- weight_streetnet (h),
+                    "x appears to have no ID column; sequential edge numbers will be used")
+    expect_true ("way_id" %in% names (graph))
+
+    names (h$geometry) <- NULL
+    expect_message (graph <- weight_streetnet (h),
+                    "x appears to have no ID column; sequential edge numbers will be used")
+    expect_false ("way_id" %in% names (graph))
+
+    #graph <- weight_streetnet (hampi, wt_profile = "bicycle")
+    #attr (graph, "px") <- NULL
+    #h <- hampi
+    #h ["oneway.bicycle"] <- FALSE
+    #graph2 <- weight_streetnet (h, wt_profile = "bicycle")
+    #attr (graph2, "px") <- NULL
+    #expect_false (identical (graph, graph2))
+    #h <- hampi
+    #h ["oneway:bicycle"] <- FALSE
+    #graph3 <- weight_streetnet (h, wt_profile = "bicycle")
+    #expect_false (identical (graph, graph3))
+    #expect_true (identical (graph2, graph3))
+})
+
 test_that ("streetnet times", {
                expect_error (graph <- weight_streetnet (hampi, turn_angle = TRUE),
                              paste0 ("Turn-angle calculations only currently ",
