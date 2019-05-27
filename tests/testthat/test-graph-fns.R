@@ -139,20 +139,24 @@ test_that ("weight_profiles", {
                   "Weighting profiles must have")
 
     g0 <- weight_streetnet (hampi)
+    while (attr (g0, "px")$is_alive ())
+        attr (g0, "px")$wait ()
     hampi2 <- hampi
     names (hampi2) [grep ("highway", names (hampi2))] <- "waytype"
-    expect_error (weight_streetnet (hampi2),
+    expect_error (net <- weight_streetnet (hampi2),
                   "Please specify type_col to be used for weighting streetnet")
     g1 <- weight_streetnet (hampi2, type_col = "waytype")
+    while (attr (g1, "px")$is_alive ())
+        attr (g1, "px")$wait ()
     attr (g0, "px") <- NULL
     attr (g1, "px") <- NULL
     expect_identical (g0, g1)
     names (hampi2) [grep ("osm_id", names (hampi2))] <- "key"
-    expect_message (weight_streetnet (hampi2, type_col = "waytype"),
-                  "Using column width as ID column for edges")
+    expect_message (net <- weight_streetnet (hampi2, type_col = "waytype"),
+                  "x appears to have no ID column")
     names (hampi2) [grep ("key", names (hampi2))] <- "id"
-    expect_error (weight_streetnet (hampi2, type_col = "waytype"),
-                  "Multiple potential ID columns")
+    expect_message (net <- weight_streetnet (hampi2, type_col = "waytype"),
+                    "Using column id as ID column for edges")
     names (hampi2) [grep ("width", names (hampi2))] <- "w"
     expect_message (g1 <- weight_streetnet (hampi2, type_col = "waytype"),
                   "Using column id as ID column for edges")
