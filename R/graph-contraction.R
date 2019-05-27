@@ -209,10 +209,19 @@ dodgr_uncontract_graph <- function (graph)
 
     edge_map <- get_edge_map (graph)
 
-    hash <- get_hash (graph)
+    gr_cols <- dodgr_graph_cols (graph)
+    hash <- attr (graph, "hashc")
+    if (is.null (hash))
+    {
+        if (is.na (gr_cols$edge_id))
+            hash <- digest::digest (seq (nrow (graph)))
+        else
+            hash <- digest::digest (graph [gr_cols$edge_id])
+    }
     fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
     if (!file.exists (fname))
-        stop ("Graph must have been contracted in current R session")
+        stop (paste0 ("Graph must have been contracted in current R session; ",
+                      "and have retained the same row structure"))
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px

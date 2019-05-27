@@ -162,7 +162,11 @@ dodgr_vertices <- function (graph)
             px$wait ()
     }
 
-    hash <- get_hash (graph)
+    gr_cols <- dodgr_graph_cols (graph)
+    if (is.na (gr_cols$edge_id))
+        hash <- ""
+    else
+        hash <- digest::digest (graph [gr_cols$edge_id])
 
     nm <- ifelse (methods::is (graph, "dodgr_contracted"), "vertsc_", "verts_")
     fname <- file.path (tempdir (), paste0 (nm, hash, ".Rds"))
@@ -296,6 +300,11 @@ dodgr_sample <- function (graph, nverts = 1000)
     }
 
     class (graph) <- classes
-    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+
+    if (is.na (gr_cols$edge_id))
+        attr (graph, "hash") <- digest::digest (seq (nrow (graph)))
+    else
+        attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+
     return (graph)
 }
