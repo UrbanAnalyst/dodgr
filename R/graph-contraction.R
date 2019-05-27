@@ -32,7 +32,6 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         px <- attr (graph, "px")
         while (px$is_alive ())
             px$wait ()
-        attr (graph, "px") <- NULL # remove to re-calculate original hash
     }
 
     v <- dodgr_vertices (graph)
@@ -216,6 +215,7 @@ dodgr_uncontract_graph <- function (graph)
         stop ("Graph must have been contracted in current R session")
 
     graph_full <- readRDS (fname)
+    attr (graph_full, "px") <- px
 
     uncontract_graph (graph, edge_map, graph_full)
 }
