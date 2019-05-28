@@ -92,7 +92,7 @@ class AdjacencyMatrix
         inline size_t get_adj_index (const size_t i, const size_t j) const
         {
             if (i >= m_nNodes || j >= m_nNodes || i == j)
-                throw std::out_of_range("get_adj_index: (i, j) must be < nNodes AND they must not be equal!");
+                throw std::out_of_range("get_adj_index: (i, j) must be < nNodes AND they must not be equal!"); // # nocov
 
             // (j - i * (i - 1 - 2 * (N - 2)) / 2) - 1
             long long li = static_cast<long long>(i),
@@ -269,7 +269,7 @@ typename Graph<TObject>::NodePath Graph<TObject>::cycleMatrix2nodePath
         }
     }
     // Only !return is if matrix does not contain any edges
-    throw std::runtime_error("Graph::cycleMatrix2nodePath(): Given Cycle Matrix does not contain any edges!");
+    throw std::runtime_error("Graph::cycleMatrix2nodePath(): Given Cycle Matrix does not contain any edges!"); // # nocov
 }
 
 template <class TObject>
@@ -291,7 +291,7 @@ void Graph<TObject>::cycleMatrix2nodePath_recursion(const AdjacencyMatrix& m,
         }
     }
     // Only not return if in a dead end:
-    throw std::runtime_error("Graph::cycleMatrix2nodePath_recursion(): Found a dead end!");
+    throw std::runtime_error("Graph::cycleMatrix2nodePath_recursion(): Found a dead end!"); // # nocov
 }
 
 // Function recursively finds the unique path within the tree from the given node to the root of the tree

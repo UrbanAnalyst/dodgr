@@ -28,13 +28,6 @@ size_t make_vert_map (const Rcpp::DataFrame &vert_map_in,
         const std::vector <unsigned int> &vert_map_n,
         std::map <std::string, unsigned int> &vert_map);
 
-size_t get_fromi_toi (const Rcpp::DataFrame &vert_map_in,
-        Rcpp::IntegerVector &fromi, Rcpp::IntegerVector &toi,
-        Rcpp::NumericVector &id_vec);
-
-size_t get_fromi (const Rcpp::DataFrame &vert_map_in,
-        Rcpp::IntegerVector &fromi, Rcpp::NumericVector &id_vec);
-
 void make_vert_to_edge_maps (const std::vector <std::string> &from,
         const std::vector <std::string> &to, const std::vector <double> &wt,
         std::unordered_map <std::string, unsigned int> &verts_to_edge_map,
