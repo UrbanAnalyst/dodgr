@@ -5,36 +5,26 @@ null_to_na <- function (x)
     return (x)
 }
 
-get_hash <- function (graph)
+get_hash <- function (graph, verts = NULL, hash = TRUE)
 {
-    hash_name <- ifelse (methods::is (graph, "dodgr_contracted"),
-                         "hashc", "hash")
-    hash <- attr (graph, hash_name)
-    if (is.null (hash))
+    if (hash)
     {
-        gr_cols <- dodgr_graph_cols (graph)
-        hash <- digest::digest (graph [[gr_cols$edge_id]])
+        hash <- attr (graph, "hash")
+        if (is.null (hash))
+        {
+            gr_cols <- dodgr_graph_cols (graph)
+            hash <- digest::digest (graph [[gr_cols$edge_id]])
+        }
+    } else
+    {
+        hash <- attr (graph, "hashc")
+        if (is.null (hash))
+        {
+            gr_cols <- dodgr_graph_cols (graph)
+            hash <- digest::digest (list (graph [[gr_cols$edge_id]], verts))
+        }
     }
     return (hash)
-}
-
-get_hashc <- function (graph, verts = NULL)
-{
-    hash <- attr (graph, "hash")
-    if (is.null (hash))
-    {
-        gr_cols <- dodgr_graph_cols (graph)
-        hash <- digest::digest (graph [[gr_cols$edge_id]])
-    }
-
-    if (is.null (verts))
-        hashc <- hash
-    else
-    {
-        gr_cols <- dodgr_graph_cols (graph)
-        hashc <- digest::digest (list (graph [[gr_cols$edge_id]], verts))
-    }
-    return (hashc)
 }
 
 get_edge_map <- function (graph)
@@ -58,34 +48,41 @@ get_edge_map <- function (graph)
 # hash of the edge map. This is needed for graph uncontraction, so that just the
 # contracted graph and edge map can be submitted, the original graph re-loaded,
 # and the uncontracted version returned.
-cache_graph <- function (graph)
+cache_graph <- function (graph, edge_col)
 {
     td <- tempdir ()
-    f <- function (graph, td)
+    f <- function (graph, edge_col, td)
     {
-        hash <- attr (graph, "hash")
         verts <- dodgr::dodgr_vertices (graph)
+        hash <- attr (graph, "hash")
         fname_v <- file.path (td, paste0 ("verts_", hash, ".Rds"))
-        saveRDS (verts, fname_v)
+        if (!file.exists (fname_v))
+            saveRDS (verts, fname_v)
 
+        # save original graph to enable subsequent re-loading from the
+        # contracted version
         fname <- file.path (td, paste0 ("graph_", hash, ".Rds"))
         saveRDS (graph, fname)
+
+        # The hash for the contracted graph is generated from the edge IDs of
+        # the full graph plus default NULL vertices:
+        hashc <- digest::digest (list (graph [[edge_col]], NULL))
+
         graphc <- dodgr::dodgr_contract_graph (graph)
-        # same hash -> contracted with **NO** additional vertices
-        fname_c <- file.path (td, paste0 ("graphc_", hash, ".Rds"))
+        fname_c <- file.path (td, paste0 ("graphc_", hashc, ".Rds"))
         saveRDS (graphc, fname_c)
 
         verts <- dodgr::dodgr_vertices (graphc)
-        fname_v <- file.path (td, paste0 ("vertsc_", hash, ".Rds"))
+        fname_v <- file.path (td, paste0 ("verts_", hashc, ".Rds"))
         saveRDS (verts, fname_v)
 
-        fname_e <- paste0 ("edge_map_", hash, ".Rds")
+        fname_e <- paste0 ("edge_map_", hashc, ".Rds")
         fname_e_fr <- file.path (tempdir (), fname_e)
         fname_e_to <- file.path (td, fname_e)
         if (file.exists (fname_e_fr)) # should always be
             file.copy (fname_e_fr, fname_e_to, overwrite = TRUE)
 
-        fname_j <- paste0 ("junctions_", hash, ".Rds")
+        fname_j <- paste0 ("junctions_", hashc, ".Rds")
         fname_j_fr <- file.path (tempdir (), fname_j)
         fname_j_to <- file.path (td, fname_j)
         if (file.exists (fname_j_fr)) # should always be
@@ -93,7 +90,7 @@ cache_graph <- function (graph)
     }
 
     sink (file = file.path (tempdir (), "Rout.txt"))
-    res <- callr::r_bg (f, list (graph, td))
+    res <- callr::r_bg (f, list (graph, edge_col, td))
     sink ()
 
     return (res) # R6 processx object

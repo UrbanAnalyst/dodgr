@@ -45,13 +45,8 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         verts <- verts [which (verts %in% v$id)]
     }
 
-    # weight_streetnet caches contracted equivalent with `verts = NULL` using
-    # the original graph hash. If versions are subsequently created with
-    # non-NULL verts, they are cached with
-    # `hash = digest (list (graph, verts))`.
-    hash <- get_hash (graph)
-    hashc <- get_hashc (graph, verts) # == hash if `is.null (verts)`
-
+    hash <- get_hash (graph, hash = TRUE)
+    hashc <- get_hash (graph, verts = verts, hash = FALSE)
     fname_c <- file.path (tempdir (), paste0 ("graphc_", hashc, ".Rds"))
 
     if (file.exists (fname_c))
@@ -64,15 +59,19 @@ dodgr_contract_graph <- function (graph, verts = NULL)
             saveRDS (graph, fname)
 
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
+
+        gr_cols <- dodgr_graph_cols (graph_contracted$graph)
+        hashe <- digest::digest (graph_contracted$graph [[gr_cols$edge_id]])
+        attr (graph_contracted$graph, "hash") <- hash
+        attr (graph_contracted$graph, "hashc") <- hashc
+        attr (graph_contracted$graph, "hashe") <- hashe
+
         saveRDS (graph_contracted$graph, fname_c)
         fname_e <- file.path (tempdir (), paste0 ("edge_map_", hashc, ".Rds"))
         saveRDS (graph_contracted$edge_map, fname_e)
         fname_j <- file.path (tempdir (), paste0 ("junctions_", hashc, ".Rds"))
         saveRDS (graph_contracted$junctions, fname_j)
     }
-
-    attr (graph_contracted$graph, "hash") <- hash
-    attr (graph_contracted$graph, "hashc") <- hashc
 
     # copy the processx R6 object associated with caching the original graph:
     if (!is.null (px))
@@ -210,14 +209,13 @@ dodgr_uncontract_graph <- function (graph)
     edge_map <- get_edge_map (graph)
 
     gr_cols <- dodgr_graph_cols (graph)
-    hash <- attr (graph, "hashc")
-    if (is.null (hash))
-    {
-        if (is.na (gr_cols$edge_id))
-            hash <- digest::digest (seq (nrow (graph)))
-        else
-            hash <- digest::digest (graph [gr_cols$edge_id])
-    }
+    hashe_ref <- attr (graph, "hashe")
+    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    if (!identical (hashe, hashe_ref))
+        stop ("Unable to uncontract this graph because the rows ",
+              "have been changed")
+
+    hash <- attr (graph, "hash")
     fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
     if (!file.exists (fname))
         stop (paste0 ("Graph must have been contracted in current R session; ",

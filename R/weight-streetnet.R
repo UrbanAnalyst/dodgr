@@ -194,7 +194,7 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 
     hash <- digest::digest (graph [[gr_cols$edge_id]])
     attr (graph, "hash") <- hash
-    attr (graph, "px") <- cache_graph (graph)
+    attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
 
     return (graph)
 }
@@ -510,7 +510,7 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     hash <- digest::digest (graph [[gr_cols$edge_id]])
     attr (graph, "hash") <- hash
-    attr (graph, "px") <- cache_graph (graph)
+    attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
 
     return (graph)
 }

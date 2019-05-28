@@ -137,7 +137,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
-        hash <- get_hash (graph)
+        hash <- get_hash (graph, hash = FALSE) # returns hashc
         fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
         if (!file.exists (fname_e))
             stop ("something went wrong extracting the edge_map ... ")
@@ -230,7 +230,7 @@ dodgr_flows_disperse <- function (graph, from, dens,
     {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
-        hash <- get_hash (graph)
+        hash <- get_hash (graph, hash = FALSE) # returns hashc
         fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
         if (!file.exists (fname_e))
             stop ("something went wrong extracting the edge_map ... ")
@@ -307,8 +307,7 @@ merge_directed_flows <- function (graph)
     graph$flow <- flows [indx]
     class (graph) <- c (class (graph), "dodgr_merged_flows")
 
-    hash <- digest::digest (graph)
-    attr (graph, "hash") <- hash
+    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
 
     return (graph)
 }

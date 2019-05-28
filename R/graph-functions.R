@@ -162,14 +162,29 @@ dodgr_vertices <- function (graph)
             px$wait ()
     }
 
+    hash <- ifelse (methods::is (graph, "dodgr_contracted"),
+                    "hashc", "hash")
+    hash <- attr (graph, hash)
+    # make sure rows of graph have not been changed
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$edge_id))
-        hash <- ""
-    else
-        hash <- digest::digest (graph [gr_cols$edge_id])
+    if (!is.null (hash))
+    {
+        hashe_ref <- attr (graph, "hashe")
+        hashe_ref <- ifelse (is.null (hashe_ref), "", hashe_ref)
+        hashe <- digest::digest (graph [[gr_cols$edge_id]])
+        if (hashe != hashe_ref)
+            hash <- hashe
+    }
 
-    nm <- ifelse (methods::is (graph, "dodgr_contracted"), "vertsc_", "verts_")
-    fname <- file.path (tempdir (), paste0 (nm, hash, ".Rds"))
+    if (is.null (hash))
+    {
+        if (is.na (gr_cols$edge_id))
+            hash <- ""
+        else
+            hash <- digest::digest (graph [[gr_cols$edge_id]])
+    }
+
+    fname <- file.path (tempdir (), paste0 ("verts_", hash, ".Rds"))
     if (file.exists (fname))
         verts <- readRDS (fname)
     else
