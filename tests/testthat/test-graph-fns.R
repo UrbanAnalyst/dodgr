@@ -48,6 +48,17 @@ test_that("uncontract graph", {
     graph_c <- dodgr_contract_graph (graph)
     graph2 <- dodgr_uncontract_graph (graph_c)
     expect_identical (graph, graph2)
+
+    # dodgr_contract_graph in that case just calls the cached version. This
+    # checks re-contraction:
+    graph$edge_id <- seq (nrow (graph))
+    graph_c <- dodgr_contract_graph (graph)
+    graph2 <- dodgr_uncontract_graph (graph_c)
+    expect_identical (graph, graph2)
+
+    graph_c$edge_id <- seq (nrow (graph_c))
+    expect_error (graph2 <- dodgr_uncontract_graph (graph_c),
+                  "Unable to uncontract this graph because the rows have been changed")
 })
 
 test_that("compare heaps", {
