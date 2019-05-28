@@ -55,6 +55,23 @@ test_that ("streetnet minus osm_id", {
                     "x appears to have no ID column; sequential edge numbers will be used")
     expect_false ("way_id" %in% names (graph))
 
+    h <- hampi
+    names (h$geometry) <- NULL
+    expect_silent (graph <- weight_streetnet (h))
+    #expect_false ("way_id" %in% names (graph))
+
+    h <- hampi
+    names (h) [names (h) == "osm_id"] <- "id1"
+    h$id2 <- h$id1
+    expect_error (graph <- weight_streetnet (h),
+                  "Multiple potential ID columns")
+
+    h <- hampi
+    h$geom <- 1
+    expect_error (graph <- weight_streetnet (h),
+                  "Unable to determine geometry column")
+
+              
     #graph <- weight_streetnet (hampi, wt_profile = "bicycle")
     #attr (graph, "px") <- NULL
     #h <- hampi

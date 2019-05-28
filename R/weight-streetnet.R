@@ -136,8 +136,8 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     x <- change_col_names (x, id_col, "osm_id")
     x <- check_highway_osmid (x, wt_profile)
 
-    if (is.null (names (x [geom_column])))
-        names (x [geom_column]) <- x$osm_id
+    if (is.null (names (x [[geom_column]])))
+        names (x [[geom_column]]) <- x$osm_id
     # Then rename geom_column to "geometry" for the C++ routine
     names (x) [match (geom_column, names (x))] <- "geometry"
     attr (x, "sf_column") <- "geometry"
