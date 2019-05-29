@@ -65,19 +65,38 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
             dplyr::select (-key)
     }
 
-    convert_hw_types_to_bool (graph)
+    convert_hw_types_to_bool (graph, wt_profile)
 }
 
-convert_hw_types_to_bool <- function (graph)
+convert_hw_types_to_bool <- function (graph, wt_profile)
 {
-    # oneway:bicycle doesn't enquote properly, so:
-    names (graph) [grep ("bicycle", names (graph))] <- "oneway_bicycle"
+    b <- grep ("oneway.*bicycle|bicycle.*oneway", names(graph))
+    if ("oneway" %in% names (graph) |
+        (length (b) == 1 & wt_profile == "bicycle"))
+    {
+        index <- which (!graph$oneway %in% c ("no", "yes"))
+        if (length (index) > 0)
+            graph$oneway [index] <- "no"
+        graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
 
-    # re-map the oneway values to boolean
-    graph$oneway [!graph$oneway %in% c ("no", "yes")] <- "no"
-    graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
-    graph$oneway_bicycle [!graph$oneway_bicycle %in% c ("no", "yes")] <- "no"
-    graph$oneway_bicycle <- ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
+        if (length (b) == 1)
+        {
+            # oneway:bicycle doesn't enquote properly, so:
+            names (graph) [b] <- "oneway_bicycle"
+
+            index <- which (!graph$oneway_bicycle %in% c ("no", "yes"))
+            if (length (index) > 0)
+                graph$oneway_bicycle [index] <- "no"
+            graph$oneway_bicycle <-
+                ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
+
+            if (wt_profile == "bicycle")
+            {
+                graph$oneway <- graph$oneway_bicycle
+                graph$oneway_bicycle <- NULL
+            }
+        }
+    }
     return (graph)
 }
 
@@ -309,11 +328,6 @@ sc_duplicate_edges <- function (x, wt_profile)
                         "hgv", "psv")
 
     index <- seq (nrow (x))
-    if (wt_profile == "bicycle" & "oneway_bicycle" %in% names (x))
-    {
-        x$oneway <- x$oneway_bicycle
-        x$oneway_bicycle <- NULL
-    }
     if (wt_profile %in% oneway_modes)
         index <- which (!x$oneway)
 

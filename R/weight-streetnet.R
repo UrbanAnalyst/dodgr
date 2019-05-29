@@ -111,8 +111,8 @@ weight_streetnet.default <- function (x, wt_profile = "bicycle",
 # ***********************   generic variables   ***********************
 # ********************************************************************
 
-way_types_to_keep = c ("highway", "oneway", "oneway:bicycle", "lanes",
-                       "maxspeed")
+way_types_to_keep = c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
+                       "lanes", "maxspeed")
 
 # ********************************************************************
 # *************************     sf class     ************************* 
@@ -143,6 +143,10 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
     attr (x, "sf_column") <- "geometry"
 
     wp <- get_wt_profile (x, wt_profile, wt_profile_file)
+    # convert oneway and oneway*bicycle values to boolean (fn is in
+    # wt_streetnet-times.R):
+    x <- convert_hw_types_to_bool (x, wt_profile)
+
     wt_profile <- wp$wt_profile
     wt_profile_name <- wp$wt_profile_name
     if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom"))
@@ -246,13 +250,6 @@ get_wt_profile <- function (x, wt_profile, wt_profile_file)
             stop ("Please use the weight_railway function for railway routing.")
         } else
         {
-            if (wt_profile == "bicycle" & "oneway" %in% names (x))
-            {
-                if ("oneway.bicycle" %in% names (x))
-                    x$oneway <- x [["oneway.bicycle"]]
-                else if ("oneway:bicycle" %in% names (x))
-                    x$oneway <- x [["oneway:bicycle"]]
-            }
             wt_profile_name <- wt_profile
             wt_profile <- get_profile (wt_profile_name, wt_profile_file)
         }
