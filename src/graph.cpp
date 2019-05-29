@@ -98,7 +98,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 
         double wt = weight [i];
         if (weight [i] < 0.0)
-            wt = INFINITE_DOUBLE;
+            wt = INFINITE_DOUBLE; // # nocov
 
         std::vector <double> weights;
         if (!has_times)

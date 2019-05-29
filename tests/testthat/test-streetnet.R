@@ -45,6 +45,12 @@ test_that ("streetnet pts", {
 
 test_that ("streetnet column names", {
     h <- hampi
+    h$geometry <- NULL
+    expect_error (graph <- weight_streetnet (h))
+    # error with no sf is: "Unable to determine geometry column", but with sf, h
+    # is de-classes, so error is "Unknown class"
+
+    h <- hampi
     h$osm_id <- NULL
     expect_message (graph <- weight_streetnet (h),
                     "x appears to have no ID column; sequential edge numbers will be used")

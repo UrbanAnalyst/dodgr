@@ -62,7 +62,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             geom_index = static_cast <int> (i);
     }
     if (geom_index < 0)
-        throw std::runtime_error ("sf_lines have no geometry component");
+        throw std::runtime_error ("sf_lines have no geometry component"); // # nocov
 
     Rcpp::CharacterVector ow; // init length = 0
     Rcpp::CharacterVector highway;
@@ -143,7 +143,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                 rnms [i] = fake_id ++;
         }
         if (rnms.size () != gi.nrow ())
-            throw std::runtime_error ("geom size differs from rownames");
+            throw std::runtime_error ("geom size differs from rownames"); // # nocov
 
         for (unsigned int i = 1;
                 i < static_cast <unsigned int> (gi.nrow ()); i ++)

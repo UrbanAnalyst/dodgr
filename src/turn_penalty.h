@@ -44,9 +44,12 @@ struct clockwise_sort
         if (det > 0)
             return false;
 
+        // # nocov start
+        // no tests make it as far as these lines ...
         double d1 = a.x * a.x + a.y * a.y;
         double d2 = b.x * b.x + b.y * b.y;
         return d1 > d2;
+        // # nocov end
     }
 };
 
