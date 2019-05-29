@@ -7,7 +7,7 @@ library (osmdata)
 ```{r}
 hampi <- opq ("hampi india") %>%
     add_osm_feature (key = "highway") %>%
-    osmdata_sf () %>%
+    osmdata_sf (quiet = FALSE) %>%
     osm_poly2line () %>%
     extract2 ("osm_lines")
 ```
@@ -20,7 +20,7 @@ nms <- c ("osm_id", "bicycle", "covered", "foot", "highway", "incline",
 hampi <- hampi [, match (nms, names (hampi))]
 ```
 ```{r}
-devtools::use_data (hampi, overwrite = TRUE, compress = 'xz')
+usethis::use_data (hampi, overwrite = TRUE, compress = 'xz')
 ```
 
 # generate `data/weight_profiles`

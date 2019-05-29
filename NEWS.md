@@ -8,6 +8,7 @@ Major changes:
   and re-loaded when needed for graph uncontraction).
 
 Minor changes:
+* Update internal `hampi` data to remove factor columns
 - Fix some bugs in max speed calculations for weight_streetnet
 * Fix bug with polygonal bbox in dodgr_streetnet()
 
