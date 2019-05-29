@@ -87,17 +87,14 @@ test_that("dists with no edge ids", {
     from <- v [match (from, v$id), c ("x", "y")]
     to <- v [match (to, v$id), c ("x", "y")]
     expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
-    identical (as.vector (d0), as.vector (d1))
+    expect_identical (as.vector (d0), as.vector (d1))
 
     # remove from_id/to_id from graph. Now coordinates will be matched on to
     # **first** occurrence in dodgr_vertices, which may not be actual one, so
     # distances won't necessarily be equal
     graph$from_id <- graph$to_id <- NULL
     expect_silent (d2 <- dodgr_distances (graph, from = from, to = to))
-    r <- cor (as.vector (d0), as.vector (d2), use = "pairwise.complete.obs")
-    if (test_all)
-        expect_true (r < 1)
-    expect_true (r > 0.99)
+    expect_identical (as.vector (d0), as.vector (d2))
 })
 
 test_that ("heaps", {

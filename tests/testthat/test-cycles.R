@@ -13,7 +13,7 @@ test_that("dodgr_fundamental_cycles", {
               expect_silent (x <- dodgr_fundamental_cycles (graph))
               expect_is (x, "list")
               if (test_all) # fails on appveyor
-                  expect_length (x, 43)
+                  expect_length (x, 14)
              })
 
 test_that("cycles_with_max_graph_size", {
@@ -23,20 +23,20 @@ test_that("cycles_with_max_graph_size", {
                                                    graph_max_size = 1000),
                               "Now computing fundamental cycles")
               expect_is (x, "list")
-              expect_length (x, 49) # more cycles than before!
+              expect_length (x, 45) # more cycles than before!
 
               expect_silent (
                     xf <- dodgr_full_cycles (graph = net, graph_max_size = 1000))
               # full_cycles creates the contracted graph, which is < 1000!
               if (test_all) # fails on appveyor
-                  expect_length (xf, 43)
+                  expect_length (xf, 14)
              })
 
 test_that("sflines_to_poly", {
               expect_silent (p <- dodgr_sflines_to_poly (hampi))
               expect_is (hampi$geometry, "sfc_LINESTRING")
               expect_is (p, "sfc_POLYGON")
-              expect_equal (length (p), 59)
+              expect_equal (length (p), 58)
 
               net <- weight_streetnet (hampi, wt_profile = 1)
 

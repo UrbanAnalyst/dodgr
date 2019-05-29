@@ -204,10 +204,10 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     id <- NULL
     if (!missing (pts))
     {
-        if (methods::is (pts, "character") | methods::is (pts, "numeric") |
-            methods::is (pts, "matrix") | methods::is (pts, "data.frame"))
+        if (is.character (pts) | is.numeric (pts) |
+            is.matrix (pts) | is.data.frame (pts))
             index <- get_pts_index (graph, gr_cols, vert_map, pts)
-        else if (methods::is (pts, "integer"))
+        else if (is.integer (pts))
             index <- pts
         else
             stop ("routing points are of unknown form; must be either ",

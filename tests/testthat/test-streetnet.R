@@ -53,12 +53,7 @@ test_that ("streetnet minus osm_id", {
     names (h$geometry) <- NULL
     expect_message (graph <- weight_streetnet (h),
                     "x appears to have no ID column; sequential edge numbers will be used")
-    expect_false ("way_id" %in% names (graph))
-
-    h <- hampi
-    names (h$geometry) <- NULL
-    expect_silent (graph <- weight_streetnet (h))
-    #expect_false ("way_id" %in% names (graph))
+    expect_true ("way_id" %in% names (graph))
 
     h <- hampi
     names (h) [names (h) == "osm_id"] <- "id1"
@@ -72,18 +67,34 @@ test_that ("streetnet minus osm_id", {
                   "Unable to determine geometry column")
 
               
-    #graph <- weight_streetnet (hampi, wt_profile = "bicycle")
-    #attr (graph, "px") <- NULL
-    #h <- hampi
-    #h ["oneway.bicycle"] <- FALSE
-    #graph2 <- weight_streetnet (h, wt_profile = "bicycle")
-    #attr (graph2, "px") <- NULL
-    #expect_false (identical (graph, graph2))
-    #h <- hampi
-    #h ["oneway:bicycle"] <- FALSE
-    #graph3 <- weight_streetnet (h, wt_profile = "bicycle")
-    #expect_false (identical (graph, graph3))
-    #expect_true (identical (graph2, graph3))
+    graph0 <- weight_streetnet (hampi, wt_profile = "bicycle")
+    # add some fake oneway paths:
+    h <- hampi
+    index <- which (hampi$highway == "path")
+    index <- index [sample (length (index) / 2)]
+    h$oneway [index] <- "yes"
+    graph1 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_true (nrow (graph1) < nrow (graph0))
+
+    h ["oneway.bicycle"] <- h$oneway
+    h [["oneway.bicycle"]] [index] <- "yes"
+    graph2 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_true (nrow (graph2) == nrow (graph1))
+
+    h ["oneway.bicycle"] <- NULL
+    h ["oneway:bicycle"] <- h$oneway
+    h [["oneway:bicycle"]] [index] <- "yes"
+    graph3 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_identical (nrow (graph2), nrow (graph3))
+
+    # change "oneway", but with wt_profile == "bicycle", only "oneway*bicycle"
+    # should affect result:
+    index <- which (hampi$highway == "path")
+    index <- index [sample (length (index) / 2)]
+    h$oneway <- ""
+    h$oneway [index] <- "yes"
+    graph4 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_identical (nrow (graph2), nrow (graph4))
 })
 
 test_that ("streetnet times", {

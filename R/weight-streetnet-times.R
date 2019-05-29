@@ -70,6 +70,14 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
 
 convert_hw_types_to_bool <- function (graph, wt_profile)
 {
+    if (!(is.character (wt_profile) | is.data.frame (wt_profile)))
+        return (graph)
+
+    if (!is.character (wt_profile))
+        wt_profile <- unique (wt_profile$name)
+    if (length (wt_profile) != 1)
+        stop ("wt_profile must be either single character element or ",
+              "data.frame with 'name' column")
     b <- grep ("oneway.*bicycle|bicycle.*oneway", names(graph))
     if ("oneway" %in% names (graph) |
         (length (b) == 1 & wt_profile == "bicycle"))
