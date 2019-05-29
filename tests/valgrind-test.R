@@ -26,7 +26,7 @@ vg_check <- function ()
 # https://github.com/RcppCore/RcppParallel/issues/81
 if (identical (Sys.getenv ("TRAVIS"), "true"))
 {
-    vv <- system2 (command = "valgrind", args = "--version", stdout = TRUE)
+    #vv <- system2 (command = "valgrind", args = "--version", stdout = TRUE)
     #if (strsplit (vv, "valgrind-") [[1]] [2] >= "3.12.0")
     #    vg_check ()
 }
