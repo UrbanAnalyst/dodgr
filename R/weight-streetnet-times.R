@@ -75,9 +75,6 @@ convert_hw_types_to_bool <- function (graph, wt_profile)
 
     if (!is.character (wt_profile))
         wt_profile <- unique (wt_profile$name)
-    if (length (wt_profile) != 1)
-        stop ("wt_profile must be either single character element or ",
-              "data.frame with 'name' column")
     b <- grep ("oneway.*bicycle|bicycle.*oneway", names(graph))
     if ("oneway" %in% names (graph) |
         (length (b) == 1 & wt_profile == "bicycle"))
@@ -126,9 +123,9 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file)
 set_maxspeed <- function (graph, wt_profile, wt_profile_file)
 {
     if (!"maxspeed" %in% names (graph))
-        graph$maxspeed <- NA_real_
+        graph$maxspeed <- NA_real_ # nocov
     if (!"highway" %in% names (graph))
-        return (graph)
+        return (graph) # nocov
 
     maxspeed <- rep (NA_real_, nrow (graph))
     index <- grep ("mph", graph$maxspeed)
@@ -210,7 +207,7 @@ weight_by_num_lanes <- function (graph, wt_profile)
     # only weight these profiles:
     profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
     if (!(wt_profile %in% profile_names | "lanes" %in% names (graph)))
-        return (graph)
+        return (graph) # nocov
 
     lns <- c (4, 5, 6, 7, 8)
     wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)

@@ -35,4 +35,7 @@ test_that ("local wt_profile", {
         expect_true (mean (n2$time_weighted) < mean (n0$time_weighted))
         expect_identical (n2$d, n0$d)
         expect_identical (n2$d_weighted, n0$d_weighted)
+
+        expect_error (weight_streetnet (hampi, wt_profile = 1:2),
+                      "wt_profile can only be one element")
 })

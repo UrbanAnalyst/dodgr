@@ -36,7 +36,7 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
   else if (heap_type == "Radix")
     return std::make_shared <HeapD<RadixHeap> >();
   else
-    throw std::runtime_error("invalid heap type: " + heap_type);
+    throw std::runtime_error("invalid heap type: " + heap_type); // # nocov
 }
 
 

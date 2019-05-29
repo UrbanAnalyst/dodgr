@@ -143,7 +143,20 @@ test_that("graph columns", {
     to <- sample (graph$from_id, size = nt)
     expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
 
-    graph <- data.frame (graph) # remove "dodgr_streetnet" class
+    graph$d_weighted <- graph$d
     expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
-    expect_identical (d0, d1)
+    expect_false (identical (d0, d1))
+})
+
+test_that ("negative weights", {
+    expect_silent (graph <- weight_streetnet (hampi))
+    nf <- 100
+    nt <- 50
+    from <- sample (graph$from_id, size = nf)
+    to <- sample (graph$from_id, size = nt)
+    expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
+
+    nneg <- 100
+    graph$d_weighted [sample (nrow (graph), nneg)] <- -runif (nneg)
+    expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
 })

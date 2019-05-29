@@ -37,8 +37,9 @@ mapview::mapview(os_roads_bristol)
 # Converting this 'sf data.frame' to a 'dodgr' network requires manual
 # specification of weighting profile:
 colnm <- "formOfWay" # name of column used to determine weights
-wts <- c (0.1, 0.2, 0.8, 1)
-names (wts) <- unique (os_roads_bristol [[colnm]])
+wts <- data.frame (name = "custom",
+                   way = unique (os_roads_bristol [[colnm]]),
+                   value = c (0.1, 0.2, 0.8, 1))
 net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
                          type_col = colnm, id_col = "identifier")
 # 'id_col' tells the function which column to use to attribute IDs of ways

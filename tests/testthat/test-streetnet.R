@@ -43,7 +43,7 @@ test_that ("streetnet pts", {
               expect_identical (bb2_bb, bb$bbox)
 })
 
-test_that ("streetnet minus osm_id", {
+test_that ("streetnet column names", {
     h <- hampi
     h$osm_id <- NULL
     expect_message (graph <- weight_streetnet (h),
@@ -66,7 +66,16 @@ test_that ("streetnet minus osm_id", {
     expect_error (graph <- weight_streetnet (h),
                   "Unable to determine geometry column")
 
-              
+    h <- hampi
+    h$geometry1 <- 1
+    expect_silent (graph <- weight_streetnet (h))
+
+    h <- hampi
+    osm_id <- h$osm_id
+    h$osm_id <- NULL
+    h$osm_id <- osm_id
+    expect_silent (graph <- weight_streetnet (h))
+
     graph0 <- weight_streetnet (hampi, wt_profile = "bicycle")
     # add some fake oneway paths:
     h <- hampi
@@ -95,6 +104,23 @@ test_that ("streetnet minus osm_id", {
     h$oneway [index] <- "yes"
     graph4 <- weight_streetnet (h, wt_profile = "bicycle")
     expect_identical (nrow (graph2), nrow (graph4))
+})
+
+test_that ("streetnet highway types", {
+    # these are based on partial matches, so modifications to highway types
+    # sholuld have no effect:
+    graph0 <- weight_streetnet (hampi)
+    n <- 10
+    index <- sample (nrow (hampi), n)
+    h <- hampi
+    h$highway [index] <- paste0 (h$highway [index], sample (letters, n))
+    graph <- weight_streetnet (h)
+
+    expect_identical (table (graph$highway), table (graph0$highway))
+
+    h$highway [sample (nrow (h), 1)] <- "invalid_type"
+    expect_message (graph <- weight_streetnet (h),
+                    "The following highway types are present in data yet lack")
 })
 
 test_that ("streetnet times", {

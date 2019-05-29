@@ -266,6 +266,15 @@ test_that ("graph columns", {
     graph$d_wt <- graph$d_weighted
     expect_error (d <- dodgr_dists (graph, from = from, to = to),
                   "Unable to determine weight column in graph")
+
+    graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
+    graph$from_lon <- paste0 (graph$from_lon)
+    expect_error (d <- dodgr_dists (graph, from = from, to = to),
+                  "graph appears to have non-numeric longitudes and latitudes")
+
+    graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
+    class (graph) <- c (class (graph), "tbl")
+    expect_silent (d <- dodgr_dists (graph, from = from, to = to))
 })
 
 test_that ("get_id_cols", {

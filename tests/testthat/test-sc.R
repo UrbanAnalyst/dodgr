@@ -29,6 +29,23 @@ test_that("SC", {
               expect_error (net_sc <- weight_streetnet (hsc),
                             paste0 ("weight_streetnet currently only works for ",
                                     "'sc'-class objects extracted with"))
+
+              expect_silent (hsc <- sf_to_sc (hampi))
+              expect_silent (net_sc2 <- weight_streetnet (hsc,
+                                                          wt_profile = "horse"))
+              expect_true (!identical (net_sc$d_weighted, net_sc2$d_weighted))
+
+              # add fake elevation data:
+              net_sc <- weight_streetnet (hsc, wt_profile = "bicycle")
+              hsc$vertex$z_ <- 10 * runif (nrow (hsc$vertex))
+              hsc$vertex <- hsc$vertex [match (names (hsc$vertex),
+                                               c ("x_", "y_", "z_", "vertex_"))]
+              net_sc2 <- weight_streetnet (hsc, wt_profile = "bicycle")
+              expect_false ("dz" %in% names (net_sc))
+              expect_true ("dz" %in% names (net_sc2))
+
+              expect_error (x <- weight_railway (hsc),
+                            'sf_lines must be class "sf"')
 })
 
 test_that ("elevation", {

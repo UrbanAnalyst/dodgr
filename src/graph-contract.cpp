@@ -410,7 +410,7 @@ Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
             else if (vertvert_map.find (tf) != vertvert_map.end ())
                 where = vertvert_map.at (tf);
             if (where == INFINITE_INT)
-                Rcpp::stop ("there is no where; this can never happen");
+                Rcpp::stop ("there is no where; this can never happen"); // # nocov
 
             flow_total [static_cast <unsigned int> (where)] += flow [i];
         } 

@@ -50,8 +50,11 @@ dodgr_graph_cols <- function (graph)
             spcols <- find_spatial_cols (graph)
             graph <- tbl_to_df (graph)
 
-            if (!(all (apply (graph [, spcols$fr_col], 2, is.numeric)) |
-                  all (apply (graph [, spcols$to_tol], 2, is.numeric))))
+            fr_is_num <- vapply (spcols$fr_col, function (i)
+                                 is.numeric (graph [[i]]), logical (1))
+            to_is_num <- vapply (spcols$to_col, function (i)
+                                 is.numeric (graph [[i]]), logical (1))
+            if (!(all (fr_is_num) & all (to_is_num)))
                 stop (paste0 ("graph appears to have non-numeric ",
                               "longitudes and latitudes"))
 
@@ -62,7 +65,7 @@ dodgr_graph_cols <- function (graph)
         } else
         {
             if (length (fr_col) != 1 & length (to_col) != 1)
-                stop ("Unable to determine from and to columns in graph")
+                stop ("Unable to determine from and to columns in graph") # nocov
         }
     }
 
@@ -179,7 +182,7 @@ dodgr_vertices <- function (graph)
     if (is.null (hash))
     {
         if (is.na (gr_cols$edge_id))
-            hash <- ""
+            hash <- "" # nocov
         else
             hash <- digest::digest (graph [[gr_cols$edge_id]])
     }
