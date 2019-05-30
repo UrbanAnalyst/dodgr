@@ -8,7 +8,7 @@ test_that("dists", {
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_silent (d <- dodgr_distances (graph, from = from, to = to))
     expect_equal (nrow (d), nf)
     expect_equal (ncol (d), nt)
@@ -57,7 +57,7 @@ test_that("dists", {
                   "Unable to determine geographical coordinates in from/to")
 
     #from <- sample (graph$from_id, size = nf)
-    #to <- sample (graph$from_id, size = nt)
+    #to <- sample (graph$to_id, size = nt)
     #graph0 <- graph
     #graph <- graph0
     #graph$from_id <- graph$to_id <- NULL
@@ -70,7 +70,7 @@ test_that("times", {
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_silent (d0 <- dodgr_dists (graph, from = from, to = to,
                                       shortest = TRUE)) # default
     expect_silent (d1 <- dodgr_dists (graph, from = from, to = to,
@@ -115,12 +115,28 @@ test_that("all dists", {
     expect_equal (nrow (d), nrow (v))
 })
 
+test_that("to-from-cols", {
+    graph <- weight_streetnet (hampi)
+    nf <- 100
+    nt <- 50
+    v <- dodgr_vertices (graph)
+    from <- sample (v$id, size = nf)
+    to <- sample (v$id, size = nt)
+    expect_silent (d0 <- dodgr_dists (graph, from = from, to = to))
+
+    from <- match (from, v$id)
+    to <- match (to, v$id)
+    expect_silent (d1 <- dodgr_dists (graph, from = from, to = to))
+
+    expect_identical (d0, d1)
+})
+
 test_that("dists with no edge ids", {
     graph <- weight_streetnet (hampi)
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
 
     # from/to as coordinates only:
@@ -143,7 +159,7 @@ test_that ("heaps", {
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_error (dodgr_dists (graph, from = from, to = to, heap = "wrong heap"),
                   "'arg' should be one of")
     expect_silent (d0 <- dodgr_dists (graph, from = from, to = to, heap = "BHeap"))
@@ -181,7 +197,7 @@ test_that("graph columns", {
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
 
     graph$d_weighted <- graph$d
@@ -194,7 +210,7 @@ test_that ("negative weights", {
     nf <- 100
     nt <- 50
     from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$from_id, size = nt)
+    to <- sample (graph$to_id, size = nt)
     expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
 
     nneg <- 100
