@@ -65,6 +65,47 @@ test_that("dists", {
 
 })
 
+test_that("times", {
+    graph <- weight_streetnet (hampi)
+    nf <- 100
+    nt <- 50
+    from <- sample (graph$from_id, size = nf)
+    to <- sample (graph$from_id, size = nt)
+    expect_silent (d0 <- dodgr_dists (graph, from = from, to = to,
+                                      shortest = TRUE)) # default
+    expect_silent (d1 <- dodgr_dists (graph, from = from, to = to,
+                                      shortest = FALSE))
+    expect_silent (t0 <- dodgr_times (graph, from = from, to = to,
+                                      shortest = TRUE))
+    expect_silent (t1 <- dodgr_times (graph, from = from, to = to,
+                                      shortest = FALSE)) # default
+
+    expect_true (!identical (d0, d1))
+    expect_true (!identical (d0, t0))
+    expect_true (!identical (d0, t1))
+    expect_true (!identical (d1, t0))
+    expect_true (!identical (d1, t1))
+    expect_true (!identical (t0, t1))
+
+    # times are just dists using different columns:
+    grapht <- graph
+    grapht$d <- grapht$time
+    grapht$d_weighted <- grapht$time_weighted
+    grapht$time <- grapht$time_weighted <- NULL
+    expect_error (t0 <- dodgr_times (grapht, from = from, to = to,
+                                     shortest = TRUE),
+                  "graph has no time column")
+    expect_error (t0 <- dodgr_times (grapht, from = from, to = to,
+                                     shortest = FALSE),
+                  "graph has no time column")
+    expect_error (t0 <- dodgr_dists (grapht, from = from, to = to,
+                                     shortest = FALSE),
+                  "Graph does not contain a weighted time column")
+    expect_silent (t2 <- dodgr_dists (grapht, from = from, to = to,
+                                      shortest = TRUE))
+    expect_identical (t2, t1)
+})
+
 test_that("all dists", {
     graph <- weight_streetnet (hampi)
     graph <- graph [graph$component == 2, ]
