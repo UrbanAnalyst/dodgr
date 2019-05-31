@@ -240,6 +240,8 @@ get_to_from_index <- function (graph, vert_map, gr_cols, pts)
     else
     {
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, pts)
+        if (any (is.na (index_id$id)))
+            stop ("Unable to match all routing points to graph vertices")
         index <- index_id$index - 1 # 0-based
         id <- index_id$id
     }

@@ -129,6 +129,16 @@ test_that("to-from-cols", {
     expect_silent (d1 <- dodgr_dists (graph, from = from, to = to))
 
     expect_identical (d0, d1)
+
+    from <- as.factor (from)
+    expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
+                  paste0 ("routing points are of unknown form; ",
+                          "must be either character, matrix, or integer"))
+    from <- sample (nrow (v), size = nf)
+    to <- sample (nrow (v), size = nt)
+    to [1] <- nrow (v) + 1L
+    expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
+                  "Unable to match all routing points to graph vertices")
 })
 
 test_that("dists with no edge ids", {
