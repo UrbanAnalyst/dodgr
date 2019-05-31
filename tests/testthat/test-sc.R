@@ -54,6 +54,11 @@ test_that ("elevation", {
                hsc$vertex$z_ <- runif (nrow (hsc$vertex)) * 10
                expect_silent (net_sc2 <- weight_streetnet (hsc))
                expect_true (ncol (net_sc2) == (ncol (net_sc) + 1))
+
+               expect_silent (net_sc3 <- weight_streetnet (hsc,
+                                                           wt_profile = "foot"))
+               expect_true (ncol (net_sc3) == (ncol (net_sc2)))
+               expect_true (mean (net_sc3$time) > mean (net_sc2$time))
 })
 
 test_that("dodgr_times", {
