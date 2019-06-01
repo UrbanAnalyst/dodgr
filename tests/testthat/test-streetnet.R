@@ -13,6 +13,13 @@ test_that("streetnet bbox", {
               bb2 <- process_bbox (bbox2, NULL, 0)
               expect_identical (bb$bbox, bb2$bbox)
 
+              rownames (bbox2) <- c ("min", "max")
+              colnames (bbox2) <- c ("x", "y")
+              expect_silent (bb3 <- process_bbox (bbox2, NULL, 0))
+              colnames (bb2$bbox) <- c ("x", "y")
+              rownames (bb2$bbox) <- c ("min", "max")
+              expect_identical (bb2, bb3)
+
               expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
               expect_identical (bb, bb2)
 
@@ -23,6 +30,12 @@ test_that("streetnet bbox", {
               bbox <- runif (6)
               expect_error (bb <- process_bbox (bbox, NULL, 0),
                             "bbox must have four numeric values")
+
+              bbox <- bbox [1:4]
+              expect_silent (bb <- process_bbox (bbox, NULL, 0))
+
+              expect_error (bb <- process_bbox (pts = NULL),
+                            "Either bbox or pts must be specified")
 })
 
 test_that ("streetnet pts", {

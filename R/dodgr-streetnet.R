@@ -93,7 +93,7 @@ process_bbox <- function (bbox, pts = NULL, expand = 0.05)
                 stop ("bbox is a list, so items must be numeric ",
                       "(as in osmdata::getbb (..., format_out = 'polygon'))")
             if (length (bbox) > 1)
-                message ("selecting the first polygon from bbox")
+                message ("selecting the first polygon from bbox") # nocov
             bbox_poly <- bbox [[1]]
             bbox <- apply (bbox [[1]], 2, range)
         } else if (is.numeric (bbox))
@@ -115,7 +115,7 @@ process_bbox <- function (bbox, pts = NULL, expand = 0.05)
             bbox <- t (bbox)
         bbox [, 1] <- bbox [, 1] + c (-expand, expand) * diff (bbox [, 1])
         bbox [, 2] <- bbox [, 2] + c (-expand, expand) * diff (bbox [, 2])
-    } else if (!missing (pts))
+    } else if (!is.null (pts))
     {
         nms <- names (pts)
         if (is.null (nms))
