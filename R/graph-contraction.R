@@ -218,8 +218,8 @@ dodgr_uncontract_graph <- function (graph)
     hash <- attr (graph, "hash")
     fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
     if (!file.exists (fname))
-        stop (paste0 ("Graph must have been contracted in current R session; ",
-                      "and have retained the same row structure"))
+        stop (paste0 ("Graph must have been contracted in current R session; ", # nocov
+                      "and have retained the same row structure"))              # nocov
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px

@@ -237,7 +237,7 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     hash <- get_hash (graphc, hash = FALSE)
     fname_e <- file.path (tempdir (), paste0 ("edge_map_", hash, ".Rds"))
     if (!file.exists (fname_e))
-        stop ("something unexpected went wrong extracting the edge map")
+        stop ("something unexpected went wrong extracting the edge map") # nocov
     edge_map <- readRDS (fname_e)
 
     x <- dodgr_fundamental_cycles (graphc,

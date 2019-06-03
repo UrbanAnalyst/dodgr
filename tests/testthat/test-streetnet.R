@@ -20,6 +20,18 @@ test_that("streetnet bbox", {
               rownames (bb2$bbox) <- c ("min", "max")
               expect_identical (bb2, bb3)
 
+              colnames (bbox) <- c ("x", "y")
+              bb4 <- process_bbox (bbox, expand = 0)
+              attr (bb4$bbox, "dimnames") <- NULL
+              expect_identical (bb$bbox, bb4$bbox)
+
+              # causes bbox to be tranposed:
+              colnames (bbox) <- c ("min", "max")
+              bb5 <- process_bbox (bbox, expand = 0)
+              attr (bb5$bbox, "dimnames") <- NULL
+              expect_identical (bb$bbox, t (bb5$bbox)) # NOTE `t`!
+
+              attr (bbox, "dimnames") <- NULL
               expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
               expect_identical (bb, bb2)
 

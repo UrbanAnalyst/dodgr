@@ -124,25 +124,25 @@ test_that("to-from-cols", {
     to <- sample (v$id, size = nt)
     expect_silent (d0 <- dodgr_dists (graph, from = from, to = to))
 
-    from <- match (from, v$id)
-    to <- match (to, v$id)
-    expect_silent (d1 <- dodgr_dists (graph, from = from, to = to))
-
-    from <- as.matrix (from, ncol = 1)
-    to <- as.matrix (to, ncol = 1)
-    expect_silent (d2 <- dodgr_dists (graph, from = from, to = to))
-    expect_identical (d0, d2)
-
-    from [1] <- -1
-    expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
-                  "points exceed numbers of vertices")
-
+    fromi <- match (from, v$id)
+    toi <- match (to, v$id)
+    expect_silent (d1 <- dodgr_dists (graph, from = fromi, to = toi))
     expect_identical (d0, d1)
 
-    from <- as.factor (from)
-    expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
+    fromm <- as.matrix (fromi, ncol = 1)
+    tom <- as.matrix (toi, ncol = 1)
+    expect_silent (d2 <- dodgr_dists (graph, from = fromm, to = tom))
+    expect_identical (d0, d2)
+
+    fromm [1] <- -1
+    expect_error (d2 <- dodgr_dists (graph, from = fromm, to = tom),
+                  "points exceed numbers of vertices")
+
+    fromf <- as.factor (fromi)
+    expect_error (d2 <- dodgr_dists (graph, from = fromf, to = toi),
                   paste0 ("routing points are of unknown form; ",
                           "must be either character, matrix, or integer"))
+
     from <- sample (nrow (v), size = nf)
     to <- sample (nrow (v), size = nt)
     to [1] <- nrow (v) + 1L
@@ -215,13 +215,27 @@ test_that("graph columns", {
     expect_silent (graph <- weight_streetnet (hampi))
     nf <- 100
     nt <- 50
-    from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$to_id, size = nt)
+    v <- dodgr_vertices (graph)
+    index_f <- sample (nrow (v), size = nf)
+    index_t <- sample (nrow (v), size = nt)
+    from <- v$id [index_f]
+    to <- v$id [index_t]
     expect_silent (d0 <- dodgr_distances (graph, from = from, to = to))
 
-    graph$d_weighted <- graph$d
+    from <- v [index_f, c ("x", "y")]
+    to <- v [index_t, c ("x", "y")]
     expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
-    expect_false (identical (d0, d1))
+    colnames (d0) <- colnames (d1) <- rownames (d0) <- rownames (d1) <- NULL
+    expect_identical (d0, d1)
+
+    graph$from_lon <- NULL
+    expect_error (d2 <- dodgr_distances (graph, from = from, to = to),
+                  "Cannot determine geographical coordinates against which to match pts")
+
+    expect_silent (graph <- weight_streetnet (hampi))
+    graph$d_weighted <- graph$d
+    expect_silent (d3 <- dodgr_distances (graph, from = from, to = to))
+    expect_false (identical (d0, d3))
 })
 
 test_that ("negative weights", {

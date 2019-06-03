@@ -39,8 +39,22 @@ test_that("components", {
 
 test_that("contract graph", {
     graph <- weight_streetnet (hampi)
-    graph_c <- dodgr_contract_graph (graph)
+    expect_silent (graph_c <- dodgr_contract_graph (graph))
     expect_true (nrow (graph_c) < nrow (graph))
+
+    vc <- dodgr_vertices (graph_c)
+    v <- dodgr_vertices (graph)
+    verts <- sample (v$id [which (!v$id %in% vc$id)], size = 10)
+    expect_silent (graph_c2 <- dodgr_contract_graph (graph, verts = verts))
+    expect_true (nrow (graph_c2) > nrow (graph_c))
+
+    verts <- as.matrix (verts, ncol = 1)
+    expect_error (graph_c3 <- dodgr_contract_graph (graph, verts = verts),
+                  "verts must be a single value or a vector of vertex IDs")
+
+    verts <- as.numeric (verts [, 1])
+    expect_silent (graph_c4 <- dodgr_contract_graph (graph, verts = verts))
+    expect_identical (graph_c2, graph_c4)
 })
 
 test_that("uncontract graph", {

@@ -31,6 +31,13 @@ test_that("cycles_with_max_graph_size", {
              })
 
 test_that("sflines_to_poly", {
+              expect_error (p <- dodgr_sflines_to_poly (list (hampi)),
+                            "lines must be an object of class 'sf' or 'sfc'")
+              h <- hampi
+              class (h$geometry) <- "list"
+              expect_error (p <- dodgr_sflines_to_poly (h),
+                            "lines must be an 'sfc_LINESTRING' object")
+
               expect_silent (p <- dodgr_sflines_to_poly (hampi))
               expect_is (hampi$geometry, "sfc_LINESTRING")
               expect_is (p, "sfc_POLYGON")

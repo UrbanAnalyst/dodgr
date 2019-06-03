@@ -217,7 +217,7 @@ convert_col <- function (x, n = 3)
 dodgr_to_tidygraph <- function (graph)
 {
     if (!requireNamespace ("tidygraph"))
-        stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.")
+        stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.") # nocov
 
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()

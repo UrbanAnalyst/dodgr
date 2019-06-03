@@ -59,9 +59,12 @@ test_that ("flows disperse", {
     expect_message (graph2 <- dodgr_flows_disperse (graph, from = from,
                                                     dens = dens, quiet = FALSE),
                     "Aggregating flows ...")
-
     expect_equal (ncol (graph2) - ncol (graph), 1)
     expect_true (mean (graph2$flow) > 0)
+
+    expect_warning (graph3 <- dodgr_flows_disperse (graph2, from = from, dens = dens),
+                    "graph already has a 'flow' column; this will be overwritten")
+    expect_identical (graph3, graph2)
 
     graph3 <- dodgr_flows_disperse (graph, from = from, dens = dens,
                                      contract = TRUE)
@@ -87,7 +90,13 @@ test_that ("flowmap", {
     {
         # just test that is produces a plot
         png (filename = "junk.png")
-        dodgr_flowmap (graph_undir)
+        expect_silent (dodgr_flowmap (graph_undir))
+        a <- dev.off (which = dev.cur ())
+        expect_true (file.remove ("junk.png")) # false if no plot
+
+        graph_undir$flow <- NULL
+        png (filename = "junk.png")
+        expect_silent (dodgr_flowmap (graph_undir))
         a <- dev.off (which = dev.cur ())
         expect_true (file.remove ("junk.png")) # false if no plot
     }
