@@ -170,6 +170,9 @@ dodgr_vertices <- function (graph)
     hash <- attr (graph, hash)
     # make sure rows of graph have not been changed
     gr_cols <- dodgr_graph_cols (graph)
+    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    if (!identical (hashe, hash))
+        hash <- NULL
     if (!is.null (hash))
     {
         hashe_ref <- attr (graph, "hashe")
@@ -212,6 +215,7 @@ dodgr_vertices_internal <- function (graph)
         graph [[gr_cols$from]] <- paste0 (graph [[gr_cols$from]])
     if (is.factor (graph [[gr_cols$to]]))
         graph [[gr_cols$to]] <- paste0 (graph [[gr_cols$to]])
+
     if (is_graph_spatial (graph))
     {
         verts <- data.frame (id = c (graph [[gr_cols$from]],
