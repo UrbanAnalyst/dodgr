@@ -47,14 +47,14 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 
     hash <- get_hash (graph, hash = TRUE)
     hashc <- get_hash (graph, verts = verts, hash = FALSE)
-    fname_c <- file.path (tempdir (), paste0 ("graphc_", hashc, ".Rds"))
+    fname_c <- file.path (tempdir (), paste0 ("dodgr_graphc_", hashc, ".Rds"))
 
     if (file.exists (fname_c))
     {
         graph_contracted <- list (graph = readRDS (fname_c))
     } else
     {
-        fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
+        fname <- file.path (tempdir (), paste0 ("dodgr_graph_", hash, ".Rds"))
         if (!file.exists (fname))
             saveRDS (graph, fname)
 
@@ -67,9 +67,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
         attr (graph_contracted$graph, "hashe") <- hashe
 
         saveRDS (graph_contracted$graph, fname_c)
-        fname_e <- file.path (tempdir (), paste0 ("edge_map_", hashc, ".Rds"))
+
+        fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
         saveRDS (graph_contracted$edge_map, fname_e)
-        fname_j <- file.path (tempdir (), paste0 ("junctions_", hashc, ".Rds"))
+
+        fname_j <- file.path (tempdir (), paste0 ("dodgr_junctions_", hashe, ".Rds"))
         saveRDS (graph_contracted$junctions, fname_j)
     }
 
@@ -216,7 +218,7 @@ dodgr_uncontract_graph <- function (graph)
               "have been changed")
 
     hash <- attr (graph, "hash")
-    fname <- file.path (tempdir (), paste0 ("graph_", hash, ".Rds"))
+    fname <- file.path (tempdir (), paste0 ("dodgr_graph_", hash, ".Rds"))
     if (!file.exists (fname))
         stop (paste0 ("Graph must have been contracted in current R session; ", # nocov
                       "and have retained the same row structure"))              # nocov

@@ -190,7 +190,7 @@ dodgr_vertices <- function (graph)
             hash <- digest::digest (graph [[gr_cols$edge_id]])
     }
 
-    fname <- file.path (tempdir (), paste0 ("verts_", hash, ".Rds"))
+    fname <- file.path (tempdir (), paste0 ("dodgr_verts_", hash, ".Rds"))
     if (file.exists (fname))
         verts <- readRDS (fname)
     else

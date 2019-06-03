@@ -29,10 +29,10 @@ get_hash <- function (graph, verts = NULL, hash = TRUE)
 
 get_edge_map <- function (graph)
 {
-    hashc <- attr (graph, "hashc")
-    if (is.null (hashc))
+    hashe <- attr (graph, "hashe")
+    if (is.null (hashe))
         stop ("something went wrong extracting the edge map")   # nocov
-    fname_e <- file.path (tempdir (), paste0 ("edge_map_", hashc, ".Rds"))
+    fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
     if (!file.exists (fname_e))
         stop ("something went wrong extracting the edge map")   # nocov
     readRDS (fname_e)
@@ -57,13 +57,13 @@ cache_graph <- function (graph, edge_col)
         # cached, so # nocov:
         verts <- dodgr::dodgr_vertices (graph) # nocov
         hash <- attr (graph, "hash")
-        fname_v <- file.path (td, paste0 ("verts_", hash, ".Rds"))
+        fname_v <- file.path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
         if (!file.exists (fname_v))
             saveRDS (verts, fname_v)
 
         # save original graph to enable subsequent re-loading from the
         # contracted version
-        fname <- file.path (td, paste0 ("graph_", hash, ".Rds"))
+        fname <- file.path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
         saveRDS (graph, fname)
 
         # The hash for the contracted graph is generated from the edge IDs of
@@ -71,20 +71,22 @@ cache_graph <- function (graph, edge_col)
         hashc <- digest::digest (list (graph [[edge_col]], NULL))
 
         graphc <- dodgr::dodgr_contract_graph (graph)
-        fname_c <- file.path (td, paste0 ("graphc_", hashc, ".Rds"))
+        fname_c <- file.path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
         saveRDS (graphc, fname_c)
 
         verts <- dodgr::dodgr_vertices (graphc)
-        fname_v <- file.path (td, paste0 ("verts_", hashc, ".Rds"))
+        fname_v <- file.path (td, paste0 ("dodgr_verts_", hashc, ".Rds"))
         saveRDS (verts, fname_v)
 
-        fname_e <- paste0 ("edge_map_", hashc, ".Rds")
+        hashe <- attr (graphc, "hashe")
+
+        fname_e <- paste0 ("dodgr_edge_map_", hashe, ".Rds")
         fname_e_fr <- file.path (tempdir (), fname_e)
         fname_e_to <- file.path (td, fname_e)
         if (file.exists (fname_e_fr)) # should always be
             file.copy (fname_e_fr, fname_e_to, overwrite = TRUE)
 
-        fname_j <- paste0 ("junctions_", hashc, ".Rds")
+        fname_j <- paste0 ("dodgr_junctions_", hashe, ".Rds")
         fname_j_fr <- file.path (tempdir (), fname_j)
         fname_j_to <- file.path (td, fname_j)
         if (file.exists (fname_j_fr)) # should always be
