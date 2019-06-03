@@ -44,5 +44,6 @@ test_that ("local wt_profile", {
 })
 
 test_that ("weight_streetnet wt_profile_file", {
-               graph <- weight_streetnet (hampi, wt_profile = 1)
+        expect_silent (graph <- weight_streetnet (hampi, wt_profile = 1))
+        expect_identical (graph$d, graph$d_weighted)
 })
