@@ -53,7 +53,9 @@ cache_graph <- function (graph, edge_col)
     td <- tempdir ()
     f <- function (graph, edge_col, td)
     {
-        verts <- dodgr::dodgr_vertices (graph)
+        # the following line does not generate a coverage symbol because it is
+        # cached, so # nocov:
+        verts <- dodgr::dodgr_vertices (graph) # nocov
         hash <- attr (graph, "hash")
         fname_v <- file.path (td, paste0 ("verts_", hash, ".Rds"))
         if (!file.exists (fname_v))

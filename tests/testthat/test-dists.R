@@ -91,7 +91,20 @@ test_that("times", {
     grapht <- graph
     grapht$d <- grapht$time
     grapht$d_weighted <- grapht$time_weighted
-    grapht$time <- grapht$time_weighted <- NULL
+    grapht$time_weighted <- NULL
+    expect_silent (t0 <- dodgr_times (grapht, from = from, to = to,
+                                      shortest = TRUE))
+    expect_error (t0 <- dodgr_times (grapht, from = from, to = to,
+                                     shortest = FALSE),
+                  "Graph does not contain a weighted time column")
+    expect_error (d0 <- dodgr_dists (grapht, from = from, to = to,
+                                     shortest = FALSE),
+                  "Graph does not contain a weighted time column")
+    expect_silent (d1 <- dodgr_dists (grapht, from = from, to = to,
+                                      shortest = TRUE))
+    expect_identical (t0, d1)
+
+    grapht$time <- NULL
     expect_error (t0 <- dodgr_times (grapht, from = from, to = to,
                                      shortest = TRUE),
                   "graph has no time column")
@@ -103,7 +116,8 @@ test_that("times", {
                   "Graph does not contain a weighted time column")
     expect_silent (t2 <- dodgr_dists (grapht, from = from, to = to,
                                       shortest = TRUE))
-    expect_identical (t2, t1)
+
+    expect_identical (t2, t0)
 })
 
 test_that("all dists", {

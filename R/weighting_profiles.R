@@ -57,10 +57,13 @@ get_profile <- function (wt_profile, file = NULL)
     prf_names <- unique (profiles$name)
     if (is.numeric (wt_profile))
     {
+        # nocov start
+        # this function is actually only called for character args
         wp <- profiles [profiles$name == "foot", ]
         wp$name <- "custom"
         wp$value <- wt_profile
         wp$max_speed <- 10
+        # nocov end
     } else
     {
         # foot, horse, wheelchair, bicycle, moped, 

@@ -412,7 +412,7 @@ add_extra_sf_columns <- function (graph, x)
         hi <- ncol (graph)
         index2 <- NULL
     } else if (hi == ncol (graph))
-        index2 <- NULL
+        index2 <- NULL # nocov
     else
         index2 <- (hi + 1):ncol (graph)
 

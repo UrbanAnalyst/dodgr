@@ -51,6 +51,10 @@ test_that("components", {
     expect_message (graph3 <- dodgr_components (graph),
                     "graph already has a component column")
     expect_identical (graph2$component, graph3$component)
+
+    graph$component <- NULL
+    expect_silent (graph4 <- dodgr_components (graph))
+    expect_identical (graph4$component, graph2$component)
 })
 
 test_that("contract graph", {
