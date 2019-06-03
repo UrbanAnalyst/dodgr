@@ -204,7 +204,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
     id <- NULL
     if (!missing (pts))
     {
-        if (is.integer (pts))
+        if (is.integer (pts) & is.vector (pts))
         {
             index <- pts
         } else if (is.character (pts) | is.numeric (pts) |

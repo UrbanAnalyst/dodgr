@@ -128,6 +128,15 @@ test_that("to-from-cols", {
     to <- match (to, v$id)
     expect_silent (d1 <- dodgr_dists (graph, from = from, to = to))
 
+    from <- as.matrix (from, ncol = 1)
+    to <- as.matrix (to, ncol = 1)
+    expect_silent (d2 <- dodgr_dists (graph, from = from, to = to))
+    expect_identical (d0, d2)
+
+    from [1] <- -1
+    expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
+                  "points exceed numbers of vertices")
+
     expect_identical (d0, d1)
 
     from <- as.factor (from)
