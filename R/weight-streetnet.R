@@ -486,13 +486,16 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
 
     if (turn_angle)
     {
-        res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
-                                          left_side)
-        # res has the expanded graph as well as an edge map from new
-        # cross-junction edges to old single edges. This is cached below:
-        graph <- res$graph
         attr (graph, "turn_penalty") <- 
             get_turn_penalties (wt_profile, wt_profile_file)$turn
+        if (attr (graph, "turn_penalty") > 0)
+        {
+            res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
+                                            left_side)
+            # res has the expanded graph as well as an edge map from new
+            # cross-junction edges to old single edges. This is cached below:
+            graph <- res$graph
+        }
     }
 
     gr_cols <- dodgr_graph_cols (graph)
