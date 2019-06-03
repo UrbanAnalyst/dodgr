@@ -78,16 +78,16 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
     if (!is.null (index_id$id))
-        from_id <- index_id$id # can be null
+        from_id <- index_id$id
     else
-        from_id <- vert_map$vert
+        from_id <- vert_map$vert # nocov
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
     to_index <- index_id$index - 1 # 0-based
     if (!is.null (index_id$id))
-        to_id <- index_id$id # can be null
+        to_id <- index_id$id
     else
-        to_id <- vert_map$vert
+        to_id <- vert_map$vert # nocov
 
     graph <- convert_graph (graph, gr_cols)
 
@@ -118,7 +118,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
                      lapply (i, function (j)
                              {
                                  if (is.null (j))
-                                     return (j)
+                                     return (j)     # nocov
                                  vert_map$vert [j]
                              }  )   )
 

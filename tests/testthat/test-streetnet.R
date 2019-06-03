@@ -137,6 +137,11 @@ test_that ("streetnet column names", {
     expect_identical (nrow (graph2), nrow (graph4))
 })
 
+test_that ("wt_profile", {
+               expect_silent (graph <- weight_streetnet (hampi, wt_profile = 1))
+               expect_identical (graph$d, graph$d_weighted)
+})
+
 test_that ("streetnet highway types", {
     # these are based on partial matches, so modifications to highway types
     # sholuld have no effect:
@@ -152,6 +157,14 @@ test_that ("streetnet highway types", {
     h$highway [sample (nrow (h), 1)] <- "invalid_type"
     expect_message (graph <- weight_streetnet (h),
                     "The following highway types are present in data yet lack")
+})
+
+test_that ("hash generation", {
+               graph <- weight_streetnet (hampi)
+               graphc <- dodgr_contract_graph (graph)
+               attr (graph, "hash") <- NULL
+               graphc2 <- dodgr_contract_graph (graph)
+               expect_identical (graphc, graphc2)
 })
 
 test_that ("streetnet times", {

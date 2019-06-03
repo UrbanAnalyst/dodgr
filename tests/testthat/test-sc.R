@@ -73,6 +73,22 @@ test_that("SC", {
                             'sf_lines must be class "sf"')
 })
 
+test_that ("traffic light nodes", {
+               expect_silent (hsc <- sf_to_sc (hampi))
+               expect_silent (net_sc0 <- weight_streetnet (hsc))
+               v <- sample (hsc$vertex$vertex_, size = 10)
+               hsc$nodes <- data.frame (vertex_ = v,
+                                        key = "highway",
+                                        value = "traffic_signals")
+               expect_silent (net_sc1 <- weight_streetnet (hsc))
+               # This has no effect here, because the edges must also be flagged with same key-val pair
+
+               expect_identical (net_sc0$d, net_sc1$d)
+               expect_identical (net_sc0$d_weighted, net_sc1$d_weighted)
+               expect_identical (net_sc0$time, net_sc1$time)
+               expect_identical (net_sc0$time_weighted, net_sc1$time_weighted)
+})
+
 test_that ("elevation", {
                expect_silent (hsc <- sf_to_sc (hampi))
                expect_silent (net_sc <- weight_streetnet (hsc))

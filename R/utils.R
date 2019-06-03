@@ -31,10 +31,10 @@ get_edge_map <- function (graph)
 {
     hashc <- attr (graph, "hashc")
     if (is.null (hashc))
-        stop ("something went wrong extracting the edge map")
+        stop ("something went wrong extracting the edge map")   # nocov
     fname_e <- file.path (tempdir (), paste0 ("edge_map_", hashc, ".Rds"))
     if (!file.exists (fname_e))
-        stop ("something went wrong extracting the edge map")
+        stop ("something went wrong extracting the edge map")   # nocov
     readRDS (fname_e)
 }
 

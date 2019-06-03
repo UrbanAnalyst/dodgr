@@ -167,6 +167,14 @@ test_that("keep cols", {
     expect_equal (ncol (hw1), 16)
     expect_true ("foot" %in% names (hw1))
     expect_false ("foot" %in% names (hw0))
+
+    i <- which (names (hampi) == "foot")
+    hw2 <- weight_streetnet (hampi, keep_cols = i)
+    attr (hw1, "px") <- attr (hw2, "px") <- NULL
+    expect_identical (hw1, hw2)
+
+    expect_error (hw3 <- weight_streetnet (hampi, keep_cols = list (i)),
+                  "keep_cols must be either character or numeric")
 })
 
 test_that ("weight_profiles", {

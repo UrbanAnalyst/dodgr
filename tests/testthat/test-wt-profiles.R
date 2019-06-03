@@ -10,6 +10,9 @@ test_that("wp", {
 })
 
 test_that ("local wt_profile", {
+        expect_error (write_dodgr_wt_profile (),
+                      "file name must be given")
+
         f <- file.path (tempdir (), "wp")
         expect_silent (write_dodgr_wt_profile (f))
         n0 <- weight_streetnet (hampi, wt_profile = "foot")

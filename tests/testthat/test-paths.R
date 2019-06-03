@@ -8,7 +8,8 @@ test_that("paths", {
     from <- graph$from_id [1:100]
     to <- graph$to_id [100:150]
     to <- to [!to %in% from]
-    dp <- dodgr_paths (graph, from = from, to = to)
+    expect_message (dp <- dodgr_paths (graph, from = from, to = to, quiet = FALSE),
+                    "Calculating shortest paths ...")
     expect_is (dp, "list")
     expect_equal (length (dp), 100)
     expect_equal (unique (sapply (dp, length)), length (to))
@@ -37,4 +38,8 @@ test_that("pairwise paths", {
     expect_is (dp, "list")
     expect_equal (length (dp), n)
     expect_true (all (lapply (dp, length) == 1))
+
+    expect_error (dp <- dodgr_paths (graph, from = from, to = to [-1],
+                                     pairwise = TRUE),
+                  "pairwise paths require from and to to have same length")
 })

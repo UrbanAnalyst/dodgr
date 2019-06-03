@@ -376,7 +376,7 @@ get_key_val_pair <- function (x, kv)
 
     res <- NULL
     if (any (xo == length (kv)))
-        res <- names (xo) [which (xo == length (kv))]
+        res <- names (xo) [which (xo == length (kv))] # nocov - not in any test data
 
     return (res)
 }

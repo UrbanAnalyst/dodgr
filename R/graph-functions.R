@@ -17,7 +17,7 @@ dodgr_graph_cols <- function (graph)
         !methods::is (graph, "dodgr_streetnet_sc") & ncol (graph) >= 11)
     {
         # columns are always identically structured
-        edge_id <- which (nms == "edge_id")
+        edge_id <- which (nms == "edge_id") %>% null_to_na ()
         fr_col <- which (nms == "from_id") %>% null_to_na ()
         to_col <- which (nms == "to_id") %>% null_to_na ()
         d_col <- which (nms == "d")
@@ -312,6 +312,14 @@ dodgr_sample <- function (graph, nverts = 1000)
     to <- find_to_id_col (graph)
     verts <- unique (c (graph [, fr], graph [, to]))
     gr_cols <- dodgr_graph_cols (graph)
+    edge_is_na <- FALSE
+    if (is.na (gr_cols$edge_id))
+    {
+        edge_is_na <- TRUE
+        graph$edge_id <- seq (nrow (graph))
+        gr_cols <- dodgr_graph_cols (graph)
+    }
+
     if (length (verts) > nverts)
     {
         graph2 <- convert_graph (graph, gr_cols)
@@ -323,10 +331,7 @@ dodgr_sample <- function (graph, nverts = 1000)
 
     class (graph) <- classes
 
-    if (is.na (gr_cols$edge_id))
-        attr (graph, "hash") <- digest::digest (seq (nrow (graph)))
-    else
-        attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
 
     return (graph)
 }
