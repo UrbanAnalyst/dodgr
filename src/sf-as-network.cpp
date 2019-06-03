@@ -193,7 +193,7 @@ void sf::fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
     if (hw_factor > 0.0)
         nmat (rownum, 6) = d * hw_factor;
     else
-        nmat (rownum, 6) = -1.0;
+        nmat (rownum, 6) = -1.0; // # nocov
 
     idmat (rownum, 0) = rnms (i_min_1);
     idmat (rownum, 1) = rnms (i);
