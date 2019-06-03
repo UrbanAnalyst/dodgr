@@ -1,4 +1,4 @@
-# v0.1.4.003
+# v0.1.4.004
 
 Major changes:
 - Lots of intermediate processes now executed and cached as background
@@ -8,6 +8,7 @@ Major changes:
   and re-loaded when needed for graph uncontraction).
 
 Minor changes:
+- Test coverage now complete (100%)
 * Update internal `hampi` data to remove factor columns
 - Fix some bugs in max speed calculations for weight_streetnet
 * Fix bug with polygonal bbox in dodgr_streetnet()
