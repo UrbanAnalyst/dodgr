@@ -86,13 +86,13 @@ find_xy_col <- function (graph, indx, x = TRUE)
     if (x)
     {
         coli <- grep ("x|lon", names (graph) [indx], ignore.case = TRUE)
-        if (length (coli) > 1) # silicate
+        if (length (coli) > 1) # silicate has $.vx0, $.vx1
             coli <- grep ("x$", names (graph) [indx], ignore.case = TRUE)
     } else
     {
         coli <- grep ("y|lat", names (graph) [indx], ignore.case = TRUE)
-        if (length (coli) > 1) # silicate
-            coli <- grep ("y$", names (graph) [indx], ignore.case = TRUE)
+        if (length (coli) > 1) # silicate still only matches once here, so nocov:
+            coli <- grep ("y$", names (graph) [indx], ignore.case = TRUE) # nocov
     }
 
     indx [coli]
@@ -124,7 +124,16 @@ find_spatial_cols <- function (graph)
         xy_fr_id <- graph [, frid_col]
         if (!is.character (xy_fr_id))
             xy_fr_id <- paste0 (xy_fr_id)
+    } else # len == 2, so must be only x-y
+    {
+        if (length (grep ("lon|lat|x|y", names (graph) [fr_col])) != 2)
+            stop ("Unable to determine coordinate columns of graph") # nocov
+        xy_fr_id <- paste0 (graph [, fr_col [1]], "-",
+                            graph [, fr_col [2]])
+    }
 
+    if (length (to_col) == 3)
+    {
         tox_col <- find_xy_col (graph, to_col, x = TRUE)
         toy_col <- find_xy_col (graph, to_col, x = FALSE)
         toid_col <- to_col [which (!to_col %in% c (tox_col, toy_col))]
@@ -134,10 +143,8 @@ find_spatial_cols <- function (graph)
             xy_to_id <- paste0 (xy_to_id)
     } else # len == 2, so must be only x-y
     {
-        if (length (grep ("lon|lat|x|y", names (graph) [fr_col])) != 2)
-            stop ("Unable to determine coordinate columns of graph")
-        xy_fr_id <- paste0 (graph [, fr_col [1]], "-",
-                            graph [, fr_col [2]])
+        if (length (grep ("lon|lat|x|y", names (graph) [to_col])) != 2)
+            stop ("Unable to determine coordinate columns of graph") # nocov
         xy_to_id <- paste0 (graph [, to_col [1]], "-",
                             graph [, to_col [2]])
     }
@@ -264,7 +271,7 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE)
     if (is (xy, "sf"))
     {
         if (!"geometry" %in% names (xy))
-            stop ("xy has no sf geometry column")
+            stop ("xy has no sf geometry column") # nocov
         if (!is (xy$geometry, "sfc_POINT"))
             stop ("xy$geometry must be a collection of sfc_POINT objects")
         xy <- unlist (lapply (xy$geometry, as.numeric)) %>%

@@ -148,6 +148,11 @@ test_that("to-from-cols", {
     to [1] <- nrow (v) + 1L
     expect_error (d2 <- dodgr_dists (graph, from = from, to = to),
                   "Unable to match all routing points to graph vertices")
+
+    to <- sample (nrow (v), size = nt)
+    graph$from_id <- graph$from_lon <- NULL
+    expect_error (d3 <- dodgr_dists (graph, from = from, to = to),
+                  "Graph appears to be spatial yet unable to extract coordinates")
 })
 
 test_that("dists with no edge ids", {

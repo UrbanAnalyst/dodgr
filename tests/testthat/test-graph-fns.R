@@ -250,6 +250,13 @@ test_that ("points to graph", {
     expect_identical (index4, index6)
     expect_silent (index7 <- match_points_to_graph (v, pts, connected = TRUE))
     expect_identical (index4, index7)
+
+    pts <- hampi [1, ]
+    expect_error (index7 <- match_points_to_graph (v, pts))
+    # error is "xy$geometry must be a collection of sfc_POINT objects", but
+    # expect_error does not match on the "$" symbo, but expect_error does not
+    # match on the "$" symbol
+
 })
 
 test_that ("graph columns", {
