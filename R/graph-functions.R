@@ -37,8 +37,8 @@ dodgr_graph_cols <- function (graph)
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
-        if (length (w_col) == 0)
-            w_col <- d_col
+        if (length (w_col) == 0) # sc ensures this never happens, so not covered
+            w_col <- d_col # nocov
 
         fr_col <- find_fr_id_col (graph)
         to_col <- find_to_id_col (graph)

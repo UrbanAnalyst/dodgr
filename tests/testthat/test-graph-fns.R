@@ -25,16 +25,32 @@ test_that("sample graph", {
 
     d2 <- mean (geodist::geodist (v))
     #expect_true (d2 > d) # that's not reliably true, but almost always
+
+    graph <- weight_streetnet (hampi)
+    graph$edge_id <- NULL
+    expect_silent (graphs <- dodgr_sample (graph, nverts = nverts))
+    expect_is (graphs$edge_id, "integer")
+    expect_true (min (graphs$edge_id) >= 1)
+    expect_true (max (graphs$edge_id) <= nrow (graph))
 })
 
 test_that("components", {
     graph <- weight_streetnet (hampi)
     comp <- graph$component
     graph$component <- NULL
-    graph <- dodgr_components (graph)
+    expect_silent (graph <- dodgr_components (graph))
     expect_identical (comp, graph$component)
     comp <- graph$component
     expect_identical (comp, graph$component)
+
+    expect_message (graph2 <- dodgr_components (graph),
+                    "graph already has a component column")
+    expect_identical (graph, graph2)
+
+    graph$edge_id <- NULL
+    expect_message (graph3 <- dodgr_components (graph),
+                    "graph already has a component column")
+    expect_identical (graph2$component, graph3$component)
 })
 
 test_that("contract graph", {
