@@ -234,11 +234,11 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     v <- dodgr_vertices (graphc)
 
     #edge_map <- get_edge_map (graphc) # TODO: Implement this
-    hashe <- attr (graphc, "hashe")
-    fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
-    if (!file.exists (fname_e))
+    hashc <- get_hash (graphc, hash = FALSE)
+    fname_c <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+    if (!file.exists (fname_c))
         stop ("something unexpected went wrong extracting the edge map") # nocov
-    edge_map <- readRDS (fname_e)
+    edge_map <- readRDS (fname_c)
 
     x <- dodgr_fundamental_cycles (graphc,
                                    vertices = v,

@@ -68,10 +68,10 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 
         saveRDS (graph_contracted$graph, fname_c)
 
-        fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
+        fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
         saveRDS (graph_contracted$edge_map, fname_e)
 
-        fname_j <- file.path (tempdir (), paste0 ("dodgr_junctions_", hashe, ".Rds"))
+        fname_j <- file.path (tempdir (), paste0 ("dodgr_junctions_", hashc, ".Rds"))
         saveRDS (graph_contracted$junctions, fname_j)
     }
 

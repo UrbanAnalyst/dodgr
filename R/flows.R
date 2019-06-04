@@ -137,11 +137,11 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
-        hashe <- attr (graph, "hashe")
-        fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
-        if (!file.exists (fname_e))
+        hashc <- get_hash (graph, hash = FALSE)
+        fname_c <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!file.exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
-        edge_map <- readRDS (fname_e)
+        edge_map <- readRDS (fname_c)
     }
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -230,11 +230,11 @@ dodgr_flows_disperse <- function (graph, from, dens,
     {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
-        hashe <- attr (graph, "hashe")
-        fname_e <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashe, ".Rds"))
-        if (!file.exists (fname_e))
+        hashc <- get_hash (graph, hash = FALSE)
+        fname_c <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!file.exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
-        edge_map <- readRDS (fname_e)
+        edge_map <- readRDS (fname_c)
     }
 
 
