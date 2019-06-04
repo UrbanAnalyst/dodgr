@@ -102,6 +102,54 @@ test_that ("elevation", {
                expect_true (mean (net_sc3$time) > mean (net_sc2$time))
 })
 
+test_that("contract with turn angles", {
+              expect_silent (hsc <- sf_to_sc (hampi))
+              expect_silent (graph <- weight_streetnet (hsc, wt_profile = "bicycle"))
+              expect_silent (graph_c <- dodgr_contract_graph (graph))
+              expect_silent (v <- dodgr_vertices (graph_c))
+              n <- 100
+              pts <- sample (v$id, size = n)
+              pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
+              fmat <- array (1, dim = c (n, n))
+
+              # aggregate flows from graph without turning angles:
+              expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
+                                                              from = pts,
+                                                              to = pts,
+                                                              flow = fmat))
+              expect_silent (graphf <- dodgr_uncontract_graph (graphf))
+              expect_silent (graphf <- merge_directed_flows (graphf))
+
+              # then turn angle graph
+              grapht <- weight_streetnet (hsc, wt_profile = "bicycle",
+                                          turn_angle = TRUE, left_side = TRUE)
+              # grapht has extra compound edges for turning angles:
+              expect_true (nrow (grapht) > nrow (graph))
+              grapht_c <- dodgr_contract_graph (grapht)
+              expect_true (nrow (grapht_c) > nrow (graph_c))
+              expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
+                                                              from = pts,
+                                                              to = pts,
+                                                              flow = fmat))
+              # this graph has junction vertices flagged with _start/_end:
+              expect_true (length (grep ("_start", graphtf$.vx0)) > 0)
+              expect_true (length (grep ("_end", graphtf$.vx1)) > 0)
+
+              expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
+              # compound junction edges are then removed, as are vertex
+              # suffixes:
+              expect_false (length (grep ("_start", graphtf$.vx0)) > 0)
+              expect_false (length (grep ("_end", graphtf$.vx1)) > 0)
+
+              expect_silent (graphtf <- merge_directed_flows (graphtf))
+              expect_identical (range (graphf$flow), range (graphtf$flow))
+
+              expect_silent (graphtf <- dodgr_flows_disperse (grapht_c,
+                                                              from = pts,
+                                                              dens = rep (1, n)))
+
+})
+
 test_that("dodgr_times", {
               # dists and times should be strongly correlated:
               expect_silent (hsc <- sf_to_sc (hampi))
