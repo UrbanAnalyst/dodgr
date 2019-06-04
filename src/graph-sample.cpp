@@ -64,8 +64,8 @@ edge_id_t graph_sample::sample_one_edge_with_comps (Rcpp::DataFrame graph,
     std::uniform_int_distribution <unsigned int> uni (0,
             static_cast <unsigned int> (graph.nrow ()) - 1);
     unsigned int e0 = uni (rng);
-    while (component (e0) > 1)
-        e0 = uni (rng);
+    while (component (e0) > 1) // can't be invoked in tests in a controlled way
+        e0 = uni (rng); // # nocov
 
     return std::next (edge_map.begin (), e0)->first;
 }
