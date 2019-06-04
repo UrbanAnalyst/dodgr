@@ -119,6 +119,16 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
+    tp <- attr (graph, "turn_penalty")
+    tp <- ifelse (is.null (tp), 0, tp)
+    if (is (graph, "dodgr_streetnet_sc") & tp > 0)
+    {
+        if (!is.null (from))
+            from <- remap_verts_with_turn_angle (graph, from, from = TRUE)
+        if (!is.null (to))
+            to <- remap_verts_with_turn_angle (graph, to, from = FALSE)
+    }
+
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
 

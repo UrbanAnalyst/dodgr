@@ -121,12 +121,8 @@ test_that("dodgr_times", {
               # includes compound junction edges
               expect_silent (net_sc2 <- weight_streetnet (hsc, turn_angle = TRUE))
               expect_true (nrow (net_sc2) > nrow (net_sc))
-              v0 <- net_sc2$.vx0 [grep ("_start", net_sc2$.vx0)]
-              v0 <- gsub ("_start", "", v0)
-              v1 <- net_sc2$.vx1 [grep ("_end", net_sc2$.vx1)]
-              v1 <- gsub ("_end", "", v1)
-              from [from %in% v0] <- paste0 (from [from %in% v0], "_start")
-              to [to %in% v1] <- paste0 (to [to %in% v1], "_end")
+              from <- remap_verts_with_turn_angle (net_sc2, from, from = TRUE)
+              to <- remap_verts_with_turn_angle (net_sc2, to, from = FALSE)
               t2 <- dodgr_times (net_sc2, from = from, to = to)
               r2 <- cor (as.numeric (t1), as.numeric (t2),
                          use = "pairwise.complete.obs")

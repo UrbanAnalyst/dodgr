@@ -133,14 +133,14 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     if (!missing (from))
     {
         # remove any routing points not in edge start nodes:
-        from <- from [from %in% graph [[gr_cols$from]] ]
         from <- nodes_arg_to_pts (from, graph)
+        from <- from [from %in% graph [[gr_cols$from]] ]
     }
     if (!missing (to))
     {
         # remove any routing points not in edge end nodes:
-        to <- to [to %in% graph [[gr_cols$to]] ]
         to <- nodes_arg_to_pts (to, graph)
+        to <- to [to %in% graph [[gr_cols$to]] ]
     }
 
     if (contract)
@@ -232,11 +232,13 @@ dodgr_flows_disperse <- function (graph, from, dens,
     heap <- hps$heap
     graph <- hps$graph
 
+    gr_cols <- dodgr_graph_cols (graph)
+
     if (!missing (from))
     {
         # remove any routing points not in edge start nodes:
-        from <- from [from %in% graph [[gr_cols$from]] ]
         from <- nodes_arg_to_pts (from, graph)
+        from <- from [from %in% graph [[gr_cols$from]] ]
     }
 
     if (contract)
@@ -250,8 +252,6 @@ dodgr_flows_disperse <- function (graph, from, dens,
         edge_map <- readRDS (fname_c)
     }
 
-
-    gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
 
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)

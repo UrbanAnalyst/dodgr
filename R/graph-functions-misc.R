@@ -297,3 +297,25 @@ match_points_to_graph <- function (verts, xy, connected = FALSE)
     match_pts_to_graph (verts, xy, connected = connected)
 }
 
+# vertices randomly selected from a graph without turn angles may be submitted
+# to functions along with the corresponding graph with turn angles. The latter
+# version appends vertex IDs with "_start" and "_end" for the starts and ends of
+# compound turn angle junctions. This function finds any instances of `pts` that
+# map on to these, and appends the appropriate suffix so these points can be
+# used in routines with the turn-angle graph.
+remap_verts_with_turn_angle <- function (graph, pts, from = TRUE)
+{
+    if (!is (graph, "dodgr_streetnet_sc"))
+        stop ("vertices with turn angles can only be re-mapped for street ",
+              "networks obtained via 'dodgr_streetnet_sc' -> 'weight_streetnet'")
+
+    suffix <- ifelse (from, "_start", "_end")
+    suffix_rgx <- paste0 (suffix, "$")
+    vcol <- ifelse (from, ".vx0", ".vx1")
+
+    index <- grep (suffix_rgx, graph [[vcol]])
+    all_pts <- gsub (suffix_rgx, "", graph [[vcol]] [index])
+    pts [pts %in% all_pts] <- paste0 (pts [pts %in% all_pts], suffix)
+
+    return (pts)
+}
