@@ -47,10 +47,17 @@ test_that("components", {
                     "graph already has a component column")
     expect_identical (graph, graph2)
 
-    expect_silent (clear_dodgr_cache ())
+    graph$edge_id <- NULL
     expect_message (graph3 <- dodgr_components (graph),
                     "graph already has a component column")
     expect_identical (graph2$component, graph3$component)
+
+    expect_silent (clear_dodgr_cache ())
+    expect_message (graph4 <- dodgr_components (graph),
+                    "graph already has a component column")
+    expect_identical (graph3, graph4)
+
+    expect_identical (graph2$component, graph4$component)
 
     graph$component <- NULL
     expect_silent (graph4 <- dodgr_components (graph))
