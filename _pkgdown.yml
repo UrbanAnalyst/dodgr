@@ -35,6 +35,7 @@ reference:
     - igraph_to_dodgr
   - title: Miscellaneous Functions
     contents:
+    - clear_dodge_cache
     - compare_heaps
     - dodgr_flowmap
     - dodgr_full_cycles

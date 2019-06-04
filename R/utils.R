@@ -99,3 +99,26 @@ cache_graph <- function (graph, edge_col)
     return (res) # R6 processx object
 }
 
+#' clear_dodgr_cache
+#'
+#' Remove cached versions of `dodgr` graphs. This function should generally
+#' \emph{not} be needed, except if graph structure has been directly modified
+#' other than through `dodgr` functions; for example by modifying edge weights
+#' or distances. Graphs are cached based on the vector of edge IDs, so manual
+#' changes to any other attributes will not necessarily be translated into
+#' changes in `dodgr` output unless the cached versions are cleared using this
+#' function. See
+#' \url{https://github.com/ATFutures/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
+#' for details of caching process.
+#'
+#' @return Nothing; the function silently clears any cached objects
+#' @export
+clear_dodgr_cache <- function ()
+{
+    lf <- list.files (tempdir (), full.names = TRUE, pattern = "^dodgr_")
+    if (length (lf) > 0)
+    {
+        tryCatch (chk <- file.remove (lf),
+                  error = function (e) NULL)
+    }
+}

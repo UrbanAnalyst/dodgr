@@ -3,6 +3,7 @@
 S3method(weight_streetnet,default)
 S3method(weight_streetnet,sc)
 S3method(weight_streetnet,sf)
+export(clear_dodgr_cache)
 export(compare_heaps)
 export(dodgr_components)
 export(dodgr_contract_graph)
