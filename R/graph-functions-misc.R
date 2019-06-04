@@ -306,8 +306,8 @@ match_points_to_graph <- function (verts, xy, connected = FALSE)
 remap_verts_with_turn_angle <- function (graph, pts, from = TRUE)
 {
     if (!is (graph, "dodgr_streetnet_sc"))
-        stop ("vertices with turn angles can only be re-mapped for street ",
-              "networks obtained via 'dodgr_streetnet_sc' -> 'weight_streetnet'")
+        stop ("vertices with turn angles can only be re-mapped for street ",      # nocov
+              "networks obtained via 'dodgr_streetnet_sc' -> 'weight_streetnet'") # nocov
 
     suffix <- ifelse (from, "_start", "_end")
     suffix_rgx <- paste0 (suffix, "$")

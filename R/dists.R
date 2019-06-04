@@ -124,9 +124,15 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     if (is (graph, "dodgr_streetnet_sc") & tp > 0)
     {
         if (!is.null (from))
+        {
+            from <- nodes_arg_to_pts (from, graph)
             from <- remap_verts_with_turn_angle (graph, from, from = TRUE)
+        }
         if (!is.null (to))
+        {
+            to <- nodes_arg_to_pts (to, graph)
             to <- remap_verts_with_turn_angle (graph, to, from = FALSE)
+        }
     }
 
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
