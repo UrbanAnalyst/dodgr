@@ -146,8 +146,8 @@ The many-to-many nature of `dodgr` means that the function to calculate
 distances,
 [`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html)
 or, for street networks, times,
-[`dodgr_times()`](https://atfutures.github.io/dodgr/reference/dodgr_times.html)
-or, for street networks, times, accepts two vectors or matrices of routing
+[`dodgr_times()`](https://atfutures.github.io/dodgr/reference/dodgr_times.html),
+accepts two vectors or matrices of routing
 points as inputs (describing origins and destinations), and returns
 a corresponding matrix of pairwise distances. If an input graph has columns for
 both distances and weighted distances, and/or times and weighted times, the
