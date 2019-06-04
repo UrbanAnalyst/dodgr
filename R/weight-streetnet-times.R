@@ -169,9 +169,9 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
 
     na_highways <- wp$way [which (is.na (wp$max_speed))]
     graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
-    gr_cols <- dodgr_graph_cols (graph)
     # Also set weighted distance for all these to NA:
-    graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA_real_
+    #gr_cols <- dodgr_graph_cols (graph)
+    #graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") |
         !"surface" %in% names (graph))
