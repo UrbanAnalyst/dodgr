@@ -167,13 +167,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_gen_hash
-Rcpp::CharacterVector rcpp_gen_hash(const int n, const int hash_len);
+Rcpp::CharacterVector rcpp_gen_hash(const int n, const size_t hash_len);
 RcppExport SEXP _dodgr_rcpp_gen_hash(SEXP nSEXP, SEXP hash_lenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const int >::type hash_len(hash_lenSEXP);
+    Rcpp::traits::input_parameter< const size_t >::type hash_len(hash_lenSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_gen_hash(n, hash_len));
     return rcpp_result_gen;
 END_RCPP
