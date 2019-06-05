@@ -16,7 +16,7 @@ Description: Distances on dual-weighted directed graphs using priority-queue
     example is a street network to be used for routing in which routes are
     calculated by weighting distances according to the type of way and mode of
     transport, yet lengths of routes must be calculated from direct distances.
-Depends: R (>= 3.2.0)
+Depends: R (>= 3.5.0)
 License: GPL-3
 Imports:
     callr,
