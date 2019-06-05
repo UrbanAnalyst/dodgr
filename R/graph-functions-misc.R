@@ -244,7 +244,7 @@ find_xy_col_simple <- function (dfr)
 #' pts # names of those vertices
 match_pts_to_graph <- function (verts, xy, connected = FALSE)
 {
-    if (!identical (names (verts), c ("id", "x", "y", "component", "n")))
+    if (!all (c ("id", "x", "y") %in% names (verts)))
     {
         message ("First argument to match_pts_to_graph should be result of ",
                  "dodgr_vertices;\npresuming you've submitted the network itself ",
