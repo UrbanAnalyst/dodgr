@@ -3,6 +3,8 @@
 Major changes:
 - Lots of intermediate processes now executed and cached as background
   processes (via `callr` package).
+- new `dodgr_cache_off` function added to suppress primary caching, for cases
+  where immediate usage is critical.
 - `dodgr_contract_graph` returns the contracted graph only, instead of former
   version which return list of `graph` and `edge_map` (the `edge_map` is cached
   and re-loaded when needed for graph uncontraction).
