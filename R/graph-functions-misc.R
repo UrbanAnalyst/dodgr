@@ -297,13 +297,13 @@ match_points_to_graph <- function (verts, xy, connected = FALSE)
     match_pts_to_graph (verts, xy, connected = connected)
 }
 
-# vertices randomly selected from a graph without turn angles may be submitted
+# vertices randomly selected from a graph without turn penalties may be submitted
 # to functions along with the corresponding graph with turn angles. The latter
 # version appends vertex IDs with "_start" and "_end" for the starts and ends of
 # compound turn angle junctions. This function finds any instances of `pts` that
 # map on to these, and appends the appropriate suffix so these points can be
-# used in routines with the turn-angle graph.
-remap_verts_with_turn_angle <- function (graph, pts, from = TRUE)
+# used in routines with the turn-penalty graph.
+remap_verts_with_turn_penalty <- function (graph, pts, from = TRUE)
 {
     if (!is (graph, "dodgr_streetnet_sc"))
         stop ("vertices with turn angles can only be re-mapped for street ",      # nocov

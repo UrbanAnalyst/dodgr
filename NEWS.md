@@ -8,6 +8,7 @@ Major changes:
   and re-loaded when needed for graph uncontraction).
 
 Minor changes:
+- 'turn_angle' parameter of `weight_streetnet` renamed to `turn_penalty`
 - Test coverage now complete (100%)
 * Update internal `hampi` data to remove factor columns
 - Fix some bugs in max speed calculations for weight_streetnet

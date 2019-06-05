@@ -168,8 +168,8 @@ test_that ("hash generation", {
 })
 
 test_that ("streetnet times", {
-               expect_error (graph <- weight_streetnet (hampi, turn_angle = TRUE),
-                             paste0 ("Turn-angle calculations only currently ",
+               expect_error (graph <- weight_streetnet (hampi, turn_penalty = TRUE),
+                             paste0 ("Turn-penalty calculations only currently ",
                                      "implemented for street network data ",
                                      "generated with"))
                expect_silent (graph <- weight_streetnet (hampi))

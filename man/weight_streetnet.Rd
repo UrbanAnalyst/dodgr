@@ -8,19 +8,19 @@
 \title{weight_streetnet}
 \usage{
 weight_streetnet(x, wt_profile = "bicycle", wt_profile_file = NULL,
-  turn_angle = FALSE, type_col = "highway", id_col = "osm_id",
+  turn_penalty = FALSE, type_col = "highway", id_col = "osm_id",
   keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{default}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, turn_angle = FALSE, type_col = "highway",
+  wt_profile_file = NULL, turn_penalty = FALSE, type_col = "highway",
   id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{sf}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, turn_angle = FALSE, type_col = "highway",
+  wt_profile_file = NULL, turn_penalty = FALSE, type_col = "highway",
   id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 
 \method{weight_streetnet}{sc}(x, wt_profile = "bicycle",
-  wt_profile_file = NULL, turn_angle = FALSE, type_col = "highway",
+  wt_profile_file = NULL, turn_penalty = FALSE, type_col = "highway",
   id_col = "osm_id", keep_cols = NULL, left_side = FALSE)
 }
 \arguments{
@@ -35,8 +35,8 @@ custom values (see Details)}
 \code{dodgr::weighting_profiles}, created with \link{write_dodgr_wt_profile}, and
 modified as desired.}
 
-\item{turn_angle}{Weight edges times by turning angles at intersections (see
-Note).}
+\item{turn_penalty}{Including time penalty on edges for turning across
+oncoming traffic at intersections (see Note).}
 
 \item{type_col}{Specify column of the \code{sf} \code{data.frame} object
 which designates different types of highways to be used for weighting
@@ -82,11 +82,11 @@ the name of this file passed as the \code{wt_profile_file} parameter. Constructi
 of custom weighting profiles is illustrated in the following example.
 
 Calculating edge times to account for turn angles (that is, with
-\code{turn_angle = TRUE}) involves calculating the temporal delay involving in
+\code{turn_penalty = TRUE}) involves calculating the temporal delay involving in
 turning across oncoming traffic. Resultant graphs are fundamentally different
 from the default for distance-based routing. The result of
-\code{weight_streetnet(..., turn_angle = TRUE)} should thus \emph{only} be used to
-submit to the \link{dodgr_times} function, and not for any other \code{dodgr}
+\code{weight_streetnet(..., turn_penalty = TRUE)} should thus \emph{only} be used
+to submit to the \link{dodgr_times} function, and not for any other \code{dodgr}
 functions nor forms of network analysis.
 }
 \examples{

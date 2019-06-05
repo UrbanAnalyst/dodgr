@@ -137,7 +137,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
         # remove any routing points not in edge start nodes:
         from <- nodes_arg_to_pts (from, graph)
         if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            from <- remap_verts_with_turn_angle (graph, from, from = TRUE)
+            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
         from <- from [from %in% graph [[gr_cols$from]] ]
     }
     if (!missing (to))
@@ -145,7 +145,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
         # remove any routing points not in edge end nodes:
         to <- nodes_arg_to_pts (to, graph)
         if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            to <- remap_verts_with_turn_angle (graph, to, from = FALSE)
+            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
         to <- to [to %in% graph [[gr_cols$to]] ]
     }
 
@@ -247,7 +247,7 @@ dodgr_flows_disperse <- function (graph, from, dens,
         # remove any routing points not in edge start nodes:
         from <- nodes_arg_to_pts (from, graph)
         if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            from <- remap_verts_with_turn_angle (graph, from, from = TRUE)
+            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
         from <- from [from %in% graph [[gr_cols$from]] ]
     }
 

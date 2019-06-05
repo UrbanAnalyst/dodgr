@@ -126,12 +126,12 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
         if (!is.null (from))
         {
             from <- nodes_arg_to_pts (from, graph)
-            from <- remap_verts_with_turn_angle (graph, from, from = TRUE)
+            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
         }
         if (!is.null (to))
         {
             to <- nodes_arg_to_pts (to, graph)
-            to <- remap_verts_with_turn_angle (graph, to, from = FALSE)
+            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
         }
     }
 
