@@ -77,8 +77,8 @@ for modelling pedestrian and bicycle transport. The may be readily incorporated
 with [Silicate (`sc`)](https://github.com/hypertidy/silicate) format data with
 the new [`osmdata`](https://github.com/ropensci/osmdata) function,
 [`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html).
-This function simply requires a locally-stored GeoTIFF-formatted elevation data
-file to be downloaded from the [Consortium for Spatial
+This function requires a locally-stored GeoTIFF-formatted elevation data file
+to be downloaded from the [Consortium for Spatial
 Information](http://srtm.csi.cgiar.org/srtmdata/), or any other source. These
 data may then be appended by calling
 [`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html),
@@ -104,17 +104,18 @@ The two most important parameters in this function are:
 1. `wt_profile`, a character string generally specifying a mode of transport
    (generally one of "bicycle", "foot", "goods", "hgv", "horse", "moped",
    "motorcar", "motorcycle", "psv", or "wheelchair"); and
-2. `turn_angle`, specifying whether edge times should include delays associated
+2. `turn_penalty`, specifying whether edge times should include delays associated
    with turning across oncoming traffic.
 
 The first of these options is described further in the following sub-section.
 The second option has no effect for
 [`sf`](https://cran.r-project.org/package=sf) data, but is particularly important for 
-[`sc`](https://github.com/hypertidy/silicate) format data, for which it
-quantifies the important effect of turn angles. This is achieved through
-fundamentally modifying the resultant graph as depicted in Fig. 1.
+[`sc`](https://github.com/hypertidy/silicate) format data, for which it enables
+estimation of temporal delays associated with turning across oncoming traffic.
+Calculation of turn penalties is achieved through fundamentally modifying the
+resultant graph as depicted in Fig. 1.
 
-```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("times-fig1.tex"), fig.cap="Figure 1: Graph modification to account for turn angles, which introduces the additional dashed lines representing compound edges with time penalties for turning angles."}
+```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("times-fig1.tex"), fig.cap="Figure 1: Graph modification to account for turn penalties, which introduces the additional dashed lines representing compound edges with time penalties for turning penalties."}
 ```
 
 Figure 1 depicts a right-angled crossing, with straight arrows showing a single
@@ -123,12 +124,12 @@ going out (solid grey lines). Turning across oncoming traffic generally takes
 time (the precise values for which are detailed in the following section), and
 so turning left ($A\rightarrow B$ in Fig. 1) is always different to turning
 right ($A\rightarrow C$). To reflect these differences, graphs are weighted to
-account for turning angles by adding three "compound" edges directly connecting
+account for turning penalties by adding three "compound" edges directly connecting
 $A$ with the end points of $B$, $C$, and $D$, including the additional time
-penalties for turn angles. (The latter are naturally dependent on which side of
-the road traffic travels, and so `weight_streetnet()` includes an additional
-`left_side` parameter to specify whether traffic travels on the left side of the
-street.)
+penalties for turning across oncoming traffic. (The latter are naturally
+dependent on which side of the road traffic travels, and so
+`weight_streetnet()` includes an additional `left_side` parameter to specify
+whether traffic travels on the left side of the street.)
 
 The compound edges do not, however, simply replace the previous edges, because
 routing may still need to begin or end at the junction node, $O$. The edge
@@ -153,13 +154,13 @@ Weighting for time-based routing thus not only introduces new "compound" edges,
 but also requires re-labelling junction vertices, through appending either
 "\_start" or "\_end". Recommended practice for routing in such cases is to
 select routing vertices (origins and destinations) from a standard weighted
-graph (that is, one generated with `turn_angle = FALSE`), and then to modify
+graph (that is, one generated with `turn_penalty = FALSE`), and then to modify
 these routing vertices as illustrated in the following example:
 
 ```{r streetnet_times, eval = FALSE}
 dat_sc <- dodgr_streetnet_sc ("ogbomosho nigeria")
 graph <- weight_streetnet (dat_sc, wt_profile = "bicycle")
-graph_t <- weight_streetnet (dat_sc, wt_profile = "bicycle", turn_angle = TRUE)
+graph_t <- weight_streetnet (dat_sc, wt_profile = "bicycle", turn_penalty = TRUE)
 nrow (graph); nrow (graph_t)
 ```
 ```{r streetnet_times-out1, echo = FALSE}
@@ -181,21 +182,10 @@ n <- 100 # number of desired vertices
 from <- sample (v$id, size = n)
 to <- sample (v$id, size = n)
 ```
-We then need to identify vertices in `from` or `to` which have been re-labelled
-in the time-based graph. We can find the re-labelled vertices from `graph` with
-the following two lines:
-```{r vert-find, eval = FALSE}
-v0 <- gsub ("_start", "", graph_t$.vx0 [grep ("_start", graph_t$.vx0)])
-v1 <- gsub ("_end", "", graph_t$.vx1 [grep ("_end", graph_t$.vx1)])
-```
-These can then be used to re-label the `from` and `to` vertices with the next
-two lines:
-```{r vert-relabel, eval = FALSE}
-from [from %in% v0] <- paste0 (from [from %in% v0], "_start")
-to [to %in% v1] <- paste0 (to [to %in% v1], "_end")
-```
-And those may then be used to calculate time-based routes on `graph`. As usual,
-it will generally be quicker to first contract the graph prior to routing.
+These can then be submitted to any `dodgr` functions along with the graph with
+turn penalties, and will be matched on to the corresponding nodes appended with
+`_start` for the `from`vertices and `_end` for the `to` vertices. As usual, it
+will generally be quicker to first contract the graph prior to routing.
 ```{r routing, eval = FALSE}
 graph_tc <- dodgr_contract_graph (graph_t)
 nrow (graph_tc); nrow (graph_t)
@@ -237,7 +227,7 @@ to 0.0 for ways that are untraversable for that mode of transport, along with an
 additional column specifying maximum speeds in kilometres per hour. Actual
 maximum speeds may be reduced by changes in surface, as specified in the second
 table (`surface_speeds`), while the final table contains time penalties in
-seconds for both traffic lights and turn angles.
+seconds for both traffic lights and turn penalties.
 
 Values in this table may be edited by first creating a local, `json`-formatted
 version with the function,
