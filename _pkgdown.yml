@@ -37,6 +37,7 @@ reference:
     contents:
     - clear_dodgr_cache
     - compare_heaps
+    - dodgr_cache_off
     - dodgr_flowmap
     - dodgr_full_cycles
     - dodgr_fundamental_cycles
