@@ -245,28 +245,30 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                                    graph_max_size = graph_max_size,
                                    expand = expand)
 
-    from_to <- paste0 (graphc$from_id, "-", graphc$to_id)
-    to_from <- paste0 (graphc$to_id, "-", graphc$from_id)
+    gr_cols <- dodgr_graph_cols (graphc)
+    from_to <- paste0 (graphc [[gr_cols$from]], "-", graphc [[gr_cols$to]])
+    to_from <- paste0 (graphc [[gr_cols$to]], "-", graphc [[gr_cols$from]])
     ids <- lapply (x, function (i) {
            idpairs <- paste0 (i$id [-length (i$id)], "-", i$id [-1])
            # Get the edge pairs that match the idpairs, whether as from->to or
            # to->from
-           edges_c1 <- graphc$edge_id [match (idpairs, from_to)]
-           edges_c2 <- graphc$edge_id [match (idpairs, to_from)]
+           edges_c1 <- graphc [[gr_cols$edge_id]] [match (idpairs, from_to)]
+           edges_c2 <- graphc [[gr_cols$edge_id]] [match (idpairs, to_from)]
            edges_c <- apply (rbind (edges_c1, edges_c2), 2, function (i)
                              i [which (!is.na (i))] [1])
            edges_new <- lapply (as.list (edges_c), function (j) {
                     if (j %in% edge_map$edge_new)
                     {
                         index <- which (edge_map$edge_new %in% j)
-                        index <- as.numeric (edge_map$edge_old [index])
-                        j <- match (index, graph$edge_id)
-                        if ((graph$from_id [j [1] ] ==
-                             graph$to_id [utils::tail (j, 1)]) ||
-                            (graph$from_id [j [1] ] == graph$to_id [j [2] ]))
+                        edges <- edge_map$edge_old [index]
+                        j <- match (edges, graph [[gr_cols$edge_id]])
+                        if ((graph [[gr_cols$from]] [j [1] ] ==
+                             graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
+                            (graph [[gr_cols$from]] [j [1] ] ==
+                             graph [[gr_cols$to]] [j [2] ]))
                             j <- rev (j)
                     } else
-                        j <- match (j, graph$edge_id)
+                        j <- match (j, graph [[gr_cols$edge_id]])
                     return (as.numeric (j))
                     }) # end edges_new lapply
            unlist (edges_new)
@@ -274,9 +276,8 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     # ids at that point is a sequences of indices into graph. This is then
     # converted to a sequence of vertex IDs, through just adding the last vertex
     # of the sequence on to close the polygon
-    gr_cols <- dodgr_graph_cols (graph) # (from, to) = [, 2:3]
     res <- lapply (ids, function (i)
-                   graph [c (i, i [1]), gr_cols$from] )
+                   graph [c (i, i [1]), gr_cols$from, drop = TRUE] )
 
     if (is_graph_spatial (graph))
     {

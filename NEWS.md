@@ -2,6 +2,7 @@
 
 Minor changes:
 - bug fix in `weight_streetnet.sc(..., wt_profile = 1)`
+- bug fix in `dodgr_full_cycles` for `SC` class objects
 
 # v0.2.0
 
