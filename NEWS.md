@@ -1,4 +1,9 @@
-# v0.1.4.00X
+# v0.2.0.001
+
+Minor changes:
+- bug fix in `weight_streetnet.sc(..., wt_profile = 1)`
+
+# v0.2.0
 
 Major changes:
 - Lots of intermediate processes now executed and cached as background

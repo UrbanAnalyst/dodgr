@@ -289,6 +289,7 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
     object_ <- NULL
 
     wait <- get_turn_penalties (wt_profile, wt_profile_file)$traffic_lights
+    if (length (wait) == 0) wait <- 0
 
     # first for intersections marked as crossings
     crossings <- traffic_light_objs (x) # way IDs
