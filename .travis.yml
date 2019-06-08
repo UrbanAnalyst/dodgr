@@ -40,8 +40,7 @@ matrix:
           r: devel
 
 before_install:
-    - tlmgr install dvisvgm
-    - tlmgr path add
+    - tlmgr install dvisvgm && tlmgr path add
 
 notifications:
   email:
