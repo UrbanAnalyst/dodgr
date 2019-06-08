@@ -40,8 +40,9 @@ matrix:
           r: devel
 
 before_install:
-    - sudo env PATH="$PATH" tlmgr
-    - sudo -i tlmgr update --all
+    - sudo env PATH="$PATH" tlmgr update dvisgm
+    - sudo env PATH="$PATH" tlmgr path add
+    #- sudo -i tlmgr update --all
     #- install dvisvgm
     #- sudo tlmgr path add
 
