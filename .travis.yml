@@ -40,7 +40,9 @@ matrix:
           r: devel
 
 before_install:
-    - sudo tlmgr install dvisvgm && tlmgr path add
+    - sudo -i tlmgr update all
+    - install dvisvgm
+    - sudo tlmgr path add
 
 notifications:
   email:
