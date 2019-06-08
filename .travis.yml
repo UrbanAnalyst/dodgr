@@ -1,5 +1,6 @@
 language: R
 cache: packages
+sudo: required
 
 addons:
     apt:
