@@ -38,6 +38,10 @@ matrix:
         - os: osx
           r: devel
 
+before_install:
+    - tlmgr install dvisvgm
+    - tlmgr path add
+
 notifications:
   email:
     on_success: change
