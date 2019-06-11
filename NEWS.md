@@ -1,6 +1,7 @@
 # v0.2.0.001
 
 Minor changes:
+- `weight_streetnet` for `sc` objects automatically adds component column
 - bug fix in `weight_streetnet.sc(..., wt_profile = 1)`
 - bug fix in `dodgr_full_cycles` for `SC` class objects
 

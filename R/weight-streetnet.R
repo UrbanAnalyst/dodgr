@@ -479,6 +479,9 @@ weight_streetnet.sc <- weight_streetnet.SC <- function (x, wt_profile = "bicycle
                            wt_profile_file) %>%         # modify time
         rm_duplicated_edges () %>%
         sc_duplicate_edges (wt_profile)
+    cl <- class (graph)
+    graph <- dodgr_components (graph) # strips tbl class 
+    class (graph) <- cl
 
     gr_cols <- dodgr_graph_cols (graph)
     graph <- graph [which (!is.na (graph [[gr_cols$w]])), ]
