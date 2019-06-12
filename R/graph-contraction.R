@@ -204,9 +204,13 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 #' dim (graph0); dim (graph3)
 dodgr_uncontract_graph <- function (graph)
 {
-    px <- attr (graph, "px") # processx R6 object
-    while (px$is_alive ())
-        px$wait ()
+    px <- NULL
+    if ("px" %in% names (attributes (graph)))
+    {
+        px <- attr (graph, "px") # processx R6 object
+        while (px$is_alive ())
+            px$wait ()
+    }
 
     edge_map <- get_edge_map (graph)
 
