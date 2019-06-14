@@ -46,6 +46,7 @@ reference:
     - merge_directed_flows
     - write_dodgr_wt_profile
   - title: Caching
+    contents:
     - dodgr_cache_off
     - dodgr_cache_on
     - clear_dodgr_cache
