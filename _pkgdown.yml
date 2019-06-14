@@ -35,9 +35,7 @@ reference:
     - igraph_to_dodgr
   - title: Miscellaneous Functions
     contents:
-    - clear_dodgr_cache
     - compare_heaps
-    - dodgr_cache_off
     - dodgr_flowmap
     - dodgr_full_cycles
     - dodgr_fundamental_cycles
@@ -47,6 +45,10 @@ reference:
     - match_points_to_graph
     - merge_directed_flows
     - write_dodgr_wt_profile
+  - title: Caching
+    - dodgr_cache_off
+    - dodgr_cache_on
+    - clear_dodgr_cache
   - title: Package data
     contents:
     - hampi

@@ -125,13 +125,26 @@ clear_dodgr_cache <- function ()
 
 #' dodgr_cache_off
 #'
-#' Turn all all dodgr caching in current session. This is useful is speed is
-#' paramount, and if graph contraction is not needed.
+#' Turn off all dodgr caching in current session. This is useful is speed is
+#' paramount, and if graph contraction is not needed. Caching can be switched
+#' back on with \link{dodgr_cache_on}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
 #' @export
 dodgr_cache_off <- function () {
-    Sys.setenv ("DODGR_CACHE" = "FALSE")    # nocov
+    Sys.setenv ("DODGR_CACHE" = "FALSE")
 }
+
+#' dodgr_cache_on
+#'
+#' Turn on all dodgr caching in current session. This will only have an effect
+#' after caching has been turned off with \link{dodgr_cache_off}.
+#' @return Nothing; the function invisibly returns `TRUE` if successful.
+#' @export
+dodgr_cache_on <- function () {
+    Sys.setenv ("DODGR_CACHE" = "TRUE")
+}
+
+
 
 is_dodgr_cache_on <- function () {
     as.logical (Sys.getenv ("DODGR_CACHE", unset = "TRUE"))

@@ -10,6 +10,7 @@ dodgr_cache_off()
 Nothing; the function invisibly returns \code{TRUE} if successful.
 }
 \description{
-Turn all all dodgr caching in current session. This is useful is speed is
-paramount, and if graph contraction is not needed.
+Turn off all dodgr caching in current session. This is useful is speed is
+paramount, and if graph contraction is not needed. Caching can be switched
+back on with \link{dodgr_cache_on}.
 }

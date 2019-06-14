@@ -96,4 +96,6 @@ test_that("cache off", {
                                                               from = pts,
                                                               dens = rep (1, n)))
 
+              expect_silent (dodgr_cache_on ())
+
 })
