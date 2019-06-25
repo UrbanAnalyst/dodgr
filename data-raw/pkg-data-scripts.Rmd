@@ -65,11 +65,13 @@ nms <- sapply (weighting_profiles, function (i) i [1, 1])
 
 wt_ls <- c (95, 80, 95, 95, 60, 50, 40, 30, 30, 30) # living street
 wt_br <- c (100, 100, 50, 70, 0, 0, 0, 0, 0, 0) # bridleway
-wt_fw <- c (100, 100, 100, 90, 0, 0, 0, 0, 0, 0) # bridleway
-names (wt_ls) <- names (wt_br) <- names (wt_fw) <- nms
+wt_fw <- c (100, 100, 100, 90, 0, 0, 0, 0, 0, 0) # footway
+wt_ped <- c (100, 20, 100, 80, 0, 0, 0, 0, 0, 0) # pedestrian
+names (wt_ls) <- names (wt_br) <- names (wt_fw) <- names (wt_ped) <- nms
 newrows <- data.frame ("living_street" = wt_ls,
                        "bridleway" = wt_br,
-                       "footway" = wt_fw)
+                       "footway" = wt_fw,
+                       "pedestrian" = wt_ped)
 weighting_profiles <- lapply (weighting_profiles, function (i) {
             newdat <- t (newrows [rownames (newrows) == i [1, 1], ])
             newdat <- cbind (i [seq (ncol (newrows)), 1],
@@ -156,6 +158,7 @@ speeds [ways == "path"]             <- 12
 speeds [ways == "steps"]            <- 4
 speeds [ways == "bridleway"]        <- 8
 speeds [ways == "footway"]          <- 4
+speeds [ways == "pedestrian"]       <- 4
 weighting_profiles$max_speed [weighting_profiles$name == "bicycle"] <- speeds
 
 # wheelchair
@@ -168,6 +171,7 @@ speeds [ways == "track"]            <- 2
 speeds [ways == "steps"]            <- NA_real_
 speeds [ways == "bridleway"]        <- NA_real_
 speeds [ways == "footway"]          <- 4
+speeds [ways == "pedestrian"]       <- 4
 weighting_profiles$max_speed [weighting_profiles$name == "wheelchair"] <- speeds
 
 # horse
