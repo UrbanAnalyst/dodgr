@@ -19,7 +19,6 @@ write_dodgr_wt_profile <- function (file = NULL)
     con <- file (file, open = "wt")
 
     sc <- summary (con)
-    d <- dirname (sc$description)
     if (!sc [["can write"]] == "yes")
         stop ("Unable to write to connection ", sc$description) # nocov
 
@@ -66,7 +65,7 @@ get_profile <- function (wt_profile, file = NULL)
         # nocov end
     } else
     {
-        # foot, horse, wheelchair, bicycle, moped, 
+        # foot, horse, wheelchair, bicycle, moped,
         # motorcycle, motorcar, goods, hgv, psv
         wt_profile <- match.arg (tolower (wt_profile), prf_names)
         wp <- profiles [profiles$name == wt_profile, ]

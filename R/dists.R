@@ -305,7 +305,7 @@ make_vert_map <- function (graph, gr_cols, xy = FALSE)
         res <- data.frame (vert = paste0 (verts [indx]),
                            id = seq (indx) - 1,
                            stringsAsFactors = FALSE)
-    } else 
+    } else
     {
         verts_x <- c (graph [[gr_cols$xfr]], graph [[gr_cols$xto]])
         verts_y <- c (graph [[gr_cols$yfr]], graph [[gr_cols$yto]])

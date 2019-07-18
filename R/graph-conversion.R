@@ -168,7 +168,8 @@ igraph_to_dodgr <- function (graph)
         vi [index] <- NULL
     vi <- data.frame (do.call (cbind, vi), stringsAsFactors = FALSE)
 
-    res <- data.frame (cbind (igraph::get.edgelist (graph), do.call (cbind, ei)),
+    res <- data.frame (cbind (igraph::get.edgelist (graph),
+                              do.call (cbind, ei)),
                        stringsAsFactors = FALSE)
     names (res) [1:2] <- c ("from_id", "to_id")
 
@@ -217,7 +218,8 @@ convert_col <- function (x, n = 3)
 dodgr_to_tidygraph <- function (graph)
 {
     if (!requireNamespace ("tidygraph"))
-        stop ("dodgr_to_tidygraph requires the tidygraph package to be installed.") # nocov
+        stop (paste0 ("dodgr_to_tidygraph requires the ",       # nocov
+                      "tidygraph package to be installed."))    # nocov
 
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()

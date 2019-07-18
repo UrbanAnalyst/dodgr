@@ -36,7 +36,8 @@ sc_edge_dist <- function (graph)
     .vx0_z <- .vx1_z <- NULL
 
     graph$d <- geodist::geodist (graph [, c (".vx0_x", ".vx0_y")],
-                                 graph [, c (".vx1_x", ".vx1_y")], paired = TRUE)
+                                 graph [, c (".vx1_x", ".vx1_y")],
+                                 paired = TRUE)
     if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph))
         graph <- dplyr::mutate (graph, "dz" = .vx1_z - .vx0_z) %>%
             dplyr::select (-c(.vx0_z, .vx1_z))
@@ -162,7 +163,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     wp_index <- wp_index [graph_index]
     maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
     maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i) 
+    graph$maxspeed <- apply (maxspeed, 1, function (i)
                              ifelse (all (is.na (i)),
                                      NA_real_,
                                      min (i, na.rm = TRUE)))
@@ -191,13 +192,13 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     maxspeed <- cbind (as.numeric (graph$maxspeed),
                        rep (NA_real_, nrow (graph)))
     maxspeed [graph_index, 2] <- surf_speeds [surf_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i) 
+    graph$maxspeed <- apply (maxspeed, 1, function (i)
                              ifelse (all (is.na (i)),
                                      NA_real_,
                                      min (i, na.rm = TRUE)))
 
     graph$surface <- NULL
-    
+
     return (graph)
 }
 
@@ -251,7 +252,7 @@ times_by_incline <- function (graph, wt_profile)
 {
     if (wt_profile == "foot")
     {
-        # Uses 
+        # Uses
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
         if ("dz" %in% names (graph))
         {
@@ -271,9 +272,9 @@ times_by_incline <- function (graph, wt_profile)
         if ("dz" %in% names (graph))
         {
             index <- which (graph$dz > 0)
-            graph$time [index] <- graph$time [index] * 
+            graph$time [index] <- graph$time [index] *
                 (1 + 11 * graph$dz [index] / graph$d [index])
-            graph$time_weighted [index] <- graph$time_weighted [index] * 
+            graph$time_weighted [index] <- graph$time_weighted [index] *
                 (1 + 11 * graph$dz [index] / graph$d [index])
         }
         # ... TODO: Downhill
@@ -297,7 +298,7 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
     oles <- x$object_link_edge %>% dplyr::filter (object_ %in% objs$object_)
     # Then the actual nodes with the traffic lights
     nodes <- traffic_signal_nodes (x)
-    # Increment waiting times for edges ending at those nodes 
+    # Increment waiting times for edges ending at those nodes
     index <- which (graph$edge_ %in% oles$edge_ &
                     graph$.vx1 %in% nodes)
     graph$time [index] <- graph$time [index] + wait
@@ -307,7 +308,7 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
     index2 <- which (graph$.vx0 %in% nodes &
                      !graph$.vx0 %in% graph$.vx0 [index])
     graph$time [index2] <- graph$time [index2] + wait
-    
+
     return (graph)
 }
 
@@ -319,7 +320,8 @@ rm_duplicated_edges <- function (graph)
                     which (duplicated (ft, fromLast = TRUE)))
 
     index <- cbind (which (duplicated (graph [, c (".vx0", ".vx1")])),
-                    which (duplicated (graph [, c (".vx0", ".vx1")], fromLast = TRUE)))
+                    which (duplicated (graph [, c (".vx0", ".vx1")],
+                                       fromLast = TRUE)))
     removes <- apply (index, 1, function (i)
                       ifelse (graph$time [i [1] ] > graph$time [i [2] ],
                               i [1], i [2]))
@@ -377,7 +379,7 @@ get_key_val_pair <- function (x, kv)
 
     res <- NULL
     if (any (xo == length (kv)))
-        res <- names (xo) [which (xo == length (kv))] # nocov - not in any test data
+        res <- names (xo) [which (xo == length (kv))] # nocov - not tested
 
     return (res)
 }
@@ -460,14 +462,15 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         res$graph$old_edge_in <- res$graph$old_edge_out <- NULL
 
         index <- which (graph$.vx0 %in% res$junction_vertices)
-        v_start <- graph$.vx0 [index]
+        #v_start <- graph$.vx0 [index]
         graph$.vx0 [index] <- paste0 (graph$.vx0 [index], "_start")
         index <- which (graph$.vx1 %in% res$junction_vertices)
-        v_end <- graph$.vx1 [index]
+        #v_end <- graph$.vx1 [index]
         graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
 
         # pad out extra columns of res to match any extra in original graph
-        resbind <- data.frame (array (NA, dim = c (nrow (res$graph), ncol (graph))))
+        resbind <- data.frame (array (NA, dim = c (nrow (res$graph),
+                                                   ncol (graph))))
         names (resbind) <- names (graph)
         resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
         graph <- rbind (graph, resbind)

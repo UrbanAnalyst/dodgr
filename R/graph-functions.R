@@ -13,7 +13,7 @@ dodgr_graph_cols <- function (graph)
 {
     nms <- names (graph)
     component <- grep ("comp", nms) %>% null_to_na ()
-    if (methods::is (graph, "dodgr_streetnet") & 
+    if (methods::is (graph, "dodgr_streetnet") &
         !methods::is (graph, "dodgr_streetnet_sc") & ncol (graph) >= 11)
     {
         # columns are always identically structured
@@ -86,8 +86,8 @@ dodgr_graph_cols <- function (graph)
 
     ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col, timew_col,
               xfr, yfr, xto, yto, component)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time", "time_weighted",
-                      "xfr", "yfr", "xto", "yto", "component")
+    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time",
+                      "time_weighted", "xfr", "yfr", "xto", "yto", "component")
     class (ret) <- c (class (ret), "graph_columns")
 
     # This is passed to many C++ routines, in which case it needs to be
@@ -312,10 +312,8 @@ dodgr_sample <- function (graph, nverts = 1000)
     to <- find_to_id_col (graph)
     verts <- unique (c (graph [, fr], graph [, to]))
     gr_cols <- dodgr_graph_cols (graph)
-    edge_is_na <- FALSE
     if (is.na (gr_cols$edge_id))
     {
-        edge_is_na <- TRUE
         graph$edge_id <- seq (nrow (graph))
         gr_cols <- dodgr_graph_cols (graph)
     }
@@ -324,7 +322,7 @@ dodgr_sample <- function (graph, nverts = 1000)
     {
         graph2 <- convert_graph (graph, gr_cols)
         if ("component" %in% names (graph))
-            graph2$component = graph$component
+            graph2$component <- graph$component
         indx <- match (rcpp_sample_graph (graph2, nverts), graph2$edge_id)
         graph <- graph [sort (indx), ]
     }

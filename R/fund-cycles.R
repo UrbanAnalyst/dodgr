@@ -149,7 +149,7 @@ get_bb_list <- function (bb, ndivs, expand = 0.05)
                                              diff (bb [, colnum]),
                                          numeric (1)))
         bb <- cbind (bb [1:ndivs], bb [2:(ndivs + 1)])
-        t (apply (bb, 1, function (i) 
+        t (apply (bb, 1, function (i)
                   mean (i) + c (-0.5 - expand, 0.5 + expand) * diff (i)))
     }
     bb_lons <- divide_bb_vec (bb, ndivs, colnum = 1, expand = expand)
@@ -262,10 +262,10 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                         index <- which (edge_map$edge_new %in% j)
                         edges <- edge_map$edge_old [index]
                         j <- match (edges, graph [[gr_cols$edge_id]])
-                        if ((graph [[gr_cols$from]] [j [1] ] ==
-                             graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
-                            (graph [[gr_cols$from]] [j [1] ] ==
-                             graph [[gr_cols$to]] [j [2] ]))
+                        if ( (graph [[gr_cols$from]] [j [1] ] ==
+                              graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
+                             (graph [[gr_cols$from]] [j [1] ] ==
+                              graph [[gr_cols$to]] [j [2] ]))
                             j <- rev (j)
                     } else
                         j <- match (j, graph [[gr_cols$edge_id]])
@@ -309,7 +309,8 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
 {
     if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf")))
         stop ("lines must be an object of class 'sf' or 'sfc'")
-    if (!methods::is (sflines [[attr (sflines, "sf_column")]], "sfc_LINESTRING"))
+    if (!methods::is (sflines [[attr (sflines, "sf_column")]],
+                      "sfc_LINESTRING"))
         stop ("lines must be an 'sfc_LINESTRING' object")
 
     graph <- weight_streetnet (sflines, wt_profile = 1)
@@ -351,7 +352,9 @@ polys_to_sfc <- function (x, sflines)
     x <- lapply (x, function (i) {
                      res <- as.matrix (i [, 2:3])
                      colnames (res) <- NULL
-                     structure (list (res), class = c ("XY", "POLYGON", "sfg")) })
+                     structure (list (res),
+                                class = c ("XY", "POLYGON", "sfg"))
+                     })
     attr (x, "n_empty") <- 0
     attr(x, "precision") <- 0.0
     class(x) <- c ("sfc_POLYGON", "sfc")

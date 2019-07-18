@@ -91,8 +91,9 @@ find_xy_col <- function (graph, indx, x = TRUE)
     } else
     {
         coli <- grep ("y|lat", names (graph) [indx], ignore.case = TRUE)
-        if (length (coli) > 1) # silicate still only matches once here, so nocov:
-            coli <- grep ("y$", names (graph) [indx], ignore.case = TRUE) # nocov
+        if (length (coli) > 1) # silicate only matches once here, so nocov:
+            coli <- grep ("y$", names (graph) [indx],       # nocov
+                          ignore.case = TRUE)               # nocov
     }
 
     indx [coli]
@@ -247,8 +248,8 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE)
     if (!all (c ("id", "x", "y") %in% names (verts)))
     {
         message ("First argument to match_pts_to_graph should be result of ",
-                 "dodgr_vertices;\npresuming you've submitted the network itself ",
-                 "and will now try extracting the vertices")
+                 "dodgr_vertices;\npresuming you've submitted the network ",
+                 "itself and will now try extracting the vertices")
         verts <- dodgr_vertices (verts)
     }
     if (!(is.matrix (xy) | is.data.frame (xy)))
@@ -306,8 +307,9 @@ match_points_to_graph <- function (verts, xy, connected = FALSE)
 remap_verts_with_turn_penalty <- function (graph, pts, from = TRUE)
 {
     if (!is (graph, "dodgr_streetnet_sc"))
-        stop ("vertices with turn angles can only be re-mapped for street ",      # nocov
-              "networks obtained via 'dodgr_streetnet_sc' -> 'weight_streetnet'") # nocov
+        stop ("vertices with turn angles can only be re-mapped for ",   # nocov
+              "street networks obtained via 'dodgr_streetnet_sc' -> ",  # nocov
+              "'weight_streetnet'")                                     # nocov
 
     suffix <- ifelse (from, "_start", "_end")
     suffix_rgx <- paste0 (suffix, "$")
