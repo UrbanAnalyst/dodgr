@@ -10,16 +10,16 @@
 #' @param verts Optional list of vertices to be retained as routing points.
 #' These must match the `from` and `to` columns of `graph`.
 #'
-#' @return A list of two items: `graph` containing contracted version of
-#' the original `graph`, converted to a standardised format, and
-#' `edge_map`, a two-column matrix mapping all newly contracted edges onto
-#' corresponding edges in original (uncontracted) graph.
+#' @return A contracted version of the original `graph`, containing the same
+#' number of columns, but with each row representing an edge between two
+#' junction vertices (or between the submitted `verts`, which may or may not be
+#' junctions).
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
-#' nrow (graph) # 5,845
+#' nrow (graph) # 5,973
 #' graph <- dodgr_contract_graph (graph)
-#' nrow (graph) # 686
+#' nrow (graph) # 662
 dodgr_contract_graph <- function (graph, verts = NULL)
 {
     if (nrow (graph) == 0)

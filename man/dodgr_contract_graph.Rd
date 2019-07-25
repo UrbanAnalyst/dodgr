@@ -16,10 +16,10 @@ similarly labelled columns of spatial coordinates (for example
 These must match the \code{from} and \code{to} columns of \code{graph}.}
 }
 \value{
-A list of two items: \code{graph} containing contracted version of
-the original \code{graph}, converted to a standardised format, and
-\code{edge_map}, a two-column matrix mapping all newly contracted edges onto
-corresponding edges in original (uncontracted) graph.
+A contracted version of the original \code{graph}, containing the same
+number of columns, but with each row representing an edge between two
+junction vertices (or between the submitted \code{verts}, which may or may not be
+junctions).
 }
 \description{
 Removes redundant (straight-line) vertices from graph, leaving only junction
@@ -27,7 +27,7 @@ vertices.
 }
 \examples{
 graph <- weight_streetnet (hampi)
-nrow (graph) # 5,845
+nrow (graph) # 5,973
 graph <- dodgr_contract_graph (graph)
-nrow (graph) # 686
+nrow (graph) # 662
 }
