@@ -55,6 +55,11 @@
 #' to submit to the \link{dodgr_times} function, and not for any other `dodgr`
 #' functions nor forms of network analysis.
 #'
+#' @note The resultant graph includes only those edges for which the given
+#' weighting profile specifies finite edge weights. Any edges of types not
+#' present in a given weighting profile are automatically removed from the
+#' weighted streetnet.
+#'
 #' @seealso \link{write_dodgr_wt_profile}, \link{dodgr_times}
 #'
 #' @export
