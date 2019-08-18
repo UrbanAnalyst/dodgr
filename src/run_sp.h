@@ -51,7 +51,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 Rcpp::NumericMatrix rcpp_get_sp_iso (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        Rcpp::IntegerVector toi_in,
         const double dlim,
         const std::string& heap_type);
 

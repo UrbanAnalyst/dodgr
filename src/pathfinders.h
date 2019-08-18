@@ -98,7 +98,6 @@ class PathFinder {
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 const unsigned int v0,
-                const std::vector <unsigned int> &to_index,
                 const double &dlim);
         void AStar (std::vector<double>& d,
                 std::vector<double>& w,

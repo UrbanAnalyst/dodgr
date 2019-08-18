@@ -160,7 +160,6 @@ void PF::PathFinder::DijkstraLimit (
         std::vector<double>& w,
         std::vector<int>& prev,
         const unsigned int v0,
-        const std::vector <unsigned int> &to_index,
         const double &dlim)
 {
     const DGraphEdge *edge;
@@ -170,13 +169,6 @@ void PF::PathFinder::DijkstraLimit (
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert(v0, 0.0);
-
-    size_t n_reached = 0;
-    const size_t n_targets = to_index.size ();
-    bool *is_target = new bool [n];
-    std::fill (is_target, is_target + n, false);
-    for (auto t: to_index)
-        is_target [t] = true;
 
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
@@ -200,14 +192,8 @@ void PF::PathFinder::DijkstraLimit (
         {
             edge = vertices [v].outHead;
             scan_edges (edge, d, w, prev, m_open, m_closed, v);
-
-            if (is_target [v])
-                n_reached++;
-            if (n_reached == n_targets)
-                break;
         }
     } // end while nItems > 0
-    delete [] is_target;
 }
 
 void PF::PathFinder::AStar (std::vector<double>& d,
