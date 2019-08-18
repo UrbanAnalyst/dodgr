@@ -175,6 +175,13 @@ rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi_in, heap_type, 
     .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial)
 }
 
+#' rcpp_get_iso
+#'
+#' @noRd
+rcpp_get_iso <- function(graph, vert_map_in, fromi, toi_in, dlim, heap_type) {
+    .Call(`_dodgr_rcpp_get_iso`, graph, vert_map_in, fromi, toi_in, dlim, heap_type)
+}
+
 #' rcpp_get_sp_dists
 #'
 #' @noRd

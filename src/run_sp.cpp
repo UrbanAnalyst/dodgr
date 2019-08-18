@@ -121,6 +121,63 @@ struct OneDist : public RcppParallel::Worker
 };
 
 
+struct OneIso : public RcppParallel::Worker
+{
+    RcppParallel::RVector <int> dp_fromi;
+    const std::vector <unsigned int> toi;
+    const size_t nverts;
+    const std::shared_ptr <DGraph> g;
+    const double dlimit;
+    const std::string heap_type;
+
+    RcppParallel::RMatrix <double> dout;
+
+    // constructor
+    OneIso (
+            const Rcpp::IntegerVector fromi,
+            const std::vector <unsigned int> toi_in,
+            const size_t nverts_in,
+            const std::shared_ptr <DGraph> g_in,
+            const double dlimit_in,
+            const std::string & heap_type_in,
+            Rcpp::NumericMatrix dout_in) :
+        dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
+        g (g_in), dlimit (dlimit_in),
+        heap_type (heap_type_in), dout (dout_in)
+    {
+    }
+
+    // Parallel function operator
+    void operator() (std::size_t begin, std::size_t end)
+    {
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <int> prev (nverts);
+
+        for (std::size_t i = begin; i < end; i++)
+        {
+            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+
+            pathfinder->DijkstraLimit (d, w, prev, from_i, toi, dlimit);
+
+            for (size_t j = 0; j < toi.size (); j++)
+            {
+                if (w [toi [j]] < INFINITE_DOUBLE)
+                {
+                    dout (i, j) = d [toi [j]];
+                }
+            }
+        }
+    }
+                                   
+};
+
+
 size_t run_sp::make_vert_map (const Rcpp::DataFrame &vert_map_in,
         const std::vector <std::string> &vert_map_id,
         const std::vector <unsigned int> &vert_map_n,
@@ -211,6 +268,55 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_dist);
+    
+    return (dout);
+}
+
+//' rcpp_get_iso
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi_in,
+        const double dlim,
+        const std::string& heap_type)
+{
+    std::vector <unsigned int> toi =
+        Rcpp::as <std::vector <unsigned int> > ( toi_in);
+
+    Rcpp::NumericVector id_vec;
+    size_t nfrom = fromi.size ();
+    size_t nto = toi.size ();
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["w"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::map <std::string, unsigned int> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+            vert_map_n, vert_map);
+
+    std::vector <double> vx (nverts), vy (nverts);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
+            Rcpp::NumericVector::get_na ());
+    Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
+            static_cast <int> (nto), na_vec.begin ());
+
+    // Create parallel worker
+    OneIso one_iso (fromi, toi, nverts, g, dlim, heap_type, dout);
+
+    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
+            one_iso);
     
     return (dout);
 }
