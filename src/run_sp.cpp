@@ -126,7 +126,7 @@ struct OneIso : public RcppParallel::Worker
     RcppParallel::RVector <int> dp_fromi;
     const size_t nverts;
     const std::shared_ptr <DGraph> g;
-    const double dlimit;
+    const Rcpp::NumericVector dlimit;
     const std::string heap_type;
 
     RcppParallel::RMatrix <double> dout;
@@ -136,7 +136,7 @@ struct OneIso : public RcppParallel::Worker
             const Rcpp::IntegerVector fromi,
             const size_t nverts_in,
             const std::shared_ptr <DGraph> g_in,
-            const double dlimit_in,
+            const Rcpp::NumericVector dlimit_in,
             const std::string & heap_type_in,
             Rcpp::NumericMatrix dout_in) :
         dp_fromi (fromi), nverts (nverts_in),
@@ -155,21 +155,25 @@ struct OneIso : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
+        double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
+
         for (std::size_t i = begin; i < end; i++)
         {
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit);
+            pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
             for (size_t j = 0; j < nverts; j++)
             {
-                if (prev [j] < INFINITE_INT && w [j] < INFINITE_DOUBLE &&
-                        w [j] > dlimit)
+                if (prev [j] < INFINITE_INT && w [j] < INFINITE_DOUBLE)
                 {
-                    if (w [prev [j]] <= dlimit)
-                        dout (i, prev [j]) = w [prev [j]];
+                    for (auto k: dlimit)
+                    {
+                        if (w [j] > k && w [prev [j]] < k)
+                            dout (i, prev [j]) = k;
+                    }
                 }
             }
         }
@@ -279,7 +283,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        const double dlim,
+        Rcpp::NumericVector dlim,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;

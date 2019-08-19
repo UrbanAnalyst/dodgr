@@ -93,7 +93,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_iso
-Rcpp::NumericMatrix rcpp_get_iso(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, const double dlim, const std::string& heap_type);
+Rcpp::NumericMatrix rcpp_get_iso(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector dlim, const std::string& heap_type);
 RcppExport SEXP _dodgr_rcpp_get_iso(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP dlimSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -101,7 +101,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
-    Rcpp::traits::input_parameter< const double >::type dlim(dlimSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dlim(dlimSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_get_iso(graph, vert_map_in, fromi, dlim, heap_type));
     return rcpp_result_gen;

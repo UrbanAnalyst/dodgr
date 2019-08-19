@@ -24,8 +24,8 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
 {
     if (is.null (dlim))
         stop ("dlim must be specified")
-    if (!is.numeric (dlim) | length (dlim) > 1)
-        stop ("dlim must be a single numeric value")
+    if (!is.numeric (dlim))
+        stop ("dlim must be numeric")
 
     graph <- tbl_to_df (graph)
 
