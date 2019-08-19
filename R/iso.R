@@ -85,8 +85,16 @@ dmat_to_pts <- function (d, from, v, dlim)
         pts [[i]] <- lapply (dlim, function (j) {
                                  res <- pt_names [which (d [i, ] == j)]
                                  res <- v [match (res, v$id), ]
-                                 order_points (res, o)
-        })
+                                 if (nrow (res) > 0)
+                                 {
+                                     res$origin <- o$id
+                                     res <- order_points (res, o)
+                                     res$dlim <- j
+                                     res <- res [, c ("origin", "dlim",
+                                                      "id", "x", "y")]
+                                 }
+                                 return (res)
+            })
         names (pts [[i]]) <- paste (dlim)
     }
     names (pts) <- rownames (d)
@@ -111,6 +119,6 @@ order_points <- function (pts, origin)
     index <- which (dx == 0 & dy < 0)
     theta [index] <- 3 * pi / 2
 
-    pts <- pts [order (theta), c ("id", "x", "y")]
+    pts <- pts [order (theta), c ("origin", "id", "x", "y")]
     rbind (pts, pts [1, ])
 }
