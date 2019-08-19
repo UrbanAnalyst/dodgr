@@ -10,10 +10,10 @@ dodgr_isodists(graph, from = NULL, dlim = NULL, heap = "BHeap")
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Notes)}
 
-\item{from}{Vector or matrix of points \strong{from} which route distances are to
+\item{from}{Vector or matrix of points \strong{from} which isodistances are to
 be calculated (see Notes)}
 
-\item{dlim}{Desired limit of isodistance}
+\item{dlim}{Desired limits of isodistances in metres.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -21,10 +21,13 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 }
 \value{
-Isodistance points
+A list of lists of isodistances as points sorted around the central
+(origin) point. The first list of of \code{from} points, each member of which
+has a list item for each specified value of \code{dlim}.
 }
 \description{
-Isodistances from a specified point
+Isodistances from specified points. Function is fully vectorized to calculate
+accept vectors of central points and vectors of isodistance thresholds.
 }
 \examples{
 graph <- weight_streetnet (hampi)

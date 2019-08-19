@@ -1,17 +1,20 @@
 #' dodgr_isodists
 #'
-#' Isodistances from a specified point
+#' Isodistances from specified points. Function is fully vectorized to calculate
+#' accept vectors of central points and vectors of isodistance thresholds.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Notes)
-#' @param from Vector or matrix of points **from** which route distances are to
+#' @param from Vector or matrix of points **from** which isodistances are to
 #' be calculated (see Notes)
-#' @param dlim Desired limit of isodistance
+#' @param dlim Desired limits of isodistances in metres.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @return Isodistance points
+#' @return A list of lists of isodistances as points sorted around the central
+#' (origin) point. The first list of of \code{from} points, each member of which
+#' has a list item for each specified value of \code{dlim}.
 #'
 #' @export 
 #' @examples
@@ -27,6 +30,7 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
     if (!is.numeric (dlim))
         stop ("dlim must be numeric")
 
+    v <- dodgr_vertices (graph)
     graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
@@ -66,5 +70,47 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
         rownames (d) <- vert_map$vert
     colnames (d) <- vert_map$vert
 
-    return (d)
+    return (dmat_to_pts (d, from, v, dlim))
+}
+
+# convert distance matrix with values equal to various isodistances into list of
+# lists of points ordered around the central points
+dmat_to_pts <- function (d, from, v, dlim)
+{
+    pt_names <- colnames (d)
+    pts <- list ()
+    for (i in seq (nrow (d)))
+    {
+        o <- v [match (from [i], v$id), ]
+        pts [[i]] <- lapply (dlim, function (j) {
+                                 res <- pt_names [which (d [i, ] == j)]
+                                 res <- v [match (res, v$id), ]
+                                 order_points (res, o)
+        })
+        names (pts [[i]]) <- paste (dlim)
+    }
+    names (pts) <- rownames (d)
+    return (pts)
+}
+
+# order points around circle
+order_points <- function (pts, origin)
+{
+    dx <- pts$x - origin$x
+    dy <- pts$y - origin$y
+    theta <- rep (NA, nrow (pts))
+
+    index <- which (dx > 0 & dy >= 0)
+    theta [index] <- atan (dy [index] / dx [index])
+    index <- which (dx > 0 & dy < 0)
+    theta [index] <- 2 * pi + atan (dy [index] / dx [index])
+    index <- which (dx < 0)
+    theta [index] <- pi + atan (dy [index] / dx [index])
+    index <- which (dx == 0 & dy >= 0)
+    theta [index] <- 0
+    index <- which (dx == 0 & dy < 0)
+    theta [index] <- 3 * pi / 2
+
+    pts <- pts [order (theta), c ("id", "x", "y")]
+    rbind (pts, pts [1, ])
 }
