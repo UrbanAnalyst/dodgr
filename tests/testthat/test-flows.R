@@ -26,7 +26,7 @@ test_that("flows aggregate", {
 
     graph4 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows,
                                      contract = TRUE)
-    expect_true (all ((graph4$flow - graph3$flow) < 1e-12))
+    expect_true (all ((graph4$flow - graph3$flow) < 1e-6))
 
     expect_warning (graph4 <- dodgr_flows_aggregate (graph3, from = from,
                                                      to = to, flows = flows),
