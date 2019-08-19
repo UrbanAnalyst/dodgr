@@ -165,9 +165,11 @@ struct OneIso : public RcppParallel::Worker
 
             for (size_t j = 0; j < nverts; j++)
             {
-                if (w [j] < INFINITE_DOUBLE)
+                if (prev [j] < INFINITE_INT && w [j] < INFINITE_DOUBLE &&
+                        w [j] > dlimit)
                 {
-                    dout (i, j) = d [j];
+                    if (w [prev [j]] <= dlimit)
+                        dout (i, prev [j]) = w [prev [j]];
                 }
             }
         }
