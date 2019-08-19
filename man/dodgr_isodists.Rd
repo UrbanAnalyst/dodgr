@@ -4,7 +4,7 @@
 \alias{dodgr_isodists}
 \title{dodgr_isodists}
 \usage{
-dodgr_isodists(graph, from = NULL, heap = "BHeap")
+dodgr_isodists(graph, from = NULL, dlim = NULL, heap = "BHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -12,6 +12,8 @@ graph (see Notes)}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
 be calculated (see Notes)}
+
+\item{dlim}{Desired limit of isodistance}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
