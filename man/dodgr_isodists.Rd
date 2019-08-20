@@ -33,7 +33,7 @@ accept vectors of central points and vectors of isodistance thresholds.
 \examples{
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
-to <- sample (graph$to_id, size = 50)
-d <- dodgr_dists (graph, from = from, to = to)
+dlim <- c (1, 2, 5, 10, 20) * 100
+d <- dodgr_isodists (graph, from = from, dlim)
 # d is a 100-by-50 matrix of distances between `from` and `to`
 }
