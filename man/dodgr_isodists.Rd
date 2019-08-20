@@ -21,9 +21,10 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 }
 \value{
-A list of lists of isodistances as points sorted around the central
-(origin) point. The first list of of \code{from} points, each member of which
-has a list item for each specified value of \code{dlim}.
+A single \code{data.frame} of isodistances as points sorted anticlockwise
+around each origin (\code{from}) point, with columns denoting the \code{from} points
+and \code{dlim} value(s). The isodistances are given as \code{id} values of the series
+of points from each from point at the specified isodistance.
 }
 \description{
 Isodistances from specified points. Function is fully vectorized to calculate

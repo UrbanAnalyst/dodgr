@@ -12,9 +12,10 @@
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @return A list of lists of isodistances as points sorted around the central
-#' (origin) point. The first list of of \code{from} points, each member of which
-#' has a list item for each specified value of \code{dlim}.
+#' @return A single `data.frame` of isodistances as points sorted anticlockwise
+#' around each origin (`from`) point, with columns denoting the `from` points
+#' and `dlim` value(s). The isodistances are given as `id` values of the series
+#' of points from each from point at the specified isodistance.
 #'
 #' @export 
 #' @examples
@@ -87,10 +88,10 @@ dmat_to_pts <- function (d, from, v, dlim)
                                  res <- v [match (res, v$id), ]
                                  if (nrow (res) > 0)
                                  {
-                                     res$origin <- o$id
+                                     res$from <- o$id
                                      res <- order_points (res, o)
                                      res$dlim <- j
-                                     res <- res [, c ("origin", "dlim",
+                                     res <- res [, c ("from", "dlim",
                                                       "id", "x", "y")]
                                  }
                                  return (res)
@@ -98,6 +99,11 @@ dmat_to_pts <- function (d, from, v, dlim)
         names (pts [[i]]) <- paste (dlim)
     }
     names (pts) <- rownames (d)
+
+    # flatten lists
+    pts <- do.call (rbind, lapply (pts, function (i) do.call (rbind, i)))
+    rownames (pts) <- NULL
+
     return (pts)
 }
 
@@ -119,6 +125,6 @@ order_points <- function (pts, origin)
     index <- which (dx == 0 & dy < 0)
     theta [index] <- 3 * pi / 2
 
-    pts <- pts [order (theta), c ("origin", "id", "x", "y")]
+    pts <- pts [order (theta), c ("from", "id", "x", "y")]
     rbind (pts, pts [1, ])
 }
