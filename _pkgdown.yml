@@ -13,6 +13,7 @@ reference:
     - dodgr_distances
     - dodgr_times
     - dodgr_paths
+    - dodgr_isodists
     - dodgr_flows_aggregate
     - dodgr_flows_disperse
   - title: Functions to Obtain Graphs
