@@ -35,5 +35,4 @@ graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
 dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim)
-# d is a 100-by-50 matrix of distances between `from` and `to`
 }
