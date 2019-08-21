@@ -1,5 +1,8 @@
 # v0.2.0.00x
 
+Major changes:
+- Add `dodgr_isochrones` and `dodgr_isodistances` functions
+
 Minor changes:
 * Add "highway:pedestrian" to weighting profiles
 - `weight_streetnet` for `sc` objects automatically adds component column
