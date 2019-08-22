@@ -11,9 +11,9 @@ dodgr_isodists(graph, from = NULL, dlim = NULL, heap = "BHeap")
 graph (see Notes)}
 
 \item{from}{Vector or matrix of points \strong{from} which isodistances are to
-be calculated (see Notes)}
+be calculated.}
 
-\item{dlim}{Desired limits of isodistances in metres.}
+\item{dlim}{Vector of desired limits of isodistances in metres.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -23,12 +23,14 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \value{
 A single \code{data.frame} of isodistances as points sorted anticlockwise
 around each origin (\code{from}) point, with columns denoting the \code{from} points
-and \code{dlim} value(s). The isodistances are given as \code{id} values of the series
-of points from each from point at the specified isodistance.
+and \code{dlim} value(s). The isodistance contours are given as \code{id} values and
+associated coordinates of the series of points from each \code{from} point at the
+specified isodistances.
 }
 \description{
-Isodistances from specified points. Function is fully vectorized to calculate
-accept vectors of central points and vectors of isodistance thresholds.
+Calculate isodistance contours from specified points. Function is fully
+vectorized to calculate accept vectors of central points and vectors
+defining multiple isodistances.
 }
 \examples{
 graph <- weight_streetnet (hampi)

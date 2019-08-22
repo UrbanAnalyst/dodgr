@@ -10,10 +10,10 @@ dodgr_isochrones(graph, from = NULL, tlim = NULL, heap = "BHeap")
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Notes)}
 
-\item{from}{Vector or matrix of points \strong{from} which isodistances are to
-be calculated (see Notes)}
+\item{from}{Vector or matrix of points \strong{from} which isochrones are to
+be calculated.}
 
-\item{tlim}{Desired limits of isochrones in seconds}
+\item{tlim}{Vector of desired limits of isochrones in seconds}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -23,12 +23,14 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \value{
 A single \code{data.frame} of isochrones as points sorted anticlockwise
 around each origin (\code{from}) point, with columns denoting the \code{from} points
-and \code{tlim} value(s). The isochrones are given as \code{id} values of the series
-of points from each from point at the specified isodistance.
+and \code{tlim} value(s). The isochrones are given as \code{id} values and associated
+coordinates of the series of points from each \code{from} point at the specified
+isochrone times.
 }
 \description{
-Isochrones from specified points. Function is fully vectorized to calculate
-accept vectors of central points and vectors of isodistance thresholds.
+Calculate isochrone contours from specified points. Function is fully
+vectorized to calculate accept vectors of central points and vectors
+defining multiple isochrone thresholds.
 }
 \examples{
 \dontrun{

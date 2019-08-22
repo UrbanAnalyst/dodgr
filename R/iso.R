@@ -1,21 +1,23 @@
 #' dodgr_isodists
 #'
-#' Isodistances from specified points. Function is fully vectorized to calculate
-#' accept vectors of central points and vectors of isodistance thresholds.
+#' Calculate isodistance contours from specified points. Function is fully
+#' vectorized to calculate accept vectors of central points and vectors
+#' defining multiple isodistances.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Notes)
 #' @param from Vector or matrix of points **from** which isodistances are to
-#' be calculated (see Notes)
-#' @param dlim Desired limits of isodistances in metres.
+#' be calculated.
+#' @param dlim Vector of desired limits of isodistances in metres.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
 #' @return A single `data.frame` of isodistances as points sorted anticlockwise
 #' around each origin (`from`) point, with columns denoting the `from` points
-#' and `dlim` value(s). The isodistances are given as `id` values of the series
-#' of points from each from point at the specified isodistance.
+#' and `dlim` value(s). The isodistance contours are given as `id` values and
+#' associated coordinates of the series of points from each `from` point at the
+#' specified isodistances.
 #'
 #' @export 
 #' @examples
@@ -75,16 +77,20 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
 
 #' dodgr_isochrones
 #'
-#' Isochrones from specified points. Function is fully vectorized to calculate
-#' accept vectors of central points and vectors of isodistance thresholds.
+#' Calculate isochrone contours from specified points. Function is fully
+#' vectorized to calculate accept vectors of central points and vectors 
+#' defining multiple isochrone thresholds.
 #'
 #' @inherit dodgr_isodists
 #'
-#' @param tlim Desired limits of isochrones in seconds
+#' @param from Vector or matrix of points **from** which isochrones are to
+#' be calculated.
+#' @param tlim Vector of desired limits of isochrones in seconds
 #' @return A single `data.frame` of isochrones as points sorted anticlockwise
 #' around each origin (`from`) point, with columns denoting the `from` points
-#' and `tlim` value(s). The isochrones are given as `id` values of the series
-#' of points from each from point at the specified isodistance.
+#' and `tlim` value(s). The isochrones are given as `id` values and associated
+#' coordinates of the series of points from each `from` point at the specified
+#' isochrone times.
 #'
 #' @export 
 #' @examples
