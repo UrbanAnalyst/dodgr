@@ -155,6 +155,8 @@ void PF::PathFinder::Dijkstra (
     delete [] is_target;
 }
 
+// Modified pathfinder only out to specified distance limit. Done as separate
+// routine to avoid costs of the `if` clause in general non-limited case.
 void PF::PathFinder::DijkstraLimit (
         std::vector<double>& d,
         std::vector<double>& w,
