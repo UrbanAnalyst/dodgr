@@ -222,7 +222,7 @@ find_xy_col_simple <- function (dfr)
 #' matrix or \pkg{sf}-formatted `data.frame`.
 #' @param connected Should points be matched to the same (largest) connected
 #' component of graph? If `FALSE` and these points are to be used for a
-#' `dodgr` routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
+#' `dodgr` routing routine (\link{dodgr_dists}, \link{dodgr_paths}, or
 #' \link{dodgr_flows_aggregate}), then results may not be returned if points are
 #' not part of the same connected component. On the other hand, forcing them to
 #' be part of the same connected component may decrease the spatial accuracy of
