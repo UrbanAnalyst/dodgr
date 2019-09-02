@@ -72,7 +72,7 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
         rownames (d) <- vert_map$vert
     colnames (d) <- vert_map$vert
 
-    return (dmat_to_pts (d, from, v, dlim))
+    return (dmat_to_pts (d, from_index$id, v, dlim))
 }
 
 #' dodgr_isochrones
