@@ -61,6 +61,8 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
     }
 
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
+    if (from_index$id != vert_map$vert [from_index$index])
+        from_index$id <- vert_map$vert [from_index$index]
 
     graph <- convert_graph (graph, gr_cols)
 

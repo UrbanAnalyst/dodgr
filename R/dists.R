@@ -240,7 +240,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 
         id <- get_id_cols (pts)
         if (is.null (id))
-            id <- vert_map$vert [index] # from_index is 1-based
+            id <- vert_map$vert [index] # index is 1-based
     }
     list (index = index, id = id)
 }
