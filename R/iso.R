@@ -32,6 +32,24 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
     if (!is.numeric (dlim))
         stop ("dlim must be numeric")
 
+    dat <- iso_pre (graph, from, heap)
+
+    d <- rcpp_get_iso (dat$graph, dat$vert_map, dat$from_index$index,
+                       dlim, dat$heap)
+    # verts inside the isohull are flagged with -1, and are removed here:
+    d [d < 0] <- NA
+
+    if (!is.null (dat$from_index$id))
+        rownames (d) <- dat$from_index$id
+    else
+        rownames (d) <- dat$vert_map$vert
+    colnames (d) <- dat$vert_map$vert
+
+    return (dmat_to_pts (d, dat$from_index$id, dat$v, dlim))
+}
+
+iso_pre <- function (graph, from = NULL, heap = "BHeap")
+{
     v <- dodgr_vertices (graph)
     graph <- tbl_to_df (graph)
 
@@ -61,20 +79,14 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
     }
 
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
-    if (from_index$id != vert_map$vert [from_index$index + 1])
-        from_index$id <- vert_map$vert [from_index$index + 1]
 
     graph <- convert_graph (graph, gr_cols)
 
-    d <- rcpp_get_iso (graph, vert_map, from_index$index, dlim, heap)
-
-    if (!is.null (from_index$id))
-        rownames (d) <- from_index$id
-    else
-        rownames (d) <- vert_map$vert
-    colnames (d) <- vert_map$vert
-
-    return (dmat_to_pts (d, from_index$id, v, dlim))
+    list (v = v,
+          graph = graph,
+          vert_map = vert_map,
+          from_index = from_index,
+          heap = heap)
 }
 
 #' dodgr_isochrones
