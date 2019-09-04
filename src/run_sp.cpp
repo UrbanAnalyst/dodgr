@@ -173,6 +173,8 @@ struct OneIso : public RcppParallel::Worker
                     {
                         if (w [j] > k && w [prev [j]] < k)
                             dout (i, prev [j]) = k;
+                        else if (w [j] < k)
+                            dout (i, j) = -1.0; // flag verts within isohull
                     }
                 }
             }
