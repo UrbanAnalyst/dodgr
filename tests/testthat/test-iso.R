@@ -26,6 +26,19 @@ test_that("isodists", {
               expect_true (length (unique (d$dlim)) == length (dlim))
 })
 
+test_that ("errors", {
+              expect_silent (hsc <- sf_to_sc (hampi))
+              expect_silent (net <- weight_streetnet (hsc,
+                                                      wt_profile = "bicycle"))
+              npts <- 100
+              from <- sample (net$.vx0, size = npts)
+              dlim <- c (1, 2, 5, 10, 20) * 100
+              expect_error (d <- dodgr_isodists (net, from = from),
+                            "dlim must be specified")
+              expect_error (d <- dodgr_isodists (net, from = from, dlim = "a"),
+                            "dlim must be numeric")
+             })
+
 test_that("isochrones", {
               expect_silent (hsc <- sf_to_sc (hampi))
               # This all exists just to test the next line:
