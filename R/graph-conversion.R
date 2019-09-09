@@ -77,6 +77,8 @@ dodgr_to_sfc <- function (graph)
     names (graph) [gr_cols$xto] <- "to_lon"
     names (graph) [gr_cols$yto] <- "to_lat"
 
+    # need to remove the hash to avoid re-loading the hashed version:
+    attr (graph, "hashc") <- NULL
     gc <- dodgr_contract_graph (graph)
     edge_map <- get_edge_map (gc)
     geometry <- rcpp_aggregate_to_sf (graph, gc, edge_map)
