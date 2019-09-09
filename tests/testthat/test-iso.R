@@ -67,7 +67,9 @@ test_that("isoverts", {
               expect_silent (dd <- dodgr_isodists (net, from = from, dlim))
               expect_silent (d <- dodgr_isoverts (net, from = from, dlim))
               expect_identical (names (dd), names (d))
-              expect_identical (unique (d$from), unique (dd$from))
+              # isodists may not return all from pts, so the following may not
+              # always hold:
+              #expect_identical (unique (d$from), unique (dd$from))
               # dd has all vertices within isodistance hulls; d has only those
               # on the actual hulls, so far fewer vertices
               expect_true (nrow (d) > nrow (dd))
