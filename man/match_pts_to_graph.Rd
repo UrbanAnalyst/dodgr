@@ -15,7 +15,7 @@ matrix or \pkg{sf}-formatted \code{data.frame}.}
 
 \item{connected}{Should points be matched to the same (largest) connected
 component of graph? If \code{FALSE} and these points are to be used for a
-\code{dodgr} routine routine (\link{dodgr_dists}, \link{dodgr_paths}, or
+\code{dodgr} routing routine (\link{dodgr_dists}, \link{dodgr_paths}, or
 \link{dodgr_flows_aggregate}), then results may not be returned if points are
 not part of the same connected component. On the other hand, forcing them to
 be part of the same connected component may decrease the spatial accuracy of

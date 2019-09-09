@@ -23,7 +23,7 @@ test_that("isodists", {
               # some points may give no iso countours, so the following 2 may
               # not always be equal:
               expect_true ((npts - length (unique (d$from))) >= 0)
-              expect_true (length (unique (d$dlim)) == length (dlim))
+              expect_true (length (unique (d$dlim)) <= length (dlim))
 })
 
 test_that ("errors", {
@@ -57,5 +57,5 @@ test_that("isochrones", {
               # some points may give no iso countours, so the following 2 may
               # not always be equal:
               expect_true ((npts - length (unique (x$from))) >= 0)
-              expect_true (length (unique (x$tlim)) == length (tlim))
+              expect_true (length (unique (x$tlim)) <= length (tlim))
 })

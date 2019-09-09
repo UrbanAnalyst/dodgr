@@ -165,16 +165,32 @@ struct OneIso : public RcppParallel::Worker
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
+            // Get the set of terminal vertices.
+            std::set <int> terminal_verts;
+            for (auto j: prev)
+                if (w [j] > INFINITE_INT && w [j] < dlimit_max)
+                {
+                    if (prev [j] < INFINITE_INT)
+                    {
+                        terminal_verts.erase (j);
+                        terminal_verts.emplace (prev [j]);
+                    }
+                }
+
+
             for (size_t j = 0; j < nverts; j++)
             {
-                if (prev [j] < INFINITE_INT && w [j] < INFINITE_DOUBLE)
+                if (terminal_verts.find (j) != terminal_verts.end ())
+                {
+                    dout (i, j) = -w [j]; // Flag terminal verts with -d
+                } else if (prev [j] < INFINITE_INT && w [j] < dlimit_max)
                 {
                     for (auto k: dlimit)
                     {
                         if (w [j] > k && w [prev [j]] < k)
-                            dout (i, prev [j]) = k;
-                        else if (w [j] < k)
-                            dout (i, j) = -1.0; // flag verts within isohull
+                            dout (i, prev [j]) = -k; // flag isohull verts with -k
+                        else
+                            dout (i, j) = w [j]; // distance of other internal verts
                     }
                 }
             }
