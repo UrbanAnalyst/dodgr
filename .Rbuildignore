@@ -18,3 +18,4 @@ tests/valgrind-test.R$
 ^appveyor\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^codemeta\.json$
