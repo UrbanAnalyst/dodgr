@@ -41,9 +41,6 @@ test_that ("errors", {
 
 test_that("isochrones", {
               expect_silent (hsc <- sf_to_sc (hampi))
-              # This all exists just to test the next line:
-              requireNamespace ("geodist")
-              requireNamespace ("dplyr")
               expect_silent (net <- weight_streetnet (hsc,
                                                       wt_profile = "bicycle"))
               npts <- 100
@@ -58,4 +55,20 @@ test_that("isochrones", {
               # not always be equal:
               expect_true ((npts - length (unique (x$from))) >= 0)
               expect_true (length (unique (x$tlim)) <= length (tlim))
+})
+
+test_that("isoverts", {
+              expect_silent (hsc <- sf_to_sc (hampi))
+              expect_silent (net <- weight_streetnet (hsc,
+                                                      wt_profile = "bicycle"))
+              npts <- 100
+              from <- sample (net$.vx0, size = npts)
+              dlim <- c (1, 2, 5, 10, 20) * 100
+              expect_silent (dd <- dodgr_isodists (net, from = from, dlim))
+              expect_silent (d <- dodgr_isoverts (net, from = from, dlim))
+              expect_identical (names (dd), names (d))
+              expect_identical (unique (d$from), unique (dd$from))
+              # dd has all vertices within isodistance hulls; d has only those
+              # on the actual hulls, so far fewer vertices
+              expect_true (nrow (d) > nrow (dd))
 })
