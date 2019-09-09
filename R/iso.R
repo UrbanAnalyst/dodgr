@@ -34,8 +34,16 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
 
     dat <- iso_pre (graph, from, heap)
 
+    # expand dlim to an extra value to capture max boundary
+    if (length (dlim) == 1)
+        dlim_exp <- c (dlim, dlim + dlim / 4)
+    else
+        dlim_exp <- c (dlim, dlim [length (dlim)] + dlim [length (dlim)] -
+                       dlim [length (dlim) - 1])
+
     d <- rcpp_get_iso (dat$graph, dat$vert_map, dat$from_index$index,
-                       sort (dlim), dat$heap)
+                       sort (dlim_exp), dat$heap)
+    d [d > max (dlim)] <- NA
 
     if (!is.null (dat$from_index$id))
         rownames (d) <- dat$from_index$id
@@ -185,9 +193,18 @@ dodgr_isoverts <- function (graph, from = NULL, dlim = NULL, tlim = NULL,
 
     dat <- iso_pre (graph, from, heap)
 
+    # expand dlim to an extra value to capture max boundary
+    if (length (dlim) == 1)
+        dlim_exp <- c (dlim, dlim + dlim / 4)
+    else
+        dlim_exp <- c (dlim, dlim [length (dlim)] + dlim [length (dlim)] -
+                       dlim [length (dlim) - 1])
+
     d <- rcpp_get_iso (dat$graph, dat$vert_map, dat$from_index$index,
-                       sort (dlim), dat$heap)
+                       sort (dlim_exp), dat$heap)
+    d [d > max (dlim)] <- NA
     index <- which (!is.na (d))
+    d [index] [d [index] < 0] <- -d [index] [d [index] < 0]
 
     if (!is.null (dat$from_index$id))
         rownames (d) <- dat$from_index$id
