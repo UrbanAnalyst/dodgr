@@ -37,6 +37,65 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
     .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
 }
 
+#' rcpp_aggregate_files
+#'
+#' @param file_names List of fill names of files (that is, with path) provided
+#' from R, coz otherwise this is C++17 with an added library flag.
+#' @param len Length of flows, which is simply the number of edges in the
+#' graph.
+#'
+#' Each parallel flow aggregation worker dumps results to a randomly-named
+#' file. This routine reassembles those results into a single aggregate vector.
+#'
+#' @noRd
+rcpp_aggregate_files <- function(file_names, len) {
+    .Call(`_dodgr_rcpp_aggregate_files`, file_names, len)
+}
+
+#' rcpp_flows_aggregate_par
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param toi Index into vert_map_in of vertex numbers
+#' @param tol Relative tolerance in terms of flows below which targets
+#' (to-vertices) are not considered.
+#'
+#' @note The parallelisation is achieved by dumping the results of each thread
+#' to a file, with aggregation performed at the end by simply reading back and
+#' aggregating all files. There is no way to aggregate into a single vector
+#' because threads have to be independent. The only danger with this approach
+#' is that multiple threads may generate the same file names, but with names 10
+#' characters long, that chance should be 1 / 62 ^ 10.
+#'
+#' @noRd
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type) {
+    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type))
+}
+
+#' rcpp_flows_disperse
+#'
+#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
+#' destinations from given set of origins, with flows attenuated by distance from
+#' those origins.
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param k Coefficient of (current proof-of-principle-only) exponential
+#' distance decay function.  If value of \code{k<0} is given, a standard
+#' logistic polynomial will be used.
+#'
+#' @note The flow data to be used for aggregation is a matrix mapping flows
+#' betwen each pair of from and to points.
+#'
+#' @noRd
+rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
+    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, heap_type)
+}
+
 #' @noRd
 rcpp_fundamental_cycles <- function(graph, verts) {
     .Call(`_dodgr_rcpp_fundamental_cycles`, graph, verts)
@@ -209,65 +268,6 @@ rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
 #' @noRd
 rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
-}
-
-#' rcpp_aggregate_files
-#'
-#' @param file_names List of fill names of files (that is, with path) provided
-#' from R, coz otherwise this is C++17 with an added library flag.
-#' @param len Length of flows, which is simply the number of edges in the
-#' graph.
-#'
-#' Each parallel flow aggregation worker dumps results to a randomly-named
-#' file. This routine reassembles those results into a single aggregate vector.
-#'
-#' @noRd
-rcpp_aggregate_files <- function(file_names, len) {
-    .Call(`_dodgr_rcpp_aggregate_files`, file_names, len)
-}
-
-#' rcpp_flows_aggregate_par
-#'
-#' @param graph The data.frame holding the graph edges
-#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
-#' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
-#' @param toi Index into vert_map_in of vertex numbers
-#' @param tol Relative tolerance in terms of flows below which targets
-#' (to-vertices) are not considered.
-#'
-#' @note The parallelisation is achieved by dumping the results of each thread
-#' to a file, with aggregation performed at the end by simply reading back and
-#' aggregating all files. There is no way to aggregate into a single vector
-#' because threads have to be independent. The only danger with this approach
-#' is that multiple threads may generate the same file names, but with names 10
-#' characters long, that chance should be 1 / 62 ^ 10.
-#'
-#' @noRd
-rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type) {
-    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type))
-}
-
-#' rcpp_flows_disperse
-#'
-#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
-#' destinations from given set of origins, with flows attenuated by distance from
-#' those origins.
-#'
-#' @param graph The data.frame holding the graph edges
-#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
-#' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
-#' @param k Coefficient of (current proof-of-principle-only) exponential
-#' distance decay function.  If value of \code{k<0} is given, a standard
-#' logistic polynomial will be used.
-#'
-#' @note The flow data to be used for aggregation is a matrix mapping flows
-#' betwen each pair of from and to points.
-#'
-#' @noRd
-rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
-    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, heap_type)
 }
 
 #' rcpp_gen_hash
