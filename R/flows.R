@@ -42,6 +42,11 @@ contract_graph_with_pts <- function (graph, from, to)
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param tol Relative tolerance below which flows towards `to` vertices are not
+#' considered. This will generally have no effect, but can provide speed gains
+#' when flow matrices represent spatial interaction models, in which case this
+#' parameter effectively reduces the radius from each `from` point over which
+#' flows are aggregated. To remove any such effect, set `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @return Modified version of graph with additonal `flow` column added.
 #'
@@ -113,7 +118,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' }
 #' @export
 dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
-                                   heap = 'BHeap', quiet = TRUE)
+                                   heap = "BHeap", tol = 1e-12, quiet = TRUE)
 {
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
@@ -180,7 +185,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     dirtxt <- file.path (tempdir (), "a")
     dirtxt <- substr (dirtxt, 1, nchar (dirtxt) - 1)
     rcpp_flows_aggregate_par (graph2, vert_map, from_index, to_index,
-                              flows, dirtxt, heap)
+                              flows, tol, dirtxt, heap)
     files <- list.files (tempdir (), pattern = "flow_", full.names = TRUE)
     graph$flow <- rcpp_aggregate_files (files, nrow (graph))
     junk <- file.remove (files) # nolint

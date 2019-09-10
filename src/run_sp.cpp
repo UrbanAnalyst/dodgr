@@ -510,6 +510,7 @@ struct OneFlow : public RcppParallel::Worker
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
+    const double tol;
     const std::string dirtxt;
     const std::string heap_type;
 
@@ -524,13 +525,14 @@ struct OneFlow : public RcppParallel::Worker
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
+            const double tol_in,
             const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), toi (toi_in), flows (flows_in), vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
-        nverts (nverts_in), nedges (nedges_in), dirtxt (dirtxt_in),
-        heap_type (heap_type_in), g (g_in)
+        nverts (nverts_in), nedges (nedges_in), tol (tol_in),
+        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
     {
     }
 
@@ -570,15 +572,36 @@ struct OneFlow : public RcppParallel::Worker
 
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
 
-            pathfinder->Dijkstra (d, w, prev, from_i, toi);
-            for (size_t j = 0; j < toi.size (); j++)
-            {
-                if (from_i != toi [j]) // Exclude self-flows
+            // reduce toi to only those within tolerance limt
+            double fmax = 0.0;
+            for (size_t j = 0; j < flows.ncol (); j++)
+                if (flows (i, j) > fmax)
+                    fmax = flows (i, j);
+            const double flim = fmax * tol;
+            size_t nto = 0;
+            for (size_t j = 0; j < flows.ncol (); j++)
+                if (flows (i, j) > flim)
+                    nto++;
+
+            std::vector <unsigned int> toi_reduced, toi_index;
+            toi_reduced.reserve (nto);
+            toi_index.reserve (nto);
+            for (size_t j = 0; j < flows.ncol (); j++)
+                if (flows (i, j) > flim)
                 {
-                    double flow_ij = flows (i, j);
-                    if (w [toi [j]] < INFINITE_DOUBLE && flow_ij > 0.0)
+                    toi_index.push_back (j);
+                    toi_reduced.push_back (toi [j]);
+                }
+
+            pathfinder->Dijkstra (d, w, prev, from_i, toi_reduced);
+            for (size_t j = 0; j < toi_reduced.size (); j++)
+            {
+                if (from_i != toi_reduced [j]) // Exclude self-flows
+                {
+                    double flow_ij = flows (i, toi_index [j]);
+                    if (w [toi_reduced [j]] < INFINITE_DOUBLE && flow_ij > 0.0)
                     {
-                        int target = static_cast <int> (toi [j]); // can equal -1
+                        int target = static_cast <int> (toi_reduced [j]); // can equal -1
                         while (target < INFINITE_INT)
                         {
                             size_t stt = static_cast <size_t> (target);
@@ -659,6 +682,8 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
 //' index of vertices
 //' @param fromi Index into vert_map_in of vertex numbers
 //' @param toi Index into vert_map_in of vertex numbers
+//' @param tol Relative tolerance in terms of flows below which targets
+//' (to-vertices) are not considered.
 //'
 //' @note The parallelisation is achieved by dumping the results of each thread
 //' to a file, with aggregation performed at the end by simply reading back and
@@ -673,7 +698,8 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
-        const Rcpp::NumericMatrix flows,
+        Rcpp::NumericMatrix flows,
+        const double tol,
         const std::string dirtxt,
         const std::string heap_type)
 {
@@ -704,7 +730,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneFlow one_flow (fromi, toi, flows, vert_name, verts_to_edge_map,
-            nverts, nedges, dirtxt, heap_type, g);
+            nverts, nedges, tol, dirtxt, heap_type, g);
 
     GetRNGstate (); // Initialise R random seed
     RcppParallel::parallelFor (0, nfrom, one_flow);

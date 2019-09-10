@@ -65,6 +65,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericMatrix flows,
+        const double tol,
         const std::string dirtxt,
         const std::string heap_type);
 

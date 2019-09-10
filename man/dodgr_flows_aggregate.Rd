@@ -5,7 +5,7 @@
 \title{dodgr_flows_aggregate}
 \usage{
 dodgr_flows_aggregate(graph, from, to, flows, contract = FALSE,
-  heap = "BHeap", quiet = TRUE)
+  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -28,6 +28,12 @@ generally be much faster).}
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+
+\item{tol}{Relative tolerance below which flows towards \code{to} vertices are not
+considered. This will generally have no effect, but can provide speed gains
+when flow matrices represent spatial interaction models, in which case this
+parameter effectively reduces the radius from each \code{from} point over which
+flows are aggregated. To remove any such effect, set \code{tol = 0}.}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }

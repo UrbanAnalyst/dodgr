@@ -233,6 +233,8 @@ rcpp_aggregate_files <- function(file_names, len) {
 #' index of vertices
 #' @param fromi Index into vert_map_in of vertex numbers
 #' @param toi Index into vert_map_in of vertex numbers
+#' @param tol Relative tolerance in terms of flows below which targets
+#' (to-vertices) are not considered.
 #'
 #' @note The parallelisation is achieved by dumping the results of each thread
 #' to a file, with aggregation performed at the end by simply reading back and
@@ -242,8 +244,8 @@ rcpp_aggregate_files <- function(file_names, len) {
 #' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, dirtxt, heap_type) {
-    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, dirtxt, heap_type))
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type) {
+    invisible(.Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, dirtxt, heap_type))
 }
 
 #' rcpp_flows_disperse
