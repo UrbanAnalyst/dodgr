@@ -77,6 +77,19 @@ test_that ("flows disperse", {
     expect_true (all (graph4$flow <= graph2$flow))
 })
 
+test_that ("flows disperse parallel", { # TODO: Remove this
+    graph <- weight_streetnet (hampi)
+    from <- sample (graph$from_id, size = 10)
+    dens <- runif (length (from))
+
+    graph0 <- dodgr_flows_disperse (graph, from = from, dens = dens, k = 700)
+    graph1 <- dodgr_flows_disperse (graph, from = from, dens = dens, k = 700,
+                                    parallel = TRUE)
+    expect_true (max (abs (graph0$flow - graph1$flow)) < 0.1)
+    r2 <- summary (lm (graph1$flow ~ graph0$flow))$r.squared
+    expect_true (r2 > 0.99)
+})
+
 test_that ("flowmap", {
     graph <- weight_streetnet (hampi)
     from <- sample (graph$from_id, size = 10)
