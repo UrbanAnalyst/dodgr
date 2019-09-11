@@ -92,8 +92,8 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, t
 #' betwen each pair of from and to points.
 #'
 #' @noRd
-rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, heap_type) {
-    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, heap_type)
+rcpp_flows_disperse <- function(graph, vert_map_in, fromi, k, flows, dlim, heap_type) {
+    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, k, flows, dlim, heap_type)
 }
 
 #' @noRd

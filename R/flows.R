@@ -206,16 +206,19 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 #' @param from Vector or matrix of points **from** which aggregate dispersed
 #' flows are to be calculated (see Details)
 #' @param dens Vectors of densities correponsing to the `from` points
+#' @param k Width coefficient of exponential diffusion function defined as
+#' `exp(-d/k)`, in units of distance column of `graph` (metres by default). If
+#' value of `k<0` is given, a standard logistic polynomial will be used.
 #' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
-#' @param k Width coefficient of exponential diffusion function defined as
-#' `exp(-d/k)`.  If value of `k<0` is given, a standard logistic
-#' polynomial will be used.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param tol Relative tolerance below which dispersal is considered to have
+#' finished. This parameter can generally be ignored; if in doubt, its effect
+#' can be removed by setting `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @return Modified version of graph with additonal `flow` column added.
 #'
@@ -229,8 +232,8 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
-dodgr_flows_disperse <- function (graph, from, dens,
-                         contract = FALSE, k = 2, heap = 'BHeap', quiet = TRUE)
+dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE, 
+                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE)
 {
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
@@ -281,8 +284,9 @@ dodgr_flows_disperse <- function (graph, from, dens,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
+    dlim <- -k * log10 (tol) # limit at which exp(-d/k) < tol
     graph$flow <- rcpp_flows_disperse (graph2, vert_map, from_index,
-                                       k, dens, heap)
+                                       k, dens, dlim, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

@@ -4,8 +4,8 @@
 \alias{dodgr_flows_disperse}
 \title{dodgr_flows_disperse}
 \usage{
-dodgr_flows_disperse(graph, from, dens, contract = FALSE, k = 2,
-  heap = "BHeap", quiet = TRUE)
+dodgr_flows_disperse(graph, from, dens, k = 500, contract = FALSE,
+  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -16,18 +16,22 @@ flows are to be calculated (see Details)}
 
 \item{dens}{Vectors of densities correponsing to the \code{from} points}
 
+\item{k}{Width coefficient of exponential diffusion function defined as
+\code{exp(-d/k)}, in units of distance column of \code{graph} (metres by default). If
+value of \code{k<0} is given, a standard logistic polynomial will be used.}
+
 \item{contract}{If \code{TRUE}, calculate flows on contracted graph before
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
-
-\item{k}{Width coefficient of exponential diffusion function defined as
-\code{exp(-d/k)}.  If value of \code{k<0} is given, a standard logistic
-polynomial will be used.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+
+\item{tol}{Relative tolerance below which dispersal is considered to have
+finished. This parameter can generally be ignored; if in doubt, its effect
+can be removed by setting \code{tol = 0}.}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }

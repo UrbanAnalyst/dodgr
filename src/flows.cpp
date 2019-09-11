@@ -280,8 +280,9 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        double k,
+        const double &k,
         Rcpp::NumericVector flows,
+        const double &dlim,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
@@ -316,10 +317,6 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
     std::vector<double> d(nverts);
     std::vector<int> prev(nverts);
 
-    std::vector <unsigned int> toi (nverts);
-    for (unsigned int i = 0; i < nverts; i++)
-        toi [i] = i;
-
     Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
     for (unsigned int v = 0; v < nfrom; v++)
     {
@@ -327,8 +324,8 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
-        pathfinder->Dijkstra (d, w, prev,
-                static_cast <unsigned int> (fromi [v]), toi);
+        pathfinder->DijkstraLimit (d, w, prev,
+                static_cast <unsigned int> (fromi [v]), dlim);
 
         for (unsigned int vi = 0; vi < nverts; vi++)
         {
@@ -345,8 +342,9 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
                 if (d [vi] < INFINITE_DOUBLE)
                 {
                     if (k > 0.0)
+                    {
                         aggregate_flows [indx] += flows (v) * exp (-d [vi] / k);
-                    else // standard logistic polynomial for UK cycling models
+                    } else // standard logistic polynomial for UK cycling models
                     {
                         // # nocov start
                         double lp = -3.894 + (-0.5872 * d [vi]) +
