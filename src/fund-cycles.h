@@ -108,7 +108,7 @@ class AdjacencyMatrix
 inline void AdjacencyMatrix::connect (size_t i, size_t j)
 {
     if (AdjacencyMatrix::m_Adjacencies [AdjacencyMatrix::get_adj_index (i, j)])
-        return; // nocov
+        return; // # nocov
 
     AdjacencyMatrix::m_Adjacencies [AdjacencyMatrix::get_adj_index (i, j)] = true;
     AdjacencyMatrix::m_nEdges++;
@@ -117,7 +117,7 @@ inline void AdjacencyMatrix::connect (size_t i, size_t j)
 inline void AdjacencyMatrix::disconnect (size_t i, size_t j)
 {
     if (!AdjacencyMatrix::m_Adjacencies [AdjacencyMatrix::get_adj_index (i, j)])
-        return; // nocov
+        return; // # nocov
 
     AdjacencyMatrix::m_Adjacencies [AdjacencyMatrix::get_adj_index (i, j)] = false;
     AdjacencyMatrix::m_nEdges--;
@@ -189,7 +189,7 @@ template <class TObject>
 void Graph<TObject>::computeFundamentalCycles()
 {
     if (!Graph<TObject>::m_fundamentalCycles.empty())
-        return; // nocov
+        return; // # nocov
 
     std::unique_ptr <TreeNode []>
         aTree (new TreeNode [Graph::m_nodeArray.size ()]);

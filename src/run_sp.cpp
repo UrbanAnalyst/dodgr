@@ -170,11 +170,13 @@ struct OneIso : public RcppParallel::Worker
             for (auto j: prev)
                 if (w [j] > INFINITE_INT && w [j] < dlimit_max)
                 {
+                    // # nocov start
                     if (prev [j] < INFINITE_INT)
                     {
                         terminal_verts.erase (j);
                         terminal_verts.emplace (prev [j]);
                     }
+                    // # nocov end
                 }
 
 
@@ -182,7 +184,8 @@ struct OneIso : public RcppParallel::Worker
             {
                 if (terminal_verts.find (j) != terminal_verts.end ())
                 {
-                    dout (i, j) = -w [j]; // Flag terminal verts with -d
+                    // Flag terminal verts with -d
+                    dout (i, j) = -w [j]; // # nocov
                 } else if (prev [j] < INFINITE_INT && w [j] < dlimit_max)
                 {
                     for (auto k: dlimit)

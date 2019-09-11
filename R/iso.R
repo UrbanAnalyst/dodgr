@@ -36,7 +36,7 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
 
     # expand dlim to an extra value to capture max boundary
     if (length (dlim) == 1)
-        dlim_exp <- c (dlim, dlim + dlim / 4)
+        dlim_exp <- c (dlim, dlim + dlim / 4) # nocov
     else
         dlim_exp <- c (dlim, dlim [length (dlim)] + dlim [length (dlim)] -
                        dlim [length (dlim) - 1])
@@ -48,7 +48,7 @@ dodgr_isodists <- function (graph, from = NULL, dlim = NULL, heap = 'BHeap')
     if (!is.null (dat$from_index$id))
         rownames (d) <- dat$from_index$id
     else
-        rownames (d) <- dat$vert_map$vert
+        rownames (d) <- dat$vert_map$vert # nocov
     colnames (d) <- dat$vert_map$vert
 
     # verts ON isohulls are flagged with negative values at isodistance;
@@ -72,10 +72,12 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap")
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols$from) | is.na (gr_cols$to))
     {
+        # nocov start - this is only tested on SC, so this never happens
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
         gr_cols <- dodgr_graph_cols (graph)
+        # nocov end - TODO: Test this
     }
     vert_map <- make_vert_map (graph, gr_cols, FALSE)
 
