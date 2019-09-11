@@ -38,3 +38,12 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         Rcpp::NumericVector flows,
         const double &dlim,
         std::string heap_type);
+
+void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        const double &k,
+        Rcpp::NumericVector flows,
+        const double &tol,
+        const std::string &dirtxt,
+        std::string heap_type);

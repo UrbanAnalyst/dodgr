@@ -180,13 +180,11 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    # parallel results are dumped in tempdir, which is read here with an extra
-    # char to get the terminal dir separator character:
-    dirtxt <- file.path (tempdir (), "a")
-    dirtxt <- substr (dirtxt, 1, nchar (dirtxt) - 1)
+    dirtxt <- get_random_prefix ()
     rcpp_flows_aggregate_par (graph2, vert_map, from_index, to_index,
                               flows, tol, dirtxt, heap)
-    files <- list.files (tempdir (), pattern = "flow_", full.names = TRUE)
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
     graph$flow <- rcpp_aggregate_files (files, nrow (graph))
     junk <- file.remove (files) # nolint
 
@@ -194,6 +192,13 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
         graph <- uncontract_graph (graph, edge_map, graph_full)
 
     return (graph)
+}
+
+get_random_prefix <- function (n = 5)
+{
+    charvec <- c (letters, LETTERS, 0:9)
+    prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
+    file.path (tempdir (), paste0 ("flow_", prefix))
 }
 
 #' dodgr_flows_disperse
@@ -220,6 +225,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 #' finished. This parameter can generally be ignored; if in doubt, its effect
 #' can be removed by setting `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
+#' @param parallel Do parallel or not
 #' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @export
@@ -233,7 +239,8 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
 dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE, 
-                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE)
+                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE,
+                                  parallel = FALSE)
 {
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
@@ -284,9 +291,19 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    dlim <- -k * log10 (tol) # limit at which exp(-d/k) < tol
-    graph$flow <- rcpp_flows_disperse (graph2, vert_map, from_index,
-                                       k, dens, dlim, heap)
+    if (parallel)
+    {
+        # parallel results are dumped in tempdir
+        dirtxt <- get_random_prefix ()
+        rcpp_flows_disperse_par (graph2, vert_map, from_index,
+                                 k, dens, tol, dirtxt, heap)
+        f <- list.files (tempdir (), full.names = TRUE)
+        files <- f [grep (dirtxt, f)]
+        graph$flow <- rcpp_aggregate_files (files, nrow (graph))
+        #junk <- file.remove (files) # nolint
+    } else
+        graph$flow <- rcpp_flows_disperse (graph2, vert_map, from_index,
+                                           k, dens, tol, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
