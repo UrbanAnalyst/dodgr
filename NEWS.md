@@ -1,7 +1,8 @@
 # v0.2.0.00x
 
 Major changes:
-- Add `dodgr_isochrones` and `dodgr_isodistances` functions
+- Add `dodgr_isochrones`, `dodgr_isodistances`, and `dodgr_isoverts` functions
+- Considerable speed-ups for `dodgr_flows_aggregate` and `dodgr_flows_disperse`
 
 Minor changes:
 * Add "highway:pedestrian" to weighting profiles
