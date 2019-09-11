@@ -35,5 +35,5 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         double k,
-        Rcpp::NumericMatrix flows,
+        Rcpp::NumericVector flows,
         std::string heap_type);

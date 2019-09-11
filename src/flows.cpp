@@ -281,7 +281,7 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         double k,
-        Rcpp::NumericMatrix flows,
+        Rcpp::NumericVector flows,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
@@ -341,18 +341,18 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
                 if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
                     Rcpp::stop ("vertex pair forms no known edge"); // # nocov
 
-                unsigned int indx = verts_to_edge_map [two_verts];
+                unsigned int indx = verts_to_edge_map.at (two_verts);
                 if (d [vi] < INFINITE_DOUBLE)
                 {
                     if (k > 0.0)
-                        aggregate_flows [indx] += flows (v, 0) * exp (-d [vi] / k);
+                        aggregate_flows [indx] += flows (v) * exp (-d [vi] / k);
                     else // standard logistic polynomial for UK cycling models
                     {
                         // # nocov start
                         double lp = -3.894 + (-0.5872 * d [vi]) +
                             (1.832 * sqrt (d [vi])) +
                             (0.007956 * d [vi] * d [vi]);
-                        aggregate_flows [indx] += flows (v, 0) *
+                        aggregate_flows [indx] += flows (v) *
                             exp (lp) / (1.0 + exp (lp));
                         // # nocov end
                     }
@@ -363,3 +363,4 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
 
     return (aggregate_flows);
 }
+
