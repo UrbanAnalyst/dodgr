@@ -225,13 +225,12 @@ struct OneDisperse : public RcppParallel::Worker
 
         const double dlim = -log10 (tol) * k; // limit at which exp(-d/k) < tol
 
-        for (size_t i = begin; i < end; i++)
+        for (size_t i = begin; i < end; i++) // over the from vertices
         {
-            // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
-            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+            const unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
             for (size_t j = 0; j < nverts; j++)
@@ -434,40 +433,40 @@ Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
 
     const double dlim = -log10 (tol) * k; // limit at which exp(-d/k) < tol
 
-    Rcpp::NumericVector aggregate_flows (from.size ()); // 0-filled by default
-    for (unsigned int v = 0; v < nfrom; v++)
+    Rcpp::NumericVector aggregate_flows (nedges, 0.0);
+    for (unsigned int i = 0; i < nfrom; i++)
     {
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         pathfinder->DijkstraLimit (d, w, prev,
-                static_cast <unsigned int> (fromi [v]), dlim);
+                static_cast <unsigned int> (fromi [i]), dlim);
 
-        for (unsigned int vi = 0; vi < nverts; vi++)
+        for (unsigned int j = 0; j < nverts; j++)
         {
-            if (prev [vi] > 0)
+            if (prev [j] > 0)
             {
                 // NOTE: Critically important that these are in the right order!
-                std::string vert_to = vert_name [vi],
-                    vert_from = vert_name [static_cast <size_t> (prev [vi])];
+                std::string vert_to = vert_name [j],
+                    vert_from = vert_name [static_cast <size_t> (prev [j])];
                 std::string two_verts = "f" + vert_from + "t" + vert_to;
                 if (verts_to_edge_map.find (two_verts) == verts_to_edge_map.end ())
                     Rcpp::stop ("vertex pair forms no known edge"); // # nocov
 
                 unsigned int indx = verts_to_edge_map.at (two_verts);
-                if (d [vi] < INFINITE_DOUBLE)
+                if (d [j] < INFINITE_DOUBLE)
                 {
                     if (k > 0.0)
                     {
-                        aggregate_flows [indx] += flows (v) * exp (-d [vi] / k);
+                        aggregate_flows [indx] += flows (i) * exp (-d [j] / k);
                     } else // standard logistic polynomial for UK cycling models
                     {
                         // # nocov start
-                        double lp = -3.894 + (-0.5872 * d [vi]) +
-                            (1.832 * sqrt (d [vi])) +
-                            (0.007956 * d [vi] * d [vi]);
-                        aggregate_flows [indx] += flows (v) *
+                        double lp = -3.894 + (-0.5872 * d [j]) +
+                            (1.832 * sqrt (d [j])) +
+                            (0.007956 * d [j] * d [j]);
+                        aggregate_flows [indx] += flows (i) *
                             exp (lp) / (1.0 + exp (lp));
                         // # nocov end
                     }
