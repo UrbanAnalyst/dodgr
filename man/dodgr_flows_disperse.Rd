@@ -5,8 +5,7 @@
 \title{dodgr_flows_disperse}
 \usage{
 dodgr_flows_disperse(graph, from, dens, k = 500, contract = FALSE,
-  heap = "BHeap", tol = 0.000000000001, quiet = TRUE,
-  parallel = FALSE)
+  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -35,8 +34,6 @@ finished. This parameter can generally be ignored; if in doubt, its effect
 can be removed by setting \code{tol = 0}.}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
-
-\item{parallel}{Do parallel or not}
 }
 \value{
 Modified version of graph with additonal \code{flow} column added.

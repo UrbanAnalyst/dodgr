@@ -225,7 +225,6 @@ get_random_prefix <- function (n = 5)
 #' finished. This parameter can generally be ignored; if in doubt, its effect
 #' can be removed by setting `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
-#' @param parallel Do parallel or not
 #' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @export
@@ -239,8 +238,7 @@ get_random_prefix <- function (n = 5)
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_flows (graph)
 dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE, 
-                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE,
-                                  parallel = FALSE)
+                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE)
 {
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
@@ -291,19 +289,14 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    if (parallel)
-    {
-        # parallel results are dumped in tempdir
-        dirtxt <- get_random_prefix ()
-        rcpp_flows_disperse_par (graph2, vert_map, from_index,
-                                 k, dens, tol, dirtxt, heap)
-        f <- list.files (tempdir (), full.names = TRUE)
-        files <- f [grep (dirtxt, f)]
-        graph$flow <- rcpp_aggregate_files (files, nrow (graph))
-        #junk <- file.remove (files) # nolint
-    } else
-        graph$flow <- rcpp_flows_disperse (graph2, vert_map, from_index,
-                                           k, dens, tol, heap)
+    # parallel results are dumped in tempdir
+    dirtxt <- get_random_prefix ()
+    rcpp_flows_disperse_par (graph2, vert_map, from_index,
+                             k, dens, tol, dirtxt, heap)
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
+    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
+    junk <- file.remove (files) # nolint
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

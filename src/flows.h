@@ -31,14 +31,6 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
         const int len);
 
-Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
-        const Rcpp::DataFrame vert_map_in,
-        Rcpp::IntegerVector fromi,
-        const double &k,
-        Rcpp::NumericVector flows,
-        const double &dlim,
-        std::string heap_type);
-
 void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
