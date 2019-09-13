@@ -123,34 +123,27 @@ x <- c (-1.1713502, -1.2216108, -1.0457199, -0.9384666, -0.9445541, -1.1207099)
 y <- c (53.89409, 54.01065, 53.83613, 53.93545, 53.89436, 54.01262)
 cbind (x, y)
 ```
-Those points can simply be passed to `dodgr_dists()`:
+The following lines download the street network within that bounding box,
+weight it for pedestrian travel, and use the weighted network to calculate the
+pairwise distances between all of the `xy`points.
 ```{r dodgr-dists-in-york, eval = FALSE}
-system.time(
-            d <- dodgr_dists (from = xy, to = xy,
-                              wt_profile = "foot", quiet = FALSE)
+net <- dodgr_streetnet (bb)
+net <- weight_streetnet (net, wt_profile = "foot")
+system.time (
+            d <- dodgr_dists (net, from = xy, to = xy)
             )
 ```
-```{r dists-york-message, echo = FALSE}
-message (paste0 ("No graph submitted to dodgr_dists; ",
-                 "downloading street network ... done\n",
-                 "Converting network to dodgr graph ... done\n",
-                 "Calculating shortest paths ... done"))
-```
 ```{r dists-york-time, echo = FALSE}
-st <- system.time (Sys.sleep (0.1))
-st [1] <- 26.620
-st [2] <- 0.132
-st [3] <- 28.567
-st
+c (user = 38.828, system = 0.036, elapsed = 5.424)
 ```
 ```{r dists-york-structure, eval = FALSE}
 dim (d); range (d, na.rm = TRUE)
 ```
 ```{r dists-york-output, echo = FALSE}
 c (1000, 1000)
-c (0.00000, 46.60609)
+c (0.00000, 57021.18)
 ```
-The result is a matrix of 1000-by-1000 distances of up to 47km long, measured
+The result is a matrix of 1000-by-1000 distances of up to 57km long, measured
 along routes weighted for optimal pedestrian travel. In this case, the single
 call to
 [`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html)
@@ -449,16 +442,16 @@ routed_points <- function (expand = 0, pts)
 }
 ```
 ```{r york-streetnet-output, eval = FALSE}
-vapply (c (0, 0.05, 0.1), function (i) routed_points (i, pts = xy),
+vapply (c (0, 0.05, 0.1, 0.2), function (i) routed_points (i, pts = xy),
         numeric (1))
 ```
 ```{r york-streetntet-values, echo = FALSE}
-c (0.078, 0.0586, 0)
+c (0.04007477, 0.02326452, 0.02131992, 0)
 ```
 With a street network that precisely encompasses the submitted routing points
-(`expand = 0`), 7.8% of pairwise distances are unable to be calculated; with a
+(`expand = 0`), 4% of pairwise distances are unable to be calculated; with a
 bounding box expanded to 5% larger than the submitted points, this is reduced to
-5.9%, and with expansion to 10%, all points can be connected.
+2.3%, and with expansion to 20%, all points can be connected.
 
 For non-spatial graphs, `from` and `to` must match precisely on to vertices
 named in the graph itself. In the graph considered above, these vertex names
@@ -481,15 +474,15 @@ The result is a 10-by-20 matrix of distances between these named graph vertices.
 
 ## 4.2 Shortest Path Calculations: Priority Queues
 
-`dodgr` uses an internal library [@Saunders2003, @Saunders2004] for the calculation of shortest paths using a
-variety of priority queues [see @Miller1960 for an overview].  In the context of
-shortest paths, priority queues determine the order in which a graph is
-traversed [@Tarjan1983], and the choice of priority queue can have a
-considerable effect on computational efficiency for different kinds of graphs
-[@Johnson1977].  In contrast to `dodgr`, most other **R** packages for shortest
-path calculations do not use priority queues, and so may often be less
-efficient. Shortest path distances can be calculated in `dodgr` with priority
-queues that use the following heaps:
+`dodgr` uses an internal library [@Saunders2003, @Saunders2004] for the
+calculation of shortest paths using a variety of priority queues [see
+@Miller1960 for an overview].  In the context of shortest paths, priority
+queues determine the order in which a graph is traversed [@Tarjan1983], and the
+choice of priority queue can have a considerable effect on computational
+efficiency for different kinds of graphs [@Johnson1977].  In contrast to
+`dodgr`, most other **R** packages for shortest path calculations do not use
+priority queues, and so may often be less efficient. Shortest path distances
+can be calculated in `dodgr` with priority queues that use the following heaps:
 
 1. Binary heaps;
 2. Fibonacci heaps [@Fredman1987];
@@ -508,7 +501,7 @@ The comparisons are actually made on a randomly selected sub-component of the
 graph containing a defined number of vertices (with a default of 1,000, or the
 entire graph if it contains fewer than 1,000 vertices).
 ```{r compare-heaps}
-compare_heaps (graph, nverts = 100, replications = 1)
+compare_heaps (graph, nverts = 1000, replications = 1)
 ```
 The key column of that `data.frame` is `relative`, which quantifies the relative
 performance of each test in relation to the best which is given a score of 1.
@@ -534,11 +527,9 @@ generates the [`igraph`](https://igraph.org) equivalent of
 [`dodgr_distances()`](https://atfutures.github.io/dodgr/reference/dodgr_distances.html),
 although of course for single-weighted graphs only:
 ```{r graph-code, eval = FALSE}
-edges <- cbind (graph$from_id, graph$to_id)
-pts <- sample (unique (as.vector (edges)), 100) # set of random routing points
-edges <- as.vector (t (edges))
-igr <- igraph::make_directed_graph (edges)
-igraph::E (igr)$weight <- graph$d
+v <- dodgr_vertices (graph)
+pts <- sample (v$id, 1000)
+igr <- dodgr_to_igraph (graph)
 d <- igraph::distances (igr, v = pts, to = pts, mode = "out")
 ```
 
@@ -580,26 +571,13 @@ nrow (graph); nrow (grc); nrow (grc) / nrow (graph)
 ```
 equivalent to the removal of around 90% of all edges.  The difference in routing
 efficiency can then be seen with the following code
-```{r benchmark1, eval = FALSE}
+```{r benchmark1, eval = TRUE}
 from <- sample (grc$from_id, size = 100)
 to <- sample (grc$to_id, size = 100)
 rbenchmark::benchmark (
                        d2 <- dodgr_dists (grc, from = from, to = to),
                        d2 <- dodgr_dists (graph, from = from, to = to),
                        replications = 2)
-```
-```{r benchmark1-results, echo = FALSE}
-# TODO: Reinstate the above test
-res <- data.frame ("test" = c ("d2 <- dodgr_dists(grc, from = from, to = to)",
-                               "d2 <- dodgr_dists(graph, from = from, to = to)"),
-                   "replications" = c (2, 2),
-                   "elapsed" = c (0.006, 0.026),
-                   "relative" = c (1, 4.333),
-                   "user.self" = c (0.013, 0.060),
-                   "sys.self" = rep (0, 2),
-                   "user.child" = rep (0, 2),
-                   "sys.child" = rep (0, 2))
-res [2:1, ]
 ```
 
 And contracting the graph has a similar effect of speeding up pairwise routing
