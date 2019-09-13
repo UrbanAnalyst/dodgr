@@ -68,7 +68,7 @@ test_that ("flows disperse", {
     #expect_identical (graph3, graph2)
     # flow values are not identical, but
     r2 <- summary (lm (graph3$flow ~ graph2$flow))$r.squared
-    expect_true (r2 > 0.9999)
+    expect_true (r2 > 0.99)
 
     graph3 <- dodgr_flows_disperse (graph, from = from, dens = dens,
                                     contract = TRUE)
