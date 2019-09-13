@@ -17,8 +17,10 @@ flows are to be calculated (see Details)}
 \item{dens}{Vectors of densities correponsing to the \code{from} points}
 
 \item{k}{Width coefficient of exponential diffusion function defined as
-\code{exp(-d/k)}, in units of distance column of \code{graph} (metres by default). If
-value of \code{k<0} is given, a standard logistic polynomial will be used.}
+\code{exp(-d/k)}, in units of distance column of \code{graph} (metres by default). Can
+also be a vector with same length as \code{from}, giving dispersal coefficients
+from each point. If value of \code{k<0} is given, a standard logistic polynomial
+will be used.}
 
 \item{contract}{If \code{TRUE}, calculate flows on contracted graph before
 mapping them back on to the original full graph (recommended as this will

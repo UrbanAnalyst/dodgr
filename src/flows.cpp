@@ -168,7 +168,7 @@ struct OneDisperse : public RcppParallel::Worker
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
-    const double k;
+    const Rcpp::NumericVector k;
     const double tol;
     const std::string dirtxt;
     const std::string heap_type;
@@ -183,7 +183,7 @@ struct OneDisperse : public RcppParallel::Worker
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
-            const double k_in,
+            const Rcpp::NumericVector k_in,
             const double tol_in,
             const std::string dirtxt_in,
             const std::string &heap_type_in,
@@ -223,10 +223,11 @@ struct OneDisperse : public RcppParallel::Worker
 
         std::vector <double> flowvec (nedges, 0.0);
 
-        const double dlim = -log10 (tol) * k; // limit at which exp(-d/k) < tol
-
         for (size_t i = begin; i < end; i++) // over the from vertices
         {
+            // limit at which exp(-d/k) < tol
+            const double dlim = -log10 (tol) * k [i];
+
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
 
@@ -244,9 +245,9 @@ struct OneDisperse : public RcppParallel::Worker
                     unsigned int indx = verts_to_edge_map.at (two_verts);
                     if (d [j] < INFINITE_DOUBLE)
                     {
-                        if (k > 0.0)
+                        if (k [i] > 0.0)
                         {
-                            flowvec [indx] += flows (i) * exp (-d [j] / k);
+                            flowvec [indx] += flows (i) * exp (-d [j] / k [i]);
                         } else // standard logistic polynomial for UK cycling models
                         {
                             // # nocov start
@@ -395,7 +396,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        const double &k,
+        Rcpp::NumericVector k,
         Rcpp::NumericVector flows,
         const double &tol,
         const std::string &dirtxt,

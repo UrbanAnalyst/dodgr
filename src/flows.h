@@ -34,7 +34,7 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
 void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        const double &k,
+        Rcpp::NumericVector k,
         Rcpp::NumericVector flows,
         const double &tol,
         const std::string &dirtxt,

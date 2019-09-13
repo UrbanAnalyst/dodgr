@@ -5,6 +5,8 @@ Major changes:
 - Considerable speed-ups for `dodgr_flows_aggregate` and `dodgr_flows_disperse`
 
 Minor changes:
+- `dodgr_flows_disperse` allows `k` to be a vector, with different coefficients
+  for each `from` point.
 * Add "highway:pedestrian" to weighting profiles
 - `weight_streetnet` for `sc` objects automatically adds component column
 - bug fix in `weight_streetnet.sc(..., wt_profile = 1)`

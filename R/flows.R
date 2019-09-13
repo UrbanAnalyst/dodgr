@@ -212,8 +212,10 @@ get_random_prefix <- function (n = 5)
 #' flows are to be calculated (see Details)
 #' @param dens Vectors of densities correponsing to the `from` points
 #' @param k Width coefficient of exponential diffusion function defined as
-#' `exp(-d/k)`, in units of distance column of `graph` (metres by default). If
-#' value of `k<0` is given, a standard logistic polynomial will be used.
+#' `exp(-d/k)`, in units of distance column of `graph` (metres by default). Can
+#' also be a vector with same length as `from`, giving dispersal coefficients
+#' from each point. If value of `k<0` is given, a standard logistic polynomial
+#' will be used.
 #' @param contract If `TRUE`, calculate flows on contracted graph before
 #' mapping them back on to the original full graph (recommended as this will
 #' generally be much faster).
@@ -243,6 +245,12 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
+
+    if (!(length (k) == 1 | length (k) == length (from)))
+        stop ("'k' must be either single value or vector ",
+              "of same lenght as 'from'")
+    if (length (k) == 1)
+        k <- rep (k, length (from))
 
     if (any (is.na (dens))) {
         dens [is.na (dens)] <- 0
