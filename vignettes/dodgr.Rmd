@@ -36,6 +36,11 @@ traverse the entire graph in an anti-clockwise direction.
 
 ```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
 ```
+(Note that this image does not currently render on the github-hosted version of
+this site, for reasons currently [beyond our
+control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
+version can be seen on the equivalent [CRAN
+vignette](https://cran.r-project.org/web/packages/dodgr/vignettes/dodgr.html).)
 
 Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
 graph of Fig. 1, presuming the edge weights to take values of 1, 2, and 3, would
@@ -66,6 +71,12 @@ illustrated in Fig. 2.
 
 ```{r fig2, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
 ```
+(As above, this image also does not currently render on the github-hosted
+version of this site, for reasons currently [beyond our
+control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
+version can be seen on the equivalent [CRAN
+vignette](https://cran.r-project.org/web/packages/dodgr/vignettes/dodgr.html).)
+
 Dual-weighted directed graphs are common in many areas, a foremost example
 being routing through street networks. Routes through street networks depends on
 mode of transport: the route a pedestrian might take will generally differ
