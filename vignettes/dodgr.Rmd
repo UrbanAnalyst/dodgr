@@ -40,7 +40,7 @@ traverse the entire graph in an anti-clockwise direction.
 this site, for reasons currently [beyond our
 control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
 version can be seen on the equivalent [CRAN
-vignette](https://cran.r-project.org/web/packages/dodgr/vignettes/dodgr.html).)
+vignette](https://cran.r-project.org/package=dodgr/vignettes/dodgr.html).)
 
 Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
 graph of Fig. 1, presuming the edge weights to take values of 1, 2, and 3, would
@@ -772,10 +772,11 @@ graph$flow <- graph_undir$flow
 This graph may then be used to visualise flows with the
 [`dodgr_flowmap()`](https://atfutures.github.io/dodgr/reference/dodgr_flowmap.html)
 function:
-```{r}
+```{r flowmap, eval = FALSE}
 graph_f <- graph_f [graph_f$flow > 0, ]
 dodgr_flowmap (graph_f, linescale = 5)
 ```
+![](hampi-flowmap.png)
 
 
 # Bibliography
