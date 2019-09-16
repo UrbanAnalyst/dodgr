@@ -1,11 +1,13 @@
-# CRAN notes for dodgr_0.2.0 submission
+# CRAN notes for dodgr_0.2.1 submission
 
 ## Notes
 
 This submissions generates the following NOTES on some systems:
 
-* One possibly invalid URL for a vignette reference, due to jstor preventing
-  automated queries. The URL is nevertheless valid.
+* Two possibly invalid URLs: one for a valid vignette reference, due to jstor
+  preventing automated queries; and one for the DOI for the paper associated
+  with this pacakge, which is also valid (https://doi.org/10.32866/6945, with
+  DOI simply given as 'doi = "10.32866/6945"').
 * "GNU make is a SystemRequirements", which is unavoidable because of the need
   to remove compiled object files in src sub-directories.
 
@@ -14,7 +16,6 @@ This submissions generates the following NOTES on some systems:
 Other than the above, this submission generates no additional notes, and no
 warnings on:
 * Ubuntu 16.04 (on `travis-ci`): R-release, R-devel
-* Windows Visual Studio 2015 (on `appveyor`; `x64`): R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 
 ## valgrind memory leak

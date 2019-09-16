@@ -75,7 +75,7 @@ illustrated in Fig. 2.
 version of this site, for reasons currently [beyond our
 control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
 version can be seen on the equivalent [CRAN
-vignette](https://cran.r-project.org/web/packages/dodgr/vignettes/dodgr.html).)
+vignette](https://cran.r-project.org/package=dodgr/vignettes/dodgr.html).)
 
 Dual-weighted directed graphs are common in many areas, a foremost example
 being routing through street networks. Routes through street networks depends on
