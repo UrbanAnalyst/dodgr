@@ -1,5 +1,13 @@
 # CRAN notes for dodgr_0.2.1 submission
 
+## Current failure
+
+CRAN checks currently fail on r-devel-linux-x86_64-debian-gcc because of one
+example which fails to read from a connection. This should never fail, as it
+reads from a file in tempdir() that must exist, and which succeeds on all other
+systems. I have nevertheless switched the very small example that caused this
+fail to `\dontrun` to rectify this problem.
+
 ## Notes
 
 This submissions generates the following NOTES on some systems:
