@@ -173,7 +173,7 @@ dodgr_isochrones <- function (graph, from = NULL, tlim = NULL, heap = 'BHeap')
 #'     add_osm_feature (key = "highway") %>%
 #'     osmdata_sc ()
 #' graph <- weight_streetnet (dat)
-#' from <- sample (graph$from_id, size = 100)
+#' from <- sample (graph$.vx0, size = 100)
 #' tlim <- c (5, 10, 20, 30, 60) * 60 # times in seconds
 #' x <- dodgr_isoverts (graph, from = from, tlim)
 #' }
