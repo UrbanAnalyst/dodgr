@@ -111,16 +111,16 @@ NULL
 #' @examples \dontrun{
 #' library(sf)
 #' library(dplyr)
-#' os_roads <- sf::read_sf("~/data/ST_RoadLink.shp") # data must be unzipped here
-#' u <- "https://opendata.arcgis.com/datasets/686603e943f948acaa13fb5d2b0f1275_4.kml"
-#' lads <- sf::read_sf(u)
-#' mapview::mapview(lads)
-#' bristol_pol <- dplyr::filter(lads, grepl("Bristol", lad16nm))
-#' os_roads <- st_transform(os_roads, st_crs(lads))
-#' os_roads_bristol <- os_roads[bristol_pol, ] %>% 
-#'   dplyr::filter(class == "Motorway" & roadNumber != "M32") %>% 
-#'   st_zm(drop = TRUE)
-#' mapview::mapview(os_roads_bristol)
+#' # os_roads <- sf::read_sf("~/data/ST_RoadLink.shp") # data must be unzipped here
+#' # u <- "https://opendata.arcgis.com/datasets/686603e943f948acaa13fb5d2b0f1275_4.kml"
+#' # lads <- sf::read_sf(u)
+#' # mapview::mapview(lads)
+#' # bristol_pol <- dplyr::filter(lads, grepl("Bristol", lad16nm))
+#' # os_roads <- st_transform(os_roads, st_crs(lads))
+#' # os_roads_bristol <- os_roads[bristol_pol, ] %>% 
+#' #   dplyr::filter(class == "Motorway" & roadNumber != "M32") %>% 
+#' #   st_zm(drop = TRUE)
+#' # mapview::mapview(os_roads_bristol)
 #' }
 #' # Converting this 'sf data.frame' to a 'dodgr' network requires manual
 #' # specification of weighting profile:
