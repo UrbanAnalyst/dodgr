@@ -48,10 +48,10 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         const std::string& heap_type,
         const bool is_spatial);
 
-Rcpp::NumericMatrix rcpp_get_sp_iso (const Rcpp::DataFrame graph,
+Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
-        const double dlim,
+        Rcpp::NumericVector dlim,
         const std::string& heap_type);
 
 Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,

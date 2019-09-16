@@ -167,22 +167,26 @@ struct OneIso : public RcppParallel::Worker
 
             // Get the set of terminal vertices.
             std::set <int> terminal_verts;
-            for (auto j: prev)
-                if (w [j] > INFINITE_INT && w [j] < dlimit_max)
+            for (int j: prev)
+            {
+                size_t sj = static_cast <size_t> (j);
+                if (w [sj] > INFINITE_INT && w [sj] < dlimit_max)
                 {
                     // # nocov start
-                    if (prev [j] < INFINITE_INT)
+                    if (prev [sj] < INFINITE_INT)
                     {
                         terminal_verts.erase (j);
-                        terminal_verts.emplace (prev [j]);
+                        terminal_verts.emplace (prev [sj]);
                     }
                     // # nocov end
                 }
+            }
 
 
             for (size_t j = 0; j < nverts; j++)
             {
-                if (terminal_verts.find (j) != terminal_verts.end ())
+                if (terminal_verts.find (static_cast <int> (j)) !=
+                        terminal_verts.end ())
                 {
                     // Flag terminal verts with -d
                     dout (i, j) = -w [j]; // # nocov
@@ -190,8 +194,9 @@ struct OneIso : public RcppParallel::Worker
                 {
                     for (auto k: dlimit)
                     {
-                        if (w [j] > k && w [prev [j]] < k)
-                            dout (i, prev [j]) = -k; // flag isohull verts with -k
+                        size_t sp = static_cast <size_t> (prev [j]);
+                        if (w [j] > k && w[sp] < k)
+                            dout (i, sp) = -k; // flag isohull verts with -k
                         else
                             dout (i, j) = w [j]; // distance of other internal verts
                     }
@@ -257,8 +262,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
 
     Rcpp::NumericVector id_vec;
-    size_t nfrom = fromi.size ();
-    size_t nto = toi.size ();
+    size_t nfrom = static_cast <size_t> (fromi.size ());
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -308,7 +313,7 @@ Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
         const std::string& heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = fromi.size ();
+    const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -354,8 +359,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    size_t nfrom = fromi.size ();
-    size_t nto = toi.size ();
+    size_t nfrom = static_cast <size_t> (fromi.size ());
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -437,8 +442,8 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    size_t nfrom = fromi.size ();
-    size_t nto = toi.size ();
+    size_t nfrom = static_cast <size_t> (fromi.size ());
+    size_t nto = static_cast <size_t> (toi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];

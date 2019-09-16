@@ -94,22 +94,22 @@ struct OneFlow : public RcppParallel::Worker
 
             // reduce toi to only those within tolerance limt
             double fmax = 0.0;
-            for (size_t j = 0; j < flows.ncol (); j++)
+            for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
                 if (flows (i, j) > fmax)
                     fmax = flows (i, j);
             const double flim = fmax * tol;
             size_t nto = 0;
-            for (size_t j = 0; j < flows.ncol (); j++)
+            for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
                 if (flows (i, j) > flim)
                     nto++;
 
             std::vector <unsigned int> toi_reduced, toi_index;
             toi_reduced.reserve (nto);
             toi_index.reserve (nto);
-            for (size_t j = 0; j < flows.ncol (); j++)
+            for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
                 if (flows (i, j) > flim)
                 {
-                    toi_index.push_back (j);
+                    toi_index.push_back (static_cast <unsigned int> (j));
                     toi_reduced.push_back (toi [j]);
                 }
 
@@ -225,8 +225,9 @@ struct OneDisperse : public RcppParallel::Worker
 
         for (size_t i = begin; i < end; i++) // over the from vertices
         {
+            R_xlen_t ir = static_cast <R_xlen_t> (i);
             // limit at which exp(-d/k) < tol
-            const double dlim = -log10 (tol) * k [i];
+            const double dlim = -log10 (tol) * k [ir];
 
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
@@ -245,9 +246,9 @@ struct OneDisperse : public RcppParallel::Worker
                     unsigned int indx = verts_to_edge_map.at (two_verts);
                     if (d [j] < INFINITE_DOUBLE)
                     {
-                        if (k [i] > 0.0)
+                        if (k [ir] > 0.0)
                         {
-                            flowvec [indx] += flows (i) * exp (-d [j] / k [i]);
+                            flowvec [indx] += flows (i) * exp (-d [j] / k [ir]);
                         } else // standard logistic polynomial for UK cycling models
                         {
                             // # nocov start
@@ -341,7 +342,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    const size_t nfrom = fromi.size ();
+    const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
@@ -403,7 +404,7 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
-    size_t nfrom = fromi.size ();
+    const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
