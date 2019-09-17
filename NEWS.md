@@ -1,4 +1,7 @@
-# v0.2.0.00x
+# v0.2.1.0x
+
+
+# v0.2.1
 
 Major changes:
 - Add `dodgr_isochrones`, `dodgr_isodistances`, and `dodgr_isoverts` functions
@@ -7,7 +10,7 @@ Major changes:
 Minor changes:
 - `dodgr_flows_disperse` allows `k` to be a vector, with different coefficients
   for each `from` point.
-* Add "highway:pedestrian" to weighting profiles
+- Add "highway:pedestrian" to weighting profiles
 - `weight_streetnet` for `sc` objects automatically adds component column
 - bug fix in `weight_streetnet.sc(..., wt_profile = 1)`
 - bug fix in `dodgr_full_cycles` for `SC` class objects
