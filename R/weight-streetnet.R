@@ -60,6 +60,13 @@
 #' present in a given weighting profile are automatically removed from the
 #' weighted streetnet.
 #'
+#' @note If the resultant graph is to be contracted via
+#' \link{dodgr_contract_graph}, **and** if the columns of the graph have been,
+#' or will be, modified, then automatic caching must be switched off with
+#' \link{dodgr_cache_off}. If not, the \link{dodgr_contract_graph} function will
+#' return the automatically cached version, which is the contracted version of
+#' the full graph prior to any modification of columns.
+#'
 #' @seealso \link{write_dodgr_wt_profile}, \link{dodgr_times}
 #'
 #' @export

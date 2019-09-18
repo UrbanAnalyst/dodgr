@@ -93,6 +93,13 @@ The resultant graph includes only those edges for which the given
 weighting profile specifies finite edge weights. Any edges of types not
 present in a given weighting profile are automatically removed from the
 weighted streetnet.
+
+If the resultant graph is to be contracted via
+\link{dodgr_contract_graph}, \strong{and} if the columns of the graph have been,
+or will be, modified, then automatic caching must be switched off with
+\link{dodgr_cache_off}. If not, the \link{dodgr_contract_graph} function will
+return the automatically cached version, which is the contracted version of
+the full graph prior to any modification of columns.
 }
 \examples{
 # hampi is included with package as an 'osmdata' sf-formatted street network
