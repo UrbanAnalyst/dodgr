@@ -219,7 +219,7 @@ head (graph)
 ```
 Note that the actual graph contains around 30 times as many edges as there are
 streets, indicating that each street is composed on average of around 30
-individual segments.  The individual points points or vertices from those
+individual segments.  The individual points or vertices from those
 segments can be extracted with,
 ```{r hampi-verts}
 vt <- dodgr_vertices (graph)
