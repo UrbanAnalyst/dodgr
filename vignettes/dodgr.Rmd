@@ -165,8 +165,7 @@ million shortest-path distances, all in under 30 seconds.
 # 3 Graphs and Street Networks
 
 Although the above code is short and fast, most users will probably want more
-control over their graphs and routing possibilities. Each of the steps indicated
-above (through the `quiet = FALSE` option) can be implemented separately. To
+control over their graphs and routing possibilities. To
 illustrate, the remainder of this vignette analyses the much smaller street
 network of Hampi, Karnataka, India, included in the `dodgr` package as the
 dataset [`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html). This
