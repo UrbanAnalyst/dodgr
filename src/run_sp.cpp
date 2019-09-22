@@ -4,6 +4,7 @@
 #include "dgraph.h"
 #include "heaps/heap_lib.h"
 
+// # nocov start
 template <typename T>
 void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
         const std::map <std::string, unsigned int>& vert_map,
@@ -19,6 +20,7 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
         g->addNewEdge (fromi, toi, dist [i], wt [i]);
     }
 }
+// # nocov end
 
 
 std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)

@@ -248,7 +248,7 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 
     if (!(length (k) == 1 | length (k) == length (from)))
         stop ("'k' must be either single value or vector ",
-              "of same lenght as 'from'")
+              "of same length as 'from'")
     if (length (k) == 1)
         k <- rep (k, length (from))
 
