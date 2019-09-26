@@ -177,7 +177,8 @@ struct OneIso : public RcppParallel::Worker
                     // # nocov start
                     if (prev [sj] < INFINITE_INT)
                     {
-                        terminal_verts.erase (j);
+                        if (terminal_verts.find (j) != terminal_verts.end ())
+                            terminal_verts.erase (j);
                         terminal_verts.emplace (prev [sj]);
                     }
                     // # nocov end
