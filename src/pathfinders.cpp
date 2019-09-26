@@ -43,10 +43,10 @@ void PF::PathFinder::init_arrays (
     w [v] = 0.0;
     d [v] = 0.0;
     prev [v] = -1;
-    m_open_vec [v] = true;
 
     std::fill (m_open_vec, m_open_vec + n, false);
     std::fill (m_closed_vec, m_closed_vec + n, false);
+    m_open_vec [v] = true;
 }
 
 void PF::PathFinder::scan_edges (const DGraphEdge *edge,
