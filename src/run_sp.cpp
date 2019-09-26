@@ -379,15 +379,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr <PF::PathFinder> pathfinder =
-        std::make_shared <PF::PathFinder> (
-            nverts, *run_sp::getHeapImpl(heap_type), g);
-
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
     std::vector<int> prev (nverts);
-
-    pathfinder->init (g); // specify the graph
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
@@ -396,19 +390,26 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
 
-    for (unsigned int v = 0; v < nfrom; v++)
+    for (unsigned int i = 0; i < nfrom; i++)
     {
+        // These lines (re-)initialise the heap, so have to be called for each v
+        std::shared_ptr <PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (
+                nverts, *run_sp::getHeapImpl(heap_type), g);
+
+        pathfinder->init (g); // specify the graph
+
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         pathfinder->Dijkstra (d, w, prev,
-                static_cast <unsigned int> (fromi [v]), toi);
-        for (unsigned int vi = 0; vi < nto; vi++)
+                static_cast <unsigned int> (fromi [i]), toi);
+        for (unsigned int j = 0; j < nto; j++)
         {
-            if (w [static_cast <size_t> (toi [vi])] < INFINITE_DOUBLE)
+            if (w [static_cast <size_t> (toi [j])] < INFINITE_DOUBLE)
             {
-                dout (v, vi) = d [static_cast <size_t> (toi [vi])];
+                dout (i, j) = d [static_cast <size_t> (toi [j])];
             }
         }
     }
@@ -462,22 +463,24 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    std::shared_ptr<PF::PathFinder> pathfinder =
-        std::make_shared <PF::PathFinder> (nverts,
-            *run_sp::getHeapImpl(heap_type), g);
-    
     Rcpp::List res (nfrom);
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
     std::vector<int> prev (nverts);
 
-    pathfinder->init (g); // specify the graph
-
     for (unsigned int i = 0; i < nfrom; i++)
     {
+        // These lines (re-)initialise the heap, so have to be called for each i
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                *run_sp::getHeapImpl(heap_type), g);
+        
+        pathfinder->init (g); // specify the graph
+
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
+        std::fill (prev.begin(), prev.end(), 0);
 
         pathfinder->Dijkstra (d, w, prev,
                 static_cast <unsigned int> (fromi [i]), toi);
