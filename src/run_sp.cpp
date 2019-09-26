@@ -473,40 +473,40 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 
     pathfinder->init (g); // specify the graph
 
-    for (unsigned int v = 0; v < nfrom; v++)
+    for (unsigned int i = 0; i < nfrom; i++)
     {
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
 
         pathfinder->Dijkstra (d, w, prev,
-                static_cast <unsigned int> (fromi [v]), toi);
+                static_cast <unsigned int> (fromi [i]), toi);
 
         Rcpp::List res1 (nto);
-        for (unsigned int vi = 0; vi < nto; vi++)
+        for (unsigned int j = 0; j < nto; j++)
         {
             std::vector <int> onePath;
-            if (w [toi [vi]] < INFINITE_DOUBLE)
+            if (w [toi [j]] < INFINITE_DOUBLE)
             {
-                int target = toi_in [vi]; // target can be -1!
+                int target = toi_in [j]; // target can be -1!
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
                     onePath.push_back (target + 1);
                     target = static_cast <int> (prev [static_cast <unsigned int> (target)]);
-                    if (target < 0 || target == fromi [v])
+                    if (target < 0 || target == fromi [i])
                         break;
                 }
             }
             if (onePath.size () >= 1)
             {
-                onePath.push_back (fromi [v] + 1);
+                onePath.push_back (fromi [i] + 1);
                 std::reverse (onePath.begin (), onePath.end ());
-                res1 [vi] = onePath;
+                res1 [j] = onePath;
             }
         }
-        res [v] = res1;
+        res [i] = res1;
     }
     return (res);
 }
