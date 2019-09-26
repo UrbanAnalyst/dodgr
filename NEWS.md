@@ -1,5 +1,8 @@
 # v0.2.1.0x
 
+Minor changes:
+- fix bug in `dodgr_paths`, thanks to @agila5
+
 
 # v0.2.1
 
