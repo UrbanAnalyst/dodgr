@@ -1,4 +1,4 @@
-# CRAN notes for dodgr_0.2.2 submission
+# CRAN notes for dodgr_0.2.3 submission
 
 ## Current ASAN/UBSAN notes
 
