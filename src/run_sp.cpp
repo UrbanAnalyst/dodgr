@@ -153,6 +153,7 @@ struct OneIso : public RcppParallel::Worker
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
+
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -167,20 +168,18 @@ struct OneIso : public RcppParallel::Worker
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
-            // Get the set of terminal vertices.
+            // Get the set of terminal vertices: those with w<dlimit_max but 
+            // with no previous (outward-going) nodes
             std::set <int> terminal_verts;
             for (int j: prev)
             {
                 size_t sj = static_cast <size_t> (j);
-                if (w [sj] > INFINITE_INT && w [sj] < dlimit_max)
+                if (prev [sj] == INFINITE_INT && w [sj] < dlimit_max)
                 {
                     // # nocov start
-                    if (prev [sj] < INFINITE_INT)
-                    {
-                        if (terminal_verts.find (j) != terminal_verts.end ())
-                            terminal_verts.erase (j);
-                        terminal_verts.emplace (prev [sj]);
-                    }
+                    if (terminal_verts.find (j) != terminal_verts.end ())
+                        terminal_verts.erase (j);
+                    terminal_verts.emplace (prev [sj]);
                     // # nocov end
                 }
             }
@@ -198,7 +197,7 @@ struct OneIso : public RcppParallel::Worker
                     for (auto k: dlimit)
                     {
                         size_t sp = static_cast <size_t> (prev [j]);
-                        if (w [j] > k && w[sp] < k)
+                        if (w [j] > k && w [sp] < k)
                             dout (i, sp) = -k; // flag isohull verts with -k
                         else
                             dout (i, j) = w [j]; // distance of other internal verts
