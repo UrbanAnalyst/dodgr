@@ -71,6 +71,9 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
 
 convert_hw_types_to_bool <- function (graph, wt_profile)
 {
+    if (is.logical (graph$oneway))
+        return (graph)
+
     if (!(is.character (wt_profile) | is.data.frame (wt_profile)))
         return (graph)
 
