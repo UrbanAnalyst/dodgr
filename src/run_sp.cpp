@@ -153,7 +153,6 @@ struct OneIso : public RcppParallel::Worker
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
-
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
@@ -165,6 +164,7 @@ struct OneIso : public RcppParallel::Worker
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+            std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
@@ -173,14 +173,17 @@ struct OneIso : public RcppParallel::Worker
             std::set <int> terminal_verts;
             for (int j: prev)
             {
-                size_t sj = static_cast <size_t> (j);
-                if (prev [sj] == INFINITE_INT && w [sj] < dlimit_max)
+                if (j < INFINITE_INT)
                 {
-                    // # nocov start
-                    if (terminal_verts.find (j) != terminal_verts.end ())
-                        terminal_verts.erase (j);
-                    terminal_verts.emplace (prev [sj]);
-                    // # nocov end
+                    size_t sj = static_cast <size_t> (j);
+                    if (prev [sj] == INFINITE_INT && w [sj] < dlimit_max)
+                    {
+                        // # nocov start
+                        if (terminal_verts.find (j) != terminal_verts.end ())
+                            terminal_verts.erase (j);
+                        terminal_verts.emplace (prev [sj]);
+                        // # nocov end
+                    }
                 }
             }
 
@@ -197,7 +200,7 @@ struct OneIso : public RcppParallel::Worker
                     for (auto k: dlimit)
                     {
                         size_t sp = static_cast <size_t> (prev [j]);
-                        if (w [j] > k && w [sp] < k)
+                        if (w [j] > k && w[sp] < k)
                             dout (i, sp) = -k; // flag isohull verts with -k
                         else
                             dout (i, j) = w [j]; // distance of other internal verts

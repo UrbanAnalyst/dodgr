@@ -8,9 +8,11 @@ not been able to reproduce the result. I tried the rocker/r-devel-ubsan-clang
 container, but that failed to install package due to the valgrind memory leak
 from TBB via RcppParallel mentioned below. I also checked on r-hub's sanitizer
 system, but that failed for same reason, and not for reasons related to current
-CRAN failures. I could also not reproduce locally. In spite of this, I am
-confident that I have identified the reason for currently failures, and
-rectified accordingly. Sorry for any inconvenience.
+CRAN failures. I could also not reproduce locally. One failing test I did
+manage to reproduce was the valgrind test, which this submission definitely
+fixes, reducing the possibly lost byte count from >200kB back to the "usual"
+2kB due to RcppParallel / TBB. I confidently presume that the fix also
+successfully addresses the ASAN/UBSAN issues. Sorry for any inconvenience.
 
 ## Notes
 
