@@ -1,12 +1,16 @@
-# CRAN notes for dodgr_0.2.1 submission
+# CRAN notes for dodgr_0.2.2 submission
 
-## Current failure
+## Current ASAN/UBSAN notes
 
-CRAN checks currently fail on r-devel-linux-x86_64-debian-gcc because of one
-example which fails to read from a connection. This should never fail, as it
-reads from a file in tempdir() that must exist, and which succeeds on all other
-systems. I have nevertheless switched the very small example that caused this
-fail to `\dontrun` to rectify this problem.
+This submission *should* rectify previous notes from address & undefined
+behaviour sanitizers. I have nevertheless been unable to confirm this as I have
+not been able to reproduce the result. I tried the rocker/r-devel-ubsan-clang
+container, but that failed to install package due to the valgrind memory leak
+from TBB via RcppParallel mentioned below. I also checked on r-hub's sanitizer
+system, but that failed for same reason, and not for reasons related to current
+CRAN failures. I could also not reproduce locally. In spite of this, I am
+confident that I have identified the reason for currently failures, and
+rectified accordingly. Sorry for any inconvenience.
 
 ## Notes
 

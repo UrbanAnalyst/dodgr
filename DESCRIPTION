@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.1.002
+Version: 0.2.2
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Andreas", "Petutschnig", role="aut"),
@@ -25,7 +25,6 @@ Imports:
     magrittr,
     methods,
     osmdata,
-    rbenchmark,
     Rcpp (>= 0.12.6),
     RcppParallel
 Suggests:
@@ -36,6 +35,7 @@ Suggests:
     jsonlite,
     knitr,
     purrr,
+    rbenchmark,
     RColorBrewer,
     rmarkdown,
     roxygen2,
