@@ -24,6 +24,8 @@
 #' compare_heaps (graph, nverts = 1000, replications = 1)
 compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
+    requireNamespace ("rbenchmark")
+
     if (is.numeric (nverts))
         graph <- dodgr_sample (graph, nverts = nverts)
     graph_contracted <- dodgr_contract_graph (graph)
