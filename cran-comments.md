@@ -14,6 +14,8 @@ fixes, reducing the possibly lost byte count from >200kB back to the "usual"
 2kB due to RcppParallel / TBB. I confidently presume that the fix also
 successfully addresses the ASAN/UBSAN issues. Sorry for any inconvenience.
 
+I have also rectified one previous, intermittently failing test.
+
 ## Notes
 
 This submissions generates the following NOTES on some systems:

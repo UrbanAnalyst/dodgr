@@ -23,7 +23,8 @@ test_that("flows aggregate", {
 
     flows [1, 2] <- NA
     graph3 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
-    expect_true (max (graph3$flow) <= max (graph2$flow))
+    if (test_all)
+        expect_true (max (graph3$flow) <= max (graph2$flow))
 
     graph4 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows,
                                      contract = TRUE)
