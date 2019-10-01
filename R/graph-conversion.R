@@ -133,6 +133,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
     }
     v <- dodgr_vertices (graph)
     graph <- graph [, do.call (c, gr_cols [!is.na (gr_cols)])]
+    names (graph) <- names (gr_cols) [!is.na (gr_cols)]
     gr_cols <- dodgr_graph_cols (graph)
     names (graph) [which (names (gr_cols) == weight_column)] <- "weight"
     # remove edge_id if it exists
