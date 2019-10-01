@@ -38,8 +38,10 @@ urgently working on a solution, and expect the package to reappear on CRAN any
 day. We apologise for any inconvenience. In the meantime, the package can still
 be installed via `remotes::install_github()`, as described below.
 
-R package for efficient calculation of many-to-many pairwise distances on
-dual-weighted directed graphs, for aggregation of flows throughout
+---
+
+`dodgr` is an R package for efficient calculation of many-to-many pairwise
+distances on dual-weighted directed graphs, for aggregation of flows throughout
 networks, and for highly realistic routing through street networks (time-based
 routing considering incline, turn-angles, surface quality, everything).
 
