@@ -8,12 +8,10 @@
 ^CONTRIBUTING\.md$
 ^cran-comments.md$
 ^vignettes/makefile$
-^vignettes/bencharm_data.rds$
-^vignettes/bencharm.Rmd$
 docs/
 data-raw/
-tests/valgrind-script.R$
-tests/valgrind-test.R$
+^tests/valgrind-script.R$
+^tests/valgrind-test.R$
 ^_pkgdown\.yml$
 ^appveyor\.yml$
 ^.*\.Rproj$

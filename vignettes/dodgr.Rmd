@@ -9,9 +9,6 @@ output:
         toc_float: true
         number_sections: false
         theme: flatly
-header-includes: 
-    - \usepackage{tikz}
-    - \usetikzlibrary{arrows}
 vignette: >
   %\VignetteIndexEntry{1 dodgr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -34,13 +31,8 @@ A. In Fig. 1, for example, the weights between the graph vertices (A, B, C, and
 D) differ depending on the direction of travel, and it is only possible to
 traverse the entire graph in an anti-clockwise direction.
 
-```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig1.tex"), fig.cap="Figure 1: A weighted, directed graph"}
-```
-(Note that this image does not currently render on the github-hosted version of
-this site, for reasons currently [beyond our
-control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
-version can be seen on the equivalent [CRAN
-vignette](https://cran.r-project.org/package=dodgr/vignettes/dodgr.html).)
+![](fig1.png)
+
 
 Graphs in `dodgr` are represented by simple flat `data.frame` objects, so the
 graph of Fig. 1, presuming the edge weights to take values of 1, 2, and 3, would
@@ -69,13 +61,7 @@ other **R** packages, such as
 through its ability to trace paths through *dual-weighted* directed graphs,
 illustrated in Fig. 2.
 
-```{r fig2, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig2.tex"), fig.cap="Figure 2: A **dual**-weighted, directed graph in which the weights (represented by thicknesses) of the grey arrows differ from those of the black arrows."}
-```
-(As above, this image also does not currently render on the github-hosted
-version of this site, for reasons currently [beyond our
-control](https://github.com/ATFutures/dodgr/issues/93); a properly rendered
-version can be seen on the equivalent [CRAN
-vignette](https://cran.r-project.org/package=dodgr/vignettes/dodgr.html).)
+![](fig2.png)
 
 Dual-weighted directed graphs are common in many areas, a foremost example
 being routing through street networks. Routes through street networks depends on
@@ -550,8 +536,7 @@ d <- igraph::distances (igr, v = pts, to = pts, mode = "out")
 A further unique feature of `dodgr` is the ability to remove redundant vertices
 from graphs (see Fig. 3), thereby speeding up routing calculations.
 
-```{r fig3, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("fig3.tex"), fig.cap="Figure 3: **(A)** Vertex#2 is redundant for routing calculations from anywhere other than that point itself. (**B**) Equivalent graph to (**A**) contracted through removal of vertex#2. (**C**) Vertex#2 is not redundant."}
-```
+![](fig3.png)
 
 In Fig. 3(A), the only way to get from vertex 1 to 3, 4 or 5 is through C. The
 intermediate vertex B is redundant for routing purposes (and than to or from

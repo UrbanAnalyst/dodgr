@@ -14,3 +14,38 @@ open: $(LFILE).html
 
 clean:
 	rm -rf *.html *.png 
+
+
+
+fig1: pdflone convone rmone
+
+pdflone: fig1.tex
+	pdflatex fig1.tex
+
+convone: fig1.pdf
+	convert -density 300 fig1.pdf -quality 100 fig1.png
+
+rmone:
+	rm fig1.aux fig1.log fig1.pdf
+
+fig2: pdfltwo convtwo rmtwo
+
+pdfltwo: fig2.tex
+	pdflatex fig2.tex
+
+convtwo: fig2.pdf
+	convert -density 300 fig2.pdf -quality 100 fig2.png
+
+rmtwo:
+	rm fig2.aux fig2.log fig2.pdf
+
+fig3: pdflthree convthree rmthree
+
+pdflthree: fig3.tex
+	pdflatex fig3.tex
+
+convthree: fig3.pdf
+	convert -density 300 fig3.pdf -quality 100 fig3.png
+
+rmthree:
+	rm fig3.aux fig3.log fig3.pdf
