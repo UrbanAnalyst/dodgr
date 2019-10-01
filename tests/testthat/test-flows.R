@@ -3,6 +3,8 @@ context("dodgr_flows")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
 
+testthat::skip_on_cran ()
+
 test_that("flows aggregate", {
     graph <- weight_streetnet (hampi)
     # get routing points from contracted graph:
@@ -28,7 +30,8 @@ test_that("flows aggregate", {
 
     graph4 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows,
                                      contract = TRUE)
-    expect_true (all ((graph4$flow - graph3$flow) < 1e-6))
+    if (test_all)
+        expect_true (all ((graph4$flow - graph3$flow) < 1e-6))
 
     expect_warning (graph4 <- dodgr_flows_aggregate (graph3, from = from,
                                                      to = to, flows = flows),
