@@ -175,7 +175,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
     # Also set weighted distance for all these to NA:
     #gr_cols <- dodgr_graph_cols (graph)
-    #graph [[gr_cols$w]] [graph$highway %in% na_highways] <- NA_real_
+    #graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") |
         !"surface" %in% names (graph))
@@ -239,7 +239,7 @@ calc_edge_time <- function (graph, wt_profile)
     gr_cols <- dodgr_graph_cols (graph)
     speed_m_per_s <- graph$maxspeed * 1000 / 3600 # maxspeeds are km/hr
     graph$time <- graph [[gr_cols$d]] / speed_m_per_s
-    graph$time_weighted <- graph [[gr_cols$w]] / speed_m_per_s
+    graph$time_weighted <- graph [[gr_cols$d_weighted]] / speed_m_per_s
 
     if ("dz" %in% names (graph) & wt_profile %in% c ("foot", "bicycle"))
     {

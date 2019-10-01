@@ -143,7 +143,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
         if (is.na (gr_cols$time_weighted))
             stop ("Graph does not contain a weighted time column from ",
                   "which to calculate fastest paths.")
-        graph [[gr_cols$w]] <- graph [[gr_cols$time_weighted]]
+        graph [[gr_cols$d_weighted]] <- graph [[gr_cols$time_weighted]]
     }
 
     graph <- convert_graph (graph, gr_cols)

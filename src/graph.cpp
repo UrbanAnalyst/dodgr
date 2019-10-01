@@ -57,7 +57,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
     Rcpp::StringVector from = gr ["from"];
     Rcpp::StringVector to = gr ["to"];
     Rcpp::NumericVector dist = gr ["d"];
-    Rcpp::NumericVector weight = gr ["w"];
+    Rcpp::NumericVector weight = gr ["d_weighted"];
     Rcpp::StringVector colnames = gr.attr ("names");
     bool has_times = false;
     Rcpp::NumericVector time, timew;

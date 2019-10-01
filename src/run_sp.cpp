@@ -273,7 +273,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
 
     unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
@@ -323,7 +323,7 @@ Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
 
     unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
@@ -370,7 +370,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
 
     unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
@@ -454,7 +454,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
 
     unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;

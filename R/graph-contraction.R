@@ -121,7 +121,8 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
     graph_refill [, gr_cols$from] <- graph_contracted$graph$from [indx_contr]
     graph_refill [, gr_cols$to] <- graph_contracted$graph$to [indx_contr]
     graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
-    graph_refill [, gr_cols$w] <- graph_contracted$graph$w [indx_contr]
+    graph_refill [, gr_cols$d_weighted] <-
+        graph_contracted$graph$d_weighted [indx_contr]
     if (!is.na (gr_cols$time) & !is.na (gr_cols$time_weighted))
     {
         graph_refill [, gr_cols$time] <-

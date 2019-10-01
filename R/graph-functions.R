@@ -86,7 +86,7 @@ dodgr_graph_cols <- function (graph)
 
     ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col, timew_col,
               xfr, yfr, xto, yto, component)
-    names (ret) <- c ("edge_id", "from", "to", "d", "w", "time",
+    names (ret) <- c ("edge_id", "from", "to", "d", "d_weighted", "time",
                       "time_weighted", "xfr", "yfr", "xto", "yto", "component")
     class (ret) <- c (class (ret), "graph_columns")
 
@@ -102,7 +102,8 @@ dodgr_graph_cols <- function (graph)
 #' @noRd
 convert_graph <- function (graph, gr_cols)
 {
-    keep_cols <- c ("edge_id", "from", "to", "d", "w", "time", "time_weighted")
+    keep_cols <- c ("edge_id", "from", "to", "d", "d_weighted",
+                    "time", "time_weighted")
     index <- do.call (c, gr_cols [keep_cols])
     index <- index [!is.na (index)]
     graph <- graph [, index]
@@ -327,12 +328,6 @@ dodgr_sample <- function (graph, nverts = 1000)
     }
 
     attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
-
-    # sub-samples of dodgr_streetnet graphs are unclassed, especially because of
-    # the way column identification works.
-    if ("dodgr_streetnet" %in% class (graph))
-        class (graph) <- class (graph) [which (!class (graph) ==
-                                               "dodgr_streetnet")]
 
     return (graph)
 }

@@ -347,7 +347,7 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
     const std::vector <double> dist = graph ["d"];
-    const std::vector <double> wt = graph ["w"];
+    const std::vector <double> wt = graph ["d_weighted"];
 
     const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     const std::vector <std::string> vert_name = vert_map_in ["vert"];
@@ -409,7 +409,7 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
 
     unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::vector <std::string> vert_name = vert_map_in ["vert"];

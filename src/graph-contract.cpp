@@ -346,7 +346,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
                 Rcpp::Named ("from") = from_vec,
                 Rcpp::Named ("to") = to_vec,
                 Rcpp::Named ("d") = dist_vec,
-                Rcpp::Named ("w") = weight_vec,
+                Rcpp::Named ("d_weighted") = weight_vec,
                 Rcpp::_["stringsAsFactors"] = false);
     else
         contracted = Rcpp::DataFrame::create (
@@ -354,7 +354,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
                 Rcpp::Named ("from") = from_vec,
                 Rcpp::Named ("to") = to_vec,
                 Rcpp::Named ("d") = dist_vec,
-                Rcpp::Named ("w") = weight_vec,
+                Rcpp::Named ("d_weighted") = weight_vec,
                 Rcpp::Named ("time") = time_vec,
                 Rcpp::Named ("timew") = timew_vec,
                 Rcpp::_["stringsAsFactors"] = false);
@@ -385,7 +385,7 @@ Rcpp::NumericVector rcpp_merge_flows (Rcpp::DataFrame graph)
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
     std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["w"];
+    std::vector <double> wt = graph ["d_weighted"];
     std::vector <double> flow = graph ["flow"]; // always called "flow"
 
     // vertvert_map just holds index of where pair of vertices were first found.
