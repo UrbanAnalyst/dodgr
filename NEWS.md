@@ -1,5 +1,8 @@
 # v0.2.3
 
+Major changes:
+- Remove benchmark vignette
+
 Minor changes:
 - fix bug in `dodgr_paths`, thanks to @agila5
 

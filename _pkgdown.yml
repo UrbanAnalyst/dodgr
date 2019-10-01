@@ -63,7 +63,6 @@ articles:
     contents:
     - dodgr
     - times
-    - benchmark
 
 navbar:
   title: dodgr
