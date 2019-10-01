@@ -634,7 +634,7 @@ then `dp [[i]] [[j]]` will contain the path from `from [i]` to `to [j]`. The
 paths are represented as sequences of vertex names. Consider the following
 example,
 ```{r}
-graph <- weight_streetnet (hampi)
+graph <- weight_streetnet (hampi, wt_profile = "foot")
 head (graph)
 ```
 The columns of `from_id` and `to_id` contain the names of the vertices. To
@@ -705,7 +705,7 @@ resultant aggregate flow to each edge.
 For a set of `nf` points of origin and `nt` points of destination, flows are
 defined by a simple `nf`-by-`nt` matrix of values, as in the following code:
 ```{r}
-graph <- weight_streetnet (hampi)
+graph <- weight_streetnet (hampi, wt_profile = "foot")
 from <- sample (graph$from_id, size = 10)
 to <- sample (graph$to_id, size = 10)
 flows <- matrix (10 * runif (length (from) * length (to)),

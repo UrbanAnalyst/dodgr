@@ -305,7 +305,6 @@ dodgr_components <- function (graph)
 #' nrow (dodgr_vertices (graph)) # 200
 dodgr_sample <- function (graph, nverts = 1000)
 {
-    classes <- class (graph)
     graph <- tbl_to_df (graph)
 
     fr <- find_fr_id_col (graph)
@@ -327,9 +326,13 @@ dodgr_sample <- function (graph, nverts = 1000)
         graph <- graph [sort (indx), ]
     }
 
-    class (graph) <- classes
-
     attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+
+    # sub-samples of dodgr_streetnet graphs are unclassed, especially because of
+    # the way column identification works.
+    if ("dodgr_streetnet" %in% class (graph))
+        class (graph) <- class (graph) [which (!class (graph) ==
+                                               "dodgr_streetnet")]
 
     return (graph)
 }
