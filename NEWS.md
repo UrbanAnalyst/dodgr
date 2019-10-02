@@ -1,10 +1,10 @@
-# v0.2.3.00x
+# v0.2.4
 
 Major changes:
 - Remove benchmark vignette
 
 Minor changes:
-- fix bug in `dodgr_paths`, thanks to @agila5
+- bug fixes in `dodgr_paths`, thanks to @agila5
 
 
 # v0.2.1

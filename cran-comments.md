@@ -1,6 +1,11 @@
-# CRAN notes for dodgr_0.2.3 submission
+# CRAN notes for dodgr_0.2.4 submission
 
-## Current ASAN/UBSAN notes
+A few submissions over the past week have failed autocheck, partly because of
+tests which have now been rectified, and presumably partly because of the
+problems with tlmgr and tikz on the Debian machine. This submission avoids the
+use of tikz, so hopefully overcoming those Debian issues.
+
+## ASAN/UBSAN notes on previous version
 
 This submission *should* rectify previous notes from address & undefined
 behaviour sanitizers. I have nevertheless been unable to confirm this as I have
