@@ -8,9 +8,6 @@ output:
         toc_float: true
         number_sections: false
         theme: flatly
-header-includes: 
-    - \usepackage{tikz}
-    - \usetikzlibrary{arrows}
 vignette: >
   %\VignetteIndexEntry{2 dodgr_times}
   %\VignetteEngine{knitr::rmarkdown}
@@ -115,8 +112,7 @@ estimation of temporal delays associated with turning across oncoming traffic.
 Calculation of turn penalties is achieved through fundamentally modifying the
 resultant graph as depicted in Fig. 1.
 
-```{r fig1, fig.align="center", echo=FALSE, engine='tikz',fig.ext='svg', code=readLines("times-fig1.tex"), fig.cap="Figure 1: Graph modification to account for turn penalties, which introduces the additional dashed lines representing compound edges with time penalties for turning penalties."}
-```
+![](times-fig1.png)
 
 Figure 1 depicts a right-angled crossing, with straight arrows showing a single
 directed edge into the crossing (solid black line), and three directed edges

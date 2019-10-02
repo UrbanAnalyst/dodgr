@@ -1,4 +1,4 @@
-LFILE = dodgr
+LFILE = times
 
 all: knith
 #all: knith open 
@@ -49,3 +49,15 @@ convthree: fig3.pdf
 
 rmthree:
 	rm fig3.aux fig3.log fig3.pdf
+
+figt1: pdflone_t convone_t rmone_t
+
+pdflone_t: times-fig1.tex
+	pdflatex times-fig1.tex
+
+convone_t: times-fig1.pdf
+	convert -density 300 times-fig1.pdf -quality 100 times-fig1.png
+
+rmone_t:
+	rm times-fig1.aux times-fig1.log times-fig1.pdf
+
