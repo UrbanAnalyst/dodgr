@@ -32,14 +32,6 @@ knitr::opts_chunk$set(
 
 # dodgr: Distances on Directed Graphs in R
 
-**NOTE** `dodgr` has temporarily been archived on CRAN (as of 1 Oct 2019), and
-so is not currently available for installation via `install.packages()`. We are
-urgently working on a solution, and expect the package to reappear on CRAN any
-day. We apologise for any inconvenience. In the meantime, the package can still
-be installed via `remotes::install_github()`, as described below.
-
----
-
 `dodgr` is an R package for efficient calculation of many-to-many pairwise
 distances on dual-weighted directed graphs, for aggregation of flows throughout
 networks, and for highly realistic routing through street networks (time-based
