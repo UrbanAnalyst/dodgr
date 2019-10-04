@@ -15,6 +15,7 @@ reference:
     - dodgr_paths
     - dodgr_isochrones
     - dodgr_isodists
+    - dodgr_isoverts
     - dodgr_flows_aggregate
     - dodgr_flows_disperse
   - title: Functions to Obtain Graphs
