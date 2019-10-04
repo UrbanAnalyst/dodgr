@@ -1,25 +1,9 @@
-# CRAN notes for dodgr_0.2.4 submission
+# CRAN notes for dodgr_0.2.5 submission
 
-A few submissions over the past week have failed autocheck, partly because of
-tests which have now been rectified, and presumably partly because of the
-problems with tlmgr and tikz on the Debian machine. This submission avoids the
-use of tikz, so hopefully overcoming those Debian issues.
-
-## ASAN/UBSAN notes on previous version
-
-This submission *should* rectify previous notes from address & undefined
-behaviour sanitizers. I have nevertheless been unable to confirm this as I have
-not been able to reproduce the result. I tried the rocker/r-devel-ubsan-clang
-container, but that failed to install package due to the valgrind memory leak
-from TBB via RcppParallel mentioned below. I also checked on r-hub's sanitizer
-system, but that failed for same reason, and not for reasons related to current
-CRAN failures. I could also not reproduce locally. One failing test I did
-manage to reproduce was the valgrind test, which this submission definitely
-fixes, reducing the possibly lost byte count from >200kB back to the "usual"
-2kB due to RcppParallel / TBB. I confidently presume that the fix also
-successfully addresses the ASAN/UBSAN issues. Sorry for any inconvenience.
-
-I have also rectified one previous, intermittently failing test.
+I finally managed to reproduce the previous UBSCAN and valgrind errors observed
+by Brian Ripley on 20 Sept 2019. This submission definitely fixes, with both
+AddressSanitizer and valgrind on r-devel returning only the by-now usual loss of
+2-3000 bytes due to TBB code bundled in RcppParallel (see below).
 
 ## Notes
 

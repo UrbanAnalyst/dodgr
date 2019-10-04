@@ -1,3 +1,7 @@
+# v0.2.5
+
+- bug fixes from previous versions
+
 # v0.2.4
 
 Major changes:
