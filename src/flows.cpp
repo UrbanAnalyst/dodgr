@@ -89,6 +89,7 @@ struct OneFlow : public RcppParallel::Worker
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+            d [i] = w [i] = 0.0;
 
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
 
@@ -231,13 +232,15 @@ struct OneDisperse : public RcppParallel::Worker
 
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+            std::fill (prev.begin (), prev.end (), INFINITE_INT);
+            d [i] = w [i] = 0.0;
 
             const unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
             for (size_t j = 0; j < nverts; j++)
             {
-                if (prev [j] > 0)
+                if (prev [j] > 0 && prev [j] < INFINITE_INT)
                 {
                     const std::string vert_to = vert_name [j],
                         vert_from = vert_name [static_cast <size_t> (prev [j])];
