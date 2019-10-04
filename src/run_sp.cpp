@@ -92,7 +92,7 @@ struct OneDist : public RcppParallel::Worker
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-            d [i] = w [i] = 0.0;
+            d [from_i] = w [from_i] = 0.0;
 
             if (is_spatial)
             {
@@ -166,7 +166,7 @@ struct OneIso : public RcppParallel::Worker
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
             std::fill (prev.begin (), prev.end (), INFINITE_INT);
-            d [i] = w [i] = 0.0;
+            d [from_i] = w [from_i] = 0.0;
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
@@ -404,7 +404,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
-        d [i] = w [i] = 0.0;
+        d [fromi [i]] = w [fromi [i]] = 0.0;
 
         pathfinder->Dijkstra (d, w, prev,
                 static_cast <unsigned int> (fromi [i]), toi);
@@ -484,7 +484,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
         std::fill (prev.begin(), prev.end(), INFINITE_INT);
-        d [i] = w [i] = 0.0;
+        d [fromi [i]] = w [fromi [i]] = 0.0;
 
         pathfinder->Dijkstra (d, w, prev,
                 static_cast <unsigned int> (fromi [i]), toi);
