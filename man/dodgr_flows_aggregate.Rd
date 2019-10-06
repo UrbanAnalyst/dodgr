@@ -5,7 +5,7 @@
 \title{dodgr_flows_aggregate}
 \usage{
 dodgr_flows_aggregate(graph, from, to, flows, contract = FALSE,
-  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
+  heap = "BHeap", tol = 1e-12, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
