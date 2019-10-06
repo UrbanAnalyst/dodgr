@@ -1,7 +1,11 @@
 context("dodgr graph functions")
 
+skip_on_cran ()
+
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
+
+skip_if (!test_all)
 
 test_that("sample graph", {
     graph <- weight_streetnet (hampi)
@@ -111,10 +115,7 @@ test_that("compare heaps", {
     #expect_true (ch$elapsed [igr] == max (ch$elapsed))
     # This actually fails on some machines (R oldrel on Windows) because elapsed
     # times are sometimes all very small *and equal*, so is turned off:
-    if (test_all)
-    {
-        #expect_true (ch$elapsed [igr] > min (ch$elapsed))
-    }
+    #expect_true (ch$elapsed [igr] > min (ch$elapsed))
 })
 
 test_that("dodgr2sf", {

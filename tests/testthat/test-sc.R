@@ -3,6 +3,9 @@ context("SC")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
 
+skip_on_cran ()
+skip_if (!test_all)
+
 #library (osmdata)
 #devtools::load_all ("../../ropensci/osmdata", export_all = FALSE)
 #h2 <- opq ("hampi india") %>%

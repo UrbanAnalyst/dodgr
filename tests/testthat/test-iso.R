@@ -26,6 +26,9 @@ test_that("isodists", {
               expect_true (length (unique (d$dlim)) <= length (dlim))
 })
 
+skip_on_cran ()
+skip_if (!test_all)
+
 test_that ("turn penalty", {
               hsc <- sf_to_sc (hampi)
               net0 <- weight_streetnet (hsc, wt_profile = "bicycle")
