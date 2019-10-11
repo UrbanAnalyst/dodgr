@@ -1,3 +1,7 @@
+#v 0.2.5.00x
+
+- switch off examples that caused previous CRAN failures
+
 # v0.2.5
 
 - bug fixes from previous versions
