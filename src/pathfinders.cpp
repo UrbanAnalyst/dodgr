@@ -15,10 +15,10 @@ PF::PathFinder::PathFinder(unsigned int n,
         const HeapDesc& heapD,
         std::shared_ptr<const DGraph> g)
 {
-    m_heap = heapD.newInstance(n);
-    m_closed = new bool[n];
-    m_open = new bool[n];
-    init(g);
+    m_heap = heapD.newInstance (n);
+    m_closed = new bool [n];
+    m_open = new bool [n];
+    init (g);
 }
 
 PF::PathFinder::~PathFinder() {
@@ -32,14 +32,17 @@ void PF::PathFinder::init(std::shared_ptr<const DGraph> g) {
 }
 
 void PF::PathFinder::init_arrays (
-        std::vector<double>& d,
-        std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector <double>& d,
+        std::vector <double>& w,
+        std::vector <int>& prev,
         bool *m_open_vec,
         bool *m_closed_vec,
         const unsigned int v,
         const size_t n)
 {
+    std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+    std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+    std::fill (prev.begin (), prev.end (), INFINITE_INT);
     w [v] = 0.0;
     d [v] = 0.0;
     prev [v] = -1;
@@ -129,7 +132,7 @@ void PF::PathFinder::Dijkstra (
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
-    m_heap->insert(v0, 0.0);
+    m_heap->insert (v0, 0.0);
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
@@ -170,7 +173,7 @@ void PF::PathFinder::DijkstraLimit (
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
-    m_heap->insert(v0, 0.0);
+    m_heap->insert (v0, 0.0);
 
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();

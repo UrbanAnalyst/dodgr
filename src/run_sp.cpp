@@ -58,7 +58,6 @@ struct OneDist : public RcppParallel::Worker
     // constructor
     OneDist (
             const Rcpp::IntegerVector fromi,
-            //const Rcpp::IntegerVector toi_in,
             const std::vector <unsigned int> toi_in,
             const size_t nverts_in,
             const std::vector <double> vx_in,
@@ -89,10 +88,6 @@ struct OneDist : public RcppParallel::Worker
         for (std::size_t i = begin; i < end; i++)
         {
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
-            // These have to be reserved within the parallel operator function!
-            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
-            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-            d [from_i] = w [from_i] = 0.0;
 
             if (is_spatial)
             {
@@ -158,15 +153,11 @@ struct OneIso : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
-        double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
+        const double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
 
         for (std::size_t i = begin; i < end; i++)
         {
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
-            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
-            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-            std::fill (prev.begin (), prev.end (), INFINITE_INT);
-            d [from_i] = w [from_i] = 0.0;
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
@@ -178,8 +169,7 @@ struct OneIso : public RcppParallel::Worker
                 if (j < INFINITE_INT)
                 {
                     size_t sj = static_cast <size_t> (j);
-                    if (sj < INFINITE_INT && prev [sj] == INFINITE_INT &&
-                            w [sj] < dlimit_max)
+                    if (prev [sj] == INFINITE_INT && w [sj] < dlimit_max)
                     {
                         terminal_verts.emplace (prev [sj]); // # nocov
                     }
