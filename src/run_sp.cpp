@@ -186,9 +186,9 @@ struct OneIso : public RcppParallel::Worker
                     dout (i, j) = -w [j]; // # nocov
                 } else if (prev [j] < INFINITE_INT && w [j] < dlimit_max)
                 {
+                    size_t st_prev = static_cast <size_t> (prev [j]);
                     for (auto k: dlimit)
                     {
-                        size_t st_prev = static_cast <size_t> (prev [j]);
                         if (w [j] > k && w [st_prev] < k)
                             dout (i, st_prev) = -k; // flag isohull verts with -k
                         else
@@ -255,7 +255,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
 
-    Rcpp::NumericVector id_vec;
     size_t nfrom = static_cast <size_t> (fromi.size ());
     size_t nto = static_cast <size_t> (toi.size ());
 
@@ -306,7 +305,6 @@ Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
         Rcpp::NumericVector dlim,
         const std::string& heap_type)
 {
-    Rcpp::NumericVector id_vec;
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     std::vector <std::string> from = graph ["from"];
@@ -352,7 +350,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
 {
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
-    Rcpp::NumericVector id_vec;
     size_t nfrom = static_cast <size_t> (fromi.size ());
     size_t nto = static_cast <size_t> (toi.size ());
 
@@ -437,7 +434,6 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 {
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
-    Rcpp::NumericVector id_vec;
     size_t nfrom = static_cast <size_t> (fromi.size ());
     size_t nto = static_cast <size_t> (toi.size ());
 
