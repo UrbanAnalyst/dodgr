@@ -3,8 +3,6 @@
 
 #include <algorithm> // std::fill
 
-#include <Rcpp.h> // TODO: Delete!
-
 // Modified from code by Shane Saunders
 
 // @param n Number of vertices in graph
@@ -77,7 +75,8 @@ void PF::PathFinder::scan_edges (const DGraphEdge *edge,
                     m_heap->insert (et, wt);
                     m_open_vec [et] = true;
                 }
-            }
+            } else
+                m_closed [et] = true;
         }
         edge = edge->nextOut;
     }
@@ -109,7 +108,8 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
                     m_heap->insert (et, wt + heur [et] - heur [v0]);
                     m_open_vec [et] = true;
                 }
-            }
+            } else
+                m_closed [et] = true;
         }
         edge = edge->nextOut;
     }
