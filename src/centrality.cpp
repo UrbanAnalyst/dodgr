@@ -1,5 +1,5 @@
-#include "centrality.h"
 #include "run_sp.h"
+#include "pathfinders.h"
 #include "heaps/heap.h"
 
 #include <algorithm> // std::fill
@@ -21,9 +21,6 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
     }
 }
 // # nocov end
-
-// igraph code starts at
-// https://github.com/igraph/igraph/blob/master/src/centrality.c#L1633
 
 void PF::PathFinder::Centrality (
         std::vector <double>& w,
