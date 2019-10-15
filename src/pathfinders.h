@@ -109,6 +109,10 @@ class PathFinder {
                 std::vector<double>& w,
                 std::vector<int>& prev,
                 unsigned int v0);
+        void Centrality (
+                std::vector <double>& w,
+                std::vector <double>& cent,
+                const unsigned int v0);
 
     private:
         Heap *m_heap;        // pointer: heap
