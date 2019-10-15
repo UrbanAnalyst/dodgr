@@ -164,6 +164,10 @@ find_d_col <- function (graph)
                     tolower (substring (names (graph), 2, 2)) != "w" &
                     tolower (substring (names (graph), 2, 2)) != "_")
     if (length (d_col) != 1)
+    {
+        d_col <- which (tolower (substring (names (graph), 1, 2)) == "di")
+    }
+    if (length (d_col) != 1)
         stop ("Unable to determine distance column in graph")
     return (d_col)
 }
