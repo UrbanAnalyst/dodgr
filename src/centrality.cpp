@@ -26,7 +26,6 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 // # nocov end
 
 void PF::PathFinder::Centrality_vertex (
-        std::vector <double>& w,
         std::vector <double>& cent,
         const unsigned int s)
 {
@@ -37,7 +36,7 @@ void PF::PathFinder::Centrality_vertex (
 
     std::deque <unsigned int> v_stack;
 
-    std::fill (w.begin (), w.end (), 0.0);
+    std::vector <double> w (n, 0.0);
     w [s] = 1.0;
 
     m_heap->insert (s, -1.0);
@@ -111,7 +110,6 @@ void PF::PathFinder::Centrality_vertex (
 
 
 void PF::PathFinder::Centrality_edge (
-        std::vector <double>& w,
         std::vector <double>& cent,
         const unsigned int s,
         const unsigned int nedges)
@@ -123,7 +121,7 @@ void PF::PathFinder::Centrality_edge (
 
     std::deque <unsigned int> v_stack;
 
-    std::fill (w.begin (), w.end (), 0.0);
+    std::vector <double> w (n, 0.0);
     w [s] = 1.0;
 
     m_heap->insert (s, -1.0);
@@ -246,7 +244,7 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_iso);
     */
-    std::vector <double> w (nverts), cent;
+    std::vector <double> cent;
     if (edges)
         cent.resize (nedges);
     else
@@ -262,9 +260,9 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         pathfinder->init (g); // specify the graph
 
         if (edges)
-            pathfinder->Centrality_edge (w, cent, i, nedges);
+            pathfinder->Centrality_edge (cent, i, nedges);
         else
-            pathfinder->Centrality_vertex (w, cent, i);
+            pathfinder->Centrality_vertex (cent, i);
     }
 
     Rcpp::NumericVector dout = Rcpp::wrap (cent);
