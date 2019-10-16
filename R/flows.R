@@ -61,7 +61,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
-#' graph_undir <- merge_directed_flows (graph)
+#' graph_undir <- merge_directed_graph (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 #'
@@ -108,7 +108,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #'                            wt_profile = 1)
 #' f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end, flows = flows)
 #' # Then merge directed flows and convert to \pkg{sf} for plotting as before:
-#' f <- merge_directed_flows (f)
+#' f <- merge_directed_graph (f)
 #' geoms <- dodgr_to_sfc (f)
 #' gc <- dodgr_contract_graph (f)
 #' gsf <- sf::st_sf (geoms)
@@ -238,7 +238,7 @@ get_random_prefix <- function (n = 5)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
-#' graph_undir <- merge_directed_flows (graph)
+#' graph_undir <- merge_directed_graph (graph)
 dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE, 
                                   heap = 'BHeap', tol = 1e-12, quiet = TRUE)
 {
@@ -308,57 +308,6 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-
-    return (graph)
-}
-
-#' merge_directed_flows
-#'
-#' The \link{dodgr_flows_aggregate} and \link{dodgr_flows_disperse} functions
-#' return a column of aggregated flows directed along each edge of a graph, so
-#' the aggregated flow from vertex A to vertex B will not necessarily equal that
-#' from B to A, and the total flow in both directions will be the sum of flow
-#' from A to B plus that from B to A. This function converts a directed graph to
-#' undirected form through reducing all pairs of directed edges to a single
-#' edge, and aggregating flows from both directions.
-#'
-#' @param graph A graph containing a `flow` column as returned from
-#' \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
-#' @return An equivalent graph in which all directed edges have been reduced to
-#' single, undirected edges, and all directed flows aggregated to undirected
-#' flows.
-#' @export
-#' @examples
-#' graph <- weight_streetnet (hampi)
-#' from <- sample (graph$from_id, size = 10)
-#' to <- sample (graph$to_id, size = 5)
-#' to <- to [!to %in% from]
-#' flows <- matrix (10 * runif (length (from) * length (to)),
-#'                  nrow = length (from))
-#' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
-#' # graph then has an additonal 'flows` column of aggregate flows along all
-#' # edges. These flows are directed, and can be aggregated to equivalent
-#' # undirected flows on an equivalent undirected graph with:
-#' graph_undir <- merge_directed_flows (graph)
-#' # This graph will only include those edges having non-zero flows, and so:
-#' nrow (graph); nrow (graph_undir) # the latter is much smaller
-merge_directed_flows <- function (graph)
-{
-    if (!"flow" %in% names (graph))
-        stop ("graph does not have any flows to merge")
-
-    gr_cols <- dodgr_graph_cols (graph)
-    graph2 <- convert_graph (graph, gr_cols)
-    graph2$flow <- graph$flow
-
-    flows <- rcpp_merge_flows (graph2)
-
-    indx <- which (flows > 0)
-    graph <- graph [indx, , drop = FALSE] #nolint
-    graph$flow <- flows [indx]
-    class (graph) <- c (class (graph), "dodgr_merged_flows")
-
-    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
 
     return (graph)
 }

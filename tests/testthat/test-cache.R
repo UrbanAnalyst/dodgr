@@ -33,7 +33,7 @@ test_that("cache on", {
                                                               to = pts,
                                                               flow = fmat))
               expect_silent (graphf <- dodgr_uncontract_graph (graphf))
-              expect_silent (graphf <- merge_directed_flows (graphf))
+              expect_silent (graphf <- merge_directed_graph (graphf))
 
               # then turn angle graph
               grapht <- weight_streetnet (hsc, wt_profile = "bicycle",
@@ -47,7 +47,7 @@ test_that("cache on", {
                                                               to = pts,
                                                               flow = fmat))
               expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
-              expect_silent (graphtf <- merge_directed_flows (graphtf))
+              expect_silent (graphtf <- merge_directed_graph (graphtf))
 
               expect_silent (graphtf <- dodgr_flows_disperse (grapht_c,
                                                               from = pts,
@@ -77,7 +77,7 @@ test_that("cache off", {
                                                               to = pts,
                                                               flow = fmat))
               expect_silent (graphf <- dodgr_uncontract_graph (graphf))
-              expect_silent (graphf <- merge_directed_flows (graphf))
+              expect_silent (graphf <- merge_directed_graph (graphf))
 
               # then turn angle graph
               expect_silent (grapht <- weight_streetnet (hsc,
@@ -90,7 +90,7 @@ test_that("cache off", {
                                                               to = pts,
                                                               flow = fmat))
               expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
-              expect_silent (graphtf <- merge_directed_flows (graphtf))
+              expect_silent (graphtf <- merge_directed_graph (graphtf))
 
               expect_silent (graphtf <- dodgr_flows_disperse (grapht_c,
                                                               from = pts,

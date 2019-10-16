@@ -55,7 +55,7 @@ graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows` column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
-graph_undir <- merge_directed_flows (graph)
+graph_undir <- merge_directed_graph (graph)
 # This graph will only include those edges having non-zero flows, and so:
 nrow (graph); nrow (graph_undir) # the latter is much smaller
 
@@ -102,7 +102,7 @@ graph <- weight_streetnet (r, type_col = "type", id_col = "id",
                            wt_profile = 1)
 f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end, flows = flows)
 # Then merge directed flows and convert to \\pkg{sf} for plotting as before:
-f <- merge_directed_flows (f)
+f <- merge_directed_graph (f)
 geoms <- dodgr_to_sfc (f)
 gc <- dodgr_contract_graph (f)
 gsf <- sf::st_sf (geoms)

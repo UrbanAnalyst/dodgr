@@ -102,14 +102,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_merge_flows
-Rcpp::NumericVector rcpp_merge_flows(Rcpp::DataFrame graph);
-RcppExport SEXP _dodgr_rcpp_merge_flows(SEXP graphSEXP) {
+// rcpp_merge_cols
+Rcpp::NumericVector rcpp_merge_cols(Rcpp::DataFrame graph);
+RcppExport SEXP _dodgr_rcpp_merge_cols(SEXP graphSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_merge_flows(graph));
+    rcpp_result_gen = Rcpp::wrap(rcpp_merge_cols(graph));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -255,7 +255,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 8},
     {"_dodgr_rcpp_fundamental_cycles", (DL_FUNC) &_dodgr_rcpp_fundamental_cycles, 2},
     {"_dodgr_rcpp_contract_graph", (DL_FUNC) &_dodgr_rcpp_contract_graph, 2},
-    {"_dodgr_rcpp_merge_flows", (DL_FUNC) &_dodgr_rcpp_merge_flows, 1},
+    {"_dodgr_rcpp_merge_cols", (DL_FUNC) &_dodgr_rcpp_merge_cols, 1},
     {"_dodgr_rcpp_sample_graph", (DL_FUNC) &_dodgr_rcpp_sample_graph, 2},
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
     {"_dodgr_rcpp_get_sp_dists_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_par, 6},

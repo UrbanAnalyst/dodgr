@@ -126,7 +126,7 @@ test_that("contract with turn angles", {
                                                               to = pts,
                                                               flow = fmat))
               expect_silent (graphf <- dodgr_uncontract_graph (graphf))
-              expect_silent (graphf <- merge_directed_flows (graphf))
+              expect_silent (graphf <- merge_directed_graph (graphf))
 
               # then turn angle graph
               grapht <- weight_streetnet (hsc, wt_profile = "bicycle",
@@ -149,7 +149,7 @@ test_that("contract with turn angles", {
               expect_false (length (grep ("_start", graphtf$.vx0)) > 0)
               expect_false (length (grep ("_end", graphtf$.vx1)) > 0)
 
-              expect_silent (graphtf <- merge_directed_flows (graphtf))
+              expect_silent (graphtf <- merge_directed_graph (graphtf))
               # this test does not consistently pass:
               # expect_identical (range (graphf$flow), range (graphtf$flow))
               # TODO: Implement a better alternative

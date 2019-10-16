@@ -142,18 +142,19 @@ rcpp_contract_graph <- function(graph, vertlist_in) {
     .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
 }
 
-#' rcpp_merge_flows
+#' rcpp_merge_cols
 #'
-#' Merge flows in directed graph to form aggregate undirected flows, and return
-#' a corresponding undirected graph useful for visualisation.
+#' Merge columns in directed graph to form aggregate undirected columns, and
+#' return a corresponding undirected graph useful for visualisation.
 #'
 #' @param graph The result of a call to \code{dodgr_flows_aggregate/disperse}
-#' @return A single vector of aggregate flows with non-zero values only for
+#' or similar function resuling in columns of directed values.
+#' @return A single vector of aggregate values with non-zero values only for
 #' those edges to be retained in the directed graph.
 #'
 #' @noRd
-rcpp_merge_flows <- function(graph) {
-    .Call(`_dodgr_rcpp_merge_flows`, graph)
+rcpp_merge_cols <- function(graph) {
+    .Call(`_dodgr_rcpp_merge_cols`, graph)
 }
 
 #' sample_one_edge_no_comps

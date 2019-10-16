@@ -1,5 +1,10 @@
 #v 0.2.5.00x
 
+Major changes:
+- `merge_directed_flows` renamed to `merge_directed_graph`, with added option
+  of specifying columns to merge.
+
+Minor changes:
 - switch off examples that caused previous CRAN failures
 
 # v0.2.5

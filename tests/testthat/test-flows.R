@@ -110,7 +110,7 @@ test_that ("flowmap", {
     flows <- matrix (10 * runif (length (from) * length (to)),
                      nrow = length (from))
     graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
-    graph_undir <- merge_directed_flows (graph)
+    graph_undir <- merge_directed_graph (graph)
     if (nrow (graph_undir) > 0)
     {
         # just test that is produces a plot
@@ -127,7 +127,7 @@ test_that ("flowmap", {
     }
 
     graph$flow <- NULL
-    expect_error (graph_undir <- merge_directed_flows (graph),
+    expect_error (graph_undir <- merge_directed_graph (graph),
                   "graph does not have any flows to merge")
 })
 

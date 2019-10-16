@@ -58,7 +58,7 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         vertices <- dodgr_vertices (graph)
     if (!"flow" %in% names (graph)) # makes no difference
         graph$flow <- 1
-    graph <- merge_directed_flows (graph) # uses fast C++ routines
+    graph <- merge_directed_graph (graph) # uses fast C++ routines
     graph$flow <- NULL
     bb <- get_graph_bb (graph)
     if (nrow (graph) <= graph_max_size)
@@ -229,7 +229,7 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
 {
     graph$flow <- 1
-    graph <- merge_directed_flows (graph)
+    graph <- merge_directed_graph (graph)
     graph$flow <- NULL
     #graph <- graph [graph$component == 1, ]
     graphc <- dodgr_contract_graph (graph)

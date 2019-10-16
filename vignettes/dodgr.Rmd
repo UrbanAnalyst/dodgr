@@ -737,13 +737,13 @@ are *directed*, so the flow from 'A' to 'B' will not necessarily equal the flow
 from 'B' to 'A'. It is often desirable to aggregate flows in an undirected
 manner, for example for visualisations where plotting pairs of directed flows
 between each edge if often not feasible for large graphs. Directed flows can be
-aggregated to equivalent undirected flows with the `merge_directed_flows()`
+aggregated to equivalent undirected flows with the `merge_directed_graph()`
 function:
 ```{r}
-graph_undir <- merge_directed_flows (graph_f)
+graph_undir <- merge_directed_graph (graph_f)
 ```
 Resultant graphs produced by
-[`merge_directed_flows()`](https://atfutures.github.io/dodgr/reference/merge_directed_flows.html)
+[`merge_directed_graph()`](https://atfutures.github.io/dodgr/reference/merge_directed_graph.html)
 only include those edges having non-zero flows, and so:
 ```{r}
 nrow (graph_f); nrow (graph_undir) # the latter is much smaller

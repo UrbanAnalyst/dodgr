@@ -19,7 +19,7 @@ of \code{net}}
 Map the output of \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
 }
 \note{
-\code{net} should be first passed through \code{merge_directed_flows}
+\code{net} should be first passed through \code{merge_directed_graph}
 prior to plotting, otherwise lines for different directions will be overlaid.
 }
 \examples{
@@ -33,7 +33,7 @@ graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows` column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
-graph_undir <- merge_directed_flows (graph)
+graph_undir <- merge_directed_graph (graph)
 \dontrun{
 dodgr_flowmap (graph_undir)
 }

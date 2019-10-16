@@ -46,7 +46,7 @@ reference:
     - dodgr_sflines_to_poly
     - dodgr_vertices
     - match_points_to_graph
-    - merge_directed_flows
+    - merge_directed_graph
     - write_dodgr_wt_profile
   - title: Caching
     contents:
