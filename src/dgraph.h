@@ -22,7 +22,7 @@
  */
 class DGraphEdge {
     public:
-        unsigned int source, target;
+        unsigned int source, target, edge_id; // edge_id only used in centrality
         double dist, wt;
         DGraphEdge *nextOut, *nextIn;
 };
@@ -69,7 +69,7 @@ class DGraph {
     
         void clear();
         void addNewEdge(unsigned int srcVertexNo, unsigned int destVertexNo,
-                double dist, double wt);
+                double dist, double wt, unsigned int edge_id);
         bool edgeExists(unsigned int v, unsigned int w) const;
         bool reachable(unsigned int s) const;
         void print() const;

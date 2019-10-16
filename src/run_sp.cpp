@@ -17,7 +17,7 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
     {
         unsigned int fromi = vert_map.at(from [i]);
         unsigned int toi = vert_map.at(to [i]);
-        g->addNewEdge (fromi, toi, dist [i], wt [i]);
+        g->addNewEdge (fromi, toi, dist [i], wt [i], i);
     }
 }
 // # nocov end
