@@ -128,6 +128,6 @@ test_that ("flowmap", {
 
     graph$flow <- NULL
     expect_error (graph_undir <- merge_directed_graph (graph),
-                  "graph does not have any flows to merge")
+                  "col_names \\[flow\\] do not match columns in graph")
 })
 
