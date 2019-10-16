@@ -63,5 +63,6 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 // in centrality.cpp
 Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
-        const std::string& heap_type);
+        const std::string& heap_type,
+        bool vertices); // FALSE for edge centrality
 

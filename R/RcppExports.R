@@ -4,8 +4,8 @@
 #' rcpp_centrality
 #'
 #' @noRd
-rcpp_centrality <- function(graph, vert_map_in, heap_type) {
-    .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type)
+rcpp_centrality <- function(graph, vert_map_in, heap_type, vertices) {
+    .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, vertices)
 }
 
 #' Make unordered_set of all new edge names
