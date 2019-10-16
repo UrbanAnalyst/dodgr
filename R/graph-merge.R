@@ -32,8 +32,10 @@
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 merge_directed_graph <- function (graph, col_names = c ("flow"))
 {
-    if (!"flow" %in% names (graph))
-        stop ("graph does not have any flows to merge")
+    if (!all (col_names %in% names (graph)))
+        stop (paste0 ("col_names [",
+                      paste (col_names, collapse = ", "),
+                      "] do not match columns in graph"))
 
     gr_cols <- dodgr_graph_cols (graph)
     graph2 <- convert_graph (graph, gr_cols)
