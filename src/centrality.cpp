@@ -218,7 +218,7 @@ void PF::PathFinder::Centrality_edge (
 Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        bool vertices)
+        bool edges)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -247,10 +247,10 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
             one_iso);
     */
     std::vector <double> w (nverts), cent;
-    if (vertices)
-        cent.resize (nverts);
-    else
+    if (edges)
         cent.resize (nedges);
+    else
+        cent.resize (nverts);
     std::fill (cent.begin (), cent.end (), 0.0);
 
     for (unsigned int i = 0; i < nverts; i++)
@@ -261,10 +261,10 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         
         pathfinder->init (g); // specify the graph
 
-        if (vertices)
-            pathfinder->Centrality_vertex (w, cent, i);
-        else
+        if (edges)
             pathfinder->Centrality_edge (w, cent, i, nedges);
+        else
+            pathfinder->Centrality_vertex (w, cent, i);
     }
 
     Rcpp::NumericVector dout = Rcpp::wrap (cent);

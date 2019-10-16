@@ -39,6 +39,7 @@ reference:
   - title: Miscellaneous Functions
     contents:
     - compare_heaps
+    - dodgr_centrality
     - dodgr_flowmap
     - dodgr_full_cycles
     - dodgr_fundamental_cycles
