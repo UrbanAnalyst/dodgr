@@ -194,11 +194,11 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     return (graph)
 }
 
-get_random_prefix <- function (n = 5)
+get_random_prefix <- function (prefix = "flow", n = 5)
 {
     charvec <- c (letters, LETTERS, 0:9)
-    prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
-    file.path (tempdir (), paste0 ("flow_", prefix))
+    rand_prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
+    file.path (tempdir (), paste0 (prefix, "_", rand_prefix))
 }
 
 #' dodgr_flows_disperse

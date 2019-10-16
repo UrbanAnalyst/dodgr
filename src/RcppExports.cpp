@@ -19,6 +19,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_centrality_edge
+void rcpp_centrality_edge(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt);
+RcppExport SEXP _dodgr_rcpp_centrality_edge(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type dirtxt(dirtxtSEXP);
+    rcpp_centrality_edge(graph, vert_map_in, heap_type, dirtxt);
+    return R_NilValue;
+END_RCPP
+}
 // rcpp_aggregate_to_sf
 Rcpp::List rcpp_aggregate_to_sf(const Rcpp::DataFrame& graph_full, const Rcpp::DataFrame& graph_contr, const Rcpp::DataFrame& edge_map);
 RcppExport SEXP _dodgr_rcpp_aggregate_to_sf(SEXP graph_fullSEXP, SEXP graph_contrSEXP, SEXP edge_mapSEXP) {
@@ -249,6 +262,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 4},
+    {"_dodgr_rcpp_centrality_edge", (DL_FUNC) &_dodgr_rcpp_centrality_edge, 4},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},

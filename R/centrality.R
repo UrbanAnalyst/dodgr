@@ -19,10 +19,12 @@
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+#' @param parallel Calculate in parallel?
 #' @return Modified version of graph with additonal `centrality` column added.
 #'
 #' @export
-dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE, heap = "BHeap")
+dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
+                              heap = "BHeap", parallel = FALSE)
 {
     if ("centrality" %in% names (graph))
         warning ("graph already has a 'centrality' column; ",
@@ -50,7 +52,16 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE, heap = "BHea
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    centrality <- rcpp_centrality (graph2, vert_map, "BHeap", edges)
+    if (parallel & edges)
+    {
+        dirtxt <- get_random_prefix ("centrality")
+        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
+        f <- list.files (tempdir (), full.names = TRUE)
+        files <- f [grep (dirtxt, f)]
+        centrality <- rcpp_aggregate_files (files, nrow (graph))
+        junk <- file.remove (files) # nolint
+    } else
+        centrality <- rcpp_centrality (graph2, vert_map, heap, edges)
 
     if (edges)
     {

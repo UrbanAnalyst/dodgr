@@ -8,6 +8,13 @@ rcpp_centrality <- function(graph, vert_map_in, heap_type, edges) {
     .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, edges)
 }
 
+#' rcpp_centrality_edge - parallel function
+#'
+#' @noRd
+rcpp_centrality_edge <- function(graph, vert_map_in, heap_type, dirtxt) {
+    invisible(.Call(`_dodgr_rcpp_centrality_edge`, graph, vert_map_in, heap_type, dirtxt))
+}
+
 #' Make unordered_set of all new edge names
 #' @noRd
 NULL
@@ -48,8 +55,8 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
 #'
 #' @param file_names List of fill names of files (that is, with path) provided
 #' from R, coz otherwise this is C++17 with an added library flag.
-#' @param len Length of flows, which is simply the number of edges in the
-#' graph.
+#' @param len Length of values, which is simply the number of edges in the
+#' graph in all cases here.
 #'
 #' Each parallel flow aggregation worker dumps results to a randomly-named
 #' file. This routine reassembles those results into a single aggregate vector.

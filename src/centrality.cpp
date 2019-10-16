@@ -3,6 +3,7 @@
 #include "heaps/heap.h"
 
 #include <algorithm> // std::fill
+#include <fstream> // file output for parallel jobs
 
 const double epsilon = 1.0e-10; // edge weight comparison == 0
 // see https://github.com/igraph/igraph/blob/master/src/igraph_math.h#L49
@@ -24,6 +25,68 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
     }
 }
 // # nocov end
+
+struct OneCentralityEdge : public RcppParallel::Worker
+{
+    size_t nverts; // can't be const because of reinterpret case
+    size_t nedges;
+    const std::string dirtxt;
+    const std::string heap_type;
+
+    std::shared_ptr <DGraph> g;
+
+    // constructor
+    OneCentralityEdge (
+            const size_t nverts_in,
+            const size_t nedges_in,
+            const std::string dirtxt_in,
+            const std::string heap_type_in,
+            const std::shared_ptr <DGraph> g_in) :
+        nverts (nverts_in), nedges (nedges_in),
+        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
+    {
+    }
+
+    // Function to generate random file names
+    std::string random_name(size_t len) {
+        auto randchar = []() -> char
+        {
+            const char charset[] = \
+               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            const size_t max_index = (sizeof(charset) - 1);
+            //return charset [ rand() % max_index ];
+            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
+            return charset [i];
+        }; // # nocov
+        std::string str (len, 0);
+        std::generate_n (str.begin(), len, randchar);
+        return str;
+    }
+
+    // Parallel function operator
+    void operator() (size_t begin, size_t end)
+    {
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+
+        std::vector <double> cent (nedges, 0.0);
+
+        for (size_t v = begin; v < end; v++)
+        {
+            pathfinder->Centrality_edge (cent, v, nedges);
+        }
+        // dump flowvec to a file; chance of re-generating same file name is
+        // 61^10, so there's no check for re-use of same
+        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
+        std::ofstream out_file;
+        out_file.open (file_name, std::ios::binary | std::ios::out);
+        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
+        out_file.write (reinterpret_cast <char *>(&cent [0]),
+                static_cast <std::streamsize> (nedges * sizeof (double)));
+        out_file.close ();
+    }
+};
 
 void PF::PathFinder::Centrality_vertex (
         std::vector <double>& cent,
@@ -268,5 +331,37 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
     Rcpp::NumericVector dout = Rcpp::wrap (cent);
 
     return (dout);
+}
+
+//' rcpp_centrality_edge - parallel function
+//'
+//' @noRd
+// [[Rcpp::export]]
+void rcpp_centrality_edge (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        const std::string& heap_type,
+        const std::string dirtxt)
+{
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["d_weighted"];
+
+    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::map <std::string, unsigned int> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+            vert_map_n, vert_map);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    // Create parallel worker
+    OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type, g);
+
+    GetRNGstate (); // Initialise R random seed
+    RcppParallel::parallelFor (0, nverts, one_centrality);
+    PutRNGstate ();
 }
 

@@ -282,8 +282,8 @@ struct OneDisperse : public RcppParallel::Worker
 //'
 //' @param file_names List of fill names of files (that is, with path) provided
 //' from R, coz otherwise this is C++17 with an added library flag.
-//' @param len Length of flows, which is simply the number of edges in the
-//' graph.
+//' @param len Length of values, which is simply the number of edges in the
+//' graph in all cases here.
 //'
 //' Each parallel flow aggregation worker dumps results to a randomly-named
 //' file. This routine reassembles those results into a single aggregate vector.
@@ -293,25 +293,25 @@ struct OneDisperse : public RcppParallel::Worker
 Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
         const int len)
 {
-    Rcpp::NumericVector flows (len, 0.0);
+    Rcpp::NumericVector values (len, 0.0);
 
     for (int i = 0; i < file_names.size (); i++)
     {
         size_t nedges;
         std::ifstream in_file (file_names [i], std::ios::binary | std::ios::in);
         in_file.read (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-        std::vector <double> flows_i (nedges);
-        in_file.read (reinterpret_cast <char *>(&flows_i [0]),
+        std::vector <double> values_i (nedges);
+        in_file.read (reinterpret_cast <char *>(&values_i [0]),
                 static_cast <std::streamsize> (nedges * sizeof (double)));
         in_file.close ();
 
         if (nedges != static_cast <size_t> (len))
-            Rcpp::stop ("aggregate flows have inconsistent sizes"); // # nocov
+            Rcpp::stop ("aggregate values have inconsistent sizes"); // # nocov
         
         for (size_t j = 0; j < nedges; j++)
-            flows [static_cast <long> (j)] += flows_i [j];
+            values [static_cast <long> (j)] += values_i [j];
     }
-    return flows;
+    return values;
 }
 
 //' rcpp_flows_aggregate_par

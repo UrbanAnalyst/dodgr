@@ -66,3 +66,7 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         const std::string& heap_type,
         bool edges); // FALSE for vertex centrality
 
+void rcpp_centrality_edge (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        const std::string& heap_type,
+        const std::string dirtxt);
