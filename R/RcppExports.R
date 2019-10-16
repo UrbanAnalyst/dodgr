@@ -8,6 +8,13 @@ rcpp_centrality <- function(graph, vert_map_in, heap_type, edges) {
     .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, edges)
 }
 
+#' rcpp_centrality_vertex - parallel function
+#'
+#' @noRd
+rcpp_centrality_vertex <- function(graph, vert_map_in, heap_type, dirtxt) {
+    invisible(.Call(`_dodgr_rcpp_centrality_vertex`, graph, vert_map_in, heap_type, dirtxt))
+}
+
 #' rcpp_centrality_edge - parallel function
 #'
 #' @noRd

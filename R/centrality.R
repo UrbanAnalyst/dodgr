@@ -52,13 +52,26 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    if (parallel & edges)
+    if (parallel)
     {
-        dirtxt <- get_random_prefix ("centrality")
-        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
+        if (edges)
+        {
+            dirtxt <- get_random_prefix ("centrality_edge")
+            rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
+        } else
+        {
+            dirtxt <- get_random_prefix ("centrality_vert")
+            rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt)
+        }
         f <- list.files (tempdir (), full.names = TRUE)
         files <- f [grep (dirtxt, f)]
-        centrality <- rcpp_aggregate_files (files, nrow (graph))
+        if (edges)
+            centrality <- rcpp_aggregate_files (files, nrow (graph))
+        else
+        {
+            v <- dodgr_vertices (graph)
+            centrality <- rcpp_aggregate_files (files, nrow (v))
+        }
         junk <- file.remove (files) # nolint
     } else
         centrality <- rcpp_centrality (graph2, vert_map, heap, edges)
