@@ -7,13 +7,11 @@
 dodgr_uncontract_graph(graph)
 }
 \arguments{
-\item{graph}{A list of two items returned from \link{dodgr_contract_graph},
-the first ("graph") containing the contracted graph, and the second
-("edge_map") mapping edges in the contracted graph back to those in the
-original graph.}
+\item{graph}{A contracted graph created from \link{dodgr_contract_graph}.}
 }
 \value{
-A single \code{data.frame} representing the original, uncontracted graph.
+A single \code{data.frame} representing the equivalent original,
+uncontracted graph.
 }
 \description{
 Revert a contracted graph created with \link{dodgr_contract_graph} back to
