@@ -27,6 +27,9 @@ void PF::PathFinder::Centrality (
         std::vector <double>& cent,
         const unsigned int s)
 {
+    const double epsilon = 1.0e-10; // edge weight comparison == 0
+    // see https://github.com/igraph/igraph/blob/master/src/igraph_math.h#L49
+
     const DGraphEdge *edge;
 
     const unsigned int n = m_graph->nVertices();
@@ -42,7 +45,7 @@ void PF::PathFinder::Centrality (
     std::vector <int> sigma (n, 0);
     sigma [s] = 1;
 
-    std::vector <std::vector <int> > prev_arr (n);
+    std::vector <std::vector <unsigned int> > prev_arr (n);
 
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
@@ -55,8 +58,7 @@ void PF::PathFinder::Centrality (
             unsigned int et = edge->target;
             double wt = w [v] + edge->dist;
 
-            std::unordered_set <int> w_set;
-            std::vector <int> w_vec;
+            std::vector <unsigned int> w_vec;
 
             if (w [et] == 0.0) // first connection to et
             {
@@ -76,7 +78,7 @@ void PF::PathFinder::Centrality (
                 sigma [et] = sigma [v];
                 w [et] = wt;
                 m_heap->decreaseKey (et, wt);
-            } else if (wt == w [et])
+            } else if (fabs (wt - w [et]) < epsilon)
             {
                 w_vec = prev_arr [et];
                 w_vec.resize (w_vec.size () + 1);
@@ -96,7 +98,7 @@ void PF::PathFinder::Centrality (
     {
         const unsigned int v = v_stack.back ();
         v_stack.pop_back ();
-        std::vector <int> w_vec = prev_arr [v];
+        std::vector <unsigned int> w_vec = prev_arr [v];
         double tempd = (1.0 + delta [v]) / sigma [v];
         for (auto ws: w_vec)
         {
