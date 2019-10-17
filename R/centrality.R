@@ -123,6 +123,8 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     else
         dirtxt <- get_random_prefix ("centrality_vert")
 
+    # final '0' is for sampling calculation to estimate speed - non-zero values
+    # used only in 'estimate_centrality_time'
     rcpp_centrality (graph2, vert_map, heap, dirtxt, dist_threshold, edges, 0)
 
     # aggregate results from the threads:
@@ -234,4 +236,90 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
 
     return (d)
     # nocov end
+}
+
+#' estimate_centrality_time
+#'
+#' The 'dodgr' centrality functions are designed to be applied to potentially
+#' very large graphs, and may take considerable time to execute. This helper
+#' function estimates how long a centrality function may take for a given graph
+#' and given value of 'dist_threshold' estimated via the
+#' \link{estimate_centrality_threshold} function.
+#'
+#' @inheritParams dodgr_centrality
+#' @return An estimated calculation time for calculating centrality for the
+#' given value of 'dist_threshold'
+#'
+#' @note This function may take some time to execute. While running, it displays
+#' ongoing information on screen of estimated values of 'dist_threshold' and
+#' associated errors. Thresholds are progressively increased until the error is
+#' reduced below the specified tolerance.
+#'
+#' @export
+estimate_centrality_time <- function (graph, contract = TRUE, edges = TRUE,
+                                      dist_threshold = NULL, heap = "BHeap")
+{
+    # copies all code from dodgr_centrality, but uses the otherwise non-exposed
+    # 'sample' parameter passed through to C++ routines
+    if (is.null (dist_threshold))
+        dist_threshold <- .Machine$double.xmax
+
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
+
+    gr_cols <- dodgr_graph_cols (graph)
+
+    if (contract & methods::is (graph, "dodgr_contracted"))
+        contract <- FALSE
+    if (contract & !methods::is (graph, "dodgr_contracted"))
+    {
+        graph_full <- graph
+        graph <- dodgr_contract_graph (graph)
+        hashc <- get_hash (graph, hash = FALSE)
+        fname_c <- file.path (tempdir (),
+                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!file.exists (fname_c))
+            stop ("something went wrong extracting the edge_map ... ") # nocov
+        edge_map <- readRDS (fname_c)
+    }
+
+    vert_map <- make_vert_map (graph, gr_cols)
+
+    graph2 <- convert_graph (graph, gr_cols)
+
+    # centrality calculation, done in parallel with each thread dumping results
+    # to files in tempdir()
+    if (edges)
+        dirtxt <- get_random_prefix ("centrality_edge")
+    else
+        dirtxt <- get_random_prefix ("centrality_vert")
+
+    # final '0' is for sampling calculation to estimate speed - non-zero values
+    # used only in 'estimate_centrality_time'
+    st <- system.time (
+                       rcpp_centrality (graph2, vert_map, heap, dirtxt,
+                                        dist_threshold, edges, 100)
+                       ) [3]
+
+    # remove files otherwise used to aggregate results from the threads:
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
+    junk <- file.remove (files) # nolint
+
+    # convert to estimated time for full graph
+    st <- st * nrow (graph) / 100
+
+    hh <- floor (st / 3600)
+    st <- st - 3600 * hh
+    mm <- floor (st / 60)
+    ss <- round (st - 60 * mm)
+
+    hh <- sprintf ("%02d", hh)
+    mm <- sprintf ("%02d", mm)
+    ss <- sprintf ("%02d", ss)
+    res <- paste0 (hh, ":", mm, ":", ss)
+    message ("Estimated time to calculate centrality for full graph is ",
+             res)
+    invisible (res)
 }

@@ -22,3 +22,10 @@ test_that("centrality", {
     expect_true ("centrality" %in% names (vc))
     expect_false ("centrality" %in% names (v))
 })
+
+test_that("estimate time", {
+    graph <- weight_streetnet (hampi)
+    expect_message (x <- estimate_centrality_time (graph),
+                    "Estimated time to calculate centrality for full graph is")
+    expect_identical (x, "00:00:00")
+})

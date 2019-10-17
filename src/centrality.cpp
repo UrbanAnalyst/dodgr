@@ -380,6 +380,10 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
+    size_t nverts_to_use = nverts;
+    if (sample > 0)
+        nverts_to_use = static_cast <size_t> (sample);
+
     // Create parallel worker
     if (edge_centrality)
     {
@@ -387,7 +391,7 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
                 dist_threshold, g);
 
         GetRNGstate (); // Initialise R random seed
-        RcppParallel::parallelFor (0, nverts, one_centrality);
+        RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
         PutRNGstate ();
     } else // vertex centrality
     {
@@ -395,7 +399,7 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
                 dist_threshold, g);
 
         GetRNGstate (); // Initialise R random seed
-        RcppParallel::parallelFor (0, nverts, one_centrality);
+        RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
         PutRNGstate ();
     }
 }
