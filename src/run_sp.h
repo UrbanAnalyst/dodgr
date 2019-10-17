@@ -7,7 +7,9 @@
 #include <fstream>
 
 #include <Rcpp.h>
-// [[Rcpp::depends(RcppParallel)]]
+// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::depends(RcppParallel,RcppThread)]]
+#include <RcppThread.h>
 #include <RcppParallel.h>
 
 #include "pathfinders.h"

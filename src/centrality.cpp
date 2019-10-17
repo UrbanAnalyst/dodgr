@@ -81,6 +81,8 @@ struct OneCentralityVert : public RcppParallel::Worker
 
         for (size_t v = begin; v < end; v++)
         {
+            if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
+                return;
             pathfinder->Centrality_vertex (cent, v, dist_threshold);
         }
         // dump flowvec to a file; chance of re-generating same file name is
@@ -145,6 +147,8 @@ struct OneCentralityEdge : public RcppParallel::Worker
 
         for (size_t v = begin; v < end; v++)
         {
+            if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
+                return;
             pathfinder->Centrality_edge (cent, v, nedges, dist_threshold);
         }
         // dump flowvec to a file; chance of re-generating same file name is
@@ -392,6 +396,7 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
 
         GetRNGstate (); // Initialise R random seed
         RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
+        RcppThread::checkUserInterrupt();
         PutRNGstate ();
     } else // vertex centrality
     {
@@ -400,6 +405,7 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
 
         GetRNGstate (); // Initialise R random seed
         RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
+        RcppThread::checkUserInterrupt();
         PutRNGstate ();
     }
 }

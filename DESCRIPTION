@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.5.013
+Version: 0.2.5.014
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Andreas", "Petutschnig", role="aut"),
@@ -25,7 +25,8 @@ Imports:
     methods,
     osmdata,
     Rcpp (>= 0.12.6),
-    RcppParallel
+    RcppParallel,
+    RcppThread
 Suggests:
     dplyr,
     geodist,
@@ -45,7 +46,8 @@ Suggests:
     tidygraph
 LinkingTo:
     Rcpp,
-    RcppParallel
+    RcppParallel,
+    RcppThread
 SystemRequirements:
     C++11,
     GNU make
