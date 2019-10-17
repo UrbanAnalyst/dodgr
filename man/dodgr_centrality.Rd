@@ -40,6 +40,11 @@ graph_full <- weight_streetnet (hampi)
 graph <- dodgr_contract_graph (graph_full)
 graph <- dodgr_centrality (graph)
 # 'graph' is then the contracted graph with an additional 'centrality' column
+# Same calculation via 'igraph':
+igr <- dodgr_to_igraph (graph)
+library (igraph)
+cent <- edge_betweenness (igr)
+identical (cent, graph$centrality) # TRUE
 # Values of centrality between all junctions in the contracted graph can then
 # be mapped back onto the original full network by "uncontracting":
 graph_full <- dodgr_uncontract_graph (graph)

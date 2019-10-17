@@ -25,6 +25,7 @@
 compare_heaps <- function(graph, nverts = 100, replications = 2)
 {
     requireNamespace ("rbenchmark")
+    requireNamespace ("igraph")
 
     if (is.numeric (nverts))
         graph <- dodgr_sample (graph, nverts = nverts)

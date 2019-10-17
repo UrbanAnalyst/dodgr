@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.5.009
+Version: 0.2.5.010
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Andreas", "Petutschnig", role="aut"),
@@ -21,7 +21,6 @@ License: GPL-3
 Imports:
     callr,
     digest,
-    igraph,
     magrittr,
     methods,
     osmdata,
@@ -31,6 +30,7 @@ Suggests:
     dplyr,
     geodist,
     ggplot2,
+    igraph,
     igraphdata,
     jsonlite,
     knitr,

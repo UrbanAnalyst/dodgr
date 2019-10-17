@@ -119,6 +119,7 @@ dodgr_to_sfc <- function (graph)
 #' graphi <- dodgr_to_igraph (graph)
 dodgr_to_igraph <- function (graph, weight_column = "d")
 {
+    requireNamespace ("igraph")
     graph <- tbl_to_df (graph)
     if (!weight_column %in% names (graph))
         stop ("graph contains no column named '", weight_column, "'")
@@ -161,6 +162,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
 #' identical (graph2, graph) # FALSE
 igraph_to_dodgr <- function (graph)
 {
+    requireNamespace ("igraph")
     ei <- igraph::edge_attr (graph)
     vi <- igraph::vertex_attr (graph)
     index <- grep ("^lon|^lat|lon$|lat$|^x|^y|x$|y$", names (ei))
@@ -220,9 +222,8 @@ convert_col <- function (x, n = 3)
 #' grapht <- dodgr_to_tidygraph (graph)
 dodgr_to_tidygraph <- function (graph)
 {
-    if (!requireNamespace ("tidygraph"))
-        stop (paste0 ("dodgr_to_tidygraph requires the ",       # nocov
-                      "tidygraph package to be installed."))    # nocov
+    requireNamespace ("igraph")
+    requireNamespace ("tidygraph")
 
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()
