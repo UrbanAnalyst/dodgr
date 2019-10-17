@@ -19,7 +19,6 @@
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @param parallel Calculate in parallel?
 #' @return Modified version of graph with additonal `centrality` column added.
 #'
 #' @examples
@@ -73,7 +72,7 @@
 #'
 #' @export
 dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
-                              heap = "BHeap", parallel = FALSE)
+                              heap = "BHeap")
 {
     if ("centrality" %in% names (graph))
         warning ("graph already has a 'centrality' column; ",
@@ -103,30 +102,31 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    if (parallel)
+    # centrality calculation, done in parallel with each thread dumping results
+    # to files in tempdir()
+    if (edges)
     {
-        if (edges)
-        {
-            dirtxt <- get_random_prefix ("centrality_edge")
-            rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
-        } else
-        {
-            dirtxt <- get_random_prefix ("centrality_vert")
-            rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt)
-        }
-        f <- list.files (tempdir (), full.names = TRUE)
-        files <- f [grep (dirtxt, f)]
-        if (edges)
-            centrality <- rcpp_aggregate_files (files, nrow (graph))
-        else
-        {
-            v <- dodgr_vertices (graph)
-            centrality <- rcpp_aggregate_files (files, nrow (v))
-        }
-        junk <- file.remove (files) # nolint
+        dirtxt <- get_random_prefix ("centrality_edge")
+        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
     } else
-        centrality <- rcpp_centrality (graph2, vert_map, heap, edges)
+    {
+        dirtxt <- get_random_prefix ("centrality_vert")
+        rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt)
+    }
 
+    # aggregate results from the threads:
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
+    if (edges)
+        centrality <- rcpp_aggregate_files (files, nrow (graph))
+    else
+    {
+        v <- dodgr_vertices (graph)
+        centrality <- rcpp_aggregate_files (files, nrow (v))
+    }
+    junk <- file.remove (files) # nolint
+
+    # attach result to edge or vertex objects:
     if (edges)
     {
         graph$centrality <- centrality

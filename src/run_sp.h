@@ -60,11 +60,9 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type);
 
-// in centrality.cpp
-Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
-        const Rcpp::DataFrame vert_map_in,
-        const std::string& heap_type,
-        bool edges); // FALSE for vertex centrality
+//----------------------------
+//----- functions in centrality.cpp
+//----------------------------
 
 void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

@@ -5,20 +5,6 @@
 
 using namespace Rcpp;
 
-// rcpp_centrality
-Rcpp::NumericVector rcpp_centrality(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, bool edges);
-RcppExport SEXP _dodgr_rcpp_centrality(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP edgesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
-    Rcpp::traits::input_parameter< bool >::type edges(edgesSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_centrality(graph, vert_map_in, heap_type, edges));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_centrality_vertex
 void rcpp_centrality_vertex(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt);
 RcppExport SEXP _dodgr_rcpp_centrality_vertex(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP) {
@@ -274,7 +260,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 4},
     {"_dodgr_rcpp_centrality_vertex", (DL_FUNC) &_dodgr_rcpp_centrality_vertex, 4},
     {"_dodgr_rcpp_centrality_edge", (DL_FUNC) &_dodgr_rcpp_centrality_edge, 4},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},

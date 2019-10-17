@@ -5,7 +5,7 @@
 \title{dodgr_centrality}
 \usage{
 dodgr_centrality(graph, contract = TRUE, edges = TRUE,
-  heap = "BHeap", parallel = FALSE)
+  heap = "BHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -27,8 +27,6 @@ centrality is calculated for vertices, returning the equivalent of
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
-
-\item{parallel}{Calculate in parallel?}
 }
 \value{
 Modified version of graph with additonal \code{centrality} column added.

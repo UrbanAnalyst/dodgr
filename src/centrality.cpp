@@ -332,67 +332,6 @@ void PF::PathFinder::Centrality_edge (
 }
 
 
-//' rcpp_centrality
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
-        const Rcpp::DataFrame vert_map_in,
-        const std::string& heap_type,
-        bool edges)
-{
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["d_weighted"];
-
-    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
-    std::map <std::string, unsigned int> vert_map;
-    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
-    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
-            vert_map_n, vert_map);
-
-    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
-    inst_graph (g, nedges, vert_map, from, to, dist, wt);
-
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nverts,
-            Rcpp::NumericVector::get_na ());
-    //Rcpp::NumericVector dout (static_cast <int> (nverts), na_vec.begin ());
-
-    // Create parallel worker
-    /*
-    OneIso one_iso (fromi, nverts, g, dlim, heap_type, dout);
-
-    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
-            one_iso);
-    */
-    std::vector <double> cent;
-    if (edges)
-        cent.resize (nedges);
-    else
-        cent.resize (nverts);
-    std::fill (cent.begin (), cent.end (), 0.0);
-
-    for (unsigned int i = 0; i < nverts; i++)
-    {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                *run_sp::getHeapImpl(heap_type), g);
-        
-        pathfinder->init (g); // specify the graph
-
-        if (edges)
-            pathfinder->Centrality_edge (cent, i, nedges);
-        else
-            pathfinder->Centrality_vertex (cent, i);
-    }
-
-    Rcpp::NumericVector dout = Rcpp::wrap (cent);
-
-    return (dout);
-}
-
 //' rcpp_centrality_vertex - parallel function
 //'
 //' @noRd
