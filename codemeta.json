@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.11",
+  "version": "0.2.5.12",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -392,5 +392,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "8610.781KB"
+  "fileSize": "8610.897KB"
 }

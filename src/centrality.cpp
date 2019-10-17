@@ -353,13 +353,17 @@ void PF::PathFinder::Centrality_edge (
 
 //' rcpp_centrality_vertex - parallel function
 //'
+//' sample is used to estimate timing, by calculating centrality from just a few
+//' vertices.
 //' @noRd
 // [[Rcpp::export]]
-void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
+void rcpp_centrality (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
         const std::string dirtxt,
-        const double dist_threshold)
+        const double dist_threshold,
+        const bool edge_centrality,
+        const int sample)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -377,45 +381,21 @@ void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     // Create parallel worker
-    OneCentralityVert one_centrality (nverts, dirtxt, heap_type,
-            dist_threshold, g);
+    if (edge_centrality)
+    {
+        OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type,
+                dist_threshold, g);
 
-    GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nverts, one_centrality);
-    PutRNGstate ();
+        GetRNGstate (); // Initialise R random seed
+        RcppParallel::parallelFor (0, nverts, one_centrality);
+        PutRNGstate ();
+    } else // vertex centrality
+    {
+        OneCentralityVert one_centrality (nverts, dirtxt, heap_type,
+                dist_threshold, g);
+
+        GetRNGstate (); // Initialise R random seed
+        RcppParallel::parallelFor (0, nverts, one_centrality);
+        PutRNGstate ();
+    }
 }
-
-//' rcpp_centrality_edge - parallel function
-//'
-//' @noRd
-// [[Rcpp::export]]
-void rcpp_centrality_edge (const Rcpp::DataFrame graph,
-        const Rcpp::DataFrame vert_map_in,
-        const std::string& heap_type,
-        const std::string dirtxt,
-        const double dist_threshold)
-{
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["d_weighted"];
-
-    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
-    std::map <std::string, unsigned int> vert_map;
-    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
-    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
-            vert_map_n, vert_map);
-
-    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
-    inst_graph (g, nedges, vert_map, from, to, dist, wt);
-
-    // Create parallel worker
-    OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type,
-            dist_threshold, g);
-
-    GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nverts, one_centrality);
-    PutRNGstate ();
-}
-

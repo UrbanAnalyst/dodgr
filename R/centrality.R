@@ -119,16 +119,11 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     # centrality calculation, done in parallel with each thread dumping results
     # to files in tempdir()
     if (edges)
-    {
         dirtxt <- get_random_prefix ("centrality_edge")
-        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt,
-                              dist_threshold)
-    } else
-    {
+    else
         dirtxt <- get_random_prefix ("centrality_vert")
-        rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt,
-                                dist_threshold)
-    }
+
+    rcpp_centrality (graph2, vert_map, heap, dirtxt, dist_threshold, edges, 0)
 
     # aggregate results from the threads:
     f <- list.files (tempdir (), full.names = TRUE)
