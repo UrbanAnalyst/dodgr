@@ -132,3 +132,13 @@ NULL
 #'                          type_col = colnm, id_col = "identifier")
 #' # 'id_col' tells the function which column to use to attribute IDs of ways
 NULL
+
+#' Pipe operator
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
+NULL
