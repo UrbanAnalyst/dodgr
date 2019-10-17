@@ -5,6 +5,13 @@
 #include <algorithm> // std::fill
 #include <fstream> // file output for parallel jobs
 
+/*************************************************************************
+ * Direct implementation of
+ * "A Faster Algorithm for Betweenness Centrality", Ulrik Brandes (2001)
+ * Journal of Mathematical Sociology 25(2):163-177
+ * - same algorithm as used in igraph and networkx
+ *************************************************************************/
+
 const double epsilon = 1.0e-10; // edge weight comparison == 0
 // see https://github.com/igraph/igraph/blob/master/src/igraph_math.h#L49
 
