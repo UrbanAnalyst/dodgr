@@ -5,7 +5,7 @@
 \title{dodgr_centrality}
 \usage{
 dodgr_centrality(graph, contract = TRUE, edges = TRUE,
-  heap = "BHeap")
+  dist_threshold = NULL, heap = "BHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -22,6 +22,13 @@ graphs should only be calculated between the latter points, and thus
 the input \code{graph} with an additional \code{centrality} column; otherwise
 centrality is calculated for vertices, returning the equivalent of
 \code{dodgr_vertices(graph)}, with an additional vertex-based \code{centrality} column.}
+
+\item{dist_threshold}{If not \code{NULL}, only calculate centrality for each point
+out to specified threshold. Setting values for this will result in
+approximate estimates for centrality, yet with considerable gains in
+computational efficiency. For sufficiently large values, approximations will
+be accurate to within some constant multiplier. Appropriate values can be
+established via the \link{estimate_centrality_threshold} function.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),

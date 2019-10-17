@@ -38,6 +38,7 @@ struct OneCentralityVert : public RcppParallel::Worker
     size_t nverts; // can't be const because of reinterpret case
     const std::string dirtxt;
     const std::string heap_type;
+    const double dist_threshold;
 
     std::shared_ptr <DGraph> g;
 
@@ -46,9 +47,10 @@ struct OneCentralityVert : public RcppParallel::Worker
             const size_t nverts_in,
             const std::string dirtxt_in,
             const std::string heap_type_in,
+            const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
-        nverts (nverts_in), dirtxt (dirtxt_in),
-        heap_type (heap_type_in), g (g_in)
+        nverts (nverts_in), dirtxt (dirtxt_in), heap_type (heap_type_in), 
+        dist_threshold (dist_threshold_in), g (g_in)
     {
     }
 
@@ -79,7 +81,7 @@ struct OneCentralityVert : public RcppParallel::Worker
 
         for (size_t v = begin; v < end; v++)
         {
-            pathfinder->Centrality_vertex (cent, v);
+            pathfinder->Centrality_vertex (cent, v, dist_threshold);
         }
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
@@ -99,6 +101,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
     size_t nedges;
     const std::string dirtxt;
     const std::string heap_type;
+    const double dist_threshold;
 
     std::shared_ptr <DGraph> g;
 
@@ -108,9 +111,10 @@ struct OneCentralityEdge : public RcppParallel::Worker
             const size_t nedges_in,
             const std::string dirtxt_in,
             const std::string heap_type_in,
+            const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
-        nverts (nverts_in), nedges (nedges_in),
-        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
+        nverts (nverts_in), nedges (nedges_in), dirtxt (dirtxt_in),
+        heap_type (heap_type_in), dist_threshold (dist_threshold_in), g (g_in)
     {
     }
 
@@ -141,7 +145,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
 
         for (size_t v = begin; v < end; v++)
         {
-            pathfinder->Centrality_edge (cent, v, nedges);
+            pathfinder->Centrality_edge (cent, v, nedges, dist_threshold);
         }
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
@@ -157,7 +161,8 @@ struct OneCentralityEdge : public RcppParallel::Worker
 
 void PF::PathFinder::Centrality_vertex (
         std::vector <double>& cent,
-        const unsigned int s)
+        const unsigned int s,
+        const double dist_threshold)
 {
     const DGraphEdge *edge;
 
@@ -242,7 +247,8 @@ void PF::PathFinder::Centrality_vertex (
 void PF::PathFinder::Centrality_edge (
         std::vector <double>& cent,
         const unsigned int s,
-        const unsigned int nedges)
+        const unsigned int nedges,
+        const double dist_threshold)
 {
     const DGraphEdge *edge;
 
@@ -346,7 +352,8 @@ void PF::PathFinder::Centrality_edge (
 void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt)
+        const std::string dirtxt,
+        const double dist_threshold)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -364,7 +371,8 @@ void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     // Create parallel worker
-    OneCentralityVert one_centrality (nverts, dirtxt, heap_type, g);
+    OneCentralityVert one_centrality (nverts, dirtxt, heap_type,
+            dist_threshold, g);
 
     GetRNGstate (); // Initialise R random seed
     RcppParallel::parallelFor (0, nverts, one_centrality);
@@ -378,7 +386,8 @@ void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
 void rcpp_centrality_edge (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt)
+        const std::string dirtxt,
+        const double dist_threshold)
 {
     std::vector <std::string> from = graph ["from"];
     std::vector <std::string> to = graph ["to"];
@@ -396,7 +405,8 @@ void rcpp_centrality_edge (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
     // Create parallel worker
-    OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type, g);
+    OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type,
+            dist_threshold, g);
 
     GetRNGstate (); // Initialise R random seed
     RcppParallel::parallelFor (0, nverts, one_centrality);

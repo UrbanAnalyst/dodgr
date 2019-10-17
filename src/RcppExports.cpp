@@ -6,28 +6,30 @@
 using namespace Rcpp;
 
 // rcpp_centrality_vertex
-void rcpp_centrality_vertex(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt);
-RcppExport SEXP _dodgr_rcpp_centrality_vertex(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP) {
+void rcpp_centrality_vertex(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt, const double dist_threshold);
+RcppExport SEXP _dodgr_rcpp_centrality_vertex(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP, SEXP dist_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
     Rcpp::traits::input_parameter< const std::string >::type dirtxt(dirtxtSEXP);
-    rcpp_centrality_vertex(graph, vert_map_in, heap_type, dirtxt);
+    Rcpp::traits::input_parameter< const double >::type dist_threshold(dist_thresholdSEXP);
+    rcpp_centrality_vertex(graph, vert_map_in, heap_type, dirtxt, dist_threshold);
     return R_NilValue;
 END_RCPP
 }
 // rcpp_centrality_edge
-void rcpp_centrality_edge(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt);
-RcppExport SEXP _dodgr_rcpp_centrality_edge(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP) {
+void rcpp_centrality_edge(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, const std::string& heap_type, const std::string dirtxt, const double dist_threshold);
+RcppExport SEXP _dodgr_rcpp_centrality_edge(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP heap_typeSEXP, SEXP dirtxtSEXP, SEXP dist_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
     Rcpp::traits::input_parameter< const std::string >::type dirtxt(dirtxtSEXP);
-    rcpp_centrality_edge(graph, vert_map_in, heap_type, dirtxt);
+    Rcpp::traits::input_parameter< const double >::type dist_threshold(dist_thresholdSEXP);
+    rcpp_centrality_edge(graph, vert_map_in, heap_type, dirtxt, dist_threshold);
     return R_NilValue;
 END_RCPP
 }
@@ -260,8 +262,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_dodgr_rcpp_centrality_vertex", (DL_FUNC) &_dodgr_rcpp_centrality_vertex, 4},
-    {"_dodgr_rcpp_centrality_edge", (DL_FUNC) &_dodgr_rcpp_centrality_edge, 4},
+    {"_dodgr_rcpp_centrality_vertex", (DL_FUNC) &_dodgr_rcpp_centrality_vertex, 5},
+    {"_dodgr_rcpp_centrality_edge", (DL_FUNC) &_dodgr_rcpp_centrality_edge, 5},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},

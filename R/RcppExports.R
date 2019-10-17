@@ -4,15 +4,15 @@
 #' rcpp_centrality_vertex - parallel function
 #'
 #' @noRd
-rcpp_centrality_vertex <- function(graph, vert_map_in, heap_type, dirtxt) {
-    invisible(.Call(`_dodgr_rcpp_centrality_vertex`, graph, vert_map_in, heap_type, dirtxt))
+rcpp_centrality_vertex <- function(graph, vert_map_in, heap_type, dirtxt, dist_threshold) {
+    invisible(.Call(`_dodgr_rcpp_centrality_vertex`, graph, vert_map_in, heap_type, dirtxt, dist_threshold))
 }
 
 #' rcpp_centrality_edge - parallel function
 #'
 #' @noRd
-rcpp_centrality_edge <- function(graph, vert_map_in, heap_type, dirtxt) {
-    invisible(.Call(`_dodgr_rcpp_centrality_edge`, graph, vert_map_in, heap_type, dirtxt))
+rcpp_centrality_edge <- function(graph, vert_map_in, heap_type, dirtxt, dist_threshold) {
+    invisible(.Call(`_dodgr_rcpp_centrality_edge`, graph, vert_map_in, heap_type, dirtxt, dist_threshold))
 }
 
 #' Make unordered_set of all new edge names

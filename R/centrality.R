@@ -15,6 +15,12 @@
 #' the input `graph` with an additional `centrality` column; otherwise
 #' centrality is calculated for vertices, returning the equivalent of
 #' `dodgr_vertices(graph)`, with an additional vertex-based `centrality` column.
+#' @param dist_threshold If not `NULL`, only calculate centrality for each point
+#' out to specified threshold. Setting values for this will result in
+#' approximate estimates for centrality, yet with considerable gains in
+#' computational efficiency. For sufficiently large values, approximations will
+#' be accurate to within some constant multiplier. Appropriate values can be
+#' established via the \link{estimate_centrality_threshold} function.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -77,11 +83,13 @@
 #'
 #' @export
 dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
-                              heap = "BHeap")
+                              dist_threshold = NULL, heap = "BHeap")
 {
     if ("centrality" %in% names (graph))
         warning ("graph already has a 'centrality' column; ",
                   "this will be overwritten")
+
+    dist_threshold <- ifelse (is.null (dist_threshold), 0, dist_threshold)
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
@@ -112,11 +120,13 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     if (edges)
     {
         dirtxt <- get_random_prefix ("centrality_edge")
-        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt)
+        rcpp_centrality_edge (graph2, vert_map, heap, dirtxt,
+                              dist_threshold)
     } else
     {
         dirtxt <- get_random_prefix ("centrality_vert")
-        rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt)
+        rcpp_centrality_vertex (graph2, vert_map, heap, dirtxt,
+                                dist_threshold)
     }
 
     # aggregate results from the threads:
@@ -145,4 +155,23 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     }
 
     return (res)
+}
+
+#' estimate_centrality_threshold
+#'
+#' Estimate a value for the `dist_threshold` parameter of the
+#' \link{dodgr_centrality} function. Providing distance thresholds to this
+#' function generally provides considerably speed gains, and results in
+#' approximations of centrality. This function enables the determination of
+#' values of `dist_threshold` corresponding to specific degrees of accuracy.
+#'
+#' @inheritParams dodgr_centrality
+#' @param tolerance Desired maximal degree of inaccuracy in centrality estimates
+#' - values will be accurate to within this amount, subject to a constant
+#' scaling factor.
+#' @return A single value for `dist_threshold` giving the required tolerance.
+#' @export
+estimate_centrality_threshold <- function (graph, tolerance = 0.001)
+{
+    graph <- weight_column (hampi)
 }

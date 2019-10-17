@@ -67,9 +67,11 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 void rcpp_centrality_vertex (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt);
+        const std::string dirtxt,
+        const double dist_threshold);
 
 void rcpp_centrality_edge (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt);
+        const std::string dirtxt,
+        const double dist_threshold);
