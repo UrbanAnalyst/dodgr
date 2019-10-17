@@ -39,8 +39,8 @@ reference:
   - title: Graph Centrality
     contents:
     - dodgr_centrality
-    - esimtate_centrality_threshold
-    - esimtate_centrality_time
+    - estimate_centrality_threshold
+    - estimate_centrality_time
   - title: Miscellaneous Functions
     contents:
     - compare_heaps
