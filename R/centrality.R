@@ -22,6 +22,55 @@
 #' @param parallel Calculate in parallel?
 #' @return Modified version of graph with additonal `centrality` column added.
 #'
+#' @examples
+#' graph_full <- weight_streetnet (hampi)
+#' graph <- dodgr_contract_graph (graph_full)
+#' graph <- dodgr_centrality (graph)
+#' # 'graph' is then the contracted graph with an additional 'centrality' column
+#' # Values of centrality between all junctions in the contracted graph can then
+#' # be mapped back onto the original full network by "uncontracting":
+#' graph_full <- dodgr_uncontract_graph (graph)
+#' # For visualisation, it is generally necessary to merge the directed edges to
+#' # form an equivalent undirected graph. Conversion to 'sf' format via
+#' # 'dodgr_to_sf()' is also useful for many visualisation routines.
+#' graph_sf <- merge_directed_graph (graph_full) %>%
+#'     dodgr_to_sf ()
+#' 
+#' \dontrun{
+#' library (mapview)
+#' centrality <- graph_sf$centrality / max (graph_sf$centrality)
+#' ncols <- 30
+#' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * centrality)]
+#' mapview (graph_sf, color = cols, lwd = 10 * centrality)
+#' }
+#' 
+#' # An example of flow aggregation across a generic (non-OSM) highway,
+#' # represented as the `routes_fast` object of the \pkg{stplanr} package,
+#' # which is a SpatialLinesDataFrame containing commuter densities along
+#' # components of a street network.
+#' \dontrun{
+#' library (stplanr)
+#' # merge all of the 'routes_fast' lines into a single network
+#' r <- overline (routes_fast, attrib = "length", buff_dist = 1)
+#' r <- sf::st_as_sf (r)
+#' # Convert to a 'dodgr' network, for which we need to specify both a `type` and
+#' # `id` column.
+#' r$type <- 1
+#' r$id <- seq (nrow (r))
+#' graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",
+#'                                 wt_profile = 1)
+#' # convert to contracted form, retaining junction vertices only, and append
+#' # 'centrality' column
+#' graph <- dodgr_contract_graph (graph_full) %>%
+#'     dodgr_centrality ()
+#' #' expand back to full graph; merge directed flows; and convert result to
+#' # 'sf'-format for plotting
+#' graph_sf <- dodgr_uncontract_graph (graph) %>%
+#'     merge_directed_graph () %>%
+#'     dodgr_to_sf ()
+#' plot (graph_sf ["centrality"])
+#' }
+#'
 #' @export
 dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
                               heap = "BHeap", parallel = FALSE)
@@ -36,6 +85,8 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     gr_cols <- dodgr_graph_cols (graph)
 
+    if (contract & methods::is (graph, "dodgr_contracted"))
+        contract <- FALSE
     if (contract & !methods::is (graph, "dodgr_contracted"))
     {
         graph_full <- graph
