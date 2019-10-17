@@ -36,10 +36,13 @@ reference:
     - dodgr_to_sfc
     - dodgr_to_tidygraph
     - igraph_to_dodgr
+  - title: Graph Centrality
+    contents:
+    - dodgr_centrality
+    - esimtate_centrality_threshold
   - title: Miscellaneous Functions
     contents:
     - compare_heaps
-    - dodgr_centrality
     - dodgr_flowmap
     - dodgr_full_cycles
     - dodgr_fundamental_cycles

@@ -8,22 +8,22 @@ dodgr_centrality(graph, contract = TRUE, edges = TRUE,
   dist_threshold = NULL, heap = "BHeap")
 }
 \arguments{
-\item{graph}{\code{data.frame} or equivalent object representing the network
+\item{graph}{'data.frame' or equivalent object representing the network
 graph (see Details)}
 
-\item{contract}{If \code{TRUE}, centrality is calculated on contracted graph
+\item{contract}{If 'TRUE', centrality is calculated on contracted graph
 before mapping back on to the original full graph. Note that for street
 networks, in particular those obtained from the \pkg{osmdata} package, vertex
 placement is effectively arbitrary except at junctions; centrality for such
 graphs should only be calculated between the latter points, and thus
-\code{contract} should always be \code{TRUE}.}
+'contract' should always be 'TRUE'.}
 
-\item{edges}{If \code{TRUE}, centrality is calculated for graph edges, returning
-the input \code{graph} with an additional \code{centrality} column; otherwise
+\item{edges}{If 'TRUE', centrality is calculated for graph edges, returning
+the input 'graph' with an additional 'centrality' column; otherwise
 centrality is calculated for vertices, returning the equivalent of
-\code{dodgr_vertices(graph)}, with an additional vertex-based \code{centrality} column.}
+'dodgr_vertices(graph)', with an additional vertex-based 'centrality' column.}
 
-\item{dist_threshold}{If not \code{NULL}, only calculate centrality for each point
+\item{dist_threshold}{If not 'NULL', only calculate centrality for each point
 out to specified threshold. Setting values for this will result in
 approximate estimates for centrality, yet with considerable gains in
 computational efficiency. For sufficiently large values, approximations will
@@ -31,15 +31,15 @@ be accurate to within some constant multiplier. Appropriate values can be
 established via the \link{estimate_centrality_threshold} function.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
-Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-\code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-(\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+Fibonacci Heap (default; 'FHeap'), Binary Heap ('BHeap'),
+'Radix', Trinomial Heap ('TriHeap'), Extended Trinomial Heap
+('TriHeapExt', and 2-3 Heap ('Heap23').}
 }
 \value{
-Modified version of graph with additonal \code{centrality} column added.
+Modified version of graph with additonal 'centrality' column added.
 }
 \description{
-Calculate betweenness centrality for a \code{dodgr} network, in either vertex- or
+Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
 edge-based form.
 }
 \examples{
@@ -70,7 +70,7 @@ mapview (graph_sf, color = cols, lwd = 10 * centrality)
 }
 
 # An example of flow aggregation across a generic (non-OSM) highway,
-# represented as the `routes_fast` object of the \\pkg{stplanr} package,
+# represented as the 'routes_fast' object of the \\pkg{stplanr} package,
 # which is a SpatialLinesDataFrame containing commuter densities along
 # components of a street network.
 \dontrun{
@@ -78,8 +78,8 @@ library (stplanr)
 # merge all of the 'routes_fast' lines into a single network
 r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 r <- sf::st_as_sf (r)
-# Convert to a 'dodgr' network, for which we need to specify both a `type` and
-# `id` column.
+# Convert to a 'dodgr' network, for which we need to specify both a 'type' and
+# 'id' column.
 r$type <- 1
 r$id <- seq (nrow (r))
 graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",

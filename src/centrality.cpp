@@ -184,6 +184,9 @@ void PF::PathFinder::Centrality_vertex (
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
 
+        if (w [v] > dist_threshold)
+            continue;
+
         v_stack.push_back (v);
 
         edge = vertices [v].outHead;
@@ -270,6 +273,9 @@ void PF::PathFinder::Centrality_edge (
 
     while (m_heap->nItems() > 0) {
         unsigned int v = m_heap->deleteMin();
+
+        if (w [v] > dist_threshold)
+            continue;
 
         v_stack.push_back (v);
 
