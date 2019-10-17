@@ -58,7 +58,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' flows <- matrix (10 * runif (length (from) * length (to)),
 #'                  nrow = length (from))
 #' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
-#' # graph then has an additonal 'flows` column of aggregate flows along all
+#' # graph then has an additonal 'flows' column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
@@ -68,10 +68,7 @@ contract_graph_with_pts <- function (graph, from, to)
 #' # The following code can be used to convert the resultant graph to an `sf`
 #' # object suitable for plotting
 #' \dontrun{
-#' geoms <- dodgr_to_sfc (graph_undir)
-#' gc <- dodgr_contract_graph (graph_undir)
-#' gsf <- sf::st_sf (geoms)
-#' gsf$flow <- gc$flow
+#' gsf <- dodgr_to_sf (graph_undir)
 #'
 #' # example of plotting with the 'mapview' package
 #' library (mapview)
