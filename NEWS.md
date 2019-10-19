@@ -1,6 +1,7 @@
 #v 0.2.5.00x
 
 Major changes:
+- Added new `dodgr_centrality` function, and associated helper functions.
 - `merge_directed_flows` renamed to `merge_directed_graph`, with added option
   of specifying columns to merge.
 
