@@ -1,5 +1,5 @@
 #' write_dodgr_wt_profile
-#' 
+#'
 #' Write the `dodgr` street network weighting profiles to a local
 #' `.json`-formatted file for manual editing and subsequent re-reading.
 #'

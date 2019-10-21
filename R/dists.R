@@ -56,7 +56,7 @@
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
 #'
-#' @export 
+#' @export
 #' @examples
 #' # A simple graph
 #' graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
@@ -89,9 +89,9 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' # should work, but even then note that
 #' table (essen$level)
-#' # There are parts of the network on different building levels (because of
-#' # shopping malls and the like). These may or may not be connected, so it may be
-#' # necessary to filter out particular levels
+#' # There are parts of the network on different building levels (because of 
+#' # shopping malls and the like). These may or may not be connected, so it may
+#' # be necessary to filter out particular levels
 #' index <- which (! (essen$level == "-1" | essen$level == "1")) # for example
 #' library (sf) # needed for following sub-select operation
 #' essen <- essen [index, ]

@@ -34,15 +34,15 @@ streetnet <- dodgr_streetnet ("hampi india", expand = 0)
 # convert to form needed for `dodgr` functions:
 graph <- weight_streetnet (streetnet)
 nrow (graph) # around 5,900 edges
-# Alternative ways of extracting street networks by using a small selection of
-# graph vertices to define bounding box:
+# Alternative ways of extracting street networks by using a small selection
+# of graph vertices to define bounding box:
 verts <- dodgr_vertices (graph)
 verts <- verts [sample (nrow (verts), size = 200), ]
 streetnet <- dodgr_streetnet (pts = verts, expand = 0)
 graph <- weight_streetnet (streetnet)
 nrow (graph)
-# This will generally have many more rows because most street networks include
-# streets that extend considerably beyond the specified bounding box.
+# This will generally have many more rows because most street networks
+# include streets that extend considerably beyond the specified bounding box.
 
 # bbox can also be a polygon:
 bb <- osmdata::getbb ("gent belgium") # rectangular bbox

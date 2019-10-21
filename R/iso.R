@@ -19,7 +19,7 @@
 #' associated coordinates of the series of points from each `from` point at the
 #' specified isodistances.
 #'
-#' @export 
+#' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 100)
@@ -106,7 +106,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap")
 #' dodgr_isochrones
 #'
 #' Calculate isochrone contours from specified points. Function is fully
-#' vectorized to calculate accept vectors of central points and vectors 
+#' vectorized to calculate accept vectors of central points and vectors
 #' defining multiple isochrone thresholds.
 #'
 #' @inherit dodgr_isodists
@@ -120,7 +120,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap")
 #' coordinates of the series of points from each `from` point at the specified
 #' isochrone times.
 #'
-#' @export 
+#' @export
 #' @examples
 #' \dontrun{
 #' # Use osmdata package to extract 'SC'-format data:
@@ -164,7 +164,7 @@ dodgr_isochrones <- function (graph, from = NULL, tlim = NULL, heap = 'BHeap')
 #' associated coordinates of the series of points from each `from` point at the
 #' specified isochrone times.
 #'
-#' @export 
+#' @export
 #' @examples
 #' \dontrun{
 #' # Use osmdata package to extract 'SC'-format data:

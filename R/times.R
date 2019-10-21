@@ -9,7 +9,7 @@
 #' @param shortest If `TRUE`, calculate times along the \emph{shortest} rather
 #' than fastest paths.
 #'
-#' @export 
+#' @export
 dodgr_times <- function (graph, from = NULL, to = NULL, shortest = FALSE,
                          heap = 'BHeap')
 {

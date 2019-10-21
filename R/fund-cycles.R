@@ -13,8 +13,8 @@ flatten_list <- function (x)
 #'
 #' @param graph `data.frame` or equivalent object representing the contracted
 #' network graph (see Details).
-#' @param vertices `data.frame` returned from \link{dodgr_vertices}`(graph)`. Will
-#' be calculated if not provided, but it's quicker to pass this if it has
+#' @param vertices `data.frame` returned from \link{dodgr_vertices}`(graph)`.
+#' Will be calculated if not provided, but it's quicker to pass this if it has
 #' already been calculated.
 #' @param graph_max_size Maximum size submitted to the internal C++ routines as
 #' a single chunk. Warning: Increasing this may lead to computer meltdown!
@@ -40,12 +40,12 @@ flatten_list <- function (x)
 #' cutting graphs into smaller, computationally manageable sub-graphs provides
 #' only an approximation and may not yield all fundamental cycles.
 #'
-#' @examples 
+#' @examples
 #' net <- weight_streetnet (hampi)
 #' graph <- dodgr_contract_graph (net)
 #' verts <- dodgr_vertices (graph)
 #' cyc <- dodgr_fundamental_cycles (graph, verts)
-#' @export 
+#' @export
 dodgr_fundamental_cycles <- function (graph, vertices = NULL,
                                       graph_max_size = 10000, expand = 0.05)
 {
@@ -215,7 +215,7 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 #' onto the original graph. This is far more computationally efficient than
 #' calculating fundamental cycles on a full (non-contracted) graph.
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' net <- weight_streetnet (hampi)
 #' graph <- dodgr_contract_graph (net)

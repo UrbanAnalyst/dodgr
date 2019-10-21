@@ -199,7 +199,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 #' nrow (graph1) # 686
 #' graph2 <- dodgr_uncontract_graph (graph1)
 #' nrow (graph2) # 5,845
-#' 
+#'
 #' # Insert new data on to the contracted graph and uncontract it:
 #' graph1$new_col <- runif (nrow (graph1))
 #' graph3 <- dodgr_uncontract_graph (graph1)

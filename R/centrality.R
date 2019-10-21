@@ -45,7 +45,7 @@
 #' # 'dodgr_to_sf()' is also useful for many visualisation routines.
 #' graph_sf <- merge_directed_graph (graph_full) %>%
 #'     dodgr_to_sf ()
-#' 
+#'
 #' \dontrun{
 #' library (mapview)
 #' centrality <- graph_sf$centrality / max (graph_sf$centrality)
@@ -53,7 +53,7 @@
 #' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * centrality)]
 #' mapview (graph_sf, color = cols, lwd = 10 * centrality)
 #' }
-#' 
+#'
 #' # An example of flow aggregation across a generic (non-OSM) highway,
 #' # represented as the 'routes_fast' object of the \pkg{stplanr} package,
 #' # which is a SpatialLinesDataFrame containing commuter densities along
@@ -63,8 +63,8 @@
 #' # merge all of the 'routes_fast' lines into a single network
 #' r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 #' r <- sf::st_as_sf (r)
-#' # Convert to a 'dodgr' network, for which we need to specify both a 'type' and
-#' # 'id' column.
+#' # Convert to a 'dodgr' network, for which we need to specify both a 'type'
+#' # and 'id' column.
 #' r$type <- 1
 #' r$id <- seq (nrow (r))
 #' graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",
@@ -100,6 +100,7 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     if (contract & methods::is (graph, "dodgr_contracted"))
         contract <- FALSE
+    graph_full <- edge_map <- NULL
     if (contract & !methods::is (graph, "dodgr_contracted"))
     {
         graph_full <- graph
@@ -194,7 +195,8 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
     # estimate max dist
     vs <- dodgr_vertices (graphs)
     vsample <- sample (vs$id, 1000)
-    dmax <- max (dodgr_dists (graphs, from = vsample, to = vsample), na.rm = TRUE)
+    dmax <- max (dodgr_dists (graphs, from = vsample, to = vsample),
+                 na.rm = TRUE)
     if (dmax > (0.75 * dabsmax))
     {
         message ("dist_threshold approaches size of graph;\n",
@@ -206,15 +208,16 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
     d <- 100
     mult <- 1.1
     ss <- 9999
+    g_old <- dodgr_centrality (graphs, dist_threshold = d)
     while (ss > tolerance)
     {
-        g0 <- dodgr_centrality (graphs, dist_threshold = d)
         d <- signif (d * mult, 2)
         g <- dodgr_centrality (graphs, dist_threshold = d)
-        mod <- stats::lm (g$centrality ~ g0$centrality)
-        ss <- sum (mod$residuals ^ 2) / sum (g0$centrality ^ 2)
-        message ("d = ", round (d), "; error = ", 
+        mod <- stats::lm (g$centrality ~ g_old$centrality)
+        ss <- sum (mod$residuals ^ 2) / sum (g_old$centrality ^ 2)
+        message ("d = ", round (d), "; error = ",
                  formatC (ss, format = "f", digits = 4))
+        g_old <- d
 
         if (d > dmax)
         {

@@ -48,7 +48,7 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
                                        keep_cols)
 {
     # no visible binding notes:
-    native_ <- key <- `:=` <- value <- NULL
+    native_ <- key <- `:=` <- value <- NULL # nolint
 
     surface <- get_surface_speeds (wt_profile, wt_profile_file)
     if (nrow (surface) > 0)
@@ -207,7 +207,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
     return (graph)
 }
 
-# adjust weighted distances according to numbers of lanes 
+# adjust weighted distances according to numbers of lanes
 weight_by_num_lanes <- function (graph, wt_profile)
 {
     # only weight these profiles:

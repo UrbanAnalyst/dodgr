@@ -78,8 +78,8 @@ library (stplanr)
 # merge all of the 'routes_fast' lines into a single network
 r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 r <- sf::st_as_sf (r)
-# Convert to a 'dodgr' network, for which we need to specify both a 'type' and
-# 'id' column.
+# Convert to a 'dodgr' network, for which we need to specify both a 'type'
+# and 'id' column.
 r$type <- 1
 r$id <- seq (nrow (r))
 graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",

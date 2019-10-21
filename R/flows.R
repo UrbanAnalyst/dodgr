@@ -103,7 +103,8 @@ contract_graph_with_pts <- function (graph, from, to)
 #' r$id <- seq (nrow (r))
 #' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
 #'                            wt_profile = 1)
-#' f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end, flows = flows)
+#' f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end,
+#'                             flows = flows)
 #' # Then merge directed flows and convert to \pkg{sf} for plotting as before:
 #' f <- merge_directed_graph (f)
 #' geoms <- dodgr_to_sfc (f)
@@ -236,7 +237,7 @@ get_random_prefix <- function (prefix = "flow", n = 5)
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
-dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE, 
+dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
                                   heap = 'BHeap', tol = 1e-12, quiet = TRUE)
 {
     if ("flow" %in% names (graph))
