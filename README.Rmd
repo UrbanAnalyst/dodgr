@@ -248,10 +248,6 @@ f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (fro
 ## Further detail
 
 For more detail, see the [main package
-vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), the second
+vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), and the second
 vignette on [street networks and time-based
-routing](https://atfutures.github.io/dodgr/articles/times.html), and a third
-vignette detailing [benchmark
-timings](https://atfutures.github.io/dodgr/articles/benchmark.html), showing
-that under many circumstances, `dodgr` performs considerably faster than
-equivalent routines from the `igraph` package.
+routing](https://atfutures.github.io/dodgr/articles/times.html)
