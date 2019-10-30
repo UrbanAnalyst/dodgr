@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.16",
+  "version": "0.2.5.17",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -360,6 +360,14 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=RcppThread"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "https://sysreqs.r-hub.io/get/gnumake"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "https://sysreqs.r-hub.io/get/cxx11"
     }
   ],
   "releaseNotes": "https://github.com/atfutures/dodgr/blob/master/NEWS.md",
@@ -404,5 +412,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "8611.753KB"
+  "fileSize": "8611.795KB"
 }
