@@ -89,7 +89,7 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' # should work, but even then note that
 #' table (essen$level)
-#' # There are parts of the network on different building levels (because of 
+#' # There are parts of the network on different building levels (because of
 #' # shopping malls and the like). These may or may not be connected, so it may
 #' # be necessary to filter out particular levels
 #' index <- which (! (essen$level == "-1" | essen$level == "1")) # for example
@@ -232,7 +232,7 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
                   "character, matrix, or integer")
 
         if (length (pts == 2) & is.numeric (pts) &
-            ( (any (grepl ("x", names (pts), ignore.case = TRUE)) &
+            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &
              any (grepl ("y", names (pts), ignore.case = TRUE))) |
              (any (grepl ("lon", names (pts), ignore.case = TRUE) &
                    (any (grepl ("lat", names (pts), ignore.case = TRUE)))))))
@@ -465,16 +465,16 @@ graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
 
 #' flip_graph
 #'
-#' Flip from and two vertices of a graph
+#' Flip from and two vertices of a graph. This is only called from
+#' `dodgr_distances`, and only on converted graph, so just needs to switch from
+#' and to vertex columns.
 #' @noRd
 flip_graph <- function (graph)
 {
-    fr_cols <- c ("from_id", "from_lon", "from_lat")
-    fr_cols <- fr_cols [which (fr_cols %in% names (graph))]
-    to_cols <- c ("to_id", "to_lon", "to_lat")
-    to_cols <- to_cols [which (to_cols %in% names (graph))]
-    fr_temp <- graph [, fr_cols]
-    graph [, fr_cols] <- graph [, to_cols]
-    graph [, to_cols] <- fr_temp
+    grcols <- dodgr_graph_cols (graph)
+    fr_temp <- graph [[grcols$from]]
+    graph [[grcols$from]] <- graph [[grcols$to]]
+    graph [[grcols$to]] <- fr_temp
+
     return (graph)
 }
