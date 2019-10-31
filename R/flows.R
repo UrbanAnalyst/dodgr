@@ -211,6 +211,7 @@ get_random_prefix <- function (prefix = "flow", n = 5)
 #' Disperse flows throughout a network based on a input vectors of origin points
 #' and associated densities
 #'
+#' @inheritParams dodgr_flows_aggregate
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which aggregate dispersed
@@ -221,17 +222,9 @@ get_random_prefix <- function (prefix = "flow", n = 5)
 #' also be a vector with same length as `from`, giving dispersal coefficients
 #' from each point. If value of `k<0` is given, a standard logistic polynomial
 #' will be used.
-#' @param contract If `TRUE`, calculate flows on contracted graph before
-#' mapping them back on to the original full graph (recommended as this will
-#' generally be much faster).
-#' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
-#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
-#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
 #' @param tol Relative tolerance below which dispersal is considered to have
 #' finished. This parameter can generally be ignored; if in doubt, its effect
 #' can be removed by setting `tol = 0`.
-#' @param quiet If `FALSE`, display progress messages on screen.
 #' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @export
