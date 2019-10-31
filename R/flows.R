@@ -220,6 +220,80 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     return (graph)
 }
 
+#' dodgr_flows_si
+#'
+#' Aggregate flows throughout a network based using an exponential Spatial
+#' Interaction (SI) model between a specified set of origin and destination
+#' points, and associated vectors of densities.
+#'
+#' @inheritParams dodgr_flows_aggregate
+#' @param k Either single value specifying width of exponential spatial
+#' interaction function (exp (-d / k)), or vector of independent values for each
+#' origin point (with same length as 'from' points).
+#' @param dens_from Vector of densities at origin ('from') points
+#' @param dens_to Vector of densities at destination ('to') points
+#' @return Modified version of graph with additonal `flow` column added.
+#'
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' from <- sample (graph$from_id, size = 10)
+#' to <- sample (graph$to_id, size = 5)
+#' to <- to [!to %in% from]
+#' flows <- matrix (10 * runif (length (from) * length (to)),
+#'                  nrow = length (from))
+#' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
+#' # graph then has an additonal 'flows' column of aggregate flows along all
+#' # edges. These flows are directed, and can be aggregated to equivalent
+#' # undirected flows on an equivalent undirected graph with:
+#' graph_undir <- merge_directed_graph (graph)
+#' # This graph will only include those edges having non-zero flows, and so:
+#' nrow (graph); nrow (graph_undir) # the latter is much smaller
+#' @export
+dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
+                            dens_to = NULL, contract = FALSE, heap = "BHeap",
+                            tol = 1e-12, quiet = TRUE)
+{
+    hps <- get_heap (heap, graph)
+    heap <- hps$heap
+    graph <- hps$graph
+
+    if (!(length (k) == 1 | length (k) == length (from)))
+        stop ("'k' must be either single value or vector ",
+              "of same length as 'from'")
+    if (length (k) == 1)
+        k <- rep (k, length (from))
+
+    if (contract)
+    {
+        graph_full <- graph
+        graph <- contract_graph_with_pts (graph, from, to)
+        hashc <- get_hash (graph, hash = FALSE)
+        fname_c <- file.path (tempdir (),
+                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!file.exists (fname_c))
+            stop ("something went wrong extracting the edge_map ... ") # nocov
+        edge_map <- readRDS (fname_c)
+    }
+
+    g <- prepare_graph (graph, from, to)
+
+    if (!quiet)
+        message ("\nAggregating flows ... ", appendLF = FALSE)
+
+    dirtxt <- get_random_prefix (prefix = "flow_si")
+    rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
+                   k, dens_from, tol, dirtxt, heap)
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
+    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
+    invisible (file.remove (files)) # nolint
+
+    if (contract) # map contracted flows back onto full graph
+        graph <- uncontract_graph (graph, edge_map, graph_full)
+
+    return (graph)
+}
+
 # transform input graph and (from, to) arguments to standard forms for passing
 # to C++ routines
 prepare_graph <- function (graph, from, to)
