@@ -39,3 +39,13 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const double &tol,
         const std::string &dirtxt,
         std::string heap_type);
+
+void rcpp_flows_si (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi_in,
+        Rcpp::NumericVector kvec,
+        Rcpp::NumericVector nvec,
+        const double tol,
+        const std::string dirtxt,
+        const std::string heap_type);

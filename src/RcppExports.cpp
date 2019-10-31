@@ -80,6 +80,24 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// rcpp_flows_si
+void rcpp_flows_si(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, Rcpp::NumericVector kvec, Rcpp::NumericVector nvec, const double tol, const std::string dirtxt, const std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_si(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP kvecSEXP, SEXP nvecSEXP, SEXP tolSEXP, SEXP dirtxtSEXP, SEXP heap_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type toi_in(toi_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type kvec(kvecSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type nvec(nvecSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type dirtxt(dirtxtSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type heap_type(heap_typeSEXP);
+    rcpp_flows_si(graph, vert_map_in, fromi, toi_in, kvec, nvec, tol, dirtxt, heap_type);
+    return R_NilValue;
+END_RCPP
+}
 // rcpp_fundamental_cycles
 Rcpp::List rcpp_fundamental_cycles(Rcpp::DataFrame graph, Rcpp::DataFrame verts);
 RcppExport SEXP _dodgr_rcpp_fundamental_cycles(SEXP graphSEXP, SEXP vertsSEXP) {
@@ -255,6 +273,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 8},
+    {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 9},
     {"_dodgr_rcpp_fundamental_cycles", (DL_FUNC) &_dodgr_rcpp_fundamental_cycles, 2},
     {"_dodgr_rcpp_contract_graph", (DL_FUNC) &_dodgr_rcpp_contract_graph, 2},
     {"_dodgr_rcpp_merge_cols", (DL_FUNC) &_dodgr_rcpp_merge_cols, 1},
