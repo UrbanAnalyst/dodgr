@@ -284,6 +284,7 @@ struct OneSI : public RcppParallel::Worker
     const std::vector <unsigned int> toi;
     const Rcpp::NumericVector k_from;
     const Rcpp::NumericVector dens_from;
+    const Rcpp::NumericVector dens_to;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
@@ -300,6 +301,7 @@ struct OneSI : public RcppParallel::Worker
             const std::vector <unsigned int> toi_in,
             const Rcpp::NumericVector k_from_in,
             const Rcpp::NumericVector dens_from_in,
+            const Rcpp::NumericVector dens_to_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
@@ -309,7 +311,7 @@ struct OneSI : public RcppParallel::Worker
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), toi (toi_in), k_from (k_from_in),
-        dens_from (dens_from_in),
+        dens_from (dens_from_in), dens_to (dens_to_in),
         vert_name (vert_name_in), verts_to_edge_map (verts_to_edge_map_in),
         nverts (nverts_in), nedges (nedges_in), tol (tol_in),
         dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
@@ -367,7 +369,8 @@ struct OneSI : public RcppParallel::Worker
                 {
                     if (d [toi [j]] < INFINITE_DOUBLE)
                     {
-                        double exp_j = exp (-d [toi [j]] / k_from [i]);
+                        double exp_j = dens_to [j] *
+                            exp (-d [toi [j]] / k_from [i]);
                         double flow_ij = dens_from [i] * exp_j;
                         expsum += exp_j;
 
@@ -589,7 +592,8 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericVector kvec,
-        Rcpp::NumericVector nvec,
+        Rcpp::NumericVector dens_from,
+        Rcpp::NumericVector dens_to,
         const double tol,
         const std::string dirtxt,
         const std::string heap_type)
@@ -620,7 +624,8 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneSI one_si (fromi, toi, kvec, nvec, vert_name, verts_to_edge_map,
+    OneSI one_si (fromi, toi, kvec, dens_from, dens_to,
+            vert_name, verts_to_edge_map,
             nverts, nedges, tol, dirtxt, heap_type, g);
 
     GetRNGstate (); // Initialise R random seed

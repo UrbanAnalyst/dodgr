@@ -282,7 +282,7 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
 
     dirtxt <- get_random_prefix (prefix = "flow_si")
     rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
-                   k, dens_from, tol, dirtxt, heap)
+                   k, dens_from, dens_to, tol, dirtxt, heap)
     f <- list.files (tempdir (), full.names = TRUE)
     files <- f [grep (dirtxt, f)]
     graph$flow <- rcpp_aggregate_files (files, nrow (graph))

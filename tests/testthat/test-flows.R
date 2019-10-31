@@ -102,6 +102,42 @@ test_that ("flows disperse", {
     expect_true (max (graph4$flow - graph2$flow) < 0.1)
 })
 
+test_that ("flows_si", {
+               graph <- weight_streetnet (hampi, wt_profile = "foot") %>%
+                   dodgr_contract_graph ()
+               v <- dodgr_vertices (graph)
+               nf <- 100
+               nt <- nrow (v)
+               from <- sample (v$id, nf)
+               to <- v$id
+
+               k <- 500 + 10 * rnorm (nf)
+               dens_from <- 100 * runif (nf)
+               dens_to <- 100 * runif (nt)
+
+               # calculation via explicit matrix and flows_aggregate:
+               d <- dodgr_distances (graph, from = from, to = to)
+               d_from <- array (dens_from, dim = c (nf, nt))
+               d_to <- t (array (dens_to, dim = c (nt, nf)))
+               kmat <- array (k, dim = c (nf, nt))
+               fmat <- d_to * exp (-d / kmat)
+               fmat [is.na (fmat)] <- 0
+               csmat <- array (rowSums (fmat), dim = c (nf, nt))
+               fmat <- d_from * fmat / csmat
+               netf <- dodgr_flows_aggregate (graph, from = from, to = to,
+                                              flows = fmat)
+
+
+               # calculation via flows_si:
+               netf_si <- dodgr_flows_si (graph, from = from, to = to, k = k,
+                                          dens_from = dens_from, dens_to = dens_to)
+               expect_identical (dim (netf), dim (netf_si))
+               expect_identical (names (netf), names (netf_si))
+               r2 <- cor (netf$flow, netf_si$flow) ^ 2
+               if (test_all)
+                   expect_true (r2 > 0.9)
+})
+
 test_that ("flowmap", {
     graph <- weight_streetnet (hampi)
     from <- sample (graph$from_id, size = 10)
