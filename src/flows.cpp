@@ -399,8 +399,9 @@ struct OneSI : public RcppParallel::Worker
                     }
                 }
             } // end for j
-            for (size_t j = 0; j < nedges; j++)
-                flowvec [j] += flows_i [j] / expsum;
+            if (expsum > tol)
+                for (size_t j = 0; j < nedges; j++)
+                    flowvec [j] += flows_i [j] / expsum;
         } // end for i
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
