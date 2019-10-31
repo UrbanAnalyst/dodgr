@@ -118,38 +118,12 @@ contract_graph_with_pts <- function (graph, from, to)
 dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
                                    heap = "BHeap", tol = 1e-12, quiet = TRUE)
 {
-    if ("flow" %in% names (graph))
-        warning ("graph already has a 'flow' column; ",
-                  "this will be overwritten")
-
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
-
-    gr_cols <- dodgr_graph_cols (graph)
-
-    # change from and to just to check conformity
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
-    if (!missing (from))
-    {
-        # remove any routing points not in edge start nodes:
-        from <- nodes_arg_to_pts (from, graph)
-        if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-        from <- from [from %in% graph [[gr_cols$from]] ]
-    }
-    if (!missing (to))
-    {
-        # remove any routing points not in edge end nodes:
-        to <- nodes_arg_to_pts (to, graph)
-        if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
-        to <- to [to %in% graph [[gr_cols$to]] ]
-    }
 
     if (contract)
     {
@@ -163,33 +137,66 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
         edge_map <- readRDS (fname_c)
     }
 
-    vert_map <- make_vert_map (graph, gr_cols)
-
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index - 1 # 0-based
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-    to_index <- index_id$index - 1 # 0-based
-
+    g <- prepare_graph (graph, from, to)
     if (!is.matrix (flows))
-        flows <- matrix (flows, nrow = length (from_index))
-
-    graph2 <- convert_graph (graph, gr_cols)
+        flows <- matrix (flows, nrow = length (g$from_index))
 
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
     dirtxt <- get_random_prefix ()
-    rcpp_flows_aggregate_par (graph2, vert_map, from_index, to_index,
+    rcpp_flows_aggregate_par (g$graph, g$vert_map, g$from_index, g$to_index,
                               flows, tol, dirtxt, heap)
     f <- list.files (tempdir (), full.names = TRUE)
     files <- f [grep (dirtxt, f)]
     graph$flow <- rcpp_aggregate_files (files, nrow (graph))
-    junk <- file.remove (files) # nolint
+    invisible (file.remove (files)) # nolint
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
 
     return (graph)
+}
+
+# transform input graph and (from, to) arguments to standard forms for passing
+# to C++ routines
+prepare_graph <- function (graph, from, to)
+{
+    if ("flow" %in% names (graph))
+        warning ("graph already has a 'flow' column; ",
+                  "this will be overwritten")
+
+    gr_cols <- dodgr_graph_cols (graph)
+    vert_map <- make_vert_map (graph, gr_cols)
+
+    # change from and to just to check conformity
+    tp <- attr (graph, "turn_penalty")
+    tp <- ifelse (is.null (tp), 0, tp)
+
+    # remove any routing points not in edge start nodes:
+    from <- nodes_arg_to_pts (from, graph)
+    if (is (graph, "dodgr_streetnet_sc") & tp > 0)
+        from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
+    from <- from [from %in% graph [[gr_cols$from]] ]
+    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
+    from_index <- index_id$index - 1 # 0-based
+
+    to_index <- NULL
+    if (!missing (to))
+    {
+        # remove any routing points not in edge end nodes:
+        to <- nodes_arg_to_pts (to, graph)
+        if (is (graph, "dodgr_streetnet_sc") & tp > 0)
+            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
+        to <- to [to %in% graph [[gr_cols$to]] ]
+        index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
+        to_index <- index_id$index - 1 # 0-based
+    }
+
+    graph2 <- convert_graph (graph, gr_cols)
+
+    list (graph = graph2, vert_map = vert_map,
+          from_index = from_index, to_index = to_index)
 }
 
 get_random_prefix <- function (prefix = "flow", n = 5)
@@ -257,19 +264,6 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     heap <- hps$heap
     graph <- hps$graph
 
-    gr_cols <- dodgr_graph_cols (graph)
-
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
-    if (!missing (from))
-    {
-        # remove any routing points not in edge start nodes:
-        from <- nodes_arg_to_pts (from, graph)
-        if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-        from <- from [from %in% graph [[gr_cols$from]] ]
-    }
-
     if (contract)
     {
         graph_full <- graph
@@ -282,27 +276,22 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
         edge_map <- readRDS (fname_c)
     }
 
-    vert_map <- make_vert_map (graph, gr_cols)
-
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index - 1 # 0-based
+    g <- prepare_graph (graph, from)
 
     if (!is.matrix (dens))
         dens <- as.matrix (dens)
-
-    graph2 <- convert_graph (graph, gr_cols)
 
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
     # parallel results are dumped in tempdir
     dirtxt <- get_random_prefix ()
-    rcpp_flows_disperse_par (graph2, vert_map, from_index,
+    rcpp_flows_disperse_par (g$graph, g$vert_map, g$from_index,
                              k, dens, tol, dirtxt, heap)
     f <- list.files (tempdir (), full.names = TRUE)
     files <- f [grep (dirtxt, f)]
     graph$flow <- rcpp_aggregate_files (files, nrow (graph))
-    junk <- file.remove (files) # nolint
+    invisible (file.remove (files)) # nolint
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
