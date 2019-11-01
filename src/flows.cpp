@@ -344,7 +344,13 @@ struct OneSI : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
-        std::vector <double> flowvec (nedges, 0.0);
+        // k_from can have multiple vectors of k-values, each equal in length to
+        // the number of 'from' points. The output is then a single vector of
+        // 'nedges' wrapped 'nk' times.
+        const size_t nfrom = dens_from.size ();
+        const size_t nk = k_from.size () / nfrom;
+        size_t out_size = nedges * nk;
+        std::vector <double> flowvec (out_size, 0.0);
 
         for (size_t i = begin; i < end; i++)
         {
@@ -357,22 +363,39 @@ struct OneSI : public RcppParallel::Worker
 
             // translate k-value to distance limit based on tol
             // exp(-d / k) = tol -> d = -k * log (tol)
-            const double dlim = -k_from [i] * log (tol);
+            //const double dlim = -k_from [i] * log (tol);
+            // k_from holds nk vectors of different k-values, each of length
+            // nedges.
+            double dlim = 0.0;
+            for (size_t k = 0; k < nk; k++)
+                if (k_from [i + k * nfrom] > dlim)
+                    dlim = k_from [i + k * nfrom];
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
 
-            std::vector <double> flows_i (nedges, 0.0);
-            double expsum = 0.0;
+            std::vector <double> flows_i (nedges * nk, 0.0);
+            //double expsum = 0.0;
+            std::vector <double> expsum (nk, 0.0);
             for (size_t j = 0; j < toi.size (); j++)
             {
                 if (from_i != toi [j]) // Exclude self-flows
                 {
                     if (d [toi [j]] < INFINITE_DOUBLE)
                     {
+                        /*
                         double exp_j = dens_to [j] *
                             exp (-d [toi [j]] / k_from [i]);
                         double flow_ij = dens_from [i] * exp_j;
                         expsum += exp_j;
+                        */
+                        std::vector <double> flow_ijk (nk);
+                        for (size_t k = 0; k < nk; k++)
+                        {
+                            double exp_jk = dens_to [j] *
+                                exp (-d [toi [j]] / k_from [i + k * nfrom]);
+                            flow_ijk [k] = dens_from [i] * exp_jk;
+                            expsum [k] += exp_jk;
+                        }
 
                         int target = static_cast <int> (toi [j]); // can equal -1
                         while (target < INFINITE_INT)
@@ -385,7 +408,13 @@ struct OneSI : public RcppParallel::Worker
                                     "t" + vert_name [stt];
                                 // multiple flows can aggregate to same edge, so
                                 // this has to be +=, not just =!
-                                flows_i [verts_to_edge_map.at (v2)] += flow_ij;
+                                for (size_t k = 0; k < nk; k++)
+                                {
+                                    size_t index = verts_to_edge_map.at (v2) +
+                                        k * nedges;
+                                    flows_i [index] += flow_ijk [k];
+                                }
+                                //flows_i [verts_to_edge_map.at (v2)] += flow_ij;
                             }
 
                             target = static_cast <int> (prev [stt]);
@@ -399,18 +428,22 @@ struct OneSI : public RcppParallel::Worker
                     }
                 }
             } // end for j
-            if (expsum > tol)
-                for (size_t j = 0; j < nedges; j++)
-                    flowvec [j] += flows_i [j] / expsum;
+            for (int k = 0; k < nk; k++)
+                if (expsum [k] > tol)
+                    for (size_t j = 0; j < nedges; j++)
+                        flowvec [j + k * nedges] +=
+                            flows_i [j + k * nedges] / expsum [k];
         } // end for i
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
         std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
         std::ofstream out_file;
         out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
+        //out_file.write (reinterpret_cast <char *>(&nedges, sizeof (size_t));
+        out_file.write (reinterpret_cast <char *>(&out_size), sizeof (size_t));
         out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
+                static_cast <std::streamsize> (out_size * sizeof (double)));
+        out_file.close ();
     } // end parallel function operator
 };
 
@@ -442,7 +475,11 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
         in_file.close ();
 
         if (nedges != static_cast <size_t> (len))
+        {
+            Rcpp::Rcout << "nedges = " << nedges << "; len = " << len <<
+                std::endl;
             Rcpp::stop ("aggregate values have inconsistent sizes"); // # nocov
+        }
         
         for (size_t j = 0; j < nedges; j++)
             values [static_cast <long> (j)] += values_i [j];

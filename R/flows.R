@@ -257,11 +257,12 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     heap <- hps$heap
     graph <- hps$graph
 
-    if (!(length (k) == 1 | length (k) == length (from)))
-        stop ("'k' must be either single value or vector ",
-              "of same length as 'from'")
+    #if (!(length (k) == 1 | length (k) == length (from)))
+    #    stop ("'k' must be either single value or vector ",
+    #          "of same length as 'from'")
     if (length (k) == 1)
         k <- rep (k, length (from))
+    nk <- length (k) / length (from)
 
     if (contract)
     {
@@ -285,8 +286,17 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
                    k, dens_from, dens_to, tol, dirtxt, heap)
     f <- list.files (tempdir (), full.names = TRUE)
     files <- f [grep (dirtxt, f)]
-    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
+    res <- rcpp_aggregate_files (files, nrow (graph) * nk)
     invisible (file.remove (files)) # nolint
+
+    if (nk == 1)
+        graph$flow <- res
+    else
+    {
+        flowmat <- data.frame (matrix (res, ncol = nk))
+        names (flowmat) <- paste0 ("flow", seq (nk))
+        graph <- cbind (graph, flowmat)
+    }
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
