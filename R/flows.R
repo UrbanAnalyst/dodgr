@@ -286,6 +286,10 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
                    k, dens_from, dens_to, tol, dirtxt, heap)
     f <- list.files (tempdir (), full.names = TRUE)
     files <- f [grep (dirtxt, f)]
+    # These threads sometimes dump 0-byte files, which can not be read back in.
+    # Simply removing these here makes everything work, but ...
+    # TODO: Find out why these 0-byte files get dumped in the first place
+    files <- files [which (file.size (files) > 0)]
     res <- rcpp_aggregate_files (files, nrow (graph) * nk)
     invisible (file.remove (files)) # nolint
 

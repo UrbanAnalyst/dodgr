@@ -150,17 +150,13 @@ struct OneFlow : public RcppParallel::Worker
         } // end for i
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
-        double fmax = *std::max_element (flowvec.begin (), flowvec.end ());
-        if (fmax > 0.0)
-        {
-            std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-            std::ofstream out_file;
-            out_file.open (file_name, std::ios::binary | std::ios::out);
-            out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-            out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                    static_cast <std::streamsize> (nedges * sizeof (double)));
-            out_file.close ();
-        }
+        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
+        std::ofstream out_file;
+        out_file.open (file_name, std::ios::binary | std::ios::out);
+        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
+        out_file.write (reinterpret_cast <char *>(&flowvec [0]),
+                static_cast <std::streamsize> (nedges * sizeof (double)));
+        out_file.close ();
     } // end parallel function operator
 };
 
@@ -338,6 +334,21 @@ struct OneSI : public RcppParallel::Worker
         return str;
     }
 
+    // function to dump binary file from thread
+    void dump_file (const std::vector <double> res, const std::string dirtxt) {
+        // chance of re-generating same file name is 61^10, so there's no check
+        // for re-use of same
+        const size_t out_size = res.size ();
+        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
+        std::ofstream out_file;
+        out_file.open (file_name, std::ios::binary | std::ios::out);
+        out_file.write (reinterpret_cast <const char *>(&out_size), sizeof (size_t));
+        out_file.write (reinterpret_cast <const char *>(&res [0]),
+                static_cast <std::streamsize> (out_size * sizeof (double)));
+        out_file.flush ();
+        out_file.close ();
+    }
+
     // Parallel function operator
     void operator() (size_t begin, size_t end)
     {
@@ -438,16 +449,9 @@ struct OneSI : public RcppParallel::Worker
                         flowvec [j + k * nedges] +=
                             flows_i [j + k * nedges] / expsum [k];
         } // end for i
-        // dump flowvec to a file; chance of re-generating same file name is
-        // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        //out_file.write (reinterpret_cast <char *>(&nedges, sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&out_size), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (out_size * sizeof (double)));
-        out_file.close ();
+
+        dump_file (flowvec, dirtxt);
+
     } // end parallel function operator
 };
 
