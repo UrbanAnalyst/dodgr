@@ -150,13 +150,17 @@ struct OneFlow : public RcppParallel::Worker
         } // end for i
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
-        out_file.close ();
+        double fmax = *std::max_element (flowvec.begin (), flowvec.end ());
+        if (fmax > 0.0)
+        {
+            std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
+            std::ofstream out_file;
+            out_file.open (file_name, std::ios::binary | std::ios::out);
+            out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
+            out_file.write (reinterpret_cast <char *>(&flowvec [0]),
+                    static_cast <std::streamsize> (nedges * sizeof (double)));
+            out_file.close ();
+        }
     } // end parallel function operator
 };
 
