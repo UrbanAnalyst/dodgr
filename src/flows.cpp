@@ -475,11 +475,7 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
         in_file.close ();
 
         if (nedges != static_cast <size_t> (len))
-        {
-            Rcpp::Rcout << "nedges = " << nedges << "; len = " << len <<
-                std::endl;
             Rcpp::stop ("aggregate values have inconsistent sizes"); // # nocov
-        }
         
         for (size_t j = 0; j < nedges; j++)
             values [static_cast <long> (j)] += values_i [j];
