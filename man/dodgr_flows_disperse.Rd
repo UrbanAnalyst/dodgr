@@ -44,6 +44,17 @@ Modified version of graph with additonal \code{flow} column added.
 Disperse flows throughout a network based on a input vectors of origin points
 and associated densities
 }
+\note{
+Spatial Interaction models are often fitted through trialling a range
+of values of 'k'. The specification above allows fitting multiple values of
+'k' to be done with a single call, in a way that is far more efficient than
+making multiple calls. A matrix of 'k' values may be entered, with each
+column holding a different vector of values, one for each 'from' point. For a
+matrix of 'k' values having 'n' columns, the return object will be a modified
+version in the input 'graph', with an additional 'n' columns, named 'flow1',
+'flow2', ... up to 'n'. These columns must be subsequently matched by the
+user back on to the corresponding columns of the matrix of 'k' values.
+}
 \examples{
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 10)
