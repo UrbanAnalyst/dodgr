@@ -267,24 +267,20 @@ struct OneDisperse : public RcppParallel::Worker
                     size_t index = verts_to_edge_map.at (two_verts);
                     if (d [j] < INFINITE_DOUBLE)
                     {
-                        /*
-                        if (kfrom [ir] > 0.0)
-                        {
-                            flowvec [index] += dens (i) * exp (-d [j] / kfrom [ir]);
-                        } else // standard logistic polynomial for UK cycling models
-                        {
-                            // # nocov start
-                            double lp = -3.894 + (-0.5872 * d [j]) +
-                                (1.832 * sqrt (d [j])) +
-                                (0.007956 * d [j] * d [j]);
-                            flowvec [index] += dens (i) *
-                                exp (lp) / (1.0 + exp (lp));
-                            // # nocov end
-                        }
-                        */
                         for (size_t k = 0; k < nk; k++)
                         {
-                            double exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
+                            double exp_jk;
+                            if (kfrom [ir + k * nfrom] > 0.0)
+                                exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
+                            else
+                            {
+                                // standard logistic polygonial for UK cycling
+                                // models
+                                double lp = -3.894 + (-0.5872 * d [j]) +
+                                    (1.832 * sqrt (d [j])) +
+                                    (0.007956 * d [j] * d [j]);
+                                exp_jk = exp (lp) / (1.0 + exp (lp));
+                            }
                             expsum [k] += exp_jk;
                             flows_i [index + k * nedges] += dens [i] * exp_jk;
                         }
