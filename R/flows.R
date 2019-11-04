@@ -276,16 +276,16 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
                             dens_to = NULL, contract = FALSE, heap = "BHeap",
                             tol = 1e-12, quiet = TRUE)
 {
+    if (missing (from))
+        stop ("'from' must be provided for spatial interaction models.")
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
 
-    #if (!(length (k) == 1 | length (k) == length (from)))
-    #    stop ("'k' must be either single value or vector ",
-    #          "of same length as 'from'")
-    if (length (k) == 1)
-        k <- rep (k, length (from))
-    nk <- length (k) / length (from)
+    res <- check_k (k, from)
+    k <- res$k
+    nk <- res$nk
 
     if (contract)
     {
@@ -329,6 +329,35 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
         graph <- uncontract_graph (graph, edge_map, graph_full)
 
     return (graph)
+}
+
+check_k <- function (k, from)
+{
+    nk <- 1
+
+    if (is.data.frame (k))
+        k <- as.matrix (k)
+
+    if (is.matrix (k))
+    {
+        if (nrow (k) != length (from))
+            stop ("nrow(k) must equal length of 'from' points")
+        nk <- ncol (k)
+    } else if (is.numeric (k))
+    {
+        if (length (k) == 1)
+            k <- rep (k, length (from))
+        else if (length (k) != length (from))
+        {
+            # convert to matrix
+            nk <- length (k)
+            k <- array (rep (k, each = length (from)),
+                        dim = c (length (from), nk))
+        }
+    } else
+        stop ("'k' must be either a single value, a vector, or a matrix")
+
+    list (k = k, nk = nk)
 }
 
 # transform input graph and (from, to) arguments to standard forms for passing
