@@ -73,7 +73,9 @@ test_that ("flows disperse", {
     k <- rep (500, length (from))
     expect_silent (graph3b <- dodgr_flows_disperse (graph, from = from,
                                                     k = k, dens = dens))
-    expect_equal (graph3a$flow, graph3b$flow)
+    #expect_equal (graph3a$flow, graph3b$flow)
+    flow_diff <- abs (graph3a$flow - graph3b$flow)
+    expect_true (max (flow_diff) < 1e-4)
 
     k <- c (500, 1000)
     expect_silent (graph3b <- dodgr_flows_disperse (graph, from = from,
