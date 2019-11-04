@@ -64,19 +64,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_flows_disperse_par
-void rcpp_flows_disperse_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector k, Rcpp::NumericVector flows, const double& tol, const std::string& dirtxt, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_flows_disperse_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP flowsSEXP, SEXP tolSEXP, SEXP dirtxtSEXP, SEXP heap_typeSEXP) {
+void rcpp_flows_disperse_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector k, Rcpp::NumericVector dens, const double& tol, const std::string& dirtxt, std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_disperse_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP densSEXP, SEXP tolSEXP, SEXP dirtxtSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type flows(flowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens(densSEXP);
     Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type dirtxt(dirtxtSEXP);
     Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_flows_disperse_par(graph, vert_map_in, fromi, k, flows, tol, dirtxt, heap_type);
+    rcpp_flows_disperse_par(graph, vert_map_in, fromi, k, dens, tol, dirtxt, heap_type);
     return R_NilValue;
 END_RCPP
 }

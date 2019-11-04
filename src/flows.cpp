@@ -164,7 +164,7 @@ struct OneFlow : public RcppParallel::Worker
 struct OneDisperse : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const Rcpp::NumericVector flows;
+    const Rcpp::NumericVector dens;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
@@ -179,7 +179,7 @@ struct OneDisperse : public RcppParallel::Worker
     // constructor
     OneDisperse (
             const Rcpp::IntegerVector fromi,
-            const Rcpp::NumericVector flows_in,
+            const Rcpp::NumericVector dens_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
@@ -189,7 +189,7 @@ struct OneDisperse : public RcppParallel::Worker
             const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
-        dp_fromi (fromi), flows (flows_in), vert_name (vert_name_in),
+        dp_fromi (fromi), dens (dens_in), vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
         nverts (nverts_in), nedges (nedges_in), k (k_in), tol (tol_in),
         dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
@@ -251,14 +251,14 @@ struct OneDisperse : public RcppParallel::Worker
                     {
                         if (k [ir] > 0.0)
                         {
-                            flowvec [indx] += flows (i) * exp (-d [j] / k [ir]);
+                            flowvec [indx] += dens (i) * exp (-d [j] / k [ir]);
                         } else // standard logistic polynomial for UK cycling models
                         {
                             // # nocov start
                             double lp = -3.894 + (-0.5872 * d [j]) +
                                 (1.832 * sqrt (d [j])) +
                                 (0.007956 * d [j] * d [j]);
-                            flowvec [indx] += flows (i) *
+                            flowvec [indx] += dens (i) *
                                 exp (lp) / (1.0 + exp (lp));
                             // # nocov end
                         }
@@ -578,7 +578,7 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::NumericVector k,
-        Rcpp::NumericVector flows,
+        Rcpp::NumericVector dens,
         const double &tol,
         const std::string &dirtxt,
         std::string heap_type)
@@ -607,7 +607,7 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneDisperse one_disperse (fromi, flows, vert_name, verts_to_edge_map,
+    OneDisperse one_disperse (fromi, dens, vert_name, verts_to_edge_map,
             nverts, nedges, k, tol, dirtxt, heap_type, g);
 
     GetRNGstate (); // Initialise R random seed
