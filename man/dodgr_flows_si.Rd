@@ -18,9 +18,11 @@ be calculated (see Details)}
 \item{to}{Vector or matrix of points \strong{to} which aggregate flows are to be
 calculated (see Details)}
 
-\item{k}{Either single value specifying width of exponential spatial
-interaction function (exp (-d / k)), or vector of independent values for each
-origin point (with same length as 'from' points).}
+\item{k}{Width of exponential spatial interaction function (exp (-d / k)),
+in units of 'd', specified in one of 3 forms: (i) a single vlaue; (ii) a
+vector of independent values for each origin point (with same length as
+'from' points); or (iii) an equivalent matrix with each column holding values
+for each 'from' point, so 'nrow(k)==length(from)'. See Note.}
 
 \item{dens_from}{Vector of densities at origin ('from') points}
 
@@ -50,6 +52,17 @@ Modified version of graph with additonal \code{flow} column added.
 Aggregate flows throughout a network based using an exponential Spatial
 Interaction (SI) model between a specified set of origin and destination
 points, and associated vectors of densities.
+}
+\note{
+Spatial Interaction models are often fitted through trialling a range
+of values of 'k'. The specification above allows fitting multiple values of
+'k' to be done with a single call, in a way that is far more efficient than
+making multiple calls. A matrix of 'k' values may be entered, with each
+column holding a different vector of values, one for each 'from' point. For a
+matrix of 'k' values having 'n' columns, the return object will be a modified
+version in the input 'graph', with an additional 'n' columns, named 'flow1',
+'flow2', ... up to 'n'. These columns must be subsequently matched by the
+user back on to the corresponding columns of the matrix of 'k' values.
 }
 \examples{
 graph <- weight_streetnet (hampi)
