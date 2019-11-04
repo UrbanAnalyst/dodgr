@@ -73,33 +73,26 @@ test_that ("flows disperse", {
     k <- rep (500, length (from))
     expect_silent (graph3b <- dodgr_flows_disperse (graph, from = from,
                                                     k = k, dens = dens))
-    expect_identical (graph3a$flows, graph3b$flows)
-    k <- c (k, 1)
-    expect_error (graph3b <- dodgr_flows_disperse (graph, from = from,
-                                                    k = k, dens = dens),
-                  "'k' must be either single value or vector of same")
+    expect_equal (graph3a$flow, graph3b$flow)
 
-    expect_warning (graph3 <- dodgr_flows_disperse (graph2, from = from,
-                                                    dens = dens),
-                    "graph already has a 'flow' column; this will be overwritten")
-    #expect_identical (graph3, graph2)
-    # flow values are not identical, but
-    r2 <- summary (lm (graph3$flow ~ graph2$flow))$r.squared
-    if (test_all) # fails on CRAN
-        expect_true (r2 > 0.9)
+    k <- c (500, 1000)
+    expect_silent (graph3b <- dodgr_flows_disperse (graph, from = from,
+                                                    k = k, dens = dens))
+    expect_true (all (c ("flow1", "flow2") %in% names (graph3b)))
+    expect_equal (graph3a$flow, graph3b$flow1)
 
-    graph3 <- dodgr_flows_disperse (graph, from = from, dens = dens,
-                                    contract = TRUE)
+    expect_silent (graph4 <- dodgr_flows_disperse (graph, from = from,
+                                                   dens = dens, contract = TRUE))
     # Dispersed flows calculated on contracted graph should **NOT** equal those
     # calculated on full graph
     if (test_all) # fails on CRAN
-        expect_false (all (graph3$flow == graph2$flow))
+        expect_false (all (graph4$flow == graph2$flow))
 
     dens [1] <- NA
-    graph4 <- dodgr_flows_disperse (graph, from = from, dens = dens)
+    graph5 <- dodgr_flows_disperse (graph, from = from, dens = dens)
     # graph4 values are on contracted graph, so flows should generally be less
     # than those on full graph, but may be every so maginally greater
-    expect_true (max (graph4$flow - graph2$flow) < 0.1)
+    expect_true (max (graph5$flow - graph2$flow) < 0.1)
 })
 
 test_that ("flows_si", {

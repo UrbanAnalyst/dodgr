@@ -169,7 +169,7 @@ struct OneDisperse : public RcppParallel::Worker
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
-    const Rcpp::NumericVector k;
+    const Rcpp::NumericVector kfrom;
     const double tol;
     const std::string dirtxt;
     const std::string heap_type;
@@ -184,14 +184,14 @@ struct OneDisperse : public RcppParallel::Worker
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
-            const Rcpp::NumericVector k_in,
+            const Rcpp::NumericVector kfrom_in,
             const double tol_in,
             const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), dens (dens_in), vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
-        nverts (nverts_in), nedges (nedges_in), k (k_in), tol (tol_in),
+        nverts (nverts_in), nedges (nedges_in), kfrom (kfrom_in), tol (tol_in),
         dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
     {
     }
@@ -222,13 +222,27 @@ struct OneDisperse : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
-        std::vector <double> flowvec (nedges, 0.0);
+        //std::vector <double> flowvec (nedges, 0.0);
+
+        const size_t nfrom = dens.size ();
+        const size_t nk = kfrom.size () / nfrom;
+        size_t out_size = nedges * nk;
+        std::vector <double> flowvec (out_size, 0.0);
+
+
 
         for (size_t i = begin; i < end; i++) // over the from vertices
         {
             R_xlen_t ir = static_cast <R_xlen_t> (i);
-            // limit at which exp(-d/k) < tol
-            const double dlim = -log10 (tol) * k [ir];
+            // translate k-value to distance limit based on tol
+            // exp(-d / k) = tol -> d = -k * log (tol)
+            // k_from holds nk vectors of different k-values, each of length
+            // nedges.
+            double dlim = 0.0;
+            for (size_t k = 0; k < nk; k++)
+                if (kfrom [i + k * nfrom] > dlim)
+                    dlim = kfrom [i + k * nfrom]; // dlim is max k-value
+            dlim = -dlim * log (tol); // converted to actual dist limit.
 
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
@@ -238,6 +252,10 @@ struct OneDisperse : public RcppParallel::Worker
             d [from_i] = w [from_i] = 0.0;
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
+
+            std::vector <double> flows_i (nedges * nk, 0.0);
+            std::vector <double> expsum (nk, 0.0);
+
             for (size_t j = 0; j < nverts; j++)
             {
                 if (prev [j] > 0 && prev [j] < INFINITE_INT)
@@ -246,34 +264,47 @@ struct OneDisperse : public RcppParallel::Worker
                         vert_from = vert_name [static_cast <size_t> (prev [j])];
                     const std::string two_verts = "f" + vert_from + "t" + vert_to;
 
-                    unsigned int indx = verts_to_edge_map.at (two_verts);
+                    size_t index = verts_to_edge_map.at (two_verts);
                     if (d [j] < INFINITE_DOUBLE)
                     {
-                        if (k [ir] > 0.0)
+                        /*
+                        if (kfrom [ir] > 0.0)
                         {
-                            flowvec [indx] += dens (i) * exp (-d [j] / k [ir]);
+                            flowvec [index] += dens (i) * exp (-d [j] / kfrom [ir]);
                         } else // standard logistic polynomial for UK cycling models
                         {
                             // # nocov start
                             double lp = -3.894 + (-0.5872 * d [j]) +
                                 (1.832 * sqrt (d [j])) +
                                 (0.007956 * d [j] * d [j]);
-                            flowvec [indx] += dens (i) *
+                            flowvec [index] += dens (i) *
                                 exp (lp) / (1.0 + exp (lp));
                             // # nocov end
                         }
+                        */
+                        for (size_t k = 0; k < nk; k++)
+                        {
+                            double exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
+                            expsum [k] += exp_jk;
+                            flows_i [index + k * nedges] += dens [i] * exp_jk;
+                        }
                     }
                 }
-            }
+            } // end for j
+            for (size_t k = 0; k < nk; k++)
+                if (expsum [k] > tol)
+                    for (size_t j = 0; j < nedges; j++)
+                        flowvec [j + k * nedges] +=
+                            flows_i [j + k * nedges] / expsum [k];
         } // end for i
         // dump flowvec to a file; chance of re-generating same file name is
         // 61^10, so there's no check for re-use of same
         std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
         std::ofstream out_file;
         out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
+        out_file.write (reinterpret_cast <char *>(&out_size), sizeof (size_t));
         out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
+                static_cast <std::streamsize> (out_size * sizeof (double)));
         out_file.close ();
     } // end parallel function operator
 };
@@ -385,6 +416,7 @@ struct OneSI : public RcppParallel::Worker
             for (size_t k = 0; k < nk; k++)
                 if (k_from [i + k * nfrom] > dlim)
                     dlim = k_from [i + k * nfrom];
+            dlim = -dlim * log (tol);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
 
@@ -397,12 +429,8 @@ struct OneSI : public RcppParallel::Worker
                 {
                     if (d [toi [j]] < INFINITE_DOUBLE)
                     {
-                        /*
-                        double exp_j = dens_to [j] *
-                            exp (-d [toi [j]] / k_from [i]);
-                        double flow_ij = dens_from [i] * exp_j;
-                        expsum += exp_j;
-                        */
+                        // Flow between i and j is based on d(i, j), but is
+                        // subsequently allocated to all intermediate vertices:
                         std::vector <double> flow_ijk (nk);
                         for (size_t k = 0; k < nk; k++)
                         {
@@ -423,11 +451,10 @@ struct OneSI : public RcppParallel::Worker
                                     "t" + vert_name [stt];
                                 // multiple flows can aggregate to same edge, so
                                 // this has to be +=, not just =!
+                                size_t index = verts_to_edge_map.at (v2);
                                 for (size_t k = 0; k < nk; k++)
                                 {
-                                    size_t index = verts_to_edge_map.at (v2) +
-                                        k * nedges;
-                                    flows_i [index] += flow_ijk [k];
+                                    flows_i [index + k * nedges] += flow_ijk [k];
                                 }
                                 //flows_i [verts_to_edge_map.at (v2)] += flow_ij;
                             }

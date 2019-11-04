@@ -178,19 +178,14 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
                                   heap = 'BHeap', tol = 1e-12, quiet = TRUE)
 {
-    if ("flow" %in% names (graph))
-        warning ("graph already has a 'flow' column; ",
-                  "this will be overwritten")
-
-    if (!(length (k) == 1 | length (k) == length (from)))
-        stop ("'k' must be either single value or vector ",
-              "of same length as 'from'")
-    if (length (k) == 1)
-        k <- rep (k, length (from))
+    res <- check_k (k, from)
+    k <- res$k
+    nk <- res$nk
 
     if (any (is.na (dens))) {
         dens [is.na (dens)] <- 0
     }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -219,10 +214,7 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     dirtxt <- get_random_prefix ()
     rcpp_flows_disperse_par (g$graph, g$vert_map, g$from_index,
                              k, dens, tol, dirtxt, heap)
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
-    invisible (file.remove (files)) # nolint
+    graph <- aggregate_files (graph, dirtxt, nk)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
@@ -307,23 +299,7 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     dirtxt <- get_random_prefix (prefix = "flow_si")
     rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
                    k, dens_from, dens_to, tol, dirtxt, heap)
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    # These threads sometimes dump 0-byte files, which can not be read back in.
-    # Simply removing these here makes everything work, but ...
-    # TODO: Find out why these 0-byte files get dumped in the first place
-    files <- files [which (file.size (files) > 0)]
-    res <- rcpp_aggregate_files (files, nrow (graph) * nk)
-    invisible (file.remove (files)) # nolint
-
-    if (nk == 1)
-        graph$flow <- res
-    else
-    {
-        flowmat <- data.frame (matrix (res, ncol = nk))
-        names (flowmat) <- paste0 ("flow", seq (nk))
-        graph <- cbind (graph, flowmat)
-    }
+    graph <- aggregate_files (graph, dirtxt, nk)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
@@ -432,3 +408,25 @@ contract_graph_with_pts <- function (graph, from, to)
     dodgr_contract_graph (graph, unique (pts))
 }
 
+aggregate_files <- function (graph, dirtxt, nk)
+{
+    f <- list.files (tempdir (), full.names = TRUE)
+    files <- f [grep (dirtxt, f)]
+    # These threads sometimes dump 0-byte files, which can not be read back in.
+    # Simply removing these here makes everything work, but ...
+    # TODO: Find out why these 0-byte files get dumped in the first place
+    files <- files [which (file.size (files) > 0)]
+    res <- rcpp_aggregate_files (files, nrow (graph) * nk)
+    invisible (file.remove (files)) # nolint
+
+    if (nk == 1)
+        graph$flow <- res
+    else
+    {
+        flowmat <- data.frame (matrix (res, ncol = nk))
+        names (flowmat) <- paste0 ("flow", seq (nk))
+        graph <- cbind (graph, flowmat)
+    }
+
+    return (graph)
+}
