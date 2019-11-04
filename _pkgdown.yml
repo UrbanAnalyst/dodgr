@@ -18,6 +18,7 @@ reference:
     - dodgr_isoverts
     - dodgr_flows_aggregate
     - dodgr_flows_disperse
+    - dodgr_flows_si
   - title: Functions to Obtain Graphs
     contents:
     - dodgr_streetnet
