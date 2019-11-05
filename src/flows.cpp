@@ -682,11 +682,11 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneSI one_si (fromi, toi, kvec, dens_from, dens_to,
+    OneSI oneSI (fromi, toi, kvec, dens_from, dens_to,
             vert_name, verts_to_edge_map,
             nverts, nedges, tol, heap_type, g);
 
-    RcppParallel::parallelReduce (0, nfrom, one_si);
+    RcppParallel::parallelReduce (0, nfrom, oneSI);
 
-    return Rcpp::wrap (one_si.output);
+    return Rcpp::wrap (oneSI.output);
 }
