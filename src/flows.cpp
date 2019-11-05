@@ -195,7 +195,7 @@ struct OneDisperse : public RcppParallel::Worker
     {
         const R_xlen_t nfrom = dens.size ();
         const R_xlen_t nk = kfrom.size () / nfrom;
-        size_t out_size = nedges * static_cast <size_t> (nk);
+        const size_t out_size = nedges * static_cast <size_t> (nk);
         output.resize (out_size, 0.0);
     }
 
@@ -317,12 +317,12 @@ struct OneSI : public RcppParallel::Worker
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
     const double tol;
-    const std::string dirtxt;
     const std::string heap_type;
-
     std::shared_ptr <DGraph> g;
 
-    // constructor
+    std::vector <double> output;
+
+    // Constructor 1: The main constructor
     OneSI (
             const Rcpp::IntegerVector fromi,
             const std::vector <unsigned int> toi_in,
@@ -334,46 +334,34 @@ struct OneSI : public RcppParallel::Worker
             const size_t nverts_in,
             const size_t nedges_in,
             const double tol_in,
-            const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), toi (toi_in), k_from (k_from_in),
         dens_from (dens_from_in), dens_to (dens_to_in),
         vert_name (vert_name_in), verts_to_edge_map (verts_to_edge_map_in),
         nverts (nverts_in), nedges (nedges_in), tol (tol_in),
-        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
+        heap_type (heap_type_in), g (g_in), output ()
     {
+        const R_xlen_t nfrom = dens_from.size ();
+        const R_xlen_t nk = k_from.size () / nfrom;
+        const size_t out_size = nedges * static_cast <size_t> (nk);
+        output.resize (out_size, 0.0);
     }
 
-    // Function to generate random file names
-    std::string random_name(size_t len) {
-        auto randchar = []() -> char
-        {
-            const char charset[] = \
-               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            const size_t max_index = (sizeof(charset) - 1);
-            //return charset [ rand() % max_index ];
-            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
-            return charset [i];
-        }; // # nocov
-        std::string str (len, 0);
-        std::generate_n (str.begin(), len, randchar);
-        return str;
-    }
-
-    // function to dump binary file from thread
-    void dump_file (const std::vector <double> res, const std::string dirtxt_in) {
-        // chance of re-generating same file name is 61^10, so there's no check
-        // for re-use of same
-        const size_t out_size = res.size ();
-        std::string file_name = dirtxt_in + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <const char *>(&out_size), sizeof (size_t));
-        out_file.write (reinterpret_cast <const char *>(&res [0]),
-                static_cast <std::streamsize> (out_size * sizeof (double)));
-        out_file.flush ();
-        out_file.close ();
+    // Constructor 2: The Split constructor
+    OneSI (
+            const OneSI& oneSI,
+            RcppParallel::Split) :
+        dp_fromi (oneSI.dp_fromi), toi (oneSI.toi), k_from (oneSI.k_from),
+        dens_from (oneSI.dens_from), dens_to (oneSI.dens_to),
+        vert_name (oneSI.vert_name), verts_to_edge_map (oneSI.verts_to_edge_map),
+        nverts (oneSI.nverts), nedges (oneSI.nedges), tol (oneSI.tol),
+        heap_type (oneSI.heap_type), g (oneSI.g), output ()
+    {
+        const R_xlen_t nfrom = dens_from.size ();
+        const R_xlen_t nk = k_from.size () / nfrom;
+        const size_t out_size = nedges * static_cast <size_t> (nk);
+        output.resize (out_size, 0.0);
     }
 
     // Parallel function operator
@@ -392,8 +380,6 @@ struct OneSI : public RcppParallel::Worker
         const R_xlen_t nfrom = dens_from.size ();
         const R_xlen_t nk = k_from.size () / nfrom;
         const size_t nk_st = static_cast <size_t> (nk);
-        size_t out_size = nedges * nk_st;
-        std::vector <double> flowvec (out_size, 0.0);
 
         for (size_t i = begin; i < end; i++)
         {
@@ -474,13 +460,16 @@ struct OneSI : public RcppParallel::Worker
             for (size_t k = 0; k < nk_st; k++)
                 if (expsum [k] > tol)
                     for (size_t j = 0; j < nedges; j++)
-                        flowvec [j + k * nedges] +=
+                        output [j + k * nedges] +=
                             flows_i [j + k * nedges] / expsum [k];
         } // end for i
-
-        dump_file (flowvec, dirtxt);
-
     } // end parallel function operator
+
+    void join (const OneSI& rhs)
+    {
+        for (size_t i = 0; i < output.size (); i++)
+            output [i] += rhs.output [i];
+    }
 };
 
 //' rcpp_aggregate_files
@@ -634,12 +623,12 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneDisperse one_disperse (fromi, dens, vert_name, verts_to_edge_map,
+    OneDisperse oneDisperse (fromi, dens, vert_name, verts_to_edge_map,
             nverts, nedges, k, tol, heap_type, g);
 
-    RcppParallel::parallelReduce (0, nfrom, one_disperse);
+    RcppParallel::parallelReduce (0, nfrom, oneDisperse);
 
-    return Rcpp::wrap (one_disperse.output);
+    return Rcpp::wrap (oneDisperse.output);
 }
 
 
@@ -657,7 +646,7 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-void rcpp_flows_si (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
@@ -665,7 +654,6 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
         Rcpp::NumericVector dens_from,
         Rcpp::NumericVector dens_to,
         const double tol,
-        const std::string dirtxt,
         const std::string heap_type)
 {
     std::vector <unsigned int> toi =
@@ -696,11 +684,9 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
     // Create parallel worker
     OneSI one_si (fromi, toi, kvec, dens_from, dens_to,
             vert_name, verts_to_edge_map,
-            nverts, nedges, tol, dirtxt, heap_type, g);
+            nverts, nedges, tol, heap_type, g);
 
-    GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nfrom, one_si, 100);
-    PutRNGstate ();
+    RcppParallel::parallelReduce (0, nfrom, one_si);
+
+    return Rcpp::wrap (one_si.output);
 }
-
-

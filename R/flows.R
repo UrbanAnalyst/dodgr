@@ -301,10 +301,18 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    dirtxt <- get_random_prefix (prefix = "flow_si")
-    rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
-                   k, dens_from, dens_to, tol, dirtxt, heap)
-    graph <- aggregate_files (graph, dirtxt, nk)
+    f <- rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
+                        k, dens_from, dens_to, tol, heap)
+
+    if (nk == 1)
+        graph$flow <- f
+    else
+    {
+        flowmat <- data.frame (matrix (f, ncol = nk))
+        names (flowmat) <- paste0 ("flow", seq (nk))
+        graph <- cbind (graph, flowmat)
+    }
+
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

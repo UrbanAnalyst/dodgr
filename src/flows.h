@@ -41,7 +41,7 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const double &tol,
         std::string heap_type);
 
-void rcpp_flows_si (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
@@ -49,5 +49,4 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
         Rcpp::NumericVector dens_from,
         Rcpp::NumericVector dens_to,
         const double tol,
-        const std::string dirtxt,
         const std::string heap_type);

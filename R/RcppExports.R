@@ -118,8 +118,8 @@ rcpp_flows_disperse_par <- function(graph, vert_map_in, fromi, k, dens, tol, hea
 #' (to-vertices) are not considered.
 #'
 #' @noRd
-rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, dirtxt, heap_type) {
-    invisible(.Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, dirtxt, heap_type))
+rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, heap_type)
 }
 
 #' @noRd
