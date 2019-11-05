@@ -21,7 +21,7 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
     }
 }
 
-struct OneFlow : public RcppParallel::Worker
+struct OneAggregate : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <unsigned int> toi;
@@ -31,13 +31,13 @@ struct OneFlow : public RcppParallel::Worker
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
     const double tol;
-    const std::string dirtxt;
     const std::string heap_type;
-
     std::shared_ptr <DGraph> g;
 
-    // constructor
-    OneFlow (
+    std::vector <double> output;
+
+    // Constructor 1: The main constructor
+    OneAggregate (
             const Rcpp::IntegerVector fromi,
             const std::vector <unsigned int> toi_in,
             const Rcpp::NumericMatrix flows_in,
@@ -46,30 +46,29 @@ struct OneFlow : public RcppParallel::Worker
             const size_t nverts_in,
             const size_t nedges_in,
             const double tol_in,
-            const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
-        dp_fromi (fromi), toi (toi_in), flows (flows_in), vert_name (vert_name_in),
+        dp_fromi (fromi), toi (toi_in), flows (flows_in),
+        vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
         nverts (nverts_in), nedges (nedges_in), tol (tol_in),
-        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
+        heap_type (heap_type_in), g (g_in), output ()
     {
+        output.resize (nedges, 0.0);
     }
 
-    // Function to generate random file names
-    std::string random_name(size_t len) {
-        auto randchar = []() -> char
-        {
-            const char charset[] = \
-               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            const size_t max_index = (sizeof(charset) - 1);
-            //return charset [ rand() % max_index ];
-            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
-            return charset [i];
-        }; // # nocov
-        std::string str (len, 0);
-        std::generate_n (str.begin(), len, randchar);
-        return str;
+    // Constructor 2: The Split constructor
+    OneAggregate (
+            const OneAggregate& oneAggregate,
+            RcppParallel::Split) :
+        dp_fromi (oneAggregate.dp_fromi), toi (oneAggregate.toi),
+        flows (oneAggregate.flows), vert_name (oneAggregate.vert_name),
+        verts_to_edge_map (oneAggregate.verts_to_edge_map),
+        nverts (oneAggregate.nverts), nedges (oneAggregate.nedges),
+        tol (oneAggregate.tol), heap_type (oneAggregate.heap_type),
+        g (oneAggregate.g), output ()
+    {
+        output.resize (nedges, 0.0);
     }
 
     // Parallel function operator
@@ -81,8 +80,6 @@ struct OneFlow : public RcppParallel::Worker
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
-
-        std::vector <double> flowvec (nedges, 0.0);
 
         for (size_t i = begin; i < end; i++)
         {
@@ -133,7 +130,7 @@ struct OneFlow : public RcppParallel::Worker
                                     "t" + vert_name [stt];
                                 // multiple flows can aggregate to same edge, so
                                 // this has to be +=, not just =!
-                                flowvec [verts_to_edge_map.at (v2)] += flow_ij;
+                                output [verts_to_edge_map.at (v2)] += flow_ij;
                             }
 
                             target = static_cast <int> (prev [stt]);
@@ -148,16 +145,13 @@ struct OneFlow : public RcppParallel::Worker
                 }
             }
         } // end for i
-        // dump flowvec to a file; chance of re-generating same file name is
-        // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
-        out_file.close ();
     } // end parallel function operator
+
+    void join (const OneAggregate &rhs)
+    {
+        for (size_t i = 0; i < output.size (); i++)
+            output [i] += rhs.output [i];
+    }
 };
 
 
@@ -527,13 +521,12 @@ Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names
 //'
 //' @noRd
 // [[Rcpp::export]]
-void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericMatrix flows,
         const double tol,
-        const std::string dirtxt,
         const std::string heap_type)
 {
     std::vector <unsigned int> toi =
@@ -562,12 +555,17 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneFlow one_flow (fromi, toi, flows, vert_name, verts_to_edge_map,
-            nverts, nedges, tol, dirtxt, heap_type, g);
+    OneAggregate oneAggregate (fromi, toi, flows, vert_name, verts_to_edge_map,
+            nverts, nedges, tol, heap_type, g);
 
+    /*
     GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nfrom, one_flow);
+    RcppParallel::parallelFor (0, nfrom, oneAggregate);
     PutRNGstate ();
+    */
+    RcppParallel::parallelReduce (0, nfrom, oneAggregate);
+
+    return Rcpp::wrap (oneAggregate.output);
 }
 
 

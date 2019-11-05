@@ -120,13 +120,9 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    dirtxt <- get_random_prefix ()
-    rcpp_flows_aggregate_par (g$graph, g$vert_map, g$from_index, g$to_index,
-                              flows, tol, dirtxt, heap)
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    graph$flow <- rcpp_aggregate_files (files, nrow (graph))
-    invisible (file.remove (files)) # nolint
+    graph$flow <- rcpp_flows_aggregate_par (g$graph, g$vert_map,
+                                            g$from_index, g$to_index,
+                                            flows, tol, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
@@ -419,27 +415,4 @@ contract_graph_with_pts <- function (graph, from, to)
     if (!missing (to))
         pts <- c (pts, to)
     dodgr_contract_graph (graph, unique (pts))
-}
-
-aggregate_files <- function (graph, dirtxt, nk)
-{
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    # These threads sometimes dump 0-byte files, which can not be read back in.
-    # Simply removing these here makes everything work, but ...
-    # TODO: Find out why these 0-byte files get dumped in the first place
-    files <- files [which (file.size (files) > 0)]
-    res <- rcpp_aggregate_files (files, nrow (graph) * nk)
-    invisible (file.remove (files)) # nolint
-
-    if (nk == 1)
-        graph$flow <- res
-    else
-    {
-        flowmat <- data.frame (matrix (res, ncol = nk))
-        names (flowmat) <- paste0 ("flow", seq (nk))
-        graph <- cbind (graph, flowmat)
-    }
-
-    return (graph)
 }

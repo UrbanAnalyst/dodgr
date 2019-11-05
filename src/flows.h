@@ -21,13 +21,12 @@ class PathFinder;
 //----- functions in flows.cpp
 //----------------------------
 
-void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericMatrix flows,
         const double tol,
-        const std::string dirtxt,
         const std::string heap_type);
 
 Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
