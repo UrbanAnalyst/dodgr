@@ -105,28 +105,6 @@ rcpp_flows_disperse_par <- function(graph, vert_map_in, fromi, k, dens, tol, hea
     .Call(`_dodgr_rcpp_flows_disperse_par`, graph, vert_map_in, fromi, k, dens, tol, heap_type)
 }
 
-#' rcpp_flows_disperse
-#'
-#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
-#' destinations from given set of origins, with flows attenuated by distance from
-#' those origins.
-#'
-#' @param graph The data.frame holding the graph edges
-#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
-#' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
-#' @param k Coefficient of (current proof-of-principle-only) exponential
-#' distance decay function.  If value of \code{k<0} is given, a standard
-#' logistic polynomial will be used.
-#'
-#' @note The flow data to be used for aggregation is a matrix mapping flows
-#' betwen each pair of from and to points.
-#'
-#' @noRd
-rcpp_flows_disperse <- function(graph, vert_map_in, fromi, kfrom, dens, tol, heap_type) {
-    .Call(`_dodgr_rcpp_flows_disperse`, graph, vert_map_in, fromi, kfrom, dens, tol, heap_type)
-}
-
 #' rcpp_flows_si
 #'
 #' @param graph The data.frame holding the graph edges

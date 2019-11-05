@@ -80,23 +80,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_flows_disperse
-Rcpp::NumericVector rcpp_flows_disperse(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector kfrom, Rcpp::NumericVector dens, const double& tol, std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_flows_disperse(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kfromSEXP, SEXP densSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type kfrom(kfromSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens(densSEXP);
-    Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_flows_disperse(graph, vert_map_in, fromi, kfrom, dens, tol, heap_type));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_flows_si
 void rcpp_flows_si(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, Rcpp::NumericVector kvec, Rcpp::NumericVector dens_from, Rcpp::NumericVector dens_to, const double tol, const std::string dirtxt, const std::string heap_type);
 RcppExport SEXP _dodgr_rcpp_flows_si(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP kvecSEXP, SEXP dens_fromSEXP, SEXP dens_toSEXP, SEXP tolSEXP, SEXP dirtxtSEXP, SEXP heap_typeSEXP) {
@@ -291,7 +274,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 7},
-    {"_dodgr_rcpp_flows_disperse", (DL_FUNC) &_dodgr_rcpp_flows_disperse, 7},
     {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 10},
     {"_dodgr_rcpp_fundamental_cycles", (DL_FUNC) &_dodgr_rcpp_fundamental_cycles, 2},
     {"_dodgr_rcpp_contract_graph", (DL_FUNC) &_dodgr_rcpp_contract_graph, 2},
