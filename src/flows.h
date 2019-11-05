@@ -29,9 +29,6 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const double tol,
         const std::string heap_type);
 
-Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
-        const int len);
-
 Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,

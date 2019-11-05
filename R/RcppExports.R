@@ -46,20 +46,11 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
     .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
 }
 
-#' rcpp_aggregate_files
+#' rcpp_flows_disperse_par
 #'
-#' @param file_names List of fill names of files (that is, with path) provided
-#' from R, coz otherwise this is C++17 with an added library flag.
-#' @param len Length of values, which is simply the number of edges in the
-#' graph in all cases here.
-#'
-#' Each parallel flow aggregation worker dumps results to a randomly-named
-#' file. This routine reassembles those results into a single aggregate vector.
-#'
-#' @noRd
-rcpp_aggregate_files <- function(file_names, len) {
-    .Call(`_dodgr_rcpp_aggregate_files`, file_names, len)
-}
+#' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all
+#' destinations from given set of origins, with flows attenuated by distance
+NULL
 
 #' rcpp_flows_aggregate_par
 #'
@@ -83,11 +74,6 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, t
     .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, heap_type)
 }
 
-#' rcpp_flows_disperse_par
-#'
-#' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
-#' destinations from given set of origins, with flows attenuated by distance from
-#' those origins.
 #'
 #' @param graph The data.frame holding the graph edges
 #' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer

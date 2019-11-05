@@ -34,18 +34,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_aggregate_files
-Rcpp::NumericVector rcpp_aggregate_files(const Rcpp::CharacterVector file_names, const int len);
-RcppExport SEXP _dodgr_rcpp_aggregate_files(SEXP file_namesSEXP, SEXP lenSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::CharacterVector >::type file_names(file_namesSEXP);
-    Rcpp::traits::input_parameter< const int >::type len(lenSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_aggregate_files(file_names, len));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_flows_aggregate_par
 Rcpp::NumericVector rcpp_flows_aggregate_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, Rcpp::NumericMatrix flows, const double tol, const std::string heap_type);
 RcppExport SEXP _dodgr_rcpp_flows_aggregate_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP flowsSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
@@ -271,7 +259,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 6},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
-    {"_dodgr_rcpp_aggregate_files", (DL_FUNC) &_dodgr_rcpp_aggregate_files, 2},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 7},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 7},
     {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 9},

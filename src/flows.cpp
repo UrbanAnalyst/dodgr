@@ -466,42 +466,6 @@ struct OneSI : public RcppParallel::Worker
     }
 };
 
-//' rcpp_aggregate_files
-//'
-//' @param file_names List of fill names of files (that is, with path) provided
-//' from R, coz otherwise this is C++17 with an added library flag.
-//' @param len Length of values, which is simply the number of edges in the
-//' graph in all cases here.
-//'
-//' Each parallel flow aggregation worker dumps results to a randomly-named
-//' file. This routine reassembles those results into a single aggregate vector.
-//'
-//' @noRd
-// [[Rcpp::export]]
-Rcpp::NumericVector rcpp_aggregate_files (const Rcpp::CharacterVector file_names,
-        const int len)
-{
-    Rcpp::NumericVector values (len, 0.0);
-
-    for (int i = 0; i < file_names.size (); i++)
-    {
-        size_t nedges;
-        std::ifstream in_file (file_names [i], std::ios::binary | std::ios::in);
-        in_file.read (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-        std::vector <double> values_i (nedges);
-        in_file.read (reinterpret_cast <char *>(&values_i [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
-        in_file.close ();
-
-        if (nedges != static_cast <size_t> (len))
-            Rcpp::stop ("aggregate values have inconsistent sizes"); // # nocov
-        
-        for (size_t j = 0; j < nedges; j++)
-            values [static_cast <long> (j)] += values_i [j];
-    }
-    return values;
-}
-
 //' rcpp_flows_aggregate_par
 //'
 //' @param graph The data.frame holding the graph edges
@@ -572,9 +536,9 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 
 //' rcpp_flows_disperse_par
 //'
-//' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
-//' destinations from given set of origins, with flows attenuated by distance from
-//' those origins.
+//' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all
+//' destinations from given set of origins, with flows attenuated by distance
+//from ' those origins.
 //'
 //' @param graph The data.frame holding the graph edges
 //' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
