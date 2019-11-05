@@ -117,28 +117,9 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    # centrality calculation, done in parallel with each thread dumping results
-    # to files in tempdir()
-    if (edges)
-        dirtxt <- get_random_prefix ("centrality_edge")
-    else
-        dirtxt <- get_random_prefix ("centrality_vert")
-
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
-    rcpp_centrality (graph2, vert_map, heap, dirtxt, dist_threshold, edges, 0)
-
-    # aggregate results from the threads:
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    if (edges)
-        centrality <- rcpp_aggregate_files (files, nrow (graph))
-    else
-    {
-        v <- dodgr_vertices (graph)
-        centrality <- rcpp_aggregate_files (files, nrow (v))
-    }
-    junk <- file.remove (files) # nolint
+    centrality <- rcpp_centrality (graph2, vert_map, heap, dist_threshold, edges, 0)
 
     # attach result to edge or vertex objects:
     if (edges)
@@ -291,24 +272,12 @@ estimate_centrality_time <- function (graph, contract = TRUE, edges = TRUE,
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    # centrality calculation, done in parallel with each thread dumping results
-    # to files in tempdir()
-    if (edges)
-        dirtxt <- get_random_prefix ("centrality_edge")
-    else
-        dirtxt <- get_random_prefix ("centrality_vert")
-
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
     st <- system.time (
-                       rcpp_centrality (graph2, vert_map, heap, dirtxt,
-                                        dist_threshold, edges, 100)
+                       x <- rcpp_centrality (graph2, vert_map, heap,
+                                             dist_threshold, edges, 100)
                        ) [3]
-
-    # remove files otherwise used to aggregate results from the threads:
-    f <- list.files (tempdir (), full.names = TRUE)
-    files <- f [grep (dirtxt, f)]
-    junk <- file.remove (files) # nolint
 
     # convert to estimated time for full graph
     st <- st * nrow (graph) / 100

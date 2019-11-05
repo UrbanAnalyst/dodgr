@@ -66,10 +66,9 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
 //----- functions in centrality.cpp
 //----------------------------
 
-void rcpp_centrality (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt,
         const double dist_threshold,
         const bool edge_centrality,
         const int sample);

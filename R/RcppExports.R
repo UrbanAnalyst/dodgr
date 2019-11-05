@@ -6,8 +6,8 @@
 #' sample is used to estimate timing, by calculating centrality from just a few
 #' vertices.
 #' @noRd
-rcpp_centrality <- function(graph, vert_map_in, heap_type, dirtxt, dist_threshold, edge_centrality, sample) {
-    invisible(.Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, dirtxt, dist_threshold, edge_centrality, sample))
+rcpp_centrality <- function(graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample) {
+    .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample)
 }
 
 #' Make unordered_set of all new edge names

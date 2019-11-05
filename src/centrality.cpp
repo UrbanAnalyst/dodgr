@@ -36,39 +36,36 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 struct OneCentralityVert : public RcppParallel::Worker
 {
     size_t nverts; // can't be const because of reinterpret case
-    const std::string dirtxt;
     const std::string heap_type;
     const double dist_threshold;
-
     std::shared_ptr <DGraph> g;
 
-    // constructor
+    std::vector <double> output;
+
+    // Constructor 1: The main constructor
     OneCentralityVert (
             const size_t nverts_in,
-            const std::string dirtxt_in,
             const std::string heap_type_in,
             const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
-        nverts (nverts_in), dirtxt (dirtxt_in), heap_type (heap_type_in), 
-        dist_threshold (dist_threshold_in), g (g_in)
+        nverts (nverts_in), heap_type (heap_type_in), 
+        dist_threshold (dist_threshold_in), g (g_in), output ()
     {
+        output.resize (nverts, 0.0);
     }
 
-    // Function to generate random file names
-    std::string random_name(size_t len) {
-        auto randchar = []() -> char
-        {
-            const char charset[] = \
-               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            const size_t max_index = (sizeof(charset) - 1);
-            //return charset [ rand() % max_index ];
-            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
-            return charset [i];
-        }; // # nocov
-        std::string str (len, 0);
-        std::generate_n (str.begin(), len, randchar);
-        return str;
+    // Constructor 2: The Split constructor
+    OneCentralityVert (
+            const OneCentralityVert &oneCentralityVert,
+            RcppParallel::Split) :
+        nverts (oneCentralityVert.nverts),
+        heap_type (oneCentralityVert.heap_type), 
+        dist_threshold (oneCentralityVert.dist_threshold),
+        g (oneCentralityVert.g), output ()
+    {
+        output.resize (nverts, 0.0);
     }
+
 
     // Parallel function operator
     void operator() (size_t begin, size_t end)
@@ -85,15 +82,15 @@ struct OneCentralityVert : public RcppParallel::Worker
                 return;
             pathfinder->Centrality_vertex (cent, v, dist_threshold);
         }
-        // dump flowvec to a file; chance of re-generating same file name is
-        // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nverts), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&cent [0]),
-                static_cast <std::streamsize> (nverts * sizeof (double)));
-        out_file.close ();
+
+        for (int i = 0; i < nverts; i++)
+            output [i] += cent [i];
+    }
+
+    void join (const OneCentralityVert &rhs)
+    {
+        for (size_t i = 0; i < output.size (); i++)
+            output [i] += rhs.output [i];
     }
 };
 
@@ -101,39 +98,38 @@ struct OneCentralityEdge : public RcppParallel::Worker
 {
     size_t nverts; // can't be const because of reinterpret case
     size_t nedges;
-    const std::string dirtxt;
     const std::string heap_type;
     const double dist_threshold;
-
     std::shared_ptr <DGraph> g;
 
-    // constructor
+    std::vector <double> output;
+
+    // Constructor 1: The main constructor
     OneCentralityEdge (
             const size_t nverts_in,
             const size_t nedges_in,
-            const std::string dirtxt_in,
             const std::string heap_type_in,
             const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
-        nverts (nverts_in), nedges (nedges_in), dirtxt (dirtxt_in),
-        heap_type (heap_type_in), dist_threshold (dist_threshold_in), g (g_in)
+        nverts (nverts_in), nedges (nedges_in), 
+        heap_type (heap_type_in), dist_threshold (dist_threshold_in), g (g_in),
+        output ()
     {
+        output.resize (nedges, 0.0);
     }
 
-    // Function to generate random file names
-    std::string random_name(size_t len) {
-        auto randchar = []() -> char
-        {
-            const char charset[] = \
-               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            const size_t max_index = (sizeof(charset) - 1);
-            //return charset [ rand() % max_index ];
-            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
-            return charset [i];
-        }; // # nocov
-        std::string str (len, 0);
-        std::generate_n (str.begin(), len, randchar);
-        return str;
+    // Constructor 2: The Split constructor
+    OneCentralityEdge (
+            const OneCentralityEdge &oneCentralityEdge,
+            RcppParallel::Split) :
+        nverts (oneCentralityEdge.nverts),
+        nedges (oneCentralityEdge.nedges), 
+        heap_type (oneCentralityEdge.heap_type),
+        dist_threshold (oneCentralityEdge.dist_threshold),
+        g (oneCentralityEdge.g),
+        output ()
+    {
+        output.resize (nedges, 0.0);
     }
 
     // Parallel function operator
@@ -151,15 +147,14 @@ struct OneCentralityEdge : public RcppParallel::Worker
                 return;
             pathfinder->Centrality_edge (cent, v, nedges, dist_threshold);
         }
-        // dump flowvec to a file; chance of re-generating same file name is
-        // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&nedges), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&cent [0]),
-                static_cast <std::streamsize> (nedges * sizeof (double)));
-        out_file.close ();
+        for (size_t i = 0; i < nedges; i++)
+            output [i] += cent [i];
+    }
+
+    void join (const OneCentralityEdge &rhs)
+    {
+        for (size_t i = 0; i < output.size (); i++)
+            output [i] += rhs.output [i];
     }
 };
 
@@ -361,10 +356,9 @@ void PF::PathFinder::Centrality_edge (
 //' vertices.
 //' @noRd
 // [[Rcpp::export]]
-void rcpp_centrality (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         const std::string& heap_type,
-        const std::string dirtxt,
         const double dist_threshold,
         const bool edge_centrality,
         const int sample)
@@ -388,24 +382,21 @@ void rcpp_centrality (const Rcpp::DataFrame graph,
     if (sample > 0)
         nverts_to_use = static_cast <size_t> (sample);
 
-    // Create parallel worker
+    std::vector <double> result;
     if (edge_centrality)
     {
-        OneCentralityEdge one_centrality (nverts, nedges, dirtxt, heap_type,
+        OneCentralityEdge one_centrality (nverts, nedges, heap_type,
                 dist_threshold, g);
 
-        GetRNGstate (); // Initialise R random seed
-        RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
-        RcppThread::checkUserInterrupt();
-        PutRNGstate ();
+        RcppParallel::parallelReduce (0, nverts_to_use, one_centrality);
+        result = one_centrality.output;
     } else // vertex centrality
     {
-        OneCentralityVert one_centrality (nverts, dirtxt, heap_type,
-                dist_threshold, g);
+        OneCentralityVert one_centrality (nverts, heap_type, dist_threshold, g);
 
-        GetRNGstate (); // Initialise R random seed
-        RcppParallel::parallelFor (0, nverts_to_use, one_centrality);
-        RcppThread::checkUserInterrupt();
-        PutRNGstate ();
+        RcppParallel::parallelReduce (0, nverts_to_use, one_centrality);
+        result = one_centrality.output;
     }
+
+    return Rcpp::wrap (result);
 }
