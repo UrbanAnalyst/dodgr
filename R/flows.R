@@ -210,11 +210,16 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    # parallel results are dumped in tempdir
-    dirtxt <- get_random_prefix ()
-    rcpp_flows_disperse_par (g$graph, g$vert_map, g$from_index,
-                             k, dens, tol, dirtxt, heap)
-    graph <- aggregate_files (graph, dirtxt, nk)
+    f <- rcpp_flows_disperse_par (g$graph, g$vert_map, g$from_index,
+                                  k, dens, tol, heap)
+    if (nk == 1)
+        graph$flow <- f
+    else
+    {
+        flowmat <- data.frame (matrix (f, ncol = nk))
+        names (flowmat) <- paste0 ("flow", seq (nk))
+        graph <- cbind (graph, flowmat)
+    }
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

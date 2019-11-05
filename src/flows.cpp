@@ -171,12 +171,12 @@ struct OneDisperse : public RcppParallel::Worker
     size_t nedges;
     const Rcpp::NumericVector kfrom;
     const double tol;
-    const std::string dirtxt;
     const std::string heap_type;
-
     std::shared_ptr <DGraph> g;
 
-    // constructor
+    std::vector <double> output;
+
+    // Constructor 1: The main constructor
     OneDisperse (
             const Rcpp::IntegerVector fromi,
             const Rcpp::NumericVector dens_in,
@@ -186,31 +186,36 @@ struct OneDisperse : public RcppParallel::Worker
             const size_t nedges_in,
             const Rcpp::NumericVector kfrom_in,
             const double tol_in,
-            const std::string dirtxt_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), dens (dens_in), vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
-        nverts (nverts_in), nedges (nedges_in), kfrom (kfrom_in), tol (tol_in),
-        dirtxt (dirtxt_in), heap_type (heap_type_in), g (g_in)
+        nverts (nverts_in), nedges (nedges_in), kfrom (kfrom_in),
+        tol (tol_in), heap_type (heap_type_in), g (g_in), output ()
     {
+        const R_xlen_t nfrom = dens.size ();
+        const R_xlen_t nk = kfrom.size () / nfrom;
+        size_t out_size = nedges * static_cast <size_t> (nk);
+        output.resize (out_size, 0.0);
     }
 
-    // Function to generate random file names
-    std::string random_name(size_t len) {
-        auto randchar = []() -> char
-        {
-            const char charset[] = \
-               "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            const size_t max_index = (sizeof(charset) - 1);
-            //return charset [ rand() % max_index ];
-            size_t i = static_cast <size_t> (floor (unif_rand () * max_index));
-            return charset [i];
-        }; // # nocov
-        std::string str (len, 0);
-        std::generate_n (str.begin(), len, randchar);
-        return str;
+    // Constructor 2: The Split constructor
+    OneDisperse (
+            const OneDisperse& oneDisperse,
+            RcppParallel::Split) :
+        dp_fromi (oneDisperse.dp_fromi), dens (oneDisperse.dens),
+        vert_name (oneDisperse.vert_name),
+        verts_to_edge_map (oneDisperse.verts_to_edge_map),
+        nverts (oneDisperse.nverts), nedges (oneDisperse.nedges),
+        kfrom (oneDisperse.kfrom), tol (oneDisperse.tol),
+        heap_type (oneDisperse.heap_type), g (oneDisperse.g), output ()
+    {
+        const R_xlen_t nfrom = dens.size ();
+        const R_xlen_t nk = kfrom.size () / nfrom;
+        size_t out_size = nedges * static_cast <size_t> (nk);
+        output.resize (out_size, 0.0);
     }
+
 
     // Parallel function operator
     void operator() (size_t begin, size_t end)
@@ -224,12 +229,8 @@ struct OneDisperse : public RcppParallel::Worker
 
         //std::vector <double> flowvec (nedges, 0.0);
 
-        // dens is Rcpp::Vector, so .size() is type R_xlen_t
         const R_xlen_t nfrom = dens.size ();
         const R_xlen_t nk = kfrom.size () / nfrom;
-        size_t out_size = nedges * static_cast <size_t> (nk);
-        std::vector <double> flowvec (out_size, 0.0);
-
         const size_t nk_st = static_cast <size_t> (nk); 
 
         for (size_t i = begin; i < end; i++) // over the from vertices
@@ -292,19 +293,16 @@ struct OneDisperse : public RcppParallel::Worker
             for (size_t k = 0; k < nk_st; k++)
                 if (expsum [k] > tol)
                     for (size_t j = 0; j < nedges; j++)
-                        flowvec [j + k * nedges] +=
+                        output [j + k * nedges] +=
                             flows_i [j + k * nedges] / expsum [k];
         } // end for i
-        // dump flowvec to a file; chance of re-generating same file name is
-        // 61^10, so there's no check for re-use of same
-        std::string file_name = dirtxt + "_" + random_name (10) + ".dat";
-        std::ofstream out_file;
-        out_file.open (file_name, std::ios::binary | std::ios::out);
-        out_file.write (reinterpret_cast <char *>(&out_size), sizeof (size_t));
-        out_file.write (reinterpret_cast <char *>(&flowvec [0]),
-                static_cast <std::streamsize> (out_size * sizeof (double)));
-        out_file.close ();
     } // end parallel function operator
+
+    void join (const OneDisperse &rhs)
+    {
+        for (size_t i = 0; i < output.size (); i++)
+            output [i] += rhs.output [i];
+    }
 };
 
 struct OneSI : public RcppParallel::Worker
@@ -604,13 +602,12 @@ void rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 //'
 //' @noRd
 // [[Rcpp::export]]
-void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
+Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::NumericVector k,
         Rcpp::NumericVector dens,
         const double &tol,
-        const std::string &dirtxt,
         std::string heap_type)
 {
     Rcpp::NumericVector id_vec;
@@ -638,11 +635,147 @@ void rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneDisperse one_disperse (fromi, dens, vert_name, verts_to_edge_map,
-            nverts, nedges, k, tol, dirtxt, heap_type, g);
+            nverts, nedges, k, tol, heap_type, g);
 
+    RcppParallel::parallelReduce (0, nfrom, one_disperse);
+
+    /*
     GetRNGstate (); // Initialise R random seed
     RcppParallel::parallelFor (0, nfrom, one_disperse);
     PutRNGstate ();
+    */
+    return Rcpp::wrap (one_disperse.output);
+}
+
+//' rcpp_flows_disperse
+//'
+//' Modified version of \code{rcpp_aggregate_flows} that aggregates flows to all
+//' destinations from given set of origins, with flows attenuated by distance from
+//' those origins.
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param k Coefficient of (current proof-of-principle-only) exponential
+//' distance decay function.  If value of \code{k<0} is given, a standard
+//' logistic polynomial will be used.
+//'
+//' @note The flow data to be used for aggregation is a matrix mapping flows
+//' betwen each pair of from and to points.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_flows_disperse (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::NumericVector kfrom,
+        Rcpp::NumericVector dens,
+        const double &tol,
+        std::string heap_type)
+{
+    Rcpp::NumericVector id_vec;
+    //const size_t nfrom = static_cast <size_t> (fromi.size ());
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["d_weighted"];
+
+    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    std::vector <std::string> vert_name = vert_map_in ["vert"];
+    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, unsigned int> vert_map_i;
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
+            vert_indx, vert_map_i);
+
+    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
+    run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph> (nverts);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
+
+    std::shared_ptr<PF::PathFinder> pathfinder =
+        std::make_shared <PF::PathFinder> (nverts,
+                *run_sp::getHeapImpl (heap_type), g);
+    std::vector <double> w (nverts);
+    std::vector <double> d (nverts);
+    std::vector <int> prev (nverts);
+
+    const R_xlen_t nfrom = dens.size ();
+    const R_xlen_t nk = kfrom.size () / nfrom;
+    const size_t nk_st = static_cast <size_t> (nk); 
+    size_t out_size = nedges * static_cast <size_t> (nk);
+
+    std::vector <double> output (out_size, 0.0);
+
+    for (size_t i = 0; i < nfrom; i++)
+    {
+        R_xlen_t ir = static_cast <R_xlen_t> (i);
+        // translate k-value to distance limit based on tol
+        // exp(-d / k) = tol -> d = -k * log (tol)
+        // k_from holds nk vectors of different k-values, each of length
+        // nedges.
+        double dlim = 0.0;
+        for (R_xlen_t k = 0; k < nk; k++)
+            if (kfrom [ir + k * nfrom] > dlim)
+                dlim = kfrom [ir + k * nfrom]; // dlim is max k-value
+        dlim = -dlim * log (tol); // converted to actual dist limit.
+
+        std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+        std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+        std::fill (prev.begin (), prev.end (), INFINITE_INT);
+
+        const unsigned int from_i = static_cast <unsigned int> (fromi [i]);
+        d [from_i] = w [from_i] = 0.0;
+
+        pathfinder->init (g);
+        pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
+
+        std::vector <double> flows_i (nedges * nk_st, 0.0);
+        std::vector <double> expsum (nk_st, 0.0);
+
+        for (size_t j = 0; j < nverts; j++)
+        {
+            if (prev [j] > 0 && prev [j] < INFINITE_INT)
+            {
+                const std::string vert_to = vert_name [j],
+                    vert_from = vert_name [static_cast <size_t> (prev [j])];
+                const std::string two_verts = "f" + vert_from + "t" + vert_to;
+
+                size_t index = verts_to_edge_map.at (two_verts);
+                if (d [j] < INFINITE_DOUBLE)
+                {
+                    for (R_xlen_t k = 0; k < nk; k++)
+                    {
+                        double exp_jk;
+                        if (kfrom [ir + k * nfrom] > 0.0)
+                            exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
+                        else
+                        {
+                            // standard logistic polygonial for UK cycling
+                            // models
+                            double lp = -3.894 + (-0.5872 * d [j]) +
+                                (1.832 * sqrt (d [j])) +
+                                (0.007956 * d [j] * d [j]);
+                            exp_jk = exp (lp) / (1.0 + exp (lp));
+                        }
+                        const size_t k_st = static_cast <size_t> (k);
+                        expsum [k_st] += exp_jk;
+                        flows_i [index + k_st * nedges] += dens [ir] * exp_jk;
+                    }
+                }
+            }
+        } // end for j
+        for (size_t k = 0; k < nk_st; k++)
+            if (expsum [k] > tol)
+                for (size_t j = 0; j < nedges; j++)
+                    output [j + k * nedges] +=
+                        flows_i [j + k * nedges] / expsum [k];
+    } // end for i
+    return Rcpp::wrap (output);
 }
 
 //' rcpp_flows_si
@@ -673,7 +806,8 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
     Rcpp::NumericVector id_vec;
-    const size_t nfrom = static_cast <size_t> (fromi.size ());
+    //const size_t nfrom = static_cast <size_t> (fromi.size ());
+    R_xlen_t nfrom = fromi.size ();
 
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
@@ -701,7 +835,7 @@ void rcpp_flows_si (const Rcpp::DataFrame graph,
             nverts, nedges, tol, dirtxt, heap_type, g);
 
     GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nfrom, one_si);
+    RcppParallel::parallelFor (0, fromi.length (), one_si, 100);
     PutRNGstate ();
 }
 
