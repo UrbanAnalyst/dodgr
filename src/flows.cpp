@@ -83,7 +83,8 @@ struct OneAggregate : public RcppParallel::Worker
 
         for (size_t i = begin; i < end; i++)
         {
-            if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
+            //if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
+            if (RcppThread::isInterrupted ())
                 return;
 
             // These have to be reserved within the parallel operator function!
@@ -224,15 +225,14 @@ struct OneDisperse : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
-        //std::vector <double> flowvec (nedges, 0.0);
-
         const R_xlen_t nfrom = dens.size ();
         const R_xlen_t nk = kfrom.size () / nfrom;
         const size_t nk_st = static_cast <size_t> (nk); 
 
         for (size_t i = begin; i < end; i++) // over the from vertices
         {
-            if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
+            //if (RcppThread::isInterrupted (i % static_cast<int>(10) == 0))
+            if (RcppThread::isInterrupted ())
                 return;
 
             R_xlen_t ir = static_cast <R_xlen_t> (i);
@@ -383,7 +383,8 @@ struct OneSI : public RcppParallel::Worker
 
         for (size_t i = begin; i < end; i++)
         {
-            if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
+            //if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
+            if (RcppThread::isInterrupted ())
                 return;
 
             R_xlen_t i_R = static_cast <R_xlen_t> (i);
@@ -475,6 +476,24 @@ struct OneSI : public RcppParallel::Worker
     }
 };
 
+// RcppParallel jobs can be chunked to a specified "grain size"; see
+// https://rcppcore.github.io/RcppParallel/#grain_size
+// This function determines chunk size such that there are at least 100 chunks
+// for a given `nfrom`.
+size_t get_chunk_size (const size_t nfrom)
+{
+    size_t chunk_size;
+
+    if (nfrom > 1000)
+        chunk_size = 100;
+    else if (nfrom > 100)
+        chunk_size = 10;
+    else
+        chunk_size = 1;
+
+    return chunk_size;
+}
+
 //' rcpp_flows_aggregate_par
 //'
 //' @param graph The data.frame holding the graph edges
@@ -531,12 +550,8 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     OneAggregate oneAggregate (fromi, toi, flows, vert_name, verts_to_edge_map,
             nverts, nedges, tol, heap_type, g);
 
-    /*
-    GetRNGstate (); // Initialise R random seed
-    RcppParallel::parallelFor (0, nfrom, oneAggregate);
-    PutRNGstate ();
-    */
-    RcppParallel::parallelReduce (0, nfrom, oneAggregate);
+    size_t chunk_size = get_chunk_size (nfrom);
+    RcppParallel::parallelReduce (0, nfrom, oneAggregate, chunk_size);
 
     return Rcpp::wrap (oneAggregate.output);
 }
@@ -597,7 +612,8 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     OneDisperse oneDisperse (fromi, dens, vert_name, verts_to_edge_map,
             nverts, nedges, k, tol, heap_type, g);
 
-    RcppParallel::parallelReduce (0, nfrom, oneDisperse);
+    size_t chunk_size = get_chunk_size (nfrom);
+    RcppParallel::parallelReduce (0, nfrom, oneDisperse, chunk_size);
 
     return Rcpp::wrap (oneDisperse.output);
 }
@@ -657,7 +673,8 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
             vert_name, verts_to_edge_map,
             nverts, nedges, tol, heap_type, g);
 
-    RcppParallel::parallelReduce (0, nfrom, oneSI);
+    size_t chunk_size = get_chunk_size (nfrom);
+    RcppParallel::parallelReduce (0, nfrom, oneSI, chunk_size);
 
     return Rcpp::wrap (oneSI.output);
 }

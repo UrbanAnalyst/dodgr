@@ -21,6 +21,8 @@ class PathFinder;
 //----- functions in flows.cpp
 //----------------------------
 
+size_t get_chunk_size (const size_t nfrom);
+
 Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
