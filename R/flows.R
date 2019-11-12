@@ -312,8 +312,8 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    f <- rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
-                        k, dens_from, dens_to, norm_sums, tol, heap)
+    f <- rcpp_flows_si_np (g$graph, g$vert_map, g$from_index, g$to_index,
+                           k, dens_from, dens_to, norm_sums, tol, heap)
 
     if (nk == 1)
         graph$flow <- f
