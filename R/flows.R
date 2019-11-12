@@ -264,6 +264,13 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 #' above example, flows along each of two edges would equal one, for a network
 #' sum of two, or greater than the sum of densities.
 #'
+#' With `norm_sums = TRUE`, the sum of network flows (`sum(output$flow)`) should
+#' equal the sum of origin densities (`sum(dens_from)`). This may nevertheless
+#' not always be the case, because origin points may simply be too far from any
+#' denstination (`to`) points for an exponential model to yield non-zero values
+#' anywhere in a network within machine tolerance. Such cases may result in sums
+#' of output flows being less than sums of input densities.
+#'
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
@@ -312,8 +319,8 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     if (!quiet)
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
-    f <- rcpp_flows_si_np (g$graph, g$vert_map, g$from_index, g$to_index,
-                           k, dens_from, dens_to, norm_sums, tol, heap)
+    f <- rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
+                        k, dens_from, dens_to, norm_sums, tol, heap)
 
     if (nk == 1)
         graph$flow <- f

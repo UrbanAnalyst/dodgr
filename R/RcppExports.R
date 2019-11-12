@@ -107,23 +107,6 @@ rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, de
     .Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type)
 }
 
-#' rcpp_flows_si_np
-#'
-#' @param graph The data.frame holding the graph edges
-#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
-#' index of vertices
-#' @param fromi Index into vert_map_in of vertex numbers
-#' @param toi Index into vert_map_in of vertex numbers
-#' @param kvec Vector of k-values for each fromi
-#' @param nvec Vector of density-values for each fromi
-#' @param tol Relative tolerance in terms of flows below which targets
-#' (to-vertices) are not considered.
-#'
-#' @noRd
-rcpp_flows_si_np <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type) {
-    .Call(`_dodgr_rcpp_flows_si_np`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type)
-}
-
 #' @noRd
 rcpp_fundamental_cycles <- function(graph, verts) {
     .Call(`_dodgr_rcpp_fundamental_cycles`, graph, verts)
