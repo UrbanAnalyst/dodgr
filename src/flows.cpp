@@ -123,6 +123,19 @@ struct OneAggregate : public RcppParallel::Worker
                     double flow_ij = flows (i, toi_index [j]);
                     if (w [toi_reduced [j]] < INFINITE_DOUBLE && flow_ij > 0.0)
                     {
+                        // need to count how long the path is, so flows on
+                        // each edge can be divided by this length
+                        int path_len = 0;
+                        size_t target_t = toi_reduced [j];
+                        size_t from_t = static_cast <size_t> (dp_fromi [i]);
+                        while (target_t < INFINITE_INT)
+                        {
+                            path_len++;
+                            target_t = prev [target_t];
+                            if (target_t < 0 || target_t == from_t)
+                                break;
+                        }
+
                         int target = static_cast <int> (toi_reduced [j]); // can equal -1
                         while (target < INFINITE_INT)
                         {
@@ -132,9 +145,8 @@ struct OneAggregate : public RcppParallel::Worker
                                 std::string v2 = "f" +
                                     vert_name [static_cast <size_t> (prev [stt])] +
                                     "t" + vert_name [stt];
-                                // multiple flows can aggregate to same edge, so
-                                // this has to be +=, not just =!
-                                output [verts_to_edge_map.at (v2)] += flow_ij;
+                                output [verts_to_edge_map.at (v2)] +=
+                                    flow_ij / static_cast <double> (path_len);
                             }
 
                             target = static_cast <int> (prev [stt]);
