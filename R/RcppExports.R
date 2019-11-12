@@ -46,12 +46,6 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
     .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
 }
 
-#' rcpp_flows_disperse_par
-#'
-#' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all
-#' destinations from given set of origins, with flows attenuated by distance
-NULL
-
 #' rcpp_flows_aggregate_par
 #'
 #' @param graph The data.frame holding the graph edges
@@ -74,6 +68,11 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, t
     .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, heap_type)
 }
 
+#' rcpp_flows_disperse_par
+#'
+#' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all
+#' destinations from given set of origins, with flows attenuated by distance
+#' from those origins.
 #'
 #' @param graph The data.frame holding the graph edges
 #' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
@@ -104,8 +103,8 @@ rcpp_flows_disperse_par <- function(graph, vert_map_in, fromi, k, dens, tol, hea
 #' (to-vertices) are not considered.
 #'
 #' @noRd
-rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, heap_type) {
-    .Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, heap_type)
+rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type)
 }
 
 #' @noRd

@@ -316,6 +316,7 @@ struct OneSI : public RcppParallel::Worker
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
+    const bool norm_sums;
     const double tol;
     const std::string heap_type;
     std::shared_ptr <DGraph> g;
@@ -333,14 +334,15 @@ struct OneSI : public RcppParallel::Worker
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
+            const bool norm_sums_in,
             const double tol_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), toi (toi_in), k_from (k_from_in),
         dens_from (dens_from_in), dens_to (dens_to_in),
         vert_name (vert_name_in), verts_to_edge_map (verts_to_edge_map_in),
-        nverts (nverts_in), nedges (nedges_in), tol (tol_in),
-        heap_type (heap_type_in), g (g_in), output ()
+        nverts (nverts_in), nedges (nedges_in), norm_sums (norm_sums_in),
+        tol (tol_in), heap_type (heap_type_in), g (g_in), output ()
     {
         const R_xlen_t nfrom = dens_from.size ();
         const R_xlen_t nk = k_from.size () / nfrom;
@@ -355,7 +357,8 @@ struct OneSI : public RcppParallel::Worker
         dp_fromi (oneSI.dp_fromi), toi (oneSI.toi), k_from (oneSI.k_from),
         dens_from (oneSI.dens_from), dens_to (oneSI.dens_to),
         vert_name (oneSI.vert_name), verts_to_edge_map (oneSI.verts_to_edge_map),
-        nverts (oneSI.nverts), nedges (oneSI.nedges), tol (oneSI.tol),
+        nverts (oneSI.nverts), nedges (oneSI.nedges),
+        norm_sums (oneSI.norm_sums), tol (oneSI.tol),
         heap_type (oneSI.heap_type), g (oneSI.g), output ()
     {
         const R_xlen_t nfrom = dens_from.size ();
@@ -428,7 +431,10 @@ struct OneSI : public RcppParallel::Worker
                             double exp_jk = dens_to [j_R] *
                                 exp (-d [toi [j]] / k_from [i_R + k_R * nfrom]);
                             flow_ijk [k] = dens_from [i_R] * exp_jk;
-                            expsum [k] += exp_jk;
+                            // !norm_sums just sums densities at origin points,
+                            // regardless of numbers of intermediate edges
+                            if (!norm_sums)
+                                expsum [k] += exp_jk;
                         }
 
                         int target = static_cast <int> (toi [j]); // can equal -1
@@ -446,8 +452,12 @@ struct OneSI : public RcppParallel::Worker
                                 for (size_t k = 0; k < nk_st; k++)
                                 {
                                     flows_i [index + k * nedges] += flow_ijk [k];
+                                    // norm_sums divides densities allocated
+                                    // between each pair of origin-destination
+                                    // points along each intermedate edge
+                                    if (norm_sums)
+                                        expsum [k] += flow_ijk [k];
                                 }
-                                //flows_i [verts_to_edge_map.at (v2)] += flow_ij;
                             }
 
                             target = static_cast <int> (prev [stt]);
@@ -562,7 +572,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 //'
 //' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all
 //' destinations from given set of origins, with flows attenuated by distance
-//from ' those origins.
+//' from those origins.
 //'
 //' @param graph The data.frame holding the graph edges
 //' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
@@ -640,6 +650,7 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
         Rcpp::NumericVector kvec,
         Rcpp::NumericVector dens_from,
         Rcpp::NumericVector dens_to,
+        const bool norm_sums,
         const double tol,
         const std::string heap_type)
 {
@@ -671,7 +682,7 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
     // Create parallel worker
     OneSI oneSI (fromi, toi, kvec, dens_from, dens_to,
             vert_name, verts_to_edge_map,
-            nverts, nedges, tol, heap_type, g);
+            nverts, nedges, norm_sums, tol, heap_type, g);
 
     size_t chunk_size = get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneSI, chunk_size);

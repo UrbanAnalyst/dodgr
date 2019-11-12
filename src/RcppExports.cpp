@@ -69,8 +69,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_flows_si
-Rcpp::NumericVector rcpp_flows_si(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, Rcpp::NumericVector kvec, Rcpp::NumericVector dens_from, Rcpp::NumericVector dens_to, const double tol, const std::string heap_type);
-RcppExport SEXP _dodgr_rcpp_flows_si(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP kvecSEXP, SEXP dens_fromSEXP, SEXP dens_toSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
+Rcpp::NumericVector rcpp_flows_si(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, Rcpp::NumericVector kvec, Rcpp::NumericVector dens_from, Rcpp::NumericVector dens_to, const bool norm_sums, const double tol, const std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_si(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP kvecSEXP, SEXP dens_fromSEXP, SEXP dens_toSEXP, SEXP norm_sumsSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -81,9 +81,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type kvec(kvecSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens_from(dens_fromSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type dens_to(dens_toSEXP);
+    Rcpp::traits::input_parameter< const bool >::type norm_sums(norm_sumsSEXP);
     Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< const std::string >::type heap_type(heap_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_flows_si(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, tol, heap_type));
+    rcpp_result_gen = Rcpp::wrap(rcpp_flows_si(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -261,7 +262,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 7},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 7},
-    {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 9},
+    {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 10},
     {"_dodgr_rcpp_fundamental_cycles", (DL_FUNC) &_dodgr_rcpp_fundamental_cycles, 2},
     {"_dodgr_rcpp_contract_graph", (DL_FUNC) &_dodgr_rcpp_contract_graph, 2},
     {"_dodgr_rcpp_merge_cols", (DL_FUNC) &_dodgr_rcpp_merge_cols, 1},

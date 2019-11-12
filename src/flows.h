@@ -46,5 +46,6 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
         Rcpp::NumericVector kvec,
         Rcpp::NumericVector dens_from,
         Rcpp::NumericVector dens_to,
+        const bool norm_sums,
         const double tol,
         const std::string heap_type);

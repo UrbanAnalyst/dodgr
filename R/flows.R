@@ -237,6 +237,9 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 #' for each 'from' point, so 'nrow(k)==length(from)'. See Note.
 #' @param dens_from Vector of densities at origin ('from') points
 #' @param dens_to Vector of densities at destination ('to') points
+#' @param norm_sums Standardise sums from all origin points, so sum of flows
+#' throughout entire network equals sum of densities from all origins (see
+#' Note).
 #' @return Modified version of graph with additonal `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
@@ -249,6 +252,15 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 #' 'flow2', ... up to 'n'. These columns must be subsequently matched by the
 #' user back on to the corresponding columns of the matrix of 'k' values.
 #'
+#' @note The `norm_sums` parameter should be used whenever densities at origins
+#' and destinations are absolute values, and ensures that the sum of resultant
+#' flow values throughout the entire network equals the sum of densities at all
+#' origins. If `norm_sums = FALSE`, then, for example, a flow from a single
+#' origin with density one to a single destination along two edges will
+#' allocate flows of one to each of those edges, such that the sum of flows
+#' across the network will equal two, or greater than the sum of densities. This
+#' option is appropriate where densities are relative values, and ensures that
+#' each edge maintains relative proportions.
 #'
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -266,7 +278,8 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 #' @export
 dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
-                            dens_to = NULL, contract = FALSE, heap = "BHeap",
+                            dens_to = NULL, contract = FALSE,
+                            norm_sums = TRUE, heap = "BHeap",
                             tol = 1e-12, quiet = TRUE)
 {
     if (missing (from))
@@ -298,7 +311,7 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
         message ("\nAggregating flows ... ", appendLF = FALSE)
 
     f <- rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
-                        k, dens_from, dens_to, tol, heap)
+                        k, dens_from, dens_to, norm_sums, tol, heap)
 
     if (nk == 1)
         graph$flow <- f

@@ -5,8 +5,8 @@
 \title{dodgr_flows_si}
 \usage{
 dodgr_flows_si(graph, from, to, k = 500, dens_from = NULL,
-  dens_to = NULL, contract = FALSE, heap = "BHeap",
-  tol = 0.000000000001, quiet = TRUE)
+  dens_to = NULL, contract = FALSE, norm_sums = TRUE,
+  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -31,6 +31,10 @@ for each 'from' point, so 'nrow(k)==length(from)'. See Note.}
 \item{contract}{If \code{TRUE}, calculate flows on contracted graph before
 mapping them back on to the original full graph (recommended as this will
 generally be much faster).}
+
+\item{norm_sums}{Standardise sums from all origin points, so sum of flows
+throughout entire network equals sum of densities from all origins (see
+Note).}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -63,6 +67,16 @@ matrix of 'k' values having 'n' columns, the return object will be a modified
 version in the input 'graph', with an additional 'n' columns, named 'flow1',
 'flow2', ... up to 'n'. These columns must be subsequently matched by the
 user back on to the corresponding columns of the matrix of 'k' values.
+
+The \code{norm_sums} parameter should be used whenever densities at origins
+and destinations are absolute values, and ensures that the sum of resultant
+flow values throughout the entire network equals the sum of densities at all
+origins. If \code{norm_sums = FALSE}, then, for example, a flow from a single
+origin with density one to a single destination along two edges will
+allocate flows of one to each of those edges, such that the sum of flows
+across the network will equal two, or greater than the sum of densities. This
+option is appropriate where densities are relative values, and ensures that
+each edge maintains relative proportions.
 }
 \examples{
 graph <- weight_streetnet (hampi)
