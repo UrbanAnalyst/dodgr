@@ -90,6 +90,7 @@ struct OneAggregate : public RcppParallel::Worker
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+            std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
             d [from_i] = w [from_i] = 0.0;
@@ -490,7 +491,8 @@ struct OneSI : public RcppParallel::Worker
                                 for (size_t k = 0; k < nk_st; k++)
                                 {
                                     flows_i [index + k * nedges] +=
-                                        flow_ijk [k] / path_len;
+                                        flow_ijk [k] / 
+                                        static_cast <double> (path_len);
                                 }
                             }
 
