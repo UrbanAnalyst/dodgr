@@ -70,6 +70,7 @@ articles:
     contents:
     - dodgr
     - times
+    - flows
 
 navbar:
   title: dodgr
