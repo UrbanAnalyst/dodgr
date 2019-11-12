@@ -1,0 +1,115 @@
+---
+title: "dodgr flows"
+author: "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: false
+        theme: flatly
+vignette: >
+  %\VignetteIndexEntry{3 dodgr-flows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r pkg-load, echo = FALSE, message = FALSE}
+library (dodgr)
+```
+
+The `dodgr`package includes three functions for allocating and aggregating
+flows throughout network, based on defined properties of a set of origin and
+destination points. The three primary functions for flows are
+[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html),
+and
+[`dodgr_flows_si()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html),
+each of which is now described in detail.
+
+## 1 Flow Aggregation
+
+The first of the above functions aggregates ''flows'' throughout a
+network from a set of origin (`from`) and destination (`to`) points.  Flows
+commonly arise in origin-destination matrices used in transport studies, but may
+be any kind of generic flows on graphs. A flow matrix specifies the flow between
+each pair of origin and destination points, and the
+[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+function aggregates all of these flows throughout a network and assigns a
+resultant aggregate flow to each edge.
+
+For a set of `nf` points of origin and `nt` points of destination, flows are
+defined by a simple `nf`-by-`nt` matrix of values, as in the following code:
+```{r}
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+from <- sample (graph$from_id, size = 10)
+to <- sample (graph$to_id, size = 10)
+flows <- matrix (10 * runif (length (from) * length (to)),
+                 nrow = length (from))
+```
+This `flows` matrix is then submitted to
+[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+which simply appends an additional column of `flows` to the submitted `graph`:
+```{r}
+graph_f <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
+head (graph_f)
+```
+Most flows are zero because they have only been calculated between very few
+points in the graph.
+```{r}
+summary (graph_f$flow)
+```
+
+## 2 Flow Dispersal
+
+The second function,
+[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html),
+uses only a vector a origin (`from`) points, and aggregates flows as they
+disperse throughout the network
+according to a simple exponential model. In place of the matrix of flows
+required by
+[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+dispersal requires an equivalent vector of densities dispersing from all origin
+(`from`) points. This is illustrated in
+the following code, using the same graph as the previous example.
+```{r}
+dens <- rep (1, length (from)) # uniform densities
+graph_f <- dodgr_flows_disperse (graph, from = from, dens = dens)
+summary (graph_f$flow)
+```
+
+## 3 Merging directed flows
+
+Note that flows from both
+[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+and
+[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+are *directed*, so the flow from 'A' to 'B' will not necessarily equal the flow
+from 'B' to 'A'. It is often desirable to aggregate flows in an undirected
+manner, for example for visualisations where plotting pairs of directed flows
+between each edge if often not feasible for large graphs. Directed flows can be
+aggregated to equivalent undirected flows with the `merge_directed_graph()`
+function:
+```{r}
+graph_undir <- merge_directed_graph (graph_f)
+```
+Resultant graphs produced by
+[`merge_directed_graph()`](https://atfutures.github.io/dodgr/reference/merge_directed_graph.html)
+only include those edges having non-zero flows, and so:
+```{r}
+nrow (graph_f); nrow (graph_undir) # the latter is much smaller
+```
+The resultant graph can readily be merged with the original graph to regain the
+original data on vertex coordinates through
+```{r}
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+```
+This graph may then be used to visualise flows with the
+[`dodgr_flowmap()`](https://atfutures.github.io/dodgr/reference/dodgr_flowmap.html)
+function:
+```{r flowmap, eval = FALSE}
+graph_f <- graph_f [graph_f$flow > 0, ]
+dodgr_flowmap (graph_f, linescale = 5)
+```
+![](hampi-flowmap.png)
