@@ -71,12 +71,14 @@ user back on to the corresponding columns of the matrix of 'k' values.
 The \code{norm_sums} parameter should be used whenever densities at origins
 and destinations are absolute values, and ensures that the sum of resultant
 flow values throughout the entire network equals the sum of densities at all
-origins. If \code{norm_sums = FALSE}, then, for example, a flow from a single
-origin with density one to a single destination along two edges will
-allocate flows of one to each of those edges, such that the sum of flows
-across the network will equal two, or greater than the sum of densities. This
-option is appropriate where densities are relative values, and ensures that
-each edge maintains relative proportions.
+origins. For example, with \code{norm_sums = TRUE} (the default), a flow from a
+single origin with density one to a single destination along two edges will
+allocate flows of one half to each of those edges, such that the sum of flows
+across the network will equal one, or the sum of densities from all origins.
+The \code{norm_sums = TRUE} option is appropriate where densities are relative
+values, and ensures that each edge maintains relative proportions. In the
+above example, flows along each of two edges would equal one, for a network
+sum of two, or greater than the sum of densities.
 }
 \examples{
 graph <- weight_streetnet (hampi)
