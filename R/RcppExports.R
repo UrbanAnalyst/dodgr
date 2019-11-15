@@ -64,8 +64,8 @@ rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
 #' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, tol, heap_type) {
-    .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, tol, heap_type)
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type)
 }
 
 #' rcpp_flows_disperse_par

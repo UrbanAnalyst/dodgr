@@ -30,6 +30,7 @@ struct OneAggregate : public RcppParallel::Worker
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
+    const bool norm_sums;
     const double tol;
     const std::string heap_type;
     std::shared_ptr <DGraph> g;
@@ -45,14 +46,15 @@ struct OneAggregate : public RcppParallel::Worker
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
+            const bool norm_sums_in,
             const double tol_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
         dp_fromi (fromi), toi (toi_in), flows (flows_in),
         vert_name (vert_name_in),
         verts_to_edge_map (verts_to_edge_map_in),
-        nverts (nverts_in), nedges (nedges_in), tol (tol_in),
-        heap_type (heap_type_in), g (g_in), output ()
+        nverts (nverts_in), nedges (nedges_in), norm_sums (norm_sums_in),
+        tol (tol_in), heap_type (heap_type_in), g (g_in), output ()
     {
         output.resize (nedges, 0.0);
     }
@@ -65,8 +67,8 @@ struct OneAggregate : public RcppParallel::Worker
         flows (oneAggregate.flows), vert_name (oneAggregate.vert_name),
         verts_to_edge_map (oneAggregate.verts_to_edge_map),
         nverts (oneAggregate.nverts), nedges (oneAggregate.nedges),
-        tol (oneAggregate.tol), heap_type (oneAggregate.heap_type),
-        g (oneAggregate.g), output ()
+        norm_sums (oneAggregate.norm_sums), tol (oneAggregate.tol),
+        heap_type (oneAggregate.heap_type), g (oneAggregate.g), output ()
     {
         output.resize (nedges, 0.0);
     }
@@ -126,15 +128,19 @@ struct OneAggregate : public RcppParallel::Worker
                     {
                         // need to count how long the path is, so flows on
                         // each edge can be divided by this length
-                        int path_len = 0;
-                        size_t target_t = toi_reduced [j];
-                        size_t from_t = static_cast <size_t> (dp_fromi [i]);
-                        while (target_t < INFINITE_INT)
+                        int path_len = 1;
+                        if (norm_sums)
                         {
-                            path_len++;
-                            target_t = prev [target_t];
-                            if (target_t < 0 || target_t == from_t)
-                                break;
+                            path_len = 0;
+                            size_t target_t = toi_reduced [j];
+                            size_t from_t = static_cast <size_t> (dp_fromi [i]);
+                            while (target_t < INFINITE_INT)
+                            {
+                                path_len++;
+                                target_t = prev [target_t];
+                                if (target_t < 0 || target_t == from_t)
+                                    break;
+                            }
                         }
 
                         int target = static_cast <int> (toi_reduced [j]); // can equal -1
@@ -564,6 +570,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericMatrix flows,
+        const bool norm_sums,
         const double tol,
         const std::string heap_type)
 {
@@ -594,7 +601,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneAggregate oneAggregate (fromi, toi, flows, vert_name, verts_to_edge_map,
-            nverts, nedges, tol, heap_type, g);
+            nverts, nedges, norm_sums, tol, heap_type, g);
 
     size_t chunk_size = get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneAggregate, chunk_size);

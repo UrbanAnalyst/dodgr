@@ -12,6 +12,7 @@ dodgr_flows_aggregate(
   contract = FALSE,
   heap = "BHeap",
   tol = 0.000000000001,
+  norm_sums = TRUE,
   quiet = TRUE
 )
 }
@@ -43,6 +44,10 @@ when flow matrices represent spatial interaction models, in which case this
 parameter effectively reduces the radius from each \code{from} point over which
 flows are aggregated. To remove any such effect, set \code{tol = 0}.}
 
+\item{norm_sums}{Standardise sums from all origin points, so sum of flows
+throughout entire network equals sum of densities from all origins (see
+Note).}
+
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
@@ -51,6 +56,36 @@ Modified version of graph with additonal \code{flow} column added.
 \description{
 Aggregate flows throughout a network based on an input matrix of flows
 between all pairs of \code{from} and \code{to} points.
+}
+\note{
+Spatial Interaction models are often fitted through trialling a range
+of values of 'k'. The specification above allows fitting multiple values of
+'k' to be done with a single call, in a way that is far more efficient than
+making multiple calls. A matrix of 'k' values may be entered, with each
+column holding a different vector of values, one for each 'from' point. For a
+matrix of 'k' values having 'n' columns, the return object will be a modified
+version in the input 'graph', with an additional 'n' columns, named 'flow1',
+'flow2', ... up to 'n'. These columns must be subsequently matched by the
+user back on to the corresponding columns of the matrix of 'k' values.
+
+The \code{norm_sums} parameter should be used whenever densities at origins
+and destinations are absolute values, and ensures that the sum of resultant
+flow values throughout the entire network equals the sum of densities at all
+origins. For example, with \code{norm_sums = TRUE} (the default), a flow from a
+single origin with density one to a single destination along two edges will
+allocate flows of one half to each of those edges, such that the sum of flows
+across the network will equal one, or the sum of densities from all origins.
+The \code{norm_sums = TRUE} option is appropriate where densities are relative
+values, and ensures that each edge maintains relative proportions. In the
+above example, flows along each of two edges would equal one, for a network
+sum of two, or greater than the sum of densities.
+
+With \code{norm_sums = TRUE}, the sum of network flows (\code{sum(output$flow)}) should
+equal the sum of origin densities (\code{sum(dens_from)}). This may nevertheless
+not always be the case, because origin points may simply be too far from any
+denstination (\code{to}) points for an exponential model to yield non-zero values
+anywhere in a network within machine tolerance. Such cases may result in sums
+of output flows being less than sums of input densities.
 }
 \examples{
 graph <- weight_streetnet (hampi)

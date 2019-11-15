@@ -24,7 +24,37 @@
 #' parameter effectively reduces the radius from each `from` point over which
 #' flows are aggregated. To remove any such effect, set `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
+#' @inheritParams dodgr_flows_si
 #' @return Modified version of graph with additonal `flow` column added.
+#'
+#' @note Spatial Interaction models are often fitted through trialling a range
+#' of values of 'k'. The specification above allows fitting multiple values of
+#' 'k' to be done with a single call, in a way that is far more efficient than
+#' making multiple calls. A matrix of 'k' values may be entered, with each
+#' column holding a different vector of values, one for each 'from' point. For a
+#' matrix of 'k' values having 'n' columns, the return object will be a modified
+#' version in the input 'graph', with an additional 'n' columns, named 'flow1',
+#' 'flow2', ... up to 'n'. These columns must be subsequently matched by the
+#' user back on to the corresponding columns of the matrix of 'k' values.
+#'
+#' @note The `norm_sums` parameter should be used whenever densities at origins
+#' and destinations are absolute values, and ensures that the sum of resultant
+#' flow values throughout the entire network equals the sum of densities at all
+#' origins. For example, with `norm_sums = TRUE` (the default), a flow from a
+#' single origin with density one to a single destination along two edges will
+#' allocate flows of one half to each of those edges, such that the sum of flows
+#' across the network will equal one, or the sum of densities from all origins.
+#' The `norm_sums = TRUE` option is appropriate where densities are relative
+#' values, and ensures that each edge maintains relative proportions. In the
+#' above example, flows along each of two edges would equal one, for a network
+#' sum of two, or greater than the sum of densities.
+#'
+#' With `norm_sums = TRUE`, the sum of network flows (`sum(output$flow)`) should
+#' equal the sum of origin densities (`sum(dens_from)`). This may nevertheless
+#' not always be the case, because origin points may simply be too far from any
+#' denstination (`to`) points for an exponential model to yield non-zero values
+#' anywhere in a network within machine tolerance. Such cases may result in sums
+#' of output flows being less than sums of input densities.
 #'
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -92,7 +122,8 @@
 #' }
 #' @export
 dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
-                                   heap = "BHeap", tol = 1e-12, quiet = TRUE)
+                                   heap = "BHeap", tol = 1e-12,
+                                   norm_sums = TRUE, quiet = TRUE)
 {
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
@@ -122,7 +153,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 
     graph$flow <- rcpp_flows_aggregate_par (g$graph, g$vert_map,
                                             g$from_index, g$to_index,
-                                            flows, tol, heap)
+                                            flows, norm_sums, tol, heap)
 
     if (contract) # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)

@@ -28,6 +28,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         Rcpp::NumericMatrix flows,
+        const bool norm_sums,
         const double tol,
         const std::string heap_type);
 

@@ -2,6 +2,8 @@
 
 Major changes:
 - Added new `dodgr_centrality` function, and associated helper functions.
+- Added new `dodgr_flows_si` function
+- Added new parameter `norm_sums` to `dodgr_flows_aggregate`
 - `merge_directed_flows` renamed to `merge_directed_graph`, with added option
   of specifying columns to merge.
 
