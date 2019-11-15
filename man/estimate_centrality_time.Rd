@@ -4,8 +4,13 @@
 \alias{estimate_centrality_time}
 \title{estimate_centrality_time}
 \usage{
-estimate_centrality_time(graph, contract = TRUE, edges = TRUE,
-  dist_threshold = NULL, heap = "BHeap")
+estimate_centrality_time(
+  graph,
+  contract = TRUE,
+  edges = TRUE,
+  dist_threshold = NULL,
+  heap = "BHeap"
+)
 }
 \arguments{
 \item{graph}{'data.frame' or equivalent object representing the network

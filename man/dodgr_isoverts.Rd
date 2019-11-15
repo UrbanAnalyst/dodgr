@@ -4,8 +4,7 @@
 \alias{dodgr_isoverts}
 \title{dodgr_isoverts}
 \usage{
-dodgr_isoverts(graph, from = NULL, dlim = NULL, tlim = NULL,
-  heap = "BHeap")
+dodgr_isoverts(graph, from = NULL, dlim = NULL, tlim = NULL, heap = "BHeap")
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -40,8 +39,8 @@ isodistances, or one or more \code{tlim} values for isochrones.
 \dontrun{
 # Use osmdata package to extract 'SC'-format data:
 library (osmdata)
-dat <- opq ("hampi india") \%>\%
-    add_osm_feature (key = "highway") \%>\%
+dat <- opq ("hampi india") %>%
+    add_osm_feature (key = "highway") %>%
     osmdata_sc ()
 graph <- weight_streetnet (dat)
 from <- sample (graph$.vx0, size = 100)

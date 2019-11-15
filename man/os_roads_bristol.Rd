@@ -29,8 +29,8 @@ library(dplyr)
 # mapview::mapview(lads)
 # bristol_pol <- dplyr::filter(lads, grepl("Bristol", lad16nm))
 # os_roads <- st_transform(os_roads, st_crs(lads))
-# os_roads_bristol <- os_roads[bristol_pol, ] \%>\% 
-#   dplyr::filter(class == "Motorway" & roadNumber != "M32") \%>\% 
+# os_roads_bristol <- os_roads[bristol_pol, ] %>% 
+#   dplyr::filter(class == "Motorway" & roadNumber != "M32") %>% 
 #   st_zm(drop = TRUE)
 # mapview::mapview(os_roads_bristol)
 }

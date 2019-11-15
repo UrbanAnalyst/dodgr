@@ -4,8 +4,12 @@
 \alias{dodgr_fundamental_cycles}
 \title{dodgr_fundamental_cycles}
 \usage{
-dodgr_fundamental_cycles(graph, vertices = NULL,
-  graph_max_size = 10000, expand = 0.05)
+dodgr_fundamental_cycles(
+  graph,
+  vertices = NULL,
+  graph_max_size = 10000,
+  expand = 0.05
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the contracted

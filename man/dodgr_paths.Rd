@@ -4,8 +4,15 @@
 \alias{dodgr_paths}
 \title{dodgr_paths}
 \usage{
-dodgr_paths(graph, from, to, vertices = TRUE, pairwise = FALSE,
-  heap = "BHeap", quiet = TRUE)
+dodgr_paths(
+  graph,
+  from,
+  to,
+  vertices = TRUE,
+  pairwise = FALSE,
+  heap = "BHeap",
+  quiet = TRUE
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -55,8 +62,8 @@ The \code{from} and \code{to} columns of \code{graph} may be either single
 columns of numeric or character values specifying the numbers or names of
 graph vertices, or combinations to two columns specifying geographical
 (longitude and latitude) coordinates. In the latter case, almost any sensible
-combination of names will be accepted (for example, \code{fromx, fromy},
-\code{from_x, from_y}, or \code{fr_lat, fr_lon}.)
+combination of names will be accepted (for example, \verb{fromx, fromy},
+\verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
 
 \code{from} and \code{to} values can be either two-column matrices of
 equivalent of longitude and latitude coordinates, or else single columns

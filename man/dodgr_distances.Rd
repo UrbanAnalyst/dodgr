@@ -4,8 +4,15 @@
 \alias{dodgr_distances}
 \title{dodgr_distances}
 \usage{
-dodgr_distances(graph, from = NULL, to = NULL, shortest = TRUE,
-  heap = "BHeap", parallel = TRUE, quiet = TRUE)
+dodgr_distances(
+  graph,
+  from = NULL,
+  to = NULL,
+  shortest = TRUE,
+  heap = "BHeap",
+  parallel = TRUE,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

@@ -4,8 +4,16 @@
 \alias{dodgr_flows_aggregate}
 \title{dodgr_flows_aggregate}
 \usage{
-dodgr_flows_aggregate(graph, from, to, flows, contract = FALSE,
-  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
+dodgr_flows_aggregate(
+  graph,
+  from,
+  to,
+  flows,
+  contract = FALSE,
+  heap = "BHeap",
+  tol = 0.000000000001,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -92,14 +100,14 @@ xy_end <- l [, 3:4]
 # Then just specify a generic OD matrix with uniform values of 1:
 flows <- matrix (1, nrow = nrow (l), ncol = nrow (l))
 # We need to specify both a `type` and `id` column for the
-# \\link{weight_streetnet} function.
+# \link{weight_streetnet} function.
 r$type <- 1
 r$id <- seq (nrow (r))
 graph <- weight_streetnet (r, type_col = "type", id_col = "id",
                            wt_profile = 1)
 f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end,
                             flows = flows)
-# Then merge directed flows and convert to \\pkg{sf} for plotting as before:
+# Then merge directed flows and convert to \pkg{sf} for plotting as before:
 f <- merge_directed_graph (f)
 geoms <- dodgr_to_sfc (f)
 gc <- dodgr_contract_graph (f)

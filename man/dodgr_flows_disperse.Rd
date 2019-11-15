@@ -4,8 +4,16 @@
 \alias{dodgr_flows_disperse}
 \title{dodgr_flows_disperse}
 \usage{
-dodgr_flows_disperse(graph, from, dens, k = 500, contract = FALSE,
-  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
+dodgr_flows_disperse(
+  graph,
+  from,
+  dens,
+  k = 500,
+  contract = FALSE,
+  heap = "BHeap",
+  tol = 0.000000000001,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

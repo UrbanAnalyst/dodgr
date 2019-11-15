@@ -4,8 +4,7 @@
 \alias{dodgr_times}
 \title{dodgr_times}
 \usage{
-dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE,
-  heap = "BHeap")
+dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE, heap = "BHeap")
 }
 \arguments{
 \item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}

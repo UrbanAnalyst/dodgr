@@ -4,9 +4,19 @@
 \alias{dodgr_flows_si}
 \title{dodgr_flows_si}
 \usage{
-dodgr_flows_si(graph, from, to, k = 500, dens_from = NULL,
-  dens_to = NULL, contract = FALSE, norm_sums = TRUE,
-  heap = "BHeap", tol = 0.000000000001, quiet = TRUE)
+dodgr_flows_si(
+  graph,
+  from,
+  to,
+  k = 500,
+  dens_from = NULL,
+  dens_to = NULL,
+  contract = FALSE,
+  norm_sums = TRUE,
+  heap = "BHeap",
+  tol = 0.000000000001,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network

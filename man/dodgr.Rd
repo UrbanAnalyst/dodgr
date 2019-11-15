@@ -3,7 +3,6 @@
 \docType{package}
 \name{dodgr}
 \alias{dodgr}
-\alias{dodgr-package}
 \title{dodgr.}
 \description{
 Distances on dual-weighted directed graphs using priority-queue shortest

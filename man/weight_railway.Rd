@@ -4,9 +4,13 @@
 \alias{weight_railway}
 \title{weight_railway}
 \usage{
-weight_railway(sf_lines, type_col = "railway", id_col = "osm_id",
-  keep_cols = c("maxspeed"), excluded = c("abandoned", "disused",
-  "proposed", "razed"))
+weight_railway(
+  sf_lines,
+  type_col = "railway",
+  id_col = "osm_id",
+  keep_cols = c("maxspeed"),
+  excluded = c("abandoned", "disused", "proposed", "razed")
+)
 }
 \arguments{
 \item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
@@ -43,8 +47,8 @@ as by maximum speed, can be implemented simply by modifying the
 \dontrun{
 # sample railway extraction with the 'osmdata' package
 library (osmdata)
-dat <- opq ("shinjuku") \%>\%
-    add_osm_feature (key = "railway") \%>\%
+dat <- opq ("shinjuku") %>%
+    add_osm_feature (key = "railway") %>%
     osmdata_sf (quiet = FALSE)
 graph <- weight_railway (dat$osm_lines)
 }
