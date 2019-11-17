@@ -415,7 +415,7 @@ prepare_graph <- function (graph, from, to)
 
     # remove any routing points not in edge start nodes:
     from <- nodes_arg_to_pts (from, graph)
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0)
+    if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
         from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
     from <- from [from %in% graph [[gr_cols$from]] ]
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
@@ -426,7 +426,7 @@ prepare_graph <- function (graph, from, to)
     {
         # remove any routing points not in edge end nodes:
         to <- nodes_arg_to_pts (to, graph)
-        if (is (graph, "dodgr_streetnet_sc") & tp > 0)
+        if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
             to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
         to <- to [to %in% graph [[gr_cols$to]] ]
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)

@@ -311,7 +311,7 @@ match_points_to_graph <- function (verts, xy, connected = FALSE)
 # points can be used in routines with the turn-penalty graph.
 remap_verts_with_turn_penalty <- function (graph, pts, from = TRUE)
 {
-    if (!is (graph, "dodgr_streetnet_sc"))
+    if (!methods::is (graph, "dodgr_streetnet_sc"))
         stop ("vertices with turn angles can only be re-mapped for ",   # nocov
               "street networks obtained via 'dodgr_streetnet_sc' -> ",  # nocov
               "'weight_streetnet'")                                     # nocov

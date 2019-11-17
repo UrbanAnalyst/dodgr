@@ -279,7 +279,7 @@ get_id_cols <- function (pts)
     if (any (grepl ("id", colnames (pts), ignore.case = TRUE)))
     {
         nmc <- which (grepl ("id", colnames (pts)))
-        if (is (pts, "data.frame"))
+        if (methods::is (pts, "data.frame"))
             ids <- pts [[nmc]]
         else if (is.matrix (pts))
             ids <- pts [, nmc, drop = TRUE]
