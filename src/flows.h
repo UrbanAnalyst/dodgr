@@ -36,7 +36,7 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::NumericVector k,
-        Rcpp::NumericVector flows,
+        Rcpp::NumericVector dens,
         const double &tol,
         std::string heap_type);
 
