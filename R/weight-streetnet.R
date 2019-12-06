@@ -482,7 +482,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         extract_sc_edges_highways (x,
                                    wt_profile,
                                    wt_profile_file,
-                                   way_types_to_keep) %>% # hw key-val pairs
+                                   c (way_types_to_keep, keep_cols)) %>% # hw key-val pairs
         weight_sc_edges (wt_profile,
                          wt_profile_file) %>%           # add d_weighted col
         set_maxspeed (wt_profile,

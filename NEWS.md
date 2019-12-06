@@ -10,6 +10,7 @@ Major changes:
 Minor changes:
 - switch off examples that caused previous CRAN failures
 - fix bug in `dodgr_dists` when number of from points >> number of to points
+- fix bug in `weight_streetnet.sc` that prevented `keep_cols` from working
 
 # v0.2.5
 
