@@ -7,7 +7,7 @@ templates:
 reference:
   - title: Package doc
     contents:
-    - dodgr-package
+    - dodgr
   - title: The Main Functions
     contents:
     - dodgr_distances
