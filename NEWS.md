@@ -6,6 +6,7 @@ Major changes:
 - Added new parameter `norm_sums` to `dodgr_flows_aggregate`
 - `merge_directed_flows` renamed to `merge_directed_graph`, with added option
   of specifying columns to merge.
+- Added new `pairwise` parameter to `dodgr_distances`; see issue #127
 
 Minor changes:
 - switch off examples that caused previous CRAN failures
