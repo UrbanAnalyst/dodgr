@@ -10,6 +10,8 @@
 #' calculated (see Notes)
 #' @param shortest If `FALSE`, calculate distances along the \emph{fastest}
 #' rather than shortest routes (see Notes).
+#' @param pairwise If `TRUE`, calculate distances only between the ordered
+#' pairs of `from` and `to`.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -100,7 +102,8 @@
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
 dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
-                         heap = 'BHeap', parallel = TRUE, quiet = TRUE)
+                         pairwise = FALSE, heap = 'BHeap', parallel = TRUE,
+                         quiet = TRUE)
 {
     graph <- tbl_to_df (graph)
 
@@ -169,24 +172,30 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
         to_index <- temp
     }
 
-    if (parallel)
-        d <- rcpp_get_sp_dists_par (graph, vert_map, from_index$index,
-                                    to_index$index, heap, is_spatial)
-    else
+    if (parallel) {
+        if (pairwise)
+            d <- rcpp_get_sp_dists_paired_par (graph, vert_map, from_index$index,
+                                               to_index$index, heap, is_spatial)
+        else
+            d <- rcpp_get_sp_dists_par (graph, vert_map, from_index$index,
+                                        to_index$index, heap, is_spatial)
+    } else
         d <- rcpp_get_sp_dists (graph, vert_map, from_index$index,
                                 to_index$index, heap)
 
-    if (!is.null (from_index$id))
-        rownames (d) <- from_index$id
-    else
-        rownames (d) <- vert_map$vert
-    if (!is.null (to_index$id))
-        colnames (d) <- to_index$id
-    else
-        colnames (d) <- vert_map$vert
+    if (!pairwise) {
+        if (!is.null (from_index$id))
+            rownames (d) <- from_index$id
+        else
+            rownames (d) <- vert_map$vert
+        if (!is.null (to_index$id))
+            colnames (d) <- to_index$id
+        else
+            colnames (d) <- vert_map$vert
 
-    if (flip)
-        d <- t (d)
+        if (flip)
+            d <- t (d)
+    }
 
     if (!quiet)
         message ("done.")
@@ -200,9 +209,10 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 #' @inherit dodgr_dists
 #' @export
 dodgr_distances <- function (graph, from = NULL, to = NULL, shortest = TRUE,
-                         heap = 'BHeap', parallel = TRUE, quiet = TRUE)
+                             pairwise = FALSE, heap = 'BHeap', parallel = TRUE,
+                             quiet = TRUE)
 {
-    dodgr_dists (graph, from, to, shortest = shortest,
+    dodgr_dists (graph, from, to, shortest = shortest, pairwise = pairwise,
                  heap = heap, parallel = parallel, quiet = quiet)
 }
 

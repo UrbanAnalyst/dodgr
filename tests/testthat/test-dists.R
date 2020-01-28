@@ -65,6 +65,18 @@ test_that("dists", {
 
 })
 
+test_that("dists-pairwise", {
+    expect_silent (graph <- weight_streetnet (hampi))
+    n <- 50
+    from <- sample (graph$from_id, size = n)
+    to <- sample (graph$to_id, size = n)
+    expect_silent (d <- dodgr_distances (graph, from = from, to = to))
+    expect_equal (dim (d), c (n, n))
+    expect_silent (d <- dodgr_distances (graph, from = from, to = to,
+                                         pairwise = TRUE))
+    expect_equal (dim (d), c (50, 1))
+})
+
 test_that("times", {
     graph <- weight_streetnet (hampi)
     nf <- 100

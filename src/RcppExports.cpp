@@ -163,6 +163,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_get_sp_dists_paired_par
+Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi, const std::string& heap_type, const bool is_spatial);
+RcppExport SEXP _dodgr_rcpp_get_sp_dists_paired_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP heap_typeSEXP, SEXP is_spatialSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type toi(toiSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
+    Rcpp::traits::input_parameter< const bool >::type is_spatial(is_spatialSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_dists_paired_par(graph, vert_map_in, fromi, toi, heap_type, is_spatial));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_get_iso
 Rcpp::NumericMatrix rcpp_get_iso(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector dlim, const std::string& heap_type);
 RcppExport SEXP _dodgr_rcpp_get_iso(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP dlimSEXP, SEXP heap_typeSEXP) {
@@ -270,6 +286,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_sample_graph", (DL_FUNC) &_dodgr_rcpp_sample_graph, 2},
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
     {"_dodgr_rcpp_get_sp_dists_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_par, 6},
+    {"_dodgr_rcpp_get_sp_dists_paired_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_paired_par, 6},
     {"_dodgr_rcpp_get_iso", (DL_FUNC) &_dodgr_rcpp_get_iso, 5},
     {"_dodgr_rcpp_get_sp_dists", (DL_FUNC) &_dodgr_rcpp_get_sp_dists, 5},
     {"_dodgr_rcpp_get_paths", (DL_FUNC) &_dodgr_rcpp_get_paths, 5},

@@ -9,6 +9,7 @@ dodgr_distances(
   from = NULL,
   to = NULL,
   shortest = TRUE,
+  pairwise = FALSE,
   heap = "BHeap",
   parallel = TRUE,
   quiet = TRUE
@@ -26,6 +27,9 @@ calculated (see Notes)}
 
 \item{shortest}{If \code{FALSE}, calculate distances along the \emph{fastest}
 rather than shortest routes (see Notes).}
+
+\item{pairwise}{If \code{TRUE}, calculate distances only between the ordered
+pairs of \code{from} and \code{to}.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
