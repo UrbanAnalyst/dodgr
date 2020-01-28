@@ -75,7 +75,7 @@ mapview (graph_sf, color = cols, lwd = 10 * centrality)
 }
 
 # An example of flow aggregation across a generic (non-OSM) highway,
-# represented as the 'routes_fast' object of the \\pkg{stplanr} package,
+# represented as the 'routes_fast' object of the \pkg{stplanr} package,
 # which is a SpatialLinesDataFrame containing commuter densities along
 # components of a street network.
 \dontrun{
@@ -91,12 +91,12 @@ graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",
                                 wt_profile = 1)
 # convert to contracted form, retaining junction vertices only, and append
 # 'centrality' column
-graph <- dodgr_contract_graph (graph_full) %>%
+graph <- dodgr_contract_graph (graph_full) \%>\%
     dodgr_centrality ()
 #' expand back to full graph; merge directed flows; and convert result to
 # 'sf'-format for plotting
-graph_sf <- dodgr_uncontract_graph (graph) %>%
-    merge_directed_graph () %>%
+graph_sf <- dodgr_uncontract_graph (graph) \%>\%
+    merge_directed_graph () \%>\%
     dodgr_to_sf ()
 plot (graph_sf ["centrality"])
 }

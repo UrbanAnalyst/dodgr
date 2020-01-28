@@ -47,8 +47,8 @@ as by maximum speed, can be implemented simply by modifying the
 \dontrun{
 # sample railway extraction with the 'osmdata' package
 library (osmdata)
-dat <- opq ("shinjuku") %>%
-    add_osm_feature (key = "railway") %>%
+dat <- opq ("shinjuku") \%>\%
+    add_osm_feature (key = "railway") \%>\%
     osmdata_sf (quiet = FALSE)
 graph <- weight_railway (dat$osm_lines)
 }

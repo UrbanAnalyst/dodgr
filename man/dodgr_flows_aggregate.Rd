@@ -116,7 +116,7 @@ mapview (gsf, color = cols, lwd = 10 * flow)
 }
 
 # An example of flow aggregation across a generic (non-OSM) highway,
-# represented as the `routes_fast` object of the \\pkg{stplanr} package,
+# represented as the `routes_fast` object of the \pkg{stplanr} package,
 # which is a SpatialLinesDataFrame containing commuter densities along
 # components of a street network.
 \dontrun{

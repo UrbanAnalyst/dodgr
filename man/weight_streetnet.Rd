@@ -146,7 +146,7 @@ net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
 dim (net) # 406 11; 406 streets
 
 # An example for a generic (non-OSM) highway, represented as the
-# `routes_fast` object of the \\pkg{stplanr} package, which is a
+# `routes_fast` object of the \pkg{stplanr} package, which is a
 # SpatialLinesDataFrame.
 \dontrun{
 library (stplanr)
