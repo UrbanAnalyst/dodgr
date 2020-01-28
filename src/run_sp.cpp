@@ -183,7 +183,8 @@ struct OneDistPaired : public RcppParallel::Worker
             else
                 pathfinder->Dijkstra_set (d, w, prev, from_i);
 
-            dout (i, 0) = d [to_i [0]];
+            if (w [to_i [0]] < INFINITE_DOUBLE)
+                dout (i, 0) = d [to_i [0]];
         }
     }
                                    
