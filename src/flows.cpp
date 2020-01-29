@@ -528,24 +528,6 @@ struct OneSI : public RcppParallel::Worker
     }
 };
 
-// RcppParallel jobs can be chunked to a specified "grain size"; see
-// https://rcppcore.github.io/RcppParallel/#grain_size
-// This function determines chunk size such that there are at least 100 chunks
-// for a given `nfrom`.
-size_t get_chunk_size (const size_t nfrom)
-{
-    size_t chunk_size;
-
-    if (nfrom > 1000)
-        chunk_size = 100;
-    else if (nfrom > 100)
-        chunk_size = 10;
-    else
-        chunk_size = 1;
-
-    return chunk_size;
-}
-
 //' rcpp_flows_aggregate_par
 //'
 //' @param graph The data.frame holding the graph edges
@@ -603,7 +585,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     OneAggregate oneAggregate (fromi, toi, flows, vert_name, verts_to_edge_map,
             nverts, nedges, norm_sums, tol, heap_type, g);
 
-    size_t chunk_size = get_chunk_size (nfrom);
+    size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneAggregate, chunk_size);
 
     return Rcpp::wrap (oneAggregate.output);
@@ -665,7 +647,7 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     OneDisperse oneDisperse (fromi, dens, vert_name, verts_to_edge_map,
             nverts, nedges, k, tol, heap_type, g);
 
-    size_t chunk_size = get_chunk_size (nfrom);
+    size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneDisperse, chunk_size);
 
     return Rcpp::wrap (oneDisperse.output);
@@ -727,7 +709,7 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
             vert_name, verts_to_edge_map,
             nverts, nedges, norm_sums, tol, heap_type, g);
 
-    size_t chunk_size = get_chunk_size (nfrom);
+    size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneSI, chunk_size);
 
     return Rcpp::wrap (oneSI.output);

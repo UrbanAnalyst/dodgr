@@ -22,6 +22,24 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 }
 // # nocov end
 
+// RcppParallel jobs can be chunked to a specified "grain size"; see
+// https://rcppcore.github.io/RcppParallel/#grain_size
+// This function determines chunk size such that there are at least 100 chunks
+// for a given `nfrom`.
+size_t run_sp::get_chunk_size (const size_t nfrom)
+{
+    size_t chunk_size;
+
+    if (nfrom > 1000)
+        chunk_size = 100;
+    else if (nfrom > 100)
+        chunk_size = 10;
+    else
+        chunk_size = 1;
+
+    return chunk_size;
+}
+
 
 std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 {
@@ -91,14 +109,11 @@ struct OneDist : public RcppParallel::Worker
 
             if (is_spatial)
             {
-                double dmax = 0.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    double dx = vx [j] - vx [from_i],
+                    const double dx = vx [j] - vx [from_i],
                         dy = vy [j] - vy [from_i];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
-                    if (heuristic [j] > dmax)
-                        dmax = heuristic [j];
                 }
                 pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
             } else if (heap_type.find ("set") == std::string::npos)
@@ -122,6 +137,7 @@ struct OneDistPaired : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromtoi;
     const size_t nverts;
+    const size_t nfrom;
     const std::vector <double> vx;
     const std::vector <double> vy;
     const std::shared_ptr <DGraph> g;
@@ -134,13 +150,14 @@ struct OneDistPaired : public RcppParallel::Worker
     OneDistPaired (
             const Rcpp::IntegerVector fromtoi,
             const size_t nverts_in,
+            const size_t nfrom_in,
             const std::vector <double> vx_in,
             const std::vector <double> vy_in,
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & is_spatial_in,
             Rcpp::NumericMatrix dout_in) :
-        dp_fromtoi (fromtoi), nverts (nverts_in),
+        dp_fromtoi (fromtoi), nverts (nverts_in), nfrom (nfrom_in),
         vx (vx_in), vy (vy_in),
         g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
         dout (dout_in)
@@ -157,25 +174,20 @@ struct OneDistPaired : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <int> prev (nverts);
 
-        const size_t n = dp_fromtoi.size () / 2;
-
         std::vector <double> heuristic (nverts, 0.0);
 
         for (std::size_t i = begin; i < end; i++)
         {
-            unsigned int from_i = static_cast <unsigned int> (dp_fromtoi [i]);
-            std::vector <unsigned int> to_i (1, static_cast <unsigned int> (dp_fromtoi [n + i]));
+            const unsigned int from_i = static_cast <unsigned int> (dp_fromtoi [i]);
+            const std::vector <unsigned int> to_i = {static_cast <unsigned int> (dp_fromtoi [nfrom + i])};
 
             if (is_spatial)
             {
-                double dmax = 0.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    double dx = vx [j] - vx [from_i],
+                    const double dx = vx [j] - vx [from_i],
                         dy = vy [j] - vy [from_i];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
-                    if (heuristic [j] > dmax)
-                        dmax = heuristic [j];
                 }
                 pathfinder->AStar (d, w, prev, heuristic, from_i, to_i);
             } else if (heap_type.find ("set") == std::string::npos)
@@ -330,16 +342,16 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     size_t nfrom = static_cast <size_t> (fromi.size ());
     size_t nto = static_cast <size_t> (toi.size ());
 
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["d_weighted"];
+    const std::vector <std::string> from = graph ["from"];
+    const std::vector <std::string> to = graph ["to"];
+    const std::vector <double> dist = graph ["d"];
+    const std::vector <double> wt = graph ["d_weighted"];
 
-    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+    const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::vector <double> vx (nverts), vy (nverts);
@@ -361,8 +373,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     OneDist one_dist (fromi, toi, nverts, vx, vy,
             g, heap_type, is_spatial, dout);
 
-    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
-            one_dist);
+    size_t chunk_size = run_sp::get_chunk_size (nfrom);
+    RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
     
     return (dout);
 }
@@ -378,21 +390,20 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
         const std::string& heap_type,
         const bool is_spatial)
 {
-    size_t nfrom = static_cast <size_t> (fromi.size ());
-    size_t nto = static_cast <size_t> (toi.size ());
-    if (nfrom != nto)
+    if (fromi.size () != toi.size ())
         Rcpp::stop ("pairwise dists must have from.size == to.size");
+    size_t n = static_cast <size_t> (fromi.size ());
 
-    std::vector <std::string> from = graph ["from"];
-    std::vector <std::string> to = graph ["to"];
-    std::vector <double> dist = graph ["d"];
-    std::vector <double> wt = graph ["d_weighted"];
+    const std::vector <std::string> from = graph ["from"];
+    const std::vector <std::string> to = graph ["to"];
+    const std::vector <double> dist = graph ["d"];
+    const std::vector <double> wt = graph ["d_weighted"];
 
-    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
     std::map <std::string, unsigned int> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
     std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
-    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+    const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     std::vector <double> vx (nverts), vy (nverts);
@@ -405,24 +416,24 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom,
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (n,
             Rcpp::NumericVector::get_na ());
-    Rcpp::NumericMatrix dout (static_cast <int> (nfrom), 1, na_vec.begin ());
+    Rcpp::NumericMatrix dout (static_cast <int> (n), 1, na_vec.begin ());
 
     // Paired (fromi, toi) in a single vector
-    Rcpp::IntegerVector fromto (2 * fromi.size ());
-    for (int i = 0; i < fromi.size (); i++)
+    Rcpp::IntegerVector fromto (2 * n);
+    for (int i = 0; i < n; i++)
     {
-        fromto [i] = fromi [i];
-        fromto [i + fromi.size ()] = toi [i];
+        fromto [i] = fromi (i);
+        fromto [i + n] = toi (i);
     }
 
     // Create parallel worker
-    OneDistPaired one_dist_paired (fromto, nverts, vx, vy,
+    OneDistPaired one_dist_paired (fromto, nverts, n, vx, vy,
             g, heap_type, is_spatial, dout);
 
-    RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
-            one_dist_paired);
+    size_t chunk_size = run_sp::get_chunk_size (n);
+    RcppParallel::parallelFor (0, n, one_dist_paired, chunk_size);
     
     return (dout);
 }

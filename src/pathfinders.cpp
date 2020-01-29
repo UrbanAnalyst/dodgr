@@ -214,7 +214,7 @@ void PF::PathFinder::AStar (std::vector<double>& d,
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
-    m_heap->insert(v0, heur [v0]);
+    m_heap->insert (v0, heur [v0]);
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
