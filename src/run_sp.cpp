@@ -183,13 +183,36 @@ struct OneDistPaired : public RcppParallel::Worker
 
             if (is_spatial)
             {
+                // need to set an additional target vertex that is somewhat
+                // beyond the single actual target vertex. Default here is max
+                // heuristic, but reduced in following loop.
+                unsigned int max_h_index = -1;
+                double max_h_value = -1.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
                     const double dx = vx [j] - vx [from_i],
                         dy = vy [j] - vy [from_i];
                     heuristic [j] = sqrt (dx * dx + dy * dy);
+                    if (heuristic [j] > max_h_value) {
+                        max_h_value = heuristic [j];
+                        max_h_index = j;
+                    }
                 }
-                pathfinder->AStar (d, w, prev, heuristic, from_i, to_i);
+                const unsigned int htemp = heuristic [dp_fromtoi [nfrom + i]];
+                double min_h_value = max_h_value;
+                unsigned int min_h_index = max_h_index;
+                // Arbitrary relative distance threshold
+                // TODO: Are there likely to be cases where this might need to
+                // be adjusted?
+                const double thr = 0.1;
+                for (size_t j = 0; j < nverts; j++) {
+                    if (heuristic [j] < (thr * htemp) & heuristic [j] > min_h_value) {
+                        min_h_value = heuristic [j];
+                        min_h_index = j;
+                    }
+                }
+                const std::vector <unsigned int> to_i2 = {to_i [0], min_h_index};
+                pathfinder->AStar (d, w, prev, heuristic, from_i, to_i2);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, to_i);
             else
@@ -422,7 +445,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 
     // Paired (fromi, toi) in a single vector
     Rcpp::IntegerVector fromto (2 * n);
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < static_cast <int> (n); i++)
     {
         fromto [i] = fromi (i);
         fromto [i + n] = toi (i);
