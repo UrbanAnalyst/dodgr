@@ -83,7 +83,7 @@ struct OneCentralityVert : public RcppParallel::Worker
             pathfinder->Centrality_vertex (cent, v, dist_threshold);
         }
 
-        for (int i = 0; i < nverts; i++)
+        for (size_t i = 0; i < nverts; i++)
             output [i] += cent [i];
     }
 
