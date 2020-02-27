@@ -15,16 +15,12 @@ edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
 {
     // TDOD: FIX edge_id_t type defs here!
     std::unordered_map <vertex_id_t, unsigned int> components;
-    std::random_device rd;
-    std::mt19937 rng (rd()); // mersenne twister
 
     unsigned int largest_component =
         graph::identify_graph_components (vertices, components);
 
     bool in_largest = false;
-    std::uniform_int_distribution <unsigned int> uni0 (0,
-            static_cast <unsigned int> (edge_map.size ()) - 1);
-    unsigned int e0 = uni0 (rng);
+    unsigned int e0 = floor (R::runif (0, edge_map.size () - 1));
     while (!in_largest)
     {
         // TODO: The following is an O(N) lookup; maybe just use
@@ -57,15 +53,12 @@ edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
 edge_id_t graph_sample::sample_one_edge_with_comps (Rcpp::DataFrame graph,
         edge_map_t &edge_map)
 {
-    std::random_device rd;
-    std::mt19937 rng (rd()); // mersenne twister
-
     Rcpp::NumericVector component = graph ["component"];
     std::uniform_int_distribution <unsigned int> uni (0,
             static_cast <unsigned int> (graph.nrow ()) - 1);
-    unsigned int e0 = uni (rng);
+    unsigned int e0 = floor (R::runif (0, edge_map.size () - 1));
     while (component (e0) > 1) // can't be invoked in tests in a controlled way
-        e0 = uni (rng); // # nocov
+        e0 = floor (R::runif (0, edge_map.size () - 1));
 
     return std::next (edge_map.begin (), e0)->first;
 }
@@ -106,9 +99,6 @@ vertex_id_t graph_sample::select_random_vert (Rcpp::DataFrame graph,
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         unsigned int nverts_to_sample)
 {
-    std::random_device rd;
-    std::default_random_engine rng (rd()); // safest to use here
-
     vertex_map_t vertices;
     edge_map_t edge_map;
     vert2edge_map_t vert2edge_map;
@@ -156,7 +146,7 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         // TODO: Is this quicker to use a single unif and round each time?
         std::uniform_int_distribution <unsigned int> uni (0,
                 static_cast <unsigned int> (vertlist.size ()) - 1);
-        unsigned int randv = uni (rng);
+        unsigned int randv = floor (R::runif (0, vertlist.size () - 1));
         this_vert = vertlist [randv];
 
         std::unordered_set <edge_id_t> edges = vert2edge_map [this_vert];

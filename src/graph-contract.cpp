@@ -1,20 +1,5 @@
 #include "graph.h"
 
-/*
-edge_id_t graph_contract::get_new_edge_id (edge_map_t &edge_map, std::mt19937 &rng)
-{
-    const int range = 1e8;
-    std::uniform_int_distribution <unsigned int> unif (0, range);
-
-    edge_id_t new_id = edge_map.begin()->first;
-    while (edge_map.find (new_id) != edge_map.end ())
-    {
-        new_id = std::to_string (unif (rng));
-    }
-    return new_id;
-}
-*/
-
 //' get_to_from
 //'
 //' Get one pair of two and from edges and vertices. Main task is to make sure
@@ -158,9 +143,6 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
 
     std::vector <edge_id_t> new_edge_ids;
 
-    // Random generator for new_edge_id
-    std::random_device rd;
-    //std::mt19937 rng (rd()); // mersenne twister
     unsigned int maxid = 123456;
 
     while (verts.size () > 0)
@@ -175,7 +157,6 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
             edges_done.emplace (e, false);
 
         new_edge_ids.clear ();
-        //new_edge_ids.push_back (graph_contract::get_new_edge_id (edge_map, rng));
         new_edge_ids.push_back ("a" + std::to_string (maxid++));
 
         if ((vtx.is_intermediate_single () || vtx.is_intermediate_double ()) &&
@@ -183,7 +164,6 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
         {
             if (edges.size () == 4) // is_intermediate_double as well!
                 new_edge_ids.push_back ("a" + std::to_string (maxid++));
-            //new_edge_ids.push_back (graph_contract::get_new_edge_id (edge_map, rng));
 
             // Get the two adjacent vertices
             std::unordered_set <vertex_id_t> nbs = vtx.get_all_neighbours ();
