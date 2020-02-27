@@ -212,6 +212,11 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
 
                     edges.erase (edge_from_id);
                     edges.erase (edge_to_id);
+                    // It is possible to have repeated values of two_nbs;
+                    // calling these a second time should then just lead to no
+                    // contraction
+                    if (vt_from == "" | vt_to == "")
+                        continue;
 
                     graph_contract::contract_one_edge (vert2edge_map,
                             vertex_map, edge_map, edgelist, vtx_id, vt_from,
