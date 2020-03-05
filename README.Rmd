@@ -73,11 +73,18 @@ traffic, and the effects of elevation on both cyclists and pedestrians.
 
 ## Installation
 
-You can install `dodgr` with:
-```{r gh-installation, eval = FALSE}
+You can install latest stable version of `dodgr` from CRAN with:
+```{r cran-installation, eval = FALSE}
 install.packages("dodgr") # current CRAN version
+```
+Alternatively, current development versions can be installed using any of the
+following options:
+```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
-remotes::install_github("ATFutures/dodgr") # Development version
+remotes::install_git("https://git.sr.ht/~mpadge/dodgr")
+remotes::install_bitbucket("atfutures/dodgr")
+remotes::install_gitlab("atfutures1/dodgr")
+remotes::install_github("ATFutures/dodgr")
 ```
 Then load with
 ```{r library}
