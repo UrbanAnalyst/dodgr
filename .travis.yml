@@ -39,10 +39,9 @@ matrix:
         - os: osx
           r: devel
 
-before_install:
-    - sudo -i env PATH="$PATH" tlmgr update -all
-    #- sudo env PATH="$PATH" tlmgr install dvisvgm
-    - sudo env PATH="$PATH" tlmgr path add
+#before_install:
+    #- sudo -i env PATH="$PATH" tlmgr update -all
+    #- sudo env PATH="$PATH" tlmgr path add
 
 notifications:
   email:
