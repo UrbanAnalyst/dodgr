@@ -4,8 +4,10 @@
 \name{os_roads_bristol}
 \alias{os_roads_bristol}
 \title{os_roads_bristol}
-\format{A Simple Features \code{sf} \code{data.frame} representing
-motorways in Bristol, UK.}
+\format{
+A Simple Features \code{sf} \code{data.frame} representing
+motorways in Bristol, UK.
+}
 \description{
 A sample street network for Bristol, U.K., from the Ordnance Survey.
 }

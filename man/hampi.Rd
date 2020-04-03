@@ -4,8 +4,10 @@
 \name{hampi}
 \alias{hampi}
 \title{hampi}
-\format{A Simple Features \code{sf} \code{data.frame} containing the street
-network of Hampi.}
+\format{
+A Simple Features \code{sf} \code{data.frame} containing the street
+network of Hampi.
+}
 \description{
 A sample street network from the township of Hampi, Karnataka, India.
 }
