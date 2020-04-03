@@ -10,6 +10,7 @@ reference:
     - dodgr
   - title: The Main Functions
     contents:
+    - dodgr_dists
     - dodgr_distances
     - dodgr_times
     - dodgr_paths
@@ -51,6 +52,7 @@ reference:
     - dodgr_sample
     - dodgr_sflines_to_poly
     - dodgr_vertices
+    - match_pts_to_graph
     - match_points_to_graph
     - merge_directed_graph
     - write_dodgr_wt_profile
