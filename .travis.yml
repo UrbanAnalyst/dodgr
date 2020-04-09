@@ -25,7 +25,6 @@ matrix:
           before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
           deploy:
               provider: script
-              github_token: $TRAVIS_DEPLOY
               script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
               skip_cleanup: true
         - r: devel

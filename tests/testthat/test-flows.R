@@ -40,7 +40,7 @@ test_that("flows aggregate", {
 
     flowsv <- as.vector (flows)
     graph5 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flowsv)
-    expect_identical (graph5$flow, graph4$flow)
+    expect_equal (graph5$flow, graph4$flow)
 })
 
 test_that("flow points", {
