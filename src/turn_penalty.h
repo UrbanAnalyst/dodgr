@@ -5,8 +5,6 @@
 #include <vector>
 
 #include <Rcpp.h>
-// [[Rcpp::depends(RcppParallel)]]
-#include <RcppParallel.h>
 
 struct OneEdge {
     std::string v0, v1, edge;
