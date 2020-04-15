@@ -206,7 +206,7 @@ struct OneDistPaired : public RcppParallel::Worker
                 // be adjusted?
                 const double thr = 0.1;
                 for (size_t j = 0; j < nverts; j++) {
-                    if (heuristic [j] < (thr * htemp) & heuristic [j] > min_h_value) {
+                    if ((heuristic [j] < (thr * htemp)) && (heuristic [j] > min_h_value)) {
                         min_h_value = heuristic [j];
                         min_h_index = j;
                     }
