@@ -7,6 +7,7 @@ Major changes:
 - `merge_directed_flows` renamed to `merge_directed_graph`, with added option
   of specifying columns to merge.
 - Added new `pairwise` parameter to `dodgr_distances`; see issue #127
+- Added new function `dodgr_insert_vertex` to add new vertices to graph; see #40
 - Removed "radix" heap option
 
 Minor changes:

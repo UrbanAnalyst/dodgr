@@ -49,6 +49,7 @@ reference:
     - dodgr_flowmap
     - dodgr_full_cycles
     - dodgr_fundamental_cycles
+    - dodgr_insert_vertex
     - dodgr_sample
     - dodgr_sflines_to_poly
     - dodgr_vertices

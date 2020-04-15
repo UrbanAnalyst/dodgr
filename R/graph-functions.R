@@ -331,3 +331,107 @@ dodgr_sample <- function (graph, nverts = 1000)
 
     return (graph)
 }
+
+#' dodgr_insert_vertex
+#'
+#' Insert a new node or vertex into a network
+#'
+#' @param v1 Vertex defining start of graph edge along which new vertex is to be
+#' inserted
+#' @param v2 Vertex defining end of graph edge along which new vertex is to be
+#' inserted (order of `v1` and `v2` is not important).
+#' @param x The `x`-coordinate of new vertex. If not specified, vertex is
+#' created half-way between `v1` and `v2`.
+#' @param y The `y`-coordinate of new vertex. If not specified, vertex is
+#' created half-way between `v1` and `v2`.
+#' @return A modifed graph with specified edge between defined start and end
+#' vertices split into two edges either side of new vertex.
+#' @inheritParams dodgr_vertices
+#'
+#' @export
+#' @examples
+#' graph <- weight_streetnet (hampi)
+#' e1 <- sample (nrow (graph), 1)
+#' v1 <- graph$from_id [e1]
+#' v2 <- graph$to_id [e1]
+#' # insert new vertex in the middle of that randomly-selected edge:
+#' graph2 <- dodgr_insert_vertex (graph, v1, v2)
+#' nrow (graph); nrow (graph2) # new edges added to graph2
+dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL)
+{
+    graph_t <- tbl_to_df (graph)
+    gr_cols <- dodgr_graph_cols (graph_t)
+    index12 <- which (graph [[gr_cols$from]] == v1 & graph [[gr_cols$to]] == v2)
+    index21 <- which (graph [[gr_cols$from]] == v2 & graph [[gr_cols$to]] == v1)
+    if (length (index12) == 0 & length (index21) == 0)
+        stop ("Nominated vertices do not define any edges in graph")
+    if ((!is.null (x) & is.null (y)) | (is.null (x) & !is.null (y)))
+        stop ("Either both x and y must be NULL, or both must be specified")
+
+
+    if (length (index12) == 1) {
+        graph <- insert_one_edge (graph, index12, x, y, gr_cols)
+        index21 <- which (graph [[gr_cols$from]] == v2 &
+                          graph [[gr_cols$to]] == v1)
+    }
+    if (length (index21) == 1) {
+        graph <- insert_one_edge (graph, index21, x, y, gr_cols)
+    }
+
+    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+
+    return (graph)
+}
+
+insert_one_edge <- function (graph, index, x, y, gr_cols)
+{
+    if (is.null (x) & is.null (y)) {
+        x <- (graph [[gr_cols$xfr]] [index] +
+              graph [[gr_cols$xto]] [index]) / 2
+        y <- (graph [[gr_cols$yfr]] [index] +
+              graph [[gr_cols$yto]] [index]) / 2
+    }
+    expand_index <- c (1:index, index, (index + 1):nrow (graph))
+    graph <- graph [expand_index, ]
+    graph [index, gr_cols$xto] <- x
+    graph [index, gr_cols$yto] <- y
+    graph [index + 1, gr_cols$xfr] <- x
+    graph [index + 1, gr_cols$yfr] <- y
+
+    xy1 <- c (x = graph [[gr_cols$xfr]] [index],
+              y = graph [[gr_cols$yfr]] [index])
+    xy2 <- c (x = graph [[gr_cols$xto]] [index + 1],
+              y = graph [[gr_cols$yto]] [index + 1])
+    if (is_graph_spatial (graph)) {
+        #requireNamespace ("geodist")
+        d1 <- geodist::geodist (xy1, c (x = x, y = y))
+        d2 <- geodist::geodist (xy2, c (x = x, y = y))
+    } else {
+        d1 <- sqrt ((xy1 [1] - x) ^ 2 + (xy1 [2] - y) ^ 2)
+        d2 <- sqrt ((x - xy2 [1]) ^ 2 + (y - xy2 [2]) ^ 2)
+    }
+    wt <- graph [index, gr_cols$d_weighted] /
+        graph [index, gr_cols$d]
+    if (!is.na (gr_cols$time)) {
+        time_scale <- graph [index, gr_cols$time] /
+            graph [index, gr_cols$d]
+        time_wt <- graph [index, gr_cols$time_weighted] /
+            graph [index, gr_cols$time]
+    }
+    graph [index, gr_cols$d] <- d1
+    graph [index, gr_cols$d_weighted] <- d1 * wt
+    graph [index + 1, gr_cols$d] <- d2
+    graph [index + 1, gr_cols$d_weighted] <- d2 * wt
+
+    if (!is.na (gr_cols$time)) {
+        graph [index, gr_cols$time] <- graph [index, gr_cols$d] *
+            time_scale
+        graph [index, gr_cols$time_weighted] <-
+            graph [index, gr_cols$time] * time_wt
+    }
+
+    graph$edge_id [index] <- paste0 (graph$edge_id [index], "_a")
+    graph$edge_id [index + 1] <- paste0 (graph$edge_id [index + 1], "_b")
+
+    return (graph)
+}

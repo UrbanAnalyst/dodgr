@@ -38,6 +38,16 @@ test_that("sample graph", {
     expect_true (max (graphs$edge_id) <= nrow (graph))
 })
 
+test_that ("insert_vertex", {
+    graph <- weight_streetnet (hampi)
+    e1 <- 2256
+    v1 <- graph$from_id [e1]
+    v2 <- graph$to_id [e1]
+    expect_silent (graph2 <- dodgr_insert_vertex (graph, v1 = v1, v2 = v2))
+    # graph should have two more rows added:
+    expect_equal (nrow (graph2) - 2, nrow (graph))
+})
+
 test_that("components", {
     graph <- weight_streetnet (hampi)
     comp <- graph$component
