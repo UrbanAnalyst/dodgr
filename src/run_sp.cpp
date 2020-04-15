@@ -73,7 +73,7 @@ struct OneDist : public RcppParallel::Worker
 
     // constructor
     OneDist (
-            const Rcpp::IntegerVector fromi,
+            const RcppParallel::RVector <int> fromi,
             const std::vector <unsigned int> toi_in,
             const size_t nverts_in,
             const std::vector <double> vx_in,
@@ -81,7 +81,7 @@ struct OneDist : public RcppParallel::Worker
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & is_spatial_in,
-            Rcpp::NumericMatrix dout_in) :
+            RcppParallel::RMatrix <double> dout_in) :
         dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
         vx (vx_in), vy (vy_in),
         g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
@@ -146,7 +146,7 @@ struct OneDistPaired : public RcppParallel::Worker
 
     // constructor
     OneDistPaired (
-            const Rcpp::IntegerVector fromtoi,
+            const RcppParallel::RVector <int> fromtoi,
             const size_t nverts_in,
             const size_t nfrom_in,
             const std::vector <double> vx_in,
@@ -154,7 +154,7 @@ struct OneDistPaired : public RcppParallel::Worker
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & is_spatial_in,
-            Rcpp::NumericMatrix dout_in) :
+            RcppParallel::RMatrix <double> dout_in) :
         dp_fromtoi (fromtoi), nverts (nverts_in), nfrom (nfrom_in),
         vx (vx_in), vy (vy_in),
         g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
@@ -229,19 +229,19 @@ struct OneIso : public RcppParallel::Worker
     RcppParallel::RVector <int> dp_fromi;
     const size_t nverts;
     const std::shared_ptr <DGraph> g;
-    const Rcpp::NumericVector dlimit;
+    const RcppParallel::RVector <double> dlimit;
     const std::string heap_type;
 
     RcppParallel::RMatrix <double> dout;
 
     // constructor
     OneIso (
-            const Rcpp::IntegerVector fromi,
+            const RcppParallel::RVector <int> fromi,
             const size_t nverts_in,
             const std::shared_ptr <DGraph> g_in,
-            const Rcpp::NumericVector dlimit_in,
+            const RcppParallel::RVector <double> dlimit_in,
             const std::string & heap_type_in,
-            Rcpp::NumericMatrix dout_in) :
+            RcppParallel::RMatrix <double> dout_in) :
         dp_fromi (fromi), nverts (nverts_in),
         g (g_in), dlimit (dlimit_in),
         heap_type (heap_type_in), dout (dout_in)
@@ -391,8 +391,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
     // Create parallel worker
-    OneDist one_dist (fromi, toi, nverts, vx, vy,
-            g, heap_type, is_spatial, dout);
+    OneDist one_dist (RcppParallel::RVector <int> (fromi), toi,
+            nverts, vx, vy, g, heap_type, is_spatial,
+            RcppParallel::RMatrix <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
@@ -450,8 +451,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
     }
 
     // Create parallel worker
-    OneDistPaired one_dist_paired (fromto, nverts, n, vx, vy,
-            g, heap_type, is_spatial, dout);
+    OneDistPaired one_dist_paired (RcppParallel::RVector <int> (fromto),
+            nverts, n, vx, vy, g, heap_type, is_spatial,
+            RcppParallel::RMatrix <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (n);
     RcppParallel::parallelFor (0, n, one_dist_paired, chunk_size);
@@ -494,7 +496,9 @@ Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
             static_cast <int> (nverts), na_vec.begin ());
 
     // Create parallel worker
-    OneIso one_iso (fromi, nverts, g, dlim, heap_type, dout);
+    OneIso one_iso (RcppParallel::RVector <int> (fromi), nverts, g,
+            RcppParallel::RVector <double> (dlim), heap_type,
+            RcppParallel::RMatrix <double> (dout));
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_iso);

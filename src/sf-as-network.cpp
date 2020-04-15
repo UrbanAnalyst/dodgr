@@ -204,16 +204,16 @@ void sf::fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
 
 struct OnePointIndex : public RcppParallel::Worker
 {
-    const Rcpp::NumericVector xy_x, xy_y, pt_x, pt_y;
+    const RcppParallel::RVector <double> xy_x, xy_y, pt_x, pt_y;
     const size_t nxy;
     RcppParallel::RVector <int> index;
 
     // constructor
     OnePointIndex (
-            const Rcpp::NumericVector xy_x_in,
-            const Rcpp::NumericVector xy_y_in,
-            const Rcpp::NumericVector pt_x_in,
-            const Rcpp::NumericVector pt_y_in,
+            const RcppParallel::RVector <double> xy_x_in,
+            const RcppParallel::RVector <double> xy_y_in,
+            const RcppParallel::RVector <double> pt_x_in,
+            const RcppParallel::RVector <double> pt_y_in,
             const size_t nxy_in,
             Rcpp::IntegerVector index_in) :
         xy_x (xy_x_in), xy_y (xy_y_in), pt_x (pt_x_in), pt_y (pt_y_in),
@@ -271,7 +271,10 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
     //Rcpp::IntegerVector index (n, Rcpp::IntegerVector::get_na ());
     Rcpp::IntegerVector index (npts);
     // Create parallel worker
-    OnePointIndex one_pt_indx (vtx, vty, ptx, pty, nxy, index);
+    OnePointIndex one_pt_indx (RcppParallel::RVector <double> (vtx),
+            RcppParallel::RVector <double> (vty),
+            RcppParallel::RVector <double> (ptx),
+            RcppParallel::RVector <double> (pty), nxy, index);
 
     RcppParallel::parallelFor (0, npts, one_pt_indx);
 

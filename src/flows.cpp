@@ -25,7 +25,7 @@ struct OneAggregate : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <unsigned int> toi;
-    const Rcpp::NumericMatrix flows;
+    const RcppParallel::RMatrix <double> flows;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
@@ -39,9 +39,9 @@ struct OneAggregate : public RcppParallel::Worker
 
     // Constructor 1: The main constructor
     OneAggregate (
-            const Rcpp::IntegerVector fromi,
+            const RcppParallel::RVector <int> fromi,
             const std::vector <unsigned int> toi_in,
-            const Rcpp::NumericMatrix flows_in,
+            const RcppParallel::RMatrix <double> flows_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
@@ -181,12 +181,12 @@ struct OneAggregate : public RcppParallel::Worker
 struct OneDisperse : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const Rcpp::NumericVector dens;
+    const RcppParallel::RVector <double> dens;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
-    const Rcpp::NumericVector kfrom;
+    const RcppParallel::RVector <double> kfrom;
     const double tol;
     const std::string heap_type;
     std::shared_ptr <DGraph> g;
@@ -195,13 +195,13 @@ struct OneDisperse : public RcppParallel::Worker
 
     // Constructor 1: The main constructor
     OneDisperse (
-            const Rcpp::IntegerVector fromi,
-            const Rcpp::NumericVector dens_in,
+            const RcppParallel::RVector <int> fromi,
+            const RcppParallel::RVector <double> dens_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
-            const Rcpp::NumericVector kfrom_in,
+            const RcppParallel::RVector <double> kfrom_in,
             const double tol_in,
             const std::string &heap_type_in,
             const std::shared_ptr <DGraph> g_in) :
@@ -328,9 +328,9 @@ struct OneSI : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <unsigned int> toi;
-    const Rcpp::NumericVector k_from;
-    const Rcpp::NumericVector dens_from;
-    const Rcpp::NumericVector dens_to;
+    const RcppParallel::RVector <double> (k_from);
+    const RcppParallel::RVector <double> (dens_from);
+    const RcppParallel::RVector <double> (dens_to);
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
@@ -344,11 +344,11 @@ struct OneSI : public RcppParallel::Worker
 
     // Constructor 1: The main constructor
     OneSI (
-            const Rcpp::IntegerVector fromi,
+            const RcppParallel::RVector <int> fromi,
             const std::vector <unsigned int> toi_in,
-            const Rcpp::NumericVector k_from_in,
-            const Rcpp::NumericVector dens_from_in,
-            const Rcpp::NumericVector dens_to_in,
+            const RcppParallel::RVector <double> (k_from_in),
+            const RcppParallel::RVector <double> (dens_from_in),
+            const RcppParallel::RVector <double> (dens_to_in),
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
             const size_t nverts_in,
@@ -582,7 +582,8 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneAggregate oneAggregate (fromi, toi, flows, vert_name, verts_to_edge_map,
+    OneAggregate oneAggregate (RcppParallel::RVector <int> (fromi), toi,
+            RcppParallel::RMatrix <double> (flows), vert_name, verts_to_edge_map,
             nverts, nedges, norm_sums, tol, heap_type, g);
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
@@ -644,8 +645,11 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneDisperse oneDisperse (fromi, dens, vert_name, verts_to_edge_map,
-            nverts, nedges, k, tol, heap_type, g);
+    OneDisperse oneDisperse (RcppParallel::RVector <int> (fromi),
+            RcppParallel::RVector <double> (dens),
+            vert_name, verts_to_edge_map,
+            nverts, nedges,
+            RcppParallel::RVector <double> (k), tol, heap_type, g);
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelReduce (0, nfrom, oneDisperse, chunk_size);
@@ -705,7 +709,10 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
 
     // Create parallel worker
-    OneSI oneSI (fromi, toi, kvec, dens_from, dens_to,
+    OneSI oneSI (RcppParallel::RVector <int> (fromi), toi, 
+            RcppParallel::RVector <double> (kvec),
+            RcppParallel::RVector <double> (dens_from),
+            RcppParallel::RVector <double> (dens_to),
             vert_name, verts_to_edge_map,
             nverts, nedges, norm_sums, tol, heap_type, g);
 
