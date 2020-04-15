@@ -369,13 +369,22 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL)
         stop ("Either both x and y must be NULL, or both must be specified")
 
 
+    charvec <- c (letters, LETTERS, 0:9)
+    randid <- function (charvec, len = 10) {
+        paste0 (sample (charvec, len, replace = TRUE), collapse = "")
+    }
+
     if (length (index12) == 1) {
         graph <- insert_one_edge (graph, index12, x, y, gr_cols)
+        graph [index12, gr_cols$to] <-
+            graph [index12 + 1, gr_cols$from] <- randid (charvec, 10)
         index21 <- which (graph [[gr_cols$from]] == v2 &
                           graph [[gr_cols$to]] == v1)
     }
     if (length (index21) == 1) {
         graph <- insert_one_edge (graph, index21, x, y, gr_cols)
+        graph [index21, gr_cols$to] <-
+            graph [index21 + 1, gr_cols$from] <- randid (charvec, 10)
     }
 
     attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
