@@ -53,8 +53,6 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
     return std::make_shared <HeapD<TriHeap> >();
   else if (heap_type == "TriHeapExt")
     return std::make_shared <HeapD<TriHeapExt> >();
-  else if (heap_type == "Radix")
-    return std::make_shared <HeapD<RadixHeap> >();
   else
     throw std::runtime_error("invalid heap type: " + heap_type); // # nocov
 }

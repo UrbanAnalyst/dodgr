@@ -48,7 +48,7 @@ Note).}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-\code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
+Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
 (\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
 
 \item{tol}{Relative tolerance below which flows towards \code{to} vertices are not

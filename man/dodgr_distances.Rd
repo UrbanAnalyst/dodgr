@@ -33,8 +33,7 @@ pairs of \code{from} and \code{to}.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
-\code{Radix}, Trinomial Heap (\code{TriHeap}), Extended Trinomial Heap
-(\code{TriHeapExt}, and 2-3 Heap (\code{Heap23}).}
+\verb{Trinomial Heap (}TriHeap\verb{), Extended Trinomial Heap (}TriHeapExt\verb{, and 2-3 Heap (}Heap23`).}
 
 \item{parallel}{If \code{TRUE}, perform routing calculation in parallel (see
 details)}

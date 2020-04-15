@@ -9,5 +9,4 @@
 #include "heap23.h"
 #include "triheap.h"
 #include "triheap_ext.h"
-#include "radixheap.h"
 #endif

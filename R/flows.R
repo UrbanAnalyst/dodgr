@@ -16,7 +16,7 @@
 #' generally be much faster).
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
-#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
 #' @param tol Relative tolerance below which flows towards `to` vertices are not
 #' considered. This will generally have no effect, but can provide speed gains

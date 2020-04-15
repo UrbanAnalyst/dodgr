@@ -23,7 +23,7 @@
 #' established via the \link{estimate_centrality_threshold} function.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; 'FHeap'), Binary Heap ('BHeap'),
-#' 'Radix', Trinomial Heap ('TriHeap'), Extended Trinomial Heap
+#' Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 #' ('TriHeapExt', and 2-3 Heap ('Heap23').
 #' @return Modified version of graph with additonal 'centrality' column added.
 #'

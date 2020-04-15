@@ -217,8 +217,6 @@ test_that ("heaps", {
                   "'arg' should be one of")
     expect_silent (d0 <- dodgr_dists (graph, from = from, to = to, heap = "BHeap"))
     expect_silent (d1 <- dodgr_dists (graph, from = from, to = to, heap = "FHeap"))
-    expect_message (d2 <- dodgr_dists (graph, from = from, to = to, heap = "Radix"),
-                    "RadixHeap can only be implemented for integer weights")
     expect_silent (d3 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeap"))
     expect_silent (d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt"))
     # This is a compound message that starts "Calculating shortest paths ..."
@@ -231,7 +229,6 @@ test_that ("heaps", {
     d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt", quiet = FALSE)
 
     expect_identical (d0, d1)
-    expect_false (identical (d0, d2))
     expect_identical (d0, d3)
     expect_identical (d0, d4)
     expect_identical (d0, d5)

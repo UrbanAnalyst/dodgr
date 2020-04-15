@@ -7,6 +7,7 @@ Major changes:
 - `merge_directed_flows` renamed to `merge_directed_graph`, with added option
   of specifying columns to merge.
 - Added new `pairwise` parameter to `dodgr_distances`; see issue #127
+- Removed "radix" heap option
 
 Minor changes:
 - switch off examples that caused previous CRAN failures

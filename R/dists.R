@@ -14,7 +14,7 @@
 #' pairs of `from` and `to`.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
-#' `Radix`, Trinomial Heap (`TriHeap`), Extended Trinomial Heap
+#' `Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
 #' @param parallel If `TRUE`, perform routing calculation in parallel (see
 #' details)
@@ -412,29 +412,15 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
 
 #' get_heap
 #'
-#' Match the heap arg and convert graph is necessary (for Radix)
+#' Match the heap arg and convert graph is necessary
 #' @param heap Name of heap as passed to `dodgr_dists`
 #' @param graph `data.frame` of graph edges
 #' @return List of matched heap arg and potentially converted graph
 #' @noRd
 get_heap <- function (heap, graph)
 {
-    heaps <- c ("FHeap", "BHeap", "Radix", "TriHeap", "TriHeapExt", "Heap23",
-                "set")
+    heaps <- c ("FHeap", "BHeap", "TriHeap", "TriHeapExt", "Heap23", "set")
     heap <- match.arg (arg = heap, choices = heaps)
-    if (heap == "Radix")
-    {
-        indx <- which (graph$d > 0)
-        dfr <- min (abs (c (graph$d [indx] %% 1, graph$d  [indx] %% 1 - 1)))
-        if (dfr > 1e-6)
-        {
-            message (paste0 ("RadixHeap can only be implemented for ",
-                             "integer weights; all weights will now be ",
-                             "rounded"))
-            graph$d <- round (graph$d)
-            graph$d_weighted <- round (graph$d_weighted)
-        }
-    }
 
     list (heap = heap, graph = graph)
 }
