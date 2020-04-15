@@ -3,6 +3,9 @@ context("dodgr_dists")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
 
+if (!test_all)
+    RcppParallel::setThreadOptions (numThreads = 2)
+
 test_that("dists", {
     expect_silent (graph <- weight_streetnet (hampi))
     nf <- 100

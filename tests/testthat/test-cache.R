@@ -11,6 +11,9 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 
 source ("../sc-conversion-fns.R")
 
+if (!test_all)
+    RcppParallel::setThreadOptions (numThreads = 2)
+
 test_that("cache on", {
               expect_silent (hsc <- sf_to_sc (hampi))
               requireNamespace ("geodist")

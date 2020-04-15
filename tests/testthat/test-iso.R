@@ -3,6 +3,9 @@ context("iso")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("TRAVIS"), "true"))
 
+if (!test_all)
+    RcppParallel::setThreadOptions (numThreads = 2)
+
 source ("../sc-conversion-fns.R")
 
 test_that("isodists", {
