@@ -57,6 +57,9 @@
 #' advantageous. For small graphs, calculating distances in parallel is likely
 #' to offer relatively little gain in speed, but increases from parallel
 #' computation will generally markedly increase with increasing graph sizes.
+#' By default, parallel computation uses the maximal number of available cores
+#' or threads. This number can be reduced by specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
 #' @export
 #' @examples

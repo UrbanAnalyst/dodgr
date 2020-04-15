@@ -47,6 +47,12 @@ Modified version of graph with additonal 'centrality' column added.
 Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
 edge-based form.
 }
+\note{
+Centrality is calculated by default using parallel computation with the
+maximal number of available cores or threads. This number can be reduced by
+specifying a value via
+\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
+}
 \examples{
 graph_full <- weight_streetnet (hampi)
 graph <- dodgr_contract_graph (graph_full)

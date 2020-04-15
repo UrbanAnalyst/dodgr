@@ -27,6 +27,10 @@ A single \code{data.frame} of vertex IDs, with columns denoting the \code{from}
 points and \code{tlim} value(s). The isochrones are given as \code{id} values and
 associated coordinates of the series of points from each \code{from} point at the
 specified isochrone times.
+
+Isoverts are calculated by default using parallel computation with the
+maximal number of available cores or threads. This number can be reduced by
+specifying a value via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \description{
 Calculate isodistance or isochrone contours from specified points, and return

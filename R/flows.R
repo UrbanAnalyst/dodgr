@@ -56,6 +56,11 @@
 #' anywhere in a network within machine tolerance. Such cases may result in sums
 #' of output flows being less than sums of input densities.
 #'
+#' Flows are calculated by default using parallel computation with the maximal
+#' number of available cores or threads. This number can be reduced by
+#' specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
+#'
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)

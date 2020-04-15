@@ -19,6 +19,11 @@
 #' associated coordinates of the series of points from each `from` point at the
 #' specified isodistances.
 #'
+#' @note Isodists are calculated by default using parallel computation with the
+#' maximal number of available cores or threads. This number can be reduced by
+#' specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
+#'
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -120,6 +125,11 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap")
 #' coordinates of the series of points from each `from` point at the specified
 #' isochrone times.
 #'
+#' Isochrones are calculated by default using parallel computation with the
+#' maximal number of available cores or threads. This number can be reduced by
+#' specifying a value via `RcppParallel::setThreadOptions (numThreads =
+#' <desired_number>)`.
+#'
 #' @export
 #' @examples
 #' \dontrun{
@@ -163,6 +173,11 @@ dodgr_isochrones <- function (graph, from = NULL, tlim = NULL, heap = 'BHeap')
 #' points and `tlim` value(s). The isochrones are given as `id` values and
 #' associated coordinates of the series of points from each `from` point at the
 #' specified isochrone times.
+#'
+#' Isoverts are calculated by default using parallel computation with the
+#' maximal number of available cores or threads. This number can be reduced by
+#' specifying a value via `RcppParallel::setThreadOptions (numThreads =
+#' <desired_number>)`.
 #'
 #' @export
 #' @examples

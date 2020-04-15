@@ -32,6 +32,12 @@ Calculate isodistance contours from specified points. Function is fully
 vectorized to calculate accept vectors of central points and vectors
 defining multiple isodistances.
 }
+\note{
+Isodists are calculated by default using parallel computation with the
+maximal number of available cores or threads. This number can be reduced by
+specifying a value via
+\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
+}
 \examples{
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)

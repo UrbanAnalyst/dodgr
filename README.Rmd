@@ -37,6 +37,16 @@ distances on dual-weighted directed graphs, for aggregation of flows throughout
 networks, and for highly realistic routing through street networks (time-based
 routing considering incline, turn-angles, surface quality, everything).
 
+Note that most `dodgr` algorithms implement parallel computation with the
+[`RcppParallel` library](https://rcppcore.github.io/RcppParallel/), and by
+default use the maximal number of available cores or threads. If you do not
+wish `dodgr`to use all available threads, please reduce the number manually by
+first specifying a value via
+```{r num_threads, eval = FALSE}
+RcppParallel::setThreadOptions (numThreads = <desired_number>)
+```
+
+
 ## What's so special?
 
 Four aspects. First, while other packages exist for calculating distances on
