@@ -63,12 +63,17 @@ struct OneAggregate : public RcppParallel::Worker
     OneAggregate (
             const OneAggregate& oneAggregate,
             RcppParallel::Split) :
-        dp_fromi (oneAggregate.dp_fromi), toi (oneAggregate.toi),
-        flows (oneAggregate.flows), vert_name (oneAggregate.vert_name),
+        dp_fromi (oneAggregate.dp_fromi),
+        toi (oneAggregate.toi),
+        flows (oneAggregate.flows),
+        vert_name (oneAggregate.vert_name),
         verts_to_edge_map (oneAggregate.verts_to_edge_map),
-        nverts (oneAggregate.nverts), nedges (oneAggregate.nedges),
-        norm_sums (oneAggregate.norm_sums), tol (oneAggregate.tol),
-        heap_type (oneAggregate.heap_type), g (oneAggregate.g), output ()
+        nverts (oneAggregate.nverts),
+        nedges (oneAggregate.nedges),
+        norm_sums (oneAggregate.norm_sums),
+        tol (oneAggregate.tol),
+        heap_type (oneAggregate.heap_type),
+        g (oneAggregate.g), output ()
     {
         output.resize (nedges, 0.0);
     }
@@ -86,8 +91,8 @@ struct OneAggregate : public RcppParallel::Worker
         for (size_t i = begin; i < end; i++)
         {
             //if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
-            if (RcppThread::isInterrupted ())
-                return;
+            //if (RcppThread::isInterrupted ())
+            //    return;
 
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
@@ -108,6 +113,11 @@ struct OneAggregate : public RcppParallel::Worker
                 if (flows (i, j) > flim)
                     nto++;
 
+            if (nto == 0)
+                continue;
+
+            // toi_index is into cols of flow matrix
+            // toi_reduced is into the vertex vectors (d, w, prev)
             std::vector <unsigned int> toi_reduced, toi_index;
             toi_reduced.reserve (nto);
             toi_index.reserve (nto);
@@ -126,7 +136,7 @@ struct OneAggregate : public RcppParallel::Worker
                     double flow_ij = flows (i, toi_index [j]);
                     if (w [toi_reduced [j]] < INFINITE_DOUBLE && flow_ij > 0.0)
                     {
-                        // need to count how long the path is, so flows on
+                        // count how long the path is, so flows on
                         // each edge can be divided by this length
                         int path_len = 1;
                         if (norm_sums)
@@ -557,8 +567,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const std::string heap_type)
 {
     std::vector <unsigned int> toi =
-        Rcpp::as <std::vector <unsigned int> > ( toi_in);
-    Rcpp::NumericVector id_vec;
+        Rcpp::as <std::vector <unsigned int> > (toi_in);
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     const std::vector <std::string> from = graph ["from"];
@@ -621,7 +630,6 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const double &tol,
         std::string heap_type)
 {
-    Rcpp::NumericVector id_vec;
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     std::vector <std::string> from = graph ["from"];
@@ -685,7 +693,6 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
 {
     std::vector <unsigned int> toi =
         Rcpp::as <std::vector <unsigned int> > ( toi_in);
-    Rcpp::NumericVector id_vec;
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     const std::vector <std::string> from = graph ["from"];
