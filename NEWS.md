@@ -1,4 +1,4 @@
-#v 0.2.5.00x
+#v 0.2.6
 
 Major changes:
 - Added new `dodgr_centrality` function, and associated helper functions.

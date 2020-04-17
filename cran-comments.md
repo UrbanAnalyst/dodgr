@@ -1,6 +1,6 @@
 # CRAN notes for dodgr_0.2.6 submission
 
-This submission should finally fix the previously reported valgrind memory leaks, due to Intel's TBB library bundled with RcppParallel. The authors of that package were unable to find a solution, and so recommend switching to a different library for multi-thread computation, which this submission now does.
+This submission fixes the current warnings that arose due to the recent tibble upgrade. The submission should also finally fix the previously reported valgrind memory leaks, due to Intel's TBB library bundled with RcppParallel. The authors of that package were unable to find a solution, and so recommend switching to a different library for multi-thread computation, which this submission now does.
 
 ## Notes
 
