@@ -151,8 +151,7 @@ million shortest-path distances, all in under 30 seconds.
 # 3 Graphs and Street Networks
 
 Although the above code is short and fast, most users will probably want more
-control over their graphs and routing possibilities. Each of the steps indicated
-above (through the `quiet = FALSE` option) can be implemented separately. To
+control over their graphs and routing possibilities. To
 illustrate, the remainder of this vignette analyses the much smaller street
 network of Hampi, Karnataka, India, included in the `dodgr` package as the
 dataset [`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html). This
@@ -206,7 +205,7 @@ head (graph)
 ```
 Note that the actual graph contains around 30 times as many edges as there are
 streets, indicating that each street is composed on average of around 30
-individual segments.  The individual points points or vertices from those
+individual segments.  The individual points or vertices from those
 segments can be extracted with,
 ```{r hampi-verts}
 vt <- dodgr_vertices (graph)
