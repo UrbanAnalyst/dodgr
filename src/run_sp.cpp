@@ -262,22 +262,22 @@ struct OneIso : public RcppParallel::Worker
 
         for (std::size_t i = begin; i < end; i++)
         {
+            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
+            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
+            std::fill (prev.begin (), prev.end (), INFINITE_INT);
+
             unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
-            // Get the set of terminal vertices: those with w<dlimit_max but 
+            // Get the set of terminal vertices: those with w < dlimit_max but 
             // with no previous (outward-going) nodes
-            std::set <int> terminal_verts;
-            for (int j: prev)
+            std::unordered_set <int> terminal_verts;
+            for (size_t j = 0; j < nverts; j++)
             {
-                if (j < INFINITE_INT)
+                if (prev [j] == INFINITE_INT && w [j] < dlimit_max)
                 {
-                    size_t sj = static_cast <size_t> (j);
-                    if (prev [sj] == INFINITE_INT && w [sj] < dlimit_max)
-                    {
-                        terminal_verts.emplace (prev [sj]); // # nocov
-                    }
+                    terminal_verts.emplace (static_cast <int> (j));
                 }
             }
 
