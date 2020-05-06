@@ -1,4 +1,10 @@
-#v 0.2.6.00x
+
+#v 0.2.7.00x
+
+#v 0.2.7
+
+Minor changes:
+- UBSAN Bug fix
 
 #v 0.2.6
 
