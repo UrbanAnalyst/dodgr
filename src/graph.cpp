@@ -227,3 +227,63 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
             Rcpp::Named ("edge_id") = edge_id,
             Rcpp::Named ("edge_component") = comp_num);
 }
+
+//' rcpp_unique_rownames
+//'
+//' Construct vertex (from, to) ID values from unique pairs of coordinates
+//' rounded to <precision>. Used when vertices have no ID values.
+//'
+// [[Rcpp::export]]
+Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom,
+                                      Rcpp::DataFrame xyto,
+                                      const int precision = 10)
+{
+            std::vector <double> xf = xyfrom ["x"],
+                                 yf = xyfrom ["y"],
+                                 xt = xyto ["x"],
+                                 yt = xyto ["y"];
+            const int n = xyfrom.nrow ();
+
+            std::vector <std::string> s_f (n), s_t (n);
+            std::vector <std::string> i_f (n), i_t (n); // indices as rownames
+            std::unordered_map <std::string, std::string> xynames;
+            int count = 0;
+            for (int i = 0; i < n; i++)
+            {
+                std::string xfs = std::to_string (xf [i]),
+                            yfs = std::to_string (yf [i]),
+                            xts = std::to_string (xt [i]),
+                            yts = std::to_string (yt [i]);
+                s_f [i] = xfs.substr(0, xfs.find(".") + precision + 1) +
+                    yfs.substr (0, yfs.find(".") + precision + 1);
+                s_t [i] = xts.substr (0, xts.find(".") + precision + 1) +
+                    yts.substr (0, yts.find(".") + precision + 1);
+
+                if (xynames.find (s_f [i]) != xynames.end ())
+                {
+                    i_f [i] = xynames.at (s_f [i]);
+                } else
+                {
+                    i_f [i] = std::to_string (count);
+                    xynames.emplace (s_f [i], i_f [i]);
+                    count++;
+                }
+
+                if (xynames.find (s_t [i]) != xynames.end ())
+                {
+                    i_t [i] = xynames.at (s_t [i]);
+                } else
+                {
+                    i_t [i] = std::to_string (count);
+                    xynames.emplace (s_t [i], i_t [i]);
+                    count++;
+                }
+            }
+
+            Rcpp::DataFrame res = Rcpp::DataFrame::create (
+                    Rcpp::Named ("from_id") = i_f,
+                    Rcpp::Named ("to_id") = i_t,
+                    Rcpp::_["stringsAsFactors"] = false);
+            return res;
+}
+

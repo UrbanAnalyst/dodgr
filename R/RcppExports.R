@@ -239,6 +239,15 @@ rcpp_get_component_vector <- function(graph) {
     .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
+#' rcpp_unique_rownames
+#'
+#' Construct vertex (from, to) ID values from unique pairs of coordinates
+#' rounded to <precision>. Used when vertices have no ID values.
+#'
+rcpp_unique_rownames <- function(xyfrom, xyto, precision = 10L) {
+    .Call(`_dodgr_rcpp_unique_rownames`, xyfrom, xyto, precision)
+}
+
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd

@@ -149,6 +149,9 @@ unsigned int identify_graph_components (vertex_map_t &v,
 
 Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph);
 
+Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom, Rcpp::DataFrame xyto,
+        const int precision);
+
 //----------------------------
 //----- functions in graph-sample.cpp
 //----------------------------

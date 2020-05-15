@@ -359,27 +359,14 @@ get_sf_geom_col <- function (graph)
 
 rownames_from_xy <- function (graph)
 {
-    # Find unique vertices by coorindates along:
-    xy <- data.frame (x = c (graph$from_lon, graph$to_lon),
-                      y = c (graph$from_lat, graph$to_lat))
-    indx <- which (!duplicated (xy))
-    #ids <- seq (indx) - 1 # 0-indexed
-    xy_indx <- xy [indx, ]
-    xy_indx$indx <- seq (nrow (xy_indx))
+    xyf <- data.frame (x = graph$from_lon,
+                       y = graph$from_lat)
+    xyt <- data.frame (x = graph$to_lon,
+                       y = graph$to_lat)
 
-    # Then match coordinates to those unique values and replace IDs. Note
-    # that `merge` does not preserve row order, see:
-    # https://www.r-statistics.com/2012/01/merging-two-data-frame-objects-while-preserving-the-rows-order/
-    xy_from <- data.frame (x = graph$from_lon,
-                           y = graph$from_lat,
-                           ord = seq (nrow (graph)))
-    xy_from <- merge (xy_from, xy_indx) # re-sorts rows
-    graph$from_id <- as.character (xy_from$indx [order (xy_from$ord)])
-    xy_to <- data.frame (x = graph$to_lon,
-                         y = graph$to_lat,
-                         ord = seq (nrow (graph)))
-    xy_to <- merge (xy_to, xy_indx)
-    graph$to_id <- as.character (xy_to$indx [order (xy_to$ord)])
+    ids <- rcpp_unique_rownames (xyf, xyt, precision = 10)
+    graph$from_id = ids$from_id
+    graph$to_id = ids$to_id
 
     return (graph)
 }
