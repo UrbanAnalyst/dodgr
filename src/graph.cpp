@@ -233,6 +233,7 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
 //' Construct vertex (from, to) ID values from unique pairs of coordinates
 //' rounded to <precision>. Used when vertices have no ID values.
 //'
+//' @noRd
 // [[Rcpp::export]]
 Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom,
                                       Rcpp::DataFrame xyto,
