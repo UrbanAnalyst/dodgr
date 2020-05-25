@@ -214,7 +214,7 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
     }
 
     Rcpp::StringVector edge_id (comp_nums.size ());
-    Rcpp::NumericVector comp_num (comp_nums.size ());
+    Rcpp::IntegerVector comp_num (comp_nums.size ());
     unsigned int i = 0;
     for (auto cn: comp_nums)
     {
