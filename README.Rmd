@@ -268,3 +268,64 @@ For more detail, see the [main package
 vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), and the second
 vignette on [street networks and time-based
 routing](https://atfutures.github.io/dodgr/articles/times.html)
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+This project follows the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/mpadge">
+<img src="https://avatars1.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=mpadge">mpadge</a>
+</td>
+<td align="center">
+<a href="https://github.com/karpfen">
+<img src="https://avatars3.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=karpfen">karpfen</a>
+</td>
+<td align="center">
+<a href="https://github.com/Robinlovelace">
+<img src="https://avatars2.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=Robinlovelace">Robinlovelace</a>
+</td>
+<td align="center">
+<a href="https://github.com/agila5">
+<img src="https://avatars1.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=agila5">agila5</a>
+</td>
+<td align="center">
+<a href="https://github.com/JimShady">
+<img src="https://avatars1.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=JimShady">JimShady</a>
+</td>
+<td align="center">
+<a href="https://github.com/layik">
+<img src="https://avatars3.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=layik">layik</a>
+</td>
+<td align="center">
+<a href="https://github.com/virgesmith">
+<img src="https://avatars3.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
+</td>
+</tr>
+
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
