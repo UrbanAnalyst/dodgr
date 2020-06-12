@@ -25,14 +25,14 @@ test_that("flows aggregate", {
 
     flows [1, 2] <- NA
     graph3 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
-    if (test_all)
-        #expect_true (max (graph3$flow) <= max (graph2$flow))
+    #if (test_all)
+    #    expect_true (max (graph3$flow) <= max (graph2$flow))
 
     graph4 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows,
                                      contract = TRUE)
     # this test is not longer true with aggregated flows normalised via #121:
-    if (test_all)
-        #expect_true (all ((graph4$flow - graph3$flow) < 1e-3))
+    #if (test_all)
+    #    expect_true (all ((graph4$flow - graph3$flow) < 1e-3))
 
     expect_warning (graph4 <- dodgr_flows_aggregate (graph3, from = from,
                                                      to = to, flows = flows),
