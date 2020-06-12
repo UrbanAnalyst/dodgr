@@ -1,5 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![R build
+status](https://github.com/atfutures/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check)
 [![Build
 Status](https://travis-ci.org/ATFutures/dodgr.svg)](https://travis-ci.org/ATFutures/dodgr)
 [![AppVeyor Build
@@ -7,6 +9,7 @@ Status](https://ci.appveyor.com/api/projects/status/github/ATFutures/dodgr?branc
 [![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/ATFutures/dodgr)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dodgr)](https://cran.r-project.org/package=dodgr)
 [![CRAN
 Downloads](http://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](https://cran.r-project.org/package=dodgr)
@@ -91,7 +94,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.2.6'
+#> [1] '0.2.7'
 ```
 
 ## Usage: Sample Data and `dodgr` networks
@@ -130,8 +133,8 @@ like this:
 head (graph)
 ```
 
-| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat |   to\_id   |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |
-| --------: | -------: | :--------- | --------: | --------: | :--------: | -------: | -------: | ---------: | ----------: | :----------- | :------- | --------: | --------: | -------------: |
+| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |
+| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | ---------: | ----------: | :----------- | :------- | --------: | --------: | -------------: |
 |         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 |
 |         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 |
 |         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 |
@@ -156,8 +159,8 @@ actual distances. Compare this with:
 head (graph [graph$highway == "path", ])
 ```
 
-|    | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat |   to\_id   |  to\_lon |  to\_lat |        d | d\_weighted | highway | way\_id  | component |     time | time\_weighted |
-| -- | --------: | -------: | :--------- | --------: | --------: | :--------: | -------: | -------: | -------: | ----------: | :------ | :------- | --------: | -------: | -------------: |
+|    | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |        d | d\_weighted | highway | way\_id  | component |     time | time\_weighted |
+| -- | --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | -------: | ----------: | :------ | :------- | --------: | -------: | -------------: |
 | 47 |         2 |       47 | 338905220  |  76.47398 |  15.31224 | 338907543  | 76.47405 | 15.31241 | 19.70399 |    19.70399 | path    | 30643853 |         1 | 35.46718 |       35.46718 |
 | 48 |         2 |       48 | 338907543  |  76.47405 |  15.31241 | 338905220  | 76.47398 | 15.31224 | 19.70399 |    19.70399 | path    | 30643853 |         1 | 35.46718 |       35.46718 |
 | 49 |         2 |       49 | 338907543  |  76.47405 |  15.31241 | 2398957585 | 76.47410 | 15.31259 | 21.39172 |    21.39172 | path    | 30643853 |         1 | 38.50510 |       38.50510 |
@@ -286,14 +289,14 @@ quantifying the aggregate flows along each edge:
 head (f)
 ```
 
-| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat |   to\_id   |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |      flow |
-| --------: | -------: | :--------- | --------: | --------: | :--------: | -------: | -------: | ---------: | ----------: | :----------- | :------- | --------: | --------: | -------------: | --------: |
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0822301 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0000000 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0822301 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0000000 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0822301 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0000000 |
+| geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |     flow |
+| --------: | -------: | :--------- | --------: | --------: | :--------- | -------: | -------: | ---------: | ----------: | :----------- | :------- | --------: | --------: | -------------: | -------: |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.077674 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.000000 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.077674 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.000000 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.077674 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.000000 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
@@ -308,65 +311,91 @@ f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (fro
 For more detail, see the [main package
 vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), and
 the second vignette on [street networks and time-based
-routing](https://atfutures.github.io/dodgr/articles/times.html)
-## Contributors
+routing](https://atfutures.github.io/dodgr/articles/times.html) \#\#
+Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
-This project follows the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+This project follows the [all-contributors](https://allcontributors.org)
+specification. Contributions of any kind are welcome\!
 
 <table>
 
 <tr>
+
 <td align="center">
+
 <a href="https://github.com/mpadge">
 <img src="https://avatars1.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=mpadge">mpadge</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/karpfen">
 <img src="https://avatars3.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=karpfen">karpfen</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/Robinlovelace">
 <img src="https://avatars2.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=Robinlovelace">Robinlovelace</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/agila5">
 <img src="https://avatars1.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=agila5">agila5</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/JimShady">
 <img src="https://avatars1.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=JimShady">JimShady</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/layik">
 <img src="https://avatars3.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=layik">layik</a>
+
 </td>
+
 <td align="center">
+
 <a href="https://github.com/virgesmith">
 <img src="https://avatars3.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
+
 </td>
+
 </tr>
 
 </table>
 
 <!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
 
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
