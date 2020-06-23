@@ -80,13 +80,6 @@ values, and ensures that each edge maintains relative proportions. In the
 above example, flows along each of two edges would equal one, for a network
 sum of two, or greater than the sum of densities.
 
-With \code{norm_sums = TRUE}, the sum of network flows (\code{sum(output$flow)}) should
-equal the sum of origin densities (\code{sum(dens_from)}). This may nevertheless
-not always be the case, because origin points may simply be too far from any
-denstination (\code{to}) points for an exponential model to yield non-zero values
-anywhere in a network within machine tolerance. Such cases may result in sums
-of output flows being less than sums of input densities.
-
 Flows are calculated by default using parallel computation with the maximal
 number of available cores or threads. This number can be reduced by
 specifying a value via
