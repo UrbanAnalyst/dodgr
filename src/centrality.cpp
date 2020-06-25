@@ -192,7 +192,7 @@ void PF::PathFinder::Centrality_vertex (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + edge->dist;
+            double wt = w [v] + edge->wt;
 
             std::vector <unsigned int> vert_vec;
 
@@ -282,7 +282,7 @@ void PF::PathFinder::Centrality_edge (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + edge->dist;
+            double wt = w [v] + edge->wt;
 
             // DGraph has no edge iterator, so edge_vec contains pairwise
             // elements of [from vertex, edge_id]
