@@ -8,6 +8,7 @@ dodgr_centrality(
   graph,
   contract = TRUE,
   edges = TRUE,
+  column = "d_weighted",
   dist_threshold = NULL,
   heap = "BHeap"
 )
@@ -27,6 +28,9 @@ graphs should only be calculated between the latter points, and thus
 the input 'graph' with an additional 'centrality' column; otherwise
 centrality is calculated for vertices, returning the equivalent of
 'dodgr_vertices(graph)', with an additional vertex-based 'centrality' column.}
+
+\item{column}{Column of graph defining the edge properties used to calculate
+centrality (see Note).}
 
 \item{dist_threshold}{If not 'NULL', only calculate centrality for each point
 out to specified threshold. Setting values for this will result in
@@ -48,6 +52,15 @@ Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
 edge-based form.
 }
 \note{
+The \code{column} parameter is by default \code{d_weighted}, meaning centrality
+is calcualted by routing according to weighted distances. Other possible
+values for this parameter are
+\begin{itemize}
+\item \code{d} for unweighted distances
+\item \code{time} for unweighted time-based routing
+\item \code{time_weighted} for weighted time-based routing
+\end{itemize}
+
 Centrality is calculated by default using parallel computation with the
 maximal number of available cores or threads. This number can be reduced by
 specifying a value via

@@ -15,6 +15,8 @@
 #' the input 'graph' with an additional 'centrality' column; otherwise
 #' centrality is calculated for vertices, returning the equivalent of
 #' 'dodgr_vertices(graph)', with an additional vertex-based 'centrality' column.
+#' @param column Column of graph defining the edge properties used to calculate
+#' centrality (see Note).
 #' @param dist_threshold If not 'NULL', only calculate centrality for each point
 #' out to specified threshold. Setting values for this will result in
 #' approximate estimates for centrality, yet with considerable gains in
@@ -26,6 +28,15 @@
 #' Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 #' ('TriHeapExt', and 2-3 Heap ('Heap23').
 #' @return Modified version of graph with additonal 'centrality' column added.
+#'
+#' @note The `column` parameter is by default `d_weighted`, meaning centrality
+#' is calcualted by routing according to weighted distances. Other possible
+#' values for this parameter are
+#' \begin{itemize}
+#' \item `d` for unweighted distances
+#' \item `time` for unweighted time-based routing
+#' \item `time_weighted` for weighted time-based routing
+#' \end{itemize}
 #'
 #' @note Centrality is calculated by default using parallel computation with the
 #' maximal number of available cores or threads. This number can be reduced by
@@ -88,8 +99,13 @@
 #'
 #' @export
 dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
+                              column = "d_weighted",
                               dist_threshold = NULL, heap = "BHeap")
 {
+    column <- match.arg (column, c ("d_weighted",
+                                    "d",
+                                    "time",
+                                    "time_weighted"))
     if ("centrality" %in% names (graph))
         warning ("graph already has a 'centrality' column; ",
                   "this will be overwritten")
@@ -121,6 +137,11 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     vert_map <- make_vert_map (graph, gr_cols)
 
     graph2 <- convert_graph (graph, gr_cols)
+    if (column != "d_weighted") {
+        gr_cols2 <- dodgr_graph_cols (graph2)
+        column <- gr_cols2 [[column]]
+        graph2$d_weighted <- graph2 [[column]]
+    }
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
