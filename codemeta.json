@@ -5,19 +5,19 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "dodgr",
-  "description": "Distances on dual-weighted directed graphs using priority-queue\n    shortest paths (Padgham (2019) <doi:10.32866/6945>). Weighted directed\n    graphs have weights from A to B which may differ from those from B to A.\n    Dual-weighted directed graphs have two sets of such weights. A canonical\n    example is a street network to be used for routing in which routes are\n    calculated by weighting distances according to the type of way and mode of\n    transport, yet lengths of routes must be calculated from direct distances.",
+  "description": "Distances on dual-weighted directed graphs using\n    priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).\n    Weighted directed graphs have weights from A to B which may differ\n    from those from B to A.  Dual-weighted directed graphs have two sets\n    of such weights. A canonical example is a street network to be used\n    for routing in which routes are calculated by weighting distances\n    according to the type of way and mode of transport, yet lengths of\n    routes must be calculated from direct distances.",
   "name": "dodgr: Distances on Directed Graphs",
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.7.4",
+  "version": "0.2.7.5",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.3",
+    "version": "4.0.1",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.3 (2020-02-29)",
+  "runtimePlatform": "R version 4.0.1 (2020-06-06)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -351,18 +351,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "RcppThread",
-      "name": "RcppThread",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=RcppThread"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "https://sysreqs.r-hub.io/get/gnumake"
     },
     {
@@ -412,5 +400,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "388.093KB"
+  "fileSize": "87762.149KB"
 }

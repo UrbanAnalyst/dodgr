@@ -1,23 +1,40 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.7.004
-Authors@R: c(
-    person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
-    person("Andreas", "Petutschnig", role="aut"),
-    person("Robin", "Lovelace", role="ctb"),
-    person("Andrew", "Smith", role="ctb"),
-    person("Malcolm", "Morgan", role="ctb"),
-    person("Shane", "Saunders", role="cph",
-        comment="Original author of included code for priority heaps"))
-Description: Distances on dual-weighted directed graphs using priority-queue
-    shortest paths (Padgham (2019) <doi:10.32866/6945>). Weighted directed
-    graphs have weights from A to B which may differ from those from B to A.
-    Dual-weighted directed graphs have two sets of such weights. A canonical
-    example is a street network to be used for routing in which routes are
-    calculated by weighting distances according to the type of way and mode of
-    transport, yet lengths of routes must be calculated from direct distances.
-Depends: R (>= 3.5.0)
+Version: 0.2.7.005
+Authors@R: 
+    c(person(given = "Mark",
+             family = "Padgham",
+             role = c("aut", "cre"),
+             email = "mark.padgham@email.com"),
+      person(given = "Andreas",
+             family = "Petutschnig",
+             role = "aut"),
+      person(given = "Robin",
+             family = "Lovelace",
+             role = "ctb"),
+      person(given = "Andrew",
+             family = "Smith",
+             role = "ctb"),
+      person(given = "Malcolm",
+             family = "Morgan",
+             role = "ctb"),
+      person(given = "Shane",
+             family = "Saunders",
+             role = "cph",
+             comment = "Original author of included code for priority heaps"))
+Description: Distances on dual-weighted directed graphs using
+    priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).
+    Weighted directed graphs have weights from A to B which may differ
+    from those from B to A.  Dual-weighted directed graphs have two sets
+    of such weights. A canonical example is a street network to be used
+    for routing in which routes are calculated by weighting distances
+    according to the type of way and mode of transport, yet lengths of
+    routes must be calculated from direct distances.
 License: GPL-3
+URL: https://github.com/ATFutures/dodgr
+BugReports: https://github.com/ATFutures/dodgr/issues
+Depends: 
+    R (>= 3.5.0)
 Imports:
     callr,
     digest,
@@ -47,14 +64,11 @@ LinkingTo:
     Rcpp,
     RcppParallel,
     RcppThread
-SystemRequirements:
-    C++11,
-    GNU make
-VignetteBuilder: knitr
-NeedsCompilation: yes
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/ATFutures/dodgr
-BugReports: https://github.com/ATFutures/dodgr/issues
-RoxygenNote: 7.1.0
+NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+SystemRequirements: C++11, GNU make
