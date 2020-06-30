@@ -394,10 +394,9 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     if (length (keep_cols) > 0)
     {
         indx <- match (graph$geom_num, seq (sf_lines$geometry))
-        if (!is.na (keep_cols))
-            for (k in seq (keep_names))
-                graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
-                                                       drop = TRUE]
+        for (k in seq (keep_names))
+            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
+                                                   drop = TRUE]
     }
 
     return (graph)
