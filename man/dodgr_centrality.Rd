@@ -45,7 +45,7 @@ Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 ('TriHeapExt', and 2-3 Heap ('Heap23').}
 }
 \value{
-Modified version of graph with additonal 'centrality' column added.
+Modified version of graph with additional 'centrality' column added.
 }
 \description{
 Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
@@ -53,13 +53,13 @@ edge-based form.
 }
 \note{
 The \code{column} parameter is by default \code{d_weighted}, meaning centrality
-is calcualted by routing according to weighted distances. Other possible
+is calculated by routing according to weighted distances. Other possible
 values for this parameter are
-\begin{itemize}
+\itemize{
 \item \code{d} for unweighted distances
 \item \code{time} for unweighted time-based routing
 \item \code{time_weighted} for weighted time-based routing
-\end{itemize}
+}
 
 Centrality is calculated by default using parallel computation with the
 maximal number of available cores or threads. This number can be reduced by

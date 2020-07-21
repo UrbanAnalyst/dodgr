@@ -27,16 +27,16 @@
 #' Fibonacci Heap (default; 'FHeap'), Binary Heap ('BHeap'),
 #' Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 #' ('TriHeapExt', and 2-3 Heap ('Heap23').
-#' @return Modified version of graph with additonal 'centrality' column added.
+#' @return Modified version of graph with additional 'centrality' column added.
 #'
 #' @note The `column` parameter is by default `d_weighted`, meaning centrality
-#' is calcualted by routing according to weighted distances. Other possible
+#' is calculated by routing according to weighted distances. Other possible
 #' values for this parameter are
-#' \begin{itemize}
+#' \itemize{
 #' \item `d` for unweighted distances
 #' \item `time` for unweighted time-based routing
 #' \item `time_weighted` for weighted time-based routing
-#' \end{itemize}
+#' }
 #'
 #' @note Centrality is calculated by default using parallel computation with the
 #' maximal number of available cores or threads. This number can be reduced by
