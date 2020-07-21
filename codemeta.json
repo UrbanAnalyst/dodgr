@@ -10,14 +10,13 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.7.008",
+  "version": "0.2.7.009",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "4.0.1",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.1 (2020-06-06)",
+  "runtimePlatform": "R version 4.0.2 (2020-06-22)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -403,5 +402,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "87762.149KB"
+  "fileSize": "93497.407KB"
 }
