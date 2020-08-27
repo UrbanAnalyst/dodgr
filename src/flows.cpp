@@ -289,7 +289,7 @@ struct OneDisperse : public RcppParallel::Worker
 
             for (size_t j = 0; j < nverts; j++)
             {
-                if (prev [j] > 0 && prev [j] < INFINITE_INT)
+                if (prev [j] >= 0 && prev [j] < INFINITE_INT)
                 {
                     const std::string vert_to = vert_name [j],
                         vert_from = vert_name [static_cast <size_t> (prev [j])];
