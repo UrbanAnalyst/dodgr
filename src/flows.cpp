@@ -305,7 +305,7 @@ struct OneDisperse : public RcppParallel::Worker
                                 exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
                             else
                             {
-                                // standard logistic polygonial for UK cycling
+                                // standard logistic polygonal for UK cycling
                                 // models
                                 double lp = -3.894 + (-0.5872 * d [j]) +
                                     (1.832 * sqrt (d [j])) +
@@ -458,7 +458,7 @@ struct OneSI : public RcppParallel::Worker
                          * vertex from the origin vertex of:
                          * N_i N_j exp (-d_{ij}) / sum_j (N_{ij} exp (-d_{ij}))
                          * is divided by the number of intermediate edges
-                         * between i and j. This is acheived by initially only
+                         * between i and j. This is achieved by initially only
                          * allocating the values of the numerator divided by
                          * numbers of intermediate edges, while accumulating the
                          * denominator independent of that value in order to
@@ -618,7 +618,7 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 //' logistic polynomial will be used.
 //'
 //' @note The flow data to be used for aggregation is a matrix mapping flows
-//' betwen each pair of from and to points.
+//' between each pair of from and to points.
 //'
 //' @noRd
 // [[Rcpp::export]]
