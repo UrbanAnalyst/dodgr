@@ -1,6 +1,10 @@
 
 #v 0.2.7.00x
 
+Minor changes:
+
+- Bug fix (#142) in `dodgr_flows_disperse()` thanks for @romainFr
+
 #v 0.2.7
 
 Minor changes:
