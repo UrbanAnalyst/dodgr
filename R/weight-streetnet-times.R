@@ -35,8 +35,8 @@ sc_edge_dist <- function (graph)
     # no visible binding notes:
     .vx0_z <- .vx1_z <- NULL
 
-    graph$d <- geodist::geodist (graph [, c (".vx0_x", ".vx0_y")],
-                                 graph [, c (".vx1_x", ".vx1_y")],
+    graph$d <- geodist::geodist (data.frame (graph [, c (".vx0_x", ".vx0_y")]),
+                                 data.frame (graph [, c (".vx1_x", ".vx1_y")]),
                                  paired = TRUE)
     if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph))
         graph <- dplyr::mutate (graph, "dz" = .vx1_z - .vx0_z) %>%
