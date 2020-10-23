@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.7.018",
+  "version": "0.2.7.19",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.2 (2020-06-22)",
+  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -359,10 +359,7 @@
   ],
   "releaseNotes": "https://github.com/ATFutures/dodgr/blob/master/NEWS.md",
   "readme": "https://github.com/ATFutures/dodgr/blob/master/README.md",
-  "contIntegration": [
-    "https://travis-ci.org/ATFutures/dodgr",
-    "https://codecov.io/gh/ATFutures/dodgr"
-  ],
+  "contIntegration": ["https://travis-ci.org/ATFutures/dodgr", "https://codecov.io/gh/ATFutures/dodgr"],
   "developmentStatus": "http://www.repostatus.org/#active",
   "keywords": [
     "distance",
@@ -391,15 +388,12 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "name": "Transport Findings"
         }
       }
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "93516.556KB"
+  "fileSize": "93768.973KB"
 }

@@ -83,7 +83,7 @@ rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, n
 #' logistic polynomial will be used.
 #'
 #' @note The flow data to be used for aggregation is a matrix mapping flows
-#' betwen each pair of from and to points.
+#' between each pair of from and to points.
 #'
 #' @noRd
 rcpp_flows_disperse_par <- function(graph, vert_map_in, fromi, k, dens, tol, heap_type) {
@@ -355,4 +355,3 @@ rcpp_points_index_par <- function(xy, pts) {
 rcpp_route_times <- function(graph, left_side, turn_penalty) {
     .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
-
