@@ -1,7 +1,6 @@
 context("centrality")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 testthat::skip_on_cran ()
 
@@ -27,5 +26,6 @@ test_that("estimate time", {
     graph <- weight_streetnet (hampi)
     expect_message (x <- estimate_centrality_time (graph),
                     "Estimated time to calculate centrality for full graph is")
-    expect_identical (x, "00:00:00")
+    if (test_all)
+        expect_identical (x, "00:00:00")
 })

@@ -1,7 +1,6 @@
 context("fundamental cycles")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 test_that("dodgr_fundamental_cycles", {
               net <- weight_streetnet (hampi)

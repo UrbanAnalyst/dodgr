@@ -1,7 +1,6 @@
 context("cache")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 #library (osmdata)
 #devtools::load_all ("../../ropensci/osmdata", export_all = FALSE)

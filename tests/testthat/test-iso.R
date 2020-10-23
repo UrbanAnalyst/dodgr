@@ -1,7 +1,6 @@
 context("iso")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 if (!test_all)
     RcppParallel::setThreadOptions (numThreads = 2)

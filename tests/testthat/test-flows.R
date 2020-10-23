@@ -1,7 +1,6 @@
 context("dodgr_flows")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 testthat::skip_on_cran ()
 
@@ -162,4 +161,3 @@ test_that ("flowmap", {
     expect_error (graph_undir <- merge_directed_graph (graph),
                   "col_names \\[flow\\] do not match columns in graph")
 })
-

@@ -1,7 +1,6 @@
 context("dodgr_paths")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 test_that("paths", {
     graph <- weight_streetnet (hampi)
