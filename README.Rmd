@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 
 [![R build
 status](https://github.com/atfutures/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check)
-[![Build Status](https://travis-ci.org/ATFutures/dodgr.svg)](https://travis-ci.org/ATFutures/dodgr) 
 [![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/ATFutures/dodgr)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
