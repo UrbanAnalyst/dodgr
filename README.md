@@ -287,19 +287,20 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 Contributors
 ------------
 
+
+## Contributors
+
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-This project uses the [`allcontributor`
-package](https://github.com/mpadge/allcontributor) following the
-[all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+This project uses the [`allcontributors` package](https://github.com/mpadge/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
 
-Code
-----
+## Code
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -344,12 +345,14 @@ Code
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
+
 </table>
 
-Issue Authors
--------------
+
+## Issue Authors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/tbuckl">
@@ -394,12 +397,24 @@ Issue Authors
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
 </tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/dcooley">
+<img src="https://avatars0.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adcooley">dcooley</a>
+</td>
+</tr>
+
 </table>
 
-Issue Contributors
-------------------
+
+## Issue Contributors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -444,6 +459,8 @@ Issue Contributors
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3ASymbolixAU">SymbolixAU</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/coatless">
@@ -488,6 +505,8 @@ Issue Contributors
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Alga455">lga455</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/Maschette">
@@ -502,7 +521,9 @@ Issue Contributors
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aorlando-sabogal">orlando-sabogal</a>
 </td>
 </tr>
+
 </table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
