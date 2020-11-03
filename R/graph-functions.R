@@ -181,9 +181,7 @@ dodgr_vertices <- function (graph)
         hashe <- digest::digest (graph [[gr_cols$edge_id]])
         if (hashe != hashe_ref)
             hash <- hashe
-    }
-
-    if (is.null (hash))
+    } else
     {
         if (is.na (gr_cols$edge_id))
             hash <- "" # nocov
@@ -238,7 +236,7 @@ dodgr_vertices_internal <- function (graph)
     }
 
     # The next line is the time-killer here, which is why this is cached
-    indx <- which (!duplicated (verts))
+    indx <- which (!duplicated (verts$id))
     verts <- verts [indx, , drop = FALSE] #nolint
     verts$n <- seq (nrow (verts)) - 1
 
