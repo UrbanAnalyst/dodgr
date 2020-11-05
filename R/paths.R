@@ -98,7 +98,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
         if (length (from_index) != length (to_index))
             stop ("pairwise paths require from and to to have same length")
         paths <- list ()
-        for (i in seq (from_index))
+        for (i in seq_along (from_index))
         {
             paths [[i]] <- rcpp_get_paths (graph, vert_map,
                                            from_index [i], to_index [i],
