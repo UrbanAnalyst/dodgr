@@ -86,7 +86,7 @@ Then load with
 
     library (dodgr)
     packageVersion ("dodgr")
-    #> [1] '0.2.7'
+    #> [1] '0.2.7.23'
 
 Usage: Sample Data and `dodgr` networks
 ---------------------------------------
@@ -263,12 +263,12 @@ quantifying the aggregate flows along each edge:
 
 | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |      flow |
 |----------:|---------:|:-----------|----------:|----------:|:-----------|---------:|---------:|-----------:|------------:|:-------------|:---------|----------:|----------:|---------------:|----------:|
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0000000 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.2094537 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0000000 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.2094537 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0000000 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.2094537 |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.1072045 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0000000 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.1072045 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0000000 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.1072045 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0000000 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
@@ -287,20 +287,19 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 Contributors
 ------------
 
-
-## Contributors
-
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-This project uses the [`allcontributors` package](https://github.com/mpadge/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+This project uses the [`allcontributors`
+package](https://github.com/ropenscilabs/allcontributors) following the
+[all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
-## Code
+Code
+----
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -345,14 +344,12 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
-
 </table>
 
-
-## Issue Authors
+Issue Authors
+-------------
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/tbuckl">
@@ -397,8 +394,6 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/dcooley">
@@ -407,14 +402,12 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adcooley">dcooley</a>
 </td>
 </tr>
-
 </table>
 
-
-## Issue Contributors
+Issue Contributors
+------------------
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -459,8 +452,6 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3ASymbolixAU">SymbolixAU</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/coatless">
@@ -505,8 +496,6 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Alga455">lga455</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/Maschette">
@@ -521,9 +510,7 @@ This project uses the [`allcontributors` package](https://github.com/mpadge/allc
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aorlando-sabogal">orlando-sabogal</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->

@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.7.025",
+  "version": "0.2.7.26",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -388,15 +388,12 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "name": "Transport Findings"
         }
       }
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "7663.641KB"
+  "fileSize": "8546.029KB"
 }
