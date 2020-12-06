@@ -152,9 +152,6 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
         vertex_id_t vtx_id = vertex_map.find (*vid)->first;
         vertex_t vtx = vertex_map.find (*vid)->second;
         std::unordered_set <edge_id_t> edges = vert2edge_map [vtx_id];
-        std::unordered_map <edge_id_t, bool> edges_done;
-        for (auto e: edges)
-            edges_done.emplace (e, false);
 
         new_edge_ids.clear ();
         new_edge_ids.push_back ("a" + std::to_string (maxid++));
