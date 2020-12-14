@@ -190,7 +190,7 @@ dodgr_vertices <- function (graph)
     }
 
     fname <- file.path (tempdir (), paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (file.exists (fname))
+    if (hash != "" & file.exists (fname))
         verts <- readRDS (fname)
     else
     {
