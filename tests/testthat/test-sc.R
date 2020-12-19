@@ -30,8 +30,8 @@ test_that("SC", {
 
               class (hsc) <- class (hsc) [!class (hsc) %in% "osmdata_sc"]
               expect_error (net_sc <- weight_streetnet (hsc),
-                            paste0 ("weight_streetnet currently only works for ",
-                                    "'sc'-class objects extracted with"))
+                            paste0 ("weight_streetnet currently only works ",
+                                    "for 'sc'-class objects extracted with"))
 
               expect_silent (hsc <- sf_to_sc (hampi))
               expect_silent (net_sc2 <- weight_streetnet (hsc,
@@ -41,12 +41,14 @@ test_that("SC", {
               net_sc2 <- dodgr_components (net_sc2)
               expect_silent (v0 <- dodgr_vertices (net_sc2))
               # force re-cache by re-generating edge IDs:
-              net_sc2$edge_ <- paste0 (seq (nrow (net_sc2)) [order (runif (nrow (net_sc2)))])
+              net_sc2$edge_ <-
+                  paste0 (seq (nrow (net_sc2)) [order (runif (nrow (net_sc2)))])
               net_sc2$.vx0 <- as.factor (net_sc2$.vx0)
               expect_silent (v1 <- dodgr_vertices (net_sc2)) # should still work
 
               # force re-cache by re-generating edge IDs:
-              net_sc2$edge_ <- paste0 (seq (nrow (net_sc2)) [order (runif (nrow (net_sc2)))])
+              net_sc2$edge_ <-
+                  paste0 (seq (nrow (net_sc2)) [order (runif (nrow (net_sc2)))])
               net_sc2$.vx0 <- as.character (net_sc2$.vx0)
               net_sc2$.vx1 <- as.factor (net_sc2$.vx1)
               expect_silent (v2 <- dodgr_vertices (net_sc2)) # should still work
@@ -54,11 +56,16 @@ test_that("SC", {
               net_sc3 <- weight_streetnet (hsc, wt_profile = "bicycle")
               net_sc3 <- dodgr_components (net_sc3)
               # force re-cache by re-generating edge IDs:
-              net_sc3$edge_ <- paste0 (seq (nrow (net_sc3)) [order (runif (nrow (net_sc3)))])
+              net_sc3$edge_ <-
+                  paste0 (seq (nrow (net_sc3)) [order (runif (nrow (net_sc3)))])
               expect_silent (v0 <- dodgr_vertices (net_sc3))
               expect_true (all (c ("x", "y") %in% names (v0)))
-              net_sc3$edge_ <- paste0 (seq (nrow (net_sc3)) [order (runif (nrow (net_sc3)))])
-              net_sc3$.vx0_x <- net_sc3$.vx0_y <- net_sc3$.vx1_x <- net_sc3$.vx1_y <- NULL
+              net_sc3$edge_ <-
+                  paste0 (seq (nrow (net_sc3)) [order (runif (nrow (net_sc3)))])
+              net_sc3$.vx0_x <-
+                  net_sc3$.vx0_y <-
+                  net_sc3$.vx1_x <-
+                  net_sc3$.vx1_y <- NULL
               expect_silent (v1 <- dodgr_vertices (net_sc3))
               expect_false (all (c ("x", "y") %in% names (v1)))
               expect_identical (v0$id, v1$id)
@@ -84,7 +91,8 @@ test_that ("traffic light nodes", {
                                         key = "highway",
                                         value = "traffic_signals")
                expect_silent (net_sc1 <- weight_streetnet (hsc))
-               # This has no effect here, because the edges must also be flagged with same key-val pair
+               # This has no effect here, because the edges must also be flagged
+               # with same key-val pair
 
                expect_identical (net_sc0$d, net_sc1$d)
                expect_identical (net_sc0$d_weighted, net_sc1$d_weighted)
@@ -112,7 +120,8 @@ test_that ("elevation", {
 
 test_that("contract with turn angles", {
               expect_silent (hsc <- sf_to_sc (hampi))
-              expect_silent (graph <- weight_streetnet (hsc, wt_profile = "bicycle"))
+              expect_silent (graph <- weight_streetnet (hsc,
+                                                        wt_profile = "bicycle"))
               expect_silent (graph_c <- dodgr_contract_graph (graph))
               expect_silent (v <- dodgr_vertices (graph_c))
               n <- 100
@@ -154,9 +163,10 @@ test_that("contract with turn angles", {
               # expect_identical (range (graphf$flow), range (graphtf$flow))
               # TODO: Implement a better alternative
 
-              expect_silent (graphtf <- dodgr_flows_disperse (grapht_c,
-                                                              from = pts,
-                                                              dens = rep (1, n)))
+              expect_silent (graphtf <-
+                  dodgr_flows_disperse (grapht_c,
+                                        from = pts,
+                                        dens = rep (1, n)))
 
 })
 
@@ -177,7 +187,8 @@ test_that("dodgr_times", {
 
               # calculate times with turning angles, such that resultant network
               # includes compound junction edges
-              expect_silent (net_sc2 <- weight_streetnet (hsc, turn_penalty = TRUE))
+              expect_silent (net_sc2 <- weight_streetnet (hsc,
+                                                          turn_penalty = TRUE))
               expect_true (nrow (net_sc2) > nrow (net_sc))
               from <- remap_verts_with_turn_penalty (net_sc2, from, from = TRUE)
               to <- remap_verts_with_turn_penalty (net_sc2, to, from = FALSE)

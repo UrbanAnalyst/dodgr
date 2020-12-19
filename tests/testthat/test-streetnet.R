@@ -78,12 +78,14 @@ test_that ("streetnet column names", {
     h <- hampi
     h$osm_id <- NULL
     expect_message (graph <- weight_streetnet (h),
-                    "x appears to have no ID column; sequential edge numbers will be used")
+                    paste0 ("x appears to have no ID column; ",
+                            "sequential edge numbers will be used"))
     expect_true ("way_id" %in% names (graph))
 
     names (h$geometry) <- NULL
     expect_message (graph <- weight_streetnet (h),
-                    "x appears to have no ID column; sequential edge numbers will be used")
+                    paste0 ("x appears to have no ID column; ",
+                            "sequential edge numbers will be used"))
     expect_true ("way_id" %in% names (graph))
 
     h <- hampi
@@ -168,10 +170,11 @@ test_that ("hash generation", {
 })
 
 test_that ("streetnet times", {
-               expect_error (graph <- weight_streetnet (hampi, turn_penalty = TRUE),
-                             paste0 ("Turn-penalty calculations only currently ",
-                                     "implemented for street network data ",
-                                     "generated with"))
+               expect_error (graph <- weight_streetnet (hampi,
+                                                        turn_penalty = TRUE),
+                         paste0 ("Turn-penalty calculations only currently ",
+                                 "implemented for street network data ",
+                                 "generated with"))
                expect_silent (graph <- weight_streetnet (hampi))
                h <- hampi
                names (h) [names (h) == "osm_id"] <- "id"

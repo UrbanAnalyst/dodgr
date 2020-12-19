@@ -112,7 +112,7 @@ test_that("uncontract graph", {
 
     graph_c$edge_id <- seq (nrow (graph_c))
     expect_error (graph2 <- dodgr_uncontract_graph (graph_c),
-                  "Unable to uncontract this graph because the rows have been changed")
+          "Unable to uncontract this graph because the rows have been changed")
 })
 
 test_that("compare heaps", {
@@ -265,7 +265,8 @@ test_that ("points to graph", {
     pts <- data.frame (x = x, y = y)
     net <- weight_streetnet (hampi)
     expect_message (index1 <- match_pts_to_graph (net, pts),
-                    "First argument to match_pts_to_graph should be result of dodgr_vertices")
+        paste0 ("First argument to match_pts_to_graph should ",
+                "be result of dodgr_vertices"))
 
     v <- dodgr_vertices (net)
     expect_silent (index2 <- match_pts_to_graph (v, pts))

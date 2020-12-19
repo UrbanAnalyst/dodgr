@@ -268,10 +268,22 @@ test_that("heaps", {
     dodgr_dists(graph, from = from, to = to, heap = "wrong heap"),
     "'arg' should be one of"
   )
-  expect_silent(d0 <- dodgr_dists(graph, from = from, to = to, heap = "BHeap"))
-  expect_silent(d1 <- dodgr_dists(graph, from = from, to = to, heap = "FHeap"))
-  expect_silent(d3 <- dodgr_dists(graph, from = from, to = to, heap = "TriHeap"))
-  expect_silent(d4 <- dodgr_dists(graph, from = from, to = to, heap = "TriHeapExt"))
+  expect_silent(d0 <- dodgr_dists(graph,
+                                  from = from,
+                                  to = to,
+                                  heap = "BHeap"))
+  expect_silent(d1 <- dodgr_dists(graph,
+                                  from = from,
+                                  to = to,
+                                  heap = "FHeap"))
+  expect_silent(d3 <- dodgr_dists(graph,
+                                  from = from,
+                                  to = to,
+                                  heap = "TriHeap"))
+  expect_silent(d4 <- dodgr_dists(graph,
+                                  from = from,
+                                  to = to,
+                                  heap = "TriHeapExt"))
   # This is a compound message that starts "Calculating shortest paths ..."
   # and then "Extended TriHeaps can not be calculated in parallel
   # That can't be tested, so just generic expect_message here
@@ -281,7 +293,11 @@ test_that("heaps", {
   ))
   expect_silent(d5 <- dodgr_dists(graph, from = from, to = to, heap = "Heap23"))
 
-  d4 <- dodgr_dists(graph, from = from, to = to, heap = "TriHeapExt", quiet = FALSE)
+  d4 <- dodgr_dists(graph,
+                    from = from,
+                    to = to,
+                    heap = "TriHeapExt",
+                    quiet = FALSE)
 
   expect_identical(d0, d1)
   expect_identical(d0, d3)

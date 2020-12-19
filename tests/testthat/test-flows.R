@@ -14,7 +14,7 @@ test_that("flows aggregate", {
     flows <- matrix (10 * runif (length (from) * length (to)),
                      nrow = length (from))
 
-    expect_message (graph2 <- dodgr_flows_aggregate (graph, from = from, 
+    expect_message (graph2 <- dodgr_flows_aggregate (graph, from = from,
                                                      to = to, flows = flows,
                                                      quiet = FALSE),
                     "Aggregating flows ...")
@@ -35,10 +35,13 @@ test_that("flows aggregate", {
 
     expect_warning (graph4 <- dodgr_flows_aggregate (graph3, from = from,
                                                      to = to, flows = flows),
-                    "graph already has a 'flow' column; this will be overwritten")
+                "graph already has a 'flow' column; this will be overwritten")
 
     flowsv <- as.vector (flows)
-    graph5 <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flowsv)
+    graph5 <- dodgr_flows_aggregate (graph,
+                                     from = from,
+                                     to = to,
+                                     flows = flowsv)
     expect_equal (graph5$flow, graph4$flow)
 })
 
@@ -83,8 +86,10 @@ test_that ("flows disperse", {
     expect_true (all (c ("flow1", "flow2") %in% names (graph3b)))
     expect_equal (graph3a$flow, graph3b$flow1)
 
-    expect_silent (graph4 <- dodgr_flows_disperse (graph, from = from,
-                                                   dens = dens, contract = TRUE))
+    expect_silent (graph4 <- dodgr_flows_disperse (graph,
+                                                   from = from,
+                                                   dens = dens,
+                                                   contract = TRUE))
     # Dispersed flows calculated on contracted graph should **NOT** equal those
     # calculated on full graph
     if (test_all) # fails on CRAN
@@ -124,8 +129,12 @@ test_that ("flows_si", {
 
 
                # calculation via flows_si:
-               netf_si <- dodgr_flows_si (graph, from = from, to = to, k = k,
-                                          dens_from = dens_from, dens_to = dens_to)
+               netf_si <- dodgr_flows_si (graph,
+                                          from = from,
+                                          to = to,
+                                          k = k,
+                                          dens_from = dens_from,
+                                          dens_to = dens_to)
                expect_identical (dim (netf), dim (netf_si))
                expect_identical (names (netf), names (netf_si))
                r2 <- cor (netf$flow, netf_si$flow) ^ 2

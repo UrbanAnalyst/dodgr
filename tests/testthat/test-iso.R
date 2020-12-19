@@ -66,10 +66,14 @@ test_that ("errors", {
                             "Only one of dlim or tlim can be provided")
 
               net <- weight_streetnet (hampi)
-              expect_error (d <- dodgr_isochrones (net, from = from, tlim = 500),
-                            "isochrones can only be calculated from SC-class networks")
-              expect_error (d <- dodgr_isoverts (net, from = from, tlim = 500),
-                            "isoverts can only be calculated from SC-class networks")
+              expect_error (d <- dodgr_isochrones (net,
+                                                   from = from,
+                                                   tlim = 500),
+                    "isochrones can only be calculated from SC-class networks")
+              expect_error (d <- dodgr_isoverts (net,
+                                                 from = from,
+                                                 tlim = 500),
+                    "isoverts can only be calculated from SC-class networks")
              })
 
 test_that("isochrones", {
@@ -108,7 +112,9 @@ test_that("isoverts", {
               expect_true (nrow (d) > nrow (dd))
 
               tlim <- c (60, 120, 300)
-              expect_silent (v <- dodgr_isoverts (net, from = from, tlim = tlim))
+              expect_silent (v <- dodgr_isoverts (net,
+                                                  from = from,
+                                                  tlim = tlim))
               expect_true ("tlim" %in% names (v))
               expect_true ("dlim" %in% names (d))
               expect_true (all (paste0 (tlim) %in% unique (v$tlim)))

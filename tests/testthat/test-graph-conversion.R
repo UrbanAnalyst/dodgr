@@ -9,12 +9,13 @@ test_that("igraph", {
     expect_true (!identical (graph, graph2))
     expect_equal (nrow (graph), nrow (graph2))
 
-    expect_error (graph_i <- dodgr_to_igraph (graph, weight_column = "does_not_exist"),
+    expect_error (graph_i <- dodgr_to_igraph (graph,
+                                  weight_column = "does_not_exist"),
                   "graph contains no column named 'does_not_exist'")
 
     graph$from_id <- graph$to_id <- NULL
     expect_error (graph_i <- dodgr_to_igraph (graph),
-                  "Some vertex names in edge list are not listed in vertex data frame")
+          "Some vertex names in edge list are not listed in vertex data frame")
 })
 
 test_that("tidyraph", {

@@ -24,7 +24,7 @@ test_that ("local wt_profile", {
 
         w <- dodgr::weighting_profiles
         w$weighting_profiles$max_speed [w$weighting_profiles$name == "foot" &
-                                        w$weighting_profiles$max_speed == 5] <- 8
+                                    w$weighting_profiles$max_speed == 5] <- 8
 
         f <- paste0 (tools::file_path_sans_ext (f), ".json")
         con <- file (f, open = "wt")

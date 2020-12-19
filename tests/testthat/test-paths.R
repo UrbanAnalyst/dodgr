@@ -7,7 +7,10 @@ test_that("paths", {
     from <- graph$from_id [1:100]
     to <- graph$to_id [100:150]
     to <- to [!to %in% from]
-    expect_message (dp <- dodgr_paths (graph, from = from, to = to, quiet = FALSE),
+    expect_message (dp <- dodgr_paths (graph,
+                                       from = from,
+                                       to = to,
+                                       quiet = FALSE),
                     "Calculating shortest paths ...")
     expect_is (dp, "list")
     expect_equal (length (dp), 100)
