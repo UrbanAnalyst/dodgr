@@ -264,10 +264,10 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                         index <- which (edge_map$edge_new %in% j)
                         edges <- edge_map$edge_old [index]
                         j <- match (edges, graph [[gr_cols$edge_id]])
-                        if ( (graph [[gr_cols$from]] [j [1] ] ==
+                        if ( (graph [[gr_cols$from]] [j [1] ] ==                # nolint
                               graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
-                             (graph [[gr_cols$from]] [j [1] ] ==
-                              graph [[gr_cols$to]] [j [2] ]))
+                             (graph [[gr_cols$from]] [j [1] ] ==                # nolint
+                              graph [[gr_cols$to]] [j [2] ]))                   # nolint
                             j <- rev (j)
                     } else
                         j <- match (j, graph [[gr_cols$edge_id]])
@@ -279,7 +279,7 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     # converted to a sequence of vertex IDs, through just adding the last vertex
     # of the sequence on to close the polygon
     res <- lapply (ids, function (i)
-                   graph [c (i, i [1]), gr_cols$from, drop = TRUE] )
+                   graph [c (i, i [1]), gr_cols$from, drop = TRUE])
 
     if (is_graph_spatial (graph))
     {
