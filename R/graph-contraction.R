@@ -136,13 +136,13 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
     {
         spcols <- find_spatial_cols (graph)$fr_col
         indx <- match (graph_contracted$graph$from [indx_contr], graph2$from)
-        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]
-        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]
+        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]   # nolint
+        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]   # nolint
 
         spcols <- find_spatial_cols (graph)$to_col
         indx <- match (graph_contracted$graph$to [indx_contr], graph2$to)
-        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]
-        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]
+        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]   # nolint
+        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]   # nolint
         # This code matches way_id values to those in original graph, but that's
         # kind of arbitrary because with duplicated ways the ID matching can
         # never be systematically controlled
