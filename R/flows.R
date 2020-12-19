@@ -78,8 +78,9 @@
 #' library (mapview)
 #' flow <- gsf$flow / max (gsf$flow)
 #' ncols <- 30
-#' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * flow)]
-#' mapview (gsf, color = cols, lwd = 10 * flow)
+#' cols <- c ("lawngreen", "red")
+#' colranmp <- colorRampPalette (cols) (ncols) [ceiling (ncols * flow)]
+#' mapview (gsf, color = colranmp, lwd = 10 * flow)
 #' }
 #'
 #' # An example of flow aggregation across a generic (non-OSM) highway,
@@ -415,7 +416,7 @@ prepare_graph <- function (graph, from, to)
     from <- nodes_arg_to_pts (from, graph)
     if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
         from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-    from <- from [from %in% graph [[gr_cols$from]] ]
+    from <- from [from %in% graph [[gr_cols$from]] ] # nolint
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
 
@@ -426,7 +427,7 @@ prepare_graph <- function (graph, from, to)
         to <- nodes_arg_to_pts (to, graph)
         if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
             to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
-        to <- to [to %in% graph [[gr_cols$to]] ]
+        to <- to [to %in% graph [[gr_cols$to]] ] # nolint
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
         to_index <- index_id$index - 1 # 0-based
     }
