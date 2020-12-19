@@ -177,14 +177,25 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 
     if (parallel) {
         if (pairwise)
-            d <- rcpp_get_sp_dists_paired_par (graph, vert_map, from_index$index,
-                                               to_index$index, heap, is_spatial)
+            d <- rcpp_get_sp_dists_paired_par (graph,
+                                               vert_map,
+                                               from_index$index,
+                                               to_index$index,
+                                               heap,
+                                               is_spatial)
         else
-            d <- rcpp_get_sp_dists_par (graph, vert_map, from_index$index,
-                                        to_index$index, heap, is_spatial)
+            d <- rcpp_get_sp_dists_par (graph,
+                                        vert_map,
+                                        from_index$index,
+                                        to_index$index,
+                                        heap,
+                                        is_spatial)
     } else
-        d <- rcpp_get_sp_dists (graph, vert_map, from_index$index,
-                                to_index$index, heap)
+        d <- rcpp_get_sp_dists (graph,
+                                vert_map,
+                                from_index$index,
+                                to_index$index,
+                                heap)
 
     if (!pairwise) {
         if (!is.null (from_index$id))
