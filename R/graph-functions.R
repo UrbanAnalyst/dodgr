@@ -65,7 +65,7 @@ dodgr_graph_cols <- function (graph)
         } else
         {
             if (length (fr_col) != 1 & length (to_col) != 1)
-                stop ("Unable to determine from and to columns in graph") # nocov
+                stop ("Unable to determine from and to columns in graph") # nolint # nocov
         }
     }
 
