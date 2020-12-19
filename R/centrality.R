@@ -230,7 +230,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
         ss <- sum (mod$residuals ^ 2) / sum (g_old$centrality ^ 2)
         message ("d = ", round (d), "; error = ",
                  formatC (ss, format = "f", digits = 4))
-        g_old <- d
+        g_old <- g
 
         if (d > dmax)
         {
