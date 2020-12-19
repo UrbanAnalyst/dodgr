@@ -66,7 +66,8 @@
 #' library (mapview)
 #' centrality <- graph_sf$centrality / max (graph_sf$centrality)
 #' ncols <- 30
-#' cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * centrality)]
+#' cols <- c ("lawngreen", "red")
+#' cols <- colorRampPalette (cols) (ncols) [ceiling (ncols * centrality)]
 #' mapview (graph_sf, color = cols, lwd = 10 * centrality)
 #' }
 #'
@@ -145,7 +146,12 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
-    centrality <- rcpp_centrality (graph2, vert_map, heap, dist_threshold, edges, 0)
+    centrality <- rcpp_centrality (graph2,
+                                   vert_map,
+                                   heap,
+                                   dist_threshold,
+                                   edges,
+                                   0)
 
     # attach result to edge or vertex objects:
     if (edges)
@@ -284,14 +290,12 @@ estimate_centrality_time <- function (graph, contract = TRUE, edges = TRUE,
         contract <- FALSE
     if (contract & !methods::is (graph, "dodgr_contracted"))
     {
-        graph_full <- graph
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
         fname_c <- file.path (tempdir (),
                               paste0 ("dodgr_edge_map_", hashc, ".Rds"))
         if (!file.exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
-        edge_map <- readRDS (fname_c)
     }
 
     vert_map <- make_vert_map (graph, gr_cols)
