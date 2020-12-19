@@ -206,7 +206,6 @@ dodgr_vertices_internal <- function (graph)
     graph <- tbl_to_df (graph)
 
     gr_cols <- dodgr_graph_cols (graph)
-    nms <- names (gr_cols)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     # NOTE: c (x, y), where x and y are both factors gives junk, so explicit
     # conversion required here: TODO: Find a better way?
