@@ -42,7 +42,7 @@
 #'
 #' @name dodgr
 #' @docType package
-#' @importFrom graphics plot 
+#' @importFrom graphics plot
 #' @importFrom grDevices colorRampPalette
 #' @importFrom magrittr %>%
 #' @importFrom methods is
@@ -78,7 +78,7 @@ NULL
 #' @format A Simple Features `sf` `data.frame` containing the street
 #' network of Hampi.
 #'
-#' @note Can be re-created with the following command, which also removes 
+#' @note Can be re-created with the following command, which also removes
 #' extraneous columns to reduce size:
 #' @examples \dontrun{
 #' hampi <- dodgr_streetnet("hampi india")
@@ -99,7 +99,7 @@ NULL
 #' @format A Simple Features `sf` `data.frame` representing
 #' motorways in Bristol, UK.
 #'
-#' @note Input data downloaded from 
+#' @note Input data downloaded from
 #' <https://www.ordnancesurvey.co.uk/opendatadownload/products.html>.
 #' To download the data from that page click on the tick box next to
 #' 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
@@ -107,18 +107,20 @@ NULL
 #' This dataset is open access and can be used under the
 #' \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License} and must be cited as follows:
 #' Contains OS data © Crown copyright and database right (2017)
-#'  
+#'
 #' @examples \dontrun{
 #' library(sf)
 #' library(dplyr)
-#' # os_roads <- sf::read_sf("~/data/ST_RoadLink.shp") # data must be unzipped here
+#' # data must be unzipped here
+#' # os_roads <- sf::read_sf("~/data/ST_RoadLink.shp")
 #' # u <- "https://opendata.arcgis.com/datasets/686603e943f948acaa13fb5d2b0f1275_4.kml"
 #' # lads <- sf::read_sf(u)
 #' # mapview::mapview(lads)
 #' # bristol_pol <- dplyr::filter(lads, grepl("Bristol", lad16nm))
-#' # os_roads <- st_transform(os_roads, st_crs(lads))
-#' # os_roads_bristol <- os_roads[bristol_pol, ] %>% 
-#' #   dplyr::filter(class == "Motorway" & roadNumber != "M32") %>% 
+#' # os_roads <- st_transform(os_roads, st_crs(lads)
+#' # os_roads_bristol <- os_roads[bristol_pol, ] %>%
+#' #   dplyr::filter(class == "Motorway" &
+#'                   roadNumber != "M32") %>%
 #' #   st_zm(drop = TRUE)
 #' # mapview::mapview(os_roads_bristol)
 #' }
