@@ -109,7 +109,7 @@ dodgr_dists <- function (graph,
                          to = NULL,
                          shortest = TRUE,
                          pairwise = FALSE,
-                         heap = 'BHeap',
+                         heap = "BHeap",
                          parallel = TRUE,
                          quiet = TRUE) {
 
@@ -226,7 +226,7 @@ dodgr_distances <- function (graph,
                              to = NULL,
                              shortest = TRUE,
                              pairwise = FALSE,
-                             heap = 'BHeap',
+                             heap = "BHeap",
                              parallel = TRUE,
                              quiet = TRUE) {
 
@@ -314,8 +314,7 @@ get_to_from_index <- function (graph,
 get_id_cols <- function (pts) {
 
     ids <- NULL
-    if (any (grepl ("id", colnames (pts), ignore.case = TRUE)))
-    {
+    if (any (grepl ("id", colnames (pts), ignore.case = TRUE))) {
         nmc <- which (grepl ("id", colnames (pts)))
         if (methods::is (pts, "data.frame"))
             ids <- pts [[nmc]]
