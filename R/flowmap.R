@@ -26,8 +26,8 @@
 #' \dontrun{
 #' dodgr_flowmap (graph_undir)
 #' }
-dodgr_flowmap <- function (net, bbox = NULL, linescale = 1)
-{
+dodgr_flowmap <- function (net, bbox = NULL, linescale = 1) {
+
     if (!"flow" %in% names (net))
         net$flow <- 1
     if (is.null (bbox))
