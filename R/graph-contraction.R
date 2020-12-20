@@ -195,8 +195,8 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
 #' graph3 <- dodgr_uncontract_graph (graph1)
 #' # graph3 is then the uncontracted graph which includes "new_col" as well
 #' dim (graph0); dim (graph3)
-dodgr_uncontract_graph <- function (graph)
-{
+dodgr_uncontract_graph <- function (graph) {
+
     px <- NULL
     if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px") # processx R6 object
