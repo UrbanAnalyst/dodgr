@@ -54,7 +54,7 @@ merge_directed_graph <- function (graph, col_names = c ("flow"))
     index <- which (rowSums (res) > 0)
     graph <- graph [index, , drop = FALSE] #nolint
     for (i in seq (col_names))
-        graph [[col_names [i] ]] <- res [index, i]
+        graph [[col_names [i] ]] <- res [index, i] # nolint
     class (graph) <- c (class (graph), "dodgr_merged")
 
     attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
