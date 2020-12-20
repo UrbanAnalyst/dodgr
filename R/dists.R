@@ -129,18 +129,9 @@ dodgr_dists <- function (graph,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
-        if (!is.null (from)) {
-            from <- nodes_arg_to_pts (from, graph)
-            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-        }
-        if (!is.null (to)) {
-            to <- nodes_arg_to_pts (to, graph)
-            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
-        }
-    }
+    # adjust to/from for turn penalty where that exists:
+    from <- to_from_with_tp (graph, from, from = TRUE)
+    to <- to_from_with_tp (graph, to, from = FALSE)
 
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
@@ -500,4 +491,19 @@ flip_graph <- function (graph) {
     graph [[grcols$to]] <- fr_temp
 
     return (graph)
+}
+
+to_from_with_tp <- function (graph, to_from, from = TRUE) {
+
+    tp <- attr (graph, "turn_penalty")
+    tp <- ifelse (is.null (tp), 0, tp)
+
+    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
+        if (!is.null (to_from)) {
+            to_from <- nodes_arg_to_pts (to_from, graph)
+            to_from <- remap_verts_with_turn_penalty (graph, to_from, from = from)
+        }
+    }
+
+    return (to_from)
 }
