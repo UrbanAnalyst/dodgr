@@ -211,7 +211,7 @@ dodgr_flows_disperse <- function (graph,
                                   dens,
                                   k = 500,
                                   contract = FALSE,
-                                  heap = 'BHeap',
+                                  heap = "BHeap",
                                   tol = 1e-12,
                                   quiet = TRUE) {
 
