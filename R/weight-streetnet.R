@@ -129,7 +129,7 @@ way_types_to_keep <- c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
                        "lanes", "maxspeed")
 
 # ********************************************************************
-# *************************     sf class     ************************* 
+# *************************     sf class     *************************
 # ********************************************************************
 
 #' @name weight_streetnet
@@ -365,8 +365,8 @@ rownames_from_xy <- function (graph)
                        y = graph$to_lat)
 
     ids <- rcpp_unique_rownames (xyf, xyt, precision = 10)
-    graph$from_id = ids$from_id
-    graph$to_id = ids$to_id
+    graph$from_id <- ids$from_id
+    graph$to_id <- ids$to_id
 
     return (graph)
 }
@@ -395,7 +395,7 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     {
         indx <- match (graph$geom_num, seq (sf_lines$geometry))
         for (k in seq (keep_names))
-            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k],
+            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k], # nolint
                                                    drop = TRUE]
     }
 
@@ -443,7 +443,7 @@ add_extra_sf_columns <- function (graph, x)
 }
 
 # ********************************************************************
-# *************************     sc class     ************************* 
+# *************************     sc class     *************************
 # ********************************************************************
 #
 # most functions are defined in weight-streetnet-times.R
@@ -468,7 +468,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         extract_sc_edges_highways (x,
                                    wt_profile,
                                    wt_profile_file,
-                                   c (way_types_to_keep, keep_cols)) %>% # hw key-val pairs
+                                   c (way_types_to_keep,
+                                      keep_cols)) %>% # hw key-val pairs
         weight_sc_edges (wt_profile,
                          wt_profile_file) %>%           # add d_weighted col
         set_maxspeed (wt_profile,
