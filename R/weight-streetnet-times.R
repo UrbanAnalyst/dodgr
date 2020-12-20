@@ -1,25 +1,24 @@
 # definitions used in weight_streetnet.sc, including functions for time-based
 # network weighting.
 
-has_elevation <- function (x)
-{
+has_elevation <- function (x) {
+
     "z_" %in% names (x$vertex)
 }
 
-check_sc <- function (x)
-{
+check_sc <- function (x) {
+
     if (!"osmdata_sc" %in% class (x))
         stop ("weight_streetnet currently only works for 'sc'-class objects ",
               "extracted with osmdata::osmdata_sc.")
 }
 
 # First step of edge extraction: join x and y coordinates
-extract_sc_edges_xy <- function (x)
-{
+extract_sc_edges_xy <- function (x) {
+
     rename0 <- c (.vx0_x = "x_", .vx0_y = "y_", .vx0_z = "z_")
     rename1 <- c (.vx1_x = "x_", .vx1_y = "y_", .vx1_z = "z_")
-    if (!has_elevation (x))
-    {
+    if (!has_elevation (x)) {
         rename0 <- rename0 [1:2]
         rename1 <- rename1 [1:2]
     }
@@ -30,8 +29,8 @@ extract_sc_edges_xy <- function (x)
         dplyr::rename (!!rename1)
 }
 
-sc_edge_dist <- function (graph)
-{
+sc_edge_dist <- function (graph) {
+
     # no visible binding notes:
     .vx0_z <- .vx1_z <- NULL
 
@@ -45,21 +44,19 @@ sc_edge_dist <- function (graph)
 }
 
 extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
-                                       keep_cols)
-{
+                                       keep_cols) {
+
     # no visible binding notes:
     native_ <- key <- `:=` <- value <- NULL # nolint
 
     surface <- get_surface_speeds (wt_profile, wt_profile_file)
-    if (nrow (surface) > 0)
-    {
+    if (nrow (surface) > 0) {
         keep_cols <- c (keep_cols, unique (surface$key))
     }
 
     graph <- dplyr::left_join (graph, x$object_link_edge, by = "edge_") %>%
         dplyr::select (-native_)
-    for (k in keep_cols)
-    {
+    for (k in keep_cols) {
         objs <- dplyr::filter (x$object, key == k)
         graph <- dplyr::left_join (graph, objs, by = "object_") %>%
             dplyr::rename (!!dplyr::quo_name (k) := value) %>%
@@ -69,8 +66,8 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
     convert_hw_types_to_bool (graph, wt_profile)
 }
 
-convert_hw_types_to_bool <- function (graph, wt_profile)
-{
+convert_hw_types_to_bool <- function (graph, wt_profile) {
+
     if (!"oneway" %in% names (graph))
         return (graph)
     if (is.logical (graph$oneway))
@@ -83,15 +80,13 @@ convert_hw_types_to_bool <- function (graph, wt_profile)
         wt_profile <- unique (wt_profile$name)
     b <- grep ("oneway.*bicycle|bicycle.*oneway", names(graph))
     if ("oneway" %in% names (graph) |
-        (length (b) == 1 & wt_profile == "bicycle"))
-    {
+        (length (b) == 1 & wt_profile == "bicycle")) {
         index <- which (!graph$oneway %in% c ("no", "yes"))
         if (length (index) > 0)
             graph$oneway [index] <- "no"
         graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
 
-        if (length (b) == 1)
-        {
+        if (length (b) == 1) {
             # oneway:bicycle doesn't enquote properly, so:
             names (graph) [b] <- "oneway_bicycle"
 
@@ -101,8 +96,7 @@ convert_hw_types_to_bool <- function (graph, wt_profile)
             graph$oneway_bicycle <-
                 ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
 
-            if (wt_profile == "bicycle")
-            {
+            if (wt_profile == "bicycle") {
                 graph$oneway <- graph$oneway_bicycle
                 graph$oneway_bicycle <- NULL
             }
@@ -111,8 +105,8 @@ convert_hw_types_to_bool <- function (graph, wt_profile)
     return (graph)
 }
 
-weight_sc_edges <- function (graph, wt_profile, wt_profile_file)
-{
+weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
+
     # no visible binding notes:
     value <- d <- NULL
 
@@ -126,8 +120,8 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file)
 }
 
 # Set maximum speed for each edge.
-set_maxspeed <- function (graph, wt_profile, wt_profile_file)
-{
+set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
+
     if (!"maxspeed" %in% names (graph))
         graph$maxspeed <- NA_real_ # nocov
     if (!"highway" %in% names (graph))
@@ -208,8 +202,8 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file)
 }
 
 # adjust weighted distances according to numbers of lanes
-weight_by_num_lanes <- function (graph, wt_profile)
-{
+weight_by_num_lanes <- function (graph, wt_profile) {
+
     # only weight these profiles:
     profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
     if (!(wt_profile %in% profile_names | "lanes" %in% names (graph)))
@@ -217,8 +211,7 @@ weight_by_num_lanes <- function (graph, wt_profile)
 
     lns <- c (4, 5, 6, 7, 8)
     wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
-    for (i in seq (lns))
-    {
+    for (i in seq (lns)) {
         index <- which (graph$lanes == lns [i])
         if (i == length (lns))
             index <- which (graph$lanes >= lns [i])
@@ -236,15 +229,15 @@ weight_by_num_lanes <- function (graph, wt_profile)
 # reflecting profile values plus effect of different surfaces.
 # The time is distance scaled by maxspeed, and time_weighted is d_weighted
 # scaled by maxspeed
-calc_edge_time <- function (graph, wt_profile)
-{
+calc_edge_time <- function (graph, wt_profile) {
+
     gr_cols <- dodgr_graph_cols (graph)
     speed_m_per_s <- graph$maxspeed * 1000 / 3600 # maxspeeds are km/hr
     graph$time <- graph [[gr_cols$d]] / speed_m_per_s
     graph$time_weighted <- graph [[gr_cols$d_weighted]] / speed_m_per_s
 
-    if ("dz" %in% names (graph) & wt_profile %in% c ("foot", "bicycle"))
-    {
+    if ("dz" %in% names (graph) &
+        wt_profile %in% c ("foot", "bicycle")) {
             graph <- times_by_incline (graph, wt_profile)
     }
     graph$maxspeed <- NULL
@@ -253,29 +246,25 @@ calc_edge_time <- function (graph, wt_profile)
 }
 
 # increase both real and weighted times according to elevation increases:
-times_by_incline <- function (graph, wt_profile)
-{
-    if (wt_profile == "foot")
-    {
+times_by_incline <- function (graph, wt_profile) {
+
+    if (wt_profile == "foot") {
         # Uses
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
-        if ("dz" %in% names (graph))
-        {
+        if ("dz" %in% names (graph)) {
             index <- which (graph$dz > 0)
             graph$time [index] <- graph$time [index] + graph$dz [index] / 10
             graph$time_weighted [index] <- graph$time_weighted [index] +
                 graph$dz [index] / 10
         }
 
-    } else if (wt_profile == "bicycle")
-    {
-        # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/
+    } else if (wt_profile == "bicycle") {
+        # http://theclimbingcyclist.com/gradients-and-cycling-how-much-harder-are-steeper-climbs/ # nolint
         # http://cycleseven.org/effect-of-hills-on-cycling-effort
         # The latter argues for a linear relationship with a reduction in speed
         # of "about 11% for every 1% change in steepness". For 0.01 to translate
         # to 0.11, it needs to be multiplied by 0.11 / 0.01, or 11
-        if ("dz" %in% names (graph))
-        {
+        if ("dz" %in% names (graph)) {
             index <- which (graph$dz > 0)
             graph$time [index] <- graph$time [index] *
                 (1 + 11 * graph$dz [index] / graph$d [index])
@@ -289,8 +278,8 @@ times_by_incline <- function (graph, wt_profile)
     return (graph)
 }
 
-sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
-{
+sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file) {
+
     # no visible binding NOTES:
     object_ <- NULL
 
@@ -317,8 +306,8 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file)
     return (graph)
 }
 
-rm_duplicated_edges <- function (graph)
-{
+rm_duplicated_edges <- function (graph) {
+
     gr_cols <- dodgr_graph_cols (graph)
     ft <- graph [, c (gr_cols$from, gr_cols$to)]
     index <- cbind (which (duplicated (ft)),
@@ -335,8 +324,8 @@ rm_duplicated_edges <- function (graph)
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated
 # for non-oneway
-sc_duplicate_edges <- function (x, wt_profile)
-{
+sc_duplicate_edges <- function (x, wt_profile) {
+
     oneway_modes <-  c ("bicycle", "moped", "motorcycle", "motorcar", "goods",
                         "hgv", "psv")
 
@@ -356,8 +345,8 @@ sc_duplicate_edges <- function (x, wt_profile)
     return (res)
 }
 
-swap_cols <- function (x, cola, colb)
-{
+swap_cols <- function (x, cola, colb) {
+
     temp <- x [[cola]]
     x [[cola]] <- x [[colb]]
     x [[colb]] <- temp
@@ -371,8 +360,8 @@ swap_cols <- function (x, cola, colb)
 
 # return silicate "object" instances -> OSM ways IDs asosicated with given sets
 # of key-val pairs
-get_key_val_pair <- function (x, kv)
-{
+get_key_val_pair <- function (x, kv) {
+
     # no visible binding notes:
     key <- value <- object_ <- NULL
 
@@ -389,8 +378,8 @@ get_key_val_pair <- function (x, kv)
     return (res)
 }
 
-get_key_val_pair_node <- function (x, kv)
-{
+get_key_val_pair_node <- function (x, kv) {
+
     # no visible binding notes:
     key <- value <- vertex_ <- NULL
 
@@ -405,8 +394,8 @@ get_key_val_pair_node <- function (x, kv)
 }
 
 # Get all OSM way IDs associated with traffic lights from osmdata_sc object x
-traffic_light_objs <- function (x)
-{
+traffic_light_objs <- function (x) {
+
     # 1. Traffic signal without intersection (e.g. before bridge), no pedestrian
     # crossing
     x1 <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
@@ -444,8 +433,8 @@ traffic_light_objs <- function (x)
 }
 
 # Get all OSM node IDs that are traffic lights from osmdata_sc object x
-traffic_signal_nodes <- function (x)
-{
+traffic_signal_nodes <- function (x) {
+
     x1 <- get_key_val_pair_node (x, list (c ("highway", "traffic_signals")))
     x2 <- get_key_val_pair_node (x, list (c ("highway", "crossing"),
                                           c ("crossing", "traffic_signals")))
@@ -453,8 +442,8 @@ traffic_signal_nodes <- function (x)
 }
 
 join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
-                                     left_side = FALSE)
-{
+                                     left_side = FALSE) {
+
     turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
     resbind <- edge_map <- NULL
     if (turn_penalty > 0)
