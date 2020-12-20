@@ -76,7 +76,7 @@ dodgr_streetnet_sc <- function (bbox,
                                 pts = NULL,
                                 expand = 0.05,
                                 quiet = TRUE) {
-    
+
     bb <- process_bbox (bbox, pts, expand)
 
     osmdata::opq (bb$bbox) %>%
@@ -136,7 +136,7 @@ process_bbox <- function (bbox,
 
         bbox <- c (x [1], y [1], x [2], y [2])
     } else
-        stop ('Either bbox or pts must be specified.')
+        stop ("Either bbox or pts must be specified.")
 
     list (bbox = bbox, bbox_poly = bbox_poly)
 }
