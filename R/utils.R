@@ -1,25 +1,21 @@
-null_to_na <- function (x)
-{
+null_to_na <- function (x) {
+
     if (length (x) == 0)
         x <- NA
     return (x)
 }
 
-get_hash <- function (graph, verts = NULL, hash = TRUE)
-{
-    if (hash)
-    {
+get_hash <- function (graph, verts = NULL, hash = TRUE) {
+
+    if (hash) {
         hash <- attr (graph, "hash")
-        if (is.null (hash))
-        {
+        if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (graph [[gr_cols$edge_id]])
         }
-    } else
-    {
+    } else {
         hash <- attr (graph, "hashc")
-        if (is.null (hash))
-        {
+        if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (list (graph [[gr_cols$edge_id]], verts))
         }
@@ -27,8 +23,8 @@ get_hash <- function (graph, verts = NULL, hash = TRUE)
     return (hash)
 }
 
-get_edge_map <- function (graph)
-{
+get_edge_map <- function (graph) {
+
     hashc <- get_hash (graph, hash = FALSE)
     if (is.null (hashc))
         stop ("something went wrong extracting the edge map")   # nocov
@@ -48,11 +44,12 @@ get_edge_map <- function (graph)
 # hash of the edge map. This is needed for graph uncontraction, so that just the
 # contracted graph and edge map can be submitted, the original graph re-loaded,
 # and the uncontracted version returned.
-cache_graph <- function (graph, edge_col)
-{
+cache_graph <- function (graph, edge_col) {
+
     td <- tempdir ()
-    f <- function (graph, edge_col, td)
-    {
+
+    f <- function (graph, edge_col, td) {
+
         # the following line does not generate a coverage symbol because it is
         # cached, so # nocov:
         verts <- dodgr::dodgr_vertices (graph) # nocov
@@ -113,11 +110,10 @@ cache_graph <- function (graph, edge_col)
 #'
 #' @return Nothing; the function silently clears any cached objects
 #' @export
-clear_dodgr_cache <- function ()
-{
+clear_dodgr_cache <- function () {
+
     lf <- list.files (tempdir (), full.names = TRUE, pattern = "^dodgr_")
-    if (length (lf) > 0)
-    {
+    if (length (lf) > 0) {
         tryCatch (chk <- file.remove (lf),
                   error = function (e) NULL)
     }
