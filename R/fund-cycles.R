@@ -1,6 +1,5 @@
 # flatten lists of lists to single list
-flatten_list <- function (x)
-{
+flatten_list <- function (x) {
     x2 <- list ()
     for (i in x)
         x2 <- c (x2, i)
@@ -46,9 +45,11 @@ flatten_list <- function (x)
 #' verts <- dodgr_vertices (graph)
 #' cyc <- dodgr_fundamental_cycles (graph, verts)
 #' @export
-dodgr_fundamental_cycles <- function (graph, vertices = NULL,
-                                      graph_max_size = 10000, expand = 0.05)
-{
+dodgr_fundamental_cycles <- function (graph,
+                                      vertices = NULL,
+                                      graph_max_size = 10000,
+                                      expand = 0.05) {
+
     if (missing (graph))
         stop ("graph must be provided")
     if (!inherits (graph, "data.frame"))
@@ -61,11 +62,9 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
     graph <- merge_directed_graph (graph) # uses fast C++ routines
     graph$flow <- NULL
     bb <- get_graph_bb (graph)
-    if (nrow (graph) <= graph_max_size)
-    {
+    if (nrow (graph) <= graph_max_size) {
         bb_indices <- list (bb)
-    } else
-    {
+    } else {
         ndivs <- get_ndivs (graph, graph_max_size)
         bb_list <- get_bb_list (bb, ndivs, expand = expand)
         bb_data <- subdivide_bb (graph, bb_list, graph_max_size, expand)
@@ -74,18 +73,15 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
 
     graphc <- convert_graph (graph, dodgr_graph_cols (graph))
 
-    if (length (bb_indices) == 1)
-    {
+    if (length (bb_indices) == 1) {
         res <- rcpp_fundamental_cycles (graphc, verts = vertices)
-    } else
-    {
+    } else {
         message ("Now computing fundamental cycles by breaking graph with ",
                  nrow (graphc), " edges into ", length (bb_indices),
                  " components ...")
         pb <- utils::txtProgressBar (style = 3)
         res <- list ()
-        for (i in seq (bb_indices))
-        {
+        for (i in seq (bb_indices)) {
             graphi <- graphc [bb_indices [[i]], ]
             verti <- dodgr_vertices (graphi)
             res [[i]] <- rcpp_fundamental_cycles (graphi, verts = verti)
@@ -100,8 +96,7 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
         res <- res [which (!duplicated (dig))]
     }
 
-    if (is_graph_spatial (graph))
-    {
+    if (is_graph_spatial (graph)) {
         if (length (bb_indices) > 1)
             message ("Generating spatial coordinates of polygons ",
                      "(this should be fairly quick ...)")
@@ -119,15 +114,13 @@ dodgr_fundamental_cycles <- function (graph, vertices = NULL,
 # ********** FUNCTIONS TO BREAK SPATIAL GRAPHS INTO SUB-COMPONENTS **********
 
 # Initial estimate of how many divisions needed
-get_ndivs <- function (graph, graph_max_size)
-{
+get_ndivs <- function (graph, graph_max_size) {
     ndivs <- ceiling (nrow (graph) / graph_max_size)
     ceiling (sqrt (ndivs)) # num of grid rows and cols
 }
 
 # get boundingn box of graph
-get_graph_bb <- function (graph)
-{
+get_graph_bb <- function (graph) {
     gr_cols <- dodgr_graph_cols (graph)
     from_lon <- graph [, gr_cols$xfr]
     from_lat <- graph [, gr_cols$yfr]
@@ -139,11 +132,9 @@ get_graph_bb <- function (graph)
 
 # divide a bb into rectangular grid of sub-boxes and return list of
 # corresponding bboxes
-get_bb_list <- function (bb, ndivs, expand = 0.05)
-{
+get_bb_list <- function (bb, ndivs, expand = 0.05) {
     # divide one column of bb: either lons or lats
-    divide_bb_vec <- function (bb, ndivs, colnum = 2, expand)
-    {
+    divide_bb_vec <- function (bb, ndivs, colnum = 2, expand) {
         bb <- c (bb [1, colnum], vapply (seq (ndivs), function (i)
                                          bb [1, colnum] + i / ndivs *
                                              diff (bb [, colnum]),
@@ -156,8 +147,7 @@ get_bb_list <- function (bb, ndivs, expand = 0.05)
     bb_lats <- divide_bb_vec (bb, ndivs, colnum = 2, expand = expand)
     bb_list <- list ()
     for (i in seq (ndivs))
-        for (j in seq (ndivs))
-        {
+        for (j in seq (ndivs)) {
             bb_list [[length (bb_list) + 1]] <-
                 cbind (bb_lons [i, ], bb_lats [j, ])
         }
@@ -165,11 +155,9 @@ get_bb_list <- function (bb, ndivs, expand = 0.05)
 }
 
 # get indices into graph of edges lying within each bit of a bb_list
-get_bb_indices <- function (graph, bb_list)
-{
+get_bb_indices <- function (graph, bb_list) {
     res <- list ()
-    for (i in seq (bb_list))
-    {
+    for (i in seq (bb_list)) {
         res [[i]] <- which (graph$from_lon > bb_list [[i]] [1, 1] &
                             graph$from_lon < bb_list [[i]] [2, 1] &
                             graph$from_lat > bb_list [[i]] [1, 2] &
@@ -184,18 +172,15 @@ get_bb_indices <- function (graph, bb_list)
 
 # Rectangularly subdivide any components of bb_list that are > graph_max_size
 # into 4 sub-components.
-subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
-{
+subdivide_bb <- function (graph, bb_list, graph_max_size, expand) {
     bb_indices <- get_bb_indices (graph, bb_list)
     lens <- unlist (lapply (bb_indices, length))
-    while (any (lens > graph_max_size))
-    {
+    while (any (lens > graph_max_size)) {
         indx <- which (lens > graph_max_size)
         bbs <- bb_list [indx]
         bb_list [indx] <- NULL
         bb_indices [indx] <- NULL
-        for (i in bbs)
-        {
+        for (i in bbs) {
             bb_list <- c (bb_list, get_bb_list (i, ndivs = 2, expand = expand))
             bb_indices <- get_bb_indices (graph, bb_list)
             lens <- unlist (lapply (bb_indices, length))
@@ -226,8 +211,10 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand)
 #' # including all points intermediate to junctions; cyc1 has cycles composed of
 #' # junction points only.
 #' @export
-dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
-{
+dodgr_full_cycles <- function (graph,
+                               graph_max_size = 10000,
+                               expand = 0.05) {
+
     graph$flow <- 1
     graph <- merge_directed_graph (graph)
     graph$flow <- NULL
@@ -281,8 +268,7 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
     res <- lapply (ids, function (i)
                    graph [c (i, i [1]), gr_cols$from, drop = TRUE])
 
-    if (is_graph_spatial (graph))
-    {
+    if (is_graph_spatial (graph)) {
         vertices <- dodgr_vertices (graph)
         res <- lapply (res, function (i) {
                            index <- match (i, vertices$id)
@@ -292,6 +278,7 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
                                        stringsAsFactors = FALSE)
                                 })
     }
+
     return (res)
 }
 
@@ -306,9 +293,10 @@ dodgr_full_cycles <- function (graph, graph_max_size = 10000, expand = 0.05)
 #' @param sflines An \pkg{sf} `LINESTRING` object representing a network.
 #' @return An `sf::sfc` collection of `POLYGON` objects.
 #' @export
-dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
-                                   expand = 0.05)
-{
+dodgr_sflines_to_poly <- function (sflines,
+                                   graph_max_size = 10000,
+                                   expand = 0.05) {
+
     if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf")))
         stop ("lines must be an object of class 'sf' or 'sfc'")
     if (!methods::is (sflines [[attr (sflines, "sf_column")]],
@@ -322,8 +310,7 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
     comps <- table (graph$component)
     comps <- as.numeric (names (comps) [which (comps > 100)])
     x <- list ()
-    for (i in seq (comps))
-    {
+    for (i in seq (comps)) {
         graphi <- graph [graph$component == comps [i], ]
         graphi$edge_id <- seq (nrow (graphi))
         attr (graphi, "hash") <- NULL
@@ -337,8 +324,7 @@ dodgr_sflines_to_poly <- function (sflines, graph_max_size = 10000,
 
 # convert list of polygon coordinates to `sf::sfc` collection
 # code adapted from osmdata/tests/testthat/test-sf-construction.R
-polys_to_sfc <- function (x, sflines)
-{
+polys_to_sfc <- function (x, sflines) {
     g <- sflines [[attr (sflines, "sf_column")]]
     crs <- attr (g, "crs")
 
