@@ -101,23 +101,29 @@
 #' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
 #'                            wt_profile = 1)
 #' }
-weight_streetnet <- function (x, wt_profile = "bicycle",
+weight_streetnet <- function (x,
+                              wt_profile = "bicycle",
                               wt_profile_file = NULL,
                               turn_penalty = FALSE,
-                              type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL, left_side = FALSE)
-{
+                              type_col = "highway",
+                              id_col = "osm_id",
+                              keep_cols = NULL,
+                              left_side = FALSE) {
+
     UseMethod ("weight_streetnet")
 }
 
 #' @name weight_streetnet
 #' @export
-weight_streetnet.default <- function (x, wt_profile = "bicycle",
-                              wt_profile_file = NULL,
-                              turn_penalty = FALSE,
-                              type_col = "highway", id_col = "osm_id",
-                              keep_cols = NULL, left_side = FALSE)
-{
+weight_streetnet.default <- function (x,
+                                      wt_profile = "bicycle",
+                                      wt_profile_file = NULL,
+                                      turn_penalty = FALSE,
+                                      type_col = "highway",
+                                      id_col = "osm_id",
+                                      keep_cols = NULL,
+                                      left_side = FALSE) {
+
     stop ("Unknown class")
 }
 
@@ -134,12 +140,15 @@ way_types_to_keep <- c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
 
 #' @name weight_streetnet
 #' @export
-weight_streetnet.sf <- function (x, wt_profile = "bicycle",
+weight_streetnet.sf <- function (x,
+                                 wt_profile = "bicycle",
                                  wt_profile_file = NULL,
                                  turn_penalty = FALSE,
-                                 type_col = "highway", id_col = "osm_id",
-                                 keep_cols = NULL, left_side = FALSE)
-{
+                                 type_col = "highway",
+                                 id_col = "osm_id",
+                                 keep_cols = NULL,
+                                 left_side = FALSE) {
+
     if (turn_penalty)
         stop ("Turn-penalty calculations only currently implemented for ",
               "street network data generated with the ",
@@ -220,34 +229,30 @@ weight_streetnet.sf <- function (x, wt_profile = "bicycle",
 }
 
 # changed type_col and id_col to expected values of "highway" and "osm_id"
-change_col_names <- function (x, colvar, expected)
-{
+change_col_names <- function (x, colvar, expected) {
+
     if (colvar != expected)
         names (x) [which (names (x) == colvar)] <- expected
     return (x)
 }
 
-check_highway_osmid <- function (x, wt_profile)
-{
+check_highway_osmid <- function (x, wt_profile) {
+
     if (!"highway" %in% names (x) & !is.numeric (wt_profile))
         stop ("Please specify type_col to be used for ",        # nocov
               "weighting streetnet")                            # nocov
-    if (!"osm_id" %in% names (x))
-    {
+    if (!"osm_id" %in% names (x)) {
         idcol <- grep ("^id|id$", names (x), ignore.case = TRUE)
-        if (length (idcol) == 1)
-        {
+        if (length (idcol) == 1) {
             message ("Using column ", names (x) [idcol],
                      " as ID column for edges; please specify explicitly if",
                      " a different column should be used.")
             names (x) [idcol] <- "osm_id"
-        } else if (length (idcol) > 1)
-        {
+        } else if (length (idcol) > 1) {
             stop ("Multiple potential ID columns: [",
                   paste0 (names (x) [idcol], collapse = " "),
                   "]; please explicitly specify one of these.")
-        } else if (length (idcol) == 0)
-        {
+        } else if (length (idcol) == 0) {
             message ("x appears to have no ID column; ",
                      "sequential edge numbers will be used.")
             x$osm_id <- seq (nrow (x))
@@ -257,24 +262,20 @@ check_highway_osmid <- function (x, wt_profile)
     return (x)
 }
 
-get_wt_profile <- function (x, wt_profile, wt_profile_file)
-{
+get_wt_profile <- function (x, wt_profile, wt_profile_file) {
+
     if (!is.data.frame (wt_profile) & length (wt_profile) > 1)
         stop ("wt_profile can only be one element")
 
     wt_profile_name <- NULL
-    if (is.character (wt_profile))
-    {
-        if (grepl ("rail", wt_profile, ignore.case = TRUE))
-        {
+    if (is.character (wt_profile)) {
+        if (grepl ("rail", wt_profile, ignore.case = TRUE)) {
             stop ("Please use the weight_railway function for railway routing.")
-        } else
-        {
+        } else {
             wt_profile_name <- wt_profile
             wt_profile <- get_profile (wt_profile_name, wt_profile_file)
         }
-    } else if (is.numeric (wt_profile))
-    {
+    } else if (is.numeric (wt_profile)) {
         nms <- names (wt_profile)
         if (is.null (nms))
             nms <- NA
@@ -282,8 +283,7 @@ get_wt_profile <- function (x, wt_profile, wt_profile_file)
                                   way = nms,
                                   value = wt_profile,
                                   stringsAsFactors = FALSE)
-    } else if (is.data.frame (wt_profile))
-    {
+    } else if (is.data.frame (wt_profile)) {
         # assert that is has the standard structure
         if (!all (c ("name", "way", "value") %in% names (wt_profile)))
             stop ("Weighting profiles must have three columsn of ",
@@ -295,15 +295,13 @@ get_wt_profile <- function (x, wt_profile, wt_profile_file)
 }
 
 # re-map any OSM 'highway' types with pmatch to standard types
-remap_way_types <- function (sf_lines, wt_profile)
-{
+remap_way_types <- function (sf_lines, wt_profile) {
+
     way_types <- unique (as.character (sf_lines$highway))
     dodgr_types <- unique (wt_profile$way)
     # clearer to code as a for loop
-    for (i in seq (way_types))
-    {
-        if (!way_types [i] %in% dodgr_types)
-        {
+    for (i in seq (way_types)) {
+        if (!way_types [i] %in% dodgr_types) {
             pos <- which (pmatch (dodgr_types, way_types  [i]) > 0)
             if (length (pos) > 0)
                 sf_lines$highway [sf_lines$highway == way_types [i]] <-
@@ -335,11 +333,10 @@ remap_way_types <- function (sf_lines, wt_profile)
 # Return the name of the sf geometry column, which this routines permits to be
 # either anything that greps "geom" (so "geom", "geoms", "geometry"), or else
 # just plain "g". See Issue#66.
-get_sf_geom_col <- function (graph)
-{
+get_sf_geom_col <- function (graph) {
+
     gcol <- grep ("geom", names (graph))
-    if (length (gcol) > 1)
-    {
+    if (length (gcol) > 1) {
         gnames <- c ("geometry", "geom", "geoms")
         mg <- match (gnames, names (graph))
         if (length (which (!is.na (mg))) == 1)
@@ -347,8 +344,7 @@ get_sf_geom_col <- function (graph)
         else
             stop ("Unable to determine geometry column from [",
                   paste0 (names (graph) [gcol], collapse = ", "), "]")
-    } else if (length (gcol) == 0)
-    {
+    } else if (length (gcol) == 0) {
         gcol <- match ("g", names (graph))
         if (is.na (gcol) | length (gcol) != 1)
             stop ("Unable to determine geometry column")
@@ -357,8 +353,8 @@ get_sf_geom_col <- function (graph)
     return (names (graph) [gcol])
 }
 
-rownames_from_xy <- function (graph)
-{
+rownames_from_xy <- function (graph) {
+
     xyf <- data.frame (x = graph$from_lon,
                        y = graph$from_lat)
     xyt <- data.frame (x = graph$to_lon,
@@ -371,19 +367,16 @@ rownames_from_xy <- function (graph)
     return (graph)
 }
 
-reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
-{
+reinsert_keep_cols <- function (sf_lines, graph, keep_cols) {
+
     keep_names <- NULL
-    if (is.character (keep_cols))
-    {
+    if (is.character (keep_cols)) {
         keep_names <- keep_cols
         keep_cols <- match (keep_cols, names (sf_lines))
         # NA is no keep_cols match
-    } else if (is.numeric (keep_cols))
-    {
+    } else if (is.numeric (keep_cols)) {
         keep_names <- names (sf_lines) [keep_cols]
-    } else
-    {
+    } else {
         stop ("keep_cols must be either character or numeric")
     }
     indx <- which (is.na (keep_cols))
@@ -391,8 +384,7 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
         message ("Data has no columns named ",
                  paste0 (keep_names, collapse = ", "))
     keep_cols <- keep_cols [!is.na (keep_cols)]
-    if (length (keep_cols) > 0)
-    {
+    if (length (keep_cols) > 0) {
         indx <- match (graph$geom_num, seq (sf_lines$geometry))
         for (k in seq (keep_names))
             graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k], # nolint
@@ -402,14 +394,13 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols)
     return (graph)
 }
 
-add_extra_sf_columns <- function (graph, x)
-{
+add_extra_sf_columns <- function (graph, x) {
+
     if (!"way_id" %in% names (graph)) # only works for OSM data
         return (graph) # nocov
 
     hi <- match ("highway", names (graph))
-    if (is.na (hi))
-    {
+    if (is.na (hi)) {
         hi <- ncol (graph)
         index2 <- NULL
     } else if (hi == ncol (graph))
@@ -457,8 +448,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
               type_col = "highway",
               id_col = "osm_id",
               keep_cols = NULL,
-              left_side = FALSE)
-{
+              left_side = FALSE) {
+
     requireNamespace ("geodist")
     requireNamespace ("dplyr")
     check_sc (x)
@@ -490,12 +481,10 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
     attr (graph, "turn_penalty") <- 0
 
-    if (turn_penalty)
-    {
+    if (turn_penalty) {
         attr (graph, "turn_penalty") <-
             get_turn_penalties (wt_profile, wt_profile_file)$turn
-        if (attr (graph, "turn_penalty") > 0)
-        {
+        if (attr (graph, "turn_penalty") > 0) {
             res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                             left_side)
             # res has the expanded graph as well as an edge map from new
@@ -510,8 +499,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
     class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
 
-    if (turn_penalty)
-    {
+    if (turn_penalty) {
         hash <- digest::digest (graph [[gr_cols$edge_id]])
         fname <- file.path (tempdir (), paste0 ("dodgr_edge_contractions_",
                                                 hash, ".Rds"))
@@ -566,11 +554,13 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 #' graph <- weight_railway (dat$osm_lines)
 #' }
 #' @export
-weight_railway <- function (sf_lines, type_col = "railway", id_col = "osm_id",
+weight_railway <- function (sf_lines,
+                            type_col = "railway",
+                            id_col = "osm_id",
                             keep_cols = c ("maxspeed"),
                             excluded = c ("abandoned", "disused",
-                                          "proposed", "razed"))
-{
+                                          "proposed", "razed")) {
+
     if (!is (sf_lines, "sf"))
         stop ('sf_lines must be class "sf"')
     geom_column <- get_sf_geom_col (sf_lines)
