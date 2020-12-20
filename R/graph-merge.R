@@ -44,7 +44,7 @@ merge_directed_graph <- function (graph, col_names = c ("flow")) {
                       "] do not match columns in graph"))
 
     gr_cols <- dodgr_graph_cols (graph)
-    graph2 <- convert_graph (graph, gr_cols)
+    graph2 <- convert_graph (graph, gr_cols) # nolint
     res <- lapply (col_names, function (i) {
         graph2$merge <- graph [[i]]
         rcpp_merge_cols (graph2)
