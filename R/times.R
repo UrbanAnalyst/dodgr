@@ -14,7 +14,7 @@ dodgr_times <- function (graph,
                          from = NULL,
                          to = NULL,
                          shortest = FALSE,
-                         heap = 'BHeap') {
+                         heap = "BHeap") {
 
     graph <- tbl_to_df (graph)
 
