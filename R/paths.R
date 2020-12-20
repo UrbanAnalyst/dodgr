@@ -69,7 +69,7 @@ dodgr_paths <- function (graph,
                          to,
                          vertices = TRUE,
                          pairwise = FALSE,
-                         heap = 'BHeap',
+                         heap = "BHeap",
                          quiet = TRUE) {
 
     hps <- get_heap (heap, graph)
@@ -112,8 +112,7 @@ dodgr_paths <- function (graph,
     # former are retained as NULL, while the following converts the latter to
     # appropriate start-end vertices.
     paths <- lapply (paths, function (i)
-                     lapply (i, function (j)
-                             {
+                     lapply (i, function (j) {
                                  if (is.null (j))
                                      return (j)     # nocov
                                  vert_map$vert [j]
@@ -137,8 +136,7 @@ dodgr_paths <- function (graph,
         # convert vertex IDs to corresponding sequences of edge numbers
         paths <- lapply (paths, function (i)
                          lapply (i, function (j)
-                                 if (length (j) > 1)
-                                 {
+                                 if (length (j) > 1) {
                                      indx <- 2:length (j)
                                      pij <- paste0 ("f", j [indx - 1],
                                                     "t", j [indx])
