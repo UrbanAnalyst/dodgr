@@ -120,10 +120,16 @@
 #' plot (gsf ["flow"])
 #' }
 #' @export
-dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
-                                   heap = "BHeap", tol = 1e-12,
-                                   norm_sums = TRUE, quiet = TRUE)
-{
+dodgr_flows_aggregate <- function (graph,
+                                   from,
+                                   to,
+                                   flows,
+                                   contract = FALSE,
+                                   heap = "BHeap",
+                                   tol = 1e-12,
+                                   norm_sums = TRUE,
+                                   quiet = TRUE) {
+
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
@@ -131,8 +137,7 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
     heap <- hps$heap
     graph <- hps$graph
 
-    if (contract)
-    {
+    if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
@@ -201,9 +206,15 @@ dodgr_flows_aggregate <- function (graph, from, to, flows, contract = FALSE,
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
-dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
-                                  heap = 'BHeap', tol = 1e-12, quiet = TRUE)
-{
+dodgr_flows_disperse <- function (graph,
+                                  from,
+                                  dens,
+                                  k = 500,
+                                  contract = FALSE,
+                                  heap = 'BHeap',
+                                  tol = 1e-12,
+                                  quiet = TRUE) {
+
     res <- check_k (k, from)
     k <- res$k
     nk <- res$nk
@@ -216,8 +227,7 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
     heap <- hps$heap
     graph <- hps$graph
 
-    if (contract)
-    {
+    if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
         hashc <- get_hash (graph, hash = FALSE)
@@ -240,8 +250,7 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
                                   k, dens, tol, heap)
     if (nk == 1)
         graph$flow <- f
-    else
-    {
+    else {
         flowmat <- data.frame (matrix (f, ncol = nk))
         names (flowmat) <- paste0 ("flow", seq (nk))
         graph <- cbind (graph, flowmat)
@@ -316,11 +325,18 @@ dodgr_flows_disperse <- function (graph, from, dens, k = 500, contract = FALSE,
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
 #' @export
-dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
-                            dens_to = NULL, contract = FALSE,
-                            norm_sums = TRUE, heap = "BHeap",
-                            tol = 1e-12, quiet = TRUE)
-{
+dodgr_flows_si <- function (graph,
+                            from,
+                            to,
+                            k = 500,
+                            dens_from = NULL,
+                            dens_to = NULL,
+                            contract = FALSE,
+                            norm_sums = TRUE,
+                            heap = "BHeap",
+                            tol = 1e-12,
+                            quiet = TRUE) {
+
     if (missing (from))
         stop ("'from' must be provided for spatial interaction models.")
 
@@ -332,8 +348,7 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     k <- res$k
     nk <- res$nk
 
-    if (contract)
-    {
+    if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
@@ -354,8 +369,7 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
 
     if (nk == 1)
         graph$flow <- f
-    else
-    {
+    else {
         flowmat <- data.frame (matrix (f, ncol = nk))
         names (flowmat) <- paste0 ("flow", seq (nk))
         graph <- cbind (graph, flowmat)
@@ -368,24 +382,22 @@ dodgr_flows_si <- function (graph, from, to, k = 500, dens_from = NULL,
     return (graph)
 }
 
-check_k <- function (k, from)
-{
+check_k <- function (k,
+                     from) {
+
     nk <- 1
 
     if (is.data.frame (k))
         k <- as.matrix (k)
 
-    if (is.matrix (k))
-    {
+    if (is.matrix (k)) {
         if (nrow (k) != length (from))
             stop ("nrow(k) must equal length of 'from' points")
         nk <- ncol (k)
-    } else if (is.numeric (k))
-    {
+    } else if (is.numeric (k)) {
         if (length (k) == 1)
             k <- rep (k, length (from))
-        else if (length (k) != length (from))
-        {
+        else if (length (k) != length (from)) {
             # convert to matrix
             nk <- length (k)
             k <- array (rep (k, each = length (from)),
@@ -399,8 +411,10 @@ check_k <- function (k, from)
 
 # transform input graph and (from, to) arguments to standard forms for passing
 # to C++ routines
-prepare_graph <- function (graph, from, to)
-{
+prepare_graph <- function (graph,
+                           from,
+                           to) {
+
     if ("flow" %in% names (graph))
         warning ("graph already has a 'flow' column; ",
                   "this will be overwritten")
@@ -421,8 +435,7 @@ prepare_graph <- function (graph, from, to)
     from_index <- index_id$index - 1 # 0-based
 
     to_index <- NULL
-    if (!missing (to))
-    {
+    if (!missing (to)) {
         # remove any routing points not in edge end nodes:
         to <- nodes_arg_to_pts (to, graph)
         if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
@@ -438,19 +451,20 @@ prepare_graph <- function (graph, from, to)
           from_index = from_index, to_index = to_index)
 }
 
-get_random_prefix <- function (prefix = "flow", n = 5)
-{
+get_random_prefix <- function (prefix = "flow",
+                               n = 5) {
+
     charvec <- c (letters, LETTERS, 0:9)
     rand_prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
     file.path (tempdir (), paste0 (prefix, "_", rand_prefix))
 }
 
-nodes_arg_to_pts <- function (nodes, graph)
-{
+nodes_arg_to_pts <- function (nodes,
+                              graph) {
+
     if (!is.matrix (nodes))
         nodes <- as.matrix (nodes)
-    if (ncol (nodes) == 2)
-    {
+    if (ncol (nodes) == 2) {
         verts <- dodgr_vertices (graph)
         nodes <- verts$id [match_pts_to_graph (verts, nodes)]
     }
@@ -459,8 +473,10 @@ nodes_arg_to_pts <- function (nodes, graph)
 
 
 # keep from and to routing points in contracted graph
-contract_graph_with_pts <- function (graph, from, to)
-{
+contract_graph_with_pts <- function (graph,
+                                     from,
+                                     to) {
+
     pts <- NULL
     if (!missing (from))
         pts <- c (pts, from)

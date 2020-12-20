@@ -109,8 +109,9 @@ gsf <- dodgr_to_sf (graph_undir)
 library (mapview)
 flow <- gsf$flow / max (gsf$flow)
 ncols <- 30
-cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * flow)]
-mapview (gsf, color = cols, lwd = 10 * flow)
+cols <- c ("lawngreen", "red")
+colranmp <- colorRampPalette (cols) (ncols) [ceiling (ncols * flow)]
+mapview (gsf, color = colranmp, lwd = 10 * flow)
 }
 
 # An example of flow aggregation across a generic (non-OSM) highway,
