@@ -151,8 +151,9 @@ test_that ("flowmap", {
                      nrow = length (from))
     graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
     graph_undir <- merge_directed_graph (graph)
-    if (nrow (graph_undir) > 0)
-    {
+
+    if (nrow (graph_undir) > 0) {
+
         # just test that is produces a plot
         png (filename = "junk.png")
         expect_silent (dodgr_flowmap (graph_undir))

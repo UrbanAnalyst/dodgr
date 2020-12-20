@@ -1,10 +1,9 @@
-genhash <- function (len = 10)
-{
+genhash <- function (len = 10) {
     paste0 (sample (c (letters, LETTERS, 0:9), size = len), collapse = "")
 }
 
-sf_to_sc <- function (x)
-{
+sf_to_sc <- function (x) {
+
     pts <- do.call (rbind, x$geometry)
     pts <- data.frame ("x_" = pts [, 1],
                        "y_" = pts [, 2],
