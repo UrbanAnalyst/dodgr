@@ -446,8 +446,9 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
 
     turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
     resbind <- edge_map <- NULL
-    if (turn_penalty > 0)
-    {
+
+    if (turn_penalty > 0) {
+
         res <- rcpp_route_times (graph, left_side, turn_penalty)
         edge_map <- data.frame ("edge" = res$graph$edge_,
                                 "e_in" = res$graph$old_edge_in,
