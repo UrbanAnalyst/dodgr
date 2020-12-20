@@ -33,7 +33,7 @@
 dodgr_isodists <- function (graph,
                             from = NULL,
                             dlim = NULL,
-                            heap = 'BHeap') {
+                            heap = "BHeap") {
 
     if (is.null (dlim))
         stop ("dlim must be specified")
@@ -143,7 +143,10 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap") {
 #' tlim <- c (5, 10, 20, 30, 60) * 60 # times in seconds
 #' x <- dodgr_isochrones (graph, from = from, tlim)
 #' }
-dodgr_isochrones <- function (graph, from = NULL, tlim = NULL, heap = 'BHeap') {
+dodgr_isochrones <- function (graph,
+                              from = NULL,
+                              tlim = NULL,
+                              heap = "BHeap") {
 
     if (!methods::is (graph, "dodgr_streetnet_sc"))
         stop ("isochrones can only be calculated from SC-class networks ",
@@ -196,7 +199,7 @@ dodgr_isoverts <- function (graph,
                             from = NULL,
                             dlim = NULL,
                             tlim = NULL,
-                            heap = 'BHeap') {
+                            heap = "BHeap") {
 
     if (!methods::is (graph, "dodgr_streetnet_sc"))
         stop ("isoverts can only be calculated from SC-class networks ",
@@ -262,8 +265,7 @@ dmat_to_pts <- function (d, from, v, dlim) {
                                                  d [i, ] < j)
                                  res <- c (res, pt_names [index])
                                  res <- v [match (res, v$id), ]
-                                 if (nrow (res) > 0)
-                                 {
+                                 if (nrow (res) > 0) {
                                      res$from <- o$id
                                      res <- order_points (res, o)
                                      res$dlim <- j
