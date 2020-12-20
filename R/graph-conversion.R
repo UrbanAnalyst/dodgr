@@ -17,8 +17,8 @@
 #' nrow(hw) # 5,729 edges
 #' xy <- dodgr_to_sf (hw)
 #' dim (xy) # 764 edges; 14 attributes
-dodgr_to_sf <- function (graph)
-{
+dodgr_to_sf <- function (graph) {
+
     graph <- tbl_to_df (graph)
 
     requireNamespace ("sf")
@@ -58,8 +58,8 @@ dodgr_to_sf <- function (graph)
 #' dim (xy$dat) # same number of rows as there are geometries
 #' # The dodgr_to_sf function then just implements this final conversion:
 #' # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
-dodgr_to_sfc <- function (graph)
-{
+dodgr_to_sfc <- function (graph) {
+
     graph <- tbl_to_df (graph)
 
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
@@ -117,26 +117,27 @@ dodgr_to_sfc <- function (graph)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' graphi <- dodgr_to_igraph (graph)
-dodgr_to_igraph <- function (graph, weight_column = "d")
-{
+dodgr_to_igraph <- function (graph, weight_column = "d") {
+
     requireNamespace ("igraph")
     graph <- tbl_to_df (graph)
     if (!weight_column %in% names (graph))
         stop ("graph contains no column named '", weight_column, "'")
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) | is.na (gr_cols$to))
-    {
+    if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
         gr_cols <- dodgr_graph_cols (graph)
     }
+
     v <- dodgr_vertices (graph)
     graph <- graph [, do.call (c, gr_cols [!is.na (gr_cols)])]
     names (graph) <- names (gr_cols) [!is.na (gr_cols)]
     gr_cols <- dodgr_graph_cols (graph)
     names (graph) [which (names (gr_cols) == weight_column)] <- "weight"
+
     # remove edge_id if it exists
     if (!is.na (gr_cols$edge_id))
         graph [[gr_cols$edge_id]] <- NULL
@@ -160,8 +161,8 @@ dodgr_to_igraph <- function (graph, weight_column = "d")
 #' graphi <- dodgr_to_igraph (graph)
 #' graph2 <- igraph_to_dodgr (graphi)
 #' identical (graph2, graph) # FALSE
-igraph_to_dodgr <- function (graph)
-{
+igraph_to_dodgr <- function (graph) {
+
     requireNamespace ("igraph")
     ei <- igraph::edge_attr (graph)
     vi <- igraph::vertex_attr (graph)
@@ -194,8 +195,7 @@ igraph_to_dodgr <- function (graph)
 
 # Convert columns from character to numeric or integer where those given
 # identical round-trip values (char -> numeric -> char, for example).
-convert_col <- function (x, n = 3)
-{
+convert_col <- function (x, n = 3) {
     xn <- xnd <- x [, n]
     cl0 <- class (xn)
     storage.mode (xnd) <- "numeric"
@@ -220,8 +220,8 @@ convert_col <- function (x, n = 3)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' grapht <- dodgr_to_tidygraph (graph)
-dodgr_to_tidygraph <- function (graph)
-{
+dodgr_to_tidygraph <- function (graph) {
+
     requireNamespace ("igraph")
     requireNamespace ("tidygraph")
 
