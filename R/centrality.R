@@ -99,10 +99,13 @@
 #' }
 #'
 #' @export
-dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
+dodgr_centrality <- function (graph,
+                              contract = TRUE,
+                              edges = TRUE,
                               column = "d_weighted",
-                              dist_threshold = NULL, heap = "BHeap")
-{
+                              dist_threshold = NULL,
+                              heap = "BHeap") {
+
     column <- match.arg (column, c ("d_weighted",
                                     "d",
                                     "time",
@@ -123,8 +126,7 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
     if (contract & methods::is (graph, "dodgr_contracted"))
         contract <- FALSE
     graph_full <- edge_map <- NULL
-    if (contract & !methods::is (graph, "dodgr_contracted"))
-    {
+    if (contract & !methods::is (graph, "dodgr_contracted")) {
         graph_full <- graph
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
@@ -154,14 +156,12 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
                                    0)
 
     # attach result to edge or vertex objects:
-    if (edges)
-    {
+    if (edges) {
         graph$centrality <- centrality
         if (contract)
             graph <- uncontract_graph (graph, edge_map, graph_full)
         res <- graph
-    } else
-    {
+    } else {
         res <- dodgr_vertices (graph)
         res$centrality <- centrality
     }
@@ -190,8 +190,7 @@ dodgr_centrality <- function (graph, contract = TRUE, edges = TRUE,
 #' reduced below the specified tolerance.
 #'
 #' @export
-estimate_centrality_threshold <- function (graph, tolerance = 0.001)
-{
+estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
     # nocov start - can't be tested on any sample data
 
     # estimate absolute maximum distance in graph
@@ -210,8 +209,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
     vsample <- sample (vs$id, 1000)
     dmax <- max (dodgr_dists (graphs, from = vsample, to = vsample),
                  na.rm = TRUE)
-    if (dmax > (0.75 * dabsmax))
-    {
+    if (dmax > (0.75 * dabsmax)) {
         message ("dist_threshold approaches size of graph;\n",
                  "Recommended value of 'dist_threshold' remains 'NULL',\n",
                  "with centrality calculated across entire graph")
@@ -222,8 +220,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
     mult <- 1.1
     ss <- 9999
     g_old <- dodgr_centrality (graphs, dist_threshold = d)
-    while (ss > tolerance)
-    {
+    while (ss > tolerance) {
         d <- signif (d * mult, 2)
         g <- dodgr_centrality (graphs, dist_threshold = d)
         mod <- stats::lm (g$centrality ~ g_old$centrality)
@@ -232,8 +229,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
                  formatC (ss, format = "f", digits = 4))
         g_old <- g
 
-        if (d > dmax)
-        {
+        if (d > dmax) {
             message ("re-sampling graph to ", nverts, " vertices")
             nverts <- signif (nverts * mult, 2)
             graphs <- dodgr_sample (graph, nverts)
@@ -241,8 +237,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
                 break
         }
     }
-    if (nverts > nrow (v))
-    {
+    if (nverts > nrow (v)) {
         message ("Failed to converge within tolerance;\n",
                  "Recommended value of 'dist_threshold' remains 'NULL',\n",
                  "with centrality calculated across entire graph")
@@ -272,9 +267,12 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001)
 #' reduced below the specified tolerance.
 #'
 #' @export
-estimate_centrality_time <- function (graph, contract = TRUE, edges = TRUE,
-                                      dist_threshold = NULL, heap = "BHeap")
-{
+estimate_centrality_time <- function (graph,
+                                      contract = TRUE,
+                                      edges = TRUE,
+                                      dist_threshold = NULL,
+                                      heap = "BHeap") {
+
     # copies all code from dodgr_centrality, but uses the otherwise non-exposed
     # 'sample' parameter passed through to C++ routines
     if (is.null (dist_threshold))
@@ -288,8 +286,7 @@ estimate_centrality_time <- function (graph, contract = TRUE, edges = TRUE,
 
     if (contract & methods::is (graph, "dodgr_contracted"))
         contract <- FALSE
-    if (contract & !methods::is (graph, "dodgr_contracted"))
-    {
+    if (contract & !methods::is (graph, "dodgr_contracted")) {
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
         fname_c <- file.path (tempdir (),

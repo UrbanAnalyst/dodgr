@@ -89,7 +89,8 @@ graph_sf <- merge_directed_graph (graph_full) \%>\%
 library (mapview)
 centrality <- graph_sf$centrality / max (graph_sf$centrality)
 ncols <- 30
-cols <- colorRampPalette (c ("lawngreen", "red")) (ncols) [ceiling (ncols * centrality)]
+cols <- c ("lawngreen", "red")
+cols <- colorRampPalette (cols) (ncols) [ceiling (ncols * centrality)]
 mapview (graph_sf, color = cols, lwd = 10 * centrality)
 }
 
