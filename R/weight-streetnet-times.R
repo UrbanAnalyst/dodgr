@@ -328,7 +328,7 @@ rm_duplicated_edges <- function (graph)
                     which (duplicated (graph [, c (".vx0", ".vx1")],
                                        fromLast = TRUE)))
     removes <- apply (index, 1, function (i)
-                      ifelse (graph$time [i [1] ] > graph$time [i [2] ],
+                      ifelse (graph$time [i [1] ] > graph$time [i [2] ], # nolint
                               i [1], i [2]))
     graph [!seq (nrow (graph)) %in% removes, ]
 }
@@ -367,7 +367,7 @@ swap_cols <- function (x, cola, colb)
 
 
 # traffic lights for pedestrians
-# https://wiki.openstreetmap.org/wiki/Tag:highway%3Dtraffic_signals#Complex_intersections
+# https://wiki.openstreetmap.org/wiki/Tag:highway%3Dtraffic_signals#Complex_intersections # nolint
 
 # return silicate "object" instances -> OSM ways IDs asosicated with given sets
 # of key-val pairs
