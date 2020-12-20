@@ -8,8 +8,8 @@
 #' @return TRUE if writing succussful.
 #' @seealso \link{weight_streetnet}
 #' @export
-write_dodgr_wt_profile <- function (file = NULL)
-{
+write_dodgr_wt_profile <- function (file = NULL) {
+
     requireNamespace ("jsonlite")
 
     if (is.null (file))
@@ -27,8 +27,8 @@ write_dodgr_wt_profile <- function (file = NULL)
     close (con)
 }
 
-read_dodgr_wt_profile <- function (file = NULL)
-{
+read_dodgr_wt_profile <- function (file = NULL) {
+
     file <- paste0 (tools::file_path_sans_ext (file), ".json")
     if (!file.exists (file))
         stop ("file [", file, "] does not exist") # nocov
@@ -41,8 +41,8 @@ read_dodgr_wt_profile <- function (file = NULL)
 }
 
 
-get_profiles <- function (file = NULL)
-{
+get_profiles <- function (file = NULL) {
+
     if (is.null (file))
         wp <- dodgr::weighting_profiles
     else
@@ -50,12 +50,11 @@ get_profiles <- function (file = NULL)
     return (wp)
 }
 
-get_profile <- function (wt_profile, file = NULL)
-{
+get_profile <- function (wt_profile, file = NULL) {
+
     profiles <- get_profiles (file)$weighting_profiles
     prf_names <- unique (profiles$name)
-    if (is.numeric (wt_profile))
-    {
+    if (is.numeric (wt_profile)) {
         # nocov start
         # this function is actually only called for character args
         wp <- profiles [profiles$name == "foot", ]
@@ -63,8 +62,7 @@ get_profile <- function (wt_profile, file = NULL)
         wp$value <- wt_profile
         wp$max_speed <- 10
         # nocov end
-    } else
-    {
+    } else {
         # foot, horse, wheelchair, bicycle, moped,
         # motorcycle, motorcar, goods, hgv, psv
         wt_profile <- match.arg (tolower (wt_profile), prf_names)
@@ -73,14 +71,14 @@ get_profile <- function (wt_profile, file = NULL)
     return (wp)
 }
 
-get_surface_speeds <- function (wt_profile, file = NULL)
-{
+get_surface_speeds <- function (wt_profile, file = NULL) {
+
     s <- get_profiles (file)$surface_speeds
     s [s$name == wt_profile, ]
 }
 
-get_turn_penalties <- function (wt_profile, file = NULL)
-{
+get_turn_penalties <- function (wt_profile, file = NULL) {
+
     tp <- get_profiles (file)$penalties
     tp [tp$name == wt_profile, ]
 }
