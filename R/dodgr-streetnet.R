@@ -41,8 +41,11 @@
 #' nrow (dodgr_streetnet (bbox = bb)) # around 17,000
 #' # The latter has fewer rows because only edges within polygon are returned
 #' }
-dodgr_streetnet <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
-{
+dodgr_streetnet <- function (bbox,
+                             pts = NULL,
+                             expand = 0.05,
+                             quiet = TRUE) {
+
     bb <- process_bbox (bbox, pts, expand)
 
     # osm_poly2line merges all street polygons with the line ones
@@ -69,8 +72,11 @@ dodgr_streetnet <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 #'
 #' @inherit dodgr_streetnet
 #' @export
-dodgr_streetnet_sc <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
-{
+dodgr_streetnet_sc <- function (bbox,
+                                pts = NULL,
+                                expand = 0.05,
+                                quiet = TRUE) {
+    
     bb <- process_bbox (bbox, pts, expand)
 
     osmdata::opq (bb$bbox) %>%
@@ -80,15 +86,15 @@ dodgr_streetnet_sc <- function (bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 
 # nocov end
 
-process_bbox <- function (bbox, pts = NULL, expand = 0.05)
-{
+process_bbox <- function (bbox,
+                          pts = NULL,
+                          expand = 0.05) {
+
     bbox_poly <- NULL
-    if (!missing (bbox))
-    {
+    if (!missing (bbox)) {
         if (is.character (bbox))
             bbox <- osmdata::getbb (bbox) # nocov
-        else if (is.list (bbox))
-        {
+        else if (is.list (bbox)) {
             if (!all (vapply (bbox, is.numeric, logical (1))))
                 stop ("bbox is a list, so items must be numeric ",
                       "(as in osmdata::getbb (..., format_out = 'polygon'))")
@@ -96,16 +102,13 @@ process_bbox <- function (bbox, pts = NULL, expand = 0.05)
                 message ("selecting the first polygon from bbox") # nocov
             bbox_poly <- bbox [[1]]
             bbox <- apply (bbox [[1]], 2, range)
-        } else if (is.numeric (bbox))
-        {
-            if (!inherits (bbox, "matrix"))
-            {
+        } else if (is.numeric (bbox)) {
+            if (!inherits (bbox, "matrix")) {
                 if (length (bbox) != 4)
                     stop ("bbox must have four numeric values")
                 bbox <- rbind (sort (bbox [c (1, 3)]),
                                sort (bbox [c (2, 4)]))
-            } else if (nrow (bbox) > 2)
-            {
+            } else if (nrow (bbox) > 2) {
                 bbox_poly <- bbox
                 bbox <- apply (bbox, 2, range)
             }
@@ -115,8 +118,7 @@ process_bbox <- function (bbox, pts = NULL, expand = 0.05)
             bbox <- t (bbox)
         bbox [, 1] <- bbox [, 1] + c (-expand, expand) * diff (bbox [, 1])
         bbox [, 2] <- bbox [, 2] + c (-expand, expand) * diff (bbox [, 2])
-    } else if (!is.null (pts))
-    {
+    } else if (!is.null (pts)) {
         nms <- names (pts)
         if (is.null (nms))
             nms <- colnames (pts)
