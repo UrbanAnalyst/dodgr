@@ -9,13 +9,13 @@
 #' which may be NA.
 #'
 #' @noRd
-dodgr_graph_cols <- function (graph)
-{
+dodgr_graph_cols <- function (graph) {
+
     nms <- names (graph)
     component <- grep ("comp", nms) %>% null_to_na ()
     if (methods::is (graph, "dodgr_streetnet") &
-        !methods::is (graph, "dodgr_streetnet_sc") & ncol (graph) >= 11)
-    {
+        !methods::is (graph, "dodgr_streetnet_sc") &
+        ncol (graph) >= 11) {
         # columns are always identically structured
         edge_id <- which (nms == "edge_id") %>% null_to_na ()
         fr_col <- which (nms == "from_id") %>% null_to_na ()
@@ -31,8 +31,7 @@ dodgr_graph_cols <- function (graph)
         if (length (xto) == 0) xto <- NA
         yto <- which (nms == "to_lat")
         if (length (yto) == 0) yto <- NA
-    } else
-    {
+    } else {
         edge_id <- grep ("edge_id|edge_$", nms) %>% null_to_na ()
 
         d_col <- find_d_col (graph)
@@ -45,8 +44,7 @@ dodgr_graph_cols <- function (graph)
 
         xfr <- yfr <- xto <- yto <- NA
         # TODO: Modify for other complex but non-spatial types of graph
-        if (is_graph_spatial (graph))
-        {
+        if (is_graph_spatial (graph)) {
             spcols <- find_spatial_cols (graph)
             graph <- tbl_to_df (graph)
 
@@ -62,23 +60,20 @@ dodgr_graph_cols <- function (graph)
             yfr <- spcols$fr_col [2]
             xto <- spcols$to_col [1]
             yto <- spcols$to_col [2]
-        } else
-        {
+        } else {
             if (length (fr_col) != 1 & length (to_col) != 1)
                 stop ("Unable to determine from and to columns in graph") # nolint # nocov
         }
     }
 
     time_col <- grep ("time", nms)
-    if (length (time_col) != 1)
-    {
+    if (length (time_col) != 1) {
         time_col <- grep ("time$", nms)
         if (length (time_col) != 1)
             time_col <- NA
     }
     timew_col <- grep ("time_w|timew|tw", nms)
-    if (length (timew_col) != 1)
-    {
+    if (length (timew_col) != 1) {
         timew_col <- grep ("time_w|timew|^tw", nms)
         if (length (timew_col) != 1)
             timew_col <- NA
@@ -100,8 +95,8 @@ dodgr_graph_cols <- function (graph)
 #'
 #' Convert graph to a standard form suitable for submission to C++ routines
 #' @noRd
-convert_graph <- function (graph, gr_cols)
-{
+convert_graph <- function (graph, gr_cols) {
+
     keep_cols <- c ("edge_id", "from", "to", "d", "d_weighted",
                     "time", "time_weighted")
     index <- do.call (c, gr_cols [keep_cols])
@@ -120,16 +115,15 @@ convert_graph <- function (graph, gr_cols)
     return (graph)
 }
 
-convert_to_char <- function (x)
-{
+convert_to_char <- function (x) {
+
     if (!is.character (x)) x <- paste0 (x)
     return (x)
 }
 
-tbl_to_df <- function (graph)
-{
-    if (methods::is (graph, "tbl"))
-    {
+tbl_to_df <- function (graph) {
+
+    if (methods::is (graph, "tbl")) {
         classes <- class (graph) [!grepl ("tbl", class (graph))]
         graph <- as.data.frame (graph)
         class (graph) <- classes
@@ -155,12 +149,11 @@ tbl_to_df <- function (graph)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' v <- dodgr_vertices (graph)
-dodgr_vertices <- function (graph)
-{
+dodgr_vertices <- function (graph) {
+
     # vertices are calculated as background process, so wait if that's not
     # finished.
-    if ("px" %in% names (attributes (graph)))
-    {
+    if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px")
         while (px$is_alive ())
             px$wait ()
@@ -174,15 +167,13 @@ dodgr_vertices <- function (graph)
     hashe <- digest::digest (graph [[gr_cols$edge_id]])
     if (!identical (hashe, hash))
         hash <- NULL
-    if (!is.null (hash))
-    {
+    if (!is.null (hash)) {
         hashe_ref <- attr (graph, "hashe")
         hashe_ref <- ifelse (is.null (hashe_ref), "", hashe_ref)
         hashe <- digest::digest (graph [[gr_cols$edge_id]])
         if (hashe != hashe_ref)
             hash <- hashe
-    } else
-    {
+    } else {
         if (is.na (gr_cols$edge_id))
             hash <- "" # nocov
         else
@@ -192,8 +183,7 @@ dodgr_vertices <- function (graph)
     fname <- file.path (tempdir (), paste0 ("dodgr_verts_", hash, ".Rds"))
     if (hash != "" & file.exists (fname))
         verts <- readRDS (fname)
-    else
-    {
+    else {
         verts <- dodgr_vertices_internal (graph)
         saveRDS (verts, fname)
     }
@@ -201,8 +191,8 @@ dodgr_vertices <- function (graph)
     return (verts)
 }
 
-dodgr_vertices_internal <- function (graph)
-{
+dodgr_vertices_internal <- function (graph) {
+
     graph <- tbl_to_df (graph)
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -214,8 +204,7 @@ dodgr_vertices_internal <- function (graph)
     if (is.factor (graph [[gr_cols$to]]))
         graph [[gr_cols$to]] <- paste0 (graph [[gr_cols$to]])
 
-    if (is_graph_spatial (graph))
-    {
+    if (is_graph_spatial (graph)) {
         verts <- data.frame (id = c (graph [[gr_cols$from]],
                                      graph [[gr_cols$to]]),
                              x = c (graph [[gr_cols$xfr]],
@@ -225,8 +214,7 @@ dodgr_vertices_internal <- function (graph)
                              stringsAsFactors = FALSE)
         if (!is.na (gr_cols$component))
             verts$component <- graph [[gr_cols$component]]
-    } else
-    {
+    } else {
         verts <- data.frame (id = c (graph [[gr_cols$from]],
                                      graph [[gr_cols$to]]),
                              stringsAsFactors = FALSE)
@@ -255,14 +243,13 @@ dodgr_vertices_internal <- function (graph)
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' graph <- dodgr_components (graph)
-dodgr_components <- function (graph)
-{
+dodgr_components <- function (graph) {
+
     graph <- tbl_to_df (graph)
 
     if ("component" %in% names (graph))
         message ("graph already has a component column")
-    else
-    {
+    else {
         gr_cols <- dodgr_graph_cols (graph)
         graph2 <- convert_graph (graph, gr_cols)
         if (is.na (gr_cols$edge_id))
@@ -301,22 +288,20 @@ dodgr_components <- function (graph)
 #' graph <- dodgr_sample (graph, nverts = 200)
 #' nrow (graph) # generally around 400 edges
 #' nrow (dodgr_vertices (graph)) # 200
-dodgr_sample <- function (graph, nverts = 1000)
-{
+dodgr_sample <- function (graph, nverts = 1000) {
+
     graph <- tbl_to_df (graph)
 
     fr <- find_fr_id_col (graph)
     to <- find_to_id_col (graph)
     verts <- unique (c (graph [, fr], graph [, to]))
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$edge_id))
-    {
+    if (is.na (gr_cols$edge_id)) {
         graph$edge_id <- seq (nrow (graph))
         gr_cols <- dodgr_graph_cols (graph)
     }
 
-    if (length (verts) > nverts)
-    {
+    if (length (verts) > nverts) {
         graph2 <- convert_graph (graph, gr_cols)
         if ("component" %in% names (graph))
             graph2$component <- graph$component
@@ -354,8 +339,8 @@ dodgr_sample <- function (graph, nverts = 1000)
 #' # insert new vertex in the middle of that randomly-selected edge:
 #' graph2 <- dodgr_insert_vertex (graph, v1, v2)
 #' nrow (graph); nrow (graph2) # new edges added to graph2
-dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL)
-{
+dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
+
     graph_t <- tbl_to_df (graph)
     gr_cols <- dodgr_graph_cols (graph_t)
     index12 <- which (graph [[gr_cols$from]] == v1 & graph [[gr_cols$to]] == v2)
@@ -389,8 +374,8 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL)
     return (graph)
 }
 
-insert_one_edge <- function (graph, index, x, y, gr_cols)
-{
+insert_one_edge <- function (graph, index, x, y, gr_cols) {
+
     if (is.null (x) & is.null (y)) {
         x <- (graph [[gr_cols$xfr]] [index] +
               graph [[gr_cols$xto]] [index]) / 2
