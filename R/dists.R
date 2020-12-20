@@ -104,10 +104,15 @@
 #' graph <- graph [which (graph$component == 1), ]
 #' d <- dodgr_dists (graph, from = xy, to = xy)
 #' }
-dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
-                         pairwise = FALSE, heap = 'BHeap', parallel = TRUE,
-                         quiet = TRUE)
-{
+dodgr_dists <- function (graph,
+                         from = NULL,
+                         to = NULL,
+                         shortest = TRUE,
+                         pairwise = FALSE,
+                         heap = 'BHeap',
+                         parallel = TRUE,
+                         quiet = TRUE) {
+
     graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
@@ -115,8 +120,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) | is.na (gr_cols$to))
-    {
+    if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
@@ -127,15 +131,12 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 
     tp <- attr (graph, "turn_penalty")
     tp <- ifelse (is.null (tp), 0, tp)
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-    {
-        if (!is.null (from))
-        {
+    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
+        if (!is.null (from)) {
             from <- nodes_arg_to_pts (from, graph)
             from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
         }
-        if (!is.null (to))
-        {
+        if (!is.null (to)) {
             to <- nodes_arg_to_pts (to, graph)
             to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
         }
@@ -144,8 +145,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
 
-    if (!shortest)
-    {
+    if (!shortest) {
         if (is.na (gr_cols$time_weighted))
             stop ("Graph does not contain a weighted time column from ",
                   "which to calculate fastest paths.")
@@ -157,8 +157,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
 
-    if (parallel & heap == "TriHeapExt")
-    {
+    if (parallel & heap == "TriHeapExt") {
         if (!quiet)
             message ("Extended TriHeaps can not be calculated in parallel; ",
                      "reverting to serial calculation")
@@ -166,8 +165,7 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
     }
 
     flip <- FALSE
-    if (length (from_index$index) > length (to_index$index))
-    {
+    if (length (from_index$index) > length (to_index$index)) {
         flip <- TRUE
         graph <- flip_graph (graph)
         temp <- from_index
@@ -190,12 +188,13 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
                                         to_index$index,
                                         heap,
                                         is_spatial)
-    } else
+    } else {
         d <- rcpp_get_sp_dists (graph,
                                 vert_map,
                                 from_index$index,
                                 to_index$index,
                                 heap)
+    }
 
     if (!pairwise) {
         if (!is.null (from_index$id))
@@ -222,12 +221,23 @@ dodgr_dists <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 #' Alias for \link{dodgr_dists}
 #' @inherit dodgr_dists
 #' @export
-dodgr_distances <- function (graph, from = NULL, to = NULL, shortest = TRUE,
-                             pairwise = FALSE, heap = 'BHeap', parallel = TRUE,
-                             quiet = TRUE)
-{
-    dodgr_dists (graph, from, to, shortest = shortest, pairwise = pairwise,
-                 heap = heap, parallel = parallel, quiet = quiet)
+dodgr_distances <- function (graph,
+                             from = NULL,
+                             to = NULL,
+                             shortest = TRUE,
+                             pairwise = FALSE,
+                             heap = 'BHeap',
+                             parallel = TRUE,
+                             quiet = TRUE) {
+
+    dodgr_dists (graph,
+                 from,
+                 to,
+                 shortest = shortest,
+                 pairwise = pairwise,
+                 heap = heap,
+                 parallel = parallel,
+                 quiet = quiet)
 }
 
 #' get_index_id_cols
@@ -238,18 +248,20 @@ dodgr_distances <- function (graph, from = NULL, to = NULL, shortest = TRUE,
 #' @return list of `index`, which is 0-based for C++, and corresponding
 #' `id` values.
 #' @noRd
-get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
-{
+get_index_id_cols <- function (graph,
+                               gr_cols,
+                               vert_map,
+                               pts) {
+
     index <- -1
     id <- NULL
-    if (!missing (pts))
-    {
-        if (is.integer (pts) & is.vector (pts))
-        {
+    if (!missing (pts)) {
+        if (is.integer (pts) & is.vector (pts)) {
             index <- pts
-        } else if (is.character (pts) | is.numeric (pts) |
-            is.matrix (pts) | is.data.frame (pts))
-        {
+        } else if (is.character (pts) |
+                   is.numeric (pts) |
+                   is.matrix (pts) |
+                   is.data.frame (pts)) {
             index <- get_pts_index (graph, gr_cols, vert_map, pts)
         } else
             stop ("routing points are of unknown form; must be either ",
@@ -272,13 +284,15 @@ get_index_id_cols <- function (graph, gr_cols, vert_map, pts)
 #' get_to_from_index
 #'
 #' @noRd
-get_to_from_index <- function (graph, vert_map, gr_cols, pts)
-{
+get_to_from_index <- function (graph,
+                               vert_map,
+                               gr_cols,
+                               pts) {
+
     id <- NULL
     if (is.null (pts))
         index <- seq (nrow (vert_map)) - 1
-    else
-    {
+    else {
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, pts)
         if (any (is.na (index_id$id)))
             stop ("Unable to match all routing points to graph vertices")
@@ -297,8 +311,8 @@ get_to_from_index <- function (graph, vert_map, gr_cols, pts)
 #' @param pts The `from` or `to` args passed to `dodgr_dists`
 #' @return Character vector of names of points, if they exist in `pts`
 #' @noRd
-get_id_cols <- function (pts)
-{
+get_id_cols <- function (pts) {
+
     ids <- NULL
     if (any (grepl ("id", colnames (pts), ignore.case = TRUE)))
     {
@@ -318,19 +332,19 @@ get_id_cols <- function (pts)
 #'
 #' Map unique vertex names to sequential numbers in matrix
 #' @noRd
-make_vert_map <- function (graph, gr_cols, xy = FALSE)
-{
+make_vert_map <- function (graph,
+                           gr_cols,
+                           xy = FALSE) {
+
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     verts <- c (paste0 (graph [[gr_cols$from]]), paste0 (graph [[gr_cols$to]]))
     indx <- which (!duplicated (verts))
-    if (!xy)
-    {
+    if (!xy) {
         # Note id has to be 0-indexed:
         res <- data.frame (vert = paste0 (verts [indx]),
                            id = seq (indx) - 1,
                            stringsAsFactors = FALSE)
-    } else
-    {
+    } else {
         verts_x <- c (graph [[gr_cols$xfr]], graph [[gr_cols$xto]])
         verts_y <- c (graph [[gr_cols$yfr]], graph [[gr_cols$yto]])
         res <- data.frame (vert = paste0 (verts [indx]),
@@ -356,14 +370,15 @@ make_vert_map <- function (graph, gr_cols, xy = FALSE)
 #' graph.
 #'
 #' @noRd
-get_pts_index <- function (graph, gr_cols, vert_map, pts)
-{
-    if (!(is.matrix (pts) | is.data.frame (pts)))
-    {
+get_pts_index <- function (graph,
+                           gr_cols,
+                           vert_map,
+                           pts) {
+
+    if (!(is.matrix (pts) | is.data.frame (pts))) {
         if (!is.numeric (pts))
             pts <- matrix (pts, ncol = 1)
-        else
-        {
+        else {
             nms <- names (pts)
             if (is.null (nms))
                 nms <- c ("x", "y")
@@ -372,11 +387,9 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         }
     }
 
-    if (ncol (pts) == 1)
-    {
+    if (ncol (pts) == 1) {
         pts <- pts [, 1]
-        if (!is.numeric (pts))
-        {
+        if (!is.numeric (pts)) {
             indx <- match (pts, vert_map$vert)
             if (any (is.na (indx)))
                 stop (paste0 ("from/to are not numeric yet can not be",
@@ -385,8 +398,7 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
         }
         if (any (pts < 1 | pts > nrow (vert_map)))
             stop (paste0 ("points exceed numbers of vertices"))
-    } else
-    {
+    } else {
         nms <- names (pts)
         if (is.null (nms))
             nms <- colnames (pts)
@@ -403,12 +415,10 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
             stop (paste0 ("Cannot determine geographical coordinates ",
                           "against which to match pts"))
 
-        if (is.data.frame (pts))
-        {
+        if (is.data.frame (pts)) {
             names (pts) [ix] <- "x"
             names (pts) [iy] <- "y"
-        } else
-        {
+        } else {
             colnames (pts) [ix] <- "x"
             colnames (pts) [iy] <- "y"
         }
@@ -428,8 +438,9 @@ get_pts_index <- function (graph, gr_cols, vert_map, pts)
 #' @param graph `data.frame` of graph edges
 #' @return List of matched heap arg and potentially converted graph
 #' @noRd
-get_heap <- function (heap, graph)
-{
+get_heap <- function (heap,
+                      graph) {
+
     heaps <- c ("FHeap", "BHeap", "TriHeap", "TriHeapExt", "Heap23", "set")
     heap <- match.arg (arg = heap, choices = heaps)
 
@@ -448,9 +459,12 @@ get_heap <- function (heap, graph)
 #' of `from` and `to` points.
 #' @return Converted graph as `data.frame`
 #' @noRd
-graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
-                            quiet = TRUE)
-{
+graph_from_pts <- function (from,
+                            to,
+                            expand = 0.1,
+                            wt_profile = "bicycle",
+                            quiet = TRUE) {
+
     if (!quiet)
         message (paste0 ("No graph submitted to dodgr_dists; ",
                          "downloading street network ... "),
@@ -479,8 +493,8 @@ graph_from_pts <- function (from, to, expand = 0.1, wt_profile = "bicycle",
 #' `dodgr_distances`, and only on converted graph, so just needs to switch from
 #' and to vertex columns.
 #' @noRd
-flip_graph <- function (graph)
-{
+flip_graph <- function (graph) {
+
     grcols <- dodgr_graph_cols (graph)
     fr_temp <- graph [[grcols$from]]
     graph [[grcols$from]] <- graph [[grcols$to]]
