@@ -64,9 +64,14 @@
 #' dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
 #' # dp is a list of 5 items, each of which just has a single path between each
 #' # pairwise from and to point.
-dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
-                         heap = 'BHeap', quiet = TRUE)
-{
+dodgr_paths <- function (graph,
+                         from,
+                         to,
+                         vertices = TRUE,
+                         pairwise = FALSE,
+                         heap = 'BHeap',
+                         quiet = TRUE) {
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -82,13 +87,11 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
-    if (pairwise)
-    {
+    if (pairwise) {
         if (length (from_index$index) != length (to_index$index))
             stop ("pairwise paths require from and to to have same length")
         paths <- list ()
-        for (i in seq_along (from_index$index))
-        {
+        for (i in seq_along (from_index$index)) {
             paths [[i]] <- rcpp_get_paths (graph,
                                            vert_map,
                                            from_index$index [i],
@@ -96,8 +99,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
                                            heap) [[1]]
 
         }
-    } else
-    {
+    } else {
         paths <- rcpp_get_paths (graph,
                                  vert_map,
                                  from_index$index,
@@ -119,10 +121,8 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
 
 
     # name path lists
-    if (!is.null (from_index$id) & !is.null (to_index$id))
-    {
-        if (!pairwise)
-        {
+    if (!is.null (from_index$id) & !is.null (to_index$id)) {
+        if (!pairwise) {
             for (i in seq (from_index$id))
                 names (paths [[i]]) <- paste0 (from_index$id [i],
                                                "-",
@@ -131,8 +131,7 @@ dodgr_paths <- function (graph, from, to, vertices = TRUE, pairwise = FALSE,
         names (paths) <- from_index$id
     }
 
-    if (!vertices)
-    {
+    if (!vertices) {
         graph_verts <- paste0 ("f", graph$from, "t", graph$to)
 
         # convert vertex IDs to corresponding sequences of edge numbers
