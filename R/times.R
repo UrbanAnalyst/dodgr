@@ -10,9 +10,12 @@
 #' than fastest paths.
 #'
 #' @export
-dodgr_times <- function (graph, from = NULL, to = NULL, shortest = FALSE,
-                         heap = 'BHeap')
-{
+dodgr_times <- function (graph,
+                         from = NULL,
+                         to = NULL,
+                         shortest = FALSE,
+                         heap = 'BHeap') {
+
     graph <- tbl_to_df (graph)
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -21,8 +24,7 @@ dodgr_times <- function (graph, from = NULL, to = NULL, shortest = FALSE,
 
     graph [[gr_cols$d]] <- graph [[gr_cols$time]]
 
-    if (!shortest)
-    {
+    if (!shortest) {
         if (is.na (gr_cols$time_weighted))
             stop ("Graph does not contain a weighted time column from ",
                   "which to calculate fastest paths.")
