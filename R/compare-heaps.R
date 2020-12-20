@@ -22,8 +22,10 @@
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' compare_heaps (graph, nverts = 1000, replications = 1)
-compare_heaps <- function(graph, nverts = 100, replications = 2)
-{
+compare_heaps <- function (graph,
+                           nverts = 100,
+                           replications = 2) {
+
     requireNamespace ("rbenchmark")
     requireNamespace ("igraph")
 
