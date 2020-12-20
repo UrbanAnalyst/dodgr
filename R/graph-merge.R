@@ -30,11 +30,10 @@
 #' graph_undir <- merge_directed_graph (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-merge_directed_graph <- function (graph, col_names = c ("flow"))
-{
+merge_directed_graph <- function (graph, col_names = c ("flow")) {
+
     # auto-detect either flow or centrality as col_names:
-    if (length (col_names) == 1)
-    {
+    if (length (col_names) == 1) {
         if (col_names == "flow" & !"flow" %in% names (graph) &
             "centrality" %in% names (graph))
             col_names <- "centrality"
