@@ -155,51 +155,15 @@ dodgr_dists <- function (graph,
         parallel <- FALSE
     }
 
-    flip <- FALSE
-    if (length (from_index$index) > length (to_index$index)) {
-        flip <- TRUE
-        graph <- flip_graph (graph)
-        temp <- from_index
-        from_index <- to_index
-        to_index <- temp
-    }
+    d <- calculate_distmat (graph,
+                            vert_map,
+                            from_index,
+                            to_index,
+                            heap,
+                            is_spatial,
+                            parallel,
+                            pairwise)
 
-    if (parallel) {
-        if (pairwise)
-            d <- rcpp_get_sp_dists_paired_par (graph,
-                                               vert_map,
-                                               from_index$index,
-                                               to_index$index,
-                                               heap,
-                                               is_spatial)
-        else
-            d <- rcpp_get_sp_dists_par (graph,
-                                        vert_map,
-                                        from_index$index,
-                                        to_index$index,
-                                        heap,
-                                        is_spatial)
-    } else {
-        d <- rcpp_get_sp_dists (graph,
-                                vert_map,
-                                from_index$index,
-                                to_index$index,
-                                heap)
-    }
-
-    if (!pairwise) {
-        if (!is.null (from_index$id))
-            rownames (d) <- from_index$id
-        else
-            rownames (d) <- vert_map$vert
-        if (!is.null (to_index$id))
-            colnames (d) <- to_index$id
-        else
-            colnames (d) <- vert_map$vert
-
-        if (flip)
-            d <- t (d)
-    }
 
     if (!quiet)
         message ("done.")
@@ -501,9 +465,71 @@ to_from_with_tp <- function (graph, to_from, from = TRUE) {
     if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
         if (!is.null (to_from)) {
             to_from <- nodes_arg_to_pts (to_from, graph)
-            to_from <- remap_verts_with_turn_penalty (graph, to_from, from = from)
+            to_from <- remap_verts_with_turn_penalty (graph,
+                                                      to_from,
+                                                      from = from)
         }
     }
 
     return (to_from)
+}
+
+#' Call the actual C++ functions to calculate and return distance matrices
+#' @noRd
+calculate_distmat <- function (graph,
+                               vert_map,
+                               from_index,
+                               to_index,
+                               heap,
+                               is_spatial,
+                               parallel = TRUE,
+                               pairwise = FALSE) {
+
+    flip <- FALSE
+    if (length (from_index$index) > length (to_index$index)) {
+        flip <- TRUE
+        graph <- flip_graph (graph)
+        temp <- from_index
+        from_index <- to_index
+        to_index <- temp
+    }
+
+    if (parallel) {
+        if (pairwise)
+            d <- rcpp_get_sp_dists_paired_par (graph,
+                                               vert_map,
+                                               from_index$index,
+                                               to_index$index,
+                                               heap,
+                                               is_spatial)
+        else
+            d <- rcpp_get_sp_dists_par (graph,
+                                        vert_map,
+                                        from_index$index,
+                                        to_index$index,
+                                        heap,
+                                        is_spatial)
+    } else {
+        d <- rcpp_get_sp_dists (graph,
+                                vert_map,
+                                from_index$index,
+                                to_index$index,
+                                heap)
+    }
+
+    if (!pairwise) {
+        if (!is.null (from_index$id))
+            rownames (d) <- from_index$id
+        else
+            rownames (d) <- vert_map$vert
+        if (!is.null (to_index$id))
+            colnames (d) <- to_index$id
+        else
+            colnames (d) <- vert_map$vert
+
+        if (flip)
+            d <- t (d)
+    }
+
+    return (d)
 }
