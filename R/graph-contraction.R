@@ -20,15 +20,13 @@
 #' nrow (graph) # 5,973
 #' graph <- dodgr_contract_graph (graph)
 #' nrow (graph) # 662
-dodgr_contract_graph <- function (graph, verts = NULL)
-{
+dodgr_contract_graph <- function (graph, verts = NULL) {
     if (nrow (graph) == 0)
         stop ("graph is empty") # nocov
 
     # px is the R6 processx object for initial caching
     px <- NULL
-    if ("px" %in% names (attributes (graph)))
-    {
+    if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px")
         while (px$is_alive ())
             px$wait ()
@@ -36,8 +34,7 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 
     v <- dodgr_vertices (graph)
 
-    if (!is.null (verts))
-    {
+    if (!is.null (verts)) {
         if (!(length (verts) == 1 | is.vector (verts)))
             stop ("verts must be a single value or a vector of vertex IDs")
         if (!is.character (verts))
@@ -49,11 +46,9 @@ dodgr_contract_graph <- function (graph, verts = NULL)
     hashc <- get_hash (graph, verts = verts, hash = FALSE)
     fname_c <- file.path (tempdir (), paste0 ("dodgr_graphc_", hashc, ".Rds"))
 
-    if (file.exists (fname_c))
-    {
+    if (file.exists (fname_c)) {
         graph_contracted <- list (graph = readRDS (fname_c))
-    } else
-    {
+    } else {
         fname <- file.path (tempdir (), paste0 ("dodgr_graph_", hash, ".Rds"))
         if (!file.exists (fname))
             saveRDS (graph, fname)
@@ -87,13 +82,11 @@ dodgr_contract_graph <- function (graph, verts = NULL)
 # get junction vertices of graphs which have been re-routed for turn angles.
 # These all have either "_start" or "_end" appended to vertex names
 # v is result of `dodgr_vertices` functions.
-get_junction_vertices <- function (v)
-{
+get_junction_vertices <- function (v) {
     gsub ("_start|_end", "", v$id [grep ("_start|_end", v$id)])
 }
 
-dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
-{
+dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     classes <- class (graph)
     graph <- tbl_to_df (graph)
 
@@ -123,8 +116,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
     graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
     graph_refill [, gr_cols$d_weighted] <-
         graph_contracted$graph$d_weighted [indx_contr]
-    if (!is.na (gr_cols$time) & !is.na (gr_cols$time_weighted))
-    {
+    if (!is.na (gr_cols$time) & !is.na (gr_cols$time_weighted)) {
         graph_refill [, gr_cols$time] <-
             graph_contracted$graph$time [indx_contr]
         graph_refill [, gr_cols$time_weighted] <-
@@ -132,8 +124,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
     }
 
     # Then re-insert spatial coordinates
-    if (is_graph_spatial (graph))
-    {
+    if (is_graph_spatial (graph)) {
         spcols <- find_spatial_cols (graph)$fr_col
         indx <- match (graph_contracted$graph$from [indx_contr], graph2$from)
         graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]   # nolint
@@ -163,8 +154,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
                            graph_contracted$edge_map$edge_old)
     graph_refill <- rbind (graph_refill, graph [indx_uncontr, ])
 
-    if (any (grepl ("comp", names (graph), ignore.case = TRUE)))
-    {
+    if (any (grepl ("comp", names (graph), ignore.case = TRUE))) {
         ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
         cnm <- names (graph_refill) [ci]
         graph_refill [[cnm]] <- NULL
@@ -208,8 +198,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL)
 dodgr_uncontract_graph <- function (graph)
 {
     px <- NULL
-    if ("px" %in% names (attributes (graph)))
-    {
+    if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px") # processx R6 object
         while (px$is_alive ())
             px$wait ()
@@ -238,8 +227,7 @@ dodgr_uncontract_graph <- function (graph)
 
     tp <- attr (graph, "turn_penalty")
     tp <- ifelse (is.null (tp), 0, tp)
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0)
-    {
+    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
         # extra code to uncontract the compound turn-angle junctions, including
         # merging extra rows such as flow from compound junctions back into
         # "normal" (non-compound) edges
@@ -257,8 +245,7 @@ dodgr_uncontract_graph <- function (graph)
         index_edge_out <- match (ec$e_out, graph [[gr_cols$edge_id]])
         new_cols <- names (graph) [which (!names (graph) %in%
                                           names (graph_full))]
-        for (n in new_cols)
-        {
+        for (n in new_cols) {
             graph [[n]] [index_edge_in] <- graph [[n]] [index_edge_in] +
                 graph [[n]] [index_junction]
             graph [[n]] [index_edge_out] <- graph [[n]] [index_edge_out] +
@@ -274,8 +261,8 @@ dodgr_uncontract_graph <- function (graph)
 }
 
 # map contracted graph with flows (or whatever else) back onto full graph
-uncontract_graph <- function (graph, edge_map, graph_full)
-{
+uncontract_graph <- function (graph, edge_map, graph_full) {
+
     gr_cols <- dodgr_graph_cols (graph_full)
     indx_to_full <- match (edge_map$edge_old, graph_full [[gr_cols$edge_id]])
     indx_to_contr <- match (edge_map$edge_new, graph [[gr_cols$edge_id]])
@@ -288,12 +275,10 @@ uncontract_graph <- function (graph, edge_map, graph_full)
     indx_to_contr <- c (indx_to_contr, match (edges, graph [[gr_cols$edge_id]]))
 
     index <- which (!names (graph) %in% names (graph_full))
-    if (length (index) > 0)
-    {
+    if (length (index) > 0) {
         nms <- names (graph) [index]
         graph_full [nms] <- NA
-        for (n in nms)
-        {
+        for (n in nms) {
             graph_full [[n]] [indx_to_full] <- graph [[n]] [indx_to_contr]
         }
     }
