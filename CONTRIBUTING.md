@@ -11,9 +11,9 @@ features is by opening a [github issue](https://github.com/ATFutures/dodgr/issue
 If you'd like to contribute changes to `dodgr`, we use [the GitHub
 flow](https://guides.github.com/introduction/flow/index.html) for proposing,
 submitting, reviewing, and accepting changes. If you haven't done this before,
-there's a nice overview of git [here](http://r-pkgs.had.co.nz/git.html), as well
+there's a nice overview of git [here](https://r-pkgs.org/git.html), as well
 as best practices for submitting pull requests
-[here](http://r-pkgs.had.co.nz/git.html#pr-make).
+[here](https://r-pkgs.org/git.html#pr-make).
 
 The `dodgr` coding style diverges somewhat from [this commonly used R style
 guide](http://adv-r.had.co.nz/Style.html), primarily in the following two ways,

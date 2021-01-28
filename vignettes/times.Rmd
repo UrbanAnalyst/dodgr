@@ -76,7 +76,7 @@ the new [`osmdata`](https://github.com/ropensci/osmdata) function,
 [`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html).
 This function requires a locally-stored GeoTIFF-formatted elevation data file
 to be downloaded from the [Consortium for Spatial
-Information](http://srtm.csi.cgiar.org/srtmdata/), or any other source. These
+Information](https://srtm.csi.cgiar.org/srtmdata/), or any other source. These
 data may then be appended by calling
 [`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html),
 and specifying the name of this file. While time-based routing is possible with
@@ -324,4 +324,3 @@ graph$d_weighted <- graph$time_weighted
 ```
 All routes will then be automatically calculated along fastest rather than
 shortest routes.
-
