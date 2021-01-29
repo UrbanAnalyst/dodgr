@@ -100,7 +100,7 @@ NULL
 #' motorways in Bristol, UK.
 #'
 #' @note Input data downloaded from
-#' <https://www.ordnancesurvey.co.uk/opendatadownload/products.html>.
+#' \href{https://osdatahub.os.uk/downloads/open},
 #' To download the data from that page click on the tick box next to
 #' 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
 #' the form on the subsequent page.

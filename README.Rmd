@@ -51,7 +51,7 @@ RcppParallel::setThreadOptions (numThreads = <desired_number>)
 ## What's so special?
 
 Four aspects. First, while other packages exist for calculating distances on
-directed graphs, notably [`igraph`](https://igraph.org/r), even that otherwise
+directed graphs, notably [`igraph`](https://igraph.org/r/), even that otherwise
 fabulous package does not (readily) permit analysis of *dual-weighted* graphs.
 Dual-weighted graphs have two sets of weights for each edge, so routing can be
 evaluated with one set of weights, while distances can be calculated with the
@@ -63,7 +63,7 @@ unweighted distances. Accurate calculation of distances on street networks
 requires a dual-weighted representation. In **R**, `dodgr` is currently the
 only package that offers this functionality (without excessive data wrangling).
 
-Second, while [`igraph`](https://igraph.org/r) and almost all other routing
+Second, while [`igraph`](https://igraph.org/r/) and almost all other routing
 packages are primarily designed for one-to-one routing, `dodgr` is specifically
 designed for many-to-many routing, and will generally outperform equivalent
 packages in large routing tasks.

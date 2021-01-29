@@ -12,8 +12,7 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/dodgr?color=orange)](ht
 [![CII Best
 Practices](https://bestpractices.coreinfrastructure.org/projects/1396/badge)](https://bestpractices.coreinfrastructure.org/projects/1396)
 
-dodgr: Distances on Directed Graphs in R
-========================================
+# dodgr: Distances on Directed Graphs in R
 
 `dodgr` is an R package for efficient calculation of many-to-many
 pairwise distances on dual-weighted directed graphs, for aggregation of
@@ -27,13 +26,14 @@ and by default use the maximal number of available cores or threads. If
 you do not wish `dodgr`to use all available threads, please reduce the
 number manually by first specifying a value via
 
-    RcppParallel::setThreadOptions (numThreads = <desired_number>)
+``` r
+RcppParallel::setThreadOptions (numThreads = <desired_number>)
+```
 
-What’s so special?
-------------------
+## What’s so special?
 
 Four aspects. First, while other packages exist for calculating
-distances on directed graphs, notably [`igraph`](https://igraph.org/r),
+distances on directed graphs, notably [`igraph`](https://igraph.org/r/),
 even that otherwise fabulous package does not (readily) permit analysis
 of *dual-weighted* graphs. Dual-weighted graphs have two sets of weights
 for each edge, so routing can be evaluated with one set of weights,
@@ -47,7 +47,7 @@ networks requires a dual-weighted representation. In **R**, `dodgr` is
 currently the only package that offers this functionality (without
 excessive data wrangling).
 
-Second, while [`igraph`](https://igraph.org/r) and almost all other
+Second, while [`igraph`](https://igraph.org/r/) and almost all other
 routing packages are primarily designed for one-to-one routing, `dodgr`
 is specifically designed for many-to-many routing, and will generally
 outperform equivalent packages in large routing tasks.
@@ -66,30 +66,34 @@ routing. Routing can include such factors as waiting times at traffic
 lights, delays for turning across oncoming traffic, and the effects of
 elevation on both cyclists and pedestrians.
 
-Installation
-------------
+## Installation
 
 You can install latest stable version of `dodgr` from CRAN with:
 
-    install.packages("dodgr") # current CRAN version
+``` r
+install.packages("dodgr") # current CRAN version
+```
 
 Alternatively, current development versions can be installed using any
 of the following options:
 
-    # install.packages("remotes")
-    remotes::install_git("https://git.sr.ht/~mpadge/dodgr")
-    remotes::install_bitbucket("atfutures/dodgr")
-    remotes::install_gitlab("atfutures1/dodgr")
-    remotes::install_github("ATFutures/dodgr")
+``` r
+# install.packages("remotes")
+remotes::install_git("https://git.sr.ht/~mpadge/dodgr")
+remotes::install_bitbucket("atfutures/dodgr")
+remotes::install_gitlab("atfutures1/dodgr")
+remotes::install_github("ATFutures/dodgr")
+```
 
 Then load with
 
-    library (dodgr)
-    packageVersion ("dodgr")
-    #> [1] '0.2.7.23'
+``` r
+library (dodgr)
+packageVersion ("dodgr")
+#> [1] '0.2.7.23'
+```
 
-Usage: Sample Data and `dodgr` networks
----------------------------------------
+## Usage: Sample Data and `dodgr` networks
 
 To illustrate functionality, the package includes an example data set
 containing the Open Street Map network for [Hampi,
@@ -103,15 +107,17 @@ two points or vertices. `sf`-format objects can be converted to
 equivalent `dodgr` representations with the `weight_streetnet()`
 function:
 
-    class (hampi)
-    #> [1] "sf"         "data.frame"
-    dim (hampi)
-    #> [1] 203  15
-    graph <- weight_streetnet (hampi, wt_profile = "foot")
-    class (graph)
-    #> [1] "data.frame"      "dodgr_streetnet"
-    dim (graph)
-    #> [1] 5973   15
+``` r
+class (hampi)
+#> [1] "sf"         "data.frame"
+dim (hampi)
+#> [1] 203  15
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+class (graph)
+#> [1] "data.frame"      "dodgr_streetnet"
+dim (graph)
+#> [1] 5973   15
+```
 
 The `sf`-format network contained 203 `LINESTRING` objects, with the
 `weight_streetnet()` function decomposing these into 5,973 distinct
@@ -119,7 +125,9 @@ edges, indicating that the `sf` representation had around 29 edges or
 segments in each `LINESTRING` object. The `dodgr` network then looks
 like this:
 
-    head (graph)
+``` r
+head (graph)
+```
 
 | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |
 |----------:|---------:|:-----------|----------:|----------:|:-----------|---------:|---------:|-----------:|------------:|:-------------|:---------|----------:|----------:|---------------:|
@@ -143,7 +151,9 @@ distances, `d`. In the example shown, `service` highways are not ideal
 for pedestrians, and so weighted distances are slightly greater than
 actual distances. Compare this with:
 
-    head (graph [graph$highway == "path", ])
+``` r
+head (graph [graph$highway == "path", ])
+```
 
 |     | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |        d | d\_weighted | highway | way\_id  | component |     time | time\_weighted |
 |:----|----------:|---------:|:-----------|----------:|----------:|:-----------|---------:|---------:|---------:|------------:|:--------|:---------|----------:|---------:|---------------:|
@@ -157,8 +167,7 @@ actual distances. Compare this with:
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
 
-Usage: Distances and Times
---------------------------
+## Usage: Distances and Times
 
 The many-to-many nature of `dodgr` means that the function to calculate
 distances,
@@ -181,8 +190,10 @@ Routing points can, for example, be randomly selected from the vertices
 of a graph. The vertices can in turn be extracted with the
 `dodgr_vertices()` function:
 
-    v <- dodgr_vertices (graph)
-    head (v)
+``` r
+v <- dodgr_vertices (graph)
+head (v)
+```
 
 |     | id         |        x |        y | component |   n |
 |:----|:-----------|---------:|---------:|----------:|----:|
@@ -201,44 +212,53 @@ the `way_id` column in the above `graph`, and as the `id` column in the
 vertices. Random vertices may be generated in this case through
 selecting `id` values:
 
-    from <- sample (v$id, size = 20)
-    to <- sample (v$id, size = 50)
-    d <- dodgr_dists (graph = graph, from = from, to = to)
-    dim (d)
-    #> [1] 20 50
+``` r
+from <- sample (v$id, size = 20)
+to <- sample (v$id, size = 50)
+d <- dodgr_dists (graph = graph, from = from, to = to)
+dim (d)
+#> [1] 20 50
+```
 
 Alternatively, the points may be specified as matrices of geographic
 coordinates:
 
-    from_x <- min (graph$from_lon) + runif (20) * diff (range (graph$from_lon))
-    from_y <- min (graph$from_lat) + runif (20) * diff (range (graph$from_lat))
-    to_x <- min (graph$from_lon) + runif (50) * diff (range (graph$from_lon))
-    to_y <- min (graph$from_lat) + runif (50) * diff (range (graph$from_lat))
-    d <- dodgr_dists (graph = graph, from = cbind (from_x, from_y), to = cbind (to_x, to_y))
+``` r
+from_x <- min (graph$from_lon) + runif (20) * diff (range (graph$from_lon))
+from_y <- min (graph$from_lat) + runif (20) * diff (range (graph$from_lat))
+to_x <- min (graph$from_lon) + runif (50) * diff (range (graph$from_lon))
+to_y <- min (graph$from_lat) + runif (50) * diff (range (graph$from_lat))
+d <- dodgr_dists (graph = graph, from = cbind (from_x, from_y), to = cbind (to_x, to_y))
+```
 
 In this case, the random points will be mapped on to the nearest points
 on the street network. This may, of course, map some points onto minor,
 disconnected components of the graph. This can be controlled either by
 reducing the graph to it’s largest connected component only:
 
-    graph <- graph [graph$component == 1, ]
-    nrow (graph)
+``` r
+graph <- graph [graph$component == 1, ]
+nrow (graph)
+```
 
 or by explicitly using the `match_points_to_graph()` function with the
 option `connected = TRUE`:
 
-    from <- match_points_to_graph (v, cbind (from_x, from_y), connected = TRUE)
-    to <- match_points_to_graph (v, cbind (to_x, to_y), connected = TRUE)
+``` r
+from <- match_points_to_graph (v, cbind (from_x, from_y), connected = TRUE)
+to <- match_points_to_graph (v, cbind (to_x, to_y), connected = TRUE)
+```
 
 This function returns an index into the result of `dodgr_vertices`, and
 so points to use for routing must then be extracted as follows:
 
-    from <- v$id [from] # or from <- v [from, c ("x", "y")]
-    to <- v$id [to]
-    d <- dodgr_dists (graph = graph, from = from, to = to)
+``` r
+from <- v$id [from] # or from <- v [from, c ("x", "y")]
+to <- v$id [to]
+d <- dodgr_dists (graph = graph, from = from, to = to)
+```
 
-Usage: Flow Aggregation
------------------------
+## Usage: Flow Aggregation
 
 Flow aggregation refers to the procedure of routing along multiple ways
 according to specified densities of flow between defined origin and
@@ -249,55 +269,61 @@ densities between the input set of origin (`from`) and destination
 (`to`) points. The following example illustrates use with a random “flow
 matrix”:
 
-    flows <- array (runif (length (from) * length (to)), dim = c (length (from), length (to)))
-    length (from); length (to); dim (flows)
-    #> [1] 20
-    #> [1] 50
-    #> [1] 20 50
-    f <- dodgr_flows_aggregate (graph = graph, from = from, to = to, flows = flows)
+``` r
+flows <- array (runif (length (from) * length (to)), dim = c (length (from), length (to)))
+length (from); length (to); dim (flows)
+#> [1] 20
+#> [1] 50
+#> [1] 20 50
+f <- dodgr_flows_aggregate (graph = graph, from = from, to = to, flows = flows)
+```
 
 The result is simply the input `graph` with an additional column
 quantifying the aggregate flows along each edge:
 
-    head (f)
+``` r
+head (f)
+```
 
 | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |      flow |
 |----------:|---------:|:-----------|----------:|----------:|:-----------|---------:|---------:|-----------:|------------:|:-------------|:---------|----------:|----------:|---------------:|----------:|
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.1072045 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0000000 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.1072045 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0000000 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.1072045 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0000000 |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0644745 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.1131806 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0644745 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.1131806 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0644745 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.1131806 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
 graph is dispersive:
 
-    f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (from)))
+``` r
+f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (from)))
+```
 
-Further detail
---------------
+## Further detail
 
 For more detail, see the [main package
 vignette](https://atfutures.github.io/dodgr/articles/dodgr.html), and
 the second vignette on [street networks and time-based
 routing](https://atfutures.github.io/dodgr/articles/times.html)
 
-Contributors
-------------
-
+## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors`
+package](https://github.com/ropenscilabs/allcontributors) following the
+[all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ### Code
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -342,14 +368,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Authors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/tbuckl">
@@ -394,8 +417,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/dcooley">
@@ -410,14 +431,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AHussein-Mahfouz">Hussein-Mahfouz</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Contributors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -462,8 +480,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3ASymbolixAU">SymbolixAU</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/coatless">
@@ -508,8 +524,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Alga455">lga455</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/Maschette">
@@ -524,9 +538,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aorlando-sabogal">orlando-sabogal</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
