@@ -13,7 +13,7 @@ A sample street network for Bristol, U.K., from the Ordnance Survey.
 }
 \note{
 Input data downloaded from
-\href{https://osdatahub.os.uk/downloads/open},
+\url{https://osdatahub.os.uk/downloads/open},
 To download the data from that page click on the tick box next to
 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
 the form on the subsequent page.
