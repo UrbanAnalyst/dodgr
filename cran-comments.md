@@ -1,17 +1,18 @@
-# CRAN notes for dodgr_0.2.7 submission
-
-This submission fixes the single UBSAN error raised by previous submissions. I was able to reproduce that error locally, and can confirm that it has now been rectified.
+# CRAN notes for dodgr_0.2.8 submission
 
 ## Notes
 
-This submission generates the following NOTES on some systems:
+This submission generates NOTES on some systems regarding "possibly invalid URLs", for which I can only assure you that all URLs are valid, and all use appropriate "https", and not "http", protocol. Note in particular that https://srtm.csi.cgiar.org/srtmdata commonly times out and errors, but the https is valid, and is the sole link to an official NASA data source. Please note that all URLs identified in 'R CMD check' NOTEs only arise in documentation, and are not directly called by any functions within the package. Thus any issues with these URLs do not affect package functionality in any way.
 
-* Two possibly invalid URLs: one for a valid vignette reference, due to jstor preventing automated queries; and one for the DOI for the paper associated with this pacakge, which is also valid (https://doi.org/10.32866/6945, with DOI simply given as 'doi = "10.32866/6945"').
+One previous NOTE regarding a "Namespace in Imports field not imported from" has also been rectified.
+
+Beyond that, this submission generates the following NOTES on some systems:
+
 * "GNU make is a SystemRequirements", which is unavoidable because of the need to remove compiled object files in src sub-directories.
 
 ## Test environments
 
 Other than the above, this submission generates no additional notes, and no warnings on:
-* Ubuntu 16.04 (on `travis-ci`): R-release, R-devel
+* Ubuntu 20.04: R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 - clang UBSAN on R-devel
