@@ -1,6 +1,10 @@
 
 #v 0.2.8.00x
 
+Minor changes:
+
+- Bug fix when submitting contracted graphs to dodgr_to_sf (#155 thanks to @agila5)
+
 #v 0.2.8
 
 Minor changes:
