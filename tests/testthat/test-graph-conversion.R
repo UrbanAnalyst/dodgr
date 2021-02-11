@@ -33,4 +33,8 @@ test_that("sf", {
     gsf1 <- dodgr_to_sf (graph)
     gsf2 <- sf::st_sf (gsfc$dat, geometry = gsfc$geometry, crs = 4326)
     expect_identical (gsf1, gsf2)
+
+    gc <- dodgr_contract_graph (graph)
+    msg <- "Calling on a contracted graph will result in loss of information"
+    expect_message (gsf <- dodgr_to_sf (gc), msg)
 })
