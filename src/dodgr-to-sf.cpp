@@ -337,9 +337,18 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
 Rcpp::List rcpp_aggregate_to_sf (const Rcpp::DataFrame &graph_full,
         const Rcpp::DataFrame &graph_contr, const Rcpp::DataFrame &edge_map)
 {
-    Rcpp::CharacterVector old_edges = edge_map ["edge_old"],
-            new_edges = edge_map ["edge_new"],
+    Rcpp::CharacterVector old_edges, new_edges,
             contr_edges = graph_contr ["edge_id"];
+
+    if (edge_map.nrow () > 0) {
+        old_edges = edge_map ["edge_old"];
+        new_edges = edge_map ["edge_new"];
+    } else {
+        // If a previously contracted graph is submitted, the edge_map will be
+        // empty and graph_full == graph_contr, so just use the latter only:
+        old_edges = contr_edges;
+        new_edges = contr_edges;
+    }
 
     // store vector of names used to name the resultant sf-objects. A
     // corresponding set is also used below to insert non-contracted edges in

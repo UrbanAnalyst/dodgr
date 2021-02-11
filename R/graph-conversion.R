@@ -19,6 +19,11 @@
 #' dim (xy) # 764 edges; 14 attributes
 dodgr_to_sf <- function (graph) {
 
+    if (methods::is (graph, "dodgr_contracted"))
+        message ("'dodgr_to_sf' is intended to be called only on ",
+                 "non-contracted graphs.\nCalling on a contracted ",
+                 "graph will result in loss of information.")
+
     graph <- tbl_to_df (graph)
 
     requireNamespace ("sf")
