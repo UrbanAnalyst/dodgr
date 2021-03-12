@@ -29,7 +29,7 @@ be calculated (see Details)}
 calculated (see Details)}
 
 \item{k}{Width of exponential spatial interaction function (exp (-d / k)),
-in units of 'd', specified in one of 3 forms: (i) a single vlaue; (ii) a
+in units of 'd', specified in one of 3 forms: (i) a single value; (ii) a
 vector of independent values for each origin point (with same length as
 'from' points); or (iii) an equivalent matrix with each column holding values
 for each 'from' point, so 'nrow(k)==length(from)'. See Note.}
@@ -60,7 +60,7 @@ flows are aggregated. To remove any such effect, set \code{tol = 0}.}
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-Modified version of graph with additonal \code{flow} column added.
+Modified version of graph with additional \code{flow} column added.
 }
 \description{
 Aggregate flows throughout a network based using an exponential Spatial
@@ -93,7 +93,7 @@ sum of two, or greater than the sum of densities.
 With \code{norm_sums = TRUE}, the sum of network flows (\code{sum(output$flow)}) should
 equal the sum of origin densities (\code{sum(dens_from)}). This may nevertheless
 not always be the case, because origin points may simply be too far from any
-denstination (\code{to}) points for an exponential model to yield non-zero values
+destination (\code{to}) points for an exponential model to yield non-zero values
 anywhere in a network within machine tolerance. Such cases may result in sums
 of output flows being less than sums of input densities.
 }

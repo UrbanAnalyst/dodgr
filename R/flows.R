@@ -25,7 +25,7 @@
 #' flows are aggregated. To remove any such effect, set `tol = 0`.
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @inheritParams dodgr_flows_si
-#' @return Modified version of graph with additonal `flow` column added.
+#' @return Modified version of graph with additional `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
 #' of values of 'k'. The specification above allows fitting multiple values of
@@ -175,7 +175,7 @@ dodgr_flows_aggregate <- function (graph,
 #' graph (see Details)
 #' @param from Vector or matrix of points **from** which aggregate dispersed
 #' flows are to be calculated (see Details)
-#' @param dens Vectors of densities correponsing to the `from` points
+#' @param dens Vectors of densities corresponding to the `from` points
 #' @param k Width coefficient of exponential diffusion function defined as
 #' `exp(-d/k)`, in units of distance column of `graph` (metres by default). Can
 #' also be a vector with same length as `from`, giving dispersal coefficients
@@ -184,7 +184,7 @@ dodgr_flows_aggregate <- function (graph,
 #' @param tol Relative tolerance below which dispersal is considered to have
 #' finished. This parameter can generally be ignored; if in doubt, its effect
 #' can be removed by setting `tol = 0`.
-#' @return Modified version of graph with additonal `flow` column added.
+#' @return Modified version of graph with additional `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
 #' of values of 'k'. The specification above allows fitting multiple values of
@@ -270,7 +270,7 @@ dodgr_flows_disperse <- function (graph,
 #'
 #' @inheritParams dodgr_flows_aggregate
 #' @param k Width of exponential spatial interaction function (exp (-d / k)),
-#' in units of 'd', specified in one of 3 forms: (i) a single vlaue; (ii) a
+#' in units of 'd', specified in one of 3 forms: (i) a single value; (ii) a
 #' vector of independent values for each origin point (with same length as
 #' 'from' points); or (iii) an equivalent matrix with each column holding values
 #' for each 'from' point, so 'nrow(k)==length(from)'. See Note.
@@ -279,7 +279,7 @@ dodgr_flows_disperse <- function (graph,
 #' @param norm_sums Standardise sums from all origin points, so sum of flows
 #' throughout entire network equals sum of densities from all origins (see
 #' Note).
-#' @return Modified version of graph with additonal `flow` column added.
+#' @return Modified version of graph with additional `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
 #' of values of 'k'. The specification above allows fitting multiple values of
@@ -306,7 +306,7 @@ dodgr_flows_disperse <- function (graph,
 #' With `norm_sums = TRUE`, the sum of network flows (`sum(output$flow)`) should
 #' equal the sum of origin densities (`sum(dens_from)`). This may nevertheless
 #' not always be the case, because origin points may simply be too far from any
-#' denstination (`to`) points for an exponential model to yield non-zero values
+#' destination (`to`) points for an exponential model to yield non-zero values
 #' anywhere in a network within machine tolerance. Such cases may result in sums
 #' of output flows being less than sums of input densities.
 #'

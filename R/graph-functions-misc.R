@@ -215,7 +215,7 @@ find_xy_col_simple <- function (dfr) {
 
 #' match_pts_to_graph
 #'
-#' Match spatial points to a spatial graph which contains vertex coordindates
+#' Match spatial points to a spatial graph which contains vertex coordinates
 #'
 #' @param verts A `data.frame` of vertices obtained from
 #' `dodgr_vertices(graph)`.

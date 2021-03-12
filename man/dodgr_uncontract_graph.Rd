@@ -16,7 +16,7 @@ uncontracted graph.
 \description{
 Revert a contracted graph created with \link{dodgr_contract_graph} back to
 the full, uncontracted version. This function is mostly used for the side
-effect of mapping any new columnns inserted on to the contracted graph back
+effect of mapping any new columns inserted on to the contracted graph back
 on to the original graph, as demonstrated in the example.
 }
 \examples{

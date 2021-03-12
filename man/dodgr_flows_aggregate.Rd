@@ -51,7 +51,7 @@ Note).}
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-Modified version of graph with additonal \code{flow} column added.
+Modified version of graph with additional \code{flow} column added.
 }
 \description{
 Aggregate flows throughout a network based on an input matrix of flows

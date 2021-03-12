@@ -11,7 +11,7 @@ write_dodgr_wt_profile(file = NULL)
 suffix will be automatically appended.}
 }
 \value{
-TRUE if writing succussful.
+TRUE if writing successful.
 }
 \description{
 Write the \code{dodgr} street network weighting profiles to a local

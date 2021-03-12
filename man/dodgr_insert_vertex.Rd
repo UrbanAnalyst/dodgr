@@ -25,7 +25,7 @@ created half-way between \code{v1} and \code{v2}.}
 created half-way between \code{v1} and \code{v2}.}
 }
 \value{
-A modifed graph with specified edge between defined start and end
+A modified graph with specified edge between defined start and end
 vertices split into two edges either side of new vertex.
 }
 \description{

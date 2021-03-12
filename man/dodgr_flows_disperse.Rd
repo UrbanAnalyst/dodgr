@@ -22,7 +22,7 @@ graph (see Details)}
 \item{from}{Vector or matrix of points \strong{from} which aggregate dispersed
 flows are to be calculated (see Details)}
 
-\item{dens}{Vectors of densities correponsing to the \code{from} points}
+\item{dens}{Vectors of densities corresponding to the \code{from} points}
 
 \item{k}{Width coefficient of exponential diffusion function defined as
 \code{exp(-d/k)}, in units of distance column of \code{graph} (metres by default). Can
@@ -46,7 +46,7 @@ can be removed by setting \code{tol = 0}.}
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-Modified version of graph with additonal \code{flow} column added.
+Modified version of graph with additional \code{flow} column added.
 }
 \description{
 Disperse flows throughout a network based on a input vectors of origin points

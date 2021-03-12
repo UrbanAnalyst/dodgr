@@ -25,7 +25,7 @@ matching.}
 A vector index into verts
 }
 \description{
-Match spatial points to a spatial graph which contains vertex coordindates
+Match spatial points to a spatial graph which contains vertex coordinates
 }
 \examples{
 net <- weight_streetnet (hampi, wt_profile = "foot")

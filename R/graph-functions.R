@@ -278,7 +278,7 @@ dodgr_components <- function (graph) {
 #'
 #' @return A connected sub-component of `graph`
 #'
-#' @note Graphs may occassionally have `nverts + 1` vertices, rather than
+#' @note Graphs may occasionally have `nverts + 1` vertices, rather than
 #' the requested `nverts`.
 #'
 #' @export
@@ -326,7 +326,7 @@ dodgr_sample <- function (graph, nverts = 1000) {
 #' created half-way between `v1` and `v2`.
 #' @param y The `y`-coordinate of new vertex. If not specified, vertex is
 #' created half-way between `v1` and `v2`.
-#' @return A modifed graph with specified edge between defined start and end
+#' @return A modified graph with specified edge between defined start and end
 #' vertices split into two edges either side of new vertex.
 #' @inheritParams dodgr_vertices
 #'

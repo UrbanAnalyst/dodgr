@@ -21,7 +21,7 @@ A connected sub-component of \code{graph}
 Sample a random but connected sub-component of a graph
 }
 \note{
-Graphs may occassionally have \code{nverts + 1} vertices, rather than
+Graphs may occasionally have \code{nverts + 1} vertices, rather than
 the requested \code{nverts}.
 }
 \examples{
