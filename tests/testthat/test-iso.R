@@ -1,6 +1,7 @@
 context("iso")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 if (!test_all)
     RcppParallel::setThreadOptions (numThreads = 2)

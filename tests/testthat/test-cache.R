@@ -1,6 +1,7 @@
 context("cache")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 #library (osmdata)
 #devtools::load_all ("../../ropensci/osmdata", export_all = FALSE)
