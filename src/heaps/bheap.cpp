@@ -24,7 +24,7 @@ BHeap::BHeap(unsigned int n)
     aPos = new unsigned int[n];
     //    for(i = 0; i <= n; i++) {
     //        a[i].item = 0;
-    //	a[i].key = 0;
+    //        a[i].key = 0;
     //    }
     //    for(i = 0; i < n; i++) aPos[i] = 0;
     itemCount = 0;

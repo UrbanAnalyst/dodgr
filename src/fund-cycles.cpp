@@ -21,7 +21,7 @@ Rcpp::List rcpp_fundamental_cycles (Rcpp::DataFrame graph,
     }
     graph::Graph <std::string> gr (vert_id, vert_id.size (),
             edge_array, from.size ());
-	gr.computeFundamentalCycles();
+    gr.computeFundamentalCycles();
 
     Rcpp::List ret (gr.m_fundamentalCycles.size ());
     std::vector<graph::AdjacencyMatrix>::iterator cycle_iter;

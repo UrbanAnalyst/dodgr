@@ -479,7 +479,7 @@ void TriHeap::decreaseKey(unsigned int item, double newValue)
 
                 compCount++;
                 if(v->key < above->key) {
-                    /* swap */		    
+                    /* swap */
                     v->extra = FALSE;
                     v2->extra = TRUE;
                     replaceChild(v2, v);
@@ -584,7 +584,7 @@ rearrange:
          * an active node.  Node v2 is consistent.  Rearrangement occurs with
          * the currently active node for this dimension, which at this point
          * must exist.
-         */	
+         */
 
 
         /* The current active node and its partner are w and w2 respectively.
@@ -697,7 +697,7 @@ rearrange:
         }
 
         /*------------------------------*/
-promote:	
+promote:
         /* Promotion Code.  Reached if the loop has not exited.  Uses variables
          * p, v, v2, and d.  Must ensure that on the trunk (p,v,v2), both v and
          * v2 are inconsistent nodes, so that (v,v2,p) will give heap
@@ -991,7 +991,7 @@ unsigned int TriHeap::merge(TriHeapNode **a, TriHeapNode **b)
         }
         else {
             nextTree->extra = FALSE;
-            other->extra = TRUE;	    
+            other->extra = TRUE;
             addChild(tree, nextTree);
         }
 

@@ -539,7 +539,7 @@ void TriHeapExt::decreaseKey(unsigned int item, double newValue)
 
             compCount++;
             if(v->key < above->key) {
-                /* swap */		    
+                /* swap */
                 v->extra = FALSE;
                 v2->extra = TRUE;
                 replaceChild(v2, v);
@@ -750,7 +750,7 @@ rearrange:
     }
 
     /*------------------------------*/
-promote:	
+promote:
     /* Promotion Code.  Reached if the loop has not exited.  Uses variables
      * p, v, v2, and d.  Must ensure that on the trunk (p,v,v2), both v and v2
      * are inconsistent nodes, so that (v,v2,p) will give heap ordering.
@@ -1243,7 +1243,7 @@ unsigned int TriHeapExt::merge(TriHeapExtNode **a, TriHeapExtNode **b)
         }
         else {
             nextTree->extra = FALSE;
-            other->extra = TRUE;	    
+            other->extra = TRUE;
             addChild(tree, nextTree);
         }
 

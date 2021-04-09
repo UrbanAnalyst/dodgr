@@ -141,8 +141,8 @@ class Graph
 
     private:
 
-        NodeArray 				m_nodeArray;
-        AdjacencyMatrix 	    m_adjMat;
+        NodeArray           m_nodeArray;
+        AdjacencyMatrix     m_adjMat;
         struct TreeNode
         {
             size_t index;
@@ -151,7 +151,7 @@ class Graph
 
     public:
 
-        CycleArray 				m_fundamentalCycles;
+        CycleArray          m_fundamentalCycles;
 
         inline Graph (const std::vector <TObject> &nodeArray,
                 const size_t nNodes,
