@@ -36,5 +36,5 @@ test_that("sf", {
 
     gc <- dodgr_contract_graph (graph)
     msg <- "Calling on a contracted graph will result in loss of information"
-    expect_message (gsf <- dodgr_to_sf (gc), msg)
+    expect_warning (gsf <- dodgr_to_sf (gc), msg)
 })
