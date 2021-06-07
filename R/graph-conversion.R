@@ -20,7 +20,7 @@
 dodgr_to_sf <- function (graph) {
 
     if (methods::is (graph, "dodgr_contracted"))
-        message ("'dodgr_to_sf' is intended to be called only on ",
+        warning ("'dodgr_to_sf' is intended to be called only on ",
                  "non-contracted graphs.\nCalling on a contracted ",
                  "graph will result in loss of information.")
 
