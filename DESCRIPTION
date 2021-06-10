@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.8.011
+Version: 0.2.8.012
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -51,6 +51,7 @@ Suggests:
     igraphdata,
     jsonlite,
     knitr,
+    markdown,
     purrr,
     rbenchmark,
     RColorBrewer,
