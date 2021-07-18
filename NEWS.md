@@ -4,6 +4,7 @@
 Minor changes:
 
 - Bug fix when submitting contracted graphs to dodgr_to_sf (#155 thanks to @agila5)
+- Fix (internal) process_bbox function for vector inputs (#156 thanks to @agila5@)
 
 #v 0.2.8
 
