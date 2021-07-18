@@ -106,12 +106,14 @@ process_bbox <- function (bbox,
             if (!inherits (bbox, "matrix")) {
                 if (length (bbox) != 4)
                     stop ("bbox must have four numeric values")
-                bbox <- rbind (sort (bbox [c (1, 3)]),
-                               sort (bbox [c (2, 4)]))
+                bbox <- vec_to_bbox (bbox)
             } else if (nrow (bbox) > 2) {
                 bbox_poly <- bbox
                 bbox <- apply (bbox, 2, range)
             }
+            colnames (bbox) <- c ("min", "max")
+            rownames (bbox) <- c ("x", "y")
+
         }
         if (identical (rownames (bbox), c ("x", "y")) |
             identical (colnames (bbox), c ("min", "max")))
@@ -150,16 +152,45 @@ vec_to_bbox <- function (bbox) {
                        sort (bbox [c (2, 4)]))
     } else {
 
-        mincols <- grep ("min|0", names (bbox), ignore.case = TRUE)
-        maxcols <- grep ("max|1", names (bbox), ignore.case = TRUE)
-        if (length (mincols) != 2 & length (maxcols) != 2)
-            stop ("names of bbox elements should clearly label min & max longitude and latitude")
+        minptn <- c ("^min", "min$", "0$")
+        chk <- vapply (minptn, function (i)
+                       any (grepl (i, names (bbox))),
+                       logical (1))
+        if (length (which (chk)) != 1L)
+            stop ("names of bbox elements should clearly label ",
+                  "min & max longitude and latitude")
 
-        loncols <- grep ("lon|x$", names (bbox), ignore.case = TRUE)
-        if (length (loncols) < 2)
-            loncols <- grep ("lon|x$|^x", names (bbox), ignore.case = TRUE)
-        latcols <- grep ("lat|^y|y$", names (bbox), ignore.case = TRUE)
+        minptn <- minptn [which (chk)]
+        mincols <- grep (minptn, names (bbox))
+        if (minptn == "min$") {
+            maxcols <- grep ("max$", names (bbox))
+            xcols <- grep ("^x|^lon", names (bbox))
+            ycols <- grep ("^y|^lat", names (bbox))
+        } else if (minptn == "^min") {
+            maxcols <- grep ("^max", names (bbox))
+            xcols <- grep ("x$|lon$", names (bbox))
+            ycols <- grep ("y$|lat$", names (bbox))
+        } else if (minptn == "0$") {
+            maxcols <- grep ("1$", names (bbox))
+            xcols <- grep ("^x|^lon", names (bbox))
+            ycols <- grep ("^y|^lat", names (bbox))
+        }
 
+        if (!(length (mincols) == 2 &
+              length (maxcols) == 2 &
+              length (xcols) == 2 &
+              length (ycols) == 2))
+            stop ("names of bbox elements should clearly label ",
+                  "min & max longitude and latitude")
+
+        lonmin <- xcols [which (xcols %in% mincols)]
+        latmin <- ycols [which (ycols %in% mincols)]
+        lonmax <- xcols [which (xcols %in% maxcols)]
+        latmax <- ycols [which (ycols %in% maxcols)]
+
+        bbox <- rbind (c (bbox [lonmin], bbox [lonmax]),
+                       c (bbox [latmin], bbox [latmax]))
     }
 
+    return (bbox)
 }
