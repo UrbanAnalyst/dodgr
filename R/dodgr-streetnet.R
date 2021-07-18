@@ -140,3 +140,26 @@ process_bbox <- function (bbox,
 
     list (bbox = bbox, bbox_poly = bbox_poly)
 }
+
+vec_to_bbox <- function (bbox) {
+
+    if (is.null (names (bbox))) {
+
+        # presume (lon, lat, lon, lat)
+        bbox <- rbind (sort (bbox [c (1, 3)]),
+                       sort (bbox [c (2, 4)]))
+    } else {
+
+        mincols <- grep ("min|0", names (bbox), ignore.case = TRUE)
+        maxcols <- grep ("max|1", names (bbox), ignore.case = TRUE)
+        if (length (mincols) != 2 & length (maxcols) != 2)
+            stop ("names of bbox elements should clearly label min & max longitude and latitude")
+
+        loncols <- grep ("lon|x$", names (bbox), ignore.case = TRUE)
+        if (length (loncols) < 2)
+            loncols <- grep ("lon|x$|^x", names (bbox), ignore.case = TRUE)
+        latcols <- grep ("lat|^y|y$", names (bbox), ignore.case = TRUE)
+
+    }
+
+}
