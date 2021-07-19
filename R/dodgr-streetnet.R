@@ -116,7 +116,10 @@ process_bbox <- function (bbox,
                 message ("selecting the first polygon from bbox") # nocov
 
             bbox_poly <- bbox [[1]]
+            colnames (bbox_poly) <- c ("x", "y")
             bbox <- apply (bbox [[1]], 2, range)
+            colnames (bbox) <- c ("x", "y")
+            rownames (bbox) <- c ("min", "max")
 
         } else if (is.numeric (bbox)) {
 
@@ -129,12 +132,12 @@ process_bbox <- function (bbox,
             } else if (nrow (bbox) > 2) {
 
                 bbox_poly <- bbox
+                colnames (bbox_poly) <- c ("x", "y")
                 bbox <- apply (bbox, 2, range)
             }
 
-            colnames (bbox) <- c ("min", "max")
-            rownames (bbox) <- c ("x", "y")
-
+            rownames (bbox) <- c ("min", "max")
+            colnames (bbox) <- c ("x", "y")
         }
 
         if (identical (rownames (bbox), c ("x", "y")) |
@@ -165,7 +168,10 @@ process_bbox <- function (bbox,
         y <- range (pts [, coly])
         y <- y + c (-expand, expand) * diff (y)
 
-        bbox <- c (x [1], y [1], x [2], y [2])
+        bbox <- cbind (c (x [1], x [2]),
+                       c (y [1], y [2]))
+        rownames (bbox) <- c ("min", "max")
+        colnames (bbox) <- c ("x", "y")
 
     } else
         stop ("Either bbox or pts must be specified.")
