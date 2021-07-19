@@ -1,5 +1,8 @@
 context("dodgr streetnet")
 
+dodgr_cache_off ()
+clear_dodgr_cache ()
+
 test_that("streetnet bbox", {
 
               set.seed (1)
