@@ -180,7 +180,7 @@ process_bbox <- function (bbox,
         bbox [1, 1] <- -90
     if (bbox [2, 1] > 90)
         bbox [2, 1] <- 90
-    if (bbox [1, 2] < 180)
+    if (bbox [1, 2] < -180)
         bbox [1, 2] <- bbox [1, 2] + 360
     if (bbox [2, 2] > 180)
         bbox [2, 2] <- bbox [2, 2] - 360
