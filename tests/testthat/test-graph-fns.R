@@ -7,7 +7,11 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 
 skip_if (!test_all)
 
+dodgr_cache_off ()
+clear_dodgr_cache ()
+
 test_that("sample graph", {
+
     graph <- weight_streetnet (hampi)
     set.seed (1)
     nverts <- 100
@@ -203,8 +207,9 @@ test_that ("weight_profiles", {
     graph0 <- weight_streetnet (hampi, wt_profile = "foot")
     graph1 <- weight_streetnet (hampi, wt_profile = 1)
     expect_equal (nrow (graph0), nrow (graph1))
-    #expect_identical (graph0$d, graph1$d)
-    #expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
+    expect_identical (graph0$d, graph1$d)
+    expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
+
     wp <- dodgr::weighting_profiles$weighting_profiles
     wpf <- wp [wp$name == "foot", ]
     graph3 <- weight_streetnet (hampi, wt_profile = wpf)
@@ -219,29 +224,45 @@ test_that ("weight_profiles", {
                   "Weighting profiles must have")
 
     g0 <- weight_streetnet (hampi)
-    while (attr (g0, "px")$is_alive ())
-        attr (g0, "px")$wait ()
+    if ("px" %in% names (attributes (g0)))
+        while (attr (g0, "px")$is_alive ())
+            attr (g0, "px")$wait ()
     hampi2 <- hampi
     names (hampi2) [grep ("highway", names (hampi2))] <- "waytype"
     expect_error (net <- weight_streetnet (hampi2),
                   "Please specify type_col to be used for weighting streetnet")
+
     g1 <- weight_streetnet (hampi2, type_col = "waytype")
-    while (attr (g1, "px")$is_alive ())
-        attr (g1, "px")$wait ()
+    if ("px" %in% names (attributes (g1)))
+        while (attr (g1, "px")$is_alive ())
+            attr (g1, "px")$wait ()
     attr (g0, "px") <- NULL
     attr (g1, "px") <- NULL
+
     expect_identical (g0, g1)
     names (hampi2) [grep ("osm_id", names (hampi2))] <- "key"
     expect_message (net <- weight_streetnet (hampi2, type_col = "waytype"),
                   "x appears to have no ID column")
+    if ("px" %in% names (attributes (net)))
+        while (attr (net, "px")$is_alive ())
+            attr (net, "px")$wait ()
+
     names (hampi2) [grep ("key", names (hampi2))] <- "id"
     expect_message (net <- weight_streetnet (hampi2, type_col = "waytype"),
                     "Using column id as ID column for edges")
+    if ("px" %in% names (attributes (net)))
+        while (attr (net, "px")$is_alive ())
+            attr (net, "px")$wait ()
+
     names (hampi2) [grep ("width", names (hampi2))] <- "w"
     expect_message (g1 <- weight_streetnet (hampi2, type_col = "waytype"),
                   "Using column id as ID column for edges")
+    if ("px" %in% names (attributes (g1)))
+        while (attr (g1, "px")$is_alive ())
+            attr (g1, "px")$wait ()
     attr (g0, "px") <- NULL
     attr (g1, "px") <- NULL
+
     expect_identical (g0, g1)
 })
 
@@ -251,10 +272,12 @@ test_that ("railway", {
                   "Please use the weight_railway function for railway routing")
     expect_error (g0 <- weight_railway (hampi),
                   "Please specify type_col to be used for weighting railway")
+
     expect_message (g0 <- weight_railway (hampi, type_col = "highway"),
                     "Data has no columns named maxspeed")
     expect_silent (g0 <- weight_railway (hampi, type_col = "highway",
                                          keep_cols = NULL))
+
     expect_identical (g0$d, g0$d_weighted)
 })
 
