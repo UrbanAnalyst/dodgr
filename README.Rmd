@@ -79,7 +79,9 @@ Fourth and finally, `dodgr` implements highly realistic and fully-customisable
 profiles for routing through street networks with various modes of transport,
 and using either distance- or time-based routing. Routing can include such
 factors as waiting times at traffic lights, delays for turning across oncoming
-traffic, and the effects of elevation on both cyclists and pedestrians.
+traffic, and the effects of elevation on both cyclists and pedestrians, as
+described in the dedicated vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html).
 
 
 ## Installation

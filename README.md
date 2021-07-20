@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![R build
@@ -64,7 +65,9 @@ fully-customisable profiles for routing through street networks with
 various modes of transport, and using either distance- or time-based
 routing. Routing can include such factors as waiting times at traffic
 lights, delays for turning across oncoming traffic, and the effects of
-elevation on both cyclists and pedestrians.
+elevation on both cyclists and pedestrians, as described in the
+dedicated vignette on [street networks and time-based
+routing](https://atfutures.github.io/dodgr/articles/times.html).
 
 ## Installation
 
@@ -90,7 +93,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.2.7.23'
+#> [1] '0.2.8.12'
 ```
 
 ## Usage: Sample Data and `dodgr` networks
@@ -287,12 +290,12 @@ head (f)
 
 | geom\_num | edge\_id | from\_id   | from\_lon | from\_lat | to\_id     |  to\_lon |  to\_lat |          d | d\_weighted | highway      | way\_id  | component |      time | time\_weighted |      flow |
 |----------:|---------:|:-----------|----------:|----------:|:-----------|---------:|---------:|-----------:|------------:|:-------------|:---------|----------:|----------:|---------------:|----------:|
-|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0644745 |
-|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.1131806 |
-|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0644745 |
-|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.1131806 |
-|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0644745 |
-|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.1131806 |
+|         1 |        1 | 339318500  |  76.47489 |  15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0342374 |
+|         1 |        2 | 339318502  |  76.47612 |  15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |   165.55271 | unclassified | 28565950 |         1 | 95.358362 |     119.197952 | 0.0976399 |
+|         1 |        3 | 339318502  |  76.47612 |  15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0342374 |
+|         1 |        4 | 2398958028 |  76.47621 |  15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |    11.11084 | unclassified | 28565950 |         1 |  6.399843 |       7.999803 | 0.0976399 |
+|         1 |        5 | 2398958028 |  76.47621 |  15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0342374 |
+|         1 |        6 | 1427116077 |  76.47628 |  15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |    11.65817 | unclassified | 28565950 |         1 |  6.715106 |       8.393882 | 0.0976399 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
