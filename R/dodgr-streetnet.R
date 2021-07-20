@@ -88,9 +88,22 @@ dodgr_streetnet_sc <- function (bbox,
 
     bb <- process_bbox (bbox, pts, expand)
 
-    osmdata::opq (bb$bbox) %>%
+    x1 <- osmdata::opq (bb$bbox) %>%
         osmdata::add_osm_feature (key = "highway") %>%
         osmdata::osmdata_sc (quiet = quiet)
+    x2 <- osmdata::opq (bb$bbox) %>%
+        osmdata::add_osm_feature (key = "restriction") %>%
+        osmdata::osmdata_sc (quiet = quiet)
+
+    # a silicate `c`-method:
+    index <- which (vapply (x1, nrow, integer (1), USE.NAMES = TRUE) > 1L)
+    nms <- names (index)
+    for (n in nms) {
+        x1 [[n]] <- rbind (x1 [[n]], x2 [[n]])
+        x1 [[n]] <- x1 [[n]] [which (!duplicated (x1 [[n]])), ]
+    }
+
+    return (x1)
 }
 
 # nocov end
