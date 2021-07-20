@@ -1,6 +1,11 @@
 
 #v 0.2.8.00x
 
+Major changes:
+
+- `weight_streetnet` now includes turn restrictions when input data are
+  extracted with `dodgr_streetnet_sc` (#136 thanks to @edzer)
+
 Minor changes:
 
 - Bug fix when submitting contracted graphs to dodgr_to_sf (#155 thanks to @agila5)
