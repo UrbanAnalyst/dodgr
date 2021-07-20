@@ -487,6 +487,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         if (attr (graph, "turn_penalty") > 0) {
             res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                             left_side)
+            #res <- remove_turn_restrictions (x, graph, res)
             # res has the expanded graph as well as an edge map from new
             # cross-junction edges to old single edges. This is cached below:
             graph <- res$graph

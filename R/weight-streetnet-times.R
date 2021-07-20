@@ -472,3 +472,62 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
     }
     list (graph = graph, edge_map = edge_map)
 }
+
+#' Remove turn restrictions
+#'
+#' @param x The original `sc` object which ,when generated from
+#' `dodgr_streetnet_sc`, includes turn restriction data
+#' @param graph The processed by not yet turn-contracted graph
+#' @param res The result of `join_junctions_to_graph`, with turn-contracted
+#' `graph` and `edge_map` components.
+#' @noRds
+remove_turn_restrictions <- function (x, graph, res) {
+
+    rels <- x$relation_properties # x from restrictions query above!!
+    restriction_rels <- rels [rels$key == "restriction", ]
+    index <- which (x$relation_members$relation_ %in%
+                    restriction_rels$relation_)
+    restriction_ways <- x$relation_members [index, ]
+
+    rr_no <- restriction_rels [grep ("^no\\_", restriction_rels$value), ]
+    rr_only <- restriction_rels [grep ("^only\\_", restriction_rels$value), ]
+    rw_no <- restriction_ways [restriction_ways$relation_ %in%
+                               rr_no$relation_, ]
+    rw_only <- restriction_ways [restriction_ways$relation_ %in%
+                                 rr_only$relation_, ]
+
+    r_to_df <- function (r) {
+        r <- lapply (split (r, f = factor (r$relation_)),
+                     function (i) c (i$relation_ [1],
+                                     i$member [2],
+                                     i$member [c (1, 3)]))
+        r <- data.frame (do.call (rbind, r))
+        names (r) <- c ("relation", "node", "from", "to")
+        return (na.omit (r))
+    }
+    rw_no <- r_to_df (rw_no)
+    rw_only <- r_to_df (rw_only)
+
+    index0 <- match (rw_no$node, graph$.vx1) # in-edges
+    index1 <- match (rw_no$node, graph$.vx0) # out-edges
+    in_edges <- graph$edge_ [index0 [which (!is.na (index0))]]
+    out_edges <- graph$edge_ [index1 [which (!is.na (index1))]]
+    index <- which (res$edge_map$e_in %in% in_edges &
+                    res$edge_map$e_out %in% out_edges)
+    no_turn_edges <- res$edge_map$edge [index]
+
+    index0 <- match (rw_only$node, graph$.vx1) # in-edges
+    index1 <- match (rw_only$node, graph$.vx0) # out-edges
+    in_edges <- graph$edge_ [index0 [which (!is.na (index0))]]
+    out_edges <- graph$edge_ [index1 [which (!is.na (index1))]]
+    # index of turns to edges other than "only" turn edges, so also to edges which
+    # are to be excluded:
+    index <- which (res$edge_map$e_in %in% in_edges &
+                    !res$edge_map$e_out %in% out_edges)
+    no_turn_edges <- unique (c (no_turn_edges, res$edge_map$edge [index]))
+
+    res$graph <- res$graph [which (!res$graph$edge_ %in% no_turn_edges), ]
+    res$edge_map <- res$edge_map [which (!res$edge_map$edge %in% no_turn_edges), ]
+
+    return (res)
+}
