@@ -113,7 +113,7 @@ estimation of temporal delays associated with turning across oncoming traffic,
 and implements restrictions on turns for specific modes of transport as
 specified in Open Street Map. (Turn penalty restrictions are given in the final
 column of the "penalties" table of [the `weighting_profiles`
-data](https://atfutures.github.io/dodgr/reference/weighting_profiles.html).
+data](https://atfutures.github.io/dodgr/reference/weighting_profiles.html).)
 Calculation of turn penalties is achieved through fundamentally modifying the
 resultant graph as depicted in Fig. 1.
 
