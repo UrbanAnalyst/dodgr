@@ -281,6 +281,10 @@ penalties <- data.frame ("name" = nms,
                          "traffic_lights" = traffic_lights,
                          "turn" = turn_penalty,
                          stringsAsFactors = FALSE)
+penalties$restrictions <- TRUE
+index <- which (penalties$name %in%
+                c ("foot", "horse", "wheelchair", "bicycle"))
+penalties$restrictions [index] <- FALSE
 ```
 
 Note that the following link describes waiting times at traffic lights with an
