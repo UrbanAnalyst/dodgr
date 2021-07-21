@@ -12,7 +12,11 @@ and weights.
 Collection of weighting profiles used to adjust the routing process to
 different means of transport. Modified from data taken from the Routino
 project, with additional tables for average speeds, dependence of speed on
-type of surface, and waiting times in seconds at traffic lights.
+type of surface, and waiting times in seconds at traffic lights. The latter
+table (called "penalties") includes waiting times at traffic lights (in
+seconds), additional time penalties for turning across oncoming traffic
+("turn"), and a binary flag indicating whether turn restrictions should be
+obeyed or not.
 }
 \references{
 \url{https://www.routino.org/xml/routino-profiles.xml}
