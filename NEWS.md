@@ -5,6 +5,8 @@ Major changes:
 
 - `weight_streetnet` now includes turn restrictions when input data are
   extracted with `dodgr_streetnet_sc` (#136 thanks to @edzer)
+- Turn restrictions also added as additional column of
+  `weighting_profiles$penalties`
 
 Minor changes:
 
