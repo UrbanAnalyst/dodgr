@@ -82,3 +82,9 @@ get_turn_penalties <- function (wt_profile, file = NULL) {
     tp <- get_profiles (file)$penalties
     tp [tp$name == wt_profile, ]
 }
+
+are_turns_restricted <- function (wt_profile, file = NULL) {
+
+    tp <- get_profiles (file)$penalties
+    tp$restrictions [tp$name == wt_profile]
+}
