@@ -53,7 +53,11 @@
 #' from the default for distance-based routing. The result of
 #' `weight_streetnet(..., turn_penalty = TRUE)` should thus \emph{only} be used
 #' to submit to the \link{dodgr_times} function, and not for any other `dodgr`
-#' functions nor forms of network analysis.
+#' functions nor forms of network analysis. Setting `turn_penalty = TRUE` is
+#' only possible for networks extracted with \link{dodgr_streetnet_sc}, and will
+#' also honour turn restrictions specified in Open Street Map (unless the
+#' "penalties" table of \link{weighting_profiles} has `restrictions = FALSE` for
+#' a specified `wt_profile`).
 #'
 #' @note The resultant graph includes only those edges for which the given
 #' weighting profile specifies finite edge weights. Any edges of types not

@@ -115,7 +115,11 @@ turning across oncoming traffic. Resultant graphs are fundamentally different
 from the default for distance-based routing. The result of
 \code{weight_streetnet(..., turn_penalty = TRUE)} should thus \emph{only} be used
 to submit to the \link{dodgr_times} function, and not for any other \code{dodgr}
-functions nor forms of network analysis.
+functions nor forms of network analysis. Setting \code{turn_penalty = TRUE} is
+only possible for networks extracted with \link{dodgr_streetnet_sc}, and will
+also honour turn restrictions specified in Open Street Map (unless the
+"penalties" table of \link{weighting_profiles} has \code{restrictions = FALSE} for
+a specified \code{wt_profile}).
 
 The resultant graph includes only those edges for which the given
 weighting profile specifies finite edge weights. Any edges of types not
