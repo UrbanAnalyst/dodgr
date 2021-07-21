@@ -480,7 +480,7 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
 #' @param graph The processed by not yet turn-contracted graph
 #' @param res The result of `join_junctions_to_graph`, with turn-contracted
 #' `graph` and `edge_map` components.
-#' @noRds
+#' @noRd
 remove_turn_restrictions <- function (x, graph, res) {
 
     rels <- x$relation_properties # x from restrictions query above!!
