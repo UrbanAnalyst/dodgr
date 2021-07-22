@@ -189,14 +189,15 @@ process_bbox <- function (bbox,
     } else
         stop ("Either bbox or pts must be specified.")
 
-    if (bbox [1, 1] < -90)
-        bbox [1, 1] <- -90
-    if (bbox [2, 1] > 90)
-        bbox [2, 1] <- 90
-    if (bbox [1, 2] < -180)
-        bbox [1, 2] <- bbox [1, 2] + 360
-    if (bbox [2, 2] > 180)
-        bbox [2, 2] <- bbox [2, 2] - 360
+    # columns are then [x, y]:
+    if (bbox [1, 1] < -180)
+        bbox [1, 1] <- bbox [1, 2] + 360
+    if (bbox [2, 1] > 180)
+        bbox [2, 1] <- bbox [2, 2] - 360
+    if (bbox [1, 2] < -90)
+        bbox [1, 2] <- -90
+    if (bbox [2, 2] > 90)
+        bbox [2, 2] <- 90
 
     list (bbox = bbox, bbox_poly = bbox_poly)
 }
