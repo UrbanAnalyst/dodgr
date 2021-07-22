@@ -246,8 +246,8 @@ vec_to_bbox <- function (bbox) {
         if (!(length (mincols) == 2 &
               length (maxcols) == 2 &
               length (xcols) == 2 &
-              length (ycols) == 2))
-        {
+              length (ycols) == 2)) {
+
             stop ("names of bbox elements should clearly label ",
                   "min & max longitude and latitude")
         }
