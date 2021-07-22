@@ -206,8 +206,10 @@ vec_to_bbox <- function (bbox) {
     if (is.null (names (bbox))) {
 
         # presume (lon, lat, lon, lat)
-        bbox <- rbind (sort (bbox [c (1, 3)]),
+        bbox <- cbind (sort (bbox [c (1, 3)]),
                        sort (bbox [c (2, 4)]))
+        colnames (bbox) <- c ("x", "y")
+        rownames (bbox) <- c ("min", "max")
     } else {
 
         minptn <- c ("^min", "min$", "0$")
