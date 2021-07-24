@@ -80,7 +80,7 @@ struct OneCentralityVert : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
-            pathfinder->Centrality_vertex (cent, v, dist_threshold);
+            pathfinder->Centrality_vertex (cent, static_cast <unsigned int> (v), dist_threshold);
         }
 
         for (size_t i = 0; i < nverts; i++)
