@@ -7,6 +7,8 @@ Major changes:
   extracted with `dodgr_streetnet_sc` (#136 thanks to @edzer)
 - Turn restrictions also added as additional column of
   `weighting_profiles$penalties`
+- `dodgr_streetnet_sc()` now extracts many additional features useful for
+  controlling access restrictions (see #159)
 
 Minor changes:
 
