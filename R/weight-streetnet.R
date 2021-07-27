@@ -59,6 +59,21 @@
 #' retained in the `dodgr` version, from which ways with specified values can
 #' easily be removed or modified, as demonstrated in the examples.
 #'
+#' The additional Open Street Map (OSM) keys which can be used to specify
+#' restrictions are which are automatically extracted with
+#' \link{dodgr_streetnet_sc}, and so may be added to the `keep_cols` argument,
+#' include:
+#' \itemize{
+#' \item "highway"
+#' \item "restriction"
+#' \item "access"
+#' \item "bicycle"
+#' \item "motorcar"
+#' \item "motor_vehicle"
+#' \item "vehicle"
+#' \item "toll"
+#' }
+#'
 #' Restrictions and time-penalties on turns can be implemented from such
 #' objects by setting `turn_penalty = TRUE`. Resultant graphs are fundamentally
 #' different from the default for distance-based routing. The result of
