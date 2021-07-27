@@ -50,5 +50,16 @@ nrow (dodgr_streetnet (bbox = bb)) # around 30,000
 bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
 nrow (dodgr_streetnet (bbox = bb)) # around 17,000
 # The latter has fewer rows because only edges within polygon are returned
+
+# Example with access restrictions
+bbox <- c (-122.2935, 47.62663, -122.28, 47.63289)
+x <- dodgr_streetnet_sc (bbox)
+net <- weight_streetnet (x, keep_cols = "access, turn_penalty = TRUE)
+# has many streets with "access" = "private; these can be removed like this:
+net2 <- net [which (!net$access != "private"), ]
+# or modified in some other way such as strongly penalizing use of those
+# streets:
+index <- which (net$access == "private")
+net$time_weighted [index] <- net$time_weighted [index] * 100
 }
 }
