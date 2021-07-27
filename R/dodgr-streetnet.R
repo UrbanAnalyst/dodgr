@@ -88,22 +88,20 @@ dodgr_streetnet_sc <- function (bbox,
 
     bb <- process_bbox (bbox, pts, expand)
 
-    x1 <- osmdata::opq (bb$bbox) %>%
-        osmdata::add_osm_feature (key = "highway") %>%
-        osmdata::osmdata_sc (quiet = quiet)
-    x2 <- osmdata::opq (bb$bbox) %>%
-        osmdata::add_osm_feature (key = "restriction") %>%
-        osmdata::osmdata_sc (quiet = quiet)
+    # This extracts only some of the most common restrictions; see full list at
+    # https://wiki.openstreetmap.org/wiki/Restrictions
+    fts <- c ("\"highway\"",
+              "\"restriction\"",
+              "\"access\"",
+              "\"bicycle\"",
+              "\"motorcar\"",
+              "\"motor_vehicle\"",
+              "\"vehicle\"",
+              "\"toll\"")
 
-    # a silicate `c`-method:
-    index <- which (vapply (x1, nrow, integer (1), USE.NAMES = TRUE) > 1L)
-    nms <- names (index)
-    for (n in nms) {
-        x1 [[n]] <- rbind (x1 [[n]], x2 [[n]])
-        x1 [[n]] <- x1 [[n]] [which (!duplicated (x1 [[n]])), ]
-    }
-
-    return (x1)
+    osmdata::opq (bb$bbox) %>%
+        osmdata::add_osm_features (features = fts) %>%
+        osmdata::osmdata_sc (quiet = quiet)
 }
 
 # nocov end

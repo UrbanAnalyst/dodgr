@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.8.042
+Version: 0.2.8.043
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -67,6 +67,8 @@ LinkingTo:
     RcppThread
 VignetteBuilder: 
     knitr
+Remotes:
+    ropensci/osmdata
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
