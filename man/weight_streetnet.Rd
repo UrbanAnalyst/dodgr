@@ -75,7 +75,8 @@ which designates different types of highways to be used for weighting
 (default works with \code{osmdata} objects).}
 
 \item{keep_cols}{Vectors of columns from \code{x} to be kept in the resultant
-\code{dodgr} network; vector can be either names or indices of desired columns.}
+\code{dodgr} network; vector can be either names or indices of desired columns
+(see notes).}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
 the right side (\code{FALSE})? - only has effect on turn angle calculations for
@@ -94,7 +95,8 @@ account for networks generated with the \pkg{osmdata} function
 \description{
 Weight (or re-weight) an \pkg{sf} or \code{SC} (\code{silicate})-formatted OSM street
 network according to a named profile, selected from (foot, horse, wheelchair,
-bicycle, moped, motorcycle, motorcar, goods, hgv, psv).
+bicycle, moped, motorcycle, motorcar, goods, hgv, psv), or a cusstomized
+version dervied from those.
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
@@ -106,20 +108,28 @@ are "bicycle", "foot", "goods", "hgv", "horse", "moped", "motorcar",
 with the separate function \link{weight_railway}. Alternatively, the entire
 \code{weighting_profile} structures can be written to a local \code{.json}-formatted
 file with \link{write_dodgr_wt_profile}, the values edited as desired, and
-the name of this file passed as the \code{wt_profile_file} parameter. Construction
-of custom weighting profiles is illustrated in the following example.
+the name of this file passed as the \code{wt_profile_file} parameter.
 
-Calculating edge times to account for turn angles (that is, with
-\code{turn_penalty = TRUE}) involves calculating the temporal delay involving in
-turning across oncoming traffic. Resultant graphs are fundamentally different
-from the default for distance-based routing. The result of
+Realistic routing include factors such as access restrictions, turn
+penalties, and effects of incline, can only be implemented when the objects
+passed to \code{weight_streetnet} are of \pkg{sc} ("silicate") format, generated
+with \link{dodgr_streetnet_sc}. Restrictions applies to ways (in Open
+Streetmap Terminology) may be controlled by ensuring specific columns are
+retained in the \code{dodgr} network with the \code{keep_cols} argument. For example,
+restrictions on access are generally specified by specifying a value for the
+key of "access". Include "access" in \code{keep_cols} will ensure these values are
+retained in the \code{dodgr} version, from which ways with specified values can
+easily be removed or modified, as demonstrated in the examples.
+
+Restrictions and time-penalties on turns can be implemented from such
+objects by setting \code{turn_penalty = TRUE}. Resultant graphs are fundamentally
+different from the default for distance-based routing. The result of
 \code{weight_streetnet(..., turn_penalty = TRUE)} should thus \emph{only} be used
 to submit to the \link{dodgr_times} function, and not for any other \code{dodgr}
-functions nor forms of network analysis. Setting \code{turn_penalty = TRUE} is
-only possible for networks extracted with \link{dodgr_streetnet_sc}, and will
-also honour turn restrictions specified in Open Street Map (unless the
-"penalties" table of \link{weighting_profiles} has \code{restrictions = FALSE} for
-a specified \code{wt_profile}).
+functions nor forms of network analysis. Setting \code{turn_penalty = TRUE} will
+honour turn restrictions specified in Open Street Map (unless the "penalties"
+table of \link{weighting_profiles} has \code{restrictions = FALSE} for a specified
+\code{wt_profile}).
 
 The resultant graph includes only those edges for which the given
 weighting profile specifies finite edge weights. Any edges of types not
