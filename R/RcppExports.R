@@ -355,3 +355,4 @@ rcpp_points_index_par <- function(xy, pts) {
 rcpp_route_times <- function(graph, left_side, turn_penalty) {
     .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
+

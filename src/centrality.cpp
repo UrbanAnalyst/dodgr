@@ -37,6 +37,7 @@ struct OneCentralityVert : public RcppParallel::Worker
 {
     size_t nverts; // can't be const because of reinterpret case
     const std::string heap_type;
+    const std::vector <double> vert_wts;
     const double dist_threshold;
     std::shared_ptr <DGraph> g;
 
@@ -46,10 +47,12 @@ struct OneCentralityVert : public RcppParallel::Worker
     OneCentralityVert (
             const size_t nverts_in,
             const std::string heap_type_in,
+            const std::vector <double> vert_wts_in,
             const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
         nverts (nverts_in), heap_type (heap_type_in), 
-        dist_threshold (dist_threshold_in), g (g_in), output ()
+        vert_wts (vert_wts_in), dist_threshold (dist_threshold_in),
+        g (g_in), output ()
     {
         output.resize (nverts, 0.0);
     }
@@ -60,6 +63,7 @@ struct OneCentralityVert : public RcppParallel::Worker
             RcppParallel::Split) :
         nverts (oneCentralityVert.nverts),
         heap_type (oneCentralityVert.heap_type), 
+        vert_wts (oneCentralityVert.vert_wts),
         dist_threshold (oneCentralityVert.dist_threshold),
         g (oneCentralityVert.g), output ()
     {
@@ -80,7 +84,9 @@ struct OneCentralityVert : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
-            pathfinder->Centrality_vertex (cent, static_cast <unsigned int> (v), 1.0, dist_threshold);
+            pathfinder->Centrality_vertex (cent,
+                    static_cast <unsigned int> (v),
+                    vert_wts [v], dist_threshold);
         }
 
         for (size_t i = 0; i < nverts; i++)
@@ -404,7 +410,8 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
         result = one_centrality.output;
     } else // vertex centrality
     {
-        OneCentralityVert one_centrality (nverts, heap_type, dist_threshold, g);
+        OneCentralityVert one_centrality (nverts, heap_type, vert_wts,
+                dist_threshold, g);
 
         RcppParallel::parallelReduce (0, nverts_to_use, one_centrality);
         result = one_centrality.output;
