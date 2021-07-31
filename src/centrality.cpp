@@ -375,6 +375,17 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
+    Rcpp::CharacterVector v_nms = vert_map_in.attr ("names");
+    std::vector <double> vert_wts;
+    for (auto n: v_nms) {
+        if (n == "vert_wts") {
+            vert_wts.resize (vert_map_in.nrow ());
+            std::vector <double> tempd = vert_map_in ["vert_wts"];
+            std::copy (tempd.begin (), tempd.end (), vert_wts.begin ());
+            break;
+        }
+    }
+
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
