@@ -122,9 +122,11 @@ dodgr_centrality <- function (graph,
     if (!(is.null (vert_wts) &
         is.vector (vert_wts) &
         is.numeric (vert_wts) &
-        length (vert_wts) == nrow (dodgr_vertices (graph))))
+        length (vert_wts) == nrow (dodgr_vertices (graph)))) {
+
         stop ("vert_wts must be a vector of same length as ",
               "nrow (dodgr_vertices (graph))")
+    }
 
     if (is.null (dist_threshold))
         dist_threshold <- .Machine$double.xmax
@@ -150,6 +152,8 @@ dodgr_centrality <- function (graph,
     }
 
     vert_map <- make_vert_map (graph, gr_cols)
+    if (!is.null (vert_wts))
+        vert_map$vert_wts <- vert_wts
 
     graph2 <- convert_graph (graph, gr_cols)
     if (column != "d_weighted") {
