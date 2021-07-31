@@ -80,7 +80,7 @@ struct OneCentralityVert : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
-            pathfinder->Centrality_vertex (cent, static_cast <unsigned int> (v), dist_threshold);
+            pathfinder->Centrality_vertex (cent, static_cast <unsigned int> (v), 1.0, dist_threshold);
         }
 
         for (size_t i = 0; i < nverts; i++)
@@ -161,6 +161,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
 void PF::PathFinder::Centrality_vertex (
         std::vector <double>& cent,
         const unsigned int s,
+        const double vert_wt,
         const double dist_threshold)
 {
     const DGraphEdge *edge;
@@ -192,7 +193,7 @@ void PF::PathFinder::Centrality_vertex (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + edge->wt;
+            double wt = w [v] + vert_wt * edge->wt;
 
             std::vector <unsigned int> vert_vec;
 
