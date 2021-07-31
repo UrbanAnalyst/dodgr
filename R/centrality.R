@@ -17,6 +17,10 @@
 #' 'dodgr_vertices(graph)', with an additional vertex-based 'centrality' column.
 #' @param column Column of graph defining the edge properties used to calculate
 #' centrality (see Note).
+#' @param vert_wts Optional vector of same length as
+#' \link{dodgr_vertices(graph)} to enable centrality to be calculated in
+#' weighted form, such that centrality measured from each vertex will be
+#' weighted by the specified amount.
 #' @param dist_threshold If not 'NULL', only calculate centrality for each point
 #' out to specified threshold. Setting values for this will result in
 #' approximate estimates for centrality, yet with considerable gains in
@@ -103,6 +107,7 @@ dodgr_centrality <- function (graph,
                               contract = TRUE,
                               edges = TRUE,
                               column = "d_weighted",
+                              vert_wts = NULL,
                               dist_threshold = NULL,
                               heap = "BHeap") {
 
@@ -113,6 +118,13 @@ dodgr_centrality <- function (graph,
     if ("centrality" %in% names (graph))
         warning ("graph already has a 'centrality' column; ",
                   "this will be overwritten")
+
+    if (!(is.null (vert_wts) &
+        is.vector (vert_wts) &
+        is.numeric (vert_wts) &
+        length (vert_wts) == nrow (dodgr_vertices (graph))))
+        stop ("vert_wts must be a vector of same length as ",
+              "nrow (dodgr_vertices (graph))")
 
     if (is.null (dist_threshold))
         dist_threshold <- .Machine$double.xmax
