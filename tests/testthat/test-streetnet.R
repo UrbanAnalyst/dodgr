@@ -3,6 +3,9 @@ context("dodgr streetnet")
 dodgr_cache_off ()
 clear_dodgr_cache ()
 
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+
 test_that("streetnet bbox", {
 
               set.seed (1)
@@ -67,6 +70,7 @@ test_that ("streetnet pts", {
                expect_identical (bb$bbox, bb2$bbox)
 })
 
+
 test_that ("streetnet column names", {
 
     h <- hampi
@@ -98,6 +102,8 @@ test_that ("streetnet column names", {
     h$geom <- 1
     expect_error (graph <- weight_streetnet (h),
                   "Unable to determine geometry column")
+
+    skip_if (!test_all)
 
     h <- hampi
     h$geometry1 <- 1
