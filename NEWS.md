@@ -9,7 +9,7 @@ Major changes:
   `weighting_profiles$penalties`
 - `dodgr_streetnet_sc()` now extracts many additional features useful for
   controlling access restrictions (see #159)
-- `dodgr_centrality` has new `vert_wts` parameter to weight vertex centrality
+- `dodgr_centrality` has new `vert_wts` parameter to weight centrality
   by user-specified weights (#162)
 
 Minor changes:
