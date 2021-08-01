@@ -503,7 +503,7 @@ remove_turn_restrictions <- function (x, graph, res) {
                                      i$member [c (1, 3)]))
         r <- data.frame (do.call (rbind, r))
         names (r) <- c ("relation", "node", "from", "to")
-        return (na.omit (r))
+        return (stats::na.omit (r))
     }
     rw_no <- r_to_df (rw_no)
     rw_only <- r_to_df (rw_only)
