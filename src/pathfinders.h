@@ -117,6 +117,7 @@ class PathFinder {
         void Centrality_edge (
                 std::vector <double>& cent,
                 const unsigned int s,
+                const std::vector <double> vert_wts,
                 const unsigned int nedges,
                 const double dist_threshold);
 

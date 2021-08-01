@@ -105,6 +105,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
     size_t nverts; // can't be const because of reinterpret case
     size_t nedges;
     const std::string heap_type;
+    const std::vector <double> vert_wts;
     const double dist_threshold;
     std::shared_ptr <DGraph> g;
 
@@ -115,11 +116,13 @@ struct OneCentralityEdge : public RcppParallel::Worker
             const size_t nverts_in,
             const size_t nedges_in,
             const std::string heap_type_in,
+            const std::vector <double> vert_wts_in,
             const double dist_threshold_in,
             const std::shared_ptr <DGraph> g_in) :
         nverts (nverts_in), nedges (nedges_in), 
-        heap_type (heap_type_in), dist_threshold (dist_threshold_in), g (g_in),
-        output ()
+        heap_type (heap_type_in), vert_wts (vert_wts_in),
+        dist_threshold (dist_threshold_in),
+        g (g_in), output ()
     {
         output.resize (nedges, 0.0);
     }
@@ -131,6 +134,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
         nverts (oneCentralityEdge.nverts),
         nedges (oneCentralityEdge.nedges), 
         heap_type (oneCentralityEdge.heap_type),
+        vert_wts (oneCentralityEdge.vert_wts),
         dist_threshold (oneCentralityEdge.dist_threshold),
         g (oneCentralityEdge.g),
         output ()
@@ -151,7 +155,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
-            pathfinder->Centrality_edge (cent, v, nedges, dist_threshold);
+            pathfinder->Centrality_edge (cent, v, vert_wts, nedges, dist_threshold);
         }
         for (size_t i = 0; i < nedges; i++)
             output [i] += cent [i];
@@ -256,6 +260,7 @@ void PF::PathFinder::Centrality_vertex (
 void PF::PathFinder::Centrality_edge (
         std::vector <double>& cent,
         const unsigned int s,
+        const std::vector <double> vert_wts,
         const unsigned int nedges,
         const double dist_threshold)
 {
@@ -289,7 +294,7 @@ void PF::PathFinder::Centrality_edge (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + edge->wt;
+            double wt = w [v] + vert_wts [s] * edge->wt;
 
             // DGraph has no edge iterator, so edge_vec contains pairwise
             // elements of [from vertex, edge_id]
@@ -403,7 +408,7 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
     if (edge_centrality)
     {
         OneCentralityEdge one_centrality (nverts, nedges, heap_type,
-                dist_threshold, g);
+                vert_wts, dist_threshold, g);
 
         RcppParallel::parallelReduce (0, nverts_to_use, one_centrality);
         result = one_centrality.output;
