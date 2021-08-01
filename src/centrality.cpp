@@ -84,9 +84,10 @@ struct OneCentralityVert : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
+            const double vwt = vert_wts [v];
             pathfinder->Centrality_vertex (cent,
                     static_cast <unsigned int> (v),
-                    vert_wts, dist_threshold);
+                    vwt, dist_threshold);
         }
 
         for (size_t i = 0; i < nverts; i++)
@@ -155,7 +156,8 @@ struct OneCentralityEdge : public RcppParallel::Worker
         {
             if (RcppThread::isInterrupted (v % static_cast<int>(100) == 0))
                 return;
-            pathfinder->Centrality_edge (cent, v, vert_wts, nedges, dist_threshold);
+            const double vwt = vert_wts [v];
+            pathfinder->Centrality_edge (cent, v, vwt, nedges, dist_threshold);
         }
         for (size_t i = 0; i < nedges; i++)
             output [i] += cent [i];
@@ -171,7 +173,7 @@ struct OneCentralityEdge : public RcppParallel::Worker
 void PF::PathFinder::Centrality_vertex (
         std::vector <double>& cent,
         const unsigned int s,
-        const std::vector <double> vert_wts,
+        const double vert_wt,
         const double dist_threshold)
 {
     const DGraphEdge *edge;
@@ -203,7 +205,7 @@ void PF::PathFinder::Centrality_vertex (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + vert_wts [s] * edge->wt;
+            double wt = w [v] + edge->wt;
 
             std::vector <unsigned int> vert_vec;
 
@@ -252,7 +254,7 @@ void PF::PathFinder::Centrality_vertex (
             delta [ws] += sigma [ws] * tempd;
         }
         if (v != s)
-            cent [v] += delta [v];
+            cent [v] += vert_wt * delta [v];
     }
 }
 
@@ -260,7 +262,7 @@ void PF::PathFinder::Centrality_vertex (
 void PF::PathFinder::Centrality_edge (
         std::vector <double>& cent,
         const unsigned int s,
-        const std::vector <double> vert_wts,
+        const double vert_wt,
         const unsigned int nedges,
         const double dist_threshold)
 {
@@ -294,7 +296,7 @@ void PF::PathFinder::Centrality_edge (
         while (edge) {
 
             unsigned int et = edge->target;
-            double wt = w [v] + vert_wts [s] * edge->wt;
+            double wt = w [v] + edge->wt;
 
             // DGraph has no edge iterator, so edge_vec contains pairwise
             // elements of [from vertex, edge_id]
@@ -355,7 +357,7 @@ void PF::PathFinder::Centrality_edge (
         {
             delta [*it] += sigma [*it] * tempd;
             it = std::next (it);
-            cent [*it] += sigma_edge [*it] * tempd;
+            cent [*it] += sigma_edge [*it] * tempd * vert_wt;
             it = std::next (it);
         }
     }
