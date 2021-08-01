@@ -33,8 +33,8 @@ centrality is calculated for vertices, returning the equivalent of
 \item{column}{Column of graph defining the edge properties used to calculate
 centrality (see Note).}
 
-\item{vert_wts}{Optional vector of same length as
-\link{dodgr_vertices(graph)} to enable centrality to be calculated in
+\item{vert_wts}{Optional vector of length equal to number of vertices
+(\code{nrow(dodgr_vertices(graph))}), to enable centrality to be calculated in
 weighted form, such that centrality measured from each vertex will be
 weighted by the specified amount.}
 

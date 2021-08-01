@@ -17,8 +17,8 @@
 #' 'dodgr_vertices(graph)', with an additional vertex-based 'centrality' column.
 #' @param column Column of graph defining the edge properties used to calculate
 #' centrality (see Note).
-#' @param vert_wts Optional vector of same length as
-#' \link{dodgr_vertices(graph)} to enable centrality to be calculated in
+#' @param vert_wts Optional vector of length equal to number of vertices
+#' (`nrow(dodgr_vertices(graph))`), to enable centrality to be calculated in
 #' weighted form, such that centrality measured from each vertex will be
 #' weighted by the specified amount.
 #' @param dist_threshold If not 'NULL', only calculate centrality for each point
