@@ -119,10 +119,10 @@ dodgr_centrality <- function (graph,
         warning ("graph already has a 'centrality' column; ",
                   "this will be overwritten")
 
-    if (!(is.null (vert_wts) &
-        is.vector (vert_wts) &
-        is.numeric (vert_wts) &
-        length (vert_wts) == nrow (dodgr_vertices (graph)))) {
+    if (!is.null (vert_wts) &
+        (!is.vector (vert_wts) |
+        !is.numeric (vert_wts) |
+        length (vert_wts) != nrow (dodgr_vertices (graph)))) {
 
         stop ("vert_wts must be a vector of same length as ",
               "nrow (dodgr_vertices (graph))")
