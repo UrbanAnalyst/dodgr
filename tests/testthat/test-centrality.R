@@ -27,6 +27,9 @@ test_that("estimate time", {
     graph <- weight_streetnet (hampi)
     expect_message (x <- estimate_centrality_time (graph),
                     "Estimated time to calculate centrality for full graph is")
+    # Convert `x` as H:M:S to integer
+    x <- as.integer (strsplit (x, ":") [[1]])
+    x <- sum (x * c (3600, 60, 1))
     if (test_all)
-        expect_identical (x, "00:00:00")
+        expect_true (x <= 1L)
 })
