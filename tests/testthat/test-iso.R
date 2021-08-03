@@ -16,6 +16,7 @@ test_that("isodists", {
               expect_silent (net <- weight_streetnet (hsc,
                                                       wt_profile = "bicycle"))
               npts <- 100
+              set.seed (1)
               from <- sample (net$.vx0, size = npts)
               dlim <- c (1, 2, 5, 10, 20) * 100
               expect_silent (d <- dodgr_isodists (net, from = from, dlim))
@@ -36,6 +37,7 @@ test_that ("turn penalty", {
               hsc <- sf_to_sc (hampi)
               net0 <- weight_streetnet (hsc, wt_profile = "bicycle")
               npts <- 100
+              set.seed (1)
               from <- sample (net0$.vx0, size = npts)
               dlim <- c (1, 2, 5, 10, 20) * 100
               d0 <- dodgr_isodists (net0, from = from, dlim)
@@ -56,6 +58,7 @@ test_that ("errors", {
               expect_silent (net <- weight_streetnet (hsc,
                                                       wt_profile = "bicycle"))
               npts <- 100
+              set.seed (1)
               from <- sample (net$.vx0, size = npts)
               dlim <- c (1, 2, 5, 10, 20) * 100
               expect_error (d <- dodgr_isodists (net, from = from),
@@ -82,6 +85,7 @@ test_that("isochrones", {
               expect_silent (net <- weight_streetnet (hsc,
                                                       wt_profile = "bicycle"))
               npts <- 100
+              set.seed (1)
               from <- sample (net$.vx0, size = npts)
               tlim <- c (5, 10, 20, 30, 60) * 60 # times in seconds
               expect_silent (x <- dodgr_isochrones (net, from = from, tlim))
@@ -100,6 +104,7 @@ test_that("isoverts", {
               expect_silent (net <- weight_streetnet (hsc,
                                                       wt_profile = "bicycle"))
               npts <- 100
+              set.seed (1)
               from <- sample (net$.vx0, size = npts)
               dlim <- c (1, 2, 5, 10, 20) * 100
               expect_silent (dd <- dodgr_isodists (net, from = from, dlim))
