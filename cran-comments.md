@@ -1,4 +1,8 @@
-# CRAN notes for dodgr_0.2.8 submission
+# CRAN notes for dodgr_0.2.9 submission
+
+## Previous errors
+
+This submission fixes previous errors on some systems, due to test failures reflecting recent updated to the 'sf' package.
 
 ## Notes
 
