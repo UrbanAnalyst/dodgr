@@ -3,6 +3,8 @@ context("fundamental cycles")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
+testthat::skip_on_cran ()
+
 test_that("dodgr_fundamental_cycles", {
               net <- weight_streetnet (hampi)
               graph <- dodgr_contract_graph (net)
