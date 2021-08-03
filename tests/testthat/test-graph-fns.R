@@ -6,6 +6,7 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 skip_if (!test_all)
+testthat::skip_on_cran ()
 
 dodgr_cache_off ()
 clear_dodgr_cache ()
