@@ -11,6 +11,7 @@ test_that("dists", {
   expect_silent(graph <- weight_streetnet(hampi))
   nf <- 100
   nt <- 50
+  set.seed (1)
   from <- sample(graph$from_id, size = nf)
   to <- sample(graph$to_id, size = nt)
   expect_silent(d <- dodgr_distances(graph, from = from, to = to))
@@ -77,6 +78,7 @@ test_that("dists", {
 test_that("dists-pairwise", {
   expect_silent(graph <- weight_streetnet(hampi))
   n <- 50
+  set.seed (1)
   from <- sample(graph$from_id, size = n)
   to <- sample(graph$to_id, size = n)
   expect_silent(d <- dodgr_distances(graph, from = from, to = to))
@@ -92,6 +94,7 @@ test_that("times", {
   graph <- weight_streetnet(hampi)
   nf <- 100
   nt <- 50
+  set.seed (1)
   from <- sample(graph$from_id, size = nf)
   to <- sample(graph$to_id, size = nt)
   expect_silent(d0 <- dodgr_dists(graph,
@@ -190,6 +193,7 @@ test_that("to-from-cols", {
   graph <- weight_streetnet(hampi)
   nf <- 100
   nt <- 50
+  set.seed (1)
   v <- dodgr_vertices(graph)
   from <- sample(v$id, size = nf)
   to <- sample(v$id, size = nt)
@@ -240,6 +244,7 @@ test_that("dists with no edge ids", {
   graph <- weight_streetnet(hampi)
   nf <- 100
   nt <- 50
+  set.seed (1)
   from <- sample(graph$from_id, size = nf)
   to <- sample(graph$to_id, size = nt)
   expect_silent(d0 <- dodgr_distances(graph, from = from, to = to))
@@ -318,6 +323,7 @@ test_that("graph columns", {
   expect_silent(graph <- weight_streetnet(hampi))
   nf <- 100
   nt <- 50
+  set.seed (1)
   v <- dodgr_vertices(graph)
   index_f <- sample(nrow(v), size = nf)
   index_t <- sample(nrow(v), size = nt)
@@ -347,6 +353,7 @@ test_that("negative weights", {
   expect_silent(graph <- weight_streetnet(hampi))
   nf <- 100
   nt <- 50
+  set.seed (1)
   from <- sample(graph$from_id, size = nf)
   to <- sample(graph$to_id, size = nt)
   expect_silent(d0 <- dodgr_distances(graph, from = from, to = to))
