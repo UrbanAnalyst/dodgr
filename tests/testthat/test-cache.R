@@ -26,6 +26,7 @@ test_that("cache on", {
               expect_silent (v <- dodgr_vertices (graph_c))
 
               n <- 100
+              set.seed (1)
               pts <- sample (v$id, size = n)
               pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
               fmat <- array (1, dim = c (n, n))
@@ -71,6 +72,7 @@ test_that("cache off", {
               expect_silent (v <- dodgr_vertices (graph_c))
 
               n <- 100
+              set.seed (1)
               pts <- sample (v$id, size = n)
               pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
               fmat <- array (1, dim = c (n, n))
