@@ -5,6 +5,7 @@ clear_dodgr_cache ()
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+# used below in a skip_if call
 
 test_that("streetnet bbox", {
 

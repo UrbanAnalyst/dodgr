@@ -1,8 +1,5 @@
 context("dodgr_paths")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
-
 test_that("paths", {
     graph <- weight_streetnet (hampi)
     from <- graph$from_id [1:100]
