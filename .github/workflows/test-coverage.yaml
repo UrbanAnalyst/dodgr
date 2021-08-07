@@ -2,34 +2,39 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
     branches:
       - main
+      - master
 
 name: test-coverage
 
 jobs:
   test-coverage:
     runs-on: macOS-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-r@v1
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - uses: r-lib/actions/setup-pandoc@v1
 
       - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
-      - name: Cache R packages
-        uses: actions/cache@v1
+      - name: Restore R package cache
+        uses: actions/cache@v2
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: macOS-r-4.0-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: macOS-r-4.0-1-
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install dependencies
         run: |
@@ -37,11 +42,6 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("covr")
         shell: Rscript {0}
-
-      - name: Configure Git user
-        run: |
-          git config --global user.email "ghau@example.com"
-          git config --global user.name "GitHub Actions User"
 
       - name: Test coverage
         run: covr::codecov(line_exclusions = list('src/heaps/bheap.cpp','src/heaps/bheap.h','src/heaps/fheap.h','src/heaps/fheap.cpp','src/heaps/heap23.h','src/heaps/heap23.cpp','src/heaps/heap23_2.h','src/heaps/heap.h','src/heaps/heap_lib.h','src/heaps/radixheap.h','src/heaps/radixheap.cpp','src/heaps/triheap.h','src/heaps/triheap.cpp','src/heaps/triheap_ext.h','src/heaps/triheap_ext.cpp','src/dgraph.cpp'))
