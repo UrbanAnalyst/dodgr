@@ -172,7 +172,7 @@ dim (hampi)
 The `streetnet` is an [`sf`](https://cran.r-project.org/package=sf) (Simple
 Features) object containing 189 `LINESTRING` geometries. In other words, it's
 got an `sf` representation of 189 street segments. The **R** package 
-[`osmplotr`](https://docs.ropensci.org/osmplotr) can be used to visualise this
+[`osmplotr`](https://docs.ropensci.org/osmplotr/) can be used to visualise this
 street network (with the help of `magrittr` pipe
 operator, `%>%`):
 ```{r hampi-osmplotr, eval = FALSE}
