@@ -54,7 +54,7 @@ multi-tabular. In its simplest form, it consists of three tables of vertices,
 edges, and objects. The vertices are points, the edges are binary relationships
 or connections between them, and the objects are high-order relationships or
 assemblages of edges. The new [`osmdata`](https://github.com/ropensci/osmdata) function,
-[`osmdata_sc()`](https://ropensci.github.io/osmdata/reference/osmdata_sc.html)
+[`osmdata_sc()`](https://docs.ropensci.org/osmdata/reference/osmdata_sc.html)
 extracts OSM data in [Silicate (`sc`)](https://github.com/hypertidy/silicate)
 format, and returns seven tables plus an additional table of meta-data. The
 `dodgr` functions may be directly used without understanding the format of these
@@ -73,12 +73,12 @@ Elevation data are used in time-based routing, and are particularly important
 for modelling pedestrian and bicycle transport. The may be readily incorporated
 with [Silicate (`sc`)](https://github.com/hypertidy/silicate) format data with
 the new [`osmdata`](https://github.com/ropensci/osmdata) function,
-[`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html).
+[`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html).
 This function requires a locally-stored GeoTIFF-formatted elevation data file
 to be downloaded from the [Consortium for Spatial
 Information](https://srtm.csi.cgiar.org/srtmdata/), or any other source. These
 data may then be appended by calling
-[`osm_elevation()`](https://ropensci.github.io/osmdata/reference/osm_elevation.html),
+[`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html),
 and specifying the name of this file. While time-based routing is possible with
 [`sf`](https://cran.r-project.org/package=sf) format data, it is currently not
 possible to incorporate elevation data with such data.
