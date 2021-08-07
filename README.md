@@ -473,12 +473,6 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Achrijo">chrijo</a>
 </td>
 <td align="center">
-<a href="https://github.com/mrsensible">
-<img src="https://avatars1.githubusercontent.com/u/25252172?u=2c62dac1ac9bfef3f26ee56c3d63b18dccc553a3&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Amrsensible">mrsensible</a>
-</td>
-<td align="center">
 <a href="https://github.com/SymbolixAU">
 <img src="https://avatars2.githubusercontent.com/u/18344164?u=022e0d3bdcca3e224021bae842672bda12b599df&v=4" width="100px;" alt=""/>
 </a><br>
