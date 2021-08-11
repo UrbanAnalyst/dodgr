@@ -2,6 +2,10 @@ context("cache")
 
 testthat::skip_on_cran ()
 
+# The cache-off tests fail on windows for some reason, both on CRAN and on
+# GitHub runners.
+testthat::skip_on_os ("windows")
+
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
@@ -61,10 +65,6 @@ test_that("cache on", {
                                         dens = rep (1, n)))
 
 })
-
-# These tests fail on windows for some reason, both on CRAN and on GitHub
-# runners.
-testthat::skip_on_os ("windows")
 
 test_that("cache off", {
               expect_silent (clear_dodgr_cache ())
