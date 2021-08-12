@@ -1,3 +1,11 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+  rmarkdown::html_vignette:
+    self_contained: no
+title: dodgr, Distances on Directed Graphs in R
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -97,6 +105,17 @@ packageVersion ("dodgr")
 #> [1] '0.2.8.12'
 ```
 
+## Important Note
+
+While `dodgr` works with any arbitrary networks, it also includes
+numerous functions explicitly intended to be applied to geodesic
+coordinates, which are identified whenever input data have columns
+labelled “longitude” and “latitude”, or similar. Coordinates for such
+data must be in the EPSG:4326 (WGS84) coordinate system. `dodgr` treats
+coordinates as numbers only, and it is up to the user to ensure
+appropriate transformation to WGS84 coordinates prior to submitting data
+to `dodgr` functions.
+
 ## Usage: Sample Data and `dodgr` networks
 
 To illustrate functionality, the package includes an example data set
@@ -148,8 +167,7 @@ directly from Open Street Map, and denotes the kind of “highway”
 represented by each edge. The `component` column is an integer value
 describing which of the connected components of the network each edge
 belongs to (with `1` always being the largest component; `2` the second
-largest; and so on). Note that all spatial data are assumed to be in the
-EPSG:4326 (WGS84) coordinate system.
+largest; and so on).
 
 Note that the `d_weighted` values are often greater than the geometric
 distances, `d`. In the example shown, `service` highways are not ideal
@@ -293,11 +311,11 @@ head (f)
 | geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway      | way_id   | component |      time | time_weighted |      flow |
 |---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:-------------|:---------|----------:|----------:|--------------:|----------:|
 |        1 |       1 | 339318500  | 76.47489 | 15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 | 0.0000000 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 | 0.1452911 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 | 0.1076805 |
 |        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 | 0.0000000 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 | 0.1452911 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 | 0.1076805 |
 |        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 | 0.0000000 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 | 0.1452911 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 | 0.1076805 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a

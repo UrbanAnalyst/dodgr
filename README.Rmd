@@ -106,6 +106,16 @@ library (dodgr)
 packageVersion ("dodgr")
 ```
 
+## Important Note
+
+While `dodgr` works with any arbitrary networks, it also includes numerous
+functions explicitly intended to be applied to geodesic coordinates, which are
+identified whenever input data have columns labelled "longitude" and
+"latitude", or similar. Coordinates for such data must be in the EPSG:4326
+(WGS84) coordinate system. `dodgr` treats coordinates as numbers only, and it
+is up to the user to ensure appropriate transformation to WGS84 coordinates
+prior to submitting data to `dodgr` functions.
+
 ## Usage: Sample Data and `dodgr` networks
 
 To illustrate functionality, the package includes an example data set
@@ -141,8 +151,7 @@ within the `sf`-formatted data.  The `highway` column is taken directly from
 Open Street Map, and denotes the kind of "highway" represented by each edge. The
 `component` column is an integer value describing which of the connected
 components of the network each edge belongs to (with `1` always being the
-largest component; `2` the second largest; and so on). Note that all spatial
-data are assumed to be in the EPSG:4326 (WGS84) coordinate system.
+largest component; `2` the second largest; and so on).
 
 Note that the `d_weighted` values are often greater than the geometric
 distances, `d`. In the example shown, `service` highways are not ideal for
