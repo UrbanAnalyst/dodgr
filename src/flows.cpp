@@ -86,7 +86,7 @@ struct OneAggregate : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         for (size_t i = begin; i < end; i++)
         {
@@ -142,7 +142,7 @@ struct OneAggregate : public RcppParallel::Worker
                         if (norm_sums)
                         {
                             path_len = 0;
-                            size_t target_t = toi_reduced [j];
+                            long int target_t = static_cast <long int> (toi_reduced [j]);
                             size_t from_t = static_cast <size_t> (dp_fromi [i]);
                             while (target_t < INFINITE_INT)
                             {
@@ -153,7 +153,7 @@ struct OneAggregate : public RcppParallel::Worker
                             }
                         }
 
-                        int target = static_cast <int> (toi_reduced [j]); // can equal -1
+                        long int target = static_cast <int> (toi_reduced [j]); // can equal -1
                         while (target < INFINITE_INT)
                         {
                             size_t stt = static_cast <size_t> (target);
@@ -166,10 +166,10 @@ struct OneAggregate : public RcppParallel::Worker
                                     flow_ij / static_cast <double> (path_len);
                             }
 
-                            target = static_cast <int> (prev [stt]);
+                            target = prev [stt];
                             // Only allocate that flow from origin vertex v to all
                             // previous vertices up until the target vi
-                            if (target < 0 || target == dp_fromi [i])
+                            if (target < 0L || target == dp_fromi [i])
                             {
                                 break;
                             }
@@ -252,7 +252,7 @@ struct OneDisperse : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         const R_xlen_t nfrom = dens.size ();
         const R_xlen_t nk = kfrom.size () / nfrom;
@@ -404,12 +404,12 @@ struct OneSI : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         // k_from can have multiple vectors of k-values, each equal in length to
         // the number of 'from' points. The output is then a single vector of
         // 'nedges' wrapped 'nk' times.
-        const R_xlen_t nfrom = dens_from.size ();
+        const size_t nfrom = dens_from.size ();
         const R_xlen_t nk = k_from.size () / nfrom;
         const size_t nk_st = static_cast <size_t> (nk);
 
@@ -418,8 +418,6 @@ struct OneSI : public RcppParallel::Worker
             //if (RcppThread::isInterrupted (i % static_cast<int>(100) == 0))
             if (RcppThread::isInterrupted ())
                 return;
-
-            R_xlen_t i_R = static_cast <R_xlen_t> (i);
 
             // These have to be reserved within the parallel operator function!
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
@@ -436,8 +434,8 @@ struct OneSI : public RcppParallel::Worker
             // nedges.
             double dlim = 0.0;
             for (R_xlen_t k = 0; k < nk; k++)
-                if (k_from [i_R + k * nfrom] > dlim)
-                    dlim = k_from [i_R + k * nfrom];
+                if (k_from [i + k * nfrom] > dlim)
+                    dlim = k_from [i + k * nfrom];
             dlim = -dlim * log (tol);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
@@ -446,7 +444,6 @@ struct OneSI : public RcppParallel::Worker
             std::vector <double> expsum (nk_st, 0.0);
             for (size_t j = 0; j < toi.size (); j++)
             {
-                const R_xlen_t j_R = static_cast <R_xlen_t> (j);
                 if (from_i != toi [j]) // Exclude self-flows
                 {
                     if (d [toi [j]] < INFINITE_DOUBLE)
@@ -468,10 +465,9 @@ struct OneSI : public RcppParallel::Worker
                             flow_ijk (nk_st, 0.0);
                         for (size_t k = 0; k < nk_st; k++)
                         {
-                            const R_xlen_t k_R = static_cast <R_xlen_t> (k);
-                            exp_jk [k] = dens_to [j_R] *
-                                exp (-d [toi [j]] / k_from [i_R + k_R * nfrom]);
-                            flow_ijk [k] = dens_from [i_R] * exp_jk [k];
+                            exp_jk [k] = dens_to [j] *
+                                exp (-d [toi [j]] / k_from [i + k * nfrom]);
+                            flow_ijk [k] = dens_from [i] * exp_jk [k];
                             expsum [k] += exp_jk [k];
                         }
 
@@ -481,7 +477,7 @@ struct OneSI : public RcppParallel::Worker
                         if (norm_sums)
                         {
                             path_len = 0;
-                            size_t target_t = toi [j];
+                            long int target_t = static_cast <long int> (toi [j]);
                             size_t from_t = static_cast <size_t> (dp_fromi [i]);
                             while (target_t < INFINITE_INT)
                             {
@@ -492,7 +488,7 @@ struct OneSI : public RcppParallel::Worker
                             }
                         } 
 
-                        int target = static_cast <int> (toi [j]); // can equal -1
+                        long int target = static_cast <long int> (toi [j]); // can equal -1
                         while (target < INFINITE_INT)
                         {
                             size_t stt = static_cast <size_t> (target);
@@ -512,10 +508,10 @@ struct OneSI : public RcppParallel::Worker
                                 }
                             }
 
-                            target = static_cast <int> (prev [stt]);
+                            target = static_cast <long int> (prev [stt]);
                             // Only allocate that flow from origin vertex v to all
                             // previous vertices up until the target vi
-                            if (target < 0 || target == dp_fromi [i])
+                            if (target < 0L || target == dp_fromi [i])
                             {
                                 break;
                             }

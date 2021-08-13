@@ -32,7 +32,7 @@ void PF::PathFinder::init(std::shared_ptr<const DGraph> g) {
 void PF::PathFinder::init_arrays (
         std::vector <double>& d,
         std::vector <double>& w,
-        std::vector <int>& prev,
+        std::vector <long int>& prev,
         bool *m_open_vec,
         bool *m_closed_vec,
         const size_t v,
@@ -53,7 +53,7 @@ void PF::PathFinder::init_arrays (
 void PF::PathFinder::scan_edges (const DGraphEdge *edge,
         std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0)
@@ -85,7 +85,7 @@ void PF::PathFinder::scan_edges (const DGraphEdge *edge,
 void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
         std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0,
@@ -122,7 +122,7 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
 void PF::PathFinder::Dijkstra (
         std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         const size_t v0,
         const std::vector <size_t> &to_index)
 {
@@ -163,7 +163,7 @@ void PF::PathFinder::Dijkstra (
 void PF::PathFinder::DijkstraLimit (
         std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         const size_t v0,
         const double &dlim)
 {
@@ -203,7 +203,7 @@ void PF::PathFinder::DijkstraLimit (
 
 void PF::PathFinder::AStar (std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         const std::vector<double>& heur,
         const size_t v0,
         const std::vector <size_t> &to_index)
@@ -244,7 +244,7 @@ void PF::PathFinder::AStar (std::vector<double>& d,
 // instead of m_heap, and so all routines hard-coded here.
 void PF::PathFinder::Dijkstra_set (std::vector<double>& d,
         std::vector<double>& w,
-        std::vector<int>& prev,
+        std::vector<long int>& prev,
         size_t v0)
 {
     const DGraphEdge *edge;

@@ -97,7 +97,7 @@ struct OneDist : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         std::vector <double> heuristic (nverts, 0.0);
 
@@ -170,7 +170,7 @@ struct OneDistPaired : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         std::vector <double> heuristic (nverts, 0.0);
 
@@ -256,7 +256,7 @@ struct OneIso : public RcppParallel::Worker
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
-        std::vector <int> prev (nverts);
+        std::vector <long int> prev (nverts);
 
         const double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
 
@@ -538,7 +538,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
 
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
-    std::vector<int> prev (nverts);
+    std::vector<long int> prev (nverts);
 
     // initialise dout matrix to NA
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
@@ -623,10 +623,12 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     Rcpp::List res (nfrom);
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
-    std::vector<int> prev (nverts);
+    std::vector<long int> prev (nverts);
 
     for (size_t i = 0; i < nfrom; i++)
     {
+        const R_xlen_t i_R = static_cast <R_xlen_t> (i);
+
         // These lines (re-)initialise the heap, so have to be called for each i
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
@@ -638,36 +640,37 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
         std::fill (prev.begin(), prev.end(), INFINITE_INT);
-        d [fromi [i]] = w [fromi [i]] = 0.0;
+        d [static_cast <size_t> (fromi [i_R])] =
+            w [static_cast <size_t> (fromi [i_R])] = 0.0;
 
         pathfinder->Dijkstra (d, w, prev,
-                static_cast <size_t> (fromi [i]), toi);
+                static_cast <size_t> (fromi [i_R]), toi);
 
         Rcpp::List res1 (nto);
         for (size_t j = 0; j < nto; j++)
         {
-            std::vector <int> onePath;
+            std::vector <long int> onePath;
             if (w [toi [j]] < INFINITE_DOUBLE)
             {
-                int target = toi_in [j]; // target can be -1!
+                long int target = toi_in [j]; // target can be -1!
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
                     // directly here to R-style 1-indexes.
-                    onePath.push_back (target + 1);
-                    target = static_cast <int> (prev [static_cast <size_t> (target)]);
-                    if (target < 0 || target == fromi [i])
+                    onePath.push_back (target + 1L);
+                    target = prev [static_cast <size_t> (target)];
+                    if (target < 0L || target == fromi [i_R])
                         break;
                 }
             }
             if (onePath.size () >= 1)
             {
-                onePath.push_back (fromi [i] + 1);
+                onePath.push_back (static_cast <R_xlen_t> (fromi [i_R] + 1L));
                 std::reverse (onePath.begin (), onePath.end ());
-                res1 [j] = onePath;
+                res1 [static_cast <R_xlen_t> (j)] = onePath;
             }
         }
-        res [i] = res1;
+        res [static_cast <R_xlen_t> (i)] = res1;
     }
     return (res);
 }
