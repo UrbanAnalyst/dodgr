@@ -1,8 +1,12 @@
 #ifndef DGRAPH_H
 #define DGRAPH_H
 
+#include <bits/c++config.h>
 #include <vector>
 #include <limits>
+
+typedef std::size_t size_t;
+
 /* Directed Graphs
  * ----------------------------------------------------------------------------
  * Author: Mark Padgham, modified from code by Shane Saunders
@@ -22,7 +26,7 @@
  */
 class DGraphEdge {
     public:
-        unsigned int source, target, edge_id; // edge_id only used in centrality
+        size_t source, target, edge_id; // edge_id only used in centrality
         double dist, wt;
         DGraphEdge *nextOut, *nextIn;
 };
@@ -57,10 +61,10 @@ class DGraphVertex {
  */
 class DGraph {
     public:
-        DGraph(unsigned int n);
+        DGraph(size_t n);
         ~DGraph();
         
-        unsigned int nVertices() const;
+        size_t nVertices() const;
         const std::vector<DGraphVertex>& vertices() const;
         
         // disable copy/assign as will crash (double-delete)
@@ -68,10 +72,10 @@ class DGraph {
         DGraph& operator=(const DGraph&) = delete;
     
         void clear();
-        void addNewEdge(unsigned int srcVertexNo, unsigned int destVertexNo,
-                double dist, double wt, unsigned int edge_id);
-        bool edgeExists(unsigned int v, unsigned int w) const;
-        bool reachable(unsigned int s) const;
+        void addNewEdge(size_t srcVertexNo, size_t destVertexNo,
+                double dist, double wt, size_t edge_id);
+        bool edgeExists(size_t v, size_t w) const;
+        bool reachable(size_t s) const;
         void print() const;
     private:
         void initVertices();

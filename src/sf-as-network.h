@@ -14,7 +14,7 @@ constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
 namespace sf{
 
 double haversine (double x1, double y1, double x2, double y2);
-void fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
+void fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
         const Rcpp::CharacterVector &rnms,
         const double &d, const double &hw_factor,
         const std::string &hway, const bool &has_names,

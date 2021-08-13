@@ -17,17 +17,17 @@ const double epsilon = 1.0e-10; // edge weight comparison == 0
 
 // # nocov start
 template <typename T>
-void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
-        const std::map <std::string, unsigned int>& vert_map,
+void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
+        const std::map <std::string, size_t>& vert_map,
         const std::vector <std::string>& from,
         const std::vector <std::string>& to,
         const std::vector <T>& dist,
         const std::vector <T>& wt)
 {
-    for (unsigned int i = 0; i < nedges; ++i)
+    for (size_t i = 0; i < nedges; ++i)
     {
-        unsigned int fromi = vert_map.at(from [i]);
-        unsigned int toi = vert_map.at(to [i]);
+        size_t fromi = vert_map.at(from [i]);
+        size_t toi = vert_map.at(to [i]);
         g->addNewEdge (fromi, toi, dist [i], wt [i], i);
     }
 }
@@ -86,7 +86,7 @@ struct OneCentralityVert : public RcppParallel::Worker
                 return;
             const double vwt = vert_wts [v];
             pathfinder->Centrality_vertex (cent,
-                    static_cast <unsigned int> (v),
+                    static_cast <size_t> (v),
                     vwt, dist_threshold);
         }
 
@@ -172,16 +172,16 @@ struct OneCentralityEdge : public RcppParallel::Worker
 
 void PF::PathFinder::Centrality_vertex (
         std::vector <double>& cent,
-        const unsigned int s,
+        const size_t s,
         const double vert_wt,
         const double dist_threshold)
 {
     const DGraphEdge *edge;
 
-    const unsigned int n = m_graph->nVertices();
+    const size_t n = m_graph->nVertices();
     const std::vector <DGraphVertex>& vertices = m_graph->vertices();
 
-    std::deque <unsigned int> v_stack;
+    std::deque <size_t> v_stack;
 
     std::vector <double> w (n, 0.0);
     w [s] = 1.0;
@@ -191,10 +191,10 @@ void PF::PathFinder::Centrality_vertex (
     std::vector <int> sigma (n, 0);
     sigma [s] = 1;
 
-    std::vector <std::vector <unsigned int> > prev_vert (n);
+    std::vector <std::vector <size_t> > prev_vert (n);
 
     while (m_heap->nItems() > 0) {
-        unsigned int v = m_heap->deleteMin();
+        size_t v = m_heap->deleteMin();
 
         if (w [v] > dist_threshold)
             continue;
@@ -204,10 +204,10 @@ void PF::PathFinder::Centrality_vertex (
         edge = vertices [v].outHead;
         while (edge) {
 
-            unsigned int et = edge->target;
+            size_t et = edge->target;
             double wt = w [v] + edge->wt;
 
-            std::vector <unsigned int> vert_vec;
+            std::vector <size_t> vert_vec;
 
             if (w [et] == 0.0) // first connection to et
             {
@@ -245,9 +245,9 @@ void PF::PathFinder::Centrality_vertex (
     std::vector <double> delta (n, 0.0);
     while (!v_stack.empty ())
     {
-        const unsigned int v = v_stack.back ();
+        const size_t v = v_stack.back ();
         v_stack.pop_back ();
-        std::vector <unsigned int> vert_vec = prev_vert [v];
+        std::vector <size_t> vert_vec = prev_vert [v];
         double tempd = (1.0 + delta [v]) / sigma [v];
         for (auto ws: vert_vec)
         {
@@ -261,17 +261,17 @@ void PF::PathFinder::Centrality_vertex (
 
 void PF::PathFinder::Centrality_edge (
         std::vector <double>& cent,
-        const unsigned int s,
+        const size_t s,
         const double vert_wt,
-        const unsigned int nedges,
+        const size_t nedges,
         const double dist_threshold)
 {
     const DGraphEdge *edge;
 
-    const unsigned int n = m_graph->nVertices();
+    const size_t n = m_graph->nVertices();
     const std::vector <DGraphVertex>& vertices = m_graph->vertices();
 
-    std::deque <unsigned int> v_stack;
+    std::deque <size_t> v_stack;
 
     std::vector <double> w (n, 0.0);
     w [s] = 1.0;
@@ -282,10 +282,10 @@ void PF::PathFinder::Centrality_edge (
     sigma [s] = 1;
     std::vector <int> sigma_edge (nedges, 0);
 
-    std::vector <std::vector <unsigned int> > prev_vert (n), prev_edge (n);
+    std::vector <std::vector <size_t> > prev_vert (n), prev_edge (n);
 
     while (m_heap->nItems() > 0) {
-        unsigned int v = m_heap->deleteMin();
+        size_t v = m_heap->deleteMin();
 
         if (w [v] > dist_threshold)
             continue;
@@ -295,12 +295,12 @@ void PF::PathFinder::Centrality_edge (
         edge = vertices [v].outHead;
         while (edge) {
 
-            unsigned int et = edge->target;
+            size_t et = edge->target;
             double wt = w [v] + edge->wt;
 
             // DGraph has no edge iterator, so edge_vec contains pairwise
             // elements of [from vertex, edge_id]
-            std::vector <unsigned int> edge_vec;
+            std::vector <size_t> edge_vec;
 
             if (w [et] == 0.0) // first connection to et
             {
@@ -346,12 +346,12 @@ void PF::PathFinder::Centrality_edge (
     std::vector <double> delta (n, 0.0);
     while (!v_stack.empty ())
     {
-        const unsigned int v = v_stack.back ();
+        const size_t v = v_stack.back ();
         v_stack.pop_back ();
-        std::vector <unsigned int> edge_vec = prev_edge [v];
+        std::vector <size_t> edge_vec = prev_edge [v];
         double tempd = (1.0 + delta [v]) / sigma [v];
 
-        std::vector <unsigned int>::iterator it = edge_vec.begin ();
+        std::vector <size_t>::iterator it = edge_vec.begin ();
         // The dereferenced edge_vec iterator is simply a direct index
         while (it != edge_vec.end ())
         {
@@ -382,15 +382,15 @@ Rcpp::NumericVector rcpp_centrality (const Rcpp::DataFrame graph,
     std::vector <double> dist = graph ["d"];
     std::vector <double> wt = graph ["d_weighted"];
 
-    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
-    std::map <std::string, unsigned int> vert_map;
+    const size_t nedges = static_cast <size_t> (graph.nrow ());
+    std::map <std::string, size_t> vert_map;
     std::vector <std::string> vert_map_id = vert_map_in ["vert"];
-    std::vector <unsigned int> vert_map_n = vert_map_in ["id"];
+    std::vector <size_t> vert_map_n = vert_map_in ["id"];
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
     Rcpp::CharacterVector v_nms = vert_map_in.attr ("names");
-    std::vector <double> vert_wts (vert_map_in.nrow (), 1.0);
+    std::vector <double> vert_wts (static_cast <size_t> (vert_map_in.nrow ()), 1.0);
     for (auto n: v_nms) {
         if (n == "vert_wts") {
             std::vector <double> tempd = vert_map_in ["vert_wts"];

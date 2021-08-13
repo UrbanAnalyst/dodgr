@@ -50,11 +50,11 @@ class Heap23Node {
         Heap23Node *child;
         Heap23Node *partner;
 
-        unsigned int extra;    
-        unsigned int dim;
+        size_t extra;    
+        size_t dim;
 
         double key;
-        unsigned int item;
+        size_t item;
 };
 
 /* --- Heap23 ---
@@ -79,13 +79,13 @@ class Heap23Node {
  */
 class Heap23 : public Heap {
     public:
-        Heap23(unsigned int maxNodes);
+        Heap23(size_t maxNodes);
         ~Heap23();
 
-        void insert(unsigned int item, double k);
-        unsigned int deleteMin();
-        void decreaseKey(unsigned int item, double newValue);
-        unsigned int nItems() const { return itemCount; }
+        void insert(size_t item, double k);
+        size_t deleteMin();
+        void decreaseKey(size_t item, double newValue);
+        size_t nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }
 
@@ -98,18 +98,18 @@ class Heap23 : public Heap {
     private:
         Heap23Node **trees;
         Heap23Node **nodes;
-        unsigned int maxNodes, maxTrees, itemCount, treeSum;
+        size_t maxNodes, maxTrees, itemCount, treeSum;
         long int compCount;
 
         void meld(Heap23Node *treeList);
         void removeNode(Heap23Node *cutNode);
 
-        static unsigned int merge(Heap23Node **a, Heap23Node **b);
+        static size_t merge(Heap23Node **a, Heap23Node **b);
         static void removeChild(Heap23Node *c, Heap23Node *p);
         static void addChild(Heap23Node *p, Heap23Node *c);
         static void replaceChild(Heap23Node *oldNode, Heap23Node *newNode);
 
-        static void dumpNodes(Heap23Node *node, unsigned int level);
+        static void dumpNodes(Heap23Node *node, size_t level);
 };
 
 /*---------------------------------------------------------------------------*/

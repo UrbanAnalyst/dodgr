@@ -55,12 +55,12 @@ class TriHeapExtNode {
         TriHeapExtNode *child;
         TriHeapExtNode *partner;
 
-        unsigned int extra;
+        size_t extra;
         ActiveItem *activeEntry;
-        unsigned int dim;
+        size_t dim;
 
         double key;
-        unsigned int item;
+        size_t item;
 };
 
 /* --- CandidateItem ---
@@ -69,7 +69,7 @@ class TriHeapExtNode {
  */
 class CandidateItem {
     public:
-        unsigned int dim;
+        size_t dim;
         CandidateItem *next, *prev;
 };
 
@@ -79,7 +79,7 @@ class CandidateItem {
 class ActiveItem {
     public:
         TriHeapExtNode *node;
-        unsigned int position;
+        size_t position;
 
         ActiveItem *next, *prev;
 };
@@ -119,13 +119,13 @@ class ActiveItem {
  */
 class TriHeapExt : public Heap {
     public:
-        TriHeapExt(unsigned int n);
+        TriHeapExt(size_t n);
         ~TriHeapExt();
 
-        void insert(unsigned int item, double k);
-        unsigned int deleteMin();
-        void decreaseKey(unsigned int item, double newValue);
-        unsigned int nItems() const { return itemCount; }
+        void insert(size_t item, double k);
+        size_t deleteMin();
+        void decreaseKey(size_t item, double newValue);
+        size_t nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }    
 
@@ -144,7 +144,7 @@ class TriHeapExt : public Heap {
         CandidateItem **candidateItems;
         CandidateItem *candQueueHead;
 
-        unsigned int maxNodes, maxTrees, activeLimit, itemCount, activeCount, treeSum;
+        size_t maxNodes, maxTrees, activeLimit, itemCount, activeCount, treeSum;
         long int compCount;
 
         void meld(TriHeapExtNode *treeList);
@@ -152,15 +152,12 @@ class TriHeapExt : public Heap {
         void deactivate(TriHeapExtNode *n);
         void replaceActive(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
 
-        static void dumpNodes(TriHeapExtNode *node, unsigned int level);
+        static void dumpNodes(TriHeapExtNode *node, size_t level);
 
-        static unsigned int merge(TriHeapExtNode **a, TriHeapExtNode **b);
+        static size_t merge(TriHeapExtNode **a, TriHeapExtNode **b);
         static void addChild(TriHeapExtNode *p, TriHeapExtNode *c);
         static void replaceChild(TriHeapExtNode *oldNode, TriHeapExtNode *newNode);
 };
 
 /*---------------------------------------------------------------------------*/
 #endif
-
-
-

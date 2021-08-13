@@ -6,17 +6,17 @@
 #include "heaps/heap_lib.h"
 
 template <typename T>
-void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
-        const std::map <std::string, unsigned int>& vert_map,
+void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
+        const std::map <std::string, size_t>& vert_map,
         const std::vector <std::string>& from,
         const std::vector <std::string>& to,
         const std::vector <T>& dist,
         const std::vector <T>& wt)
 {
-    for (unsigned int i = 0; i < nedges; ++i)
+    for (size_t i = 0; i < nedges; ++i)
     {
-        unsigned int fromi = vert_map.at(from [i]);
-        unsigned int toi = vert_map.at(to [i]);
+        size_t fromi = vert_map.at(from [i]);
+        size_t toi = vert_map.at(to [i]);
         g->addNewEdge (fromi, toi, dist [i], wt [i], i);
     }
 }
@@ -24,10 +24,10 @@ void inst_graph (std::shared_ptr<DGraph> g, unsigned int nedges,
 struct OneAggregate : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const std::vector <unsigned int> toi;
+    const std::vector <size_t> toi;
     const RcppParallel::RMatrix <double> flows;
     const std::vector <std::string> vert_name;
-    const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    const std::unordered_map <std::string, size_t> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
     const bool norm_sums;
@@ -40,10 +40,10 @@ struct OneAggregate : public RcppParallel::Worker
     // Constructor 1: The main constructor
     OneAggregate (
             const RcppParallel::RVector <int> fromi,
-            const std::vector <unsigned int> toi_in,
+            const std::vector <size_t> toi_in,
             const RcppParallel::RMatrix <double> flows_in,
             const std::vector <std::string>  vert_name_in,
-            const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
+            const std::unordered_map <std::string, size_t> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
             const bool norm_sums_in,
@@ -99,7 +99,7 @@ struct OneAggregate : public RcppParallel::Worker
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
             std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
-            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+            size_t from_i = static_cast <size_t> (dp_fromi [i]);
             d [from_i] = w [from_i] = 0.0;
 
             // reduce toi to only those within tolerance limt
@@ -118,13 +118,13 @@ struct OneAggregate : public RcppParallel::Worker
 
             // toi_index is into cols of flow matrix
             // toi_reduced is into the vertex vectors (d, w, prev)
-            std::vector <unsigned int> toi_reduced, toi_index;
+            std::vector <size_t> toi_reduced, toi_index;
             toi_reduced.reserve (nto);
             toi_index.reserve (nto);
             for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
                 if (flows (i, j) > flim)
                 {
-                    toi_index.push_back (static_cast <unsigned int> (j));
+                    toi_index.push_back (static_cast <size_t> (j));
                     toi_reduced.push_back (toi [j]);
                 }
 
@@ -193,7 +193,7 @@ struct OneDisperse : public RcppParallel::Worker
     RcppParallel::RVector <int> dp_fromi;
     const RcppParallel::RVector <double> dens;
     const std::vector <std::string> vert_name;
-    const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    const std::unordered_map <std::string, size_t> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
     const RcppParallel::RVector <double> kfrom;
@@ -208,7 +208,7 @@ struct OneDisperse : public RcppParallel::Worker
             const RcppParallel::RVector <int> fromi,
             const RcppParallel::RVector <double> dens_in,
             const std::vector <std::string>  vert_name_in,
-            const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
+            const std::unordered_map <std::string, size_t> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
             const RcppParallel::RVector <double> kfrom_in,
@@ -279,7 +279,7 @@ struct OneDisperse : public RcppParallel::Worker
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
             std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
-            const unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+            const size_t from_i = static_cast <size_t> (dp_fromi [i]);
             d [from_i] = w [from_i] = 0.0;
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
@@ -337,12 +337,12 @@ struct OneDisperse : public RcppParallel::Worker
 struct OneSI : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
-    const std::vector <unsigned int> toi;
+    const std::vector <size_t> toi;
     const RcppParallel::RVector <double> (k_from);
     const RcppParallel::RVector <double> (dens_from);
     const RcppParallel::RVector <double> (dens_to);
     const std::vector <std::string> vert_name;
-    const std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    const std::unordered_map <std::string, size_t> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
     size_t nedges;
     const bool norm_sums;
@@ -355,12 +355,12 @@ struct OneSI : public RcppParallel::Worker
     // Constructor 1: The main constructor
     OneSI (
             const RcppParallel::RVector <int> fromi,
-            const std::vector <unsigned int> toi_in,
+            const std::vector <size_t> toi_in,
             const RcppParallel::RVector <double> (k_from_in),
             const RcppParallel::RVector <double> (dens_from_in),
             const RcppParallel::RVector <double> (dens_to_in),
             const std::vector <std::string>  vert_name_in,
-            const std::unordered_map <std::string, unsigned int> verts_to_edge_map_in,
+            const std::unordered_map <std::string, size_t> verts_to_edge_map_in,
             const size_t nverts_in,
             const size_t nedges_in,
             const bool norm_sums_in,
@@ -426,7 +426,7 @@ struct OneSI : public RcppParallel::Worker
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
             std::fill (prev.begin (), prev.end (), INFINITE_INT);
 
-            unsigned int from_i = static_cast <unsigned int> (dp_fromi [i]);
+            size_t from_i = static_cast <size_t> (dp_fromi [i]);
             d [from_i] = w [from_i] = 0.0;
 
             // translate k-value to distance limit based on tol
@@ -566,8 +566,8 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const double tol,
         const std::string heap_type)
 {
-    std::vector <unsigned int> toi =
-        Rcpp::as <std::vector <unsigned int> > (toi_in);
+    std::vector <size_t> toi =
+        Rcpp::as <std::vector <size_t> > (toi_in);
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     const std::vector <std::string> from = graph ["from"];
@@ -575,15 +575,15 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
     const std::vector <double> dist = graph ["d"];
     const std::vector <double> wt = graph ["d_weighted"];
 
-    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    const size_t nedges = static_cast <size_t> (graph.nrow ());
     const std::vector <std::string> vert_name = vert_map_in ["vert"];
-    const std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    const std::vector <size_t> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
-    std::map <std::string, unsigned int> vert_map_i;
+    std::map <std::string, size_t> vert_map_i;
     const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
-    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, size_t> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
     run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
@@ -637,15 +637,15 @@ Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
     std::vector <double> dist = graph ["d"];
     std::vector <double> wt = graph ["d_weighted"];
 
-    unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    size_t nedges = static_cast <size_t> (graph.nrow ());
     std::vector <std::string> vert_name = vert_map_in ["vert"];
-    std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    std::vector <size_t> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
-    std::map <std::string, unsigned int> vert_map_i;
+    std::map <std::string, size_t> vert_map_i;
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
-    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, size_t> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
     run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 
@@ -691,8 +691,8 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
         const double tol,
         const std::string heap_type)
 {
-    std::vector <unsigned int> toi =
-        Rcpp::as <std::vector <unsigned int> > ( toi_in);
+    std::vector <size_t> toi =
+        Rcpp::as <std::vector <size_t> > ( toi_in);
     const size_t nfrom = static_cast <size_t> (fromi.size ());
 
     const std::vector <std::string> from = graph ["from"];
@@ -700,15 +700,15 @@ Rcpp::NumericVector rcpp_flows_si (const Rcpp::DataFrame graph,
     const std::vector <double> dist = graph ["d"];
     const std::vector <double> wt = graph ["d_weighted"];
 
-    const unsigned int nedges = static_cast <unsigned int> (graph.nrow ());
+    const size_t nedges = static_cast <size_t> (graph.nrow ());
     const std::vector <std::string> vert_name = vert_map_in ["vert"];
-    const std::vector <unsigned int> vert_indx = vert_map_in ["id"];
+    const std::vector <size_t> vert_indx = vert_map_in ["id"];
     // Make map from vertex name to integer index
-    std::map <std::string, unsigned int> vert_map_i;
+    std::map <std::string, size_t> vert_map_i;
     const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
             vert_indx, vert_map_i);
 
-    std::unordered_map <std::string, unsigned int> verts_to_edge_map;
+    std::unordered_map <std::string, size_t> verts_to_edge_map;
     std::unordered_map <std::string, double> verts_to_dist_map;
     run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
 

@@ -20,13 +20,13 @@
  */
 class BHeapNode {
     public:
-        unsigned int item;
+        size_t item;
         double key;
 };
 
 class BHeapNodeInt {
     public:
-        unsigned int item;
+        size_t item;
         int key;
 };
 
@@ -39,19 +39,19 @@ class BHeapNodeInt {
  */
 class BHeap : public Heap {
     public:
-        BHeap(unsigned int n);
+        BHeap(size_t n);
         ~BHeap();
 
-        void deleteItem(unsigned int item);
-        unsigned int deleteMin() {
-            unsigned int v;
+        void deleteItem(size_t item);
+        size_t deleteMin() {
+            size_t v;
             v = min();
             deleteItem(v);
             return v;
         }
-        void insert(unsigned int item, double key);
-        void decreaseKey(unsigned int item, double newKey);
-        unsigned int nItems() const { return itemCount; }
+        void insert(size_t item, double key);
+        void decreaseKey(size_t item, double newKey);
+        size_t nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }
         void dump() const;
@@ -59,32 +59,32 @@ class BHeap : public Heap {
         double getmin();
 
         /* extra functions */
-        unsigned int min();
+        size_t min();
 
     private:
         BHeapNode *a;
-        unsigned int *aPos;
-        unsigned int itemCount;    
+        size_t *aPos;
+        size_t itemCount;    
         long int compCount;    
 
-        void siftUp(unsigned int p, unsigned int q);
+        void siftUp(size_t p, size_t q);
 };
 
 class BHeapInt : public HeapInt {
     public:
-        BHeapInt(unsigned int n);
+        BHeapInt(size_t n);
         ~BHeapInt();
 
-        void deleteItem(unsigned int item);
-        unsigned int deleteMin() {
-            unsigned int v;
+        void deleteItem(size_t item);
+        size_t deleteMin() {
+            size_t v;
             v = min();
             deleteItem(v);
             return v;
         }
-        void insert(unsigned int item, int key);
-        void decreaseKey(unsigned int item, int newKey);
-        unsigned int nItems() const { return itemCount; }
+        void insert(size_t item, int key);
+        void decreaseKey(size_t item, int newKey);
+        size_t nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }
         void dump() const;
@@ -92,15 +92,15 @@ class BHeapInt : public HeapInt {
         int getmin();
 
         /* extra functions */
-        unsigned int min();
+        size_t min();
 
     private:
         BHeapNodeInt *a;
-        unsigned int *aPos;
-        unsigned int itemCount;    
+        size_t *aPos;
+        size_t itemCount;    
         long int compCount;    
 
-        void siftUp(unsigned int p, unsigned int q);
+        void siftUp(size_t p, size_t q);
 };
 
 /*---------------------------------------------------------------------------*/

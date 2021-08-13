@@ -9,19 +9,19 @@
 #include <cmath> // round
 #include <math.h> // isnan
 
-const float INFINITE_FLOAT =  std::numeric_limits<float>::max ();
-const double INFINITE_DOUBLE =  std::numeric_limits<double>::max ();
-const int INFINITE_INT =  std::numeric_limits<int>::max ();
+const float INFINITE_FLOAT =  std::numeric_limits <float>::max ();
+const double INFINITE_DOUBLE =  std::numeric_limits <double>::max ();
+const long int INFINITE_INT =  std::numeric_limits <long int>::max ();
 
 typedef std::string vertex_id_t, edge_id_t;
-typedef std::unordered_map <unsigned int,
-    std::unordered_set <unsigned int> > int2ints_map_t;
+typedef std::unordered_map <size_t,
+    std::unordered_set <size_t> > int2ints_map_t;
 
 struct edge_component
 {
     // used only for edge sampling on graphs without component numbers
     edge_id_t edge;
-    unsigned int component;
+    size_t component;
 };
 
 struct vertex_t
@@ -32,8 +32,8 @@ struct vertex_t
     public:
         void add_neighbour_in (vertex_id_t vert_id) { in.insert (vert_id); }
         void add_neighbour_out (vertex_id_t vert_id) { out.insert (vert_id); }
-        unsigned long int get_degree_in () { return in.size (); }
-        unsigned long int get_degree_out () { return out.size (); }
+        size_t get_degree_in () { return in.size (); }
+        size_t get_degree_out () { return out.size (); }
 
         std::unordered_set <vertex_id_t> get_all_neighbours ()
         {
@@ -142,8 +142,8 @@ bool graph_has_components (const Rcpp::DataFrame &graph);
 bool graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         edge_map_t &edge_map, vert2edge_map_t &vert2edge_map);
 
-unsigned int identify_graph_components (vertex_map_t &v,
-        std::unordered_map <vertex_id_t, unsigned int> &com);
+size_t identify_graph_components (vertex_map_t &v,
+        std::unordered_map <vertex_id_t, size_t> &com);
 
 } // end namespace graph
 
@@ -173,7 +173,7 @@ vertex_id_t select_random_vert (Rcpp::DataFrame graph,
 } // end namespace graph_sample
 
 Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
-        unsigned int nverts_to_sample);
+        size_t nverts_to_sample);
 
 //----------------------------
 //----- functions in graph-contract.cpp

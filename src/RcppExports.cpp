@@ -130,13 +130,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_sample_graph
-Rcpp::StringVector rcpp_sample_graph(Rcpp::DataFrame graph, unsigned int nverts_to_sample);
+Rcpp::StringVector rcpp_sample_graph(Rcpp::DataFrame graph, size_t nverts_to_sample);
 RcppExport SEXP _dodgr_rcpp_sample_graph(SEXP graphSEXP, SEXP nverts_to_sampleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type graph(graphSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type nverts_to_sample(nverts_to_sampleSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nverts_to_sample(nverts_to_sampleSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_sample_graph(graph, nverts_to_sample));
     return rcpp_result_gen;
 END_RCPP

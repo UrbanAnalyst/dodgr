@@ -90,8 +90,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
     std::vector <bool> isOneWay (static_cast <size_t> (geoms.length ()));
     std::fill (isOneWay.begin (), isOneWay.end (), false);
     // Get dimension of matrix
-    size_t nrows = 0;
-    unsigned int ngeoms = 0;
+    size_t nrows = 0L;
+    R_xlen_t ngeoms = 0L;
     for (auto g = geoms.begin (); g != geoms.end (); ++g)
     {
         // Rcpp uses an internal proxy iterator here, NOT a direct copy
@@ -145,8 +145,8 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         if (rnms.size () != gi.nrow ())
             throw std::runtime_error ("geom size differs from rownames"); // # nocov
 
-        for (unsigned int i = 1;
-                i < static_cast <unsigned int> (gi.nrow ()); i ++)
+        for (size_t i = 1;
+                i < static_cast <size_t> (gi.nrow ()); i ++)
         {
             double d = sf::haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
                     gi (i, 1));
@@ -169,7 +169,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
             Rcpp::Named ("character_values") = idmat);
 }
 
-void sf::fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
+void sf::fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
         const Rcpp::CharacterVector &rnms,
         const double &d, const double &hw_factor,
         const std::string &hway, const bool &has_names,
@@ -184,7 +184,7 @@ void sf::fill_one_row (const unsigned int ngeoms, const Rcpp::NumericMatrix &gi,
         i = grownum - 1;
     }
 
-    nmat (rownum, 0) = ngeoms;
+    nmat (rownum, 0) = static_cast <double> (ngeoms);
     nmat (rownum, 1) = gi (i_min_1, 0);
     nmat (rownum, 2) = gi (i_min_1, 1);
     nmat (rownum, 3) = gi (i, 0);
@@ -226,13 +226,12 @@ struct OnePointIndex : public RcppParallel::Worker
     {
         for (std::size_t i = begin; i < end; i++)
         {
-            long int li = static_cast <long int> (i);
             double dmin = INFINITE_DOUBLE;
             int jmin = INFINITE_INT;
-            for (int j = 0; j < static_cast <int> (nxy); j++)
+            for (size_t j = 0; j < nxy; j++)
             {
-                double dij = (xy_x [j] - pt_x [li]) * (xy_x [j] - pt_x [li]) +
-                    (xy_y [j] - pt_y [li]) * (xy_y [j] - pt_y [li]);
+                double dij = (xy_x [j] - pt_x [i]) * (xy_x [j] - pt_x [i]) +
+                    (xy_y [j] - pt_y [i]) * (xy_y [j] - pt_y [i]);
                 if (dij < dmin)
                 {
                     dmin = dij;

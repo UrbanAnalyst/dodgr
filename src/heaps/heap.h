@@ -29,10 +29,10 @@
 class Heap {
     public:
         virtual ~Heap(){}
-        virtual unsigned int deleteMin() = 0;
-        virtual void insert(unsigned int item, double key) = 0;
-        virtual void decreaseKey(unsigned int item, double newKey) = 0;
-        virtual unsigned int nItems() const = 0;
+        virtual size_t deleteMin() = 0;
+        virtual void insert(size_t item, double key) = 0;
+        virtual void decreaseKey(size_t item, double newKey) = 0;
+        virtual size_t nItems() const = 0;
         virtual long int nComps() const = 0;
         virtual void dump() const = 0;
         // MP: implement getmin fn in BHeap only
@@ -44,10 +44,10 @@ class Heap {
 class HeapInt {
     public:
         virtual ~HeapInt(){}
-        virtual unsigned int deleteMin() = 0;
-        virtual void insert(unsigned int item, int key) = 0;
-        virtual void decreaseKey(unsigned int item, int newKey) = 0;
-        virtual unsigned int nItems() const = 0;
+        virtual size_t deleteMin() = 0;
+        virtual void insert(size_t item, int key) = 0;
+        virtual void decreaseKey(size_t item, int newKey) = 0;
+        virtual size_t nItems() const = 0;
         virtual long int nComps() const = 0;
         virtual int getmin() = 0;
 };
@@ -55,13 +55,13 @@ class HeapInt {
 class HeapDesc {
     public:
         virtual ~HeapDesc(){}
-        virtual Heap *newInstance(unsigned int n) const = 0;
+        virtual Heap *newInstance(size_t n) const = 0;
 };
 
 template <class T>
 class HeapD: public HeapDesc {
     public:
-        Heap *newInstance(unsigned int n) const { return new T(n); }
+        Heap *newInstance(size_t n) const { return new T(n); }
 };
 
 

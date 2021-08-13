@@ -43,9 +43,9 @@ class Heap23Node {
         Heap23Node *parent;
         Heap23Node *child;
         Heap23Node *left, *right;
-        unsigned int dim;
+        size_t dim;
         double key;
-        unsigned int item;
+        size_t item;
 };
 
 /* The structure type for a 2-3 heap.
@@ -69,13 +69,13 @@ class Heap23Node {
  */
 class Heap23 : public Heap {
     public:
-        Heap23(unsigned int n);
+        Heap23(size_t n);
         ~Heap23();
 
-        void insert(unsigned int item, double k);
-        unsigned int deleteMin();
-        void decreaseKey(unsigned int item, double newValue);
-        unsigned int nItems() const { return itemCount; }
+        void insert(size_t item, double k);
+        size_t deleteMin();
+        void decreaseKey(size_t item, double newValue);
+        size_t nItems() const { return itemCount; }
 
         long int nComps() const { return compCount; }
 
@@ -88,19 +88,19 @@ class Heap23 : public Heap {
     private:
         Heap23Node **trees;
         Heap23Node **nodes;
-        unsigned int maxNodes, maxTrees, itemCount, treeSum;
+        size_t maxNodes, maxTrees, itemCount, treeSum;
         long compCount;
 
         void meld(Heap23Node *tree_list);
         void removeNode(Heap23Node *cutNode);
 
-        static unsigned int merge(Heap23Node **a, Heap23Node **b);
+        static size_t merge(Heap23Node **a, Heap23Node **b);
         static void trimExtraNode(Heap23Node *x);
         static void addChild(Heap23Node *p, Heap23Node *c);
         static void replaceNode(Heap23Node *oldNode, Heap23Node *newNode);
         static void swapTrunks(Heap23Node *lowNode, Heap23Node *highNode);    
 
-        static void dumpNodes(Heap23Node *ptr, unsigned int level);
+        static void dumpNodes(Heap23Node *ptr, size_t level);
 };
 
 /*---------------------------------------------------------------------------*/
