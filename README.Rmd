@@ -1,11 +1,11 @@
 ---
-title: "dodgr, Distances on Directed Graphs in R"
+title: "dodgr: Distances on Directed Graphs in R"
 output:
-  rmarkdown::html_vignette:
-    self_contained: no
-
   md_document:
     variant: markdown_github
+
+  rmarkdown::html_vignette:
+    self_contained: no
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
