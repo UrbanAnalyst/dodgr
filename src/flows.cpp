@@ -220,8 +220,8 @@ struct OneDisperse : public RcppParallel::Worker
         nverts (nverts_in), nedges (nedges_in), kfrom (kfrom_in),
         tol (tol_in), heap_type (heap_type_in), g (g_in), output ()
     {
-        const R_xlen_t nfrom = dens.size ();
-        const R_xlen_t nk = kfrom.size () / nfrom;
+        const R_xlen_t nfrom = static_cast <R_xlen_t> (dens.size ());
+        const R_xlen_t nk = static_cast <R_xlen_t> (kfrom.size ()) / nfrom;
         const size_t out_size = nedges * static_cast <size_t> (nk);
         output.resize (out_size, 0.0);
     }
@@ -237,8 +237,8 @@ struct OneDisperse : public RcppParallel::Worker
         kfrom (oneDisperse.kfrom), tol (oneDisperse.tol),
         heap_type (oneDisperse.heap_type), g (oneDisperse.g), output ()
     {
-        const R_xlen_t nfrom = dens.size ();
-        const R_xlen_t nk = kfrom.size () / nfrom;
+        const R_xlen_t nfrom = static_cast <R_xlen_t> (dens.size ());
+        const R_xlen_t nk = static_cast <R_xlen_t> (kfrom.size ()) / nfrom;
         size_t out_size = nedges * static_cast <size_t> (nk);
         output.resize (out_size, 0.0);
     }
@@ -254,9 +254,8 @@ struct OneDisperse : public RcppParallel::Worker
         std::vector <double> d (nverts);
         std::vector <long int> prev (nverts);
 
-        const R_xlen_t nfrom = dens.size ();
-        const R_xlen_t nk = kfrom.size () / nfrom;
-        const size_t nk_st = static_cast <size_t> (nk); 
+        const size_t nfrom = dens.size ();
+        const size_t nk = kfrom.size () / nfrom;
 
         for (size_t i = begin; i < end; i++) // over the from vertices
         {
@@ -264,15 +263,14 @@ struct OneDisperse : public RcppParallel::Worker
             if (RcppThread::isInterrupted ())
                 return;
 
-            R_xlen_t ir = static_cast <R_xlen_t> (i);
             // translate k-value to distance limit based on tol
             // exp(-d / k) = tol -> d = -k * log (tol)
             // k_from holds nk vectors of different k-values, each of length
             // nedges.
             double dlim = 0.0;
-            for (R_xlen_t k = 0; k < nk; k++)
-                if (kfrom [ir + k * nfrom] > dlim)
-                    dlim = kfrom [ir + k * nfrom]; // dlim is max k-value
+            for (size_t k = 0; k < nk; k++)
+                if (kfrom [i + k * nfrom] > dlim)
+                    dlim = kfrom [i + k * nfrom]; // dlim is max k-value
             dlim = -dlim * log (tol); // converted to actual dist limit.
 
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
@@ -284,8 +282,8 @@ struct OneDisperse : public RcppParallel::Worker
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
 
-            std::vector <double> flows_i (nedges * nk_st, 0.0);
-            std::vector <double> expsum (nk_st, 0.0);
+            std::vector <double> flows_i (nedges * nk, 0.0);
+            std::vector <double> expsum (nk, 0.0);
 
             for (size_t j = 0; j < nverts; j++)
             {
@@ -298,11 +296,11 @@ struct OneDisperse : public RcppParallel::Worker
                     size_t index = verts_to_edge_map.at (two_verts);
                     if (d [j] < INFINITE_DOUBLE)
                     {
-                        for (R_xlen_t k = 0; k < nk; k++)
+                        for (size_t k = 0; k < nk; k++)
                         {
                             double exp_jk;
-                            if (kfrom [ir + k * nfrom] > 0.0)
-                                exp_jk = exp (-d [j] / kfrom [ir + k * nfrom]);
+                            if (kfrom [i + k * nfrom] > 0.0)
+                                exp_jk = exp (-d [j] / kfrom [i + k * nfrom]);
                             else
                             {
                                 // standard logistic polygonal for UK cycling
@@ -314,12 +312,12 @@ struct OneDisperse : public RcppParallel::Worker
                             }
                             const size_t k_st = static_cast <size_t> (k);
                             expsum [k_st] += exp_jk;
-                            flows_i [index + k_st * nedges] += dens [ir] * exp_jk;
+                            flows_i [index + k_st * nedges] += dens [i] * exp_jk;
                         }
                     }
                 }
             } // end for j
-            for (size_t k = 0; k < nk_st; k++)
+            for (size_t k = 0; k < nk; k++)
                 if (expsum [k] > tol)
                     for (size_t j = 0; j < nedges; j++)
                         output [j + k * nedges] +=
