@@ -336,9 +336,9 @@ struct OneSI : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
-    const RcppParallel::RVector <double> (k_from);
-    const RcppParallel::RVector <double> (dens_from);
-    const RcppParallel::RVector <double> (dens_to);
+    const RcppParallel::RVector <double> k_from;
+    const RcppParallel::RVector <double> dens_from;
+    const RcppParallel::RVector <double> dens_to;
     const std::vector <std::string> vert_name;
     const std::unordered_map <std::string, size_t> verts_to_edge_map;
     size_t nverts; // can't be const because of reinterpret cast
@@ -354,9 +354,9 @@ struct OneSI : public RcppParallel::Worker
     OneSI (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
-            const RcppParallel::RVector <double> (k_from_in),
-            const RcppParallel::RVector <double> (dens_from_in),
-            const RcppParallel::RVector <double> (dens_to_in),
+            const RcppParallel::RVector <double> k_from_in,
+            const RcppParallel::RVector <double> dens_from_in,
+            const RcppParallel::RVector <double> dens_to_in,
             const std::vector <std::string>  vert_name_in,
             const std::unordered_map <std::string, size_t> verts_to_edge_map_in,
             const size_t nverts_in,
@@ -478,9 +478,10 @@ struct OneSI : public RcppParallel::Worker
                             size_t from_t = static_cast <size_t> (dp_fromi [i]);
                             while (target_t < INFINITE_INT)
                             {
+                                size_t target_size_t = static_cast <size_t> (target_t);
                                 path_len++;
-                                target_t = prev [static_cast <size_t> (target_t)];
-                                if (target_t < 0 || target_t == from_t)
+                                target_t = prev [target_size_t];
+                                if (target_t < 0 || target_size_t == from_t)
                                     break;
                             }
                         } 
