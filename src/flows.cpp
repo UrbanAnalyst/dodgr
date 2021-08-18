@@ -371,9 +371,9 @@ struct OneSI : public RcppParallel::Worker
         nverts (nverts_in), nedges (nedges_in), norm_sums (norm_sums_in),
         tol (tol_in), heap_type (heap_type_in), g (g_in), output ()
     {
-        const R_xlen_t nfrom = dens_from.size ();
-        const R_xlen_t nk = k_from.size () / nfrom;
-        const size_t out_size = nedges * static_cast <size_t> (nk);
+        const size_t nfrom = dens_from.size ();
+        const size_t nk = k_from.size () / nfrom;
+        const size_t out_size = nedges * nk;
         output.resize (out_size, 0.0);
     }
 
@@ -388,9 +388,9 @@ struct OneSI : public RcppParallel::Worker
         norm_sums (oneSI.norm_sums), tol (oneSI.tol),
         heap_type (oneSI.heap_type), g (oneSI.g), output ()
     {
-        const R_xlen_t nfrom = dens_from.size ();
-        const R_xlen_t nk = k_from.size () / nfrom;
-        const size_t out_size = nedges * static_cast <size_t> (nk);
+        const size_t nfrom = dens_from.size ();
+        const size_t nk = k_from.size () / nfrom;
+        const size_t out_size = nedges * nk;
         output.resize (out_size, 0.0);
     }
 
@@ -408,8 +408,7 @@ struct OneSI : public RcppParallel::Worker
         // the number of 'from' points. The output is then a single vector of
         // 'nedges' wrapped 'nk' times.
         const size_t nfrom = dens_from.size ();
-        const R_xlen_t nk = k_from.size () / nfrom;
-        const size_t nk_st = static_cast <size_t> (nk);
+        const size_t nk = k_from.size () / nfrom;
 
         for (size_t i = begin; i < end; i++)
         {
@@ -431,15 +430,15 @@ struct OneSI : public RcppParallel::Worker
             // k_from holds nk vectors of different k-values, each of length
             // nedges.
             double dlim = 0.0;
-            for (R_xlen_t k = 0; k < nk; k++)
+            for (size_t k = 0; k < nk; k++)
                 if (k_from [i + k * nfrom] > dlim)
                     dlim = k_from [i + k * nfrom];
             dlim = -dlim * log (tol);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlim);
 
-            std::vector <double> flows_i (nedges * nk_st, 0.0);
-            std::vector <double> expsum (nk_st, 0.0);
+            std::vector <double> flows_i (nedges * nk, 0.0);
+            std::vector <double> expsum (nk, 0.0);
             for (size_t j = 0; j < toi.size (); j++)
             {
                 if (from_i != toi [j]) // Exclude self-flows
@@ -459,9 +458,9 @@ struct OneSI : public RcppParallel::Worker
                          * denominator independent of that value in order to
                          * divide all final values.
                          */
-                        std::vector <double> exp_jk (nk_st, 0.0),
-                            flow_ijk (nk_st, 0.0);
-                        for (size_t k = 0; k < nk_st; k++)
+                        std::vector <double> exp_jk (nk, 0.0),
+                            flow_ijk (nk, 0.0);
+                        for (size_t k = 0; k < nk; k++)
                         {
                             exp_jk [k] = dens_to [j] *
                                 exp (-d [toi [j]] / k_from [i + k * nfrom]);
@@ -480,7 +479,7 @@ struct OneSI : public RcppParallel::Worker
                             while (target_t < INFINITE_INT)
                             {
                                 path_len++;
-                                target_t = prev [target_t];
+                                target_t = prev [static_cast <size_t> (target_t)];
                                 if (target_t < 0 || target_t == from_t)
                                     break;
                             }
@@ -498,7 +497,7 @@ struct OneSI : public RcppParallel::Worker
                                 // multiple flows can aggregate to same edge, so
                                 // this has to be +=, not just =!
                                 size_t index = verts_to_edge_map.at (v2);
-                                for (size_t k = 0; k < nk_st; k++)
+                                for (size_t k = 0; k < nk; k++)
                                 {
                                     flows_i [index + k * nedges] +=
                                         flow_ijk [k] / 
@@ -517,7 +516,7 @@ struct OneSI : public RcppParallel::Worker
                     }
                 }
             } // end for j
-            for (size_t k = 0; k < nk_st; k++)
+            for (size_t k = 0; k < nk; k++)
                 if (expsum [k] > tol)
                     for (size_t j = 0; j < nedges; j++)
                         output [j + k * nedges] +=
