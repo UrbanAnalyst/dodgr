@@ -239,6 +239,8 @@ Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom,
         Rcpp::DataFrame xyto,
         const int precision = 10)
 {
+    const size_t prec_size_t = static_cast <size_t> (precision);
+
     std::vector <double> xf = xyfrom ["x"],
     yf = xyfrom ["y"],
     xt = xyto ["x"],
@@ -255,10 +257,10 @@ Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom,
             yfs = std::to_string (yf [i]),
             xts = std::to_string (xt [i]),
             yts = std::to_string (yt [i]);
-        s_f [i] = xfs.substr(0, xfs.find(".") + precision + 1) +
-            yfs.substr (0, yfs.find(".") + precision + 1);
-        s_t [i] = xts.substr (0, xts.find(".") + precision + 1) +
-            yts.substr (0, yts.find(".") + precision + 1);
+        s_f [i] = xfs.substr(0, xfs.find(".") + prec_size_t + 1) +
+            yfs.substr (0, yfs.find(".") + prec_size_t + 1);
+        s_t [i] = xts.substr (0, xts.find(".") + prec_size_t + 1) +
+            yts.substr (0, yts.find(".") + prec_size_t + 1);
 
         if (xynames.find (s_f [i]) != xynames.end ())
         {
