@@ -147,8 +147,9 @@ struct OneAggregate : public RcppParallel::Worker
                             while (target_t < INFINITE_INT)
                             {
                                 path_len++;
-                                target_t = prev [static_cast <size_t> (target_t)];
-                                if (target_t < 0 || target_t == from_t)
+                                size_t target_size_t = static_cast <size_t> (target_t);
+                                target_t = prev [target_size_t];
+                                if (target_t < 0 || target_size_t == from_t)
                                     break;
                             }
                         }
