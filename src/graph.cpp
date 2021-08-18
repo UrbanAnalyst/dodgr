@@ -70,7 +70,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 
     std::set <edge_id_t> replacement_edges; // all empty here
 
-    for (int i = 0; i < to.length (); i ++)
+    for (R_xlen_t i = 0; i < to.length (); i ++)
     {
         Rcpp::checkUserInterrupt ();
         vertex_id_t from_id = std::string (from [i]);
@@ -219,7 +219,7 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
     for (auto cn: comp_nums)
     {
         edge_id (i) = cn.first;
-        comp_num (i) = cn.second + 1; // 1-indexed for R
+        comp_num (i) = static_cast <int> (cn.second) + 1L; // 1-indexed for R
         i++;
     }
 
@@ -243,13 +243,13 @@ Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom,
                                  yf = xyfrom ["y"],
                                  xt = xyto ["x"],
                                  yt = xyto ["y"];
-            const int n = xyfrom.nrow ();
+            const size_t n = static_cast <size_t> (xyfrom.nrow ());
 
             std::vector <std::string> s_f (n), s_t (n);
             std::vector <std::string> i_f (n), i_t (n); // indices as rownames
             std::unordered_map <std::string, std::string> xynames;
-            int count = 0;
-            for (int i = 0; i < n; i++)
+            size_t count = 0;
+            for (size_t i = 0; i < n; i++)
             {
                 std::string xfs = std::to_string (xf [i]),
                             yfs = std::to_string (yf [i]),
