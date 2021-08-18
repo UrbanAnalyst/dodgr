@@ -246,7 +246,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     if (vertlist_in.isNotNull ())
     {
         Rcpp::StringVector vertlist (vertlist_in);
-        for (int i = 0; i < vertlist.length (); i ++)
+        for (R_xlen_t i = 0; i < vertlist.length (); i ++)
             verts_to_keep.emplace (std::string (vertlist [i]));
     }
 
@@ -277,7 +277,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         time_vec (nedges), timew_vec (nedges);
 
     size_t map_size = 0; // size of edge map contracted -> original
-    unsigned int edge_count = 0;
+    size_t edge_count = 0;
     for (auto e = edge_map_contracted.begin ();
             e != edge_map_contracted.end (); ++e)
     {
@@ -306,7 +306,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
 
     // populate the new -> old edge map
     std::vector <edge_id_t> edge_map_new (map_size), edge_map_old (map_size);
-    unsigned int count = 0;
+    size_t count = 0;
     for (auto e = edge_map_contracted.begin ();
             e != edge_map_contracted.end (); ++e)
     {
@@ -376,18 +376,19 @@ Rcpp::NumericVector rcpp_merge_cols (Rcpp::DataFrame graph)
     // needed.
     std::unordered_map <std::string, int> vertvert_map;
     Rcpp::NumericVector aggr_total (from.size ());
-    for (unsigned int i = 0; i < from.size (); i++)
+    for (size_t i = 0; i < from.size (); i++)
     {
+        R_xlen_t i_r = static_cast <R_xlen_t> (i);
         std::string ft = "a" + from [i] + "b" + to [i],
             tf = "a" + to [i] + "b" + from [i];
         if (vertvert_map.find (ft) == vertvert_map.end () &&
                 vertvert_map.find (tf) == vertvert_map.end ())
         {
             vertvert_map.emplace (ft, i);
-            aggr_total [i] = aggr_var [i];
+            aggr_total [i_r] = aggr_var [i];
         } else
         {
-            int where = INFINITE_INT;
+            long int where = INFINITE_INT;
             if (vertvert_map.find (ft) != vertvert_map.end ())
                 where = vertvert_map.at (ft);
             else if (vertvert_map.find (tf) != vertvert_map.end ())
@@ -395,7 +396,7 @@ Rcpp::NumericVector rcpp_merge_cols (Rcpp::DataFrame graph)
             if (where == INFINITE_INT)
                 Rcpp::stop ("there is no where; this can never happen"); // # nocov
 
-            aggr_total [static_cast <unsigned int> (where)] += aggr_var [i];
+            aggr_total [static_cast <R_xlen_t> (where)] += aggr_var [i];
         } 
     }
 
