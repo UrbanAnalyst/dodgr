@@ -20,7 +20,8 @@ edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
         graph::identify_graph_components (vertices, components);
 
     bool in_largest = false;
-    size_t e0 = floor (R::runif (0, edge_map.size () - 1));
+    long int e0 = static_cast <long int> (floor (R::runif (0.0,
+                    static_cast <double> (edge_map.size ()) - 1.0)));
     while (!in_largest)
     {
         // TODO: The following is an O(N) lookup; maybe just use
@@ -30,7 +31,7 @@ edge_component graph_sample::sample_one_edge_no_comps (vertex_map_t &vertices,
         vertex_id_t this_vert = this_edge.get_from_vertex ();
         if (components [this_vert] == largest_component)
             in_largest = true;
-        if (e0 >= edge_map.size ())
+        if (e0 >= static_cast <long int> (edge_map.size ()))
             e0 = 0; // # nocov
     }
 
@@ -56,9 +57,11 @@ edge_id_t graph_sample::sample_one_edge_with_comps (Rcpp::DataFrame graph,
     Rcpp::NumericVector component = graph ["component"];
     std::uniform_int_distribution <size_t> uni (0,
             static_cast <size_t> (graph.nrow ()) - 1);
-    size_t e0 = floor (R::runif (0, edge_map.size () - 1));
-    while (component (e0) > 1) // can't be invoked in tests in a controlled way
-        e0 = floor (R::runif (0, edge_map.size () - 1));
+    long int e0 = static_cast <long int> (floor (R::runif (0.0,
+                    static_cast <double> (edge_map.size ()) - 1.0)));
+    while (component (static_cast <size_t> (e0)) > 1L) // can't be invoked in tests in a controlled way
+        e0 = static_cast <long int> (floor (R::runif (0.0,
+                        static_cast <double> (edge_map.size ()) - 1.0)));
 
     return std::next (edge_map.begin (), e0)->first;
 }
@@ -146,7 +149,8 @@ Rcpp::StringVector rcpp_sample_graph (Rcpp::DataFrame graph,
         // TODO: Is this quicker to use a single unif and round each time?
         std::uniform_int_distribution <size_t> uni (0,
                 static_cast <size_t> (vertlist.size ()) - 1);
-        size_t randv = floor (R::runif (0, vertlist.size () - 1));
+        size_t randv = static_cast <size_t> (floor (R::runif (0.0,
+                        static_cast <double> (vertlist.size ()) - 1.0)));
         this_vert = vertlist [randv];
 
         std::unordered_set <edge_id_t> edges = vert2edge_map [this_vert];
