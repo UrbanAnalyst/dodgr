@@ -184,7 +184,7 @@ struct OneDistPaired : public RcppParallel::Worker
                 // need to set an additional target vertex that is somewhat
                 // beyond the single actual target vertex. Default here is max
                 // heuristic, but reduced in following loop.
-                size_t max_h_index = -1;
+                long int max_h_index = -1;
                 double max_h_value = -1.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
@@ -193,10 +193,10 @@ struct OneDistPaired : public RcppParallel::Worker
                     heuristic [j] = sqrt (dx * dx + dy * dy);
                     if (heuristic [j] > max_h_value) {
                         max_h_value = heuristic [j];
-                        max_h_index = j;
+                        max_h_index = static_cast <long int> (j);
                     }
                 }
-                const double htemp = heuristic [dp_fromtoi [nfrom + i]];
+                const double htemp = heuristic [static_cast <size_t> (dp_fromtoi [nfrom + i])];
                 double min_h_value = max_h_value;
                 size_t min_h_index = max_h_index;
                 // Arbitrary relative distance threshold
