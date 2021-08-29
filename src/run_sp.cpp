@@ -561,10 +561,10 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         Rcpp::checkUserInterrupt ();
         std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
         std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
-        d [fromi [i]] = w [fromi [i]] = 0.0;
+        size_t fromi_i = static_cast <size_t> (fromi [static_cast <R_xlen_t> (i)]);
+        d [fromi_i] = w [fromi_i] = 0.0;
 
-        pathfinder->Dijkstra (d, w, prev,
-                static_cast <size_t> (fromi [i]), toi);
+        pathfinder->Dijkstra (d, w, prev, fromi_i, toi);
         for (size_t j = 0; j < nto; j++)
         {
             if (w [static_cast <size_t> (toi [j])] < INFINITE_DOUBLE)
@@ -654,7 +654,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
             std::vector <long int> onePath;
             if (w [toi [j]] < INFINITE_DOUBLE)
             {
-                long int target = toi_in [j]; // target can be -1!
+                long int target = toi_in [static_cast <R_xlen_t> (j)]; // target can be -1!
                 while (target < INFINITE_INT)
                 {
                     // Note that targets are all C++ 0-indexed and are converted
