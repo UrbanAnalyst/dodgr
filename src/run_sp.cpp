@@ -198,7 +198,7 @@ struct OneDistPaired : public RcppParallel::Worker
                 }
                 const double htemp = heuristic [static_cast <size_t> (dp_fromtoi [nfrom + i])];
                 double min_h_value = max_h_value;
-                size_t min_h_index = max_h_index;
+                long int min_h_index = max_h_index;
                 // Arbitrary relative distance threshold
                 // TODO: Are there likely to be cases where this might need to
                 // be adjusted?
@@ -206,10 +206,10 @@ struct OneDistPaired : public RcppParallel::Worker
                 for (size_t j = 0; j < nverts; j++) {
                     if ((heuristic [j] < (thr * htemp)) && (heuristic [j] > min_h_value)) {
                         min_h_value = heuristic [j];
-                        min_h_index = j;
+                        min_h_index = static_cast <long int> (j);
                     }
                 }
-                const std::vector <size_t> to_i2 = {to_i [0], min_h_index};
+                const std::vector <size_t> to_i2 = {to_i [0], static_cast <size_t> (min_h_index)};
                 pathfinder->AStar (d, w, prev, heuristic, from_i, to_i2);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, to_i);
