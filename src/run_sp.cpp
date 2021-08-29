@@ -196,7 +196,7 @@ struct OneDistPaired : public RcppParallel::Worker
                         max_h_index = j;
                     }
                 }
-                const size_t htemp = heuristic [dp_fromtoi [nfrom + i]];
+                const double htemp = heuristic [dp_fromtoi [nfrom + i]];
                 double min_h_value = max_h_value;
                 size_t min_h_index = max_h_index;
                 // Arbitrary relative distance threshold
