@@ -414,7 +414,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 {
     if (fromi.size () != toi.size ())
         Rcpp::stop ("pairwise dists must have from.size == to.size");
-    int n = fromi.size ();
+    long int n = fromi.size ();
     size_t n_st = static_cast <size_t> (n);
 
     const std::vector <std::string> from = graph ["from"];
@@ -441,7 +441,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (n_st,
             Rcpp::NumericVector::get_na ());
-    Rcpp::NumericMatrix dout (n, 1, na_vec.begin ());
+    Rcpp::NumericMatrix dout (static_cast <int> (n), 1, na_vec.begin ());
 
     // Paired (fromi, toi) in a single vector
     Rcpp::IntegerVector fromto (2 * n_st);
