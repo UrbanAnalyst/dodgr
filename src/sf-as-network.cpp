@@ -102,7 +102,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                     ow [ngeoms] == "yes" || ow [ngeoms] == "true" ||
                     ow [ngeoms] == "Yes" || ow [ngeoms] == "True" ||
                     ow [ngeoms] == "YES" || ow [ngeoms] == "TRUE"))
-            isOneWay [ngeoms] = true;
+            isOneWay [static_cast <size_t> (ngeoms)] = true;
         else
             nrows += rows;
         ngeoms ++;
@@ -154,7 +154,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
                     has_names, way_names, i, nrows, false, nmat, idmat);
             nrows++;
 
-            if (!isOneWay [ngeoms])
+            if (!isOneWay [static_cast <size_t> (ngeoms)])
             {
                 sf::fill_one_row (ngeoms, gi, rnms, d, hw_factor, hway,
                         has_names, way_names, i, nrows, true, nmat, idmat);
@@ -199,7 +199,7 @@ void sf::fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
     idmat (rownum, 1) = rnms (i);
     idmat (rownum, 2) = hway;
     if (has_names)
-        idmat (rownum, 3) = way_names [ngeoms];
+        idmat (rownum, 3) = way_names [static_cast <size_t> (ngeoms)];
 }
 
 struct OnePointIndex : public RcppParallel::Worker
@@ -227,7 +227,7 @@ struct OnePointIndex : public RcppParallel::Worker
         for (std::size_t i = begin; i < end; i++)
         {
             double dmin = INFINITE_DOUBLE;
-            int jmin = INFINITE_INT;
+            long int jmin = INFINITE_INT;
             for (size_t j = 0; j < nxy; j++)
             {
                 double dij = (xy_x [j] - pt_x [i]) * (xy_x [j] - pt_x [i]) +
@@ -235,10 +235,10 @@ struct OnePointIndex : public RcppParallel::Worker
                 if (dij < dmin)
                 {
                     dmin = dij;
-                    jmin = j;
+                    jmin = static_cast <long int> (j);
                 }
             }
-            index [i] = jmin;
+            index [i] = static_cast <int> (jmin);
         }
     }
                                    
