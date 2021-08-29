@@ -414,7 +414,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 {
     if (fromi.size () != toi.size ())
         Rcpp::stop ("pairwise dists must have from.size == to.size");
-    size_t n = static_cast <size_t> (fromi.size ());
+    int n = fromi.size ();
+    size_t n_st = static_cast <size_t> (n);
 
     const std::vector <std::string> from = graph ["from"];
     const std::vector <std::string> to = graph ["to"];
@@ -438,25 +439,26 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (n,
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (n_st,
             Rcpp::NumericVector::get_na ());
-    Rcpp::NumericMatrix dout (static_cast <int> (n), 1, na_vec.begin ());
+    Rcpp::NumericMatrix dout (n, 1, na_vec.begin ());
 
     // Paired (fromi, toi) in a single vector
-    Rcpp::IntegerVector fromto (2 * n);
-    for (int i = 0; i < static_cast <int> (n); i++)
+    Rcpp::IntegerVector fromto (2 * n_st);
+    for (int i = 0; i < n; i++)
     {
-        fromto [i] = fromi (i);
-        fromto [i + n] = toi (i);
+        size_t i_t = static_cast <size_t> (i);
+        fromto [i] = fromi (i_t);
+        fromto [i + n] = toi (i_t);
     }
 
     // Create parallel worker
     OneDistPaired one_dist_paired (RcppParallel::RVector <int> (fromto),
-            nverts, n, vx, vy, g, heap_type, is_spatial,
+            nverts, n_st, vx, vy, g, heap_type, is_spatial,
             RcppParallel::RMatrix <double> (dout));
 
-    size_t chunk_size = run_sp::get_chunk_size (n);
-    RcppParallel::parallelFor (0, n, one_dist_paired, chunk_size);
+    size_t chunk_size = run_sp::get_chunk_size (n_st);
+    RcppParallel::parallelFor (0, n_st, one_dist_paired, chunk_size);
     
     return (dout);
 }
