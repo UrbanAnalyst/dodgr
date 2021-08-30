@@ -38,6 +38,12 @@ void make_vert_to_edge_maps (const std::vector <std::string> &from,
 size_t get_chunk_size (const size_t nfrom);
 } // end namespace run_sp
 
+namespace proportional {
+
+size_t num_edge_types (const std::vector <int> &edge_type);
+
+} // end namespace proportional
+
 
 Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

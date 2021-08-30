@@ -5,6 +5,7 @@
 
 #include "dgraph.h"
 #include "heaps/heap_lib.h"
+#include <unordered_set>
 
 // # nocov start
 template <typename T>
@@ -28,6 +29,7 @@ struct OneProportionalDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
+    const std::vector <int> edge_type;
     const size_t nverts;
     const std::vector <double> vx;
     const std::vector <double> vy;
@@ -41,6 +43,7 @@ struct OneProportionalDist : public RcppParallel::Worker
     OneProportionalDist (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
+            const std::vector <int> edge_type_in,
             const size_t nverts_in,
             const std::vector <double> vx_in,
             const std::vector <double> vy_in,
@@ -48,8 +51,8 @@ struct OneProportionalDist : public RcppParallel::Worker
             const std::string & heap_type_in,
             const bool & is_spatial_in,
             RcppParallel::RMatrix <double> dout_in) :
-        dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
-        vx (vx_in), vy (vy_in),
+        dp_fromi (fromi), toi (toi_in), edge_type (edge_type_in),
+        nverts (nverts_in), vx (vx_in), vy (vy_in),
         g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
         dout (dout_in)
     {
@@ -97,6 +100,16 @@ struct OneProportionalDist : public RcppParallel::Worker
                                    
 };
 
+size_t proportional::num_edge_types (const std::vector <int> &edge_type)
+{
+    std::unordered_set <int> type_set;
+    for (auto e: edge_type)
+        type_set.emplace (e);
+
+    return type_set.size ();
+}
+
+
 //' rcpp_get_sp_dists_par
 //'
 //' Implemented in parallal form only; no single-threaded version
@@ -119,6 +132,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     const std::vector <std::string> to = graph ["to"];
     const std::vector <double> dist = graph ["d"];
     const std::vector <double> wt = graph ["d_weighted"];
+    const std::vector <int> edge_type = graph ["edge_type"];
+
+    const size_t num_types = proportional::num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -144,7 +160,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneProportionalDist one_dist (RcppParallel::RVector <int> (fromi), toi,
-            nverts, vx, vy, g, heap_type, is_spatial,
+            edge_type, nverts, vx, vy,
+            g, heap_type, is_spatial,
             RcppParallel::RMatrix <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
