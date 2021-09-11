@@ -176,12 +176,8 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
             double wt = w [v0] + edge->wt;
             if (wt < w [et]) {
                 d [et] = d [v0] + edge->dist;
-                if (edge_id > 0L) {
-                    if (d [et + edge_id * n] == INFINITE_DOUBLE)
-                        d [et + edge_id * n] = edge->dist;
-                    else
-                        d [et + edge_id * n] += edge->dist;
-                }
+                if (edge_id > 0L)
+                    d [et + edge_id * n] = edge->dist;
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 
