@@ -36,7 +36,6 @@ struct OneProportionalDist : public RcppParallel::Worker
     const std::vector <double> vy;
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
-    const bool is_spatial;
     const size_t num_edge_types;
 
     RcppParallel::RMatrix <double> dout;
@@ -51,12 +50,11 @@ struct OneProportionalDist : public RcppParallel::Worker
             const std::vector <double> vy_in,
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
-            const bool & is_spatial_in,
             const size_t & num_edge_types_in,
             RcppParallel::RMatrix <double> dout_in) :
         dp_fromi (fromi), toi (toi_in), edge_type (edge_type_in),
         nverts (nverts_in), vx (vx_in), vy (vy_in),
-        g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
+        g (g_in), heap_type (heap_type_in), 
         num_edge_types (num_edge_types_in),
         dout (dout_in)
     {
@@ -215,8 +213,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
-        const std::string& heap_type,
-        const bool is_spatial)
+        const std::string& heap_type)
 {
     std::vector <size_t> toi =
         Rcpp::as <std::vector <size_t> > ( toi_in);
@@ -240,11 +237,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
             vert_map_n, vert_map);
 
     std::vector <double> vx (nverts), vy (nverts);
-    if (is_spatial)
-    {
-        vx = Rcpp::as <std::vector <double> > (vert_map_in ["x"]);
-        vy = Rcpp::as <std::vector <double> > (vert_map_in ["y"]);
-    }
+    vx = Rcpp::as <std::vector <double> > (vert_map_in ["x"]);
+    vy = Rcpp::as <std::vector <double> > (vert_map_in ["y"]);
 
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, edge_type, dist, wt);
@@ -258,7 +252,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     // Create parallel worker
     OneProportionalDist one_dist (RcppParallel::RVector <int> (fromi), toi,
             edge_type, nverts, vx, vy,
-            g, heap_type, is_spatial, num_types,
+            g, heap_type, num_types,
             RcppParallel::RMatrix <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
