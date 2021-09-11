@@ -13,6 +13,7 @@ void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
         const std::map <std::string, size_t>& vert_map,
         const std::vector <std::string>& from,
         const std::vector <std::string>& to,
+        const std::vector <size_t>& edge_type,
         const std::vector <T>& dist,
         const std::vector <T>& wt)
 {
@@ -20,7 +21,7 @@ void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
     {
         size_t fromi = vert_map.at(from [i]);
         size_t toi = vert_map.at(to [i]);
-        g->addNewEdge (fromi, toi, dist [i], wt [i], i);
+        g->addNewEdge (fromi, toi, dist [i], wt [i], edge_type [i]);
     }
 }
 // # nocov end
@@ -29,7 +30,7 @@ struct OneProportionalDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
-    const std::vector <int> edge_type;
+    const std::vector <size_t> edge_type;
     const size_t nverts;
     const std::vector <double> vx;
     const std::vector <double> vy;
@@ -43,7 +44,7 @@ struct OneProportionalDist : public RcppParallel::Worker
     OneProportionalDist (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
-            const std::vector <int> edge_type_in,
+            const std::vector <size_t> edge_type_in,
             const size_t nverts_in,
             const std::vector <double> vx_in,
             const std::vector <double> vy_in,
@@ -70,23 +71,20 @@ struct OneProportionalDist : public RcppParallel::Worker
 
         std::vector <double> heuristic (nverts, 0.0);
 
+        const size_t nto = toi.size ();
+
         for (std::size_t i = begin; i < end; i++)
         {
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
-            if (is_spatial)
+            // only implemented for spatial graphs
+            for (size_t j = 0; j < nverts; j++)
             {
-                for (size_t j = 0; j < nverts; j++)
-                {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                }
-                pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
-            } else if (heap_type.find ("set") == std::string::npos)
-                pathfinder->Dijkstra (d, w, prev, from_i, toi);
-            else
-                pathfinder->Dijkstra_set (d, w, prev, from_i);
+                const double dx = vx [j] - vx [from_i],
+                    dy = vy [j] - vy [from_i];
+                heuristic [j] = sqrt (dx * dx + dy * dy);
+            }
+            pathfinder->AStarEdgeType (d, w, prev, heuristic, from_i, toi);
 
             for (size_t j = 0; j < toi.size (); j++)
             {
@@ -100,15 +98,87 @@ struct OneProportionalDist : public RcppParallel::Worker
                                    
 };
 
-size_t proportional::num_edge_types (const std::vector <int> &edge_type)
+size_t proportional::num_edge_types (const std::vector <size_t> &edge_type)
 {
-    std::unordered_set <int> type_set;
+    std::unordered_set <size_t> type_set;
     for (auto e: edge_type)
         type_set.emplace (e);
 
     return type_set.size ();
 }
 
+void PF::PathFinder::AStarEdgeType (std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<long int>& prev,
+        const std::vector<double>& heur,
+        const size_t v0,
+        const std::vector <size_t> &to_index)
+{
+    const DGraphEdge *edge;
+
+    const size_t n = m_graph->nVertices();
+    const std::vector<DGraphVertex>& vertices = m_graph->vertices();
+
+    PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
+    m_heap->insert (v0, heur [v0]);
+
+    size_t n_reached = 0;
+    const size_t n_targets = to_index.size ();
+    bool *is_target = new bool [n];
+    std::fill (is_target, is_target + n, false);
+    for (auto t: to_index)
+        is_target [t] = true;
+
+    while (m_heap->nItems() > 0) {
+        size_t v = m_heap->deleteMin();
+
+        m_closed [v] = true;
+        m_open [v] = false;
+
+        edge = vertices [v].outHead;
+        scan_edge_types_heur (edge, d, w, prev, m_open, m_closed, v, heur);
+
+        if (is_target [v])
+            n_reached++;
+        if (n_reached == n_targets)
+            break;
+    } // end while m_heap->nItems
+    delete [] is_target;
+}
+
+
+void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<long int>& prev,
+        bool *m_open_vec,
+        const bool *m_closed_vec,
+        const size_t &v0,
+        const std::vector<double> &heur)    // heuristic for A*
+{
+    while (edge) {
+        size_t et = edge->target;
+        if (!m_closed_vec [et])
+        {
+            double wt = w [v0] + edge->wt;
+            if (wt < w [et]) {
+                d [et] = d [v0] + edge->dist;
+                w [et] = wt;
+                prev [et] = static_cast <int> (v0);
+
+                if (m_open_vec [et]) {
+                    m_heap->decreaseKey(et, wt + heur [et] - heur [v0]);
+                }
+                else {
+                    m_heap->insert (et, wt + heur [et] - heur [v0]);
+                    m_open_vec [et] = true;
+                }
+            } else
+                m_closed [et] = true;
+        }
+        edge = edge->nextOut;
+    }
+}
 
 //' rcpp_get_sp_dists_par
 //'
@@ -132,7 +202,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     const std::vector <std::string> to = graph ["to"];
     const std::vector <double> dist = graph ["d"];
     const std::vector <double> wt = graph ["d_weighted"];
-    const std::vector <int> edge_type = graph ["edge_type"];
+    const std::vector <size_t> edge_type = graph ["edge_type"];
 
     const size_t num_types = proportional::num_edge_types (edge_type);
 
@@ -151,12 +221,13 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     }
 
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
-    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+    inst_graph (g, nedges, vert_map, from, to, edge_type, dist, wt);
 
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto,
+    // One standard [nfrom, nto] matrix plus one extra for each value of edge_type:
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto * (num_types + 1L),
             Rcpp::NumericVector::get_na ());
     Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
-            static_cast <int> (nto), na_vec.begin ());
+            static_cast <int> (nto * (num_types + 1L)), na_vec.begin ());
 
     // Create parallel worker
     OneProportionalDist one_dist (RcppParallel::RVector <int> (fromi), toi,

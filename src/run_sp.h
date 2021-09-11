@@ -40,7 +40,7 @@ size_t get_chunk_size (const size_t nfrom);
 
 namespace proportional {
 
-size_t num_edge_types (const std::vector <int> &edge_type);
+size_t num_edge_types (const std::vector <size_t> &edge_type);
 
 } // end namespace proportional
 
