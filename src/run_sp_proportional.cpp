@@ -129,6 +129,11 @@ void PF::PathFinder::AStarEdgeType (std::vector<double>& d,
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert (v0, heur [v0]);
+    // initialise v0 values for all edge_types
+    const size_t num_edge_types = d.size () / n - 1L;
+    const size_t nverts = w.size ();
+    for (size_t i = 1; i <= num_edge_types; i++)
+        d [v0 + i * nverts] = 0.0;
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
@@ -165,6 +170,7 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
         const std::vector<double> &heur)    // heuristic for A*
 {
     const size_t n = w.size ();
+    const size_t num_edge_types = d.size () / n - 1L;
 
     while (edge) {
 
@@ -176,9 +182,14 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
             double wt = w [v0] + edge->wt;
             if (wt < w [et]) {
                 d [et] = d [v0] + edge->dist;
-                if (edge_id > 0L) {
-                    d [et + edge_id * n] = d [v0 + edge_id * n] + edge->dist;
+                // iterate over rest of matrix for each edge_type
+                for (size_t i = 1; i <= num_edge_types; i++) {
+                    if (i == edge_id)
+                        d [et + edge_id * n] = d [v0 + edge_id * n] + edge->dist;
+                    else // carry over without incrementing dist
+                        d [et + i * n] = d [v0 + i * n];
                 }
+
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 

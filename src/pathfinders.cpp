@@ -39,12 +39,7 @@ void PF::PathFinder::init_arrays (
         const size_t n)
 {
     std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
-    if (d.size () > w.size ()) { // proportional distances
-        std::fill (d.begin (), d.begin () + w.size (), INFINITE_DOUBLE);
-        std::fill (d.begin () + w.size () + 1, d.end (), 0.0);
-    } else {
-        std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-    }
+    std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
     std::fill (prev.begin (), prev.end (), INFINITE_INT);
     w [v] = 0.0;
     d [v] = 0.0;
