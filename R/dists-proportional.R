@@ -2,17 +2,17 @@
 #'
 #' @inheritParams dodgr_dists
 #' @param graph `data.frame` or equivalent object representing the network
-#' graph which must have a column named "edge_type" with integer types along
-#' which proportional distances are to be aggregated (see Note).
+#' graph which must have a column named "edge_type" which labels categories of
+#' edge types along which proportional distances are to be aggregated (see
+#' Note).
 #' @return A list of distance matrices of equal dimensions (length(from),
 #' length(to)), the first of which ("distance") holds the final distances, while
 #' the rest are one matrix for each unique value of "edge_type", holding the
 #' distances traversed along those types of edges only.
 #'
-#' @note The "edge_type" column in the graph must be labelled with sequential
-#' integer values: The first type should have a value of 1; the second a value
-#' of 2; and so on. Values of 0 can be used to flag "default" edges for which
-#' distances are not to be aggregated.
+#' @note The "edge_type" column in the graph can contain any kind of discrete or
+#' categorical values, although integer values of 0 are not permissible. `NA`
+#' values are ignored.
 #' @export
 dodgr_dists_proportional <- function (graph,
                                       from = NULL,
@@ -22,16 +22,10 @@ dodgr_dists_proportional <- function (graph,
 
     if (!"edge_type" %in% names (graph))
         stop ("graph must have a column named 'edge_type'")
-    if (!is.integer (graph$edge_type))
-        stop ("'edge_type' column must contain integer values only")
-    if (any (graph$edge_type < 0L))
-        stop ("'edge_type' must contain non-negative values only")
+    if (is.integer (graph$edge_type) & any (graph$edge_type == 0L))
+        stop ("graphs with integer edge_type columns may not contain 0s")
 
     edge_type <- graph$edge_type
-    et <- sort (unique (edge_type))
-    if (any (diff (et) > 1L))
-        stop ("'edge_type' values must be sequential integers (1, 2, 3, ...)")
-
     graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
@@ -59,7 +53,9 @@ dodgr_dists_proportional <- function (graph,
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
 
     graph <- convert_graph (graph, gr_cols)
-    graph$edge_type <- edge_type
+    edge_type_table <- table (edge_type)
+    graph$edge_type <- match (edge_type, names (edge_type_table))
+    graph$edge_type [is.na (graph$edge_type)] <- 0L
 
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -72,11 +68,10 @@ dodgr_dists_proportional <- function (graph,
 
     n <-length (to)
     d0 <- list ("distances" = d [, seq (n)])
-    et <- et [et > 0L]
-    d <- lapply (et, function (i) {
+    d <- lapply (seq_along (edge_type_table), function (i) {
                      index <- i * n + seq (n) - 1
                      d [, index]    })
-    names (d) <- et
+    names (d) <- names (edge_type_table)
 
     return (c (d0, d))
 }

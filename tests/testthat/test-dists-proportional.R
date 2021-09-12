@@ -22,37 +22,24 @@ test_that("proportional dists", {
                                                to),
                 "graph must have a column named 'edge_type'")
 
-  graph$edge_type <- "A"
+  graph$edge_type <- 1L
+  graph$edge_type [1] <- 0L
   expect_error (d <- dodgr_dists_proportional (graph,
                                                from,
                                                to),
-                "'edge_type' column must contain integer values only")
+                "graphs with integer edge_type columns may not contain 0s")
 
-  graph$edge_type <- -1L
-  expect_error (d <- dodgr_dists_proportional (graph,
-                                               from,
-                                               to),
-                "'edge_type' must contain non-negative values only")
-
-  types <- sort (table (graph$highway), decreasing = TRUE)
-  graph$edge_type <- match (graph$highway, names (types))
-  graph$edge_type [graph$edge_type == 2] <- 22L
-  expect_error (d <- dodgr_dists_proportional (graph,
-                                               from,
-                                               to),
-                "'edge_type' values must be sequential integers")
-
-  graph$edge_type <- 0L
-  graph$edge_type [graph$highway != "path"] <- 1L
-
+  graph$edge_type <- graph$highway
   expect_silent(d <- dodgr_dists_proportional(graph, from = from, to = to))
   expect_type (d, "list")
-  expect_length (d, 2L) # distance + 1L; 0 is ignored
+  ntypes <- length (unique (graph$highway))
+  expect_length (d, ntypes + 1L)
 
   # All dimensions should be equal:
   dims <- vapply (d, dim, integer (2))
   expect_identical (sum (diff (dims [1, ])), 0L)
-  expect_identical (sum (diff (dims [2, ])), 0L)
+  expect_true (all (dims [1, ] == nf))
+  expect_true (all (dims [2, ] == nt))
 
   expect_message(
     d2 <- dodgr_dists_proportional(graph, from = from, to = to, quiet = FALSE),
