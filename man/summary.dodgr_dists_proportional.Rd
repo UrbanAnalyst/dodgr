@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{A 'dodgr_dists_proportional' object}
+
+\item{...}{Extra parameters currently not used}
 }
 \value{
 The summary statistics (invisibly)

@@ -83,6 +83,7 @@ dodgr_dists_proportional <- function (graph,
 #' Transform a result from 'dodgr_dists_proportional' to summary statistics
 #'
 #' @param object A 'dodgr_dists_proportional' object
+#' @param ... Extra parameters currently not used
 #' @return The summary statistics (invisibly)
 #' @export
 summary.dodgr_dists_proportional <- function (object, ...) {
