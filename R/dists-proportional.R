@@ -5,9 +5,10 @@
 #' graph which must have a column named "edge_type" with integer types along
 #' which proportional distances are to be aggregated. The value of "edge_type" =
 #' 0 is the default type for which proportional distances are not aggregated.
-#' @return An expanded distance matrix with number of rows equal to number of
-#' "from" points, and number of columns equal to number of "to" points
-#' \emph{times} the number of distinct edge types.
+#' @return A list of distance matrices of equal dimensions (length(from),
+#' length(to)), the first of which ("distance") holds the final distances, while
+#' the rest are one matrix for each unique value of "edge_type", holding the
+#' distances traversed along those types of edges only.
 #' @export
 dodgr_dists_proportional <- function (graph,
                                       from = NULL,
@@ -23,6 +24,7 @@ dodgr_dists_proportional <- function (graph,
         stop ("'edge_type' must contain non-negative values only")
 
     edge_type <- graph$edge_type
+    et <- sort (unique (edge_type))
 
     graph <- tbl_to_df (graph)
 
@@ -62,5 +64,12 @@ dodgr_dists_proportional <- function (graph,
                                          to_index$index,
                                          heap)
 
-    return (d)
+    n <-length (to)
+    d0 <- list ("distances" = d [, seq (n)])
+    d <- lapply (et, function (i) {
+                     index <- i * n + seq (n) - 1
+                     d [, index]    })
+    names (d) <- et
+
+    return (c (d0, d))
 }
