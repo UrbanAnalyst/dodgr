@@ -299,6 +299,19 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
+#' rcpp_get_sp_dists_proportional
+#'
+#' The `graph` must have an `edge_type` column of non-negative integers,
+#' with 0 denoting edges which are not aggregated, and all other values
+#' defining aggregation categories.
+#'
+#' Implemented in parallal form only; no single-threaded version, and
+#' only for AStar (so graphs must be spatial).
+#' @noRd
+rcpp_get_sp_dists_proportional <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_proportional`, graph, vert_map_in, fromi, toi_in, heap_type)
+}
+
 #' rcpp_gen_hash
 #'
 #' Efficient generation of long sequences of hash keys
