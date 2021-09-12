@@ -34,6 +34,7 @@ test_that("proportional dists", {
   expect_type (d, "list")
   ntypes <- length (unique (graph$highway))
   expect_length (d, ntypes + 1L)
+  expect_true (all (unique (graph$highway) %in% names (d)))
 
   # All dimensions should be equal:
   dims <- vapply (d, dim, integer (2))
@@ -46,4 +47,23 @@ test_that("proportional dists", {
     "Calculating shortest paths ..."
   )
   expect_identical(d, d2)
+})
+
+test_that("proportional dists summary", {
+
+  expect_silent(graph <- weight_streetnet(hampi))
+  graph <- graph [graph$component == 1, ]
+
+  v <- dodgr_vertices (graph)
+  from <- v$id
+  to <- v$id
+
+  graph$edge_type <- graph$highway
+
+  expect_silent (d <- dodgr_dists_proportional (graph, from, to))
+
+  expect_message (ds <- summary (d))
+  expect_is (ds, "numeric")
+  expect_equal (length (ds), length (unique (graph$edge_type)))
+  expect_true (all (ds < 1.0))
 })

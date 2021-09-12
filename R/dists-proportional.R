@@ -73,5 +73,33 @@ dodgr_dists_proportional <- function (graph,
                      d [, index]    })
     names (d) <- names (edge_type_table)
 
-    return (c (d0, d))
+    res <- c (d0, d)
+    class (res) <- c (class (res), "dodgr_dists_proportional")
+
+    return (res)
+}
+
+
+#' Transform a result from 'dodgr_dists_proportional' to summary statistics
+#'
+#' @param d A 'dodgr_dists_proportional' object
+#' @return The summary statistics (invisibly)
+#' @export
+summary.dodgr_dists_proportional <- function (d) {
+
+    edge_types <- names (d) [-1]
+
+    d0 <- d$distances
+    sum_d0 <- sum (d0, na.rm = TRUE)
+    d <- d [-1]
+
+    dprop <- vapply (d, function (i) sum (i, na.rm = TRUE) / sum_d0,
+                     numeric (1))
+
+    message ("Proportional distances along each kind of edge:")
+    for (i in seq_along (dprop))
+        message ("  ", names (dprop) [i],
+                 ": ", round (dprop [i], digits = 4))
+
+    invisible (dprop)
 }
