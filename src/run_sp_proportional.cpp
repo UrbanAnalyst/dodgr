@@ -67,7 +67,7 @@ struct OneProportionalDist : public RcppParallel::Worker
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
         std::vector <double> w (nverts);
-        std::vector <double> d (nverts * num_edge_types);
+        std::vector <double> d (nverts * (num_edge_types + 1));
         std::vector <long int> prev (nverts);
 
         std::vector <double> heuristic (nverts, 0.0);
@@ -252,10 +252,10 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     inst_graph (g, nedges, vert_map, from, to, edge_type, dist, wt);
 
     // One standard [nfrom, nto] matrix plus one extra for each value of edge_type:
-    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto * num_types,
+    Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * nto * (num_types + 1L),
             Rcpp::NumericVector::get_na ());
     Rcpp::NumericMatrix dout (static_cast <int> (nfrom),
-            static_cast <int> (nto * num_types), na_vec.begin ());
+            static_cast <int> (nto * (num_types + 1L)), na_vec.begin ());
 
     // Create parallel worker
     OneProportionalDist one_dist (RcppParallel::RVector <int> (fromi), toi,
