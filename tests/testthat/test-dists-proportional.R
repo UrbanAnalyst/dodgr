@@ -47,10 +47,12 @@ test_that("proportional dists", {
 
   expect_silent(d <- dodgr_dists_proportional(graph, from = from, to = to))
   expect_type (d, "list")
-  expect_length (d, 3L)
+  expect_length (d, 2L) # distance + 1L; 0 is ignored
 
+  # All dimensions should be equal:
   dims <- vapply (d, dim, integer (2))
-  # TODO: Fix that
+  expect_identical (sum (diff (dims [1, ])), 0L)
+  expect_identical (sum (diff (dims [2, ])), 0L)
 
   expect_message(
     d2 <- dodgr_dists_proportional(graph, from = from, to = to, quiet = FALSE),

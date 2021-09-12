@@ -72,6 +72,7 @@ dodgr_dists_proportional <- function (graph,
 
     n <-length (to)
     d0 <- list ("distances" = d [, seq (n)])
+    et <- et [et > 0L]
     d <- lapply (et, function (i) {
                      index <- i * n + seq (n) - 1
                      d [, index]    })

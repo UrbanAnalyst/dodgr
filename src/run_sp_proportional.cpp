@@ -108,7 +108,8 @@ size_t proportional::num_edge_types (const std::vector <size_t> &edge_type)
 {
     std::unordered_set <size_t> type_set;
     for (auto e: edge_type)
-        type_set.emplace (e);
+        if (e != 0L)
+            type_set.emplace (e);
 
     return type_set.size ();
 }
