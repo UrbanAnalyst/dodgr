@@ -47,7 +47,6 @@ test_that("proportional dists", {
   )
   expect_identical(d, d2)
 
-  n <- nrow (v)
   d0 <- d [, seq (nt)]
   d1 <- d [, nt + seq (nt)]
   index <- which (is.na (d1))
