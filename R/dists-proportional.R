@@ -29,6 +29,8 @@ dodgr_dists_proportional <- function (graph,
 
     edge_type <- graph$edge_type
     et <- sort (unique (edge_type))
+    if (any (diff (et) > 1L))
+        stop ("'edge_type' values must be sequential integers (1, 2, 3, ...)")
 
     graph <- tbl_to_df (graph)
 

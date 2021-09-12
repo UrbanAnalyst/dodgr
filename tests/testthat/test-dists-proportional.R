@@ -35,6 +35,13 @@ test_that("proportional dists", {
                 "'edge_type' must contain non-negative values only")
 
   types <- sort (table (graph$highway), decreasing = TRUE)
+  graph$edge_type <- match (graph$highway, names (types))
+  graph$edge_type [graph$edge_type == 2] <- 22L
+  expect_error (d <- dodgr_dists_proportional (graph,
+                                               from,
+                                               to),
+                "'edge_type' must be sequential integers")
+
   graph$edge_type <- 0L
   graph$edge_type [graph$highway != "path"] <- 1L
 
