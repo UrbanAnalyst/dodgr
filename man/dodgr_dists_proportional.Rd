@@ -15,8 +15,7 @@ dodgr_dists_proportional(
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph which must have a column named "edge_type" with integer types along
-which proportional distances are to be aggregated. The value of "edge_type" =
-0 is the default type for which proportional distances are not aggregated.}
+which proportional distances are to be aggregated (see Note).}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
 be calculated (see Notes)}
@@ -38,4 +37,10 @@ distances traversed along those types of edges only.
 }
 \description{
 Proportional distances along different edge categories
+}
+\note{
+The "edge_type" column in the graph must be labelled with sequential
+integer values: The first type should have a value of 1; the second a value
+of 2; and so on. Values of 0 can be used to flag "default" edges for which
+distances are not to be aggregated.
 }
