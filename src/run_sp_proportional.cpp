@@ -175,7 +175,6 @@ struct OneProportion : public RcppParallel::Worker
                     {
                         const double dto = d [toi [j] + k * nverts];
                         if (dto < INFINITE_DOUBLE) {
-                            //if (dout (i, k) == NA_REAL)
                             if (Rcpp::NumericMatrix::is_na (dout (i, k)))
                                 dout (i, k) = dto;
                             else
@@ -338,7 +337,6 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
     inst_graph (g, nedges, vert_map, from, to, edge_type, dist, wt);
 
-    // One standard [nfrom, nto] matrix plus one extra for each value of edge_type:
     size_t ncol;
     if (proportions_only)
         ncol = num_types + 1L;
