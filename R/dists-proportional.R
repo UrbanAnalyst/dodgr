@@ -75,17 +75,29 @@ dodgr_dists_proportional <- function (graph,
                                          vert_map,
                                          from_index$index,
                                          to_index$index,
-                                         heap)
+                                         heap,
+                                         proportions_only)
 
-    n <-length (to)
-    d0 <- list ("distances" = d [, seq (n)])
-    d <- lapply (seq_along (edge_type_table), function (i) {
-                     index <- i * n + seq (n) - 1
-                     d [, index]    })
-    names (d) <- names (edge_type_table)
+    n <- length (to)
 
-    res <- c (d0, d)
-    class (res) <- append (class (res), "dodgr_dists_proportional")
+    if (!proportions_only) {
+
+        d0 <- list ("distances" = d [, seq (n)])
+        d <- lapply (seq_along (edge_type_table), function (i) {
+                         index <- i * n + seq (n) - 1
+                         d [, index]    })
+        names (d) <- names (edge_type_table)
+
+        res <- c (d0, d)
+        class (res) <- append (class (res), "dodgr_dists_proportional")
+
+    } else {
+
+        res <- apply (d, 2, sum)
+        res [2:length (res)] <- res [2:length (res)] / res [1]
+        res <- res [-1]
+        names (res) <- names (edge_type_table)
+    }
 
     return (res)
 }
