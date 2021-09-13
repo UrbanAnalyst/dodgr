@@ -19,8 +19,8 @@
 #' values are ignored.
 #'
 #' @note Setting the `proportions_only` flag to `TRUE` may be advantageous for
-#' large jobs, because this avoids construction of the full matrices, which may
-#' notably speed up calculations for large jobs, or may make possible
+#' large jobs, because this avoids construction of the full matrices. Although
+#' this generally won't notably speed up calculations, it may make possible
 #' calculations which would otherwise require distance matrices too large to be
 #' directly stored.
 #' @export

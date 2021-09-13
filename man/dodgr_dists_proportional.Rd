@@ -51,8 +51,8 @@ categorical values, although integer values of 0 are not permissible. \code{NA}
 values are ignored.
 
 Setting the \code{proportions_only} flag to \code{TRUE} may be advantageous for
-large jobs, because this avoids construction of the full matrices, which may
-notably speed up calculations for large jobs, or may make possible
+large jobs, because this avoids construction of the full matrices. Although
+this generally won't notably speed up calculations, it may make possible
 calculations which would otherwise require distance matrices too large to be
 directly stored.
 }
