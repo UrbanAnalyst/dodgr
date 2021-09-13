@@ -5,6 +5,10 @@
 #' graph which must have a column named "edge_type" which labels categories of
 #' edge types along which proportional distances are to be aggregated (see
 #' Note).
+#' @param proportions_only If `FALSE`, return full distance matrices for full
+#' distances and for each edge category; if `TRUE`, return single vector of
+#' proportional distances, like current `summary` function applied to full
+#' results. See Note.
 #' @return A list of distance matrices of equal dimensions (length(from),
 #' length(to)), the first of which ("distance") holds the final distances, while
 #' the rest are one matrix for each unique value of "edge_type", holding the
@@ -13,10 +17,17 @@
 #' @note The "edge_type" column in the graph can contain any kind of discrete or
 #' categorical values, although integer values of 0 are not permissible. `NA`
 #' values are ignored.
+#'
+#' @note Setting the `proportions_only` flag to `TRUE` may be advantageous for
+#' large jobs, because this avoids construction of the full matrices, which may
+#' notably speed up calculations for large jobs, or may make possible
+#' calculations which would otherwise require distance matrices too large to be
+#' directly stored.
 #' @export
 dodgr_dists_proportional <- function (graph,
                                       from = NULL,
                                       to = NULL,
+                                      proportions_only = FALSE,
                                       heap = "BHeap",
                                       quiet = TRUE) {
 

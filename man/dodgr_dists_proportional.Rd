@@ -8,6 +8,7 @@ dodgr_dists_proportional(
   graph,
   from = NULL,
   to = NULL,
+  proportions_only = FALSE,
   heap = "BHeap",
   quiet = TRUE
 )
@@ -23,6 +24,11 @@ be calculated (see Notes)}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
 calculated (see Notes)}
+
+\item{proportions_only}{If \code{FALSE}, return full distance matrices for full
+distances and for each edge category; if \code{TRUE}, return single vector of
+proportional distances, like current \code{summary} function applied to full
+results. See Note.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -43,4 +49,10 @@ Proportional distances along different edge categories
 The "edge_type" column in the graph can contain any kind of discrete or
 categorical values, although integer values of 0 are not permissible. \code{NA}
 values are ignored.
+
+Setting the \code{proportions_only} flag to \code{TRUE} may be advantageous for
+large jobs, because this avoids construction of the full matrices, which may
+notably speed up calculations for large jobs, or may make possible
+calculations which would otherwise require distance matrices too large to be
+directly stored.
 }
