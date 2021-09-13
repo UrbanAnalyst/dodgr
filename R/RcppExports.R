@@ -308,8 +308,8 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
 #' Implemented in parallal form only; no single-threaded version, and
 #' only for AStar (so graphs must be spatial).
 #' @noRd
-rcpp_get_sp_dists_proportional <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call(`_dodgr_rcpp_get_sp_dists_proportional`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_sp_dists_proportional <- function(graph, vert_map_in, fromi, toi_in, heap_type, proportions_only) {
+    .Call(`_dodgr_rcpp_get_sp_dists_proportional`, graph, vert_map_in, fromi, toi_in, heap_type, proportions_only)
 }
 
 #' rcpp_gen_hash
@@ -368,4 +368,3 @@ rcpp_points_index_par <- function(xy, pts) {
 rcpp_route_times <- function(graph, left_side, turn_penalty) {
     .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
-
