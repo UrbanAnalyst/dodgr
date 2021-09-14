@@ -48,11 +48,14 @@ Proportional distances along different edge categories
 \note{
 The "edge_type" column in the graph can contain any kind of discrete or
 categorical values, although integer values of 0 are not permissible. \code{NA}
-values are ignored.
+values are ignored. The function requires one full distance
+matrix to be stored for each category of "edge_type" (unless
+\code{proportions_only = TRUE}). It is wise to keep numbers of discrete types as
+low as possible, especially for large distance matrices.
 
 Setting the \code{proportions_only} flag to \code{TRUE} may be advantageous for
-large jobs, because this avoids construction of the full matrices. Although
-this generally won't notably speed up calculations, it may make possible
+large jobs, because this avoids construction of the full matrices. This may
+speed up calculations, but perhaps more importantly it may make possible
 calculations which would otherwise require distance matrices too large to be
 directly stored.
 }
