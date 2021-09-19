@@ -288,16 +288,16 @@ struct OneIso : public RcppParallel::Worker
                         terminal_verts.end ())
                 {
                     // Flag terminal verts with -d
-                    dout (i, j) = -w [j]; // # nocov
-                } else if (prev [j] < INFINITE_INT && w [j] < dlimit_max)
+                    dout (i, j) = -d [j]; // # nocov
+                } else if (prev [j] < INFINITE_INT && d [j] < dlimit_max)
                 {
                     size_t st_prev = static_cast <size_t> (prev [j]);
                     for (auto k: dlimit)
                     {
-                        if (w [j] > k && w [st_prev] < k)
+                        if (d [j] > k && d [st_prev] < k)
                             dout (i, st_prev) = -k; // flag isohull verts with -k
                         else
-                            dout (i, j) = w [j]; // distance of other internal verts
+                            dout (i, j) = d [j]; // distance of other internal verts
                     }
                 }
             }
