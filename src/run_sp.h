@@ -77,6 +77,14 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type);
 
+// in run_sp_proportional:
+Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi_in,
+        const std::string& heap_type,
+        const bool proportions_only);
+
 //----------------------------
 //----- functions in centrality.cpp
 //----------------------------
