@@ -93,3 +93,24 @@ test_that ("proportions only", {
   expect_true (mean (abs (d1 - d2)) > 0)
   expect_true (max (abs (d1 - d2)) < 0.01) # within 1%
 })
+
+test_that ("proportion threshold", {
+
+  expect_silent(graph <- weight_streetnet(hampi))
+  graph <- graph [graph$component == 1, ]
+
+  v <- dodgr_vertices (graph)
+  from <- v$id
+
+  graph$edge_type <- graph$highway
+
+  expect_silent (d <- dodgr_dists_proportional (graph, from, dlimit = 2000))
+
+  expect_is (d, "data.frame")
+  expect_equal (nrow (d), length (from))
+  expect_equal (ncol (d), length (unique (graph$edge_type)) + 1L)
+
+  # d [, 1] is distance; all other cols are edge-type-specific
+  for (i in 2:ncol (d))
+      expect_true (all (d [, i] <= d [, 1]))
+})
