@@ -9,10 +9,16 @@
 #' distances and for each edge category; if `TRUE`, return single vector of
 #' proportional distances, like current `summary` function applied to full
 #' results. See Note.
-#' @return A list of distance matrices of equal dimensions (length(from),
+#' @param dlimit If `TRUE`, and no value to `to` is given, distances are
+#' aggregated from each `from` point out to the specified distance limit (in
+#' metres). The `proportions_only` argument has no effect when `dlimit = TRUE`.
+#' @return If `dlimit = FALSE`, a list of distance matrices of equal dimensions (length(from),
 #' length(to)), the first of which ("distance") holds the final distances, while
 #' the rest are one matrix for each unique value of "edge_type", holding the
-#' distances traversed along those types of edges only.
+#' distances traversed along those types of edges only. If `dlimit = TRUE`, a
+#' single matrix of total distances along all ways from each point, along with
+#' distances along each of the different kinds of ways specified in the
+#' "edge_type" column of the input graph.
 #'
 #' @note The "edge_type" column in the graph can contain any kind of discrete or
 #' categorical values, although integer values of 0 are not permissible. `NA`
@@ -31,6 +37,7 @@ dodgr_dists_proportional <- function (graph,
                                       from = NULL,
                                       to = NULL,
                                       proportions_only = FALSE,
+                                      dlimit = NULL,
                                       heap = "BHeap",
                                       quiet = TRUE) {
 
@@ -59,12 +66,12 @@ dodgr_dists_proportional <- function (graph,
 
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    # adjust to/from for turn penalty where that exists:
-    from <- to_from_with_tp (graph, from, from = TRUE)
-    to <- to_from_with_tp (graph, to, from = FALSE)
-
+    from <- to_from_with_tp (graph, from, from = TRUE) # turn penalty
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
-    to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+    if (!is.null (to)) {
+        to <- to_from_with_tp (graph, to, from = FALSE)
+        to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+    }
 
     graph <- convert_graph (graph, gr_cols)
     edge_type_table <- table (edge_type)
@@ -74,33 +81,47 @@ dodgr_dists_proportional <- function (graph,
     if (!quiet)
         message ("Calculating shortest paths ... ", appendLF = FALSE)
 
-    d <- rcpp_get_sp_dists_proportional (graph,
-                                         vert_map,
-                                         from_index$index,
-                                         to_index$index,
-                                         heap,
-                                         proportions_only)
+    if (is.null (dlimit) & !is.null (to)) {
 
-    n <- length (to)
+        d <- rcpp_get_sp_dists_proportional (graph,
+                                             vert_map,
+                                             from_index$index,
+                                             to_index$index,
+                                             heap,
+                                             proportions_only)
 
-    if (!proportions_only) {
+        n <- length (to)
+    
+        if (!proportions_only) {
 
-        d0 <- list ("distances" = d [, seq (n)])
-        d <- lapply (seq_along (edge_type_table), function (i) {
-                         index <- i * n + seq (n) - 1
-                         d [, index]    })
-        names (d) <- names (edge_type_table)
+            d0 <- list ("distances" = d [, 1])
+            d <- lapply (seq_along (edge_type_table), function (i) {
+                             index <- i * n + seq (n) - 1
+                             d [, index]    })
+            names (d) <- names (edge_type_table)
 
-        res <- c (d0, d)
-        class (res) <- append (class (res), "dodgr_dists_proportional")
+            res <- c (d0, d)
+            class (res) <- append (class (res), "dodgr_dists_proportional")
 
+        } else {
+
+            res <- apply (d, 2, sum)
+            res [2:length (res)] <- res [2:length (res)] / res [1]
+            res <- res [-1]
+            names (res) <- names (edge_type_table)
+        }
     } else {
 
-        res <- apply (d, 2, sum)
-        res [2:length (res)] <- res [2:length (res)] / res [1]
-        res <- res [-1]
-        names (res) <- names (edge_type_table)
+        d <- rcpp_get_sp_dists_prop_threshold (graph,
+                                               vert_map,
+                                               from_index$index,
+                                               dlimit,
+                                               heap)
+
+        res <- data.frame (d)
+        names (res) <- c ("distance", names (edge_type_table))
     }
+
 
     return (res)
 }

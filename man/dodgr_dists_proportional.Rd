@@ -9,6 +9,7 @@ dodgr_dists_proportional(
   from = NULL,
   to = NULL,
   proportions_only = FALSE,
+  dlimit = NULL,
   heap = "BHeap",
   quiet = TRUE
 )
@@ -30,6 +31,10 @@ distances and for each edge category; if \code{TRUE}, return single vector of
 proportional distances, like current \code{summary} function applied to full
 results. See Note.}
 
+\item{dlimit}{If \code{TRUE}, and no value to \code{to} is given, distances are
+aggregated from each \code{from} point out to the specified distance limit (in
+metres). The \code{proportions_only} argument has no effect when \code{dlimit = TRUE}.}
+
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \verb{Trinomial Heap (}TriHeap\verb{), Extended Trinomial Heap (}TriHeapExt\verb{, and 2-3 Heap (}Heap23`).}
@@ -37,10 +42,13 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-A list of distance matrices of equal dimensions (length(from),
+If \code{dlimit = FALSE}, a list of distance matrices of equal dimensions (length(from),
 length(to)), the first of which ("distance") holds the final distances, while
 the rest are one matrix for each unique value of "edge_type", holding the
-distances traversed along those types of edges only.
+distances traversed along those types of edges only. If \code{dlimit = TRUE}, a
+single matrix of total distances along all ways from each point, along with
+distances along each of the different kinds of ways specified in the
+"edge_type" column of the input graph.
 }
 \description{
 Proportional distances along different edge categories
