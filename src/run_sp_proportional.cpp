@@ -376,6 +376,11 @@ void PF::PathFinder::DijkstraLimitEdgeType (
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert (v0, 0.0);
+    // initialise v0 values for all edge_types
+    const size_t num_edge_types = d.size () / n - 1L;
+    const size_t nverts = w.size ();
+    for (size_t i = 1; i <= num_edge_types; i++)
+        d [v0 + i * nverts] = 0.0;
 
     while (m_heap->nItems() > 0) {
         size_t v = m_heap->deleteMin();
