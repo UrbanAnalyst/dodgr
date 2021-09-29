@@ -398,7 +398,7 @@ void PF::PathFinder::DijkstraLimitEdgeType (
         if (explore)
         {
             edge = vertices [v].outHead;
-            scan_edges (edge, d, w, prev, m_open, m_closed, v);
+            scan_edge_types (edge, d, w, prev, m_open, m_closed, v);
         }
     } // end while nItems > 0
 }
