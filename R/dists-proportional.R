@@ -12,13 +12,13 @@
 #' @param dlimit If `TRUE`, and no value to `to` is given, distances are
 #' aggregated from each `from` point out to the specified distance limit (in
 #' metres). The `proportions_only` argument has no effect when `dlimit = TRUE`.
-#' @return If `dlimit = FALSE`, a list of distance matrices of equal dimensions (length(from),
-#' length(to)), the first of which ("distance") holds the final distances, while
-#' the rest are one matrix for each unique value of "edge_type", holding the
-#' distances traversed along those types of edges only. If `dlimit = TRUE`, a
-#' single matrix of total distances along all ways from each point, along with
-#' distances along each of the different kinds of ways specified in the
-#' "edge_type" column of the input graph.
+#' @return If `dlimit = FALSE`, a list of distance matrices of equal dimensions
+#' (length(from), length(to)), the first of which ("distance") holds the final
+#' distances, while the rest are one matrix for each unique value of
+#' "edge_type", holding the distances traversed along those types of edges only.
+#' If `dlimit = TRUE`, a single matrix of total distances along all ways from
+#' each point, along with distances along each of the different kinds of ways
+#' specified in the "edge_type" column of the input graph.
 #'
 #' @note The "edge_type" column in the graph can contain any kind of discrete or
 #' categorical values, although integer values of 0 are not permissible. `NA`
@@ -91,7 +91,7 @@ dodgr_dists_proportional <- function (graph,
                                              proportions_only)
 
         n <- length (to)
-    
+
         if (!proportions_only) {
 
             d0 <- list ("distances" = d [, seq (n)])
@@ -134,8 +134,6 @@ dodgr_dists_proportional <- function (graph,
 #' @return The summary statistics (invisibly)
 #' @export
 summary.dodgr_dists_proportional <- function (object, ...) {
-
-    edge_types <- names (object) [-1]
 
     d0 <- object$distances # first list item
     sum_d0 <- sum (d0, na.rm = TRUE)
