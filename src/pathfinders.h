@@ -96,6 +96,15 @@ class PathFinder {
                 const bool *m_closed_vec,
                 const size_t &v0,
                 const std::vector<double> &heur);
+        // run_sp_proportional for threshold dists
+        void scan_edge_types (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                bool *m_open_vec,
+                const bool *m_closed_vec,
+                const size_t &v0);
 
         void Dijkstra (
                 std::vector<double>& d,
@@ -103,7 +112,13 @@ class PathFinder {
                 std::vector<long int>& prev,
                 const size_t v0,
                 const std::vector <size_t> &to_index);
-        void DijkstraLimit (
+        void DijkstraLimit ( // run_sp_proportional
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                const size_t v0,
+                const double &dlim);
+        void DijkstraLimitEdgeType (
                 std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,

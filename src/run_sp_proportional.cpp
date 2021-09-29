@@ -292,6 +292,94 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
     }
 }
 
+// Modified pathfinder only out to specified distance limit. Done as separate
+// routine to avoid costs of the `if` clause in general non-limited case.
+void PF::PathFinder::DijkstraLimitEdgeType (
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<long int>& prev,
+        const size_t v0,
+        const double &dlim)
+{
+    const DGraphEdge *edge;
+
+    const size_t n = m_graph->nVertices();
+    const std::vector<DGraphVertex>& vertices = m_graph->vertices();
+
+    PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
+    m_heap->insert (v0, 0.0);
+
+    while (m_heap->nItems() > 0) {
+        size_t v = m_heap->deleteMin();
+
+        m_closed [v] = true;
+        m_open [v] = false;
+
+        // explore the OUT set of v only if distances are < threshold
+        bool explore = false;
+        edge = vertices [v].outHead;
+        while (edge) {
+            if ((d [v] + edge->dist) <= dlim)
+            {
+                explore = true;
+                break;
+            }
+            edge = edge->nextOut;
+        }
+
+        if (explore)
+        {
+            edge = vertices [v].outHead;
+            scan_edges (edge, d, w, prev, m_open, m_closed, v);
+        }
+    } // end while nItems > 0
+}
+
+void PF::PathFinder::scan_edge_types (const DGraphEdge *edge,
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<long int>& prev,
+        bool *m_open_vec,
+        const bool *m_closed_vec,
+        const size_t &v0)
+{
+    const size_t n = w.size ();
+    const size_t num_edge_types = d.size () / n - 1L;
+
+    while (edge) {
+
+        const size_t et = edge->target;
+        const size_t edge_id = edge->edge_id;
+
+        if (!m_closed_vec [et])
+        {
+            double wt = w [v0] + edge->wt;
+            if (wt < w [et]) {
+                d [et] = d [v0] + edge->dist;
+                // iterate over rest of matrix for each edge_type
+                for (size_t i = 1; i <= num_edge_types; i++) {
+                    if (i == edge_id)
+                        d [et + edge_id * n] = d [v0 + edge_id * n] + edge->dist;
+                    else // carry over without incrementing dist
+                        d [et + i * n] = d [v0 + i * n];
+                }
+
+                w [et] = wt;
+                prev [et] = static_cast <int> (v0);
+
+                if (m_open_vec [et]) {
+                    m_heap->decreaseKey(et, wt);
+                }
+                else {
+                    m_heap->insert (et, wt);
+                    m_open_vec [et] = true;
+                }
+            } else
+                m_closed [et] = true;
+        }
+        edge = edge->nextOut;
+    }
+}
 //' rcpp_get_sp_dists_proportional
 //'
 //' The `graph` must have an `edge_type` column of non-negative integers,
