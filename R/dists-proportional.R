@@ -94,7 +94,7 @@ dodgr_dists_proportional <- function (graph,
     
         if (!proportions_only) {
 
-            d0 <- list ("distances" = d [, 1])
+            d0 <- list ("distances" = d [, seq (n)])
             d <- lapply (seq_along (edge_type_table), function (i) {
                              index <- i * n + seq (n) - 1
                              d [, index]    })
