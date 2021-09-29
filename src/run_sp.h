@@ -85,6 +85,12 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
         const std::string& heap_type,
         const bool proportions_only);
 
+Rcpp::NumericMatrix rcpp_get_sp_dists_prop_threshold (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        const double dlimit,
+        const std::string& heap_type);
+
 //----------------------------
 //----- functions in centrality.cpp
 //----------------------------
