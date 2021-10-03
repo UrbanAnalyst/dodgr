@@ -97,12 +97,12 @@ dodgr_dists_proportional <- function (graph,
             if (is.null (from_index$id)) {
                 rnames <- vert_map$vert
             } else {
-                rnames <- to_index$id
+                rnames <- from_index$id
             }
             if (is.null (to_index$id)) {
                 cnames <- vert_map$vert
             } else {
-                cnames <- from_index$id
+                cnames <- to_index$id
             }
 
 
