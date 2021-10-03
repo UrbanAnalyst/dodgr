@@ -152,8 +152,6 @@ struct OneProportion : public RcppParallel::Worker
 
         std::vector <double> heuristic (nverts, 0.0);
 
-        const size_t nto = toi.size ();
-
         for (std::size_t i = begin; i < end; i++)
         {
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
