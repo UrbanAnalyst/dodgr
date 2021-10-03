@@ -250,6 +250,10 @@ struct OnePropThreshold : public RcppParallel::Worker
             {
                 if (w [j] < INFINITE_DOUBLE)
                 {
+                    size_t st_prev = static_cast <size_t> (prev [j]);
+                    bool is_terminal =
+                        terminal_verts.find (j) != terminal_verts.end () ||
+                        d [j] > dlimit && d [st_prev] < dlimit;
                     for (size_t k = 0; k < num_edge_types; k++)
                     {
                         const double dto = d [j + k * nverts];
