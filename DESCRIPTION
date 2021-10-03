@@ -1,27 +1,15 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.10
-Authors@R: 
-    c(person(given = "Mark",
-             family = "Padgham",
-             role = c("aut", "cre"),
-             email = "mark.padgham@email.com"),
-      person(given = "Andreas",
-             family = "Petutschnig",
-             role = "aut"),
-      person(given = "Robin",
-             family = "Lovelace",
-             role = "ctb"),
-      person(given = "Andrew",
-             family = "Smith",
-             role = "ctb"),
-      person(given = "Malcolm",
-             family = "Morgan",
-             role = "ctb"),
-      person(given = "Shane",
-             family = "Saunders",
-             role = "cph",
-             comment = "Original author of included code for priority heaps"))
+Version: 0.2.10.001
+Authors@R: c(
+    person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
+    person("Andreas", "Petutschnig", role = "aut"),
+    person("Robin", "Lovelace", role = "ctb"),
+    person("Andrew", "Smith", role = "ctb"),
+    person("Malcolm", "Morgan", role = "ctb"),
+    person("Shane", "Saunders", role = "cph",
+           comment = "Original author of included code for priority heaps")
+  )
 Description: Distances on dual-weighted directed graphs using
     priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).
     Weighted directed graphs have weights from A to B which may differ

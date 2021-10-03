@@ -94,10 +94,30 @@ dodgr_dists_proportional <- function (graph,
 
         if (!proportions_only) {
 
-            d0 <- list ("distances" = d [, seq (n)])
+            if (is.null (from_index$id)) {
+                rnames <- vert_map$vert
+            } else {
+                rnames <- to_index$id
+            }
+            if (is.null (to_index$id)) {
+                cnames <- vert_map$vert
+            } else {
+                cnames <- from_index$id
+            }
+
+
+            d0 <- d [, seq (n)]
+            rownames (d0) <- rnames
+            colnames (d0) <- cnames
+
+            d0 <- list ("distances" = d0)
             d <- lapply (seq_along (edge_type_table), function (i) {
                              index <- i * n + seq (n) - 1
-                             d [, index]    })
+                             res <- d [, index]
+                             rownames (res) <- rnames
+                             colnames (res) <- cnames
+                             return (res)
+                              })
             names (d) <- names (edge_type_table)
 
             res <- c (d0, d)
