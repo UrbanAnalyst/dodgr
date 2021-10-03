@@ -237,12 +237,12 @@ struct OnePropThreshold : public RcppParallel::Worker
 
             // Get the set of terminal vertices: those with w < dlimit_max but
             // with no previous (outward-going) nodes
-            std::unordered_set <int> terminal_verts;
+            std::unordered_set <size_t> terminal_verts;
             for (size_t j = 0; j < nverts; j++)
             {
                 if (prev [j] == INFINITE_INT && w [j] < dlimit)
                 {
-                    terminal_verts.emplace (static_cast <int> (j));
+                    terminal_verts.emplace (j);
                 }
             }
 
