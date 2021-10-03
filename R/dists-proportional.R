@@ -138,6 +138,12 @@ dodgr_dists_proportional <- function (graph,
                                                dlimit,
                                                heap)
 
+        if (is.null (from_index$id)) {
+            rownames (d) <- vert_map$vert
+        } else {
+            rownames (d) <- from_index$id
+        }
+
         res <- data.frame (d)
         names (res) <- c ("distance", names (edge_type_table))
     }
