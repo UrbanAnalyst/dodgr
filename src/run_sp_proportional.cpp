@@ -235,6 +235,17 @@ struct OnePropThreshold : public RcppParallel::Worker
 
             pathfinder->DijkstraLimitEdgeType (d, w, prev, from_i, dlimit);
 
+            // Get the set of terminal vertices: those with w < dlimit_max but
+            // with no previous (outward-going) nodes
+            std::unordered_set <int> terminal_verts;
+            for (size_t j = 0; j < nverts; j++)
+            {
+                if (prev [j] == INFINITE_INT && w [j] < dlimit)
+                {
+                    terminal_verts.emplace (static_cast <int> (j));
+                }
+            }
+
             for (size_t j = 0; j < nverts; j++)
             {
                 if (w [j] < INFINITE_DOUBLE)
