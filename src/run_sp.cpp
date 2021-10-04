@@ -275,7 +275,7 @@ struct OneIso : public RcppParallel::Worker
             std::unordered_set <int> terminal_verts;
             for (size_t j = 0; j < nverts; j++)
             {
-                if (prev [j] == INFINITE_INT && w [j] < dlimit_max)
+                if (prev [j] == INFINITE_INT && d [j] < dlimit_max)
                 {
                     terminal_verts.emplace (static_cast <int> (j));
                 }
