@@ -86,7 +86,7 @@ class PathFinder {
                 const bool *m_closed_vec,
                 const size_t &v0,
                 const std::vector<double> &heur);
-        // with A* heuristic for dists-proportional
+        // with A* heuristic for dists-categorical
         void scan_edge_types_heur (
                 const DGraphEdge *edge,
                 std::vector<double>& d,
@@ -96,7 +96,7 @@ class PathFinder {
                 const bool *m_closed_vec,
                 const size_t &v0,
                 const std::vector<double> &heur);
-        // run_sp_proportional for threshold dists
+        // run_sp_categorical for threshold dists
         void scan_edge_types (
                 const DGraphEdge *edge,
                 std::vector<double>& d,
@@ -112,7 +112,7 @@ class PathFinder {
                 std::vector<long int>& prev,
                 const size_t v0,
                 const std::vector <size_t> &to_index);
-        void DijkstraLimit ( // run_sp_proportional
+        void DijkstraLimit ( // run_sp_categorical
                 std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,

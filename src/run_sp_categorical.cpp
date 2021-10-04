@@ -1,4 +1,4 @@
-// Modified functions from run_sp.cpp to calculate proportional distances along
+// Modified functions from run_sp.cpp to calculate categorical distances along
 // defined kinds of ways (issue #144)
 
 #include "run_sp.h"
@@ -26,7 +26,7 @@ void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
 }
 // # nocov end
 
-struct OneProportionalDist : public RcppParallel::Worker
+struct OneCategoricalDist : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
@@ -41,7 +41,7 @@ struct OneProportionalDist : public RcppParallel::Worker
     RcppParallel::RMatrix <double> dout;
 
     // constructor
-    OneProportionalDist (
+    OneCategoricalDist (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
             const std::vector <size_t> edge_type_in,
@@ -104,9 +104,9 @@ struct OneProportionalDist : public RcppParallel::Worker
                                    
 };
 
-// Modified version of OneProportionalDist to aggregate only a vector of
+// Modified version of OneCategoricalDist to aggregate only a vector of
 // distances, one value for each `from`.
-struct OneProportion : public RcppParallel::Worker
+struct OneCategory : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
@@ -121,7 +121,7 @@ struct OneProportion : public RcppParallel::Worker
     RcppParallel::RMatrix <double> dout;
 
     // constructor
-    OneProportion (
+    OneCategory (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
             const std::vector <size_t> edge_type_in,
@@ -186,9 +186,9 @@ struct OneProportion : public RcppParallel::Worker
                                    
 };
 
-// Modified version of OneProportion to aggregate vector of proportional
+// Modified version of OneCategory to aggregate vector of categorical
 // distances out to a specified threshold, one value for each `from`.
-struct OnePropThreshold : public RcppParallel::Worker
+struct OneCatThreshold : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> edge_type;
@@ -201,7 +201,7 @@ struct OnePropThreshold : public RcppParallel::Worker
     RcppParallel::RMatrix <double> dout;
 
     // constructor
-    OnePropThreshold (
+    OneCatThreshold (
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> edge_type_in,
             const size_t nverts_in,
@@ -274,7 +274,7 @@ struct OnePropThreshold : public RcppParallel::Worker
                                    
 };
 
-size_t proportional::num_edge_types (const std::vector <size_t> &edge_type)
+size_t categorical::num_edge_types (const std::vector <size_t> &edge_type)
 {
     std::unordered_set <size_t> type_set;
     for (auto e: edge_type)
@@ -472,7 +472,7 @@ void PF::PathFinder::scan_edge_types (const DGraphEdge *edge,
     }
 }
 
-//' rcpp_get_sp_dists_proportional
+//' rcpp_get_sp_dists_categorical
 //'
 //' The `graph` must have an `edge_type` column of non-negative integers,
 //' with 0 denoting edges which are not aggregated, and all other values
@@ -482,7 +482,7 @@ void PF::PathFinder::scan_edge_types (const DGraphEdge *edge,
 //' only for AStar (so graphs must be spatial).
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
+Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
@@ -501,7 +501,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = proportional::num_edge_types (edge_type);
+    const size_t num_types = categorical::num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -532,15 +532,15 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
     if (proportions_only)
     {
-        OneProportion one_dist (RcppParallel::RVector <int> (fromi), toi,
+        OneCategory one_dist (RcppParallel::RVector <int> (fromi), toi,
                 edge_type, nverts, vx, vy,
                 g, heap_type, num_types,
                 RcppParallel::RMatrix <double> (dout));
         RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
     } else
     {
-        OneProportionalDist one_dist (RcppParallel::RVector <int> (fromi), toi,
-                edge_type, nverts, vx, vy,
+        OneCategoricalDist one_dist (RcppParallel::RVector <int> (fromi),
+                toi, edge_type, nverts, vx, vy,
                 g, heap_type, num_types,
                 RcppParallel::RMatrix <double> (dout));
         RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
@@ -550,7 +550,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
     return (dout);
 }
 
-//' rcpp_get_sp_dists_prop_threshold
+//' rcpp_get_sp_dists_cat_threshold
 //'
 //' The `graph` must have an `edge_type` column of non-negative integers,
 //' with 0 denoting edges which are not aggregated, and all other values
@@ -560,7 +560,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
 //' only for AStar (so graphs must be spatial).
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::NumericMatrix rcpp_get_sp_dists_prop_threshold (const Rcpp::DataFrame graph,
+Rcpp::NumericMatrix rcpp_get_sp_dists_cat_threshold (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         const double dlimit,
@@ -574,7 +574,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_prop_threshold (const Rcpp::DataFrame grap
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = proportional::num_edge_types (edge_type);
+    const size_t num_types = categorical::num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -595,7 +595,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_prop_threshold (const Rcpp::DataFrame grap
 
     // Create parallel worker
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
-    OnePropThreshold one_dist (RcppParallel::RVector <int> (fromi),
+    OneCatThreshold one_dist (RcppParallel::RVector <int> (fromi),
             edge_type, nverts, g, heap_type,
             num_types, dlimit,
             RcppParallel::RMatrix <double> (dout));

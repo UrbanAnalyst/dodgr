@@ -1,4 +1,4 @@
-context("dodgr_dists_proportional")
+context("dodgr_dists_categorical")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
@@ -7,7 +7,7 @@ if (!test_all) {
   RcppParallel::setThreadOptions(numThreads = 2)
 }
 
-test_that("proportional dists", {
+test_that("categorical dists", {
 
   expect_silent(graph <- weight_streetnet(hampi))
 
@@ -17,20 +17,20 @@ test_that("proportional dists", {
   from <- sample(graph$from_id, size = nf)
   to <- sample(graph$to_id, size = nt)
 
-  expect_error (d <- dodgr_dists_proportional (graph,
+  expect_error (d <- dodgr_dists_categorical (graph,
                                                from,
                                                to),
                 "graph must have a column named 'edge_type'")
 
   graph$edge_type <- 1L
   graph$edge_type [1] <- 0L
-  expect_error (d <- dodgr_dists_proportional (graph,
+  expect_error (d <- dodgr_dists_categorical (graph,
                                                from,
                                                to),
                 "graphs with integer edge_type columns may not contain 0s")
 
   graph$edge_type <- graph$highway
-  expect_silent(d <- dodgr_dists_proportional(graph, from = from, to = to))
+  expect_silent(d <- dodgr_dists_categorical(graph, from = from, to = to))
   expect_type (d, "list")
   ntypes <- length (unique (graph$highway))
   expect_length (d, ntypes + 1L)
@@ -43,13 +43,13 @@ test_that("proportional dists", {
   expect_true (all (dims [2, ] == nt))
 
   expect_message(
-    d2 <- dodgr_dists_proportional(graph, from = from, to = to, quiet = FALSE),
+    d2 <- dodgr_dists_categorical(graph, from = from, to = to, quiet = FALSE),
     "Calculating shortest paths ..."
   )
   expect_identical(d, d2)
 })
 
-test_that("proportional dists summary", {
+test_that("categorical dists summary", {
 
   expect_silent(graph <- weight_streetnet(hampi))
   graph <- graph [graph$component == 1, ]
@@ -60,7 +60,7 @@ test_that("proportional dists summary", {
 
   graph$edge_type <- graph$highway
 
-  expect_silent (d <- dodgr_dists_proportional (graph, from, to))
+  expect_silent (d <- dodgr_dists_categorical (graph, from, to))
 
   expect_message (ds <- summary (d))
   expect_is (ds, "numeric")
@@ -79,7 +79,7 @@ test_that ("proportions only", {
 
   graph$edge_type <- graph$highway
 
-  expect_silent (d <- dodgr_dists_proportional (graph, from, to))
+  expect_silent (d <- dodgr_dists_categorical (graph, from, to))
 
   d0 <- d$distances
   d <- d [-1]
@@ -87,14 +87,14 @@ test_that ("proportions only", {
                    numeric (1))
   d1 <- dtypes / sum (colSums (d0))
 
-  expect_silent (d2 <- dodgr_dists_proportional (graph, from, to,
-                                                 proportions_only = TRUE))
+  expect_silent (d2 <- dodgr_dists_categorical (graph, from, to,
+                                                proportions_only = TRUE))
   # These will only be approximately equal:
   expect_true (mean (abs (d1 - d2)) > 0)
   expect_true (max (abs (d1 - d2)) < 0.01) # within 1%
 })
 
-test_that ("proportion threshold", {
+test_that ("categorical threshold", {
 
   expect_silent(graph <- weight_streetnet(hampi))
   graph <- graph [graph$component == 1, ]
@@ -104,7 +104,7 @@ test_that ("proportion threshold", {
 
   graph$edge_type <- graph$highway
 
-  expect_silent (d <- dodgr_dists_proportional (graph, from, dlimit = 2000))
+  expect_silent (d <- dodgr_dists_categorical (graph, from, dlimit = 2000))
 
   expect_is (d, "data.frame")
   expect_equal (nrow (d), length (from))

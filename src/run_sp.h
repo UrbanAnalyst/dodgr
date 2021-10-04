@@ -38,11 +38,11 @@ void make_vert_to_edge_maps (const std::vector <std::string> &from,
 size_t get_chunk_size (const size_t nfrom);
 } // end namespace run_sp
 
-namespace proportional {
+namespace categorical {
 
 size_t num_edge_types (const std::vector <size_t> &edge_type);
 
-} // end namespace proportional
+} // end namespace categorical
 
 
 Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
@@ -77,15 +77,15 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type);
 
-// in run_sp_proportional:
-Rcpp::NumericMatrix rcpp_get_sp_dists_proportional (const Rcpp::DataFrame graph,
+// in run_sp_categorical:
+Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type,
         const bool proportions_only);
 
-Rcpp::NumericMatrix rcpp_get_sp_dists_prop_threshold (const Rcpp::DataFrame graph,
+Rcpp::NumericMatrix rcpp_get_sp_dists_cat_threshold (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         const double dlimit,

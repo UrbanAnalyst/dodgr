@@ -1,13 +1,13 @@
-#' Proportional distances along different edge categories
+#' Cumulative distances along different edge categories
 #'
 #' @inheritParams dodgr_dists
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph which must have a column named "edge_type" which labels categories of
-#' edge types along which proportional distances are to be aggregated (see
+#' edge types along which categorical distances are to be aggregated (see
 #' Note).
-#' @param proportions_only If `FALSE`, return full distance matrices for full
+#' @param proportions_only If `FALSE`, return distance matrices for full
 #' distances and for each edge category; if `TRUE`, return single vector of
-#' proportional distances, like current `summary` function applied to full
+#' proportional distances, like the `summary` function applied to full
 #' results. See Note.
 #' @param dlimit If `TRUE`, and no value to `to` is given, distances are
 #' aggregated from each `from` point out to the specified distance limit (in
@@ -33,7 +33,7 @@
 #' calculations which would otherwise require distance matrices too large to be
 #' directly stored.
 #' @export
-dodgr_dists_proportional <- function (graph,
+dodgr_dists_categorical <- function (graph,
                                       from = NULL,
                                       to = NULL,
                                       proportions_only = FALSE,
@@ -62,7 +62,7 @@ dodgr_dists_proportional <- function (graph,
     }
     is_spatial <- is_graph_spatial (graph)
     if (!is_spatial)
-        stop ("proportional distances only implemented for spatial graphs")
+        stop ("Categorical distances only implemented for spatial graphs")
 
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
@@ -83,7 +83,7 @@ dodgr_dists_proportional <- function (graph,
 
     if (is.null (dlimit) & !is.null (to)) {
 
-        d <- rcpp_get_sp_dists_proportional (graph,
+        d <- rcpp_get_sp_dists_categorical (graph,
                                              vert_map,
                                              from_index$index,
                                              to_index$index,
@@ -121,7 +121,7 @@ dodgr_dists_proportional <- function (graph,
             names (d) <- names (edge_type_table)
 
             res <- c (d0, d)
-            class (res) <- append (class (res), "dodgr_dists_proportional")
+            class (res) <- append (class (res), "dodgr_dists_categorical")
 
         } else {
 
@@ -132,7 +132,7 @@ dodgr_dists_proportional <- function (graph,
         }
     } else {
 
-        d <- rcpp_get_sp_dists_prop_threshold (graph,
+        d <- rcpp_get_sp_dists_cat_threshold (graph,
                                                vert_map,
                                                from_index$index,
                                                dlimit,
@@ -153,13 +153,13 @@ dodgr_dists_proportional <- function (graph,
 }
 
 
-#' Transform a result from 'dodgr_dists_proportional' to summary statistics
+#' Transform a result from 'dodgr_dists_categorical' to summary statistics
 #'
-#' @param object A 'dodgr_dists_proportional' object
+#' @param object A 'dodgr_dists_categorical' object
 #' @param ... Extra parameters currently not used
 #' @return The summary statistics (invisibly)
 #' @export
-summary.dodgr_dists_proportional <- function (object, ...) {
+summary.dodgr_dists_categorical <- function (object, ...) {
 
     d0 <- object$distances # first list item
     sum_d0 <- sum (d0, na.rm = TRUE)
