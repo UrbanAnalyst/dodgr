@@ -41,3 +41,11 @@ dim (xy$dat) # same number of rows as there are geometries
 # The dodgr_to_sf function then just implements this final conversion:
 # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
 }
+\seealso{
+Other conversion: 
+\code{\link{dodgr_to_igraph}()},
+\code{\link{dodgr_to_sf}()},
+\code{\link{dodgr_to_tidygraph}()},
+\code{\link{igraph_to_dodgr}()}
+}
+\concept{conversion}

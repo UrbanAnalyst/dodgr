@@ -73,3 +73,20 @@ graph <- dodgr_flows_disperse (graph, from = from, dens = dens)
 # undirected flows on an equivalent undirected graph with:
 graph_undir <- merge_directed_graph (graph)
 }
+\seealso{
+Other distances: 
+\code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists}()},
+\code{\link{dodgr_flows_aggregate}()},
+\code{\link{dodgr_flows_si}()},
+\code{\link{dodgr_isochrones}()},
+\code{\link{dodgr_isodists}()},
+\code{\link{dodgr_isoverts}()},
+\code{\link{dodgr_paths}()},
+\code{\link{dodgr_streetnet_sc}()},
+\code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_times}()},
+\code{\link{weight_railway}()},
+\code{\link{weight_streetnet}()}
+}
+\concept{distances}

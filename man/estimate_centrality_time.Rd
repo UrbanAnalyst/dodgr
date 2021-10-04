@@ -57,3 +57,9 @@ ongoing information on screen of estimated values of 'dist_threshold' and
 associated errors. Thresholds are progressively increased until the error is
 reduced below the specified tolerance.
 }
+\seealso{
+Other centrality: 
+\code{\link{dodgr_centrality}()},
+\code{\link{estimate_centrality_threshold}()}
+}
+\concept{centrality}

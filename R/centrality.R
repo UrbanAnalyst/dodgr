@@ -47,6 +47,8 @@
 #' specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
+#' @family centrality
+#' @export
 #' @examples
 #' graph_full <- weight_streetnet (hampi)
 #' graph <- dodgr_contract_graph (graph_full)
@@ -102,7 +104,6 @@
 #' plot (graph_sf ["centrality"])
 #' }
 #'
-#' @export
 dodgr_centrality <- function (graph,
                               contract = TRUE,
                               edges = TRUE,
@@ -205,6 +206,7 @@ dodgr_centrality <- function (graph,
 #' associated errors. Thresholds are progressively increased until the error is
 #' reduced below the specified tolerance.
 #'
+#' @family centrality
 #' @export
 estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
     # nocov start - can't be tested on any sample data
@@ -282,6 +284,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
 #' associated errors. Thresholds are progressively increased until the error is
 #' reduced below the specified tolerance.
 #'
+#' @family centrality
 #' @export
 estimate_centrality_time <- function (graph,
                                       contract = TRUE,

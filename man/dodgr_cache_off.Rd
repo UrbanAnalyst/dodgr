@@ -14,3 +14,9 @@ Turn off all dodgr caching in current session. This is useful is speed is
 paramount, and if graph contraction is not needed. Caching can be switched
 back on with \link{dodgr_cache_on}.
 }
+\seealso{
+Other cache: 
+\code{\link{clear_dodgr_cache}()},
+\code{\link{dodgr_cache_on}()}
+}
+\concept{cache}

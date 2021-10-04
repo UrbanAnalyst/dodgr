@@ -14,6 +14,7 @@
 #' number of columns, but with each row representing an edge between two
 #' junction vertices (or between the submitted `verts`, which may or may not be
 #' junctions).
+#' @family modification
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -181,6 +182,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
 #'
 #' @return A single `data.frame` representing the equivalent original,
 #' uncontracted graph.
+#' @family modification
 #' @export
 #' @examples
 #' graph0 <- weight_streetnet (hampi)

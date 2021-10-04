@@ -18,6 +18,7 @@
 #' the \pkg{igraph} comparisons will be faster on subsequent runs. To obtain
 #' fair comparisons, run only once or re-start the current R session.
 #'
+#' @family misc
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

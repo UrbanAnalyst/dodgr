@@ -48,4 +48,10 @@ net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
                          type_col = colnm, id_col = "identifier")
 # 'id_col' tells the function which column to use to attribute IDs of ways
 }
+\seealso{
+Other data: 
+\code{\link{hampi}},
+\code{\link{weighting_profiles}}
+}
+\concept{data}
 \keyword{datasets}

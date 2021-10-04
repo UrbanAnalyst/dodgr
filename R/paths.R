@@ -48,6 +48,7 @@
 #' `to` are specified, pairwise distances are calculated between all nodes
 #' in `graph`.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

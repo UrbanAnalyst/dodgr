@@ -24,6 +24,7 @@
 #' specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -130,6 +131,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap") {
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' \dontrun{
@@ -182,6 +184,7 @@ dodgr_isochrones <- function (graph,
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' \dontrun{

@@ -9,6 +9,7 @@
 #' @param shortest If `TRUE`, calculate times along the \emph{shortest} rather
 #' than fastest paths.
 #'
+#' @family distances
 #' @export
 dodgr_times <- function (graph,
                          from = NULL,

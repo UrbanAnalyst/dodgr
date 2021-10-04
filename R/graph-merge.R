@@ -16,6 +16,7 @@
 #' single, undirected edges, and all values of the specified column(s) have been
 #' aggregated across directions to undirected values.
 #' @export
+#' @family misc
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)

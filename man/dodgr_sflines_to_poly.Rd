@@ -23,3 +23,18 @@ An \code{sf::sfc} collection of \code{POLYGON} objects.
 Convert \pkg{sf} \code{LINESTRING} objects to \code{POLYGON} objects representing all
 fundamental cycles within the \code{LINESTRING} objects.
 }
+\seealso{
+Other misc: 
+\code{\link{compare_heaps}()},
+\code{\link{dodgr_flowmap}()},
+\code{\link{dodgr_full_cycles}()},
+\code{\link{dodgr_fundamental_cycles}()},
+\code{\link{dodgr_insert_vertex}()},
+\code{\link{dodgr_sample}()},
+\code{\link{dodgr_vertices}()},
+\code{\link{match_points_to_graph}()},
+\code{\link{match_pts_to_graph}()},
+\code{\link{merge_directed_graph}()},
+\code{\link{write_dodgr_wt_profile}()}
+}
+\concept{misc}

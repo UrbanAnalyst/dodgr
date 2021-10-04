@@ -33,3 +33,9 @@ graph3 <- dodgr_uncontract_graph (graph1)
 # graph3 is then the uncontracted graph which includes "new_col" as well
 dim (graph0); dim (graph3)
 }
+\seealso{
+Other modification: 
+\code{\link{dodgr_components}()},
+\code{\link{dodgr_contract_graph}()}
+}
+\concept{modification}

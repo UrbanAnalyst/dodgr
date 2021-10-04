@@ -21,3 +21,9 @@ column to \code{data.frame}.
 graph <- weight_streetnet (hampi)
 graph <- dodgr_components (graph)
 }
+\seealso{
+Other modification: 
+\code{\link{dodgr_contract_graph}()},
+\code{\link{dodgr_uncontract_graph}()}
+}
+\concept{modification}

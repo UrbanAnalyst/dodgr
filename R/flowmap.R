@@ -10,6 +10,7 @@
 #'
 #' @note `net` should be first passed through `merge_directed_graph`
 #' prior to plotting, otherwise lines for different directions will be overlaid.
+#' @family misc
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

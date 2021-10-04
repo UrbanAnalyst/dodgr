@@ -151,3 +151,20 @@ gsf$flow <- gc$flow
 plot (gsf ["flow"])
 }
 }
+\seealso{
+Other distances: 
+\code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists}()},
+\code{\link{dodgr_flows_disperse}()},
+\code{\link{dodgr_flows_si}()},
+\code{\link{dodgr_isochrones}()},
+\code{\link{dodgr_isodists}()},
+\code{\link{dodgr_isoverts}()},
+\code{\link{dodgr_paths}()},
+\code{\link{dodgr_streetnet_sc}()},
+\code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_times}()},
+\code{\link{weight_railway}()},
+\code{\link{weight_streetnet}()}
+}
+\concept{distances}

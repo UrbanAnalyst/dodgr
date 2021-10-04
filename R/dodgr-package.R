@@ -66,6 +66,7 @@ NULL
 #'
 #' @name weighting_profiles
 #' @docType data
+#' @family data
 #' @keywords datasets
 #' @format List of `data.frame` objects with profile names, means of transport
 #' and weights.
@@ -78,6 +79,7 @@ NULL
 #'
 #' @name hampi
 #' @docType data
+#' @family data
 #' @keywords datasets
 #' @format A Simple Features `sf` `data.frame` containing the street
 #' network of Hampi.
@@ -112,6 +114,7 @@ NULL
 #' \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License} and must be cited as follows:
 #' Contains OS data © Crown copyright and database right (2017)
 #'
+#' @family data
 #' @examples \dontrun{
 #' library(sf)
 #' library(dplyr)

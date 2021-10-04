@@ -39,12 +39,13 @@ flatten_list <- function (x) {
 #' cutting graphs into smaller, computationally manageable sub-graphs provides
 #' only an approximation and may not yield all fundamental cycles.
 #'
+#' @family misc
+#' @export
 #' @examples
 #' net <- weight_streetnet (hampi)
 #' graph <- dodgr_contract_graph (net)
 #' verts <- dodgr_vertices (graph)
 #' cyc <- dodgr_fundamental_cycles (graph, verts)
-#' @export
 dodgr_fundamental_cycles <- function (graph,
                                       vertices = NULL,
                                       graph_max_size = 10000,
@@ -200,6 +201,8 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand) {
 #' onto the original graph. This is far more computationally efficient than
 #' calculating fundamental cycles on a full (non-contracted) graph.
 #'
+#' @family misc
+#' @export
 #' @examples
 #' \dontrun{
 #' net <- weight_streetnet (hampi)
@@ -210,7 +213,6 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand) {
 #' # cyc2 has same number of cycles, but each one is generally longer, through
 #' # including all points intermediate to junctions; cyc1 has cycles composed of
 #' # junction points only.
-#' @export
 dodgr_full_cycles <- function (graph,
                                graph_max_size = 10000,
                                expand = 0.05) {
@@ -292,6 +294,7 @@ dodgr_full_cycles <- function (graph,
 #' @inheritParams dodgr_fundamental_cycles
 #' @param sflines An \pkg{sf} `LINESTRING` object representing a network.
 #' @return An `sf::sfc` collection of `POLYGON` objects.
+#' @family misc
 #' @export
 dodgr_sflines_to_poly <- function (sflines,
                                    graph_max_size = 10000,

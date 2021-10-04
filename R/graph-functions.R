@@ -145,6 +145,7 @@ tbl_to_df <- function (graph) {
 #'
 #' @note Values of `n` are 0-indexed
 #'
+#' @family misc
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -239,6 +240,7 @@ dodgr_vertices_internal <- function (graph) {
 #' @param graph A `data.frame` of edges
 #' @return Equivalent graph with additional `component` column,
 #' sequentially numbered from 1 = largest component.
+#' @family modification
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -281,6 +283,7 @@ dodgr_components <- function (graph) {
 #' @note Graphs may occasionally have `nverts + 1` vertices, rather than
 #' the requested `nverts`.
 #'
+#' @family misc
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -330,6 +333,7 @@ dodgr_sample <- function (graph, nverts = 1000) {
 #' vertices split into two edges either side of new vertex.
 #' @inheritParams dodgr_vertices
 #'
+#' @family misc
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

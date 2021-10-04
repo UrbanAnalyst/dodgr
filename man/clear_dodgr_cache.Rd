@@ -20,3 +20,9 @@ function. See
 \url{https://github.com/ATFutures/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
 for details of caching process.
 }
+\seealso{
+Other cache: 
+\code{\link{dodgr_cache_off}()},
+\code{\link{dodgr_cache_on}()}
+}
+\concept{cache}

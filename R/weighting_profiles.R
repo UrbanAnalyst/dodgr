@@ -7,6 +7,7 @@
 #' suffix will be automatically appended.
 #' @return TRUE if writing successful.
 #' @seealso \link{weight_streetnet}
+#' @family misc
 #' @export
 write_dodgr_wt_profile <- function (file = NULL) {
 

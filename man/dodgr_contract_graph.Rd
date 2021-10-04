@@ -31,3 +31,9 @@ nrow (graph) # 5,973
 graph <- dodgr_contract_graph (graph)
 nrow (graph) # 662
 }
+\seealso{
+Other modification: 
+\code{\link{dodgr_components}()},
+\code{\link{dodgr_uncontract_graph}()}
+}
+\concept{modification}

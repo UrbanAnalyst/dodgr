@@ -61,6 +61,7 @@
 #' or threads. This number can be reduced by specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' # A simple graph
@@ -175,6 +176,7 @@ dodgr_dists <- function (graph,
 #'
 #' Alias for \link{dodgr_dists}
 #' @inherit dodgr_dists
+#' @family distances
 #' @export
 dodgr_distances <- function (graph,
                              from = NULL,

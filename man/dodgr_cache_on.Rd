@@ -13,3 +13,9 @@ Nothing; the function invisibly returns \code{TRUE} if successful.
 Turn on all dodgr caching in current session. This will only have an effect
 after caching has been turned off with \link{dodgr_cache_off}.
 }
+\seealso{
+Other cache: 
+\code{\link{clear_dodgr_cache}()},
+\code{\link{dodgr_cache_off}()}
+}
+\concept{cache}

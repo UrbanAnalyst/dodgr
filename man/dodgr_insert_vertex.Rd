@@ -40,3 +40,18 @@ v2 <- graph$to_id [e1]
 graph2 <- dodgr_insert_vertex (graph, v1, v2)
 nrow (graph); nrow (graph2) # new edges added to graph2
 }
+\seealso{
+Other misc: 
+\code{\link{compare_heaps}()},
+\code{\link{dodgr_flowmap}()},
+\code{\link{dodgr_full_cycles}()},
+\code{\link{dodgr_fundamental_cycles}()},
+\code{\link{dodgr_sample}()},
+\code{\link{dodgr_sflines_to_poly}()},
+\code{\link{dodgr_vertices}()},
+\code{\link{match_points_to_graph}()},
+\code{\link{match_pts_to_graph}()},
+\code{\link{merge_directed_graph}()},
+\code{\link{write_dodgr_wt_profile}()}
+}
+\concept{misc}

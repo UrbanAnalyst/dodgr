@@ -54,6 +54,8 @@
 #' specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
+#' @family distances
+#' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
@@ -119,7 +121,6 @@
 #' # sf plot:
 #' plot (gsf ["flow"])
 #' }
-#' @export
 dodgr_flows_aggregate <- function (graph,
                                    from,
                                    to,
@@ -196,6 +197,7 @@ dodgr_flows_aggregate <- function (graph,
 #' 'flow2', ... up to 'n'. These columns must be subsequently matched by the
 #' user back on to the corresponding columns of the matrix of 'k' values.
 #'
+#' @family distances
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -310,6 +312,8 @@ dodgr_flows_disperse <- function (graph,
 #' anywhere in a network within machine tolerance. Such cases may result in sums
 #' of output flows being less than sums of input densities.
 #'
+#' @family distances
+#' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
@@ -324,7 +328,6 @@ dodgr_flows_disperse <- function (graph,
 #' graph_undir <- merge_directed_graph (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph); nrow (graph_undir) # the latter is much smaller
-#' @export
 dodgr_flows_si <- function (graph,
                             from,
                             to,

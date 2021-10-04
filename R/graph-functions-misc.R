@@ -230,6 +230,7 @@ find_xy_col_simple <- function (dfr) {
 #' matching.
 #'
 #' @return A vector index into verts
+#' @family misc
 #' @export
 #' @examples
 #' net <- weight_streetnet (hampi, wt_profile = "foot")
@@ -290,6 +291,7 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE) {
 #'
 #' Alias for \link{match_points_to_graph}
 #' @inherit match_pts_to_graph
+#' @family misc
 #' @export
 match_points_to_graph <- function (verts, xy, connected = FALSE) {
 

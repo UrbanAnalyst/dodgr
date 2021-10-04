@@ -109,6 +109,7 @@ cache_graph <- function (graph, edge_col) {
 #' for details of caching process.
 #'
 #' @return Nothing; the function silently clears any cached objects
+#' @family cache
 #' @export
 clear_dodgr_cache <- function () {
 
@@ -125,6 +126,7 @@ clear_dodgr_cache <- function () {
 #' paramount, and if graph contraction is not needed. Caching can be switched
 #' back on with \link{dodgr_cache_on}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
+#' @family cache
 #' @export
 dodgr_cache_off <- function () {
     Sys.setenv ("DODGR_CACHE" = "FALSE")
@@ -135,6 +137,7 @@ dodgr_cache_off <- function () {
 #' Turn on all dodgr caching in current session. This will only have an effect
 #' after caching has been turned off with \link{dodgr_cache_off}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
+#' @family cache
 #' @export
 dodgr_cache_on <- function () {
     Sys.setenv ("DODGR_CACHE" = "TRUE")

@@ -11,6 +11,7 @@
 #'
 #' @note Requires the \pkg{sf} package to be installed.
 #'
+#' @family conversion
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
@@ -52,6 +53,7 @@ dodgr_to_sf <- function (graph) {
 #' to be installed; the corresponding function that creates a full \pkg{sf}
 #' object - \link{dodgr_to_sf} does requires \pkg{sf} to be installed.
 #'
+#' @family conversion
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
@@ -118,6 +120,7 @@ dodgr_to_sfc <- function (graph) {
 #'
 #' @seealso \link{igraph_to_dodgr}
 #'
+#' @family conversion
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -160,6 +163,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
 #'
 #' @seealso \link{dodgr_to_igraph}
 #'
+#' @family conversion
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -221,6 +225,7 @@ convert_col <- function (x, n = 3) {
 #' @param graph A `dodgr` graph
 #'
 #' @return The `tidygraph` equivalent of the input
+#' @family conversion
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)

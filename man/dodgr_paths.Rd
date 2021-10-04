@@ -89,3 +89,20 @@ dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
 # dp is a list of 5 items, each of which just has a single path between each
 # pairwise from and to point.
 }
+\seealso{
+Other distances: 
+\code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists}()},
+\code{\link{dodgr_flows_aggregate}()},
+\code{\link{dodgr_flows_disperse}()},
+\code{\link{dodgr_flows_si}()},
+\code{\link{dodgr_isochrones}()},
+\code{\link{dodgr_isodists}()},
+\code{\link{dodgr_isoverts}()},
+\code{\link{dodgr_streetnet_sc}()},
+\code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_times}()},
+\code{\link{weight_railway}()},
+\code{\link{weight_streetnet}()}
+}
+\concept{distances}

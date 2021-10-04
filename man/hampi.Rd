@@ -24,4 +24,10 @@ hampi <- hampi [, which (names (hampi) \%in\% cols)]
 # this 'sf data.frame' can be converted to a 'dodgr' network with
 net <- weight_streetnet (hampi, wt_profile = 'foot')
 }
+\seealso{
+Other data: 
+\code{\link{os_roads_bristol}},
+\code{\link{weighting_profiles}}
+}
+\concept{data}
 \keyword{datasets}

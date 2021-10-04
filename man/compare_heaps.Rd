@@ -37,3 +37,18 @@ graph <- weight_streetnet (hampi)
 compare_heaps (graph, nverts = 1000, replications = 1)
 }
 }
+\seealso{
+Other misc: 
+\code{\link{dodgr_flowmap}()},
+\code{\link{dodgr_full_cycles}()},
+\code{\link{dodgr_fundamental_cycles}()},
+\code{\link{dodgr_insert_vertex}()},
+\code{\link{dodgr_sample}()},
+\code{\link{dodgr_sflines_to_poly}()},
+\code{\link{dodgr_vertices}()},
+\code{\link{match_points_to_graph}()},
+\code{\link{match_pts_to_graph}()},
+\code{\link{merge_directed_graph}()},
+\code{\link{write_dodgr_wt_profile}()}
+}
+\concept{misc}

@@ -112,3 +112,20 @@ graph_undir <- merge_directed_graph (graph)
 # This graph will only include those edges having non-zero flows, and so:
 nrow (graph); nrow (graph_undir) # the latter is much smaller
 }
+\seealso{
+Other distances: 
+\code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists}()},
+\code{\link{dodgr_flows_aggregate}()},
+\code{\link{dodgr_flows_disperse}()},
+\code{\link{dodgr_isochrones}()},
+\code{\link{dodgr_isodists}()},
+\code{\link{dodgr_isoverts}()},
+\code{\link{dodgr_paths}()},
+\code{\link{dodgr_streetnet_sc}()},
+\code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_times}()},
+\code{\link{weight_railway}()},
+\code{\link{weight_streetnet}()}
+}
+\concept{distances}

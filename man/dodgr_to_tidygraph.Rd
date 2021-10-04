@@ -19,3 +19,11 @@ Convert a \code{dodgr} graph to an \pkg{tidygraph}.
 graph <- weight_streetnet (hampi)
 grapht <- dodgr_to_tidygraph (graph)
 }
+\seealso{
+Other conversion: 
+\code{\link{dodgr_to_igraph}()},
+\code{\link{dodgr_to_sfc}()},
+\code{\link{dodgr_to_sf}()},
+\code{\link{igraph_to_dodgr}()}
+}
+\concept{conversion}

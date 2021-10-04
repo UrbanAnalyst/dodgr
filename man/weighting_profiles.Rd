@@ -21,4 +21,10 @@ obeyed or not.
 \references{
 \url{https://www.routino.org/xml/routino-profiles.xml}
 }
+\seealso{
+Other data: 
+\code{\link{hampi}},
+\code{\link{os_roads_bristol}}
+}
+\concept{data}
 \keyword{datasets}
