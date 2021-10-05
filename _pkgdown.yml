@@ -4,6 +4,32 @@ templates:
   params:
     bootswatch: cerulean
 
+reference:
+- title: Main functions
+  contents:
+  - has_concept("distances")
+- title: Functions to Obtain Graphs
+  contents:
+  - has_concept("extraction")
+- title: Functions to Modify Graphs
+  contents:
+  - has_concept("modification")
+- title: Functions to Convert Graphs
+  contents:
+  - has_concept("conversion")
+- title: Graph Centrality
+  contents:
+  - has_concept("centrality")
+- title: Miscellaneous Functions
+  contents:
+  - has_concept("misc")
+- title: Caching
+  contents:
+  - has_concept("cache")
+- title: Package Data
+  contents:
+  - has_concept("data")
+
 navbar:
   title: dodgr
   type: default
