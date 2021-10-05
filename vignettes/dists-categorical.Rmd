@@ -1,0 +1,189 @@
+---
+title: "Aggregating distances along categories of edges"
+author: "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: false
+        theme: flatly
+vignette: >
+  %\VignetteIndexEntry{4 dodgr_dists_categorical}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r pkg-load, echo = FALSE, message = FALSE}
+library (dodgr)
+```
+
+The [`dodgr_dists_categorical`
+function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+enables multiple distances to be aggregated along distinct categories of edges
+with a single query. This is particularly useful to examine information on
+proportions of total distances routed along different edge categories. The
+following three sub-sections describe the three main uses and interfaces of the
+[`dodgr_dists_categorical`
+function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html).
+Each of these requires an input `graph` to have an additional column named
+`"edge_type"`, which labels discrete categories of edges. These can be any kind
+of discrete labels at all, from integer values to character labels or factors.
+The labels are retained in the result, as demonstrated below.
+
+# 1 Full Distance Information for Edge Categories
+
+The "default" interface of the 
+[`dodgr_dists_categorical`
+function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+requires the same three mandatory parameters as 
+[`dodgr_distances`](https://atfutures.github.io/dodgr/reference/dodgr_dists.html), of
+
+1. A weighted `graph` on which the distances are to be calculated;
+2. A vector of `from` points from which distances are to be calculated; and
+3. A corresponding vector of `to` points.
+
+As for 
+[`dodgr_distances`](https://atfutures.github.io/dodgr/reference/dodgr_dists.html),
+the `from` and `to` arguments can be either vertex identifiers (generally as
+`from_id` and `to_id` columns of the input `graph`), or two-column coordinates
+for spatial graphs. The following code illustrates the procedure, using the
+internal data set,
+[`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html), initially
+starting by reducing to the largest connected component only, to ensure all
+points are mutually reachable.
+
+```{r hampi-edge-types}
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+graph <- graph [graph$component == 1, ]
+graph$edge_type <- graph$highway
+table (graph$edge_type)
+```
+
+That network then has `r length (unique (graph$edge_type))` distinct edge
+types. Submitting this graph to the function, and calculating pairwise
+distances between all points, then gives the following result:
+
+```{r full-dists1}
+v <- dodgr_vertices (graph)
+from <- to <- v$id
+d <- dodgr_dists_categorical (graph, from, to)
+class (d)
+length (d)
+sapply (d, dim)
+```
+
+The result has the dedicated class, `dodgr_dists_categorical`, which it itself
+a list of matrices, one for each distinct edge type. This class enables
+a convenient `summary` method which converts data on aggregate distances along
+each category of edges into overall proportions:
+
+```{r summary-full-dists, eval = FALSE}
+summary (d)
+```
+```{r summary-out, echo = FALSE, collapse = TRUE}
+s <- summary (d)
+```
+
+
+# 2. Proportional Distances along each Edge Category
+
+If `summary` results like those immediately above are all that is desired,
+without any additional information from the full distance matrices, then
+a `proportions_only` parameter can be used to directly return those:
+
+```{r prop-only}
+dodgr_dists_categorical (graph, from, to,
+                         proportions_only = TRUE)
+```
+
+Queries with `proportions_only = TRUE` are constructed in a different way in
+the underlying C++ code, with the main difference being that the full list of
+matrices is not stored, and these queries will generally use considerably less
+memory. For most jobs, this should translate to faster queries, as illustrated
+in the following benchmark:
+
+```{r prop-only-benchmark, warning = FALSE}
+bench::mark (full = dodgr_dists_categorical (graph, from, to),
+             prop_only = dodgr_dists_categorical (graph, from, to,
+                                                  proportions_only = TRUE),
+             check = FALSE, time_unit = "s") [, 1:3]
+```
+
+# 3. Proportional Distances within a Threshold Distance
+
+The third and final use of the [`dodgr_dists_categorical`
+function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+is through the `dlimit` parameter, used to specify a distance threshold below
+which categorical distances are to be aggregated. This is useful to examine
+relative proportions of different edges types necessary in travelling in any
+and all directions away from each point or vertex of a graph.
+
+When a `dlimit` parameter is specified, the `to` parameter is ignored, and
+distances are aggregated along all possible routes away from each `from` point,
+out to the specified `dlimit`. The value of `dlimit` must be specified relative
+to the edge distance values contained in the input graph. For spatial graphs
+obtained with [`dodgr_streetnet()` or
+`dodgr_streetnet_sc()`](https://atfutures.github.io/dodgr/reference/dodgr_streetnet.html),
+for example, as well as the internal [`hampi`
+data](https://atfutures.github.io/dodgr/reference/hampi.html), these distances
+are in metres, and so `dlimit` must be specified in metres.
+
+The result in then a single matrix in which each row represents one of the
+`from` points, and there is one column of aggregate distances for each edge
+type, plus an initial column of overall distances. The following code
+illustrates:
+
+```{r dists-dlimit}
+dlimit <- 2000 # in metres
+d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
+dim (d)
+head (d)
+```
+
+The row names of the resultant `data.frame` are the vertex identifiers
+specified in the `from` parameter. Such results can easily be combined with
+spatial information on the vertices obtained from the [`dodgr_vertices()~
+function](https://atfutures.github.io/dodgr/reference/dodgr_vertices.html) to
+generate spatial maps of relative proportions around each point in a graph or
+network. Summary statistics can also readily be extracted, for example,
+
+```{r hist-path}
+hist (d$path / d$distance,
+      xlab = "Relative proportions of trips along paths", main = "")
+```
+
+Trips along paths are roughly evenly distributed between 0 and 1. In contrast,
+proportions of trips along service ways -- used to facilitate motorised
+vehicular access in the otherwise car-free area of Hampi, India -- are
+distinctly different:
+
+```{r hist-track}
+hist (d$service / d$distance,
+      xlab = "Relative proportions of trips along service ways", main = "")
+```
+
+These distributions provide more detailed and nuanced insights than those
+provided by the overall `summary` functions above, which only revealed overall
+respective relative proportions of `r round (s [["path"]], digits = 2)` and
+`r round (s [["service"]], digits = 2)` for paths and service ways. The results
+within the distance threshold reveal that the distributional forms of
+proportional distances differ as much as the aggregate values, and that both
+aspects of the function provide distinct insights into proportional distances
+along categories of edge types.
+
+Finally, this use of the function also utilizes distinct difference in the
+underlying C++ code that are even more efficient that the previous case of
+proportional distances. The following code benchmarks the three modes:
+
+```{r benchmark3, warning = FALSE}
+bench::mark (full = dodgr_dists_categorical (graph, from, to),
+             prop_only = dodgr_dists_categorical (graph, from, to,
+                                                  proportions_only = TRUE),
+             dlimit = dodgr_dists_categorical (graph, from, dlimit = 2000),
+             check = FALSE, time_unit = "s") [, 1:3]
+```
+
+Finally, note that the efficiency of distance-threshold queries scales
+non-linearly with increases in `dlimit`, with queries quickly becoming less
+efficient for larger values of `dlimit`.

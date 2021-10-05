@@ -1,4 +1,4 @@
-LFILE = times
+LFILE = dists-categorical
 
 all: knith
 #all: knith open 
@@ -60,4 +60,3 @@ convone_t: times-fig1.pdf
 
 rmone_t:
 	rm times-fig1.aux times-fig1.log times-fig1.pdf
-
