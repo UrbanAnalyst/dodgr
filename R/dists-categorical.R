@@ -11,7 +11,8 @@
 #' results. See Note.
 #' @param dlimit If `TRUE`, and no value to `to` is given, distances are
 #' aggregated from each `from` point out to the specified distance limit (in
-#' metres). The `proportions_only` argument has no effect when `dlimit = TRUE`.
+#' the same units as the edge distances of the input graph). The
+#' `proportions_only` argument has no effect when `dlimit = TRUE`.
 #' @return If `dlimit = FALSE`, a list of distance matrices of equal dimensions
 #' (length(from), length(to)), the first of which ("distance") holds the final
 #' distances, while the rest are one matrix for each unique value of

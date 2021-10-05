@@ -33,7 +33,8 @@ results. See Note.}
 
 \item{dlimit}{If \code{TRUE}, and no value to \code{to} is given, distances are
 aggregated from each \code{from} point out to the specified distance limit (in
-metres). The \code{proportions_only} argument has no effect when \code{dlimit = TRUE}.}
+the same units as the edge distances of the input graph). The
+\code{proportions_only} argument has no effect when \code{dlimit = TRUE}.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
