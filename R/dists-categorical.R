@@ -32,6 +32,7 @@
 #' speed up calculations, but perhaps more importantly it may make possible
 #' calculations which would otherwise require distance matrices too large to be
 #' directly stored.
+#' @family distances
 #' @export
 dodgr_dists_categorical <- function (graph,
                                       from = NULL,
@@ -158,6 +159,7 @@ dodgr_dists_categorical <- function (graph,
 #' @param object A 'dodgr_dists_categorical' object
 #' @param ... Extra parameters currently not used
 #' @return The summary statistics (invisibly)
+#' @family misc
 #' @export
 summary.dodgr_dists_categorical <- function (object, ...) {
 

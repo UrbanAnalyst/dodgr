@@ -31,6 +31,7 @@ Other misc:
 \code{\link{dodgr_vertices}()},
 \code{\link{match_points_to_graph}()},
 \code{\link{match_pts_to_graph}()},
-\code{\link{merge_directed_graph}()}
+\code{\link{merge_directed_graph}()},
+\code{\link{summary.dodgr_dists_categorical}()}
 }
 \concept{misc}
