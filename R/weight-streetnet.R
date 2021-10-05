@@ -98,7 +98,7 @@
 #'
 #' @seealso \link{write_dodgr_wt_profile}, \link{dodgr_times}
 #'
-#' @family distances
+#' @family extraction
 #' @export
 #' @examples
 #' # hampi is included with package as an 'osmdata' sf-formatted street network
@@ -144,7 +144,7 @@ weight_streetnet <- function (x,
 }
 
 #' @name weight_streetnet
-#' @family distances
+#' @family extraction
 #' @export
 weight_streetnet.default <- function (x,
                                       wt_profile = "bicycle",
@@ -170,7 +170,7 @@ way_types_to_keep <- c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
 # ********************************************************************
 
 #' @name weight_streetnet
-#' @family distances
+#' @family extraction
 #' @export
 weight_streetnet.sf <- function (x,
                                  wt_profile = "bicycle",
@@ -472,7 +472,7 @@ add_extra_sf_columns <- function (graph, x) {
 # most functions are defined in weight-streetnet-times.R
 
 #' @name weight_streetnet
-#' @family distances
+#' @family extraction
 #' @export
 weight_streetnet.sc <- weight_streetnet.SC <-
     function (x, wt_profile = "bicycle",
@@ -580,7 +580,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 #' as by maximum speed, can be implemented simply by modifying the
 #' `d_weighted` column returned by this function accordingly.
 #'
-#' @family distances
+#' @family extraction
 #' @export
 #' @examples
 #' \dontrun{

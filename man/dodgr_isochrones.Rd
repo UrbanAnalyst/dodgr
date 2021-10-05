@@ -59,10 +59,6 @@ Other distances:
 \code{\link{dodgr_isodists}()},
 \code{\link{dodgr_isoverts}()},
 \code{\link{dodgr_paths}()},
-\code{\link{dodgr_streetnet_sc}()},
-\code{\link{dodgr_streetnet}()},
-\code{\link{dodgr_times}()},
-\code{\link{weight_railway}()},
-\code{\link{weight_streetnet}()}
+\code{\link{dodgr_times}()}
 }
 \concept{distances}

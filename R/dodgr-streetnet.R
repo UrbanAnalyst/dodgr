@@ -25,7 +25,7 @@
 #' should rather be interpreted to indicate that a request is too large, and may
 #' need to be refined, or somehow broken up into smaller queries.
 #'
-#' @family distances
+#' @family extraction
 #' @export
 #' @examples
 #' \dontrun{
@@ -91,7 +91,7 @@ dodgr_streetnet <- function (bbox,
 #' bounding box will be constructed by expanding the range of `pts` by the
 #' relative amount of `expand`.
 #'
-#' @family distances
+#' @family extraction
 #' @inherit dodgr_streetnet
 #' @export
 dodgr_streetnet_sc <- function (bbox,
