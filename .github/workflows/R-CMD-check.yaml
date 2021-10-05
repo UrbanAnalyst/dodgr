@@ -55,9 +55,11 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
+      # multilib to ensure link to bits/c++-config in dgraph.h
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
+          apt-get install -y gcc-multilib g++-multilib
           while read -r cmd
           do
             eval sudo $cmd
