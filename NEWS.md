@@ -1,5 +1,9 @@
 
-#v 0.2.9.00X
+#v 0.2.10.00X
+
+Major changes:
+
+- New `dodgr_dists_categorical` function + accompanying vignette
 
 #v 0.2.9
 
