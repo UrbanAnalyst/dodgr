@@ -41,15 +41,21 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
-        with:
-          extra-packages: rcmdcheck
-
       # multilib to ensure link to bits/c++-config in dgraph.h
-      - name: Install system dependencies
+      - name: Install linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install -y gcc-multilib g++-multilib
+
+      - name: Install macos dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install gcc
+
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: rcmdcheck
 
       - uses: r-lib/actions/check-r-package@v1
 
