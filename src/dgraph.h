@@ -1,7 +1,6 @@
 #ifndef DGRAPH_H
 #define DGRAPH_H
 
-#include <bits/c++config.h>
 #include <vector>
 #include <limits>
 
