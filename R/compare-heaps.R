@@ -53,6 +53,7 @@ compare_heaps <- function (graph,
         TriHeap_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "TriHeap"),
         TriHeapExt_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "TriHeapExt"),
         Heap23_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "Heap23"),
-        igraph = igraph::distances (igr, v = from_id, to = to_id, mode = "out")
+        igraph = igraph::distances (igr, v = from_id, to = to_id, mode = "out"),
+        check = FALSE # contracted don't necessarily equal full dists here
         )
 }
