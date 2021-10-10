@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.11.007",
+  "version": "0.2.11.008",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -177,18 +177,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=markdown"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "RColorBrewer",
-      "name": "RColorBrewer",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=RColorBrewer"
     },
     {
       "@type": "SoftwareApplication",
@@ -401,5 +389,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "13856.066KB"
+  "fileSize": "13856.048KB"
 }
