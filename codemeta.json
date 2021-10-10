@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.11.008",
+  "version": "0.2.11.009",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -204,18 +204,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "scales",
-      "name": "scales",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=scales"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
       "provider": {
@@ -389,5 +377,5 @@
     }
   ],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "13856.048KB"
+  "fileSize": "13856.036KB"
 }
