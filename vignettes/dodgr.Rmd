@@ -429,8 +429,9 @@ which calculates distances between 100 random points:
 bb <- osmdata::getbb ("york uk")
 npts <- 100
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
-routed_points <- function (expand = 0, pts)
-{
+
+routed_points <- function (expand = 0, pts) {
+
     gr0 <- dodgr_streetnet (pts = pts, expand = expand) %>%
         weight_streetnet ()
     d0 <- dodgr_dists (gr0, from = pts)
@@ -641,12 +642,11 @@ dp [[1]] [[1]]
 # make sure there are some paths:
 maxlen <- max (unlist (lapply (dp, function (i)
                                max (unlist (lapply (i, length))))))
-if (maxlen > 0)
-{
+if (maxlen > 0) {
+
     n <- 0
     i <- 0
-    while (all (n == 0))
-    {
+    while (all (n == 0)) {
         i <- i + 1
         n <- which (lapply (dp [[i]], length) > 0)
     }
