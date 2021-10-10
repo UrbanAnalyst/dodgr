@@ -497,7 +497,7 @@ The comparisons are actually made on a randomly selected sub-component of the
 graph containing a defined number of vertices (with a default of 1,000, or the
 entire graph if it contains fewer than 1,000 vertices).
 ```{r compare-heaps}
-compare_heaps (graph, nverts = 1000, replications = 1)
+compare_heaps (graph, nverts = 100)
 ```
 The key column of that `data.frame` is `relative`, which quantifies the relative
 performance of each test in relation to the best which is given a score of 1.
