@@ -11,8 +11,7 @@
 #' @param nverts Number of vertices used to generate random sub-graph. If a
 #' non-numeric value is given, the whole graph will be used.
 #' @param replications Number of replications to be used in comparison
-#' @return Result of `rbenchmark::benchmark` comparison in
-#' `data.frame` form.
+#' @return Result of `bench::mark` comparison.
 #'
 #' @note \pkg{igraph} caches intermediate results of graph processing, so
 #' the \pkg{igraph} comparisons will be faster on subsequent runs. To obtain
@@ -43,31 +42,17 @@ compare_heaps <- function (graph,
 
     igr <- dodgr_to_igraph (graph)
 
-    rbenchmark::benchmark (
-                           d <- dodgr_dists (graph, from = from_id, to = to_id,
-                                             heap = "BHeap"),
-                           d <- dodgr_dists (graph, from = from_id, to = to_id,
-                                             heap = "FHeap"),
-                           d <- dodgr_dists (graph, from = from_id, to = to_id,
-                                             heap = "TriHeap"),
-                           d <- dodgr_dists (graph, from = from_id, to = to_id,
-                                             heap = "TriHeapExt"),
-                           d <- dodgr_dists (graph, from = from_id, to = to_id,
-                                             heap = "Heap23"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "BHeap"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "FHeap"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "TriHeap"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "TriHeapExt"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "Heap23"),
-                           d <- dodgr_dists (graph_contracted, from = from_id,
-                                             to = to_id, heap = "set"),
-                           d <- igraph::distances (igr, v = from_id, to = to_id,
-                                              mode = "out"),
-                           replications = replications,
-                           order = "relative")
+    bench::mark (
+        BHeap = dodgr_dists (graph, from = from_id, to = to_id, heap = "BHeap"),
+        FHeap = dodgr_dists (graph, from = from_id, to = to_id, heap = "FHeap"),
+        TriHeap = dodgr_dists (graph, from = from_id, to = to_id, heap = "TriHeap"),
+        TriHeapExt = dodgr_dists (graph, from = from_id, to = to_id, heap = "TriHeapExt"),
+        Heap23 = dodgr_dists (graph, from = from_id, to = to_id, heap = "Heap23"),
+        BHeap_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "BHeap"),
+        FHeap_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "FHeap"),
+        TriHeap_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "TriHeap"),
+        TriHeapExt_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "TriHeapExt"),
+        Heap23_contracted = dodgr_dists (graph_contracted, from = from_id, to = to_id, heap = "Heap23"),
+        igraph = igraph::distances (igr, v = from_id, to = to_id, mode = "out")
+        )
 }

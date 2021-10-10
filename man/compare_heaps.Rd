@@ -16,8 +16,7 @@ non-numeric value is given, the whole graph will be used.}
 \item{replications}{Number of replications to be used in comparison}
 }
 \value{
-Result of \code{rbenchmark::benchmark} comparison in
-\code{data.frame} form.
+Result of \code{bench::mark} comparison.
 }
 \description{
 Perform timing comparison between different kinds of heaps as well as with
