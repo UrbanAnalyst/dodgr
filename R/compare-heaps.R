@@ -28,7 +28,7 @@ compare_heaps <- function (graph,
                            nverts = 100,
                            replications = 2) {
 
-    requireNamespace ("rbenchmark")
+    requireNamespace ("bench")
     requireNamespace ("igraph")
 
     if (is.numeric (nverts))
