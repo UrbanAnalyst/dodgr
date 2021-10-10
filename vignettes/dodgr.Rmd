@@ -569,10 +569,11 @@ efficiency can then be seen with the following code
 ```{r benchmark1, eval = TRUE}
 from <- sample (grc$from_id, size = 100)
 to <- sample (grc$to_id, size = 100)
-rbenchmark::benchmark (
-                       d2 <- dodgr_dists (grc, from = from, to = to),
-                       d2 <- dodgr_dists (graph, from = from, to = to),
-                       replications = 2)
+bench::mark (
+    full = dodgr_dists (graph, from = from, to = to),
+    contracted = dodgr_dists (grc, from = from, to = to),
+    check = FALSE # numeric rounding errors can lead to differences
+    )
 ```
 
 And contracting the graph has a similar effect of speeding up pairwise routing
