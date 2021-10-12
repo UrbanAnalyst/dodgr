@@ -169,7 +169,7 @@ struct OneCategory : public RcppParallel::Worker
             {
                 if (w [toi [j]] < INFINITE_DOUBLE)
                 {
-                    for (size_t k = 0; k < num_edge_types; k++)
+                    for (size_t k = 0; k <= num_edge_types; k++)
                     {
                         const double dto = d [toi [j] + k * nverts];
                         if (dto < INFINITE_DOUBLE) {

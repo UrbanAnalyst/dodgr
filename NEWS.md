@@ -1,6 +1,11 @@
 
 #v 0.2.11.00X
 
+Minor changes:
+
+- Bug fix for `dists_categorical(proportions_only = TRUE)` to ensure all edge
+  types are aggregated (final type was previously not aggregated).
+
 #v 0.2.11
 
 Major changes:
