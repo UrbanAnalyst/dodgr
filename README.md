@@ -2,7 +2,7 @@
 
 [![R build
 status](https://github.com/atfutures/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://codecov.io/gh/ATFutures/dodgr)
+[![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ATFutures/dodgr)
 [![Project Status:
 Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
