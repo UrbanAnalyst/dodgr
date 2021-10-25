@@ -1,5 +1,8 @@
 # v 0.2.12.00X
 
+Minor changes:
+
+- Add example code for `dodgr_dists_categorical`
 
 # v 0.2.12
 

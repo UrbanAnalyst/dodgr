@@ -33,6 +33,31 @@
 #' speed up calculations, but perhaps more importantly it may make possible
 #' calculations which would otherwise require distance matrices too large to be
 #' directly stored.
+#' @examples
+#' # Prepare a graph for categorical routing by including an "edge_type" column
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
+#' graph <- graph [graph$component == 1, ]
+#' graph$edge_type <- graph$highway
+#' # Define start and end points for categorical distances; using all vertices
+#' # here.
+#' length (unique (graph$edge_type)) # Number of categories
+#' v <- dodgr_vertices (graph)
+#' from <- to <- v$id
+#' d <- dodgr_dists_categorical (graph, from, to)
+#' class (d)
+#' length (d)
+#' sapply (d, dim)
+#' # 9 distance matrices, all of same dimensions, first of which is standard
+#' # distance matrix
+#' # s <- summary (d) # print summary as proportions along each "edge_type"
+#' # or directly calculate proportions only
+#' dodgr_dists_categorical (graph, from, to,
+#'                          proportions_only = TRUE)
+#' 
+#' # The 'dlimit' parameter can be used to calculate total distances along each
+#' # category of edges from a set of points: dlimit <- 2000 # in metres
+#' d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
+#' dim (d) # length(from), length(unique(edge_type)) + 1
 #' @family distances
 #' @export
 dodgr_dists_categorical <- function (graph,
