@@ -1,5 +1,10 @@
 # v 0.2.12.00X
 
+Major changes:
+
+- New `save_dodgr_streetnet` and `load_dodgr_streetnet` functions; thanks to
+  idea from @FlxPo
+
 Minor changes:
 
 - Add example code for `dodgr_dists_categorical`
