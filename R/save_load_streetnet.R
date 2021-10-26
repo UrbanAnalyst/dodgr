@@ -129,6 +129,11 @@ dodgr_load_streetnet <- function (filename) {
     hashc <- attr (x$graph_c, "hashc") # hash for contracted graph
     hashe <- attr (x$graph_c, "hashe") # hash for edge map
 
+    fname <- file.path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
+    if (!file.exists (fname)) {
+        saveRDS (x$graph, fname)
+    }
+
     fname_v <- file.path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
     if (!file.exists (fname_v)) {
         saveRDS (x$verts, fname_v)
