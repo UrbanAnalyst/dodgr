@@ -55,7 +55,8 @@
 #'                          proportions_only = TRUE)
 #' 
 #' # The 'dlimit' parameter can be used to calculate total distances along each
-#' # category of edges from a set of points: dlimit <- 2000 # in metres
+#' # category of edges from a set of points:
+#' dlimit <- 2000 # in metres
 #' d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
 #' dim (d) # length(from), length(unique(edge_type)) + 1
 #' @family distances

@@ -26,7 +26,7 @@ test_that("tidyraph", {
 
 test_that("sf", {
     graph <- weight_streetnet (hampi)
-    expect_silent (gsfc <- dodgr_to_sfc (graph))
+    gsfc <- dodgr_to_sfc (graph)
     expect_is (gsfc, "list")
     expect_equal (length (gsfc), 2)
 

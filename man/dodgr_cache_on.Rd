@@ -16,6 +16,8 @@ after caching has been turned off with \link{dodgr_cache_off}.
 \seealso{
 Other cache: 
 \code{\link{clear_dodgr_cache}()},
-\code{\link{dodgr_cache_off}()}
+\code{\link{dodgr_cache_off}()},
+\code{\link{dodgr_load_streetnet}()},
+\code{\link{dodgr_save_streetnet}()}
 }
 \concept{cache}

@@ -23,6 +23,8 @@ for details of caching process.
 \seealso{
 Other cache: 
 \code{\link{dodgr_cache_off}()},
-\code{\link{dodgr_cache_on}()}
+\code{\link{dodgr_cache_on}()},
+\code{\link{dodgr_load_streetnet}()},
+\code{\link{dodgr_save_streetnet}()}
 }
 \concept{cache}
