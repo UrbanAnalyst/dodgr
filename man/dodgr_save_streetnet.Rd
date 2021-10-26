@@ -30,6 +30,14 @@ This may take some time if \link{dodgr_cache_off} has been called.
 The contracted version of the graph is also saved, and so must be calculated
 if it has not previously been automatically cached.
 }
+\examples{
+net <- weight_streetnet (hampi)
+f <- file.path (tempdir (), "streetnet.Rds")
+dodgr_save_streetnet (net, f)
+clear_dodgr_cache () # rm cached objects from tempdir
+# at some later time, or in a new R session:
+net <- dodgr_load_streetnet (net)
+}
 \seealso{
 Other cache: 
 \code{\link{clear_dodgr_cache}()},
