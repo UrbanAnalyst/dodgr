@@ -30,3 +30,11 @@ This may take some time if \link{dodgr_cache_off} has been called.
 The contracted version of the graph is also saved, and so must be calculated
 if it has not previously been automatically cached.
 }
+\seealso{
+Other cache: 
+\code{\link{clear_dodgr_cache}()},
+\code{\link{dodgr_cache_off}()},
+\code{\link{dodgr_cache_on}()},
+\code{\link{dodgr_load_streetnet}()}
+}
+\concept{cache}
