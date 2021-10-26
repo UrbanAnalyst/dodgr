@@ -92,7 +92,7 @@ test_that ("proportions only", {
   # These will only be approximately equal:
   expect_true (mean (abs (d1 - d2)) > 0)
   if (test_all) {
-      expect_true (max (abs (d1 - d2)) < 0.01) # within 1%
+      expect_true (max (abs (d1 - d2)) < 0.1) # within 10%
   }
 })
 
