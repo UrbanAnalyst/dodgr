@@ -23,7 +23,7 @@ reference:
 - title: Miscellaneous Functions
   contents:
   - has_concept("misc")
-- title: Caching
+- title: Save, Load, and Caching
   contents:
   - has_concept("cache")
 - title: Package Data
