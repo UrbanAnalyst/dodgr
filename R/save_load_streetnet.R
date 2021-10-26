@@ -27,7 +27,7 @@
 #' dodgr_save_streetnet (net, f)
 #' clear_dodgr_cache () # rm cached objects from tempdir
 #' # at some later time, or in a new R session:
-#' net <- dodgr_load_streetnet (net)
+#' net <- dodgr_load_streetnet (f)
 #' @family cache
 #' @export
 dodgr_save_streetnet <- function (net, filename = NULL) {
