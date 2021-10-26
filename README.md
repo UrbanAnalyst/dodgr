@@ -325,228 +325,258 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the
-[`allcontributors`
-package](https://github.com/ropenscilabs/allcontributors) following the
-[all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
-<img src="https://avatars1.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=mpadge">mpadge</a>
 </td>
 <td align="center">
 <a href="https://github.com/karpfen">
-<img src="https://avatars3.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=karpfen">karpfen</a>
 </td>
 <td align="center">
 <a href="https://github.com/Robinlovelace">
-<img src="https://avatars2.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=Robinlovelace">Robinlovelace</a>
 </td>
 <td align="center">
 <a href="https://github.com/agila5">
-<img src="https://avatars1.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=agila5">agila5</a>
 </td>
 <td align="center">
 <a href="https://github.com/JimShady">
-<img src="https://avatars1.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=JimShady">JimShady</a>
 </td>
 <td align="center">
 <a href="https://github.com/layik">
-<img src="https://avatars3.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=layik">layik</a>
 </td>
 <td align="center">
 <a href="https://github.com/virgesmith">
-<img src="https://avatars3.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
+
 </table>
+
 
 ### Issue Authors
 
 <table>
+
 <tr>
 <td align="center">
+<a href="https://github.com/chrjangit">
+<img src="https://avatars.githubusercontent.com/u/13800425?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Achrjangit">chrjangit</a>
+</td>
+<td align="center">
+<a href="https://github.com/rafapereirabr">
+<img src="https://avatars.githubusercontent.com/u/7448421?u=9a760f26e72cd66150784babc5da6862e7775542&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Arafapereirabr">rafapereirabr</a>
+</td>
+<td align="center">
+<a href="https://github.com/chrijo">
+<img src="https://avatars.githubusercontent.com/u/37801457?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Achrijo">chrijo</a>
+</td>
+<td align="center">
+<a href="https://github.com/dataandcrowd">
+<img src="https://avatars.githubusercontent.com/u/25252172?u=2c62dac1ac9bfef3f26ee56c3d63b18dccc553a3&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adataandcrowd">dataandcrowd</a>
+</td>
+<td align="center">
+<a href="https://github.com/mem48">
+<img src="https://avatars.githubusercontent.com/u/15819577?u=0c128db4e7567656c23e83e4314111fcea424526&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amem48">mem48</a>
+</td>
+<td align="center">
+<a href="https://github.com/fzenoni">
+<img src="https://avatars.githubusercontent.com/u/6040873?u=bf32b8c1bc7ffc30c34bb09a1b0ae0f851414a48&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Afzenoni">fzenoni</a>
+</td>
+<td align="center">
+<a href="https://github.com/mdsumner">
+<img src="https://avatars.githubusercontent.com/u/4107631?u=c04c3e58dcca3b8c7a49ef4a3ccc6552df195e1b&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/nacnudus">
+<img src="https://avatars.githubusercontent.com/u/3522552?u=53524b68ca89335d9079b7272ee6c2b0afda340a&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Anacnudus">nacnudus</a>
+</td>
+<td align="center">
+<a href="https://github.com/mkvasnicka">
+<img src="https://avatars.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amkvasnicka">mkvasnicka</a>
+</td>
+<td align="center">
+<a href="https://github.com/lga455">
+<img src="https://avatars.githubusercontent.com/u/8452822?u=498a6b3125470c20e4057b0f12b794571cfd49e1&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Alga455">lga455</a>
+</td>
+<td align="center">
+<a href="https://github.com/Maschette">
+<img src="https://avatars.githubusercontent.com/u/14663215?u=93694159d02e924e6413bd067d7746f1d16d64c1&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AMaschette">Maschette</a>
+</td>
+<td align="center">
+<a href="https://github.com/orlando-sabogal">
+<img src="https://avatars.githubusercontent.com/u/7365739?u=f6ac9be2676c4b2cedcc047715c292248b468d3e&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Aorlando-sabogal">orlando-sabogal</a>
+</td>
+<td align="center">
 <a href="https://github.com/tbuckl">
-<img src="https://avatars1.githubusercontent.com/u/98956?u=9580c2ee3c03cbbe44ac8180b0f6a6725b0415f0&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/98956?u=9580c2ee3c03cbbe44ac8180b0f6a6725b0415f0&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Atbuckl">tbuckl</a>
 </td>
 <td align="center">
 <a href="https://github.com/douglascm">
-<img src="https://avatars1.githubusercontent.com/u/29764356?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/29764356?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
-<td align="center">
-<a href="https://github.com/mem48">
-<img src="https://avatars1.githubusercontent.com/u/15819577?u=4a4078aff5fa01d9ef82b5a504c3068d3ad21f0d&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amem48">mem48</a>
-</td>
-<td align="center">
-<a href="https://github.com/rafapereirabr">
-<img src="https://avatars0.githubusercontent.com/u/7448421?u=9a760f26e72cd66150784babc5da6862e7775542&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Arafapereirabr">rafapereirabr</a>
-</td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
-<img src="https://avatars0.githubusercontent.com/u/6937320?u=b5a5f5dca24d1b509236ca6d3871182f9171bd14&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/6937320?u=dcb5b57ddc41cfd15aac6145c80efbfbfcab734d&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adarinchristensen">darinchristensen</a>
 </td>
 <td align="center">
-<a href="https://github.com/edzer">
-<img src="https://avatars0.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Aedzer">edzer</a>
-</td>
-<td align="center">
 <a href="https://github.com/romainFr">
-<img src="https://avatars1.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
-</tr>
-<tr>
 <td align="center">
 <a href="https://github.com/dcooley">
-<img src="https://avatars0.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adcooley">dcooley</a>
 </td>
 <td align="center">
 <a href="https://github.com/Hussein-Mahfouz">
-<img src="https://avatars2.githubusercontent.com/u/45176416?u=ceef68f4fec4aed25b069522e8c90fde3629c7f0&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/45176416?u=ceef68f4fec4aed25b069522e8c90fde3629c7f0&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AHussein-Mahfouz">Hussein-Mahfouz</a>
 </td>
+<td align="center">
+<a href="https://github.com/sigmafelix">
+<img src="https://avatars.githubusercontent.com/u/25448786?u=fe2158c4bd573cf9aeb7efb7cf5c2c6bca2d8560&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asigmafelix">sigmafelix</a>
+</td>
+<td align="center">
+<a href="https://github.com/theFippo">
+<img src="https://avatars.githubusercontent.com/u/28879598?u=13dda47f088a55bc2c0f62ac2e23c264d6397a2c&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AtheFippo">theFippo</a>
+</td>
+<td align="center">
+<a href="https://github.com/polettif">
+<img src="https://avatars.githubusercontent.com/u/17431069?u=757eac2821736acbb02e7c90b456411d256d5780&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
+</td>
 </tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/edzer">
+<img src="https://avatars.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Aedzer">edzer</a>
+</td>
+<td align="center">
+<a href="https://github.com/FlxPo">
+<img src="https://avatars.githubusercontent.com/u/5145583?u=cbd02ee0a0fa0447429f38bd7e3a1da57c841239&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
+</td>
+</tr>
+
 </table>
+
 
 ### Issue Contributors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
-<img src="https://avatars0.githubusercontent.com/u/10625733?u=8d7cd55a61f1a1b3f9973ddff5adbb45e0b193c6&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/10625733?u=8d7cd55a61f1a1b3f9973ddff5adbb45e0b193c6&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Arichardellison">richardellison</a>
 </td>
 <td align="center">
-<a href="https://github.com/polettif">
-<img src="https://avatars3.githubusercontent.com/u/17431069?u=757eac2821736acbb02e7c90b456411d256d5780&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Apolettif">polettif</a>
-</td>
-<td align="center">
-<a href="https://github.com/chrjangit">
-<img src="https://avatars2.githubusercontent.com/u/13800425?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Achrjangit">chrjangit</a>
-</td>
-<td align="center">
-<a href="https://github.com/mdsumner">
-<img src="https://avatars1.githubusercontent.com/u/4107631?u=c7a3627c592123651d51d002f421c2bd00be172f&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Amdsumner">mdsumner</a>
-</td>
-<td align="center">
-<a href="https://github.com/chrijo">
-<img src="https://avatars1.githubusercontent.com/u/37801457?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Achrijo">chrijo</a>
-</td>
-<td align="center">
-<a href="https://github.com/SymbolixAU">
-<img src="https://avatars2.githubusercontent.com/u/18344164?u=022e0d3bdcca3e224021bae842672bda12b599df&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3ASymbolixAU">SymbolixAU</a>
-</td>
-</tr>
-<tr>
-<td align="center">
 <a href="https://github.com/coatless">
-<img src="https://avatars2.githubusercontent.com/u/833642?u=4f003526aa302417ef486034c4a7f95267d49637&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/833642?u=4f003526aa302417ef486034c4a7f95267d49637&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Acoatless">coatless</a>
 </td>
 <td align="center">
-<a href="https://github.com/fzenoni">
-<img src="https://avatars3.githubusercontent.com/u/6040873?u=bf32b8c1bc7ffc30c34bb09a1b0ae0f851414a48&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Afzenoni">fzenoni</a>
-</td>
-<td align="center">
-<a href="https://github.com/nacnudus">
-<img src="https://avatars1.githubusercontent.com/u/3522552?u=53524b68ca89335d9079b7272ee6c2b0afda340a&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Anacnudus">nacnudus</a>
-</td>
-<td align="center">
-<a href="https://github.com/mkvasnicka">
-<img src="https://avatars2.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Amkvasnicka">mkvasnicka</a>
-</td>
-<td align="center">
 <a href="https://github.com/znmeb">
-<img src="https://avatars2.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb">znmeb</a>
 </td>
 <td align="center">
 <a href="https://github.com/yihui">
-<img src="https://avatars2.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
 </td>
-<td align="center">
-<a href="https://github.com/lga455">
-<img src="https://avatars3.githubusercontent.com/u/8452822?u=498a6b3125470c20e4057b0f12b794571cfd49e1&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Alga455">lga455</a>
-</td>
 </tr>
-<tr>
-<td align="center">
-<a href="https://github.com/Maschette">
-<img src="https://avatars2.githubusercontent.com/u/14663215?u=93694159d02e924e6413bd067d7746f1d16d64c1&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3AMaschette">Maschette</a>
-</td>
-<td align="center">
-<a href="https://github.com/orlando-sabogal">
-<img src="https://avatars1.githubusercontent.com/u/7365739?u=f6ac9be2676c4b2cedcc047715c292248b468d3e&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aorlando-sabogal">orlando-sabogal</a>
-</td>
-</tr>
+
 </table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
