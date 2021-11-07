@@ -9,12 +9,17 @@ on:
 name: test-coverage
 
 jobs:
+
   test-coverage:
+
     runs-on: ubuntu-latest
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
+    if: "!(contains(github.event.head_commit.message, 'ci skip')||contains(github.event.head_commit.message, 'skip ci'))"
     steps:
+
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-r@v1
