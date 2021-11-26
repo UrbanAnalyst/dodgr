@@ -6,7 +6,6 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
              identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 skip_if (!test_all)
-testthat::skip_on_cran ()
 
 dodgr_cache_off ()
 clear_dodgr_cache ()
@@ -126,7 +125,7 @@ test_that("compare heaps", {
     ch <- compare_heaps (graph, nverts = 100)
     expect_equal (nrow (ch), 11L)
     # Test that all dodgr calculations are faster than igraph:
-    igr <- which (grepl ("igraph", ch$test))
+    igr <- which (grepl ("igraph", ch$expression))
     #expect_true (ch$elapsed [igr] == max (ch$elapsed))
     # This actually fails on some machines (R oldrel on Windows) because elapsed
     # times are sometimes all very small *and equal*, so is turned off:
