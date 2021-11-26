@@ -226,6 +226,32 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
     }
 }
 
+// Sort a vector of edges according to original edge sequence
+void graph_contract::sort_edges (
+    const std::vector <edge_id_t> &old_edges,
+    const std::unordered_map <edge_id_t, size_t> &edge_sequence,
+    std::vector <edge_id_t> &edges_sorted) {
+
+    std::vector <size_t> old_edge_index (old_edges.size ());
+    std::set <size_t> index_tmp;
+    for (size_t i = 0; i < old_edges.size (); i++)
+    {
+        old_edge_index [i] = edge_sequence.find (old_edges [i])->second;
+        index_tmp.emplace (old_edge_index [i]);
+    }
+    // Convert ordered index_tmp into sorted vector index:
+    std::vector <size_t> index (old_edges.size ());
+    for (size_t i = 0; i < old_edges.size (); i++) {
+        index [i] = static_cast <size_t> (std::distance (index_tmp.begin (),
+                    index_tmp.find (old_edge_index [i])));
+    }
+    // Finally use that index to re-order old_edges:
+    for (size_t i = 0; i < old_edges.size (); i++) {
+        edges_sorted [i] = old_edges [index [i]];
+    }
+}
+
+
 //' rcpp_contract_graph
 //'
 //' Removes nodes and edges from a graph that are not needed for routing
@@ -250,11 +276,18 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
             verts_to_keep.emplace (std::string (vertlist [i]));
     }
 
-    // Get set of all original edge IDs
+    // Get set of all original edge IDs, as well as a map of original edge
+    // sequence numbers to ensure contracted edges follow original sequences
+    // (used below to fill the final edge_map).
     std::unordered_set <edge_id_t> original_edges;
     Rcpp::StringVector edge_id = graph ["edge_id"];
+    std::unordered_map <edge_id_t, size_t> edge_sequence;
+    size_t i = 0;
     for (auto e: edge_id)
+    {
         original_edges.emplace (e);
+        edge_sequence.emplace (e, i++);
+    }
 
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -305,6 +338,11 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     }
 
     // populate the new -> old edge map
+    // The graph_contract::contract_one_edge function unavoidably inserts edges
+    // in random order. They have to be re-ordered here to the order in the
+    // original graph so that uncontracted edges follow original sequences
+    // (#173).
+
     std::vector <edge_id_t> edge_map_new (map_size), edge_map_old (map_size);
     size_t count = 0;
     for (auto e = edge_map_contracted.begin ();
@@ -313,7 +351,16 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         if (original_edges.find (e->first) == original_edges.end ())
         {
             std::vector <edge_id_t> old_edges = e->second.get_old_edges ();
-            for (auto oe: old_edges)
+            std::vector <edge_id_t> edges_sorted (old_edges.size ());
+            if (old_edges.size () == 1L)
+            {
+                edges_sorted [0] = old_edges [0];
+            } else
+            {
+                graph_contract::sort_edges (old_edges, edge_sequence, edges_sorted);
+            }
+
+            for (auto oe: edges_sorted)
             {
                 edge_map_new [count] = e->first;
                 edge_map_old [count++] = oe;

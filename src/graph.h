@@ -205,6 +205,11 @@ void contract_graph (vertex_map_t &vertex_map, edge_map_t &edge_map,
         std::unordered_set <vertex_id_t> verts_to_keep,
         bool has_times);
 
+void sort_edges (
+    const std::vector <edge_id_t> &old_edges,
+    const std::unordered_map <edge_id_t, size_t> &edge_sequence,
+    std::vector <edge_id_t> &edges_sorted);
+
 } // end namespace graph_contract
 
 Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
