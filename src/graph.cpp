@@ -68,7 +68,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
         timew = gr ["time_weighted"];
     }
 
-    std::set <edge_id_t> replacement_edges; // all empty here
+    std::vector <edge_id_t> replacement_edges; // all empty here
 
     for (R_xlen_t i = 0; i < to.length (); i ++)
     {

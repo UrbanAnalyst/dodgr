@@ -85,7 +85,7 @@ struct edge_t
     private:
         vertex_id_t from, to;
         edge_id_t id;
-        std::set <edge_id_t> old_edges;
+        std::vector <edge_id_t> old_edges;
 
     public:
         double dist;
@@ -97,11 +97,11 @@ struct edge_t
         vertex_id_t get_from_vertex () { return from; }
         vertex_id_t get_to_vertex () { return to; }
         edge_id_t getID () { return id; }
-        std::set <edge_id_t> get_old_edges () { return old_edges; }
+        std::vector <edge_id_t> get_old_edges () { return old_edges; }
 
         edge_t (vertex_id_t from_id, vertex_id_t to_id,
                 std::vector <double> weights_in, edge_id_t id_in,
-                std::set <edge_id_t> replacement_edges)
+                std::vector <edge_id_t> replacement_edges)
         {
             replaced_by_compact = false;
             this -> to = to_id;
@@ -114,7 +114,8 @@ struct edge_t
             if (weights_in.size () > 3)
                 this -> timew = weights_in [3];
             this -> id = id_in;
-            this -> old_edges.insert (replacement_edges.begin (),
+            this -> old_edges.insert (old_edges.end (),
+                    replacement_edges.begin (),
                     replacement_edges.end ());
         }
 };

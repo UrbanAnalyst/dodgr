@@ -67,18 +67,18 @@ void graph_contract::contract_one_edge (vert2edge_map_t &vert2edge_map,
         timew = edge_from.timew + edge_to.timew;
     }
 
-    std::set <edge_id_t> old_edges,
+    std::vector <edge_id_t> old_edges,
         old_edges_fr = edge_from.get_old_edges (),
         old_edges_to = edge_to.get_old_edges ();
     for (auto e: old_edges_fr)
-        old_edges.insert (e);
+        old_edges.push_back (e);
     for (auto e: old_edges_to)
-        old_edges.insert (e);
+        old_edges.push_back (e);
     // Only insert edge IDs that are in the original list
     if (edgelist.find (edge_from_id) != edgelist.end ())
-        old_edges.insert (edge_from_id);
+        old_edges.push_back (edge_from_id);
     if (edgelist.find (edge_to_id) != edgelist.end ())
-        old_edges.insert (edge_to_id);
+        old_edges.push_back (edge_to_id);
 
     graph::erase_from_v2e_map (vert2edge_map, vtx_id, edge_from_id);
     graph::erase_from_v2e_map (vert2edge_map, vtx_id, edge_to_id);
@@ -312,7 +312,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     {
         if (original_edges.find (e->first) == original_edges.end ())
         {
-            std::set <edge_id_t> old_edges = e->second.get_old_edges ();
+            std::vector <edge_id_t> old_edges = e->second.get_old_edges ();
             for (auto oe: old_edges)
             {
                 edge_map_new [count] = e->first;
