@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.12.26",
+  "version": "0.2.12.027",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -335,7 +335,10 @@
   ],
   "releaseNotes": "https://github.com/ATFutures/dodgr/blob/master/NEWS.md",
   "readme": "https://github.com/ATFutures/dodgr/blob/main/README.md",
-  "contIntegration": ["https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/ATFutures/dodgr"],
+  "contIntegration": [
+    "https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check",
+    "https://app.codecov.io/gh/ATFutures/dodgr"
+  ],
   "developmentStatus": "https://www.repostatus.org/#active",
   "keywords": [
     "distance",
@@ -364,7 +367,10 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": ["PublicationVolume", "Periodical"],
+          "@type": [
+            "PublicationVolume",
+            "Periodical"
+          ],
           "name": "Transport Findings"
         }
       }
