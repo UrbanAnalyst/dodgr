@@ -4,6 +4,8 @@ Major changes:
 
 - New `save_dodgr_streetnet` and `load_dodgr_streetnet` functions; thanks to
   idea from @FlxPo
+- Edge maps used to uncontract graphs now store edges in original order,
+  enabling complex edge sequences such as polygons to be reconstructed (#173).
 
 Minor changes:
 
