@@ -239,15 +239,17 @@ void graph_contract::sort_edges (
         old_edge_index [i] = edge_sequence.find (old_edges [i])->second;
         index_tmp.emplace (old_edge_index [i]);
     }
+
     // Convert ordered index_tmp into sorted vector index:
     std::vector <size_t> index (old_edges.size ());
     for (size_t i = 0; i < old_edges.size (); i++) {
         index [i] = static_cast <size_t> (std::distance (index_tmp.begin (),
                     index_tmp.find (old_edge_index [i])));
     }
+
     // Finally use that index to re-order old_edges:
     for (size_t i = 0; i < old_edges.size (); i++) {
-        edges_sorted [i] = old_edges [index [i]];
+        edges_sorted [index [i] ] = old_edges [i];
     }
 }
 
@@ -352,6 +354,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
         {
             std::vector <edge_id_t> old_edges = e->second.get_old_edges ();
             std::vector <edge_id_t> edges_sorted (old_edges.size ());
+
             if (old_edges.size () == 1L)
             {
                 edges_sorted [0] = old_edges [0];
