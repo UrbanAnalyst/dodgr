@@ -42,6 +42,7 @@
 #'
 #' @name dodgr
 #' @docType package
+#' @family package
 #' @importFrom graphics plot
 #' @importFrom grDevices colorRampPalette
 #' @importFrom magrittr %>%
