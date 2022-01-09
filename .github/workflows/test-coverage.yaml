@@ -22,13 +22,14 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: covr
+          extra-packages: any::covr
+          needs: coverage
 
       - name: Test coverage
         run: covr::codecov(line_exclusions = list('src/heaps/bheap.cpp','src/heaps/bheap.h','src/heaps/fheap.h','src/heaps/fheap.cpp','src/heaps/heap23.h','src/heaps/heap23.cpp','src/heaps/heap23_2.h','src/heaps/heap.h','src/heaps/heap_lib.h','src/heaps/triheap.h','src/heaps/triheap.cpp','src/heaps/triheap_ext.h','src/heaps/triheap_ext.cpp','src/dgraph.cpp'))
