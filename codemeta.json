@@ -1,16 +1,13 @@
 {
-  "@context": [
-    "https://doi.org/10.5063/schema/codemeta-2.0",
-    "http://schema.org"
-  ],
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "dodgr",
-  "description": "Distances on dual-weighted directed graphs using\n    priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).\n    Weighted directed graphs have weights from A to B which may differ\n    from those from B to A.  Dual-weighted directed graphs have two sets\n    of such weights. A canonical example is a street network to be used\n    for routing in which routes are calculated by weighting distances\n    according to the type of way and mode of transport, yet lengths of\n    routes must be calculated from direct distances.",
+  "description": "Distances on dual-weighted directed graphs using priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>). Weighted directed graphs have weights from A to B which may differ from those from B to A. Dual-weighted directed graphs have two sets of such weights. A canonical example is a street network to be used for routing in which routes are calculated by weighting distances according to the type of way and mode of transport, yet lengths of routes must be calculated from direct distances.",
   "name": "dodgr: Distances on Directed Graphs",
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.12.030",
+  "version": "0.2.12.31",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -60,7 +57,6 @@
       "familyName": "Saunders"
     }
   ],
-  "funder": {},
   "maintainer": [
     {
       "@type": "Person",
@@ -239,14 +235,14 @@
       "sameAs": "https://CRAN.R-project.org/package=tidygraph"
     }
   ],
-  "softwareRequirements": [
-    {
+  "softwareRequirements": {
+    "1": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 3.5.0"
     },
-    {
+    "2": {
       "@type": "SoftwareApplication",
       "identifier": "callr",
       "name": "callr",
@@ -258,7 +254,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=callr"
     },
-    {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "digest",
       "name": "digest",
@@ -270,7 +266,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=digest"
     },
-    {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -282,12 +278,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "osmdata",
       "name": "osmdata",
@@ -299,7 +295,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=osmdata"
     },
-    {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -312,7 +308,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     },
-    {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "RcppParallel",
       "name": "RcppParallel",
@@ -324,30 +320,9 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=RcppParallel"
     },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "https://sysreqs.r-hub.io/get/gnumake"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "https://sysreqs.r-hub.io/get/cxx11"
-    }
-  ],
-  "releaseNotes": "https://github.com/ATFutures/dodgr/blob/master/NEWS.md",
-  "readme": "https://github.com/ATFutures/dodgr/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check",
-    "https://app.codecov.io/gh/ATFutures/dodgr"
-  ],
-  "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": [
-    "distance",
-    "street-networks",
-    "shortest-paths",
-    "r",
-    "router",
-    "openstreetmap"
-  ],
+    "SystemRequirements": "C++11, GNU make"
+  },
+  "fileSize": "14863.713KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -367,15 +342,16 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "name": "Transport Findings"
         }
       }
     }
   ],
-  "relatedLink": "https://CRAN.R-project.org/package=dodgr",
-  "fileSize": "14863.676KB"
+  "releaseNotes": "https://github.com/ATFutures/dodgr/blob/master/NEWS.md",
+  "readme": "https://github.com/ATFutures/dodgr/blob/main/README.md",
+  "contIntegration": ["https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/ATFutures/dodgr"],
+  "developmentStatus": "https://www.repostatus.org/#active",
+  "keywords": ["distance", "street-networks", "shortest-paths", "r", "router", "openstreetmap"],
+  "relatedLink": "https://CRAN.R-project.org/package=dodgr"
 }
