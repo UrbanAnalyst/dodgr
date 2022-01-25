@@ -2,7 +2,7 @@
 
 [![R build
 status](https://github.com/atfutures/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check)
-[![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ATFutures/dodgr)
+[![codecov](https://codecov.io/gh/ATFutures/dodgr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ATFutures/dodgr)
 [![Project Status:
 Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
@@ -93,7 +93,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.2.8.12'
+#> [1] '0.2.12.27'
 ```
 
 ## Important Note
@@ -125,16 +125,16 @@ function:
 class (hampi)
 #> [1] "sf"         "data.frame"
 dim (hampi)
-#> [1] 203  15
+#> [1] 236  15
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 class (graph)
 #> [1] "data.frame"      "dodgr_streetnet"
 dim (graph)
-#> [1] 5973   15
+#> [1] 6813   15
 ```
 
-The `sf`-format network contained 203 `LINESTRING` objects, with the
-`weight_streetnet()` function decomposing these into 5,973 distinct
+The `sf`-format network contained 236 `LINESTRING` objects, with the
+`weight_streetnet()` function decomposing these into 6,813 distinct
 edges, indicating that the `sf` representation had around 29 edges or
 segments in each `LINESTRING` object. The `dodgr` network then looks
 like this:
@@ -143,14 +143,14 @@ like this:
 head (graph)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway      | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:-------------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47489 | 15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 |
+| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
+|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
 
 The `geom_num` column maps directly onto the sequence of `LINESTRING`
 objects within the `sf`-formatted data. The `highway` column is taken
@@ -169,14 +169,14 @@ actual distances. Compare this with:
 head (graph [graph$highway == "path", ])
 ```
 
-|     | geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |        d | d_weighted | highway | way_id   | component |     time | time_weighted |
-|:----|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|---------:|-----------:|:--------|:---------|----------:|---------:|--------------:|
-| 47  |        2 |      47 | 338905220  | 76.47398 | 15.31224 | 338907543  | 76.47405 | 15.31241 | 19.70399 |   19.70399 | path    | 30643853 |         1 | 35.46718 |      35.46718 |
-| 48  |        2 |      48 | 338907543  | 76.47405 | 15.31241 | 338905220  | 76.47398 | 15.31224 | 19.70399 |   19.70399 | path    | 30643853 |         1 | 35.46718 |      35.46718 |
-| 49  |        2 |      49 | 338907543  | 76.47405 | 15.31241 | 2398957585 | 76.47410 | 15.31259 | 21.39172 |   21.39172 | path    | 30643853 |         1 | 38.50510 |      38.50510 |
-| 50  |        2 |      50 | 2398957585 | 76.47410 | 15.31259 | 338907543  | 76.47405 | 15.31241 | 21.39172 |   21.39172 | path    | 30643853 |         1 | 38.50510 |      38.50510 |
-| 51  |        2 |      51 | 2398957585 | 76.47410 | 15.31259 | 338907597  | 76.47413 | 15.31279 | 22.15205 |   22.15205 | path    | 30643853 |         1 | 39.87370 |      39.87370 |
-| 52  |        2 |      52 | 338907597  | 76.47413 | 15.31279 | 2398957585 | 76.47410 | 15.31259 | 22.15205 |   22.15205 | path    | 30643853 |         1 | 39.87370 |      39.87370 |
+| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
+|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
 
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
@@ -211,12 +211,12 @@ head (v)
 
 |     | id         |        x |        y | component |   n |
 |:----|:-----------|---------:|---------:|----------:|----:|
-| 1   | 339318500  | 76.47489 | 15.34169 |         1 |   0 |
+| 1   | 339318500  | 76.47491 | 15.34167 |         1 |   0 |
 | 2   | 339318502  | 76.47612 | 15.34173 |         1 |   1 |
 | 4   | 2398958028 | 76.47621 | 15.34174 |         1 |   2 |
 | 6   | 1427116077 | 76.47628 | 15.34179 |         1 |   3 |
-| 8   | 339318503  | 76.47641 | 15.34190 |         1 |   4 |
-| 10  | 2398958034 | 76.47650 | 15.34199 |         1 |   5 |
+| 8   | 7799710916 | 76.47634 | 15.34184 |         1 |   4 |
+| 10  | 339318503  | 76.47641 | 15.34190 |         1 |   5 |
 
 For OSM data extracted with the `osmdata` package (or, equivalently, via
 the `dodgr::dodgr_streetnet()` function), each object (vertices, ways,
@@ -299,14 +299,14 @@ quantifying the aggregate flows along each edge:
 head (f)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway      | way_id   | component |      time | time_weighted |      flow |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:-------------|:---------|----------:|----------:|--------------:|----------:|
-|        1 |       1 | 339318500  | 76.47489 | 15.34169 | 339318502  | 76.47612 | 15.34173 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 | 0.0000000 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47489 | 15.34169 | 132.442169 |  165.55271 | unclassified | 28565950 |         1 | 95.358362 |    119.197952 | 0.1143834 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 | 0.0000000 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   11.11084 | unclassified | 28565950 |         1 |  6.399843 |      7.999803 | 0.1143834 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 | 0.0000000 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   11.65817 | unclassified | 28565950 |         1 |  6.715106 |      8.393882 | 0.1143834 |
+| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |      flow |
+|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|----------:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 | 0.1046131 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 | 0.1310037 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 | 0.1046131 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 | 0.1310037 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 | 0.1046131 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 | 0.1310037 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
@@ -325,17 +325,19 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors`
+package](https://github.com/ropenscilabs/allcontributors) following the
+[all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ### Code
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -380,14 +382,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Authors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -432,8 +431,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
@@ -478,8 +475,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
@@ -524,8 +519,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/edzer">
@@ -540,14 +533,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Contributors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -574,9 +564,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
