@@ -325,19 +325,17 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the
-[`allcontributors`
-package](https://github.com/ropenscilabs/allcontributors) following the
-[all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -382,11 +380,14 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
+
 </table>
+
 
 ### Issue Authors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -431,6 +432,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
@@ -475,6 +478,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
@@ -507,10 +512,10 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asigmafelix">sigmafelix</a>
 </td>
 <td align="center">
-<a href="https://github.com/theFippo">
+<a href="https://github.com/JBSP-code">
 <img src="https://avatars.githubusercontent.com/u/28879598?u=13dda47f088a55bc2c0f62ac2e23c264d6397a2c&v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AtheFippo">theFippo</a>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AJBSP-code">JBSP-code</a>
 </td>
 <td align="center">
 <a href="https://github.com/polettif">
@@ -519,6 +524,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/edzer">
@@ -533,11 +540,14 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
 </td>
 </tr>
+
 </table>
+
 
 ### Issue Contributors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -564,7 +574,9 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
 </td>
 </tr>
+
 </table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
