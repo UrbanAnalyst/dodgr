@@ -10,6 +10,7 @@ Major changes:
 Minor changes:
 
 - Add example code for `dodgr_dists_categorical`
+- Slightly extend categorical routing vignette
 
 # v 0.2.12
 

@@ -49,9 +49,10 @@ the `from` and `to` arguments can be either vertex identifiers (generally as
 `from_id` and `to_id` columns of the input `graph`), or two-column coordinates
 for spatial graphs. The following code illustrates the procedure, using the
 internal data set,
-[`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html), initially
-starting by reducing to the largest connected component only, to ensure all
-points are mutually reachable.
+[`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html), from the
+settlement of Hampi in the middle of a national park in the Deccan Plains of
+India. The following code also reduces the network to the largest connected
+component only, to ensure all points are mutually reachable.
 
 ```{r hampi-edge-types}
 graph <- weight_streetnet (hampi, wt_profile = "foot")
@@ -84,6 +85,10 @@ summary (d)
 ```{r summary-out, echo = FALSE, collapse = TRUE}
 s <- summary (d)
 ```
+
+Those statistics clearly highlight the fact that Hampi is a pedestrian town -
+most ways are either paths or tracks, with a new "secondary" ways for access
+vehicles.
 
 
 # 2. Proportional Distances along each Edge Category
