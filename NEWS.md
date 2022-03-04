@@ -11,6 +11,7 @@ Minor changes:
 
 - Add example code for `dodgr_dists_categorical`
 - Slightly extend categorical routing vignette
+- fix caching bug in dodgr_centrality (#138), thanks to @mem48
 
 # v 0.2.12
 

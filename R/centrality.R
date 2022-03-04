@@ -183,6 +183,10 @@ dodgr_centrality <- function (graph,
         res$centrality <- centrality
     }
 
+    # re-cache graph:
+    if (is_dodgr_cache_on ())
+        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+
     return (res)
 }
 
