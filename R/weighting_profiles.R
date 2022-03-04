@@ -31,7 +31,7 @@ write_dodgr_wt_profile <- function (file = NULL) {
 read_dodgr_wt_profile <- function (file = NULL) {
 
     file <- paste0 (tools::file_path_sans_ext (file), ".json")
-    if (!file.exists (file))
+    if (!fs::file_exists (file))
         stop ("file [", file, "] does not exist") # nocov
 
     res <- jsonlite::fromJSON (file)

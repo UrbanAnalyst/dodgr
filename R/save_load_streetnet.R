@@ -48,10 +48,10 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
 
     # This function is essentially cache_graph in reverse
     hash <- attr (net, "hash")
-    td <- tempdir ()
+    td <- fs::path_temp ()
 
-    fname_v <- file.path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (file.exists (fname_v)) {
+    fname_v <- fs::path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
+    if (fs::file_exists (fname_v)) {
         v <- readRDS (fname_v)
     } else {
         v <- dodgr_vertices (net)
@@ -63,30 +63,30 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
     edge_col <- gr_cols$edge_id
     hashc <- digest::digest (list (net [[edge_col]], NULL))
 
-    fname_c <- file.path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
-    if (file.exists (fname_c)) {
+    fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
+    if (fs::file_exists (fname_c)) {
         graphc <- readRDS (fname_c)
     } else {
         graphc <- dodgr::dodgr_contract_graph (net)
     }
 
     hashe <- attr (graphc, "hashe")
-    fname_vc <- file.path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
-    if (file.exists (fname_vc)) {
+    fname_vc <- fs::path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
+    if (fs::file_exists (fname_vc)) {
         verts_c <- readRDS (fname_vc)
     } else {
         verts_c <- dodgr::dodgr_vertices (graphc)
     }
 
-    fname_e <- file.path (td, paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-    if (!file.exists (fname_e)) { # should always be
+    fname_e <- fs::path (td, paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_e)) { # should always be
         stop ("edge_map was not cached; unable to save network.")
     }
 
     edge_map <- readRDS (fname_e)
 
-    fname_j <- file.path (td, paste0 ("dodgr_junctions_", hashc, ".Rds"))
-    if (!file.exists (fname_j)) # should always be
+    fname_j <- fs::path (td, paste0 ("dodgr_junctions_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_j)) # should always be
         stop ("junction list was not cached; unable to save network.")
     junctions <- readRDS (fname_j)
 
@@ -118,44 +118,44 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
 #' @export
 dodgr_load_streetnet <- function (filename) {
 
-    if (!file.exists (filename)) {
+    if (!fs::file_exists (filename)) {
         stop ("filename [", filename, "] not found.")
     }
 
-    td <- tempdir ()
+    td <- fs::path_temp ()
     x <- readRDS (filename)
 
     hash <- attr (x$graph, "hash")
     hashc <- attr (x$graph_c, "hashc") # hash for contracted graph
     hashe <- attr (x$graph_c, "hashe") # hash for edge map
 
-    fname <- file.path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
-    if (!file.exists (fname)) {
+    fname <- fs::path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
+    if (!fs::file_exists (fname)) {
         saveRDS (x$graph, fname)
     }
 
-    fname_v <- file.path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (!file.exists (fname_v)) {
+    fname_v <- fs::path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
+    if (!fs::file_exists (fname_v)) {
         saveRDS (x$verts, fname_v)
     }
 
-    fname_c <- file.path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
-    if (!file.exists (fname_c)) {
+    fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_c)) {
         saveRDS (x$graph_c, fname_c)
     }
 
-    fname_vc <- file.path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
-    if (!file.exists (fname_vc)) {
+    fname_vc <- fs::path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
+    if (!fs::file_exists (fname_vc)) {
         saveRDS (x$verts_c, fname_vc)
     }
 
-    fname_e <- file.path (td, paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-    if (!file.exists (fname_e)) {
+    fname_e <- fs::path (td, paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_e)) {
         saveRDS (x$edge_map, fname_e)
     }
 
-    fname_j <- file.path (td, paste0 ("dodgr_junctions_", hashc, ".Rds"))
-    if (!file.exists (fname_j)) {
+    fname_j <- fs::path (td, paste0 ("dodgr_junctions_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_j)) {
         saveRDS (x$junctions, fname_j)
     }
 

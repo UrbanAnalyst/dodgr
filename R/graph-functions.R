@@ -181,8 +181,8 @@ dodgr_vertices <- function (graph) {
             hash <- digest::digest (graph [[gr_cols$edge_id]])
     }
 
-    fname <- file.path (tempdir (), paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (hash != "" & file.exists (fname))
+    fname <- fs::path (fs::path_temp (), paste0 ("dodgr_verts_", hash, ".Rds"))
+    if (hash != "" & fs::file_exists (fname))
         verts <- readRDS (fname)
     else {
         verts <- dodgr_vertices_internal (graph)

@@ -537,7 +537,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
     if (turn_penalty) {
         hash <- digest::digest (graph [[gr_cols$edge_id]])
-        fname <- file.path (tempdir (), paste0 ("dodgr_edge_contractions_",
+        fname <- fs::path (fs::path_temp (), paste0 ("dodgr_edge_contractions_",
                                                 hash, ".Rds"))
         obj <- res$edge_map
         saveRDS (obj, fname)

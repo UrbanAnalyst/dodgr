@@ -21,8 +21,9 @@ get_edge_map <- function (graph) {
     hashc <- get_hash (graph, hash = FALSE)
     if (is.null (hashc))
         stop ("something went wrong extracting the edge map")   # nocov
-    fname_c <- file.path (tempdir (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-    if (!file.exists (fname_c))
+    fname_c <- fs::path (fs::path_temp (),
+                         paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+    if (!fs::file_exists (fname_c))
         stop ("something went wrong extracting the edge map")   # nocov
     readRDS (fname_c)
 }
@@ -39,7 +40,7 @@ get_edge_map <- function (graph) {
 # and the uncontracted version returned.
 cache_graph <- function (graph, edge_col) {
 
-    td <- tempdir ()
+    td <- fs::path_temp ()
 
     f <- function (graph, edge_col, td) {
 
@@ -47,13 +48,13 @@ cache_graph <- function (graph, edge_col) {
         # cached, so # nocov:
         verts <- dodgr::dodgr_vertices (graph) # nocov
         hash <- attr (graph, "hash")
-        fname_v <- file.path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
-        if (!file.exists (fname_v))
+        fname_v <- fs::path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
+        if (!fs::file_exists (fname_v))
             saveRDS (verts, fname_v)
 
         # save original graph to enable subsequent re-loading from the
         # contracted version
-        fname <- file.path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
+        fname <- fs::path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
         saveRDS (graph, fname)
 
         # The hash for the contracted graph is generated from the edge IDs of
@@ -61,28 +62,28 @@ cache_graph <- function (graph, edge_col) {
         hashc <- digest::digest (list (graph [[edge_col]], NULL))
 
         graphc <- dodgr::dodgr_contract_graph (graph)
-        fname_c <- file.path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
+        fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
         saveRDS (graphc, fname_c)
 
         hashe <- attr (graphc, "hashe")
         verts <- dodgr::dodgr_vertices (graphc)
-        fname_v <- file.path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
+        fname_v <- fs::path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
         saveRDS (verts, fname_v)
 
         fname_e <- paste0 ("dodgr_edge_map_", hashc, ".Rds")
-        fname_e_fr <- file.path (tempdir (), fname_e)
-        fname_e_to <- file.path (td, fname_e)
-        if (file.exists (fname_e_fr)) # should always be
-            file.copy (fname_e_fr, fname_e_to, overwrite = TRUE)
+        fname_e_fr <- fs::path (fs::path_temp (), fname_e)
+        fname_e_to <- fs::path (td, fname_e)
+        if (fs::file_exists (fname_e_fr)) # should always be
+            fs::file_copy (fname_e_fr, fname_e_to, overwrite = TRUE)
 
         fname_j <- paste0 ("dodgr_junctions_", hashc, ".Rds")
-        fname_j_fr <- file.path (tempdir (), fname_j)
-        fname_j_to <- file.path (td, fname_j)
-        if (file.exists (fname_j_fr)) # should always be
-            file.copy (fname_j_fr, fname_j_to, overwrite = TRUE)
+        fname_j_fr <- fs::path (fs::path_temp (), fname_j)
+        fname_j_to <- fs::path (td, fname_j)
+        if (fs::file_exists (fname_j_fr)) # should always be
+            fs::file_copy (fname_j_fr, fname_j_to, overwrite = TRUE)
     }
 
-    sink (file = file.path (tempdir (), "Rout.txt"))
+    sink (file = fs::path (fs::path_temp (), "Rout.txt"))
     res <- callr::r_bg (f, list (graph, edge_col, td))
     sink ()
 
@@ -106,7 +107,7 @@ cache_graph <- function (graph, edge_col) {
 #' @export
 clear_dodgr_cache <- function () {
 
-    lf <- list.files (tempdir (), full.names = TRUE, pattern = "^dodgr_")
+    lf <- list.files (fs::path_temp (), full.names = TRUE, pattern = "^dodgr_")
     if (length (lf) > 0) {
         tryCatch (chk <- file.remove (lf),
                   error = function (e) NULL)

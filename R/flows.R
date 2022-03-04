@@ -142,9 +142,9 @@ dodgr_flows_aggregate <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- file.path (tempdir (),
-                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!file.exists (fname_c))
+        fname_c <- fs::path (fs::path_temp (),
+                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!fs::file_exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
         edge_map <- readRDS (fname_c)
     }
@@ -233,9 +233,9 @@ dodgr_flows_disperse <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- file.path (tempdir (),
-                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!file.exists (fname_c))
+        fname_c <- fs::path (fs::path_temp (),
+                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!fs::file_exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
         edge_map <- readRDS (fname_c)
     }
@@ -355,9 +355,9 @@ dodgr_flows_si <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- file.path (tempdir (),
-                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!file.exists (fname_c))
+        fname_c <- fs::path (fs::path_temp (),
+                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!fs::file_exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
         edge_map <- readRDS (fname_c)
     }
@@ -459,7 +459,7 @@ get_random_prefix <- function (prefix = "flow",
 
     charvec <- c (letters, LETTERS, 0:9)
     rand_prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
-    file.path (tempdir (), paste0 (prefix, "_", rand_prefix))
+    fs::path (fs::path_temp (), paste0 (prefix, "_", rand_prefix))
 }
 
 nodes_arg_to_pts <- function (nodes,

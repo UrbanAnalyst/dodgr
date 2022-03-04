@@ -145,9 +145,9 @@ dodgr_centrality <- function (graph,
         graph_full <- graph
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- file.path (tempdir (),
-                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!file.exists (fname_c))
+        fname_c <- fs::path (fs::path_temp (),
+                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!fs::file_exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
         edge_map <- readRDS (fname_c)
     }
@@ -312,9 +312,9 @@ estimate_centrality_time <- function (graph,
     if (contract & !methods::is (graph, "dodgr_contracted")) {
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- file.path (tempdir (),
-                              paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!file.exists (fname_c))
+        fname_c <- fs::path (fs::path_temp (),
+                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        if (!fs::file_exists (fname_c))
             stop ("something went wrong extracting the edge_map ... ") # nocov
     }
 
