@@ -160,6 +160,12 @@ process_bbox <- function (bbox,
                 bbox <- apply (bbox, 2, range)
             }
 
+            # if x/y are rows, then transpose to columns:
+            ptn <- "^x|x$|^y|y$|^lon|lon$|long$|longitude|^lat|lat$|latitude"
+            if (all (grepl (ptn, rownames (bbox)))) {
+                bbox <- t (bbox)
+            }
+
             rownames (bbox) <- c ("min", "max")
             colnames (bbox) <- c ("x", "y")
         }
