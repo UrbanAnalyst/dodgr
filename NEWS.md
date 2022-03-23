@@ -13,6 +13,7 @@ Minor changes:
 - Add example code for `dodgr_dists_categorical`
 - Slightly extend categorical routing vignette
 - fix caching bug in dodgr_centrality (#138), thanks to @mem48
+- Fix bug with bbox in `dodgr_streetnet`, thanks to @LeshunXu (#174)
 
 # v 0.2.12
 
