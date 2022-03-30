@@ -7,6 +7,8 @@ Major changes:
 - Edge maps used to uncontract graphs now store edges in original order,
   enabling complex edge sequences such as polygons to be reconstructed (#173).
 - Add "Imports: fs" to ensure cache paths work on all (ie windows) machines (#163)
+- Implement directional travel in roundabouts on weight_streetnet.sc, thanks to
+  @deanmarchiori (#175).
 
 Minor changes:
 
