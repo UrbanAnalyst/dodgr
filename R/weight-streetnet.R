@@ -163,7 +163,7 @@ weight_streetnet.default <- function (x,
 # ********************************************************************
 
 way_types_to_keep <- c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
-                       "lanes", "maxspeed")
+                       "lanes", "maxspeed", "junction")
 
 # ********************************************************************
 # *************************     sf class     *************************
@@ -514,6 +514,11 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
     attr (graph, "turn_penalty") <- 0
 
+    # follow roundabouts in allowed direction:
+    if (are_turns_restricted (wt_profile, wt_profile_file)) {
+        graph <- remove_roundabout_directions (graph, left_side)
+    }
+
     if (turn_penalty) {
         attr (graph, "turn_penalty") <-
             get_turn_penalties (wt_profile, wt_profile_file)$turn
@@ -549,6 +554,39 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
 
     return (graph)
+}
+
+#' Roundabouts are represented in both possible directions of travel. This
+#' function removes the duplicated edges which go against the allotted
+#' direction.
+#' @noRd
+remove_roundabout_directions <- function (graph, left_side = FALSE) {
+
+    index <- which (graph$junction == "roundabout")
+    rnd_objects <- unique (graph$object_ [index])
+
+    # This produces indices of edges to REMOVE, which are anti-clockwise edges
+    # for `left_side = TRUE`, and clockwise edges for `left_side = FALSE`.
+    index <- lapply (rnd_objects, function (i) {
+
+        index <- which (graph$object_ == i)
+        rnd_i <- graph [index, ]
+        xy_mid <- apply (rnd_i [, c (".vx0_x", ".vx0_y")], 2, mean)
+
+        xy0 <- cbind (rnd_i$.vx0_x - xy_mid [1],
+                      rnd_i$.vx0_y - xy_mid [2])
+        xy1 <- cbind (rnd_i$.vx1_x - xy_mid [1],
+                      rnd_i$.vx1_y - xy_mid [2])
+        cross_prod <- xy0 [, 1] * xy1 [, 2] - xy0 [, 2] * xy1 [, 1]
+        if (left_side) {
+            not_these_edges <- which (cross_prod > 0) # anti-clockwise
+        } else {
+            not_these_edges <- which (cross_prod < 0) # clockwise
+        }
+        return (index [not_these_edges])
+    })
+
+    return (graph [-(unlist (index)), ])
 }
 
 # ********************************************************************
