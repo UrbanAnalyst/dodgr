@@ -457,10 +457,8 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         res$graph$old_edge_in <- res$graph$old_edge_out <- NULL
 
         index <- which (graph$.vx0 %in% res$junction_vertices)
-        #v_start <- graph$.vx0 [index]
         graph$.vx0 [index] <- paste0 (graph$.vx0 [index], "_start")
         index <- which (graph$.vx1 %in% res$junction_vertices)
-        #v_end <- graph$.vx1 [index]
         graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
 
         # pad out extra columns of res to match any extra in original graph
