@@ -515,13 +515,13 @@ weight_streetnet.sc <- weight_streetnet.SC <-
     attr (graph, "turn_penalty") <- 0
 
     # follow roundabouts in allowed direction:
-    tp <- get_turn_penalties (wt_profile, wt_profile_file)
-    if (tp$restrictions) {
+    if (are_turns_restricted (wt_profile, wt_profile_file)) {
         graph <- remove_roundabout_directions (graph, left_side)
     }
 
     if (turn_penalty) {
-        attr (graph, "turn_penalty") <- tp$turn
+        attr (graph, "turn_penalty") <-
+            get_turn_penalties (wt_profile, wt_profile_file)$turn
         if (attr (graph, "turn_penalty") > 0) {
             res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
                                             left_side)
