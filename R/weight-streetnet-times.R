@@ -330,8 +330,10 @@ sc_duplicate_edges <- function (x, wt_profile) {
                         "hgv", "psv")
 
     index <- seq (nrow (x))
-    if (wt_profile %in% oneway_modes)
+    if (wt_profile %in% oneway_modes) {
+        x$oneway [x$junction == "roundabout"] <- TRUE # #175
         index <- which (!x$oneway)
+    }
 
     xnew <- x [index, ]
     xnew <- swap_cols (xnew, ".vx0", ".vx1")
