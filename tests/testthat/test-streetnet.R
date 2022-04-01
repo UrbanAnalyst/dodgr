@@ -168,6 +168,7 @@ test_that ("streetnet highway types", {
 })
 
 test_that ("hash generation", {
+    skip_on_cran ()
     # The following test fails on GitHub windows machines for some reason?
     is_windows <- Sys.info()[["sysname"]] == "Windows"
     if (!is_windows) {
