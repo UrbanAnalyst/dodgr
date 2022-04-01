@@ -212,7 +212,7 @@ void graph_contract::contract_graph (vertex_map_t &vertex_map,
                     // It is possible to have repeated values of two_nbs;
                     // calling these a second time should then just lead to no
                     // contraction
-                    if ((vt_from == "") | (vt_to == ""))
+                    if ((vt_from == "") || (vt_to == ""))
                         continue;
 
                     graph_contract::contract_one_edge (vert2edge_map,
