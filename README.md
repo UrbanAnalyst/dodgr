@@ -326,6 +326,7 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 ## Contributors
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -539,6 +540,18 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
 </td>
+<td align="center">
+<a href="https://github.com/LeshunXu">
+<img src="https://avatars.githubusercontent.com/u/48538622?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3ALeshunXu">LeshunXu</a>
+</td>
+<td align="center">
+<a href="https://github.com/deanmarchiori">
+<img src="https://avatars.githubusercontent.com/u/9559770?u=5abd6534fd7f1cf94a54f894cdb12e017db1a9af&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adeanmarchiori">deanmarchiori</a>
+</td>
 </tr>
 
 </table>
@@ -572,6 +585,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
+</td>
+<td align="center">
+<a href="https://github.com/MartinLHazelton">
+<img src="https://avatars.githubusercontent.com/u/36397695?u=bc2261049e9b33f2c5d8e25f0bd56d4b1d6275df&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton">MartinLHazelton</a>
 </td>
 </tr>
 
