@@ -63,6 +63,8 @@ struct OneCategoricalDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        Rcpp::checkUserInterrupt ();
+
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
@@ -143,6 +145,8 @@ struct OneCategory : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        Rcpp::checkUserInterrupt ();
+
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
@@ -220,6 +224,8 @@ struct OneCatThreshold : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        Rcpp::checkUserInterrupt ();
+
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                     *run_sp::getHeapImpl (heap_type), g);
