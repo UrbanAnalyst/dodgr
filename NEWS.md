@@ -2,8 +2,6 @@
 
 Minor changes:
 
-- Add user interrupt to categorical distance calculations.
-
 # v 0.2.13
 
 Major changes:
