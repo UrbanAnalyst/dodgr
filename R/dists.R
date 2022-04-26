@@ -59,7 +59,9 @@
 #' computation will generally markedly increase with increasing graph sizes.
 #' By default, parallel computation uses the maximal number of available cores
 #' or threads. This number can be reduced by specifying a value via
-#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`. Parallel
+#' calculations are, however, not able to be interrupted (for example, by
+#' `Ctrl-C`), and can only be stopped by killing the R process.
 #'
 #' @family distances
 #' @export
