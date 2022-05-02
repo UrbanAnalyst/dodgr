@@ -5,7 +5,7 @@
 \title{weight_railway}
 \usage{
 weight_railway(
-  sf_lines,
+  x,
   type_col = "railway",
   id_col = "osm_id",
   keep_cols = c("maxspeed"),
@@ -13,8 +13,8 @@ weight_railway(
 )
 }
 \arguments{
-\item{sf_lines}{A street network represented as \code{sf} \code{LINESTRING}
-objects, typically extracted with \code{dodgr_streetnet}}
+\item{x}{A street network represented either as \code{sf} \code{LINESTRING}
+objects, typically extracted with \link{dodgr_streetnet}.}
 
 \item{type_col}{Specify column of the \code{sf} \code{data.frame} object
 which designates different types of railways to be used for weighting
