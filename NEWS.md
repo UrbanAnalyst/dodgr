@@ -2,6 +2,11 @@
 
 Minor changes:
 
+- Main parameter of `weight_railway` function renamed `sf_lines` -> `x` (for consistency with all other `weight_` functions).
+- Default distances for all functions changed to geodesic distances calculated via geodist.
+
+Minor changes:
+
 # v 0.2.13
 
 Major changes:
