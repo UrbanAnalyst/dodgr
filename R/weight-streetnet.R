@@ -565,8 +565,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 #' Weight (or re-weight) an `sf`-formatted OSM street network for routing
 #' along railways.
 #'
-#' @param sf_lines A street network represented as `sf` `LINESTRING`
-#' objects, typically extracted with `dodgr_streetnet`
+#' @param x A street network represented either as `sf` `LINESTRING`
+#' objects, typically extracted with \link{dodgr_streetnet}.
 #' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of railways to be used for weighting
 #' (default works with `osmdata` objects).
@@ -596,46 +596,44 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 #'     osmdata_sf (quiet = FALSE)
 #' graph <- weight_railway (dat$osm_lines)
 #' }
-weight_railway <- function (sf_lines,
+weight_railway <- function (x,
                             type_col = "railway",
                             id_col = "osm_id",
                             keep_cols = c ("maxspeed"),
                             excluded = c ("abandoned", "disused",
                                           "proposed", "razed")) {
 
-    if (!is (sf_lines, "sf"))
-        stop ('sf_lines must be class "sf"')
-    geom_column <- get_sf_geom_col (sf_lines)
-    attr (sf_lines, "sf_column") <- geom_column
+    if (!is (n, "sf"))
+        stop ('n must be class "sf"')
+    geom_column <- get_sf_geom_col (n)
+    attr (n, "sf_column") <- geom_column
 
     if (type_col != "railway")
-        names (sf_lines) [which (names (sf_lines) == type_col)] <- "railway"
+        names (n) [which (names (n) == type_col)] <- "railway"
     if (id_col != "osm_id")
-        names (sf_lines) [which (names (sf_lines) == id_col)] <-    # nocov
-            "osm_id"                                                # nocov
+        names (n) [which (names (n) == id_col)] <- "osm_id" # nocov
 
-    if (!"railway" %in% names (sf_lines))
+    if (!"railway" %in% names (x))
         stop ("Please specify type_col to be used for weighting railway")
-    if (!"osm_id" %in% names (sf_lines))
+    if (!"osm_id" %in% names (x))
         stop ("Please specifiy id_col to be used to identify ", # nocov
               "railway rows")                                   # nocov
 
-    if (is.null (names (sf_lines$geometry)))
-        names (sf_lines$geometry) <- sf_lines$osm_id # nocov
+    if (is.null (names (x$geometry)))
+        names (x$geometry) <- x$osm_id # nocov
 
 
-    sf_lines <- sf_lines [which (!(sf_lines$railway %in% excluded |
-                                   is.na (sf_lines$railway))), ]
+    x <- x [which (!(x$railway %in% excluded | is.na (x$railway))), ]
     # routing is based on matching the given profile to the "highway" field of
-    # sf_lines, so:
-    sf_lines$highway <- sf_lines$railway
+    # n, so:
+    n$highway <- n$railway
 
     wt_profile <- data.frame (name = "custom",
-                              way = unique (sf_lines$highway),
+                              way = unique (n$highway),
                               value = 1,
                               stringsAsFactors = FALSE)
 
-    dat <- rcpp_sf_as_network (sf_lines, pr = wt_profile)
+    dat <- rcpp_sf_as_network (n, pr = wt_profile)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
@@ -665,7 +663,7 @@ weight_railway <- function (sf_lines,
 
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
-    if (is.null (rownames (as.matrix (sf_lines$geometry [[1]]))))
+    if (is.null (rownames (as.matrix (n$geometry [[1]]))))
         graph <- rownames_from_xy (graph) # nocov
 
     # get component numbers for each edge
@@ -674,7 +672,7 @@ weight_railway <- function (sf_lines,
 
     # And finally, re-insert keep_cols:
     if (length (keep_cols) > 0)
-        graph <- reinsert_keep_cols (sf_lines, graph, keep_cols)
+        graph <- reinsert_keep_cols (n, graph, keep_cols)
 
     return (graph)
 }
