@@ -217,12 +217,17 @@ weight_streetnet.sf <- function (x,
                          to_id = as.character (dat$character_values [, 2]),
                          to_lon = dat$numeric_values [, 4],
                          to_lat = dat$numeric_values [, 5],
-                         d = dat$numeric_values [, 6],
-                         d_weighted = dat$numeric_values [, 7],
-                         highway = as.character (dat$character_values [, 3]),
-                         way_id = as.character (dat$character_values [, 4]),
-                         stringsAsFactors = FALSE
-                         )
+                         stringsAsFactors = FALSE)
+
+    graph$d <- geodist::geodist (graph [, c ("from_lon", "from_lat")],
+                                 graph [, c ("to_lon", "to_lat")],
+                                 paired = TRUE,
+                                 measure = "geodesic")
+    graph$d_weighted <- graph$d * dat$numeric_values [, 6]
+
+    graph$highway <- as.character (dat$character_values [, 3])
+    graph$way_id <- as.character (dat$character_values [, 4])
+
     # rcpp_sf_as_network flags non-routable ways with -1, so:
     graph$d_weighted [graph$d_weighted < 0] <- NA
     if (all (graph$highway == ""))
@@ -639,12 +644,18 @@ weight_railway <- function (sf_lines,
                          to_id = as.character (dat$character_values [, 2]),
                          to_lon = dat$numeric_values [, 4],
                          to_lat = dat$numeric_values [, 5],
-                         d = dat$numeric_values [, 6],
-                         d_weighted = dat$numeric_values [, 7],
-                         highway = as.character (dat$character_values [, 3]),
-                         way_id = as.character (dat$character_values [, 4]),
                          stringsAsFactors = FALSE
                          )
+
+    graph$d <- geodist::geodist (graph [, c ("from_lon", "from_lat")],
+                                 graph [, c ("to_lon", "to_lat")],
+                                 paired = TRUE,
+                                 measure = "geodesic")
+    graph$d_weighted <- graph$d * dat$numeric_values [, 6]
+
+    graph$highway <- as.character (dat$character_values [, 3])
+    graph$way_id <- as.character (dat$character_values [, 4])
+
     # rcpp_sf_as_network now flags non-routable ways with -1, so:
     graph$d_weighted [graph$d_weighted < 0] <- .Machine$double.xmax
     if (all (graph$highway == ""))

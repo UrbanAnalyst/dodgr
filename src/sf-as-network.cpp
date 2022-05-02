@@ -1,16 +1,5 @@
 #include "sf-as-network.h"
 
-// Haversine great circle distance between two points
-double sf::haversine (double x1, double y1, double x2, double y2)
-{
-    double xd = (x2 - x1) * M_PI / 180.0;
-    double yd = (y2 - y1) * M_PI / 180.0;
-    double d = sin (yd / 2.0) * sin (yd / 2.0) + cos (y2 * M_PI / 180.0) *
-        cos (y1 * M_PI / 180.0) * sin (xd / 2.0) * sin (xd / 2.0);
-    d = 2.0 * earth * asin (sqrt (d));
-    return (d);
-}
-
 //' rcpp_sf_as_network
 //'
 //' Return OSM data from Simple Features format input
@@ -108,7 +97,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         ngeoms ++;
     }
 
-    Rcpp::NumericMatrix nmat = Rcpp::NumericMatrix (Rcpp::Dimension (nrows, 7));
+    Rcpp::NumericMatrix nmat = Rcpp::NumericMatrix (Rcpp::Dimension (nrows, 6));
     Rcpp::CharacterMatrix idmat =
         Rcpp::CharacterMatrix (Rcpp::Dimension (nrows, 4));
 
@@ -148,15 +137,13 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         for (size_t i = 1;
                 i < static_cast <size_t> (gi.nrow ()); i ++)
         {
-            double d = sf::haversine (gi (i-1, 0), gi (i-1, 1), gi (i, 0),
-                    gi (i, 1));
-            sf::fill_one_row (ngeoms, gi, rnms, d, hw_factor, hway,
+            sf::fill_one_row (ngeoms, gi, rnms, hw_factor, hway,
                     has_names, way_names, i, nrows, false, nmat, idmat);
             nrows++;
 
             if (!isOneWay [static_cast <size_t> (ngeoms)])
             {
-                sf::fill_one_row (ngeoms, gi, rnms, d, hw_factor, hway,
+                sf::fill_one_row (ngeoms, gi, rnms, hw_factor, hway,
                         has_names, way_names, i, nrows, true, nmat, idmat);
                 nrows++;
             }
@@ -170,8 +157,7 @@ Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
 }
 
 void sf::fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
-        const Rcpp::CharacterVector &rnms,
-        const double &d, const double &hw_factor,
+        const Rcpp::CharacterVector &rnms, const double &hw_factor,
         const std::string &hway, const bool &has_names,
         const std::vector <std::string> &way_names,
         const size_t &grownum, const size_t &rownum, const bool &reverse,
@@ -189,11 +175,10 @@ void sf::fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
     nmat (rownum, 2) = gi (i_min_1, 1);
     nmat (rownum, 3) = gi (i, 0);
     nmat (rownum, 4) = gi (i, 1);
-    nmat (rownum, 5) = d;
     if (hw_factor > 0.0)
-        nmat (rownum, 6) = d * hw_factor;
+        nmat (rownum, 5) = hw_factor;
     else
-        nmat (rownum, 6) = -1.0; // # nocov
+        nmat (rownum, 5) = -1.0; // # nocov
 
     idmat (rownum, 0) = rnms (i_min_1);
     idmat (rownum, 1) = rnms (i);
