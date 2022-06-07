@@ -14,6 +14,7 @@ test_that ("local wt_profile", {
                       "file name must be given")
 
         f <- file.path (tempdir (), "wp")
+        requireNamespace ("jsonlite") # that message now issued
         expect_silent (write_dodgr_wt_profile (f))
         n0 <- weight_streetnet (hampi, wt_profile = "foot")
         n1 <- weight_streetnet (hampi, wt_profile = "foot",
