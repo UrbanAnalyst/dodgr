@@ -603,15 +603,15 @@ weight_railway <- function (x,
                             excluded = c ("abandoned", "disused",
                                           "proposed", "razed")) {
 
-    if (!is (n, "sf"))
-        stop ('n must be class "sf"')
-    geom_column <- get_sf_geom_col (n)
-    attr (n, "sf_column") <- geom_column
+    if (!is (x, "sf"))
+        stop ('x must be class "sf"')
+    geom_column <- get_sf_geom_col (x)
+    attr (x, "sf_column") <- geom_column
 
     if (type_col != "railway")
-        names (n) [which (names (n) == type_col)] <- "railway"
+        names (x) [which (names (x) == type_col)] <- "railway"
     if (id_col != "osm_id")
-        names (n) [which (names (n) == id_col)] <- "osm_id" # nocov
+        names (x) [which (names (x) == id_col)] <- "osm_id" # nocov
 
     if (!"railway" %in% names (x))
         stop ("Please specify type_col to be used for weighting railway")
@@ -625,15 +625,15 @@ weight_railway <- function (x,
 
     x <- x [which (!(x$railway %in% excluded | is.na (x$railway))), ]
     # routing is based on matching the given profile to the "highway" field of
-    # n, so:
-    n$highway <- n$railway
+    # x, so:
+    x$highway <- x$railway
 
     wt_profile <- data.frame (name = "custom",
-                              way = unique (n$highway),
+                              way = unique (x$highway),
                               value = 1,
                               stringsAsFactors = FALSE)
 
-    dat <- rcpp_sf_as_network (n, pr = wt_profile)
+    dat <- rcpp_sf_as_network (x, pr = wt_profile)
     graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
                          edge_id = seq (nrow (dat$character_values)),
                          from_id = as.character (dat$character_values [, 1]),
@@ -672,7 +672,7 @@ weight_railway <- function (x,
 
     # And finally, re-insert keep_cols:
     if (length (keep_cols) > 0)
-        graph <- reinsert_keep_cols (n, graph, keep_cols)
+        graph <- reinsert_keep_cols (x, graph, keep_cols)
 
     return (graph)
 }
