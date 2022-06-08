@@ -81,7 +81,7 @@ test_that("SC", {
               expect_true ("dz" %in% names (net_sc2))
 
               expect_error (x <- weight_railway (hsc),
-                            'sf_lines must be class "sf"')
+                            'x must be class "sf"')
 })
 
 test_that ("traffic light nodes", {
