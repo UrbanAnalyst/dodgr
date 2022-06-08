@@ -663,7 +663,7 @@ weight_railway <- function (x,
 
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
-    if (is.null (rownames (as.matrix (n$geometry [[1]]))))
+    if (is.null (rownames (as.matrix (x$geometry [[1]]))))
         graph <- rownames_from_xy (graph) # nocov
 
     # get component numbers for each edge
