@@ -28,6 +28,15 @@ points (passed as \code{pts}), the \code{bbox} argument may be omitted, in which
 bounding box will be constructed by expanding the range of \code{pts} by the
 relative amount of \code{expand}.
 }
+\note{
+Calls to this function may return "General overpass server error" with
+a note that "Query timed out." The overpass served used to access the data
+has a sophisticated queueing system which prioritises requests that are
+likely to require little time. These timeout errors can thus generally \emph{not}
+be circumvented by changing "timeout" options on the HTTP requests, and
+should rather be interpreted to indicate that a request is too large, and may
+need to be refined, or somehow broken up into smaller queries.
+}
 \examples{
 \dontrun{
 streetnet <- dodgr_streetnet ("hampi india", expand = 0)

@@ -30,6 +30,49 @@ square matrix of distances between nodes
 \description{
 Calculate matrix of pair-wise travel times between points.
 }
+\note{
+\code{graph} must minimally contain three columns of \code{from},
+\code{to}, \code{dist}. If an additional column named \code{weight} or
+\code{wt} is present, shortest paths are calculated according to values
+specified in that column; otherwise according to \code{dist} values. Either
+way, final distances between \code{from} and \code{to} points are calculated
+by default according to values of \code{dist}. That is, paths between any pair of
+points will be calculated according to the minimal total sum of \code{weight}
+values (if present), while reported distances will be total sums of \code{dist}
+values.
+
+For street networks produced with \link{weight_streetnet}, distances may also
+be calculated along the \emph{fastest} routes with the \code{shortest = FALSE}
+option. Graphs must in this case have columns of \code{time} and \code{time_weighted}.
+Note that the fastest routes will only be approximate when derived from
+\pkg{sf}-format data generated with the \pkg{osmdata} function
+\code{osmdata_sf()}, and will be much more accurate when derived from \code{sc}-format
+data generated with \code{osmdata_sc()}. See \link{weight_streetnet} for details.
+
+The \code{from} and \code{to} columns of \code{graph} may be either single
+columns of numeric or character values specifying the numbers or names of
+graph vertices, or combinations to two columns specifying geographical
+(longitude and latitude) coordinates. In the latter case, almost any sensible
+combination of names will be accepted (for example, \verb{fromx, fromy},
+\verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
+
+\code{from} and \code{to} values can be either two-column matrices of
+equivalent of longitude and latitude coordinates, or else single columns
+precisely matching node numbers or names given in \code{graph$from} or
+\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated
+between all points specified in \code{from}. If both \code{from} and \code{to} are \code{NULL},
+pairwise distances are calculated between all nodes in \code{graph}.
+
+Calculations in parallel (\code{parallel = TRUE}) ought very generally be
+advantageous. For small graphs, calculating distances in parallel is likely
+to offer relatively little gain in speed, but increases from parallel
+computation will generally markedly increase with increasing graph sizes.
+By default, parallel computation uses the maximal number of available cores
+or threads. This number can be reduced by specifying a value via
+\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}. Parallel
+calculations are, however, not able to be interrupted (for example, by
+\code{Ctrl-C}), and can only be stopped by killing the R process.
+}
 \examples{
 # A simple graph
 graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),

@@ -36,6 +36,12 @@ Calculate isochrone contours from specified points. Function is fully
 vectorized to calculate accept vectors of central points and vectors
 defining multiple isochrone thresholds.
 }
+\note{
+Isodists are calculated by default using parallel computation with the
+maximal number of available cores or threads. This number can be reduced by
+specifying a value via
+\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
+}
 \examples{
 \dontrun{
 # Use osmdata package to extract 'SC'-format data:
