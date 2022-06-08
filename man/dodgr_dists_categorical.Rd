@@ -80,7 +80,7 @@ graph$edge_type <- graph$highway
 # here.
 length (unique (graph$edge_type)) # Number of categories
 v <- dodgr_vertices (graph)
-from <- to <- v$id
+from <- to <- v$id [1:100]
 d <- dodgr_dists_categorical (graph, from, to)
 class (d)
 length (d)
