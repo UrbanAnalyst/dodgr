@@ -130,10 +130,11 @@ dodgr_paths <- function (graph,
     # name path lists
     if (!is.null (from_index$id) & !is.null (to_index$id)) {
         if (!pairwise) {
-            for (i in seq (from_index$id))
+            for (i in seq_along (from_index$id)) {
                 names (paths [[i]]) <- paste0 (from_index$id [i],
                                                "-",
-                                               to_index$id [i])
+                                               to_index$id)
+            }
         }
         names (paths) <- from_index$id
     }
