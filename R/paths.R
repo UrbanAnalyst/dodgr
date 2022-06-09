@@ -81,7 +81,14 @@ dodgr_paths <- function (graph,
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     vert_map <- make_vert_map (graph, gr_cols)
 
+    if (missing (from)) {
+        from <- vert_map$vert
+    }
     from_index <- get_path_indices (graph, gr_cols, vert_map, from)
+
+    if (missing (to)) {
+        to <- vert_map$vert
+    }
     to_index <- get_path_indices (graph, gr_cols, vert_map, to)
 
     graph <- convert_graph (graph, gr_cols)
