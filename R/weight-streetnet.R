@@ -614,7 +614,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
                     res <- remove_turn_restrictions (x, graph, res)
                 }
                 # res has the expanded graph as well as an edge map from new
-                # cross-junction edges to old single edges. This is cached below:
+                # cross-junction edges to old single edges. This is cached
+                # below:
                 graph <- res$graph
             }
         }
@@ -623,7 +624,11 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]]) |
             !is.na (graph [[gr_cols$time]])), ]
 
-        class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
+        class (graph) <- c (
+            class (graph),
+            "dodgr_streetnet",
+            "dodgr_streetnet_sc"
+        )
 
         if (turn_penalty) {
             hash <- digest::digest (graph [[gr_cols$edge_id]])

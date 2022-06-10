@@ -49,12 +49,18 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
 
     hash <- get_hash (graph, hash = TRUE)
     hashc <- get_hash (graph, verts = verts, hash = FALSE)
-    fname_c <- fs::path (fs::path_temp (), paste0 ("dodgr_graphc_", hashc, ".Rds"))
+    fname_c <- fs::path (
+        fs::path_temp (),
+        paste0 ("dodgr_graphc_", hashc, ".Rds")
+    )
 
     if (fs::file_exists (fname_c)) {
         graph_contracted <- list (graph = readRDS (fname_c))
     } else {
-        fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
+        fname <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_graph_", hash, ".Rds")
+        )
         if (!fs::file_exists (fname)) {
             saveRDS (graph, fname)
         }

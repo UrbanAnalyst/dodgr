@@ -615,14 +615,16 @@ remove_turn_restrictions <- function (x, graph, res) {
     index1 <- match (rw_only$node, graph$.vx0) # out-edges
     in_edges <- graph$edge_ [index0 [which (!is.na (index0))]]
     out_edges <- graph$edge_ [index1 [which (!is.na (index1))]]
-    # index of turns to edges other than "only" turn edges, so also to edges which
-    # are to be excluded:
+    # index of turns to edges other than "only" turn edges, so also to edges
+    # which are to be excluded:
     index <- which (res$edge_map$e_in %in% in_edges &
         !res$edge_map$e_out %in% out_edges)
     no_turn_edges <- unique (c (no_turn_edges, res$edge_map$edge [index]))
 
     res$graph <- res$graph [which (!res$graph$edge_ %in% no_turn_edges), ]
-    res$edge_map <- res$edge_map [which (!res$edge_map$edge %in% no_turn_edges), ]
+    res$edge_map <- res$edge_map [
+        which (!res$edge_map$edge %in% no_turn_edges),
+    ]
 
     return (res)
 }

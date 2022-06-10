@@ -245,7 +245,10 @@ dodgr_full_cycles <- function (graph,
 
     # edge_map <- get_edge_map (graphc) # TODO: Implement this
     hashc <- get_hash (graphc, hash = FALSE)
-    fname_c <- fs::path (fs::path_temp (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+    fname_c <- fs::path (
+        fs::path_temp (),
+        paste0 ("dodgr_edge_map_", hashc, ".Rds")
+    )
     if (!fs::file_exists (fname_c)) {
         stop ("something unexpected went wrong extracting the edge map")
     } # nocov
