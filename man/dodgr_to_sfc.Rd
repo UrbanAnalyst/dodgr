@@ -32,7 +32,7 @@ object - \link{dodgr_to_sf} does requires \pkg{sf} to be installed.
 }
 \examples{
 hw <- weight_streetnet (hampi)
-nrow(hw)
+nrow (hw)
 xy <- dodgr_to_sfc (hw)
 dim (hw) # 5.845 edges
 length (xy$geometry) # more linestrings aggregated from those edges

@@ -15,15 +15,18 @@
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
-#' nrow(hw) # 5,729 edges
+#' nrow (hw) # 5,729 edges
 #' xy <- dodgr_to_sf (hw)
 #' dim (xy) # 764 edges; 14 attributes
 dodgr_to_sf <- function (graph) {
 
-    if (methods::is (graph, "dodgr_contracted"))
-        warning ("'dodgr_to_sf' is intended to be called only on ",
-                 "non-contracted graphs.\nCalling on a contracted ",
-                 "graph will result in loss of information.")
+    if (methods::is (graph, "dodgr_contracted")) {
+        warning (
+            "'dodgr_to_sf' is intended to be called only on ",
+            "non-contracted graphs.\nCalling on a contracted ",
+            "graph will result in loss of information."
+        )
+    }
 
     graph <- tbl_to_df (graph)
 
@@ -57,7 +60,7 @@ dodgr_to_sf <- function (graph) {
 #' @export
 #' @examples
 #' hw <- weight_streetnet (hampi)
-#' nrow(hw)
+#' nrow (hw)
 #' xy <- dodgr_to_sfc (hw)
 #' dim (hw) # 5.845 edges
 #' length (xy$geometry) # more linestrings aggregated from those edges
@@ -92,15 +95,15 @@ dodgr_to_sfc <- function (graph) {
 
     # Then match data of `graph` potentially including way_id, back on to the
     # geometries:
-    #edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
-    #indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
-    #indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
-    #edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
-    #index <- match (edge_ids, graph$edge_id)
-    #dat <- graph [index, ]
-    #dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
-    #dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
-    #dat$d <- dat$d_weighted <- dat$edge_id <- NULL
+    # edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
+    # indx1 <- which (edge_ids %in% gc$edge_map$edge_new)
+    # indx2 <- seq (edge_ids) [!seq (edge_ids) %in% indx1]
+    # edge_ids <- c (gc$edge_map$edge_old [indx1], edge_ids [indx2])
+    # index <- match (edge_ids, graph$edge_id)
+    # dat <- graph [index, ]
+    # dat$from_id <- dat$from_lat <- dat$from_lon <- NULL
+    # dat$to_id <- dat$to_lat <- dat$to_lon <- NULL
+    # dat$d <- dat$d_weighted <- dat$edge_id <- NULL
 
     geometry <- geometry [match (gc [[gr_cols$edge_id]], names (geometry))]
 
@@ -129,8 +132,9 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
 
     requireNamespace ("igraph")
     graph <- tbl_to_df (graph)
-    if (!weight_column %in% names (graph))
+    if (!weight_column %in% names (graph)) {
         stop ("graph contains no column named '", weight_column, "'")
+    }
 
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
@@ -147,8 +151,9 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
     names (graph) [which (names (gr_cols) == weight_column)] <- "weight"
 
     # remove edge_id if it exists
-    if (!is.na (gr_cols$edge_id))
+    if (!is.na (gr_cols$edge_id)) {
         graph [[gr_cols$edge_id]] <- NULL
+    }
 
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
 }
@@ -176,16 +181,21 @@ igraph_to_dodgr <- function (graph) {
     ei <- igraph::edge_attr (graph)
     vi <- igraph::vertex_attr (graph)
     index <- grep ("^lon|^lat|lon$|lat$|^x|^y|x$|y$", names (ei))
-    if (length (index) > 0)
+    if (length (index) > 0) {
         ei [index] <- NULL
+    }
     index <- which (names (vi) %in% names (ei))
-    if (length (index) > 0)
+    if (length (index) > 0) {
         vi [index] <- NULL
+    }
     vi <- data.frame (do.call (cbind, vi), stringsAsFactors = FALSE)
 
-    res <- data.frame (cbind (igraph::get.edgelist (graph),
-                              do.call (cbind, ei)),
-                       stringsAsFactors = FALSE)
+    res <- data.frame (cbind (
+        igraph::get.edgelist (graph),
+        do.call (cbind, ei)
+    ),
+    stringsAsFactors = FALSE
+    )
     names (res) [1:2] <- c ("from_id", "to_id")
 
     nms <- paste0 (names (vi), "_from") [-1]
@@ -194,8 +204,9 @@ igraph_to_dodgr <- function (graph) {
     nms <- paste0 (names (vi), "_to") [-1]
     res [, nms] <- vi [match (res$to_id, vi$name), 2:ncol (vi)]
 
-    for (i in 3:ncol (res))
+    for (i in 3:ncol (res)) {
         res [, i] <- convert_col (res, i)
+    }
 
     res <- cbind ("edge_id" = seq (nrow (res)), res)
 
@@ -210,10 +221,11 @@ convert_col <- function (x, n = 3) {
     storage.mode (xnd) <- "numeric"
     xni <- round (xnd)
     storage.mode (xni) <- "integer"
-    if (identical (methods::as (xni, cl0), xn))
+    if (identical (methods::as (xni, cl0), xn)) {
         xn <- xni
-    else if (identical (methods::as (xnd, cl0), xn))
+    } else if (identical (methods::as (xnd, cl0), xn)) {
         xn <- xnd
+    }
     return (xn)
 }
 

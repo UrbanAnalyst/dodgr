@@ -24,7 +24,7 @@ Requires the \pkg{sf} package to be installed.
 }
 \examples{
 hw <- weight_streetnet (hampi)
-nrow(hw) # 5,729 edges
+nrow (hw) # 5,729 edges
 xy <- dodgr_to_sf (hw)
 dim (xy) # 764 edges; 14 attributes
 }
