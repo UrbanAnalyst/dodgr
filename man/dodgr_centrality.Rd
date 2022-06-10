@@ -113,8 +113,12 @@ r <- sf::st_as_sf (r)
 # and 'id' column.
 r$type <- 1
 r$id <- seq (nrow (r))
-graph_full <- weight_streetnet (r, type_col = "type", id_col = "id",
-                                wt_profile = 1)
+graph_full <- weight_streetnet (
+    r,
+    type_col = "type",
+    id_col = "id",
+    wt_profile = 1
+)
 # convert to contracted form, retaining junction vertices only, and append
 # 'centrality' column
 graph <- dodgr_contract_graph (graph_full) \%>\%
