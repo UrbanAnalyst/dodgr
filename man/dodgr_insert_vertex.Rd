@@ -38,7 +38,8 @@ v1 <- graph$from_id [e1]
 v2 <- graph$to_id [e1]
 # insert new vertex in the middle of that randomly-selected edge:
 graph2 <- dodgr_insert_vertex (graph, v1, v2)
-nrow (graph); nrow (graph2) # new edges added to graph2
+nrow (graph)
+nrow (graph2) # new edges added to graph2
 }
 \seealso{
 Other misc: 

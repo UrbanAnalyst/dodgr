@@ -36,8 +36,9 @@ dodgr_graph_cols <- function (graph) {
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
-        if (length (w_col) == 0) # sc ensures this never happens, so not covered
-            w_col <- d_col # nocov
+        if (length (w_col) == 0) { # sc ensures this never happens, so not covered
+            w_col <- d_col
+        } # nocov
 
         fr_col <- find_fr_id_col (graph)
         to_col <- find_to_id_col (graph)
@@ -48,41 +49,73 @@ dodgr_graph_cols <- function (graph) {
             spcols <- find_spatial_cols (graph)
             graph <- tbl_to_df (graph)
 
-            fr_is_num <- vapply (spcols$fr_col, function (i)
-                                 is.numeric (graph [[i]]), logical (1))
-            to_is_num <- vapply (spcols$to_col, function (i)
-                                 is.numeric (graph [[i]]), logical (1))
-            if (!(all (fr_is_num) & all (to_is_num)))
-                stop (paste0 ("graph appears to have non-numeric ",
-                              "longitudes and latitudes"))
+            fr_is_num <- vapply (spcols$fr_col, function (i) {
+                is.numeric (graph [[i]])
+            }, logical (1))
+            to_is_num <- vapply (spcols$to_col, function (i) {
+                is.numeric (graph [[i]])
+            }, logical (1))
+            if (!(all (fr_is_num) & all (to_is_num))) {
+                stop (paste0 (
+                    "graph appears to have non-numeric ",
+                    "longitudes and latitudes"
+                ))
+            }
 
             xfr <- spcols$fr_col [1]
             yfr <- spcols$fr_col [2]
             xto <- spcols$to_col [1]
             yto <- spcols$to_col [2]
         } else {
-            if (length (fr_col) != 1 & length (to_col) != 1)
-                stop ("Unable to determine from and to columns in graph") # nolint # nocov
+            if (length (fr_col) != 1 & length (to_col) != 1) {
+                stop ("Unable to determine from and to columns in graph")
+            } # nolint # nocov
         }
     }
 
     time_col <- grep ("time", nms)
     if (length (time_col) != 1) {
         time_col <- grep ("time$", nms)
-        if (length (time_col) != 1)
+        if (length (time_col) != 1) {
             time_col <- NA
+        }
     }
     timew_col <- grep ("time_w|timew|tw", nms)
     if (length (timew_col) != 1) {
         timew_col <- grep ("time_w|timew|^tw", nms)
-        if (length (timew_col) != 1)
+        if (length (timew_col) != 1) {
             timew_col <- NA
+        }
     }
 
-    ret <- c (edge_id, fr_col, to_col, d_col, w_col, time_col, timew_col,
-              xfr, yfr, xto, yto, component)
-    names (ret) <- c ("edge_id", "from", "to", "d", "d_weighted", "time",
-                      "time_weighted", "xfr", "yfr", "xto", "yto", "component")
+    ret <- c (
+        edge_id,
+        fr_col,
+        to_col,
+        d_col,
+        w_col,
+        time_col,
+        timew_col,
+        xfr,
+        yfr,
+        xto,
+        yto,
+        component
+    )
+    names (ret) <- c (
+        "edge_id",
+        "from",
+        "to",
+        "d",
+        "d_weighted",
+        "time",
+        "time_weighted",
+        "xfr",
+        "yfr",
+        "xto",
+        "yto",
+        "component"
+    )
     class (ret) <- c (class (ret), "graph_columns")
 
     # This is passed to many C++ routines, in which case it needs to be
@@ -97,20 +130,24 @@ dodgr_graph_cols <- function (graph) {
 #' @noRd
 convert_graph <- function (graph, gr_cols) {
 
-    keep_cols <- c ("edge_id", "from", "to", "d", "d_weighted",
-                    "time", "time_weighted")
+    keep_cols <- c (
+        "edge_id", "from", "to", "d", "d_weighted",
+        "time", "time_weighted"
+    )
     index <- do.call (c, gr_cols [keep_cols])
     index <- index [!is.na (index)]
     graph <- graph [, index]
     names (graph) <- names (index)
 
-    if ("edge_id" %in% names (graph))
+    if ("edge_id" %in% names (graph)) {
         graph$edge_id <- convert_to_char (graph$edge_id)
+    }
     graph$from <- convert_to_char (graph$from)
     graph$to <- convert_to_char (graph$to)
 
-    if (!"time_weighted" %in% names (graph))
+    if (!"time_weighted" %in% names (graph)) {
         graph$time_weighted <- graph$time
+    }
 
     return (graph)
 }
@@ -156,35 +193,41 @@ dodgr_vertices <- function (graph) {
     # finished.
     if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px")
-        while (px$is_alive ())
+        while (px$is_alive ()) {
             px$wait ()
+        }
     }
 
     hash <- ifelse (methods::is (graph, "dodgr_contracted"),
-                    "hashc", "hash")
+        "hashc", "hash"
+    )
     hash <- attr (graph, hash)
     # make sure rows of graph have not been changed
     gr_cols <- dodgr_graph_cols (graph)
     hashe <- digest::digest (graph [[gr_cols$edge_id]])
-    if (!identical (hashe, hash))
+    if (!identical (hashe, hash)) {
         hash <- NULL
+    }
     if (!is.null (hash)) {
         hashe_ref <- attr (graph, "hashe")
         hashe_ref <- ifelse (is.null (hashe_ref), "", hashe_ref)
         hashe <- digest::digest (graph [[gr_cols$edge_id]])
-        if (hashe != hashe_ref)
+        if (hashe != hashe_ref) {
             hash <- hashe
+        }
     } else {
-        if (is.na (gr_cols$edge_id))
-            hash <- "" # nocov
-        else
+        if (is.na (gr_cols$edge_id)) {
+            hash <- ""
+        } # nocov
+        else {
             hash <- digest::digest (graph [[gr_cols$edge_id]])
+        }
     }
 
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (hash != "" & fs::file_exists (fname))
+    if (hash != "" & fs::file_exists (fname)) {
         verts <- readRDS (fname)
-    else {
+    } else {
         verts <- dodgr_vertices_internal (graph)
         saveRDS (verts, fname)
     }
@@ -200,32 +243,48 @@ dodgr_vertices_internal <- function (graph) {
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     # NOTE: c (x, y), where x and y are both factors gives junk, so explicit
     # conversion required here: TODO: Find a better way?
-    if (is.factor (graph [[gr_cols$from]]))
+    if (is.factor (graph [[gr_cols$from]])) {
         graph [[gr_cols$from]] <- paste0 (graph [[gr_cols$from]])
-    if (is.factor (graph [[gr_cols$to]]))
+    }
+    if (is.factor (graph [[gr_cols$to]])) {
         graph [[gr_cols$to]] <- paste0 (graph [[gr_cols$to]])
+    }
 
     if (is_graph_spatial (graph)) {
-        verts <- data.frame (id = c (graph [[gr_cols$from]],
-                                     graph [[gr_cols$to]]),
-                             x = c (graph [[gr_cols$xfr]],
-                                    graph [[gr_cols$xto]]),
-                             y = c (graph [[gr_cols$yfr]],
-                                    graph [[gr_cols$yto]]),
-                             stringsAsFactors = FALSE)
-        if (!is.na (gr_cols$component))
+        verts <- data.frame (
+            id = c (
+                graph [[gr_cols$from]],
+                graph [[gr_cols$to]]
+            ),
+            x = c (
+                graph [[gr_cols$xfr]],
+                graph [[gr_cols$xto]]
+            ),
+            y = c (
+                graph [[gr_cols$yfr]],
+                graph [[gr_cols$yto]]
+            ),
+            stringsAsFactors = FALSE
+        )
+        if (!is.na (gr_cols$component)) {
             verts$component <- graph [[gr_cols$component]]
+        }
     } else {
-        verts <- data.frame (id = c (graph [[gr_cols$from]],
-                                     graph [[gr_cols$to]]),
-                             stringsAsFactors = FALSE)
-        if (!is.na (gr_cols$component))
+        verts <- data.frame (
+            id = c (
+                graph [[gr_cols$from]],
+                graph [[gr_cols$to]]
+            ),
+            stringsAsFactors = FALSE
+        )
+        if (!is.na (gr_cols$component)) {
             verts$component <- graph [[gr_cols$component]]
+        }
     }
 
     # The next line is the time-killer here, which is why this is cached
     indx <- which (!duplicated (verts$id))
-    verts <- verts [indx, , drop = FALSE] #nolint
+    verts <- verts [indx, , drop = FALSE] # nolint
     verts$n <- seq (nrow (verts)) - 1
 
     return (verts)
@@ -249,20 +308,23 @@ dodgr_components <- function (graph) {
 
     graph <- tbl_to_df (graph)
 
-    if ("component" %in% names (graph))
+    if ("component" %in% names (graph)) {
         message ("graph already has a component column")
-    else {
+    } else {
         gr_cols <- dodgr_graph_cols (graph)
         graph2 <- convert_graph (graph, gr_cols)
-        if (is.na (gr_cols$edge_id))
+        if (is.na (gr_cols$edge_id)) {
             graph2$edge_id <- seq (nrow (graph2))
+        }
         cns <- rcpp_get_component_vector (graph2)
 
         indx <- match (graph2$edge_id, cns$edge_id)
         component <- cns$edge_component [indx]
         # Then re-number in order to decreasing component size:
-        graph$component <- match (component,
-                                  order (table (component), decreasing = TRUE))
+        graph$component <- match (
+            component,
+            order (table (component), decreasing = TRUE)
+        )
     }
 
     return (graph)
@@ -306,8 +368,9 @@ dodgr_sample <- function (graph, nverts = 1000) {
 
     if (length (verts) > nverts) {
         graph2 <- convert_graph (graph, gr_cols)
-        if ("component" %in% names (graph))
+        if ("component" %in% names (graph)) {
             graph2$component <- graph$component
+        }
         indx <- match (rcpp_sample_graph (graph2, nverts), graph2$edge_id)
         graph <- graph [sort (indx), ]
     }
@@ -342,17 +405,20 @@ dodgr_sample <- function (graph, nverts = 1000) {
 #' v2 <- graph$to_id [e1]
 #' # insert new vertex in the middle of that randomly-selected edge:
 #' graph2 <- dodgr_insert_vertex (graph, v1, v2)
-#' nrow (graph); nrow (graph2) # new edges added to graph2
+#' nrow (graph)
+#' nrow (graph2) # new edges added to graph2
 dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
 
     graph_t <- tbl_to_df (graph)
     gr_cols <- dodgr_graph_cols (graph_t)
     index12 <- which (graph [[gr_cols$from]] == v1 & graph [[gr_cols$to]] == v2)
     index21 <- which (graph [[gr_cols$from]] == v2 & graph [[gr_cols$to]] == v1)
-    if (length (index12) == 0 & length (index21) == 0)
+    if (length (index12) == 0 & length (index21) == 0) {
         stop ("Nominated vertices do not define any edges in graph")
-    if ((!is.null (x) & is.null (y)) | (is.null (x) & !is.null (y)))
+    }
+    if ((!is.null (x) & is.null (y)) | (is.null (x) & !is.null (y))) {
         stop ("Either both x and y must be NULL, or both must be specified")
+    }
 
 
     charvec <- c (letters, LETTERS, 0:9)
@@ -365,7 +431,7 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
         graph [index12, gr_cols$to] <-
             graph [index12 + 1, gr_cols$from] <- randid (charvec, 10)
         index21 <- which (graph [[gr_cols$from]] == v2 &
-                          graph [[gr_cols$to]] == v1)
+            graph [[gr_cols$to]] == v1)
     }
     if (length (index21) == 1) {
         graph <- insert_one_edge (graph, index21, x, y, gr_cols)
@@ -382,9 +448,9 @@ insert_one_edge <- function (graph, index, x, y, gr_cols) {
 
     if (is.null (x) & is.null (y)) {
         x <- (graph [[gr_cols$xfr]] [index] +
-              graph [[gr_cols$xto]] [index]) / 2
+            graph [[gr_cols$xto]] [index]) / 2
         y <- (graph [[gr_cols$yfr]] [index] +
-              graph [[gr_cols$yto]] [index]) / 2
+            graph [[gr_cols$yto]] [index]) / 2
     }
     expand_index <- c (1:index, index, (index + 1):nrow (graph))
     graph <- graph [expand_index, ]
@@ -393,17 +459,21 @@ insert_one_edge <- function (graph, index, x, y, gr_cols) {
     graph [index + 1, gr_cols$xfr] <- x
     graph [index + 1, gr_cols$yfr] <- y
 
-    xy1 <- c (x = graph [[gr_cols$xfr]] [index],
-              y = graph [[gr_cols$yfr]] [index])
-    xy2 <- c (x = graph [[gr_cols$xto]] [index + 1],
-              y = graph [[gr_cols$yto]] [index + 1])
+    xy1 <- c (
+        x = graph [[gr_cols$xfr]] [index],
+        y = graph [[gr_cols$yfr]] [index]
+    )
+    xy2 <- c (
+        x = graph [[gr_cols$xto]] [index + 1],
+        y = graph [[gr_cols$yto]] [index + 1]
+    )
     if (is_graph_spatial (graph)) {
         requireNamespace ("geodist")
         d1 <- geodist::geodist (xy1, c (x = x, y = y), measure = "geodesic")
         d2 <- geodist::geodist (xy2, c (x = x, y = y), measure = "geodesic")
     } else {
-        d1 <- sqrt ((xy1 [1] - x) ^ 2 + (xy1 [2] - y) ^ 2)
-        d2 <- sqrt ((x - xy2 [1]) ^ 2 + (y - xy2 [2]) ^ 2)
+        d1 <- sqrt ((xy1 [1] - x)^2 + (xy1 [2] - y)^2)
+        d2 <- sqrt ((x - xy2 [1])^2 + (y - xy2 [2])^2)
     }
     wt <- graph [index, gr_cols$d_weighted] /
         graph [index, gr_cols$d]
