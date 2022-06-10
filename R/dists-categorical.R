@@ -55,8 +55,9 @@
 #' # s <- summary (d) # print summary as proportions along each "edge_type"
 #' # or directly calculate proportions only
 #' dodgr_dists_categorical (graph, from, to,
-#'                          proportions_only = TRUE)
-#' 
+#'     proportions_only = TRUE
+#' )
+#'
 #' # The 'dlimit' parameter can be used to calculate total distances along each
 #' # category of edges from a set of points:
 #' dlimit <- 2000 # in metres
@@ -65,17 +66,19 @@
 #' @family distances
 #' @export
 dodgr_dists_categorical <- function (graph,
-                                      from = NULL,
-                                      to = NULL,
-                                      proportions_only = FALSE,
-                                      dlimit = NULL,
-                                      heap = "BHeap",
-                                      quiet = TRUE) {
+                                     from = NULL,
+                                     to = NULL,
+                                     proportions_only = FALSE,
+                                     dlimit = NULL,
+                                     heap = "BHeap",
+                                     quiet = TRUE) {
 
-    if (!"edge_type" %in% names (graph))
+    if (!"edge_type" %in% names (graph)) {
         stop ("graph must have a column named 'edge_type'")
-    if (is.integer (graph$edge_type) & any (graph$edge_type == 0L))
+    }
+    if (is.integer (graph$edge_type) & any (graph$edge_type == 0L)) {
         stop ("graphs with integer edge_type columns may not contain 0s")
+    }
 
     edge_type <- graph$edge_type
     graph <- tbl_to_df (graph)
@@ -92,8 +95,9 @@ dodgr_dists_categorical <- function (graph,
         gr_cols <- dodgr_graph_cols (graph)
     }
     is_spatial <- is_graph_spatial (graph)
-    if (!is_spatial)
+    if (!is_spatial) {
         stop ("Categorical distances only implemented for spatial graphs")
+    }
 
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
@@ -109,17 +113,20 @@ dodgr_dists_categorical <- function (graph,
     graph$edge_type <- match (edge_type, names (edge_type_table))
     graph$edge_type [is.na (graph$edge_type)] <- 0L
 
-    if (!quiet)
+    if (!quiet) {
         message ("Calculating shortest paths ... ", appendLF = FALSE)
+    }
 
     if (is.null (dlimit) & !is.null (to)) {
 
-        d <- rcpp_get_sp_dists_categorical (graph,
-                                             vert_map,
-                                             from_index$index,
-                                             to_index$index,
-                                             heap,
-                                             proportions_only)
+        d <- rcpp_get_sp_dists_categorical (
+            graph,
+            vert_map,
+            from_index$index,
+            to_index$index,
+            heap,
+            proportions_only
+        )
 
         n <- length (to)
 
@@ -143,12 +150,12 @@ dodgr_dists_categorical <- function (graph,
 
             d0 <- list ("distances" = d0)
             d <- lapply (seq_along (edge_type_table), function (i) {
-                             index <- i * n + seq (n) - 1
-                             res <- d [, index]
-                             rownames (res) <- rnames
-                             colnames (res) <- cnames
-                             return (res)
-                              })
+                index <- i * n + seq (n) - 1
+                res <- d [, index]
+                rownames (res) <- rnames
+                colnames (res) <- cnames
+                return (res)
+            })
             names (d) <- names (edge_type_table)
 
             res <- c (d0, d)
@@ -163,11 +170,13 @@ dodgr_dists_categorical <- function (graph,
         }
     } else {
 
-        d <- rcpp_get_sp_dists_cat_threshold (graph,
-                                               vert_map,
-                                               from_index$index,
-                                               dlimit,
-                                               heap)
+        d <- rcpp_get_sp_dists_cat_threshold (
+            graph,
+            vert_map,
+            from_index$index,
+            dlimit,
+            heap
+        )
 
         if (is.null (from_index$id)) {
             rownames (d) <- vert_map$vert
@@ -197,14 +206,20 @@ summary.dodgr_dists_categorical <- function (object, ...) {
     sum_d0 <- sum (d0, na.rm = TRUE)
     object <- object [-1]
 
-    dprop <- vapply (object, function (i)
-                     sum (i, na.rm = TRUE) / sum_d0,
-                     numeric (1))
+    dprop <- vapply (
+        object, function (i) {
+            sum (i, na.rm = TRUE) / sum_d0
+        },
+        numeric (1)
+    )
 
     message ("Proportional distances along each kind of edge:")
-    for (i in seq_along (dprop))
-        message ("  ", names (dprop) [i],
-                 ": ", round (dprop [i], digits = 4))
+    for (i in seq_along (dprop)) {
+        message (
+            "  ", names (dprop) [i],
+            ": ", round (dprop [i], digits = 4)
+        )
+    }
 
     invisible (dprop)
 }
