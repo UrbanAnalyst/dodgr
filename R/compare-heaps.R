@@ -31,8 +31,9 @@ compare_heaps <- function (graph,
     requireNamespace ("bench")
     requireNamespace ("igraph")
 
-    if (is.numeric (nverts))
+    if (is.numeric (nverts)) {
         graph <- dodgr_sample (graph, nverts = nverts)
+    }
     graph_contracted <- dodgr_contract_graph (graph)
 
     # route only between points on the contracted graph:
@@ -43,50 +44,72 @@ compare_heaps <- function (graph,
     igr <- dodgr_to_igraph (graph)
 
     bench::mark (
-        BHeap = dodgr_dists (graph,
-                             from = from_id,
-                             to = to_id,
-                             heap = "BHeap"),
-        FHeap = dodgr_dists (graph,
-                             from = from_id,
-                             to = to_id,
-                             heap = "FHeap"),
-        TriHeap = dodgr_dists (graph,
-                               from = from_id,
-                               to = to_id,
-                               heap = "TriHeap"),
-        TriHeapExt = dodgr_dists (graph,
-                                  from = from_id,
-                                  to = to_id,
-                                  heap = "TriHeapExt"),
-        Heap23 = dodgr_dists (graph,
-                              from = from_id,
-                              to = to_id,
-                              heap = "Heap23"),
-        BHeap_contracted = dodgr_dists (graph_contracted,
-                                        from = from_id,
-                                        to = to_id,
-                                        heap = "BHeap"),
-        FHeap_contracted = dodgr_dists (graph_contracted,
-                                        from = from_id,
-                                        to = to_id,
-                                        heap = "FHeap"),
-        TriHeap_contracted = dodgr_dists (graph_contracted,
-                                          from = from_id,
-                                          to = to_id,
-                                          heap = "TriHeap"),
-        TriHeapExt_contracted = dodgr_dists (graph_contracted,
-                                             from = from_id,
-                                             to = to_id,
-                                             heap = "TriHeapExt"),
-        Heap23_contracted = dodgr_dists (graph_contracted,
-                                         from = from_id,
-                                         to = to_id,
-                                         heap = "Heap23"),
-        igraph = igraph::distances (igr,
-                                    v = from_id,
-                                    to = to_id,
-                                    mode = "out"),
+        BHeap = dodgr_dists (
+            graph,
+            from = from_id,
+            to = to_id,
+            heap = "BHeap"
+        ),
+        FHeap = dodgr_dists (
+            graph,
+            from = from_id,
+            to = to_id,
+            heap = "FHeap"
+        ),
+        TriHeap = dodgr_dists (
+            graph,
+            from = from_id,
+            to = to_id,
+            heap = "TriHeap"
+        ),
+        TriHeapExt = dodgr_dists (
+                graph,
+            from = from_id,
+            to = to_id,
+            heap = "TriHeapExt"
+        ),
+        Heap23 = dodgr_dists (
+            graph,
+            from = from_id,
+            to = to_id,
+            heap = "Heap23"
+        ),
+        BHeap_contracted = dodgr_dists (
+            graph_contracted,
+            from = from_id,
+            to = to_id,
+            heap = "BHeap"
+        ),
+        FHeap_contracted = dodgr_dists (
+            graph_contracted,
+            from = from_id,
+            to = to_id,
+            heap = "FHeap"
+        ),
+        TriHeap_contracted = dodgr_dists (
+                graph_contracted,
+            from = from_id,
+            to = to_id,
+            heap = "TriHeap"
+        ),
+        TriHeapExt_contracted = dodgr_dists (
+            graph_contracted,
+            from = from_id,
+            to = to_id,
+            heap = "TriHeapExt"
+        ),
+        Heap23_contracted = dodgr_dists (
+            graph_contracted,
+            from = from_id,
+            to = to_id,
+            heap = "Heap23"
+        ),
+        igraph = igraph::distances (
+            igr,
+            v = from_id,
+            to = to_id,
+            mode = "out"
+        ),
         check = FALSE # contracted don't necessarily equal full dists here
-        )
+    )
 }
