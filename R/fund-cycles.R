@@ -1,8 +1,9 @@
 # flatten lists of lists to single list
 flatten_list <- function (x) {
     x2 <- list ()
-    for (i in x)
+    for (i in x) {
         x2 <- c (x2, i)
+    }
     return (x2)
 }
 
@@ -51,15 +52,19 @@ dodgr_fundamental_cycles <- function (graph,
                                       graph_max_size = 10000,
                                       expand = 0.05) {
 
-    if (missing (graph))
+    if (missing (graph)) {
         stop ("graph must be provided")
-    if (!inherits (graph, "data.frame"))
+    }
+    if (!inherits (graph, "data.frame")) {
         stop ("graph must be a data.frame object")
+    }
 
-    if (is.null (vertices))
+    if (is.null (vertices)) {
         vertices <- dodgr_vertices (graph)
-    if (!"flow" %in% names (graph)) # makes no difference
+    }
+    if (!"flow" %in% names (graph)) { # makes no difference
         graph$flow <- 1
+    }
     graph <- merge_directed_graph (graph) # uses fast C++ routines
     graph$flow <- NULL
     bb <- get_graph_bb (graph)
@@ -77,9 +82,13 @@ dodgr_fundamental_cycles <- function (graph,
     if (length (bb_indices) == 1) {
         res <- rcpp_fundamental_cycles (graphc, verts = vertices)
     } else {
-        message ("Now computing fundamental cycles by breaking graph with ",
-                 nrow (graphc), " edges into ", length (bb_indices),
-                 " components ...")
+        message (
+            "Now computing fundamental cycles by breaking graph with ",
+            nrow (graphc),
+            " edges into ",
+            length (bb_indices),
+            " components ..."
+        )
         pb <- utils::txtProgressBar (style = 3)
         res <- list ()
         for (i in seq (bb_indices)) {
@@ -98,16 +107,21 @@ dodgr_fundamental_cycles <- function (graph,
     }
 
     if (is_graph_spatial (graph)) {
-        if (length (bb_indices) > 1)
-            message ("Generating spatial coordinates of polygons ",
-                     "(this should be fairly quick ...)")
+        if (length (bb_indices) > 1) {
+            message (
+                "Generating spatial coordinates of polygons ",
+                "(this should be fairly quick ...)"
+            )
+        }
         res <- lapply (res, function (i) {
-                           index <- match (i, vertices$id)
-                           data.frame (id = i,
-                                       x = vertices$x [index],
-                                       y = vertices$y [index],
-                                       stringsAsFactors = FALSE)
-                                })
+            index <- match (i, vertices$id)
+            data.frame (
+                id = i,
+                x = vertices$x [index],
+                y = vertices$y [index],
+                stringsAsFactors = FALSE
+            )
+        })
     }
     return (res)
 }
@@ -136,22 +150,27 @@ get_graph_bb <- function (graph) {
 get_bb_list <- function (bb, ndivs, expand = 0.05) {
     # divide one column of bb: either lons or lats
     divide_bb_vec <- function (bb, ndivs, colnum = 2, expand) {
-        bb <- c (bb [1, colnum], vapply (seq (ndivs), function (i)
-                                         bb [1, colnum] + i / ndivs *
-                                             diff (bb [, colnum]),
-                                         numeric (1)))
+        bb <- c (bb [1, colnum], vapply (
+            seq (ndivs), function (i) {
+                bb [1, colnum] + i / ndivs *
+                    diff (bb [, colnum])
+            },
+            numeric (1)
+        ))
         bb <- cbind (bb [1:ndivs], bb [2:(ndivs + 1)])
-        t (apply (bb, 1, function (i)
-                  mean (i) + c (-0.5 - expand, 0.5 + expand) * diff (i)))
+        t (apply (bb, 1, function (i) {
+            mean (i) + c (-0.5 - expand, 0.5 + expand) * diff (i)
+        }))
     }
     bb_lons <- divide_bb_vec (bb, ndivs, colnum = 1, expand = expand)
     bb_lats <- divide_bb_vec (bb, ndivs, colnum = 2, expand = expand)
     bb_list <- list ()
-    for (i in seq (ndivs))
+    for (i in seq (ndivs)) {
         for (j in seq (ndivs)) {
             bb_list [[length (bb_list) + 1]] <-
                 cbind (bb_lons [i, ], bb_lats [j, ])
         }
+    }
     return (bb_list)
 }
 
@@ -160,13 +179,13 @@ get_bb_indices <- function (graph, bb_list) {
     res <- list ()
     for (i in seq (bb_list)) {
         res [[i]] <- which (graph$from_lon > bb_list [[i]] [1, 1] &
-                            graph$from_lon < bb_list [[i]] [2, 1] &
-                            graph$from_lat > bb_list [[i]] [1, 2] &
-                            graph$from_lat < bb_list [[i]] [2, 2] &
-                            graph$to_lon > bb_list [[i]] [1, 1] &
-                            graph$to_lon < bb_list [[i]] [2, 1] &
-                            graph$to_lat > bb_list [[i]] [1, 2] &
-                            graph$to_lat < bb_list [[i]] [2, 2])
+            graph$from_lon < bb_list [[i]] [2, 1] &
+            graph$from_lat > bb_list [[i]] [1, 2] &
+            graph$from_lat < bb_list [[i]] [2, 2] &
+            graph$to_lon > bb_list [[i]] [1, 1] &
+            graph$to_lon < bb_list [[i]] [2, 1] &
+            graph$to_lat > bb_list [[i]] [1, 2] &
+            graph$to_lat < bb_list [[i]] [2, 2])
     }
     return (res)
 }
@@ -220,65 +239,72 @@ dodgr_full_cycles <- function (graph,
     graph$flow <- 1
     graph <- merge_directed_graph (graph)
     graph$flow <- NULL
-    #graph <- graph [graph$component == 1, ]
+    # graph <- graph [graph$component == 1, ]
     graphc <- dodgr_contract_graph (graph)
     v <- dodgr_vertices (graphc)
 
-    #edge_map <- get_edge_map (graphc) # TODO: Implement this
+    # edge_map <- get_edge_map (graphc) # TODO: Implement this
     hashc <- get_hash (graphc, hash = FALSE)
     fname_c <- fs::path (fs::path_temp (), paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-    if (!fs::file_exists (fname_c))
-        stop ("something unexpected went wrong extracting the edge map") # nocov
+    if (!fs::file_exists (fname_c)) {
+        stop ("something unexpected went wrong extracting the edge map")
+    } # nocov
     edge_map <- readRDS (fname_c)
 
     x <- dodgr_fundamental_cycles (graphc,
-                                   vertices = v,
-                                   graph_max_size = graph_max_size,
-                                   expand = expand)
+        vertices = v,
+        graph_max_size = graph_max_size,
+        expand = expand
+    )
 
     gr_cols <- dodgr_graph_cols (graphc)
     from_to <- paste0 (graphc [[gr_cols$from]], "-", graphc [[gr_cols$to]])
     to_from <- paste0 (graphc [[gr_cols$to]], "-", graphc [[gr_cols$from]])
     ids <- lapply (x, function (i) {
-           idpairs <- paste0 (i$id [-length (i$id)], "-", i$id [-1])
-           # Get the edge pairs that match the idpairs, whether as from->to or
-           # to->from
-           edges_c1 <- graphc [[gr_cols$edge_id]] [match (idpairs, from_to)]
-           edges_c2 <- graphc [[gr_cols$edge_id]] [match (idpairs, to_from)]
-           edges_c <- apply (rbind (edges_c1, edges_c2), 2, function (i)
-                             i [which (!is.na (i))] [1])
-           edges_new <- lapply (as.list (edges_c), function (j) {
-                    if (j %in% edge_map$edge_new) {
-                        index <- which (edge_map$edge_new %in% j)
-                        edges <- edge_map$edge_old [index]
-                        j <- match (edges, graph [[gr_cols$edge_id]])
-                        if ( (graph [[gr_cols$from]] [j [1] ] ==                # nolint
-                              graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
-                             (graph [[gr_cols$from]] [j [1] ] ==                # nolint
-                              graph [[gr_cols$to]] [j [2] ]))                   # nolint
-                            j <- rev (j)
-                    } else {
-                        j <- match (j, graph [[gr_cols$edge_id]])
-                    }
-                    return (as.numeric (j))
-                    }) # end edges_new lapply
-           unlist (edges_new)
-            }) # end ids lapply
+        idpairs <- paste0 (i$id [-length (i$id)], "-", i$id [-1])
+        # Get the edge pairs that match the idpairs, whether as from->to or
+        # to->from
+        edges_c1 <- graphc [[gr_cols$edge_id]] [match (idpairs, from_to)]
+        edges_c2 <- graphc [[gr_cols$edge_id]] [match (idpairs, to_from)]
+        edges_c <- apply (rbind (edges_c1, edges_c2), 2, function (i) {
+            i [which (!is.na (i))] [1]
+        })
+        edges_new <- lapply (as.list (edges_c), function (j) {
+            if (j %in% edge_map$edge_new) {
+                index <- which (edge_map$edge_new %in% j)
+                edges <- edge_map$edge_old [index]
+                j <- match (edges, graph [[gr_cols$edge_id]])
+                if ((graph [[gr_cols$from]] [j [1]] == # nolint
+                    graph [[gr_cols$to]] [utils::tail (j, 1)]) ||
+                    (graph [[gr_cols$from]] [j [1]] == # nolint
+                        graph [[gr_cols$to]] [j [2]])) { # nolint
+                    j <- rev (j)
+                }
+            } else {
+                j <- match (j, graph [[gr_cols$edge_id]])
+            }
+            return (as.numeric (j))
+        }) # end edges_new lapply
+        unlist (edges_new)
+    }) # end ids lapply
     # ids at that point is a sequences of indices into graph. This is then
     # converted to a sequence of vertex IDs, through just adding the last vertex
     # of the sequence on to close the polygon
-    res <- lapply (ids, function (i)
-                   graph [c (i, i [1]), gr_cols$from, drop = TRUE])
+    res <- lapply (ids, function (i) {
+        graph [c (i, i [1]), gr_cols$from, drop = TRUE]
+    })
 
     if (is_graph_spatial (graph)) {
         vertices <- dodgr_vertices (graph)
         res <- lapply (res, function (i) {
-                           index <- match (i, vertices$id)
-                           data.frame (id = i,
-                                       x = vertices$x [index],
-                                       y = vertices$y [index],
-                                       stringsAsFactors = FALSE)
-                                })
+            index <- match (i, vertices$id)
+            data.frame (
+                id = i,
+                x = vertices$x [index],
+                y = vertices$y [index],
+                stringsAsFactors = FALSE
+            )
+        })
     }
 
     return (res)
@@ -300,11 +326,15 @@ dodgr_sflines_to_poly <- function (sflines,
                                    graph_max_size = 10000,
                                    expand = 0.05) {
 
-    if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf")))
+    if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf"))) {
         stop ("lines must be an object of class 'sf' or 'sfc'")
-    if (!methods::is (sflines [[attr (sflines, "sf_column")]],
-                      "sfc_LINESTRING"))
+    }
+    if (!methods::is (
+        sflines [[attr (sflines, "sf_column")]],
+        "sfc_LINESTRING"
+    )) {
         stop ("lines must be an 'sfc_LINESTRING' object")
+    }
 
     graph <- weight_streetnet (sflines, wt_profile = 1)
     # Different graph components need to be analysed seperately, and an
@@ -317,9 +347,10 @@ dodgr_sflines_to_poly <- function (sflines,
         graphi <- graph [graph$component == comps [i], ]
         graphi$edge_id <- seq (nrow (graphi))
         attr (graphi, "hash") <- NULL
-        x [[i]] <-  dodgr_full_cycles (graphi,
-                                       graph_max_size = graph_max_size,
-                                       expand = expand)
+        x [[i]] <- dodgr_full_cycles (graphi,
+            graph_max_size = graph_max_size,
+            expand = expand
+        )
     }
     x <- flatten_list (x)
     polys_to_sfc (x, sflines)
@@ -335,21 +366,23 @@ polys_to_sfc <- function (x, sflines) {
     xvals <- xy [, 2]
     yvals <- xy [, 3]
     bb <- structure (rep (NA_real_, 4),
-                     names = c("xmin", "ymin", "xmax", "ymax"))
+        names = c ("xmin", "ymin", "xmax", "ymax")
+    )
     bb [1:4] <- c (min (xvals), min (yvals), max (xvals), max (yvals))
     class (bb) <- "bbox"
     attr (bb, "crs") <- crs
 
     x <- lapply (x, function (i) {
-                     res <- as.matrix (i [, 2:3])
-                     colnames (res) <- NULL
-                     structure (list (res),
-                                class = c ("XY", "POLYGON", "sfg"))
-                     })
+        res <- as.matrix (i [, 2:3])
+        colnames (res) <- NULL
+        structure (list (res),
+            class = c ("XY", "POLYGON", "sfg")
+        )
+    })
     attr (x, "n_empty") <- 0
-    attr(x, "precision") <- 0.0
-    class(x) <- c ("sfc_POLYGON", "sfc")
-    attr(x, "bbox") <- bb
-    attr(x, "crs") <- crs
+    attr (x, "precision") <- 0.0
+    class (x) <- c ("sfc_POLYGON", "sfc")
+    attr (x, "bbox") <- bb
+    attr (x, "crs") <- crs
     x
 }
