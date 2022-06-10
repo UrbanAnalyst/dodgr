@@ -23,8 +23,8 @@ Contains OS data © Crown copyright and database right (2017)
 }
 \examples{
 \dontrun{
-library(sf)
-library(dplyr)
+library (sf)
+library (dplyr)
 # data must be unzipped here
 # os_roads <- sf::read_sf("~/data/ST_RoadLink.shp")
 # u <- "https://opendata.arcgis.com/datasets/686603e943f948acaa13fb5d2b0f1275_4.kml"
@@ -34,18 +34,23 @@ library(dplyr)
 # os_roads <- st_transform(os_roads, st_crs(lads)
 # os_roads_bristol <- os_roads[bristol_pol, ] \%>\%
 #   dplyr::filter(class == "Motorway" &
-                  roadNumber != "M32") \%>\%
+#                 roadNumber != "M32") \%>\%
 #   st_zm(drop = TRUE)
 # mapview::mapview(os_roads_bristol)
 }
 # Converting this 'sf data.frame' to a 'dodgr' network requires manual
 # specification of weighting profile:
 colnm <- "formOfWay" # name of column used to determine weights
-wts <- data.frame (name = "custom",
-                   way = unique (os_roads_bristol [[colnm]]),
-                   value = c (0.1, 0.2, 0.8, 1))
-net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
-                         type_col = colnm, id_col = "identifier")
+wts <- data.frame (
+    name = "custom",
+    way = unique (os_roads_bristol [[colnm]]),
+    value = c (0.1, 0.2, 0.8, 1)
+)
+net <- weight_streetnet (
+    os_roads_bristol,
+    wt_profile = wts,
+    type_col = colnm, id_col = "identifier"
+)
 # 'id_col' tells the function which column to use to attribute IDs of ways
 }
 \seealso{
