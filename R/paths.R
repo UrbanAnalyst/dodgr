@@ -93,47 +93,57 @@ dodgr_paths <- function (graph,
 
     graph <- convert_graph (graph, gr_cols)
 
-    if (!quiet)
+    if (!quiet) {
         message ("Calculating shortest paths ... ", appendLF = FALSE)
+    }
     if (pairwise) {
-        if (length (from_index$index) != length (to_index$index))
+        if (length (from_index$index) != length (to_index$index)) {
             stop ("pairwise paths require from and to to have same length")
+        }
         paths <- list ()
         for (i in seq_along (from_index$index)) {
-            paths [[i]] <- rcpp_get_paths (graph,
-                                           vert_map,
-                                           from_index$index [i],
-                                           to_index$index [i],
-                                           heap) [[1]]
+            paths [[i]] <- rcpp_get_paths (
+                graph,
+                vert_map,
+                from_index$index [i],
+                to_index$index [i],
+                heap
+            ) [[1]]
 
         }
     } else {
-        paths <- rcpp_get_paths (graph,
-                                 vert_map,
-                                 from_index$index,
-                                 to_index$index,
-                                 heap)
+        paths <- rcpp_get_paths (
+            graph,
+            vert_map,
+            from_index$index,
+            to_index$index,
+            heap
+        )
     }
 
     # convert 1-based indices back into vertex IDs. Note both paths that can not
     # be traced and single-step paths are returned from the above as NULL. The
     # former are retained as NULL, while the following converts the latter to
     # appropriate start-end vertices.
-    paths <- lapply (paths, function (i)
-                     lapply (i, function (j) {
-                                 if (is.null (j))
-                                     return (j)     # nocov
-                                 vert_map$vert [j]
-                             }  )   ) # nolint
+    paths <- lapply (paths, function (i) {
+        lapply (i, function (j) {
+            if (is.null (j)) {
+                return (j)
+            } # nocov
+            vert_map$vert [j]
+        })
+    }) # nolint
 
 
     # name path lists
     if (!is.null (from_index$id) & !is.null (to_index$id)) {
         if (!pairwise) {
             for (i in seq_along (from_index$id)) {
-                names (paths [[i]]) <- paste0 (from_index$id [i],
-                                               "-",
-                                               to_index$id)
+                names (paths [[i]]) <- paste0 (
+                    from_index$id [i],
+                    "-",
+                    to_index$id
+                )
             }
         }
         names (paths) <- from_index$id
@@ -143,17 +153,24 @@ dodgr_paths <- function (graph,
         graph_verts <- paste0 ("f", graph$from, "t", graph$to)
 
         # convert vertex IDs to corresponding sequences of edge numbers
-        paths <- lapply (paths, function (i)
-                         lapply (i, function (j)
-                                 if (length (j) > 1) {
-                                     indx <- 2:length (j)
-                                     pij <- paste0 ("f", j [indx - 1],
-                                                    "t", j [indx])
-                                     res <- match (pij, graph_verts)
-                                     res <- res [which (!is.na (res))]
-                                     return (if (length (res) == 0) NULL
-                                             else res)
-                                 } )) # nolint
+        paths <- lapply (paths, function (i) {
+            lapply (i, function (j) {
+                if (length (j) > 1) {
+                    indx <- 2:length (j)
+                    pij <- paste0 (
+                        "f", j [indx - 1],
+                        "t", j [indx]
+                    )
+                    res <- match (pij, graph_verts)
+                    res <- res [which (!is.na (res))]
+                    return (if (length (res) == 0) {
+                        NULL
+                    } else {
+                        res
+                    })
+                }
+            })
+        }) # nolint
     }
 
     return (paths)
