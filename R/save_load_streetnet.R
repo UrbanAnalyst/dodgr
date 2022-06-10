@@ -41,7 +41,7 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
     if (length (filename) != 1L) {
         stop ("'filename' must be specified as single character value.")
     }
-    
+
     if (tools::file_ext (filename) == "") {
         filename <- paste0 (filename, ".Rds")
     }
@@ -86,17 +86,19 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
     edge_map <- readRDS (fname_e)
 
     fname_j <- fs::path (td, paste0 ("dodgr_junctions_", hashc, ".Rds"))
-    if (!fs::file_exists (fname_j)) # should always be
+    if (!fs::file_exists (fname_j)) { # should always be
         stop ("junction list was not cached; unable to save network.")
+    }
     junctions <- readRDS (fname_j)
 
     out <- list (
-                 graph = net,
-                 verts = v,
-                 graph_c = graphc,
-                 verts_c = verts_c,
-                 edge_map = edge_map,
-                 junctions = junctions)
+        graph = net,
+        verts = v,
+        graph_c = graphc,
+        verts_c = verts_c,
+        edge_map = edge_map,
+        junctions = junctions
+    )
 
     saveRDS (out, filename)
 }
