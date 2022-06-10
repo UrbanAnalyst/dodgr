@@ -17,8 +17,10 @@
 #' from <- sample (graph$from_id, size = 10)
 #' to <- sample (graph$to_id, size = 5)
 #' to <- to [!to %in% from]
-#' flows <- matrix (10 * runif (length (from) * length (to)),
-#'                  nrow = length (from))
+#' flows <- matrix (
+#'     10 * runif (length (from) * length (to)),
+#'     nrow = length (from)
+#' )
 #' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows` column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
@@ -29,11 +31,15 @@
 #' }
 dodgr_flowmap <- function (net, bbox = NULL, linescale = 1) {
 
-    if (!"flow" %in% names (net))
+    if (!"flow" %in% names (net)) {
         net$flow <- 1
-    if (is.null (bbox))
-        bbox <- c (min (net$from_lon), min (net$from_lat),
-                 max (net$from_lon), max (net$from_lat))
+    }
+    if (is.null (bbox)) {
+        bbox <- c (
+            min (net$from_lon), min (net$from_lat),
+            max (net$from_lon), max (net$from_lat)
+        )
+    }
 
     xlims <- c (bbox [1], bbox [3])
     ylims <- c (bbox [2], bbox [4])
@@ -46,5 +52,6 @@ dodgr_flowmap <- function (net, bbox = NULL, linescale = 1) {
     cols <- cols [ceiling (net$flow * ncols)]
 
     with (net, segments (from_lon, from_lat, to_lon, to_lat,
-                            col = cols, lwd = linescale * net$flow))
+        col = cols, lwd = linescale * net$flow
+    ))
 }
