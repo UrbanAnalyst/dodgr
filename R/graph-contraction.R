@@ -22,24 +22,28 @@
 #' graph <- dodgr_contract_graph (graph)
 #' nrow (graph) # 662
 dodgr_contract_graph <- function (graph, verts = NULL) {
-    if (nrow (graph) == 0)
-        stop ("graph is empty") # nocov
+    if (nrow (graph) == 0) {
+        stop ("graph is empty")
+    } # nocov
 
     # px is the R6 processx object for initial caching
     px <- NULL
     if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px")
-        while (px$is_alive ())
+        while (px$is_alive ()) {
             px$wait ()
+        }
     }
 
     v <- dodgr_vertices (graph)
 
     if (!is.null (verts)) {
-        if (!(length (verts) == 1 | is.vector (verts)))
+        if (!(length (verts) == 1 | is.vector (verts))) {
             stop ("verts must be a single value or a vector of vertex IDs")
-        if (!is.character (verts))
+        }
+        if (!is.character (verts)) {
             verts <- paste0 (verts)
+        }
         verts <- verts [which (verts %in% v$id)]
     }
 
@@ -51,8 +55,9 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
         graph_contracted <- list (graph = readRDS (fname_c))
     } else {
         fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
-        if (!fs::file_exists (fname))
+        if (!fs::file_exists (fname)) {
             saveRDS (graph, fname)
+        }
 
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
 
@@ -64,18 +69,23 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
 
         saveRDS (graph_contracted$graph, fname_c)
 
-        fname_e <- fs::path (fs::path_temp (),
-                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
+        fname_e <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_edge_map_", hashc, ".Rds")
+        )
         saveRDS (graph_contracted$edge_map, fname_e)
 
-        fname_j <- fs::path (fs::path_temp (),
-                             paste0 ("dodgr_junctions_", hashc, ".Rds"))
+        fname_j <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_junctions_", hashc, ".Rds")
+        )
         saveRDS (graph_contracted$junctions, fname_j)
     }
 
     # copy the processx R6 object associated with caching the original graph:
-    if (!is.null (px))
+    if (!is.null (px)) {
         attr (graph_contracted$graph, "px") <- px
+    }
 
     return (graph_contracted$graph)
 }
@@ -100,10 +110,14 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:
-    indx_contr <- match (graph_contracted$edge_map$edge_new,
-                         graph_contracted$graph$edge_id)
-    indx_orig <- match (graph_contracted$edge_map$edge_old,
-                        graph [, gr_cols$edge_id])
+    indx_contr <- match (
+        graph_contracted$edge_map$edge_new,
+        graph_contracted$graph$edge_id
+    )
+    indx_orig <- match (
+        graph_contracted$edge_map$edge_old,
+        graph [, gr_cols$edge_id]
+    )
     # Then reduce the latter only to the corresponding first non-repeated values
     # of the former.
     indx_orig <- indx_orig [which (!duplicated (indx_contr))]
@@ -128,18 +142,18 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     if (is_graph_spatial (graph)) {
         spcols <- find_spatial_cols (graph)$fr_col
         indx <- match (graph_contracted$graph$from [indx_contr], graph2$from)
-        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]   # nolint
-        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]   # nolint
+        graph_refill [, spcols [1]] <- graph [indx, spcols [1]] # nolint
+        graph_refill [, spcols [2]] <- graph [indx, spcols [2]] # nolint
 
         spcols <- find_spatial_cols (graph)$to_col
         indx <- match (graph_contracted$graph$to [indx_contr], graph2$to)
-        graph_refill [, spcols [1] ] <- graph [indx, spcols [1] ]   # nolint
-        graph_refill [, spcols [2] ] <- graph [indx, spcols [2] ]   # nolint
+        graph_refill [, spcols [1]] <- graph [indx, spcols [1]] # nolint
+        graph_refill [, spcols [2]] <- graph [indx, spcols [2]] # nolint
         # This code matches way_id values to those in original graph, but that's
         # kind of arbitrary because with duplicated ways the ID matching can
         # never be systematically controlled
-        #if ("way_id" %in% names (graph))
-        #{
+        # if ("way_id" %in% names (graph))
+        # {
         #    indx <- match (graph_contracted$graph$edge_id,
         #                   graph_contracted$edge_map$edge_new)
         #    indx <- graph_contracted$edge_map$edge_old [indx]
@@ -147,12 +161,12 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
         #    indx2 <- which (!is.na (indx))
         #    indx <- indx [indx2]
         #    graph_refill$way_id [indx2] <- graph$way_id [indx]
-        #}
+        # }
     }
 
     # and finally replicate the uncontracted edges of graph in graph_contracted
     indx_uncontr <- which (!graph [, gr_cols$edge_id] %in%
-                           graph_contracted$edge_map$edge_old)
+        graph_contracted$edge_map$edge_old)
     graph_refill <- rbind (graph_refill, graph [indx_uncontr, ])
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE))) {
@@ -166,9 +180,11 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
 
     class (graph_refill) <- c (classes, "dodgr_contracted")
 
-    return (list (graph = graph_refill,
-                  edge_map = graph_contracted$edge_map,
-                  junctions = junctions))
+    return (list (
+        graph = graph_refill,
+        edge_map = graph_contracted$edge_map,
+        junctions = junctions
+    ))
 }
 
 #' dodgr_uncontract_graph
@@ -196,14 +212,16 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
 #' graph1$new_col <- runif (nrow (graph1))
 #' graph3 <- dodgr_uncontract_graph (graph1)
 #' # graph3 is then the uncontracted graph which includes "new_col" as well
-#' dim (graph0); dim (graph3)
+#' dim (graph0)
+#' dim (graph3)
 dodgr_uncontract_graph <- function (graph) {
 
     px <- NULL
     if ("px" %in% names (attributes (graph))) {
         px <- attr (graph, "px") # processx R6 object
-        while (px$is_alive ())
+        while (px$is_alive ()) {
             px$wait ()
+        }
     }
 
     edge_map <- get_edge_map (graph)
@@ -211,16 +229,22 @@ dodgr_uncontract_graph <- function (graph) {
     gr_cols <- dodgr_graph_cols (graph)
     hashe_ref <- attr (graph, "hashe")
     hashe <- digest::digest (graph [[gr_cols$edge_id]])
-    if (!identical (hashe, hashe_ref))
-        stop ("Unable to uncontract this graph because the rows ",
-              "have been changed")
+    if (!identical (hashe, hashe_ref)) {
+        stop (
+            "Unable to uncontract this graph because the rows ",
+            "have been changed"
+        )
+    }
 
     hash <- attr (graph, "hash")
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
-    if (!fs::file_exists (fname))
-        stop (paste0 ("Graph must have been contracted in ",    # nocov
-                      "current R session; and have retained ",  # nocov
-                      "the same row structure"))                # nocov
+    if (!fs::file_exists (fname)) {
+        stop (paste0 (
+            "Graph must have been contracted in ", # nocov
+            "current R session; and have retained ", # nocov
+            "the same row structure"
+        ))
+    } # nocov
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px
@@ -234,25 +258,36 @@ dodgr_uncontract_graph <- function (graph) {
         # merging extra rows such as flow from compound junctions back into
         # "normal" (non-compound) edges
         hash <- get_hash (graph, hash = TRUE)
-        fname <- fs::path (fs::path_temp (), paste0 ("dodgr_edge_contractions_",
-                                               hash, ".Rds"))
-        if (!fs::file_exists (fname))
-            stop (paste0 ("Graph must have been contracted in ",    # nocov
-                          "current R session; and have retained ",  # nocov
-                          "the same row structure"))                # nocov
+        fname <- fs::path (fs::path_temp (), paste0 (
+            "dodgr_edge_contractions_",
+            hash, ".Rds"
+        ))
+        if (!fs::file_exists (fname)) {
+            stop (paste0 (
+                "Graph must have been contracted in ", # nocov
+                "current R session; and have retained ", # nocov
+                "the same row structure"
+            ))
+        } # nocov
         ec <- readRDS (fname)
 
         index_junction <- match (ec$edge, graph [[gr_cols$edge_id]])
         index_edge_in <- match (ec$e_in, graph [[gr_cols$edge_id]])
         index_edge_out <- match (ec$e_out, graph [[gr_cols$edge_id]])
         new_cols <- names (graph) [which (!names (graph) %in%
-                                          names (graph_full))]
+            names (graph_full))]
+
         for (n in new_cols) {
-            graph [[n]] [index_edge_in] <- graph [[n]] [index_edge_in] +
+
+            graph [[n]] [index_edge_in] <-
+                graph [[n]] [index_edge_in] +
                 graph [[n]] [index_junction]
-            graph [[n]] [index_edge_out] <- graph [[n]] [index_edge_out] +
+
+            graph [[n]] [index_edge_out] <-
+                graph [[n]] [index_edge_out] +
                 graph [[n]] [index_junction]
         }
+
         # next line removes all the compound turn angle edges:
         graph <- graph [which (!graph [[gr_cols$edge_id]] %in% ec$edge), ]
         graph$.vx0 <- gsub ("_start$", "", graph$.vx0)
@@ -271,10 +306,15 @@ uncontract_graph <- function (graph, edge_map, graph_full) {
     # edge_map only has the contracted edges; flows from the original
     # non-contracted edges also need to be inserted
     edges <- graph [[gr_cols$edge_id]] [which (!graph [[gr_cols$edge_id]] %in%
-                                               edge_map$edge_new)]
-    indx_to_full <- c (indx_to_full, match (edges,
-                                            graph_full [[gr_cols$edge_id]]))
-    indx_to_contr <- c (indx_to_contr, match (edges, graph [[gr_cols$edge_id]]))
+        edge_map$edge_new)]
+    indx_to_full <- c (
+        indx_to_full,
+        match (edges, graph_full [[gr_cols$edge_id]])
+    )
+    indx_to_contr <- c (
+        indx_to_contr,
+        match (edges, graph [[gr_cols$edge_id]])
+    )
 
     index <- which (!names (graph) %in% names (graph_full))
     if (length (index) > 0) {

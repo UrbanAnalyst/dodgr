@@ -31,7 +31,8 @@ nrow (graph2) # 5,845
 graph1$new_col <- runif (nrow (graph1))
 graph3 <- dodgr_uncontract_graph (graph1)
 # graph3 is then the uncontracted graph which includes "new_col" as well
-dim (graph0); dim (graph3)
+dim (graph0)
+dim (graph3)
 }
 \seealso{
 Other modification: 
