@@ -33,9 +33,9 @@ verts <- dodgr_vertices (net)
 # Then generate some random points to match to graph
 npts <- 10
 xy <- data.frame (
-                  x = min (verts$x) + runif (npts) * diff (range (verts$x)),
-                  y = min (verts$y) + runif (npts) * diff (range (verts$y))
-                  )
+    x = min (verts$x) + runif (npts) * diff (range (verts$x)),
+    y = min (verts$y) + runif (npts) * diff (range (verts$y))
+)
 pts <- match_pts_to_graph (verts, xy)
 pts # an index into verts
 pts <- verts$id [pts]
