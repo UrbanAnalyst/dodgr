@@ -53,8 +53,8 @@
 #' # Example with access restrictions
 #' bbox <- c (-122.2935, 47.62663, -122.28, 47.63289)
 #' x <- dodgr_streetnet_sc (bbox)
-#' net <- weight_streetnet (x, keep_cols = "access, turn_penalty = TRUE)
-#' # has many streets with "access" = "private; these can be removed like this:
+#' net <- weight_streetnet (x, keep_cols = "access", turn_penalty = TRUE)
+#' # has many streets with "access" = "private"; these can be removed like this:
 #' net2 <- net [which (!net$access != "private"), ]
 #' # or modified in some other way such as strongly penalizing use of those
 #' # streets:
@@ -70,15 +70,17 @@ dodgr_streetnet <- function (bbox,
 
     # osm_poly2line merges all street polygons with the line ones
     net <- osmdata::opq (bb$bbox) %>%
-                osmdata::add_osm_feature (key = "highway") %>%
-                osmdata::osmdata_sf (quiet = quiet) %>%
-                osmdata::osm_poly2line ()
+        osmdata::add_osm_feature (key = "highway") %>%
+        osmdata::osmdata_sf (quiet = quiet) %>%
+        osmdata::osm_poly2line ()
 
-    if (nrow (net$osm_lines) == 0)
+    if (nrow (net$osm_lines) == 0) {
         stop ("Street network unable to be downloaded")
+    }
 
-    if (!is.null (bb$bbox_poly))
+    if (!is.null (bb$bbox_poly)) {
         net <- osmdata::trim_osmdata (net, bb$bbox_poly)
+    }
 
     return (net$osm_lines)
 }
@@ -103,14 +105,16 @@ dodgr_streetnet_sc <- function (bbox,
 
     # This extracts only some of the most common restrictions; see full list at
     # https://wiki.openstreetmap.org/wiki/Restrictions
-    fts <- c ("\"highway\"",
-              "\"restriction\"",
-              "\"access\"",
-              "\"bicycle\"",
-              "\"motorcar\"",
-              "\"motor_vehicle\"",
-              "\"vehicle\"",
-              "\"toll\"")
+    fts <- c (
+        "\"highway\"",
+        "\"restriction\"",
+        "\"access\"",
+        "\"bicycle\"",
+        "\"motorcar\"",
+        "\"motor_vehicle\"",
+        "\"vehicle\"",
+        "\"toll\""
+    )
 
     osmdata::opq (bb$bbox) %>%
         osmdata::add_osm_features (features = fts) %>%
@@ -133,11 +137,15 @@ process_bbox <- function (bbox,
 
         } else if (is.list (bbox)) {
 
-            if (!all (vapply (bbox, is.numeric, logical (1))))
-                stop ("bbox is a list, so items must be numeric ",
-                      "(as in osmdata::getbb (..., format_out = 'polygon'))")
-            if (length (bbox) > 1)
-                message ("selecting the first polygon from bbox") # nocov
+            if (!all (vapply (bbox, is.numeric, logical (1)))) {
+                stop (
+                    "bbox is a list, so items must be numeric ",
+                    "(as in osmdata::getbb (..., format_out = 'polygon'))"
+                )
+            }
+            if (length (bbox) > 1) {
+                message ("selecting the first polygon from bbox")
+            } # nocov
 
             bbox_poly <- bbox [[1]]
             colnames (bbox_poly) <- c ("x", "y")
@@ -149,8 +157,9 @@ process_bbox <- function (bbox,
 
             if (!inherits (bbox, "matrix")) {
 
-                if (length (bbox) != 4)
+                if (length (bbox) != 4) {
                     stop ("bbox must have four numeric values")
+                }
                 bbox <- vec_to_bbox (bbox)
 
             } else if (nrow (bbox) > 2) {
@@ -171,8 +180,7 @@ process_bbox <- function (bbox,
         }
 
         if (identical (rownames (bbox), c ("x", "y")) |
-            identical (colnames (bbox), c ("min", "max")))
-        {
+            identical (colnames (bbox), c ("min", "max"))) {
             bbox <- t (bbox)
         }
 
@@ -182,39 +190,48 @@ process_bbox <- function (bbox,
     } else if (!is.null (pts)) {
 
         nms <- names (pts)
-        if (is.null (nms))
+        if (is.null (nms)) {
             nms <- colnames (pts)
+        }
 
         colx <- which (grepl ("x", nms, ignore.case = TRUE) |
-                       grepl ("lon", nms, ignore.case = TRUE))
+            grepl ("lon", nms, ignore.case = TRUE))
         coly <- which (grepl ("y", nms, ignore.case = TRUE) |
-                       grepl ("lat", nms, ignore.case = TRUE))
+            grepl ("lat", nms, ignore.case = TRUE))
 
-        if (! (length (colx) == 1 | length (coly) == 1))
+        if (!(length (colx) == 1 | length (coly) == 1)) {
             stop ("Can not unambiguously determine coordinates in graph")
+        }
 
         x <- range (pts [, colx])
         x <- x + c (-expand, expand) * diff (x)
         y <- range (pts [, coly])
         y <- y + c (-expand, expand) * diff (y)
 
-        bbox <- cbind (c (x [1], x [2]),
-                       c (y [1], y [2]))
+        bbox <- cbind (
+            c (x [1], x [2]),
+            c (y [1], y [2])
+        )
         rownames (bbox) <- c ("min", "max")
         colnames (bbox) <- c ("x", "y")
 
-    } else
+    } else {
         stop ("Either bbox or pts must be specified.")
+    }
 
     # columns are then [x, y]:
-    if (bbox [1, 1] < -180)
+    if (bbox [1, 1] < -180) {
         bbox [1, 1] <- bbox [1, 2] + 360
-    if (bbox [2, 1] > 180)
+    }
+    if (bbox [2, 1] > 180) {
         bbox [2, 1] <- bbox [2, 2] - 360
-    if (bbox [1, 2] < -90)
+    }
+    if (bbox [1, 2] < -90) {
         bbox [1, 2] <- -90
-    if (bbox [2, 2] > 90)
+    }
+    if (bbox [2, 2] > 90) {
         bbox [2, 2] <- 90
+    }
 
     list (bbox = bbox, bbox_poly = bbox_poly)
 }
@@ -224,19 +241,27 @@ vec_to_bbox <- function (bbox) {
     if (is.null (names (bbox))) {
 
         # presume (lon, lat, lon, lat)
-        bbox <- cbind (sort (bbox [c (1, 3)]),
-                       sort (bbox [c (2, 4)]))
+        bbox <- cbind (
+            sort (bbox [c (1, 3)]),
+            sort (bbox [c (2, 4)])
+        )
         colnames (bbox) <- c ("x", "y")
         rownames (bbox) <- c ("min", "max")
     } else {
 
         minptn <- c ("^min", "min$", "0$")
-        chk <- vapply (minptn, function (i)
-                       any (grepl (i, names (bbox))),
-                       logical (1))
-        if (length (which (chk)) != 1L)
-            stop ("names of bbox elements should clearly label ",
-                  "min & max longitude and latitude")
+        chk <- vapply (
+            minptn, function (i) {
+                any (grepl (i, names (bbox)))
+            },
+            logical (1)
+        )
+        if (length (which (chk)) != 1L) {
+            stop (
+                "names of bbox elements should clearly label ",
+                "min & max longitude and latitude"
+            )
+        }
 
         minptn <- minptn [which (chk)]
         mincols <- grep (minptn, names (bbox))
@@ -261,12 +286,14 @@ vec_to_bbox <- function (bbox) {
         }
 
         if (!(length (mincols) == 2 &
-              length (maxcols) == 2 &
-              length (xcols) == 2 &
-              length (ycols) == 2)) {
+            length (maxcols) == 2 &
+            length (xcols) == 2 &
+            length (ycols) == 2)) {
 
-            stop ("names of bbox elements should clearly label ",
-                  "min & max longitude and latitude")
+            stop (
+                "names of bbox elements should clearly label ",
+                "min & max longitude and latitude"
+            )
         }
 
         lonmin <- xcols [which (xcols %in% mincols)]
@@ -274,8 +301,10 @@ vec_to_bbox <- function (bbox) {
         lonmax <- xcols [which (xcols %in% maxcols)]
         latmax <- ycols [which (ycols %in% maxcols)]
 
-        bbox <- rbind (c (bbox [lonmin], bbox [lonmax]),
-                       c (bbox [latmin], bbox [latmax]))
+        bbox <- rbind (
+            c (bbox [lonmin], bbox [lonmax]),
+            c (bbox [latmin], bbox [latmax])
+        )
     }
 
     return (bbox)

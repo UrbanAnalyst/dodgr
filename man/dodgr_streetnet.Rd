@@ -63,8 +63,8 @@ nrow (dodgr_streetnet (bbox = bb)) # around 17,000
 # Example with access restrictions
 bbox <- c (-122.2935, 47.62663, -122.28, 47.63289)
 x <- dodgr_streetnet_sc (bbox)
-net <- weight_streetnet (x, keep_cols = "access, turn_penalty = TRUE)
-# has many streets with "access" = "private; these can be removed like this:
+net <- weight_streetnet (x, keep_cols = "access", turn_penalty = TRUE)
+# has many streets with "access" = "private"; these can be removed like this:
 net2 <- net [which (!net$access != "private"), ]
 # or modified in some other way such as strongly penalizing use of those
 # streets:
