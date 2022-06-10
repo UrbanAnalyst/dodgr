@@ -19,12 +19,16 @@ get_hash <- function (graph, verts = NULL, hash = TRUE) {
 get_edge_map <- function (graph) {
 
     hashc <- get_hash (graph, hash = FALSE)
-    if (is.null (hashc))
-        stop ("something went wrong extracting the edge map")   # nocov
-    fname_c <- fs::path (fs::path_temp (),
-                         paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-    if (!fs::file_exists (fname_c))
-        stop ("something went wrong extracting the edge map")   # nocov
+    if (is.null (hashc)) {
+        stop ("something went wrong extracting the edge map")
+    } # nocov
+    fname_c <- fs::path (
+        fs::path_temp (),
+        paste0 ("dodgr_edge_map_", hashc, ".Rds")
+    )
+    if (!fs::file_exists (fname_c)) {
+        stop ("something went wrong extracting the edge map")
+    } # nocov
     readRDS (fname_c)
 }
 
@@ -49,8 +53,9 @@ cache_graph <- function (graph, edge_col) {
         verts <- dodgr::dodgr_vertices (graph) # nocov
         hash <- attr (graph, "hash")
         fname_v <- fs::path (td, paste0 ("dodgr_verts_", hash, ".Rds"))
-        if (!fs::file_exists (fname_v))
+        if (!fs::file_exists (fname_v)) {
             saveRDS (verts, fname_v)
+        }
 
         # save original graph to enable subsequent re-loading from the
         # contracted version
@@ -73,14 +78,16 @@ cache_graph <- function (graph, edge_col) {
         fname_e <- paste0 ("dodgr_edge_map_", hashc, ".Rds")
         fname_e_fr <- fs::path (fs::path_temp (), fname_e)
         fname_e_to <- fs::path (td, fname_e)
-        if (fs::file_exists (fname_e_fr)) # should always be
+        if (fs::file_exists (fname_e_fr)) { # should always be
             fs::file_copy (fname_e_fr, fname_e_to, overwrite = TRUE)
+        }
 
         fname_j <- paste0 ("dodgr_junctions_", hashc, ".Rds")
         fname_j_fr <- fs::path (fs::path_temp (), fname_j)
         fname_j_to <- fs::path (td, fname_j)
-        if (fs::file_exists (fname_j_fr)) # should always be
+        if (fs::file_exists (fname_j_fr)) { # should always be
             fs::file_copy (fname_j_fr, fname_j_to, overwrite = TRUE)
+        }
     }
 
     sink (file = fs::path (fs::path_temp (), "Rout.txt"))
@@ -109,8 +116,10 @@ clear_dodgr_cache <- function () {
 
     lf <- list.files (fs::path_temp (), full.names = TRUE, pattern = "^dodgr_")
     if (length (lf) > 0) {
-        tryCatch (chk <- file.remove (lf),
-                  error = function (e) NULL)
+        tryCatch (
+            chk <- file.remove (lf),
+            error = function (e) NULL
+        )
     }
 }
 
