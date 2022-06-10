@@ -90,7 +90,8 @@ sapply (d, dim)
 # s <- summary (d) # print summary as proportions along each "edge_type"
 # or directly calculate proportions only
 dodgr_dists_categorical (graph, from, to,
-                         proportions_only = TRUE)
+    proportions_only = TRUE
+)
 
 # The 'dlimit' parameter can be used to calculate total distances along each
 # category of edges from a set of points:

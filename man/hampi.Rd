@@ -17,12 +17,12 @@ extraneous columns to reduce size:
 }
 \examples{
 \dontrun{
-hampi <- dodgr_streetnet("hampi india")
+hampi <- dodgr_streetnet ("hampi india")
 cols <- c ("osm_id", "highway", "oneway", "geometry")
 hampi <- hampi [, which (names (hampi) \%in\% cols)]
 }
 # this 'sf data.frame' can be converted to a 'dodgr' network with
-net <- weight_streetnet (hampi, wt_profile = 'foot')
+net <- weight_streetnet (hampi, wt_profile = "foot")
 }
 \seealso{
 Other data: 

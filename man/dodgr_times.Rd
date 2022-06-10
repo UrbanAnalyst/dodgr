@@ -75,9 +75,11 @@ calculations are, however, not able to be interrupted (for example, by
 }
 \examples{
 # A simple graph
-graph <- data.frame (from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
-                     to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
-                     d = c (1, 2, 1, 3, 2, 1, 2, 1))
+graph <- data.frame (
+    from = c ("A", "B", "B", "B", "C", "C", "D", "D"),
+    to = c ("B", "A", "C", "D", "B", "D", "C", "A"),
+    d = c (1, 2, 1, 3, 2, 1, 2, 1)
+)
 dodgr_dists (graph)
 
 # A larger example from the included [hampi()] data.
@@ -91,8 +93,10 @@ d <- dodgr_dists (graph, from = from, to = to)
 # a more complex street network example, thanks to @chrijo; see
 # https://github.com/ATFutures/dodgr/issues/47
 
-xy <- rbind (c (7.005994, 51.45774), # limbeckerplatz 1 essen germany
-             c (7.012874, 51.45041)) # hauptbahnhof essen germany
+xy <- rbind (
+    c (7.005994, 51.45774), # limbeckerplatz 1 essen germany
+    c (7.012874, 51.45041)
+) # hauptbahnhof essen germany
 xy <- data.frame (lon = xy [, 1], lat = xy [, 2])
 essen <- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
 graph <- weight_streetnet (essen, wt_profile = "foot")
@@ -108,7 +112,7 @@ table (essen$level)
 # There are parts of the network on different building levels (because of
 # shopping malls and the like). These may or may not be connected, so it may
 # be necessary to filter out particular levels
-index <- which (! (essen$level == "-1" | essen$level == "1")) # for example
+index <- which (!(essen$level == "-1" | essen$level == "1")) # for example
 library (sf) # needed for following sub-select operation
 essen <- essen [index, ]
 graph <- weight_streetnet (essen, wt_profile = "foot")
