@@ -13,15 +13,17 @@ write_dodgr_wt_profile <- function (file = NULL) {
 
     requireNamespace ("jsonlite")
 
-    if (is.null (file))
+    if (is.null (file)) {
         stop ("file name must be given")
+    }
 
     file <- paste0 (tools::file_path_sans_ext (file), ".json")
     con <- file (file, open = "wt")
 
     sc <- summary (con)
-    if (!sc [["can write"]] == "yes")
-        stop ("Unable to write to connection ", sc$description) # nocov
+    if (!sc [["can write"]] == "yes") {
+        stop ("Unable to write to connection ", sc$description)
+    } # nocov
 
     wpj <- jsonlite::toJSON (dodgr::weighting_profiles, pretty = TRUE)
     writeLines (wpj, con)
@@ -31,8 +33,9 @@ write_dodgr_wt_profile <- function (file = NULL) {
 read_dodgr_wt_profile <- function (file = NULL) {
 
     file <- paste0 (tools::file_path_sans_ext (file), ".json")
-    if (!fs::file_exists (file))
-        stop ("file [", file, "] does not exist") # nocov
+    if (!fs::file_exists (file)) {
+        stop ("file [", file, "] does not exist")
+    } # nocov
 
     res <- jsonlite::fromJSON (file)
     # jsonlite interprets these as "integer":
@@ -44,10 +47,11 @@ read_dodgr_wt_profile <- function (file = NULL) {
 
 get_profiles <- function (file = NULL) {
 
-    if (is.null (file))
+    if (is.null (file)) {
         wp <- dodgr::weighting_profiles
-    else
+    } else {
         wp <- read_dodgr_wt_profile (file)
+    }
     return (wp)
 }
 
