@@ -27,7 +27,10 @@ library (sf)
 library (dplyr)
 # data must be unzipped here
 # os_roads <- sf::read_sf("~/data/ST_RoadLink.shp")
-# u <- "https://opendata.arcgis.com/datasets/686603e943f948acaa13fb5d2b0f1275_4.kml"
+# u <- paste0 (
+#     "https://opendata.arcgis.com/datasets/",
+#     "686603e943f948acaa13fb5d2b0f1275_4.kml"
+# )
 # lads <- sf::read_sf(u)
 # mapview::mapview(lads)
 # bristol_pol <- dplyr::filter(lads, grepl("Bristol", lad16nm))
