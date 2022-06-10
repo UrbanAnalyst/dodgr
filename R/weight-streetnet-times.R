@@ -8,9 +8,12 @@ has_elevation <- function (x) {
 
 check_sc <- function (x) {
 
-    if (!"osmdata_sc" %in% class (x))
-        stop ("weight_streetnet currently only works for 'sc'-class objects ",
-              "extracted with osmdata::osmdata_sc.")
+    if (!"osmdata_sc" %in% class (x)) {
+        stop (
+            "weight_streetnet currently only works for 'sc'-class objects ",
+            "extracted with osmdata::osmdata_sc."
+        )
+    }
 }
 
 # First step of edge extraction: join x and y coordinates
@@ -37,9 +40,10 @@ sc_edge_dist <- function (graph) {
     xy0 <- as.data.frame (graph [, c (".vx0_x", ".vx0_y")])
     xy1 <- as.data.frame (graph [, c (".vx1_x", ".vx1_y")])
     graph$d <- geodist::geodist (xy0, xy1, paired = TRUE, measure = "geodesic")
-    if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph))
+    if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph)) {
         graph <- dplyr::mutate (graph, "dz" = .vx1_z - .vx0_z) %>%
-            dplyr::select (-c(.vx0_z, .vx1_z))
+            dplyr::select (-c (.vx0_z, .vx1_z))
+    }
     return (graph)
 }
 
@@ -68,22 +72,27 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
 
 convert_hw_types_to_bool <- function (graph, wt_profile) {
 
-    if (!"oneway" %in% names (graph))
+    if (!"oneway" %in% names (graph)) {
         return (graph)
-    if (is.logical (graph$oneway))
+    }
+    if (is.logical (graph$oneway)) {
         return (graph)
+    }
 
-    if (!(is.character (wt_profile) | is.data.frame (wt_profile)))
+    if (!(is.character (wt_profile) | is.data.frame (wt_profile))) {
         return (graph)
+    }
 
-    if (!is.character (wt_profile))
+    if (!is.character (wt_profile)) {
         wt_profile <- unique (wt_profile$name)
-    b <- grep ("oneway.*bicycle|bicycle.*oneway", names(graph))
+    }
+    b <- grep ("oneway.*bicycle|bicycle.*oneway", names (graph))
     if ("oneway" %in% names (graph) |
         (length (b) == 1 & wt_profile == "bicycle")) {
         index <- which (!graph$oneway %in% c ("no", "yes"))
-        if (length (index) > 0)
+        if (length (index) > 0) {
             graph$oneway [index] <- "no"
+        }
         graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
 
         if (length (b) == 1) {
@@ -91,8 +100,9 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
             names (graph) [b] <- "oneway_bicycle"
 
             index <- which (!graph$oneway_bicycle %in% c ("no", "yes"))
-            if (length (index) > 0)
+            if (length (index) > 0) {
                 graph$oneway_bicycle [index] <- "no"
+            }
             graph$oneway_bicycle <-
                 ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
 
@@ -122,15 +132,19 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
 # Set maximum speed for each edge.
 set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
 
-    if (!"maxspeed" %in% names (graph))
-        graph$maxspeed <- NA_real_ # nocov
-    if (!"highway" %in% names (graph))
-        return (graph) # nocov
+    if (!"maxspeed" %in% names (graph)) {
+        graph$maxspeed <- NA_real_
+    } # nocov
+    if (!"highway" %in% names (graph)) {
+        return (graph)
+    } # nocov
 
     maxspeed <- rep (NA_real_, nrow (graph))
     index <- grep ("mph", graph$maxspeed)
-    maxspeed [index] <- as.numeric (gsub ("[^[:digit:]. ]", "",
-                                            graph$maxspeed [index]))
+    maxspeed [index] <- as.numeric (gsub (
+        "[^[:digit:]. ]", "",
+        graph$maxspeed [index]
+    ))
     maxspeed [index] <- maxspeed [index] * 1.609344
 
     index <- seq (nrow (graph)) [!(seq (nrow (graph)) %in% index)]
@@ -143,8 +157,8 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     maxspeed_char <- gsub ("walk", "10", maxspeed_char)
     maxspeed_char <- gsub ("none", NA, maxspeed_char)
     index2 <- which (!(is.na (maxspeed_char) |
-                       maxspeed_char == "" |
-                       maxspeed_char == "NA"))
+        maxspeed_char == "" |
+        maxspeed_char == "NA"))
     index2 <- index2 [which (!grepl ("[[:alpha:]]", maxspeed_char [index2]))]
 
     maxspeed_numeric <- rep (NA_real_, length (index))
@@ -162,20 +176,23 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     wp_index <- wp_index [graph_index]
     maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
     maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i)
-                             ifelse (all (is.na (i)),
-                                     NA_real_,
-                                     min (i, na.rm = TRUE)))
+    graph$maxspeed <- apply (maxspeed, 1, function (i) {
+        ifelse (all (is.na (i)),
+            NA_real_,
+            min (i, na.rm = TRUE)
+        )
+    })
 
     na_highways <- wp$way [which (is.na (wp$max_speed))]
     graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
     # Also set weighted distance for all these to NA:
-    #gr_cols <- dodgr_graph_cols (graph)
-    #graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+    # gr_cols <- dodgr_graph_cols (graph)
+    # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") |
-        !"surface" %in% names (graph))
+        !"surface" %in% names (graph)) {
         return (graph)
+    }
 
     # And then repeat for max speeds according to surface profiles
     s <- get_surface_speeds (wt_profile, wt_profile_file)
@@ -188,13 +205,17 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     surf_index <- match (graph$surface, surf_vals)
     graph_index <- which (!is.na (surf_index))
     surf_index <- surf_index [graph_index]
-    maxspeed <- cbind (as.numeric (graph$maxspeed),
-                       rep (NA_real_, nrow (graph)))
+    maxspeed <- cbind (
+        as.numeric (graph$maxspeed),
+        rep (NA_real_, nrow (graph))
+    )
     maxspeed [graph_index, 2] <- surf_speeds [surf_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i)
-                             ifelse (all (is.na (i)),
-                                     NA_real_,
-                                     min (i, na.rm = TRUE)))
+    graph$maxspeed <- apply (maxspeed, 1, function (i) {
+        ifelse (all (is.na (i)),
+            NA_real_,
+            min (i, na.rm = TRUE)
+        )
+    })
 
     graph$surface <- NULL
 
@@ -206,15 +227,17 @@ weight_by_num_lanes <- function (graph, wt_profile) {
 
     # only weight these profiles:
     profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
-    if (!(wt_profile %in% profile_names | "lanes" %in% names (graph)))
-        return (graph) # nocov
+    if (!(wt_profile %in% profile_names | "lanes" %in% names (graph))) {
+        return (graph)
+    } # nocov
 
     lns <- c (4, 5, 6, 7, 8)
     wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
     for (i in seq (lns)) {
         index <- which (graph$lanes == lns [i])
-        if (i == length (lns))
+        if (i == length (lns)) {
             index <- which (graph$lanes >= lns [i])
+        }
         graph$d_weighted [index] <- graph$d_weighted [index] * (1 + wts [i])
     }
 
@@ -238,7 +261,7 @@ calc_edge_time <- function (graph, wt_profile) {
 
     if ("dz" %in% names (graph) &
         wt_profile %in% c ("foot", "bicycle")) {
-            graph <- times_by_incline (graph, wt_profile)
+        graph <- times_by_incline (graph, wt_profile)
     }
     graph$maxspeed <- NULL
 
@@ -294,13 +317,13 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file) {
     nodes <- traffic_signal_nodes (x)
     # Increment waiting times for edges ending at those nodes
     index <- which (graph$edge_ %in% oles$edge_ &
-                    graph$.vx1 %in% nodes)
+        graph$.vx1 %in% nodes)
     graph$time [index] <- graph$time [index] + wait
 
     # then all others with nodes simply marked as traffic lights - match
     # those to *start* nodes and simply add the waiting time
     index2 <- which (graph$.vx0 %in% nodes &
-                     !graph$.vx0 %in% graph$.vx0 [index])
+        !graph$.vx0 %in% graph$.vx0 [index])
     graph$time [index2] <- graph$time [index2] + wait
 
     return (graph)
@@ -310,15 +333,22 @@ rm_duplicated_edges <- function (graph) {
 
     gr_cols <- dodgr_graph_cols (graph)
     ft <- graph [, c (gr_cols$from, gr_cols$to)]
-    index <- cbind (which (duplicated (ft)),
-                    which (duplicated (ft, fromLast = TRUE)))
+    index <- cbind (
+        which (duplicated (ft)),
+        which (duplicated (ft, fromLast = TRUE))
+    )
 
-    index <- cbind (which (duplicated (graph [, c (".vx0", ".vx1")])),
-                    which (duplicated (graph [, c (".vx0", ".vx1")],
-                                       fromLast = TRUE)))
-    removes <- apply (index, 1, function (i)
-                      ifelse (graph$time [i [1] ] > graph$time [i [2] ], # nolint
-                              i [1], i [2]))
+    index <- cbind (
+        which (duplicated (graph [, c (".vx0", ".vx1")])),
+        which (duplicated (graph [, c (".vx0", ".vx1")], fromLast = TRUE))
+    )
+    removes <- apply (index, 1, function (i) {
+        ifelse (
+            graph$time [i [1]] > graph$time [i [2]],
+            i [1],
+            i [2]
+        )
+    })
     graph [!seq (nrow (graph)) %in% removes, ]
 }
 
@@ -326,8 +356,10 @@ rm_duplicated_edges <- function (graph) {
 # for non-oneway
 sc_duplicate_edges <- function (x, wt_profile) {
 
-    oneway_modes <-  c ("bicycle", "moped", "motorcycle", "motorcar", "goods",
-                        "hgv", "psv")
+    oneway_modes <- c (
+        "bicycle", "moped", "motorcycle", "motorcar", "goods",
+        "hgv", "psv"
+    )
 
     index <- seq (nrow (x))
     if (wt_profile %in% oneway_modes) {
@@ -367,15 +399,17 @@ get_key_val_pair <- function (x, kv) {
     # no visible binding notes:
     key <- value <- object_ <- NULL
 
-    xo <- lapply (kv, function (i)
-                  dplyr::filter (x$object, key == i [1], value == i [2]) %>%
-                  dplyr::select (object_) %>%
-                  dplyr::pull (object_))
+    xo <- lapply (kv, function (i) {
+        dplyr::filter (x$object, key == i [1], value == i [2]) %>%
+            dplyr::select (object_) %>%
+            dplyr::pull (object_)
+    })
     xo <- table (do.call (c, xo))
 
     res <- NULL
-    if (any (xo == length (kv)))
-        res <- names (xo) [which (xo == length (kv))] # nocov - not tested
+    if (any (xo == length (kv))) {
+        res <- names (xo) [which (xo == length (kv))]
+    } # nocov - not tested
 
     return (res)
 }
@@ -385,13 +419,15 @@ get_key_val_pair_node <- function (x, kv) {
     # no visible binding notes:
     key <- value <- vertex_ <- NULL
 
-    if (is.null (x$nodes))
+    if (is.null (x$nodes)) {
         return (NULL)
+    }
 
-    xo <- lapply (kv, function (i)
-                  dplyr::filter (x$nodes, key == i [1], value == i [2]) %>%
-                  dplyr::select (vertex_) %>%
-                  dplyr::pull (vertex_))
+    xo <- lapply (kv, function (i) {
+        dplyr::filter (x$nodes, key == i [1], value == i [2]) %>%
+            dplyr::select (vertex_) %>%
+            dplyr::pull (vertex_)
+    })
     unique (unlist (xo))
 }
 
@@ -400,46 +436,95 @@ traffic_light_objs <- function (x) {
 
     # 1. Traffic signal without intersection (e.g. before bridge), no pedestrian
     # crossing
-    x1 <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                     c ("crossing", "no")))
+    x1 <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "no")
+        )
+    )
 
     # 2. Pedestrian crossing without intersection
-    x2a <- get_key_val_pair (x, list (c ("highway", "crossing"),
-                                      c ("crossing", "traffic_signals")))
-    x2b <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                      c ("crossing", "traffic_signals")))
-    x2_forw <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                          c ("crossing", "no"),
-                                  c ("traffic_signals:direction", "forward")))
-    x2_back <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                          c ("crossing", "no"),
-                                  c ("traffic_signals:direction", "backward")))
+    x2a <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "crossing"),
+            c ("crossing", "traffic_signals")
+        )
+    )
+    x2b <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "traffic_signals")
+        )
+    )
+    x2_forw <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "no"),
+            c ("traffic_signals:direction", "forward")
+        )
+    )
+    x2_back <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "no"),
+            c ("traffic_signals:direction", "backward")
+        )
+    )
 
     # 3. Simple Intersection
-    x3a <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                      c ("crossing", "traffic_signals")))
-    x3b <- get_key_val_pair (x, list (c ("highway", "traffic_signals"),
-                                      c ("crossing", "no")))
-    x3c <- get_key_val_pair (x, list (c ("highway", "crossing"),
-                                      c ("crossing", "traffic_signals")))
+    x3a <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "traffic_signals")
+        )
+    )
+    x3b <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "traffic_signals"),
+            c ("crossing", "no")
+        )
+    )
+    x3c <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "crossing"),
+            c ("crossing", "traffic_signals")
+        )
+    )
 
     # 4. Intersection of divided and undivided highway with no lights
-    crossings <- get_key_val_pair (x, list (c ("highway", "footway"),
-                                            c ("footway", "crossing")))
+    crossings <- get_key_val_pair (
+        x,
+        list (
+            c ("highway", "footway"),
+            c ("footway", "crossing")
+        )
+    )
 
     xout <- unique (c (x1, x2a, x2b, x3a, x3b, x3c))
-    list ("both" = xout,
-          "forward" = x2_forw,
-          "back" = x2_back,
-          "crossings" = crossings)
+    list (
+        "both" = xout,
+        "forward" = x2_forw,
+        "back" = x2_back,
+        "crossings" = crossings
+    )
 }
 
 # Get all OSM node IDs that are traffic lights from osmdata_sc object x
 traffic_signal_nodes <- function (x) {
 
     x1 <- get_key_val_pair_node (x, list (c ("highway", "traffic_signals")))
-    x2 <- get_key_val_pair_node (x, list (c ("highway", "crossing"),
-                                          c ("crossing", "traffic_signals")))
+    x2 <- get_key_val_pair_node (x, list (
+        c ("highway", "crossing"),
+        c ("crossing", "traffic_signals")
+    ))
     unique (c (x1, x2))
 }
 
@@ -452,10 +537,12 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
     if (turn_penalty > 0) {
 
         res <- rcpp_route_times (graph, left_side, turn_penalty)
-        edge_map <- data.frame ("edge" = res$graph$edge_,
-                                "e_in" = res$graph$old_edge_in,
-                                "e_out" = res$graph$old_edge_out,
-                                stringsAsFactors = FALSE)
+        edge_map <- data.frame (
+            "edge" = res$graph$edge_,
+            "e_in" = res$graph$old_edge_in,
+            "e_out" = res$graph$old_edge_out,
+            stringsAsFactors = FALSE
+        )
         res$graph$old_edge_in <- res$graph$old_edge_out <- NULL
 
         index <- which (graph$.vx0 %in% res$junction_vertices)
@@ -464,8 +551,10 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         graph$.vx1 [index] <- paste0 (graph$.vx1 [index], "_end")
 
         # pad out extra columns of res to match any extra in original graph
-        resbind <- data.frame (array (NA, dim = c (nrow (res$graph),
-                                                   ncol (graph))))
+        resbind <- data.frame (array (NA, dim = c (
+            nrow (res$graph),
+            ncol (graph)
+        )))
         names (resbind) <- names (graph)
         resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
         graph <- rbind (graph, resbind)
@@ -486,21 +575,27 @@ remove_turn_restrictions <- function (x, graph, res) {
     rels <- x$relation_properties # x from restrictions query above!!
     restriction_rels <- rels [rels$key == "restriction", ]
     index <- which (x$relation_members$relation_ %in%
-                    restriction_rels$relation_)
+        restriction_rels$relation_)
     restriction_ways <- x$relation_members [index, ]
 
     rr_no <- restriction_rels [grep ("^no\\_", restriction_rels$value), ]
     rr_only <- restriction_rels [grep ("^only\\_", restriction_rels$value), ]
     rw_no <- restriction_ways [restriction_ways$relation_ %in%
-                               rr_no$relation_, ]
+        rr_no$relation_, ]
     rw_only <- restriction_ways [restriction_ways$relation_ %in%
-                                 rr_only$relation_, ]
+        rr_only$relation_, ]
 
     r_to_df <- function (r) {
-        r <- lapply (split (r, f = factor (r$relation_)),
-                     function (i) c (i$relation_ [1],
-                                     i$member [2],
-                                     i$member [c (1, 3)]))
+        r <- lapply (
+            split (r, f = factor (r$relation_)),
+            function (i) {
+                c (
+                    i$relation_ [1],
+                    i$member [2],
+                    i$member [c (1, 3)]
+                )
+            }
+        )
         r <- data.frame (do.call (rbind, r))
         names (r) <- c ("relation", "node", "from", "to")
         return (stats::na.omit (r))
@@ -513,7 +608,7 @@ remove_turn_restrictions <- function (x, graph, res) {
     in_edges <- graph$edge_ [index0 [which (!is.na (index0))]]
     out_edges <- graph$edge_ [index1 [which (!is.na (index1))]]
     index <- which (res$edge_map$e_in %in% in_edges &
-                    res$edge_map$e_out %in% out_edges)
+        res$edge_map$e_out %in% out_edges)
     no_turn_edges <- res$edge_map$edge [index]
 
     index0 <- match (rw_only$node, graph$.vx1) # in-edges
@@ -523,7 +618,7 @@ remove_turn_restrictions <- function (x, graph, res) {
     # index of turns to edges other than "only" turn edges, so also to edges which
     # are to be excluded:
     index <- which (res$edge_map$e_in %in% in_edges &
-                    !res$edge_map$e_out %in% out_edges)
+        !res$edge_map$e_out %in% out_edges)
     no_turn_edges <- unique (c (no_turn_edges, res$edge_map$edge [index]))
 
     res$graph <- res$graph [which (!res$graph$edge_ %in% no_turn_edges), ]
