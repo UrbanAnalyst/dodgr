@@ -62,14 +62,16 @@
 #' to <- sample (graph$to_id, size = 5)
 #' to <- to [!to %in% from]
 #' flows <- matrix (10 * runif (length (from) * length (to)),
-#'                  nrow = length (from))
+#'     nrow = length (from)
+#' )
 #' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows' column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
-#' nrow (graph); nrow (graph_undir) # the latter is much smaller
+#' nrow (graph)
+#' nrow (graph_undir) # the latter is much smaller
 #'
 #' # The following code can be used to convert the resultant graph to an `sf`
 #' # object suitable for plotting
@@ -96,9 +98,12 @@
 #' r <- sf::st_as_sf (r)
 #' # then extract the start and end points of each of the original 'routes_fast'
 #' # lines and use these for routing with `dodgr`
-#' l <- lapply (routes_fast@lines, function (i)
-#'              c (sp::coordinates (i) [[1]] [1, ],
-#'                 tail (sp::coordinates (i) [[1]], 1)))
+#' l <- lapply (routes_fast@lines, function (i) {
+#'     c (
+#'         sp::coordinates (i) [[1]] [1, ],
+#'         tail (sp::coordinates (i) [[1]], 1)
+#'     )
+#' })
 #' l <- do.call (rbind, l)
 #' xy_start <- l [, 1:2]
 #' xy_end <- l [, 3:4]
@@ -108,10 +113,18 @@
 #' # \link{weight_streetnet} function.
 #' r$type <- 1
 #' r$id <- seq (nrow (r))
-#' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
-#'                            wt_profile = 1)
-#' f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end,
-#'                             flows = flows)
+#' graph <- weight_streetnet (
+#'     r,
+#'     type_col = "type",
+#'     id_col = "id",
+#'     wt_profile = 1
+#' )
+#' f <- dodgr_flows_aggregate (
+#'     graph,
+#'     from = xy_start,
+#'     to = xy_end,
+#'     flows = flows
+#' )
 #' # Then merge directed flows and convert to \pkg{sf} for plotting as before:
 #' f <- merge_directed_graph (f)
 #' geoms <- dodgr_to_sfc (f)
@@ -142,26 +155,34 @@ dodgr_flows_aggregate <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- fs::path (fs::path_temp (),
-                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!fs::file_exists (fname_c))
-            stop ("something went wrong extracting the edge_map ... ") # nocov
+        fname_c <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_edge_map_", hashc, ".Rds")
+        )
+        if (!fs::file_exists (fname_c)) {
+            stop ("something went wrong extracting the edge_map ... ")
+        } # nocov
         edge_map <- readRDS (fname_c)
     }
 
     g <- prepare_graph (graph, from, to)
-    if (!is.matrix (flows))
+    if (!is.matrix (flows)) {
         flows <- matrix (flows, nrow = length (g$from_index))
+    }
 
-    if (!quiet)
+    if (!quiet) {
         message ("\nAggregating flows ... ", appendLF = FALSE)
+    }
 
-    graph$flow <- rcpp_flows_aggregate_par (g$graph, g$vert_map,
-                                            g$from_index, g$to_index,
-                                            flows, norm_sums, tol, heap)
+    graph$flow <- rcpp_flows_aggregate_par (
+        g$graph, g$vert_map,
+        g$from_index, g$to_index,
+        flows, norm_sums, tol, heap
+    )
 
-    if (contract) # map contracted flows back onto full graph
+    if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+    }
 
     return (graph)
 }
@@ -233,33 +254,46 @@ dodgr_flows_disperse <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- fs::path (fs::path_temp (),
-                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!fs::file_exists (fname_c))
-            stop ("something went wrong extracting the edge_map ... ") # nocov
+        fname_c <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_edge_map_", hashc, ".Rds")
+        )
+        if (!fs::file_exists (fname_c)) {
+            stop ("something went wrong extracting the edge_map ... ")
+        } # nocov
         edge_map <- readRDS (fname_c)
     }
 
     g <- prepare_graph (graph, from)
 
-    if (!is.matrix (dens))
+    if (!is.matrix (dens)) {
         dens <- as.matrix (dens)
+    }
 
-    if (!quiet)
+    if (!quiet) {
         message ("\nAggregating flows ... ", appendLF = FALSE)
+    }
 
-    f <- rcpp_flows_disperse_par (g$graph, g$vert_map, g$from_index,
-                                  k, dens, tol, heap)
-    if (nk == 1)
+    f <- rcpp_flows_disperse_par (
+        g$graph,
+        g$vert_map,
+        g$from_index,
+        k,
+        dens,
+        tol,
+        heap
+    )
+    if (nk == 1) {
         graph$flow <- f
-    else {
+    } else {
         flowmat <- data.frame (matrix (f, ncol = nk))
         names (flowmat) <- paste0 ("flow", seq (nk))
         graph <- cbind (graph, flowmat)
     }
 
-    if (contract) # map contracted flows back onto full graph
+    if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+    }
 
     return (graph)
 }
@@ -320,14 +354,16 @@ dodgr_flows_disperse <- function (graph,
 #' to <- sample (graph$to_id, size = 5)
 #' to <- to [!to %in% from]
 #' flows <- matrix (10 * runif (length (from) * length (to)),
-#'                  nrow = length (from))
+#'     nrow = length (from)
+#' )
 #' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows' column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
 #' # This graph will only include those edges having non-zero flows, and so:
-#' nrow (graph); nrow (graph_undir) # the latter is much smaller
+#' nrow (graph)
+#' nrow (graph_undir) # the latter is much smaller
 dodgr_flows_si <- function (graph,
                             from,
                             to,
@@ -340,8 +376,9 @@ dodgr_flows_si <- function (graph,
                             tol = 1e-12,
                             quiet = TRUE) {
 
-    if (missing (from))
+    if (missing (from)) {
         stop ("'from' must be provided for spatial interaction models.")
+    }
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
@@ -355,32 +392,47 @@ dodgr_flows_si <- function (graph,
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
         hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- fs::path (fs::path_temp (),
-                             paste0 ("dodgr_edge_map_", hashc, ".Rds"))
-        if (!fs::file_exists (fname_c))
-            stop ("something went wrong extracting the edge_map ... ") # nocov
+        fname_c <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_edge_map_", hashc, ".Rds")
+        )
+        if (!fs::file_exists (fname_c)) {
+            stop ("something went wrong extracting the edge_map ... ")
+        } # nocov
         edge_map <- readRDS (fname_c)
     }
 
     g <- prepare_graph (graph, from, to)
 
-    if (!quiet)
+    if (!quiet) {
         message ("\nAggregating flows ... ", appendLF = FALSE)
+    }
 
-    f <- rcpp_flows_si (g$graph, g$vert_map, g$from_index, g$to_index,
-                        k, dens_from, dens_to, norm_sums, tol, heap)
+    f <- rcpp_flows_si (
+        g$graph,
+        g$vert_map,
+        g$from_index,
+        g$to_index,
+        k,
+        dens_from,
+        dens_to,
+        norm_sums,
+        tol,
+        heap
+    )
 
-    if (nk == 1)
+    if (nk == 1) {
         graph$flow <- f
-    else {
+    } else {
         flowmat <- data.frame (matrix (f, ncol = nk))
         names (flowmat) <- paste0 ("flow", seq (nk))
         graph <- cbind (graph, flowmat)
     }
 
 
-    if (contract) # map contracted flows back onto full graph
+    if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+    }
 
     return (graph)
 }
@@ -390,24 +442,28 @@ check_k <- function (k,
 
     nk <- 1
 
-    if (is.data.frame (k))
+    if (is.data.frame (k)) {
         k <- as.matrix (k)
+    }
 
     if (is.matrix (k)) {
-        if (nrow (k) != length (from))
+        if (nrow (k) != length (from)) {
             stop ("nrow(k) must equal length of 'from' points")
+        }
         nk <- ncol (k)
     } else if (is.numeric (k)) {
-        if (length (k) == 1)
+        if (length (k) == 1) {
             k <- rep (k, length (from))
-        else if (length (k) != length (from)) {
+        } else if (length (k) != length (from)) {
             # convert to matrix
             nk <- length (k)
             k <- array (rep (k, each = length (from)),
-                        dim = c (length (from), nk))
+                dim = c (length (from), nk)
+            )
         }
-    } else
+    } else {
         stop ("'k' must be either a single value, a vector, or a matrix")
+    }
 
     list (k = k, nk = nk)
 }
@@ -418,9 +474,12 @@ prepare_graph <- function (graph,
                            from,
                            to) {
 
-    if ("flow" %in% names (graph))
-        warning ("graph already has a 'flow' column; ",
-                  "this will be overwritten")
+    if ("flow" %in% names (graph)) {
+        warning (
+            "graph already has a 'flow' column; ",
+            "this will be overwritten"
+        )
+    }
 
     gr_cols <- dodgr_graph_cols (graph)
     vert_map <- make_vert_map (graph, gr_cols)
@@ -431,9 +490,10 @@ prepare_graph <- function (graph,
 
     # remove any routing points not in edge start nodes:
     from <- nodes_arg_to_pts (from, graph)
-    if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
+    if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0) {
         from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-    from <- from [from %in% graph [[gr_cols$from]] ] # nolint
+    }
+    from <- from [from %in% graph [[gr_cols$from]]] # nolint
     index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
     from_index <- index_id$index - 1 # 0-based
 
@@ -441,17 +501,22 @@ prepare_graph <- function (graph,
     if (!missing (to)) {
         # remove any routing points not in edge end nodes:
         to <- nodes_arg_to_pts (to, graph)
-        if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0)
+        if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0) {
             to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
-        to <- to [to %in% graph [[gr_cols$to]] ] # nolint
+        }
+        to <- to [to %in% graph [[gr_cols$to]]] # nolint
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
         to_index <- index_id$index - 1 # 0-based
     }
 
     graph2 <- convert_graph (graph, gr_cols)
 
-    list (graph = graph2, vert_map = vert_map,
-          from_index = from_index, to_index = to_index)
+    list (
+        graph = graph2,
+        vert_map = vert_map,
+        from_index = from_index,
+        to_index = to_index
+    )
 }
 
 get_random_prefix <- function (prefix = "flow",
@@ -465,8 +530,9 @@ get_random_prefix <- function (prefix = "flow",
 nodes_arg_to_pts <- function (nodes,
                               graph) {
 
-    if (!is.matrix (nodes))
+    if (!is.matrix (nodes)) {
         nodes <- as.matrix (nodes)
+    }
     if (ncol (nodes) == 2) {
         verts <- dodgr_vertices (graph)
         nodes <- verts$id [match_pts_to_graph (verts, nodes)]
@@ -481,9 +547,11 @@ contract_graph_with_pts <- function (graph,
                                      to) {
 
     pts <- NULL
-    if (!missing (from))
+    if (!missing (from)) {
         pts <- c (pts, from)
-    if (!missing (to))
+    }
+    if (!missing (to)) {
         pts <- c (pts, to)
+    }
     dodgr_contract_graph (graph, unique (pts))
 }

@@ -91,14 +91,16 @@ from <- sample (graph$from_id, size = 10)
 to <- sample (graph$to_id, size = 5)
 to <- to [!to \%in\% from]
 flows <- matrix (10 * runif (length (from) * length (to)),
-                 nrow = length (from))
+    nrow = length (from)
+)
 graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows' column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
 graph_undir <- merge_directed_graph (graph)
 # This graph will only include those edges having non-zero flows, and so:
-nrow (graph); nrow (graph_undir) # the latter is much smaller
+nrow (graph)
+nrow (graph_undir) # the latter is much smaller
 
 # The following code can be used to convert the resultant graph to an `sf`
 # object suitable for plotting
@@ -125,9 +127,12 @@ r <- overline (routes_fast, attrib = "length", buff_dist = 1)
 r <- sf::st_as_sf (r)
 # then extract the start and end points of each of the original 'routes_fast'
 # lines and use these for routing with `dodgr`
-l <- lapply (routes_fast@lines, function (i)
-             c (sp::coordinates (i) [[1]] [1, ],
-                tail (sp::coordinates (i) [[1]], 1)))
+l <- lapply (routes_fast@lines, function (i) {
+    c (
+        sp::coordinates (i) [[1]] [1, ],
+        tail (sp::coordinates (i) [[1]], 1)
+    )
+})
 l <- do.call (rbind, l)
 xy_start <- l [, 1:2]
 xy_end <- l [, 3:4]
@@ -137,10 +142,18 @@ flows <- matrix (1, nrow = nrow (l), ncol = nrow (l))
 # \link{weight_streetnet} function.
 r$type <- 1
 r$id <- seq (nrow (r))
-graph <- weight_streetnet (r, type_col = "type", id_col = "id",
-                           wt_profile = 1)
-f <- dodgr_flows_aggregate (graph, from = xy_start, to = xy_end,
-                            flows = flows)
+graph <- weight_streetnet (
+    r,
+    type_col = "type",
+    id_col = "id",
+    wt_profile = 1
+)
+f <- dodgr_flows_aggregate (
+    graph,
+    from = xy_start,
+    to = xy_end,
+    flows = flows
+)
 # Then merge directed flows and convert to \pkg{sf} for plotting as before:
 f <- merge_directed_graph (f)
 geoms <- dodgr_to_sfc (f)
