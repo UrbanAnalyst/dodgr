@@ -161,17 +161,22 @@ the full graph prior to any modification of columns.
 \examples{
 # hampi is included with package as an 'osmdata' sf-formatted street network
 net <- weight_streetnet (hampi)
-class(net) # data.frame
-dim(net) # 6096  11; 6096 streets
+class (net) # data.frame
+dim (net) # 6096  11; 6096 streets
 # os_roads_bristol is also included as an sf data.frame, but in a different
 # format requiring identification of columns and specification of custom
 # weighting scheme.
 colnm <- "formOfWay"
-wts <- data.frame (name = "custom",
-                   way = unique (os_roads_bristol [[colnm]]),
-                   value = c (0.1, 0.2, 0.8, 1))
-net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
-                         type_col = colnm, id_col = "identifier")
+wts <- data.frame (
+    name = "custom",
+    way = unique (os_roads_bristol [[colnm]]),
+    value = c (0.1, 0.2, 0.8, 1)
+)
+net <- weight_streetnet (
+    os_roads_bristol,
+    wt_profile = wts,
+    type_col = colnm, id_col = "identifier"
+)
 dim (net) # 406 11; 406 streets
 
 # An example for a generic (non-OSM) highway, represented as the
@@ -186,8 +191,12 @@ r <- sf::st_as_sf (r, crs = 4326)
 # \link{weight_streetnet} function.
 r$type <- 1
 r$id <- seq (nrow (r))
-graph <- weight_streetnet (r, type_col = "type", id_col = "id",
-                           wt_profile = 1)
+graph <- weight_streetnet (
+    r,
+    type_col = "type",
+    id_col = "id",
+    wt_profile = 1
+)
 }
 }
 \seealso{

@@ -103,17 +103,22 @@
 #' @examples
 #' # hampi is included with package as an 'osmdata' sf-formatted street network
 #' net <- weight_streetnet (hampi)
-#' class(net) # data.frame
-#' dim(net) # 6096  11; 6096 streets
+#' class (net) # data.frame
+#' dim (net) # 6096  11; 6096 streets
 #' # os_roads_bristol is also included as an sf data.frame, but in a different
 #' # format requiring identification of columns and specification of custom
 #' # weighting scheme.
 #' colnm <- "formOfWay"
-#' wts <- data.frame (name = "custom",
-#'                    way = unique (os_roads_bristol [[colnm]]),
-#'                    value = c (0.1, 0.2, 0.8, 1))
-#' net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
-#'                          type_col = colnm, id_col = "identifier")
+#' wts <- data.frame (
+#'     name = "custom",
+#'     way = unique (os_roads_bristol [[colnm]]),
+#'     value = c (0.1, 0.2, 0.8, 1)
+#' )
+#' net <- weight_streetnet (
+#'     os_roads_bristol,
+#'     wt_profile = wts,
+#'     type_col = colnm, id_col = "identifier"
+#' )
 #' dim (net) # 406 11; 406 streets
 #'
 #' # An example for a generic (non-OSM) highway, represented as the
@@ -128,8 +133,12 @@
 #' # \link{weight_streetnet} function.
 #' r$type <- 1
 #' r$id <- seq (nrow (r))
-#' graph <- weight_streetnet (r, type_col = "type", id_col = "id",
-#'                            wt_profile = 1)
+#' graph <- weight_streetnet (
+#'     r,
+#'     type_col = "type",
+#'     id_col = "id",
+#'     wt_profile = 1
+#' )
 #' }
 weight_streetnet <- function (x,
                               wt_profile = "bicycle",
@@ -162,8 +171,15 @@ weight_streetnet.default <- function (x,
 # ***********************   generic variables   ***********************
 # ********************************************************************
 
-way_types_to_keep <- c ("highway", "oneway", "oneway.bicycle", "oneway:bicycle",
-                       "lanes", "maxspeed", "junction")
+way_types_to_keep <- c (
+    "highway",
+    "oneway",
+    "oneway.bicycle",
+    "oneway:bicycle",
+    "lanes",
+    "maxspeed",
+    "junction"
+)
 
 # ********************************************************************
 # *************************     sf class     *************************
@@ -181,10 +197,13 @@ weight_streetnet.sf <- function (x,
                                  keep_cols = NULL,
                                  left_side = FALSE) {
 
-    if (turn_penalty)
-        stop ("Turn-penalty calculations only currently implemented for ",
-              "street network data generated with the ",
-              "`osmdata::osmdata_sc()` function.")
+    if (turn_penalty) {
+        stop (
+            "Turn-penalty calculations only currently implemented for ",
+            "street network data generated with the ",
+            "`osmdata::osmdata_sc()` function."
+        )
+    }
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
@@ -192,8 +211,9 @@ weight_streetnet.sf <- function (x,
     x <- change_col_names (x, id_col, "osm_id")
     x <- check_highway_osmid (x, wt_profile)
 
-    if (is.null (names (x [[geom_column]])))
+    if (is.null (names (x [[geom_column]]))) {
         names (x [[geom_column]]) <- x$osm_id
+    }
     # Then rename geom_column to "geometry" for the C++ routine
     names (x) [match (geom_column, names (x))] <- "geometry"
     attr (x, "sf_column") <- "geometry"
@@ -205,24 +225,28 @@ weight_streetnet.sf <- function (x,
 
     wt_profile <- wp$wt_profile
     wt_profile_name <- wp$wt_profile_name
-    if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom"))
+    if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom")) {
         x <- remap_way_types (x, wt_profile)
+    }
 
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
-    graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
-                         edge_id = seq (nrow (dat$character_values)),
-                         from_id = as.character (dat$character_values [, 1]),
-                         from_lon = dat$numeric_values [, 2],
-                         from_lat = dat$numeric_values [, 3],
-                         to_id = as.character (dat$character_values [, 2]),
-                         to_lon = dat$numeric_values [, 4],
-                         to_lat = dat$numeric_values [, 5],
-                         stringsAsFactors = FALSE)
+    graph <- data.frame (
+        geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
+        edge_id = seq (nrow (dat$character_values)),
+        from_id = as.character (dat$character_values [, 1]),
+        from_lon = dat$numeric_values [, 2],
+        from_lat = dat$numeric_values [, 3],
+        to_id = as.character (dat$character_values [, 2]),
+        to_lon = dat$numeric_values [, 4],
+        to_lat = dat$numeric_values [, 5],
+        stringsAsFactors = FALSE
+    )
 
     graph$d <- geodist::geodist (graph [, c ("from_lon", "from_lat")],
-                                 graph [, c ("to_lon", "to_lat")],
-                                 paired = TRUE,
-                                 measure = "geodesic")
+        graph [, c ("to_lon", "to_lat")],
+        paired = TRUE,
+        measure = "geodesic"
+    )
     graph$d_weighted <- graph$d * dat$numeric_values [, 6]
 
     graph$highway <- as.character (dat$character_values [, 3])
@@ -230,26 +254,31 @@ weight_streetnet.sf <- function (x,
 
     # rcpp_sf_as_network flags non-routable ways with -1, so:
     graph$d_weighted [graph$d_weighted < 0] <- NA
-    if (all (graph$highway == ""))
+    if (all (graph$highway == "")) {
         graph$highway <- NULL
-    if (all (graph$way_id == ""))
-        graph$way_id <- NULL # nocov
+    }
+    if (all (graph$way_id == "")) {
+        graph$way_id <- NULL
+    } # nocov
 
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
-    if (is.null (rownames (as.matrix (x$geometry [[1]]))))
+    if (is.null (rownames (as.matrix (x$geometry [[1]])))) {
         graph <- rownames_from_xy (graph)
+    }
 
     graph <- dodgr_components (graph)
 
-    if (length (keep_cols) > 0)
+    if (length (keep_cols) > 0) {
         graph <- reinsert_keep_cols (x, graph, keep_cols)
+    }
 
     graph <- add_extra_sf_columns (graph, x)
-    if (!is.null (wt_profile_name))
+    if (!is.null (wt_profile_name)) {
         graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file) %>%
             weight_by_num_lanes (wt_profile_name) %>%
             calc_edge_time (wt_profile_name)
+    }
 
     gr_cols <- dodgr_graph_cols (graph)
     graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
@@ -259,8 +288,9 @@ weight_streetnet.sf <- function (x,
 
     hash <- digest::digest (graph [[gr_cols$edge_id]])
     attr (graph, "hash") <- hash
-    if (is_dodgr_cache_on ())
+    if (is_dodgr_cache_on ()) {
         attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+    }
 
     return (graph)
 }
@@ -268,30 +298,40 @@ weight_streetnet.sf <- function (x,
 # changed type_col and id_col to expected values of "highway" and "osm_id"
 change_col_names <- function (x, colvar, expected) {
 
-    if (colvar != expected)
+    if (colvar != expected) {
         names (x) [which (names (x) == colvar)] <- expected
+    }
     return (x)
 }
 
 check_highway_osmid <- function (x, wt_profile) {
 
-    if (!"highway" %in% names (x) & !is.numeric (wt_profile))
-        stop ("Please specify type_col to be used for ",        # nocov
-              "weighting streetnet")                            # nocov
+    if (!"highway" %in% names (x) & !is.numeric (wt_profile)) {
+        stop (
+            "Please specify type_col to be used for ", # nocov
+            "weighting streetnet"
+        )
+    } # nocov
     if (!"osm_id" %in% names (x)) {
         idcol <- grep ("^id|id$", names (x), ignore.case = TRUE)
         if (length (idcol) == 1) {
-            message ("Using column ", names (x) [idcol],
-                     " as ID column for edges; please specify explicitly if",
-                     " a different column should be used.")
+            message (
+                "Using column ", names (x) [idcol],
+                " as ID column for edges; please specify explicitly if",
+                " a different column should be used."
+            )
             names (x) [idcol] <- "osm_id"
         } else if (length (idcol) > 1) {
-            stop ("Multiple potential ID columns: [",
-                  paste0 (names (x) [idcol], collapse = " "),
-                  "]; please explicitly specify one of these.")
+            stop (
+                "Multiple potential ID columns: [",
+                paste0 (names (x) [idcol], collapse = " "),
+                "]; please explicitly specify one of these."
+            )
         } else if (length (idcol) == 0) {
-            message ("x appears to have no ID column; ",
-                     "sequential edge numbers will be used.")
+            message (
+                "x appears to have no ID column; ",
+                "sequential edge numbers will be used."
+            )
             x$osm_id <- seq (nrow (x))
         }
     }
@@ -301,8 +341,9 @@ check_highway_osmid <- function (x, wt_profile) {
 
 get_wt_profile <- function (x, wt_profile, wt_profile_file) {
 
-    if (!is.data.frame (wt_profile) & length (wt_profile) > 1)
+    if (!is.data.frame (wt_profile) & length (wt_profile) > 1) {
         stop ("wt_profile can only be one element")
+    }
 
     wt_profile_name <- NULL
     if (is.character (wt_profile)) {
@@ -314,19 +355,26 @@ get_wt_profile <- function (x, wt_profile, wt_profile_file) {
         }
     } else if (is.numeric (wt_profile)) {
         nms <- names (wt_profile)
-        if (is.null (nms))
+        if (is.null (nms)) {
             nms <- NA
-        wt_profile <- data.frame (name = "custom",
-                                  way = nms,
-                                  value = wt_profile,
-                                  stringsAsFactors = FALSE)
+        }
+        wt_profile <- data.frame (
+            name = "custom",
+            way = nms,
+            value = wt_profile,
+            stringsAsFactors = FALSE
+        )
     } else if (is.data.frame (wt_profile)) {
         # assert that is has the standard structure
-        if (!all (c ("name", "way", "value") %in% names (wt_profile)))
-            stop ("Weighting profiles must have three columsn of ",
-                  "(name, way, value); see 'weighting_profiles' for examples")
-    } else
+        if (!all (c ("name", "way", "value") %in% names (wt_profile))) {
+            stop (
+                "Weighting profiles must have three columsn of ",
+                "(name, way, value); see 'weighting_profiles' for examples"
+            )
+        }
+    } else {
         stop ("Custom named profiles must be vectors with named values")
+    }
 
     list (wt_profile = wt_profile, wt_profile_name = wt_profile_name)
 }
@@ -339,24 +387,29 @@ remap_way_types <- function (sf_lines, wt_profile) {
     # clearer to code as a for loop
     for (i in seq (way_types)) {
         if (!way_types [i] %in% dodgr_types) {
-            pos <- which (pmatch (dodgr_types, way_types  [i]) > 0)
-            if (length (pos) > 0)
+            pos <- which (pmatch (dodgr_types, way_types [i]) > 0)
+            if (length (pos) > 0) {
                 sf_lines$highway [sf_lines$highway == way_types [i]] <-
                     dodgr_types [pos]
+            }
         }
     }
 
     # re-map some common types
     indx <- grep ("pedestrian|footway", sf_lines$highway)
-    if (length (indx) > 0)
+    if (length (indx) > 0) {
         sf_lines$highway [indx] <- "path"
+    }
 
     way_types <- unique (as.character (sf_lines$highway))
     not_in_wt_prof <- way_types [which (!way_types %in% dodgr_types)]
-    if (length (not_in_wt_prof) > 0)
-        message ("The following highway types are present in data yet ",
-                 "lack corresponding weight_profile values: ",
-                 paste0 (not_in_wt_prof, sep = ", "))
+    if (length (not_in_wt_prof) > 0) {
+        message (
+            "The following highway types are present in data yet ",
+            "lack corresponding weight_profile values: ",
+            paste0 (not_in_wt_prof, sep = ", ")
+        )
+    }
 
     # remove not_in_wt_prof types. Note that this subsetting strips most sf
     # attributes, so is not sf-compliant, but that's okay here because this
@@ -376,15 +429,19 @@ get_sf_geom_col <- function (graph) {
     if (length (gcol) > 1) {
         gnames <- c ("geometry", "geom", "geoms")
         mg <- match (gnames, names (graph))
-        if (length (which (!is.na (mg))) == 1)
+        if (length (which (!is.na (mg))) == 1) {
             gcol <- mg [which (!is.na (mg))]
-        else
-            stop ("Unable to determine geometry column from [",
-                  paste0 (names (graph) [gcol], collapse = ", "), "]")
+        } else {
+            stop (
+                "Unable to determine geometry column from [",
+                paste0 (names (graph) [gcol], collapse = ", "), "]"
+            )
+        }
     } else if (length (gcol) == 0) {
         gcol <- match ("g", names (graph))
-        if (is.na (gcol) | length (gcol) != 1)
+        if (is.na (gcol) | length (gcol) != 1) {
             stop ("Unable to determine geometry column")
+        }
     }
 
     return (names (graph) [gcol])
@@ -392,10 +449,14 @@ get_sf_geom_col <- function (graph) {
 
 rownames_from_xy <- function (graph) {
 
-    xyf <- data.frame (x = graph$from_lon,
-                       y = graph$from_lat)
-    xyt <- data.frame (x = graph$to_lon,
-                       y = graph$to_lat)
+    xyf <- data.frame (
+        x = graph$from_lon,
+        y = graph$from_lat
+    )
+    xyt <- data.frame (
+        x = graph$to_lon,
+        y = graph$to_lat
+    )
 
     ids <- rcpp_unique_rownames (xyf, xyt, precision = 10)
     graph$from_id <- ids$from_id
@@ -417,15 +478,20 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols) {
         stop ("keep_cols must be either character or numeric")
     }
     indx <- which (is.na (keep_cols))
-    if (length (indx) > 0)
-        message ("Data has no columns named ",
-                 paste0 (keep_names, collapse = ", "))
+    if (length (indx) > 0) {
+        message (
+            "Data has no columns named ",
+            paste0 (keep_names, collapse = ", ")
+        )
+    }
     keep_cols <- keep_cols [!is.na (keep_cols)]
     if (length (keep_cols) > 0) {
         indx <- match (graph$geom_num, seq (sf_lines$geometry))
-        for (k in seq (keep_names))
-            graph [[keep_names [k] ]] <- sf_lines [indx, keep_cols [k], # nolint
-                                                   drop = TRUE]
+        for (k in seq (keep_names)) {
+            graph [[keep_names [k]]] <- sf_lines [indx, keep_cols [k], # nolint
+                drop = TRUE
+            ]
+        }
     }
 
     return (graph)
@@ -433,25 +499,31 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols) {
 
 add_extra_sf_columns <- function (graph, x) {
 
-    if (!"way_id" %in% names (graph)) # only works for OSM data
-        return (graph) # nocov
+    if (!"way_id" %in% names (graph)) { # only works for OSM data
+        return (graph)
+    } # nocov
 
     hi <- match ("highway", names (graph))
     if (is.na (hi)) {
         hi <- ncol (graph)
         index2 <- NULL
-    } else if (hi == ncol (graph))
-        index2 <- NULL # nocov
-    else
+    } else if (hi == ncol (graph)) {
+        index2 <- NULL
+    } # nocov
+    else {
         index2 <- (hi + 1):ncol (graph)
+    }
 
     keep_types <- c ("lanes", "maxspeed", "surface")
     keep_df <- array (NA_character_,
-                      dim = c (nrow (graph), length (keep_types)))
+        dim = c (nrow (graph), length (keep_types))
+    )
     nms <- c (names (graph) [1:hi], keep_types, names (graph) [index2])
-    graph <- cbind (graph [, 1:hi],
-                    data.frame (keep_df, stringsAsFactors = FALSE),
-                    graph [, index2])
+    graph <- cbind (
+        graph [, 1:hi],
+        data.frame (keep_df, stringsAsFactors = FALSE),
+        graph [, index2]
+    )
     names (graph) <- nms
 
     row_index <- match (graph$way_id, x$osm_id)
@@ -463,8 +535,9 @@ add_extra_sf_columns <- function (graph, x) {
     x [[attr (x, "sf_column")]] <- NULL
     x <- data.frame (x, stringsAsFactors = FALSE)
     # that still sometimes produces factors, so:
-    for (i in seq (ncol (x)))
+    for (i in seq (ncol (x))) {
         x [, i] <- paste0 (x [, i])
+    }
     graph [, col_index_graph] <- x [row_index, col_index_x]
 
     return (graph)
@@ -488,73 +561,88 @@ weight_streetnet.sc <- weight_streetnet.SC <-
               keep_cols = NULL,
               left_side = FALSE) {
 
-    requireNamespace ("geodist")
-    requireNamespace ("dplyr")
-    check_sc (x)
+        requireNamespace ("geodist")
+        requireNamespace ("dplyr")
+        check_sc (x)
 
-    graph <- extract_sc_edges_xy (x) %>%        # vert, edge IDs + coordinates
-        sc_edge_dist () %>%                             # append dist
-        extract_sc_edges_highways (x,
-                                   wt_profile,
-                                   wt_profile_file,
-                                   c (way_types_to_keep,
-                                      keep_cols)) %>% # hw key-val pairs
-        weight_sc_edges (wt_profile,
-                         wt_profile_file) %>%           # add d_weighted col
-        set_maxspeed (wt_profile,
-                      wt_profile_file) %>%              # modify d_weighted
-        weight_by_num_lanes (wt_profile) %>%
-        calc_edge_time (wt_profile) %>%                 # add time
-        sc_traffic_lights (x,
-                           wt_profile,
-                           wt_profile_file) %>%         # modify time
-        rm_duplicated_edges () %>%
-        sc_duplicate_edges (wt_profile)
-    cl <- class (graph)
-    graph <- dodgr_components (graph) # strips tbl class
-    class (graph) <- cl
+        graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
+            sc_edge_dist () %>% # append dist
+            extract_sc_edges_highways (
+                x,
+                wt_profile,
+                wt_profile_file,
+                c (
+                    way_types_to_keep,
+                    keep_cols
+                )
+            ) %>% # hw key-val pairs
+            weight_sc_edges (
+                wt_profile,
+                wt_profile_file
+            ) %>% # add d_weighted col
+            set_maxspeed (
+                wt_profile,
+                wt_profile_file
+            ) %>% # modify d_weighted
+            weight_by_num_lanes (wt_profile) %>%
+            calc_edge_time (wt_profile) %>% # add time
+            sc_traffic_lights (
+                x,
+                wt_profile,
+                wt_profile_file
+            ) %>% # modify time
+            rm_duplicated_edges () %>%
+            sc_duplicate_edges (wt_profile)
+        cl <- class (graph)
+        graph <- dodgr_components (graph) # strips tbl class
+        class (graph) <- cl
 
-    gr_cols <- dodgr_graph_cols (graph)
-    graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
+        gr_cols <- dodgr_graph_cols (graph)
+        graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
 
-    attr (graph, "turn_penalty") <- 0
+        attr (graph, "turn_penalty") <- 0
 
-    if (turn_penalty) {
-        attr (graph, "turn_penalty") <-
-            get_turn_penalties (wt_profile, wt_profile_file)$turn
-        if (attr (graph, "turn_penalty") > 0) {
-            res <- join_junctions_to_graph (graph, wt_profile, wt_profile_file,
-                                            left_side)
-            if (are_turns_restricted (wt_profile, wt_profile_file)) {
-                res <- remove_turn_restrictions (x, graph, res)
+        if (turn_penalty) {
+            attr (graph, "turn_penalty") <-
+                get_turn_penalties (wt_profile, wt_profile_file)$turn
+            if (attr (graph, "turn_penalty") > 0) {
+                res <- join_junctions_to_graph (
+                    graph, wt_profile, wt_profile_file,
+                    left_side
+                )
+                if (are_turns_restricted (wt_profile, wt_profile_file)) {
+                    res <- remove_turn_restrictions (x, graph, res)
+                }
+                # res has the expanded graph as well as an edge map from new
+                # cross-junction edges to old single edges. This is cached below:
+                graph <- res$graph
             }
-            # res has the expanded graph as well as an edge map from new
-            # cross-junction edges to old single edges. This is cached below:
-            graph <- res$graph
         }
-    }
 
-    gr_cols <- dodgr_graph_cols (graph)
-    graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]]) |
-                           !is.na (graph [[gr_cols$time]])), ]
+        gr_cols <- dodgr_graph_cols (graph)
+        graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]]) |
+            !is.na (graph [[gr_cols$time]])), ]
 
-    class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
+        class (graph) <- c (class (graph), "dodgr_streetnet", "dodgr_streetnet_sc")
 
-    if (turn_penalty) {
+        if (turn_penalty) {
+            hash <- digest::digest (graph [[gr_cols$edge_id]])
+            fname <- fs::path (fs::path_temp (), paste0 (
+                "dodgr_edge_contractions_",
+                hash, ".Rds"
+            ))
+            obj <- res$edge_map
+            saveRDS (obj, fname)
+        }
+
         hash <- digest::digest (graph [[gr_cols$edge_id]])
-        fname <- fs::path (fs::path_temp (), paste0 ("dodgr_edge_contractions_",
-                                                hash, ".Rds"))
-        obj <- res$edge_map
-        saveRDS (obj, fname)
+        attr (graph, "hash") <- hash
+        if (is_dodgr_cache_on ()) {
+            attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+        }
+
+        return (graph)
     }
-
-    hash <- digest::digest (graph [[gr_cols$edge_id]])
-    attr (graph, "hash") <- hash
-    if (is_dodgr_cache_on ())
-        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
-
-    return (graph)
-}
 
 # ********************************************************************
 # **********************     weight railway     **********************
@@ -600,27 +688,39 @@ weight_railway <- function (x,
                             type_col = "railway",
                             id_col = "osm_id",
                             keep_cols = c ("maxspeed"),
-                            excluded = c ("abandoned", "disused",
-                                          "proposed", "razed")) {
+                            excluded = c (
+                                "abandoned",
+                                "disused",
+                                "proposed",
+                                "razed"
+                            )) {
 
-    if (!is (x, "sf"))
+    if (!is (x, "sf")) {
         stop ('x must be class "sf"')
+    }
     geom_column <- get_sf_geom_col (x)
     attr (x, "sf_column") <- geom_column
 
-    if (type_col != "railway")
+    if (type_col != "railway") {
         names (x) [which (names (x) == type_col)] <- "railway"
-    if (id_col != "osm_id")
-        names (x) [which (names (x) == id_col)] <- "osm_id" # nocov
+    }
+    if (id_col != "osm_id") {
+        names (x) [which (names (x) == id_col)] <- "osm_id"
+    } # nocov
 
-    if (!"railway" %in% names (x))
+    if (!"railway" %in% names (x)) {
         stop ("Please specify type_col to be used for weighting railway")
-    if (!"osm_id" %in% names (x))
-        stop ("Please specifiy id_col to be used to identify ", # nocov
-              "railway rows")                                   # nocov
+    }
+    if (!"osm_id" %in% names (x)) {
+        stop (
+            "Please specifiy id_col to be used to identify ", # nocov
+            "railway rows"
+        )
+    } # nocov
 
-    if (is.null (names (x$geometry)))
-        names (x$geometry) <- x$osm_id # nocov
+    if (is.null (names (x$geometry))) {
+        names (x$geometry) <- x$osm_id
+    } # nocov
 
 
     x <- x [which (!(x$railway %in% excluded | is.na (x$railway))), ]
@@ -628,27 +728,31 @@ weight_railway <- function (x,
     # x, so:
     x$highway <- x$railway
 
-    wt_profile <- data.frame (name = "custom",
-                              way = unique (x$highway),
-                              value = 1,
-                              stringsAsFactors = FALSE)
+    wt_profile <- data.frame (
+        name = "custom",
+        way = unique (x$highway),
+        value = 1,
+        stringsAsFactors = FALSE
+    )
 
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
-    graph <- data.frame (geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
-                         edge_id = seq (nrow (dat$character_values)),
-                         from_id = as.character (dat$character_values [, 1]),
-                         from_lon = dat$numeric_values [, 2],
-                         from_lat = dat$numeric_values [, 3],
-                         to_id = as.character (dat$character_values [, 2]),
-                         to_lon = dat$numeric_values [, 4],
-                         to_lat = dat$numeric_values [, 5],
-                         stringsAsFactors = FALSE
-                         )
+    graph <- data.frame (
+        geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
+        edge_id = seq (nrow (dat$character_values)),
+        from_id = as.character (dat$character_values [, 1]),
+        from_lon = dat$numeric_values [, 2],
+        from_lat = dat$numeric_values [, 3],
+        to_id = as.character (dat$character_values [, 2]),
+        to_lon = dat$numeric_values [, 4],
+        to_lat = dat$numeric_values [, 5],
+        stringsAsFactors = FALSE
+    )
 
     graph$d <- geodist::geodist (graph [, c ("from_lon", "from_lat")],
-                                 graph [, c ("to_lon", "to_lat")],
-                                 paired = TRUE,
-                                 measure = "geodesic")
+        graph [, c ("to_lon", "to_lat")],
+        paired = TRUE,
+        measure = "geodesic"
+    )
     graph$d_weighted <- graph$d * dat$numeric_values [, 6]
 
     graph$highway <- as.character (dat$character_values [, 3])
@@ -656,23 +760,27 @@ weight_railway <- function (x,
 
     # rcpp_sf_as_network now flags non-routable ways with -1, so:
     graph$d_weighted [graph$d_weighted < 0] <- .Machine$double.xmax
-    if (all (graph$highway == ""))
-        graph$highway <- NULL # nocov
-    if (all (graph$way_id == ""))
-        graph$way_id <- NULL # nocov
+    if (all (graph$highway == "")) {
+        graph$highway <- NULL
+    } # nocov
+    if (all (graph$way_id == "")) {
+        graph$way_id <- NULL
+    } # nocov
 
     # If original geometries did not have rownames (meaning it's not from
     # osmdata), then reassign unique vertex from/to IDs based on coordinates
-    if (is.null (rownames (as.matrix (x$geometry [[1]]))))
-        graph <- rownames_from_xy (graph) # nocov
+    if (is.null (rownames (as.matrix (x$geometry [[1]])))) {
+        graph <- rownames_from_xy (graph)
+    } # nocov
 
     # get component numbers for each edge
     class (graph) <- c (class (graph), "dodgr_streetnet")
     graph <- dodgr_components (graph)
 
     # And finally, re-insert keep_cols:
-    if (length (keep_cols) > 0)
+    if (length (keep_cols) > 0) {
         graph <- reinsert_keep_cols (x, graph, keep_cols)
+    }
 
     return (graph)
 }
