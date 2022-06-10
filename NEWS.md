@@ -1,15 +1,25 @@
 # v 0.2.14.00X
 
+## Minor changes:
+
+- Reformat code using https://github.com/ropensci-review-tools/spaceout
+
+
+---
+
 # v 0.2.14
 
-Minor changes:
+## Minor changes:
 
 - Main parameter of `weight_railway` function renamed `sf_lines` -> `x` (for consistency with all other `weight_` functions).
 - Default distances for all functions changed to geodesic distances calculated via geodist.
 
+
+---
+
 # v 0.2.13
 
-Major changes:
+## Major changes:
 
 - New `save_dodgr_streetnet` and `load_dodgr_streetnet` functions; thanks to
   idea from @FlxPo
@@ -19,7 +29,7 @@ Major changes:
 - Implement directional travel in roundabouts on weight_streetnet.sc, thanks to
   @deanmarchiori (#175).
 
-Minor changes:
+## Minor changes:
 
 - Add example code for `dodgr_dists_categorical`
 - Slightly extend categorical routing vignette
@@ -27,22 +37,31 @@ Minor changes:
 - Fix bug with bbox in `dodgr_streetnet`, thanks to @LeshunXu (#174)
 - Fix bug in src/graph-contract.cpp that led to CRAN warning (`|` -> `||`)
 
+
+---
+
 # v 0.2.12
 
-Minor changes:
+## Minor changes:
 
 - Bug fix for `dists_categorical(proportions_only = TRUE)` to ensure all edge
   types are aggregated (final type was previously not aggregated).
 
+
+---
+
 # v 0.2.11
 
-Major changes:
+## Major changes:
 
 - New `dodgr_dists_categorical` function + accompanying vignette
 
+
+---
+
 # v 0.2.9
 
-Major changes:
+## Major changes:
 
 - `weight_streetnet` now includes turn restrictions when input data are
   extracted with `dodgr_streetnet_sc` (#136 thanks to @edzer)
@@ -53,27 +72,38 @@ Major changes:
 - `dodgr_centrality` has new `vert_wts` parameter to weight centrality
   by user-specified weights (#162)
 
-Minor changes:
+## Minor changes:
 
 - Bug fix when submitting contracted graphs to dodgr_to_sf (#155 thanks to @agila5)
 - Fix (internal) process_bbox function for vector inputs (#156 thanks to @agila5@)
 
+
+---
+
 # v 0.2.8
 
-Minor changes:
+## Minor changes:
 
 - Bug fix (#142) in `dodgr_flows_disperse()` thanks for @romainFr
 - Fix `keep_cols` param in `weight_streetnet()`; #140 thanks to @agila5
 - Return component vector as `integer` not `numeric`
 
+
+---
+
 # v 0.2.7
 
-Minor changes:
+## Minor changes:
+
 - UBSAN Bug fix
+
+
+---
 
 # v 0.2.6
 
-Major changes:
+## Major changes:
+
 - Added new `dodgr_centrality` function, and associated helper functions.
 - Added new `dodgr_flows_si` function
 - Added new parameter `norm_sums` to `dodgr_flows_aggregate`
@@ -83,31 +113,45 @@ Major changes:
 - Added new function `dodgr_insert_vertex` to add new vertices to graph; see #40
 - Removed "radix" heap option
 
-Minor changes:
+## Minor changes:
+
 - switch off examples that caused previous CRAN failures
 - fix bug in `dodgr_dists` when number of from points >> number of to points
 - fix bug in `weight_streetnet.sc` that prevented `keep_cols` from working
+
+
+---
 
 # v0.2.5
 
 - bug fixes from previous versions
 
+
+---
+
 # v0.2.4
 
-Major changes:
+## Major changes:
+
 - Remove benchmark vignette
 
-Minor changes:
+## Minor changes:
+
 - bug fixes in `dodgr_paths`, thanks to @agila5
 
 
+
+---
+
 # v0.2.1
 
-Major changes:
+## Major changes:
+
 - Add `dodgr_isochrones`, `dodgr_isodistances`, and `dodgr_isoverts` functions
 - Considerable speed-ups for `dodgr_flows_aggregate` and `dodgr_flows_disperse`
 
-Minor changes:
+## Minor changes:
+
 - `dodgr_flows_disperse` allows `k` to be a vector, with different coefficients
   for each `from` point.
 - Add "highway:pedestrian" to weighting profiles
@@ -115,9 +159,13 @@ Minor changes:
 - bug fix in `weight_streetnet.sc(..., wt_profile = 1)`
 - bug fix in `dodgr_full_cycles` for `SC` class objects
 
+
+---
+
 # v0.2.0
 
-Major changes:
+## Major changes:
+
 - Lots of intermediate processes now executed and cached as background
   processes (via `callr` package).
 - new `dodgr_cache_off` function added to suppress primary caching, for cases
@@ -126,15 +174,21 @@ Major changes:
   version which return list of `graph` and `edge_map` (the `edge_map` is cached
   and re-loaded when needed for graph uncontraction).
 
-Minor changes:
+## Minor changes:
+
 - 'turn_angle' parameter of `weight_streetnet` renamed to `turn_penalty`
 - Test coverage now complete (100%)
 * Update internal `hampi` data to remove factor columns
 - Fix some bugs in max speed calculations for weight_streetnet
 * Fix bug with polygonal bbox in dodgr_streetnet()
 
+
+---
+
 # v0.1.4
-Major changes:
+
+## Major changes:
+
 * New vignette on street networks and time-based routing
 - `weight_streetnet` function now returns edge times for all Open Street Map
   networks extracted with the `osmdata` package.
@@ -153,12 +207,18 @@ Major changes:
   `wt_profile` and `expand` have been removed; networks must be explicitly
   downloaded with `dodgr_streetnet()`.
 
-Minor changes:
+## Minor changes:
+
 - Bug fix with dodgr_to_igraph to create proper *weighted* igraph
 - Add "footway" to weighting_profiles
 
+
+---
+
 # v0.1.3
-Major changes:
+
+## Major changes:
+
 - New functions `dodgr_fundamental_cycles` and `dodgr_full_cycles`
 - New function `dodgr_sflines_to_poly` to convert `sf` collections of
   `LINESTRING` object into corresponding enclosed `POLYGON` objects.
@@ -168,13 +228,19 @@ Major changes:
   original, uncontracted from, including any additional data appended on to
   contracted graph.
 
-Minor changes:
+## Minor changes:
+
 - Bug fix with vignette caused by updates to `tinytex` rendering of `svg`
 - Bug fix for `dodgr_dists (heap = "set")` with integer distances
 
 
+
+---
+
 # v0.1.2
-Major changes:
+
+## Major changes:
+
 - New function `dodgr_to_igraph`
 - `weight_streetnet` is now a method, with implementations for objects of
   classes `.sf` and `.sc`.
@@ -183,7 +249,8 @@ Major changes:
   option `dodgr_dists(..., heap = "set")` (It's slower than others, but good for
   sake of completeness).
 
-Minor changes:
+## Minor changes:
+
 - Various modifications that should result in notable speed gains
 - `dodgr_streetnet` now accepts polygonal `bbox` argument, and uses
   `osmdata::trim_osmdata` to trim resultant network to within that polygon
@@ -192,9 +259,13 @@ Minor changes:
   a non-OSM example from `stplanr::routes_fast` (issue #45).
 
 
+
+---
+
 # v0.1.1
 
-Major changes:
+## Major changes:
+
 - Crucial fix of previous typo that made all `dodgr_dist` calculations wrong
   (Earth's radius is 6371, not 3671!) - thanks to @chrijo
 - `weight_streetnet` function now accepts `data.frame` objects defining
@@ -209,16 +280,21 @@ Major changes:
   than `n^2`), thanks to @mem48.
 - `dodgr_to_sf` deprecated to `dodgr_to_sfc` (#43)
 
-Minor changes:
+## Minor changes:
+
 - Added Malcolm Morgan (@mem48; bug-finder extraordinare) as contributor 
 - Bug fix with `dodgr_paths` and simple `data.frame`s, thanks to James Smith.
 - Bug fix of former improper handling of one-way edges, thanks to @chrijo.
 - `match_pts_to_graph` has additional `connected` parameter to allow points to
   be matched only to largest connected component.
 
+
+---
+
 # v0.1.0
 
-Major changes:
+## Major changes:
+
 - New function `dodgr_flowmap` plots maps of flows. Currently only writes .png
   files, because large networks can not be effectively plotted on graphic
   devices.
@@ -227,29 +303,41 @@ Major changes:
 - `dodgr_to_sf` converts a spatially-explicit `dodgr` graph into Simple Features
   (`sf`) format.
 
-Minor changes:
+## Minor changes:
+
 - `match_pts_to_graph` now accepts Simple Features (sf) collections of
   `sfc_POINT` objects to be matched.
+
+
+---
 
 # v0.0.3
 
 Tidy C++ code that flagged errors on CRAN solaris machine. Nothing else.
 
+
+---
+
 # v0.0.2
 
-Major changes:
+## Major changes:
+
 - New function, `dodgr_paths`, for returning explicit shortest path routes.
 - New function, `dodgr_flows`, for aggregting flows across a network from
   multiple origin and destination points.
 - New function, `merge_directed_flows`, to reduce aggregated directional flows
   to non-directional equivalent values useful for visualisation.
 
-Minor changes:
+## Minor changes:
+
 - `weight_streetnet` now accepts arbitrary `sf`-formatted networks via
   specification of custom weighting profiles, along with highway type and ID
   columns in data.frame.
 - Distance matrices from `dodgr_dists` inherit the names of routing points
   (`from` and `to` parameters).
+
+
+---
 
 # v0.0.1
 
