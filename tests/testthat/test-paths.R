@@ -1,15 +1,18 @@
-context("dodgr_paths")
+context ("dodgr_paths")
 
-test_that("paths", {
+test_that ("paths", {
     graph <- weight_streetnet (hampi)
     from <- graph$from_id [1:100]
     to <- graph$to_id [100:150]
     to <- to [!to %in% from]
-    expect_message (dp <- dodgr_paths (graph,
-                                       from = from,
-                                       to = to,
-                                       quiet = FALSE),
-                    "Calculating shortest paths ...")
+    expect_message (
+        dp <- dodgr_paths (graph,
+            from = from,
+            to = to,
+            quiet = FALSE
+        ),
+        "Calculating shortest paths ..."
+    )
     expect_is (dp, "list")
     expect_equal (length (dp), 100)
     expect_equal (unique (sapply (dp, length)), length (to))
@@ -26,7 +29,7 @@ test_that("paths", {
     expect_true (all (abs (lens - lens2) == 1))
 })
 
-test_that("pairwise paths", {
+test_that ("pairwise paths", {
     graph <- weight_streetnet (hampi)
     from <- graph$from_id [1:10]
     to <- graph$to_id [100:105]
@@ -39,7 +42,11 @@ test_that("pairwise paths", {
     expect_equal (length (dp), n)
     expect_true (all (lapply (dp, length) == 1))
 
-    expect_error (dp <- dodgr_paths (graph, from = from, to = to [-1],
-                                     pairwise = TRUE),
-                  "pairwise paths require from and to to have same length")
+    expect_error (
+        dp <- dodgr_paths (graph,
+            from = from, to = to [-1],
+            pairwise = TRUE
+        ),
+        "pairwise paths require from and to to have same length"
+    )
 })

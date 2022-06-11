@@ -1,6 +1,6 @@
-context("dodgr graph conversion")
+context ("dodgr graph conversion")
 
-test_that("igraph", {
+test_that ("igraph", {
     graph <- weight_streetnet (hampi)
     graph_i <- dodgr_to_igraph (graph)
     expect_equal (nrow (graph), igraph::ecount (graph_i))
@@ -9,22 +9,27 @@ test_that("igraph", {
     expect_true (!identical (graph, graph2))
     expect_equal (nrow (graph), nrow (graph2))
 
-    expect_error (graph_i <- dodgr_to_igraph (graph,
-                                  weight_column = "does_not_exist"),
-                  "graph contains no column named 'does_not_exist'")
+    expect_error (
+        graph_i <- dodgr_to_igraph (graph,
+            weight_column = "does_not_exist"
+        ),
+        "graph contains no column named 'does_not_exist'"
+    )
 
     graph$from_id <- graph$to_id <- NULL
-    expect_error (graph_i <- dodgr_to_igraph (graph),
-          "Some vertex names in edge list are not listed in vertex data frame")
+    expect_error (
+        graph_i <- dodgr_to_igraph (graph),
+        "Some vertex names in edge list are not listed in vertex data frame"
+    )
 })
 
-test_that("tidyraph", {
+test_that ("tidyraph", {
     graph <- weight_streetnet (hampi)
     graph_t <- dodgr_to_tidygraph (graph)
     expect_equal (nrow (graph), igraph::ecount (graph_t))
 })
 
-test_that("sf", {
+test_that ("sf", {
     graph <- weight_streetnet (hampi)
     gsfc <- dodgr_to_sfc (graph)
     expect_is (gsfc, "list")

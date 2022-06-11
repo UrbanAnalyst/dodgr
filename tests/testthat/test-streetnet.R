@@ -1,73 +1,84 @@
-context("dodgr streetnet")
+context ("dodgr streetnet")
 
 dodgr_cache_off ()
 clear_dodgr_cache ()
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 # used below in a skip_if call
 
-test_that("streetnet bbox", {
+test_that ("streetnet bbox", {
 
-              set.seed (1)
-              n <- 12
-              bbox <- cbind (runif (n), 2 * runif (n))
-              bb <- process_bbox (bbox, NULL, 0)
-              expect_is (bb, "list")
-              expect_length (bb, 2)
-              expect_equal (nrow (bb$bbox), 2)
-              expect_equal (nrow (bb$bbox_poly), n)
+    set.seed (1)
+    n <- 12
+    bbox <- cbind (runif (n), 2 * runif (n))
+    bb <- process_bbox (bbox, NULL, 0)
+    expect_is (bb, "list")
+    expect_length (bb, 2)
+    expect_equal (nrow (bb$bbox), 2)
+    expect_equal (nrow (bb$bbox_poly), n)
 
-              bbox2 <- apply (bbox, 2, range)
-              bb2 <- process_bbox (bbox2, NULL, 0)
-              expect_identical (bb$bbox, bb2$bbox)
+    bbox2 <- apply (bbox, 2, range)
+    bb2 <- process_bbox (bbox2, NULL, 0)
+    expect_identical (bb$bbox, bb2$bbox)
 
-              rownames (bbox2) <- c ("min", "max")
-              colnames (bbox2) <- c ("x", "y")
-              expect_silent (bb3 <- process_bbox (bbox2, NULL, 0))
-              expect_true (!identical (bb2, bb3))
+    rownames (bbox2) <- c ("min", "max")
+    colnames (bbox2) <- c ("x", "y")
+    expect_silent (bb3 <- process_bbox (bbox2, NULL, 0))
+    expect_true (!identical (bb2, bb3))
 
-              colnames (bbox) <- c ("x", "y")
-              bb4 <- process_bbox (bbox, expand = 0)
-              expect_identical (bb$bbox, bb4$bbox)
+    colnames (bbox) <- c ("x", "y")
+    bb4 <- process_bbox (bbox, expand = 0)
+    expect_identical (bb$bbox, bb4$bbox)
 
-              # causes bbox to be tranposed:
-              colnames (bbox) <- c ("min", "max")
-              bb5 <- process_bbox (bbox, expand = 0)
-              expect_identical (bb$bbox, bb5$bbox)
+    # causes bbox to be tranposed:
+    colnames (bbox) <- c ("min", "max")
+    bb5 <- process_bbox (bbox, expand = 0)
+    expect_identical (bb$bbox, bb5$bbox)
 
-              expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
-              expect_true (!identical (bb, bb2))
+    expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
+    expect_true (!identical (bb, bb2))
 
-              bbox <- list (matrix (letters [ceiling (runif (n) * 26)],
-                                    ncol = 2))
-              expect_error (bb <- process_bbox (bbox, NULL, 0),
-                            "bbox is a list, so items must be numeric")
-              bbox <- runif (6)
-              expect_error (bb <- process_bbox (bbox, NULL, 0),
-                            "bbox must have four numeric values")
+    bbox <- list (matrix (letters [ceiling (runif (n) * 26)],
+        ncol = 2
+    ))
+    expect_error (
+        bb <- process_bbox (bbox, NULL, 0),
+        "bbox is a list, so items must be numeric"
+    )
+    bbox <- runif (6)
+    expect_error (
+        bb <- process_bbox (bbox, NULL, 0),
+        "bbox must have four numeric values"
+    )
 
-              bbox <- bbox [1:4]
-              expect_silent (bb <- process_bbox (bbox, NULL, 0))
+    bbox <- bbox [1:4]
+    expect_silent (bb <- process_bbox (bbox, NULL, 0))
 
-              expect_error (bb <- process_bbox (pts = NULL),
-                            "Either bbox or pts must be specified")
+    expect_error (
+        bb <- process_bbox (pts = NULL),
+        "Either bbox or pts must be specified"
+    )
 })
 
 test_that ("streetnet pts", {
 
-               set.seed (1)
-               n <- 12
-               pts <- cbind (runif (n), 2 * runif (n))
-               expect_error (bb <- process_bbox (pts = pts, expand = 0),
-                             paste0 ("Can not unambiguously determine ",
-                                     "coordinates in graph"))
+    set.seed (1)
+    n <- 12
+    pts <- cbind (runif (n), 2 * runif (n))
+    expect_error (
+        bb <- process_bbox (pts = pts, expand = 0),
+        paste0 (
+            "Can not unambiguously determine ",
+            "coordinates in graph"
+        )
+    )
 
-               colnames (pts) <- c ("x", "y")
-               expect_silent (bb <- process_bbox (pts = pts, expand = 0))
-               # This gives wrong result:
-               expect_silent (bb2 <- process_bbox (bbox = pts, expand = 0))
-               expect_true (!identical (bb$bbox, bb2$bbox))
+    colnames (pts) <- c ("x", "y")
+    expect_silent (bb <- process_bbox (pts = pts, expand = 0))
+    # This gives wrong result:
+    expect_silent (bb2 <- process_bbox (bbox = pts, expand = 0))
+    expect_true (!identical (bb$bbox, bb2$bbox))
 })
 
 
@@ -81,27 +92,39 @@ test_that ("streetnet column names", {
 
     h <- hampi
     h$osm_id <- NULL
-    expect_message (graph <- weight_streetnet (h),
-                    paste0 ("x appears to have no ID column; ",
-                            "sequential edge numbers will be used"))
+    expect_message (
+        graph <- weight_streetnet (h),
+        paste0 (
+            "x appears to have no ID column; ",
+            "sequential edge numbers will be used"
+        )
+    )
     expect_true ("way_id" %in% names (graph))
 
     names (h$geometry) <- NULL
-    expect_message (graph <- weight_streetnet (h),
-                    paste0 ("x appears to have no ID column; ",
-                            "sequential edge numbers will be used"))
+    expect_message (
+        graph <- weight_streetnet (h),
+        paste0 (
+            "x appears to have no ID column; ",
+            "sequential edge numbers will be used"
+        )
+    )
     expect_true ("way_id" %in% names (graph))
 
     h <- hampi
     names (h) [names (h) == "osm_id"] <- "id1"
     h$id2 <- h$id1
-    expect_error (graph <- weight_streetnet (h),
-                  "Multiple potential ID columns")
+    expect_error (
+        graph <- weight_streetnet (h),
+        "Multiple potential ID columns"
+    )
 
     h <- hampi
     h$geom <- 1
-    expect_error (graph <- weight_streetnet (h),
-                  "Unable to determine geometry column")
+    expect_error (
+        graph <- weight_streetnet (h),
+        "Unable to determine geometry column"
+    )
 
     skip_if (!test_all)
 
@@ -146,8 +169,8 @@ test_that ("streetnet column names", {
 })
 
 test_that ("wt_profile", {
-               expect_silent (graph <- weight_streetnet (hampi, wt_profile = 1))
-               expect_identical (graph$d, graph$d_weighted)
+    expect_silent (graph <- weight_streetnet (hampi, wt_profile = 1))
+    expect_identical (graph$d, graph$d_weighted)
 })
 
 test_that ("streetnet highway types", {
@@ -163,14 +186,16 @@ test_that ("streetnet highway types", {
     expect_identical (table (graph$highway), table (graph0$highway))
 
     h$highway [sample (nrow (h), 1)] <- "invalid_type"
-    expect_message (graph <- weight_streetnet (h),
-                    "The following highway types are present in data yet lack")
+    expect_message (
+        graph <- weight_streetnet (h),
+        "The following highway types are present in data yet lack"
+    )
 })
 
 test_that ("hash generation", {
     skip_on_cran ()
     # The following test fails on GitHub windows machines for some reason?
-    is_windows <- Sys.info()[["sysname"]] == "Windows"
+    is_windows <- Sys.info () [["sysname"]] == "Windows"
     if (!is_windows) {
 
         graph <- weight_streetnet (hampi)
@@ -182,36 +207,46 @@ test_that ("hash generation", {
 })
 
 test_that ("streetnet times", {
-               expect_error (graph <- weight_streetnet (hampi,
-                                                        turn_penalty = TRUE),
-                         paste0 ("Turn-penalty calculations only currently ",
-                                 "implemented for street network data ",
-                                 "generated with"))
-               expect_silent (graph <- weight_streetnet (hampi))
-               h <- hampi
-               names (h) [names (h) == "osm_id"] <- "id"
-               expect_silent (graph2 <- weight_streetnet (h, id_col = "id"))
-               attr (graph, "px") <- NULL
-               attr (graph2, "px") <- NULL
-               expect_identical (graph, graph2)
+    expect_error (
+        graph <- weight_streetnet (hampi,
+            turn_penalty = TRUE
+        ),
+        paste0 (
+            "Turn-penalty calculations only currently ",
+            "implemented for street network data ",
+            "generated with"
+        )
+    )
+    expect_silent (graph <- weight_streetnet (hampi))
+    h <- hampi
+    names (h) [names (h) == "osm_id"] <- "id"
+    expect_silent (graph2 <- weight_streetnet (h, id_col = "id"))
+    attr (graph, "px") <- NULL
+    attr (graph2, "px") <- NULL
+    expect_identical (graph, graph2)
 
-               h$id <- NULL
-               msg <- paste ("x appears to have no ID column;",
-                             "sequential edge numbers will be used.")
-               expect_message (graph3 <- weight_streetnet (h), msg)
+    h$id <- NULL
+    msg <- paste (
+        "x appears to have no ID column;",
+        "sequential edge numbers will be used."
+    )
+    expect_message (graph3 <- weight_streetnet (h), msg)
 
-               h <- hampi
-               names (h$geometry) <- NULL
-               graph4 <- weight_streetnet (h)
-               expect_identical (graph$edge_id, seq (nrow (graph)))
+    h <- hampi
+    names (h$geometry) <- NULL
+    graph4 <- weight_streetnet (h)
+    expect_identical (graph$edge_id, seq (nrow (graph)))
 
-               h$oneway_bicycle <- h$oneway
-               graph5 <- weight_streetnet (h)
-               attr (graph4, "px") <- NULL
-               attr (graph5, "px") <- NULL
-               expect_identical (graph5, graph4)
+    h$oneway_bicycle <- h$oneway
+    graph5 <- weight_streetnet (h)
+    attr (graph4, "px") <- NULL
+    attr (graph5, "px") <- NULL
+    expect_identical (graph5, graph4)
 
-               expect_error (weight_streetnet (hampi,
-                                               wt_profile = list (1)),
-                             "Custom named profiles must be vectors")
+    expect_error (
+        weight_streetnet (hampi,
+            wt_profile = list (1)
+        ),
+        "Custom named profiles must be vectors"
+    )
 })

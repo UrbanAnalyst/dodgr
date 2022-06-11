@@ -1,11 +1,11 @@
-context("centrality")
+context ("centrality")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 testthat::skip_on_cran ()
 
-test_that("centrality", {
+test_that ("centrality", {
     graph_full <- weight_streetnet (hampi)
     graph <- dodgr_contract_graph (graph_full)
 
@@ -23,7 +23,7 @@ test_that("centrality", {
     expect_false ("centrality" %in% names (v))
 })
 
-test_that("weighted centrality", {
+test_that ("weighted centrality", {
     graph_full <- weight_streetnet (hampi)
     graph <- dodgr_contract_graph (graph_full)
     graphc0 <- dodgr_centrality (graph)
@@ -47,26 +47,31 @@ test_that("weighted centrality", {
     vert_wts <- NULL
     expect_silent (
         vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE)
-        )
+    )
 
     vert_wts <- runif (nrow (v)) [-1]
     expect_error (
         vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE),
-        "vert_wts must be a vector of same length")
+        "vert_wts must be a vector of same length"
+    )
 
     vert_wts <- "A"
     expect_error (
         vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE),
-        "vert_wts must be a vector of same length")
+        "vert_wts must be a vector of same length"
+    )
 })
 
-test_that("estimate time", {
+test_that ("estimate time", {
     graph <- weight_streetnet (hampi)
-    expect_message (x <- estimate_centrality_time (graph),
-                    "Estimated time to calculate centrality for full graph is")
+    expect_message (
+        x <- estimate_centrality_time (graph),
+        "Estimated time to calculate centrality for full graph is"
+    )
     # Convert `x` as H:M:S to integer
     x <- as.integer (strsplit (x, ":") [[1]])
     x <- sum (x * c (3600, 60, 1))
-    if (test_all)
+    if (test_all) {
         expect_true (x <= 1L)
+    }
 })
