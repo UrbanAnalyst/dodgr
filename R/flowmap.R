@@ -34,6 +34,12 @@ dodgr_flowmap <- function (net, bbox = NULL, linescale = 1) {
     if (!"flow" %in% names (net)) {
         net$flow <- 1
     }
+    gr_cols <- dodgr_graph_cols (net)
+    names (net) [gr_cols$xfr] <- "from_lon"
+    names (net) [gr_cols$yfr] <- "from_lat"
+    names (net) [gr_cols$xto] <- "to_lon"
+    names (net) [gr_cols$yto] <- "to_lat"
+
     if (is.null (bbox)) {
         bbox <- c (
             min (net$from_lon), min (net$from_lat),

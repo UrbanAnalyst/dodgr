@@ -2,6 +2,7 @@
 
 ## Minor changes:
 
+- Fix `dodgr_flowmap` to work on both `sf` and `sc` streetnets.
 - Reformat code using https://github.com/ropensci-review-tools/spaceout
 
 
