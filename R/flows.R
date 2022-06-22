@@ -531,7 +531,7 @@ nodes_arg_to_pts <- function (nodes,
                               graph) {
 
     if (!is.matrix (nodes)) {
-        nodes <- as.matrix (nodes)
+        nodes <- matrix (nodes, ncol = 2)
     }
     if (ncol (nodes) == 2) {
         verts <- dodgr_vertices (graph)
