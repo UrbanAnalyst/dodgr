@@ -28,7 +28,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          #extra-packages: any::pkgdown, local::.
+          extra-packages: github::r-lib/pkgdown, local::.
           needs: website
 
       - name: Build site
