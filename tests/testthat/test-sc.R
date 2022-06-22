@@ -146,7 +146,8 @@ test_that ("contract with turn angles", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
     expect_silent (graphf <- merge_directed_graph (graphf))
@@ -163,7 +164,8 @@ test_that ("contract with turn angles", {
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     # this graph has junction vertices flagged with _start/_end:
     expect_true (length (grep ("_start", graphtf$.vx0)) > 0)
