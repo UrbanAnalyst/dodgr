@@ -530,8 +530,12 @@ get_random_prefix <- function (prefix = "flow",
 nodes_arg_to_pts <- function (nodes,
                               graph) {
 
-    if (!is.matrix (nodes)) {
+    if (!is.matrix (nodes) & is.numeric (nodes)) {
         nodes <- matrix (nodes, ncol = 2)
+    }
+    if (is.vector (nodes)) {
+        # non-numeric, so must be vector of node IDs
+        return (nodes)
     }
     if (ncol (nodes) == 2) {
         verts <- dodgr_vertices (graph)
