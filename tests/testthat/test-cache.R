@@ -38,7 +38,8 @@ test_that ("cache on", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
     expect_silent (graphf <- merge_directed_graph (graphf))
@@ -55,7 +56,8 @@ test_that ("cache on", {
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (graphtf <- merge_directed_graph (graphtf))
@@ -91,7 +93,8 @@ test_that ("cache off", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
     expect_silent (graphf <- merge_directed_graph (graphf))
@@ -106,7 +109,8 @@ test_that ("cache off", {
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
         from = pts,
         to = pts,
-        flow = fmat
+        flow = fmat,
+        contract = FALSE
     ))
     expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (graphtf <- merge_directed_graph (graphtf))
