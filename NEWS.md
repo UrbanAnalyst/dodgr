@@ -4,6 +4,8 @@
 
 - Fix `dodgr_flowmap` to work on both `sf` and `sc` streetnets.
 - Reformat code using https://github.com/ropensci-review-tools/spaceout
+- Minor bug fix matching from/to args of `dodgr_flows_aggregate()`
+- Change default value in `dodgr_flows_aggregate` from `contract = FALSE` to `contract = TRUE`
 
 
 ---

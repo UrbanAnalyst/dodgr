@@ -38,9 +38,10 @@ for each 'from' point, so 'nrow(k)==length(from)'. See Note.}
 
 \item{dens_to}{Vector of densities at destination ('to') points}
 
-\item{contract}{If \code{TRUE}, calculate flows on contracted graph before
-mapping them back on to the original full graph (recommended as this will
-generally be much faster).}
+\item{contract}{If \code{TRUE} (default), calculate flows on contracted graph
+before mapping them back on to the original full graph (recommended as this
+will generally be much faster). \code{FALSE} should only be used if the \code{graph}
+has already been contracted.}
 
 \item{norm_sums}{Standardise sums from all origin points, so sum of flows
 throughout entire network equals sum of densities from all origins (see

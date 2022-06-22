@@ -11,9 +11,10 @@
 #' calculated (see Details)
 #' @param flows Matrix of flows with `nrow(flows)==length(from)` and
 #' `ncol(flows)==length(to)`.
-#' @param contract If `TRUE`, calculate flows on contracted graph before
-#' mapping them back on to the original full graph (recommended as this will
-#' generally be much faster).
+#' @param contract If `TRUE` (default), calculate flows on contracted graph
+#' before mapping them back on to the original full graph (recommended as this
+#' will generally be much faster). `FALSE` should only be used if the `graph`
+#' has already been contracted.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -138,7 +139,7 @@ dodgr_flows_aggregate <- function (graph,
                                    from,
                                    to,
                                    flows,
-                                   contract = FALSE,
+                                   contract = TRUE,
                                    heap = "BHeap",
                                    tol = 1e-12,
                                    norm_sums = TRUE,

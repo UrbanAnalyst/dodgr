@@ -30,9 +30,10 @@ also be a vector with same length as \code{from}, giving dispersal coefficients
 from each point. If value of \code{k<0} is given, a standard logistic polynomial
 will be used.}
 
-\item{contract}{If \code{TRUE}, calculate flows on contracted graph before
-mapping them back on to the original full graph (recommended as this will
-generally be much faster).}
+\item{contract}{If \code{TRUE} (default), calculate flows on contracted graph
+before mapping them back on to the original full graph (recommended as this
+will generally be much faster). \code{FALSE} should only be used if the \code{graph}
+has already been contracted.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
