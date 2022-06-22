@@ -1,8 +1,8 @@
+url: https://atfutures.github.io/dodgr
 title: dodgr
 
-templates:
-  params:
-    bootswatch: cerulean
+template:
+  bootstrap: 5
 
 reference:
 - title: Main functions
