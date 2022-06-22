@@ -103,18 +103,22 @@ struct OneAggregate : public RcppParallel::Worker
             d [from_i] = w [from_i] = 0.0;
 
             // reduce toi to only those within tolerance limt
-            double fmax = 0.0;
-            for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
-                if (flows (i, j) > fmax)
-                    fmax = flows (i, j);
-            const double flim = fmax * tol;
-            size_t nto = 0;
-            for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
-                if (flows (i, j) > flim)
-                    nto++;
+            double flim = 0.0;
+            size_t nto = toi.size ();
+            if (tol > 0.0) {
+                double fmax = 0.0;
+                for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
+                    if (flows (i, j) > fmax)
+                        fmax = flows (i, j);
+                flim = fmax * tol;
+                size_t nto = 0;
+                for (size_t j = 0; j < static_cast <size_t> (flows.ncol ()); j++)
+                    if (flows (i, j) > flim)
+                        nto++;
 
-            if (nto == 0)
-                continue;
+                if (nto == 0)
+                    continue;
+            }
 
             // toi_index is into cols of flow matrix
             // toi_reduced is into the vertex vectors (d, w, prev)
