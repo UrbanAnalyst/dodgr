@@ -46,7 +46,9 @@ test_that ("flows aggregate", {
     expect_warning (
         graph4 <- dodgr_flows_aggregate (graph3,
             from = from,
-            to = to, flows = flows
+            to = to,
+            flows = flows,
+            contract = FALSE
         ),
         "graph already has a 'flow' column; this will be overwritten"
     )
@@ -55,7 +57,8 @@ test_that ("flows aggregate", {
     graph5 <- dodgr_flows_aggregate (graph,
         from = from,
         to = to,
-        flows = flowsv
+        flows = flowsv,
+        contract = FALSE
     )
     expect_equal (graph5$flow, graph4$flow)
 })
@@ -158,9 +161,12 @@ test_that ("flows_si", {
     fmat [is.na (fmat)] <- 0
     csmat <- array (rowSums (fmat), dim = c (nf, nt))
     fmat <- d_from * fmat / csmat
-    netf <- dodgr_flows_aggregate (graph,
-        from = from, to = to,
-        flows = fmat
+    netf <- dodgr_flows_aggregate (
+        graph,
+        from = from,
+        to = to,
+        flows = fmat,
+        contract = FALSE
     )
 
 
