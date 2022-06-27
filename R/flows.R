@@ -145,6 +145,10 @@ dodgr_flows_aggregate <- function (graph,
                                    norm_sums = TRUE,
                                    quiet = TRUE) {
 
+    if (methods::is (graph, "dodgr_contracted")) {
+        contract <- FALSE
+    }
+
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
@@ -238,6 +242,10 @@ dodgr_flows_disperse <- function (graph,
                                   heap = "BHeap",
                                   tol = 1e-12,
                                   quiet = TRUE) {
+
+    if (methods::is (graph, "dodgr_contracted")) {
+        contract <- FALSE
+    }
 
     res <- check_k (k, from)
     k <- res$k
@@ -376,6 +384,10 @@ dodgr_flows_si <- function (graph,
                             heap = "BHeap",
                             tol = 1e-12,
                             quiet = TRUE) {
+
+    if (methods::is (graph, "dodgr_contracted")) {
+        contract <- FALSE
+    }
 
     if (missing (from)) {
         stop ("'from' must be provided for spatial interaction models.")
