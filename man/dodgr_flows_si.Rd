@@ -11,7 +11,7 @@ dodgr_flows_si(
   k = 500,
   dens_from = NULL,
   dens_to = NULL,
-  contract = FALSE,
+  contract = TRUE,
   norm_sums = TRUE,
   heap = "BHeap",
   tol = 0.000000000001,

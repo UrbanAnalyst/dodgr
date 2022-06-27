@@ -9,7 +9,7 @@ dodgr_flows_disperse(
   from,
   dens,
   k = 500,
-  contract = FALSE,
+  contract = TRUE,
   heap = "BHeap",
   tol = 0.000000000001,
   quiet = TRUE
