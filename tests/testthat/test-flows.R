@@ -88,9 +88,11 @@ test_that ("flows disperse", {
     dens <- runif (length (from))
 
     expect_message (
-        graph2 <- dodgr_flows_disperse (graph,
+        graph2 <- dodgr_flows_disperse (
+            graph,
             from = from,
-            dens = dens, quiet = FALSE
+            dens = dens,
+            quiet = FALSE
         ),
         "Aggregating flows ..."
     )
@@ -99,36 +101,54 @@ test_that ("flows disperse", {
         expect_true (mean (graph2$flow) > 0)
     }
 
-    expect_silent (graph3a <- dodgr_flows_disperse (graph,
-        from = from,
-        k = 500, dens = dens
-    ))
+    expect_silent (
+        graph3a <- dodgr_flows_disperse (
+            graph,
+            from = from,
+            k = 500,
+            dens = dens,
+            contract = FALSE
+        )
+    )
     k <- rep (500, length (from))
-    expect_silent (graph3b <- dodgr_flows_disperse (graph,
-        from = from,
-        k = k, dens = dens
-    ))
+    expect_silent (
+        graph3b <- dodgr_flows_disperse (
+            graph,
+            from = from,
+            k = k,
+            dens = dens,
+            contract = FALSE
+        )
+    )
     # expect_equal (graph3a$flow, graph3b$flow)
     flow_diff <- abs (graph3a$flow - graph3b$flow)
     expect_true (max (flow_diff) < 1e-4)
 
     k <- c (500, 1000)
-    expect_silent (graph3b <- dodgr_flows_disperse (graph,
-        from = from,
-        k = k, dens = dens
-    ))
+    expect_silent (
+        graph3b <- dodgr_flows_disperse (
+            graph,
+            from = from,
+            k = k,
+            dens = dens,
+            contract = FALSE
+        )
+    )
     expect_true (all (c ("flow1", "flow2") %in% names (graph3b)))
     expect_equal (graph3a$flow, graph3b$flow1)
 
-    expect_silent (graph4 <- dodgr_flows_disperse (graph,
-        from = from,
-        dens = dens,
-        contract = TRUE
-    ))
+    expect_silent (
+        graph4 <- dodgr_flows_disperse (
+            graph,
+            from = from,
+            dens = dens,
+            contract = TRUE
+        )
+    )
     # Dispersed flows calculated on contracted graph should **NOT** equal those
     # calculated on full graph
     if (test_all) { # fails on CRAN
-        expect_false (all (graph4$flow == graph2$flow))
+        expect_true (all (graph4$flow == graph2$flow))
     }
 
     dens [1] <- NA
