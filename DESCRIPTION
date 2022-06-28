@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.14.048
+Version: 0.2.14.049
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
     person("Andreas", "Petutschnig", role = "aut"),
@@ -46,6 +46,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     sf,
+    stplanr,
     testthat,
     tidygraph
 LinkingTo:
