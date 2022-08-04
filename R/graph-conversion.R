@@ -93,6 +93,13 @@ dodgr_to_sfc <- function (graph) {
     edge_map <- get_edge_map (gc)
     geometry <- rcpp_aggregate_to_sf (graph, gc, edge_map)
 
+    # geometry has full WKT representation of CRS via osmdata, but still
+    # triggers "old-style crs" message from `sf`. This uses `sf` to replace the
+    # crs with identical values which don't trigger that message.
+    out <- suppressMessages (
+        sf::st_crs (geometry) <- 4326
+    )
+
     # Then match data of `graph` potentially including way_id, back on to the
     # geometries:
     # edge_ids <- gc$graph$edge_id [match (names (geometry), gc$graph$edge_id)]
