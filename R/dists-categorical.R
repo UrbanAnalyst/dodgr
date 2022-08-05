@@ -76,7 +76,7 @@ dodgr_dists_categorical <- function (graph,
     if (!"edge_type" %in% names (graph)) {
         stop ("graph must have a column named 'edge_type'")
     }
-    if (is.integer (graph$edge_type) & any (graph$edge_type == 0L)) {
+    if (is.integer (graph$edge_type) && any (graph$edge_type == 0L)) {
         stop ("graphs with integer edge_type columns may not contain 0s")
     }
 
@@ -88,7 +88,7 @@ dodgr_dists_categorical <- function (graph,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
+    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
@@ -117,7 +117,7 @@ dodgr_dists_categorical <- function (graph,
         message ("Calculating shortest paths ... ", appendLF = FALSE)
     }
 
-    if (is.null (dlimit) & !is.null (to)) {
+    if (is.null (dlimit) && !is.null (to)) {
 
         d <- rcpp_get_sp_dists_categorical (
             graph,
