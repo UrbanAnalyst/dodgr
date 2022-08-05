@@ -13,8 +13,8 @@ dodgr_graph_cols <- function (graph) {
 
     nms <- names (graph)
     component <- grep ("comp", nms) %>% null_to_na ()
-    if (methods::is (graph, "dodgr_streetnet") &
-        !methods::is (graph, "dodgr_streetnet_sc") &
+    if (methods::is (graph, "dodgr_streetnet") &&
+        !methods::is (graph, "dodgr_streetnet_sc") &&
         ncol (graph) >= 11) {
         # columns are always identically structured
         edge_id <- which (nms == "edge_id") %>% null_to_na ()
@@ -56,7 +56,7 @@ dodgr_graph_cols <- function (graph) {
             to_is_num <- vapply (spcols$to_col, function (i) {
                 is.numeric (graph [[i]])
             }, logical (1))
-            if (!(all (fr_is_num) & all (to_is_num))) {
+            if (!(all (fr_is_num) && all (to_is_num))) {
                 stop (paste0 (
                     "graph appears to have non-numeric ",
                     "longitudes and latitudes"
@@ -68,7 +68,7 @@ dodgr_graph_cols <- function (graph) {
             xto <- spcols$to_col [1]
             yto <- spcols$to_col [2]
         } else {
-            if (length (fr_col) != 1 & length (to_col) != 1) {
+            if (length (fr_col) != 1 && length (to_col) != 1) {
                 stop ("Unable to determine from and to columns in graph")
             } # nolint # nocov
         }
@@ -218,15 +218,14 @@ dodgr_vertices <- function (graph) {
         }
     } else {
         if (is.na (gr_cols$edge_id)) {
-            hash <- ""
-        } # nocov
-        else {
+            hash <- "" # nocov
+        } else {
             hash <- digest::digest (graph [[gr_cols$edge_id]])
         }
     }
 
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_verts_", hash, ".Rds"))
-    if (hash != "" & fs::file_exists (fname)) {
+    if (hash != "" && fs::file_exists (fname)) {
         verts <- readRDS (fname)
     } else {
         verts <- dodgr_vertices_internal (graph)
@@ -414,10 +413,10 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
     gr_cols <- dodgr_graph_cols (graph_t)
     index12 <- which (graph [[gr_cols$from]] == v1 & graph [[gr_cols$to]] == v2)
     index21 <- which (graph [[gr_cols$from]] == v2 & graph [[gr_cols$to]] == v1)
-    if (length (index12) == 0 & length (index21) == 0) {
+    if (length (index12) == 0 && length (index21) == 0) {
         stop ("Nominated vertices do not define any edges in graph")
     }
-    if ((!is.null (x) & is.null (y)) | (is.null (x) & !is.null (y))) {
+    if ((!is.null (x) && is.null (y)) || (is.null (x) && !is.null (y))) {
         stop ("Either both x and y must be NULL, or both must be specified")
     }
 
@@ -447,7 +446,7 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
 
 insert_one_edge <- function (graph, index, x, y, gr_cols) {
 
-    if (is.null (x) & is.null (y)) {
+    if (is.null (x) && is.null (y)) {
         x <- (graph [[gr_cols$xfr]] [index] +
             graph [[gr_cols$xto]] [index]) / 2
         y <- (graph [[gr_cols$yfr]] [index] +
