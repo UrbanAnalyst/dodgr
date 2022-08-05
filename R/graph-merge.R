@@ -37,7 +37,7 @@ merge_directed_graph <- function (graph, col_names = c ("flow")) {
 
     # auto-detect either flow or centrality as col_names:
     if (length (col_names) == 1) {
-        if (col_names == "flow" & !"flow" %in% names (graph) &
+        if (col_names == "flow" && !"flow" %in% names (graph) &&
             "centrality" %in% names (graph)) {
             col_names <- "centrality"
         }
