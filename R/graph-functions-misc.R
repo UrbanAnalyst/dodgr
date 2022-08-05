@@ -121,7 +121,7 @@ find_spatial_cols <- function (graph) {
     fr_col <- find_fr_col (graph)
     to_col <- find_to_col (graph)
 
-    if (length (fr_col) < 2 | length (to_col) < 2) {
+    if (length (fr_col) < 2 || length (to_col) < 2) {
         stop (paste0 (
             "Graph appears to be spatial yet unable to ",
             "extract coordinates."
@@ -199,7 +199,7 @@ find_d_col <- function (graph) {
 find_w_col <- function (graph) {
 
     w_col <- match (c ("w", "wt"), names (graph))
-    if (all (is.na (w_col)) | length (w_col) != 1) {
+    if (all (is.na (w_col)) || length (w_col) != 1) {
         w_col <- grep ("weight", names (graph))
     }
     if (length (w_col) != 1) {
@@ -237,7 +237,7 @@ find_xy_col_simple <- function (dfr) {
             grepl ("lat", nms, ignore.case = TRUE))
     }
 
-    if (length (ix) == 0 | length (iy) == 0) {
+    if (length (ix) == 0 || length (iy) == 0) {
         message ("xy has no named columns; assuming order is x then y")
         ix <- 1
         iy <- 2
@@ -288,7 +288,7 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE) {
         )
         verts <- dodgr_vertices (verts)
     }
-    if (!(is.matrix (xy) | is.data.frame (xy))) {
+    if (!(is.matrix (xy) || is.data.frame (xy))) {
         stop ("xy must be a matrix or data.frame")
     }
     if (!is (xy, "sf")) {
