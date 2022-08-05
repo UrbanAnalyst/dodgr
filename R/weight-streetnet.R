@@ -225,7 +225,7 @@ weight_streetnet.sf <- function (x,
 
     wt_profile <- wp$wt_profile
     wt_profile_name <- wp$wt_profile_name
-    if (nrow (wt_profile) > 1 & all (wt_profile$name != "custom")) {
+    if (nrow (wt_profile) > 1 && all (wt_profile$name != "custom")) {
         x <- remap_way_types (x, wt_profile)
     }
 
@@ -306,7 +306,7 @@ change_col_names <- function (x, colvar, expected) {
 
 check_highway_osmid <- function (x, wt_profile) {
 
-    if (!"highway" %in% names (x) & !is.numeric (wt_profile)) {
+    if (!"highway" %in% names (x) && !is.numeric (wt_profile)) {
         stop (
             "Please specify type_col to be used for ", # nocov
             "weighting streetnet"
@@ -341,7 +341,7 @@ check_highway_osmid <- function (x, wt_profile) {
 
 get_wt_profile <- function (x, wt_profile, wt_profile_file) {
 
-    if (!is.data.frame (wt_profile) & length (wt_profile) > 1) {
+    if (!is.data.frame (wt_profile) && length (wt_profile) > 1) {
         stop ("wt_profile can only be one element")
     }
 
@@ -439,7 +439,7 @@ get_sf_geom_col <- function (graph) {
         }
     } else if (length (gcol) == 0) {
         gcol <- match ("g", names (graph))
-        if (is.na (gcol) | length (gcol) != 1) {
+        if (is.na (gcol) || length (gcol) != 1) {
             stop ("Unable to determine geometry column")
         }
     }
@@ -508,9 +508,8 @@ add_extra_sf_columns <- function (graph, x) {
         hi <- ncol (graph)
         index2 <- NULL
     } else if (hi == ncol (graph)) {
-        index2 <- NULL
-    } # nocov
-    else {
+        index2 <- NULL # nocov
+    } else {
         index2 <- (hi + 1):ncol (graph)
     }
 
