@@ -129,9 +129,9 @@ dodgr_centrality <- function (graph,
         )
     }
 
-    if (!is.null (vert_wts) &
-        (!is.vector (vert_wts) |
-            !is.numeric (vert_wts) |
+    if (!is.null (vert_wts) &&
+        (!is.vector (vert_wts) ||
+            !is.numeric (vert_wts) ||
             length (vert_wts) != nrow (dodgr_vertices (graph)))) {
 
         stop (
@@ -150,11 +150,11 @@ dodgr_centrality <- function (graph,
 
     gr_cols <- dodgr_graph_cols (graph)
 
-    if (contract & methods::is (graph, "dodgr_contracted")) {
+    if (contract && methods::is (graph, "dodgr_contracted")) {
         contract <- FALSE
     }
     graph_full <- edge_map <- NULL
-    if (contract & !methods::is (graph, "dodgr_contracted")) {
+    if (contract && !methods::is (graph, "dodgr_contracted")) {
         graph_full <- graph
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
@@ -339,10 +339,10 @@ estimate_centrality_time <- function (graph,
 
     gr_cols <- dodgr_graph_cols (graph)
 
-    if (contract & methods::is (graph, "dodgr_contracted")) {
+    if (contract && methods::is (graph, "dodgr_contracted")) {
         contract <- FALSE
     }
-    if (contract & !methods::is (graph, "dodgr_contracted")) {
+    if (contract && !methods::is (graph, "dodgr_contracted")) {
         graph <- dodgr_contract_graph (graph)
         hashc <- get_hash (graph, hash = FALSE)
         fname_c <- fs::path (
