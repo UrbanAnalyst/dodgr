@@ -112,7 +112,8 @@ NULL
 #' 'OS Open Roads', scroll to the bottom, click 'Continue' and complete
 #' the form on the subsequent page.
 #' This dataset is open access and can be used under the
-#' \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License} and must be cited as follows:
+#' \href{https://www.ordnancesurvey.co.uk/business-and-government/licensing/using-creating-data-with-os-products/os-opendata.html}{Open Government License}
+#' and must be cited as follows:
 #' Contains OS data © Crown copyright and database right (2017)
 #'
 #' @family data
