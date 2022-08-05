@@ -179,7 +179,7 @@ process_bbox <- function (bbox,
             colnames (bbox) <- c ("x", "y")
         }
 
-        if (identical (rownames (bbox), c ("x", "y")) |
+        if (identical (rownames (bbox), c ("x", "y")) ||
             identical (colnames (bbox), c ("min", "max"))) {
             bbox <- t (bbox)
         }
@@ -199,7 +199,7 @@ process_bbox <- function (bbox,
         coly <- which (grepl ("y", nms, ignore.case = TRUE) |
             grepl ("lat", nms, ignore.case = TRUE))
 
-        if (!(length (colx) == 1 | length (coly) == 1)) {
+        if (!(length (colx) == 1 || length (coly) == 1)) {
             stop ("Can not unambiguously determine coordinates in graph")
         }
 
@@ -285,9 +285,9 @@ vec_to_bbox <- function (bbox) {
             ycols <- grep ("^y|^lat", names (bbox))
         }
 
-        if (!(length (mincols) == 2 &
-            length (maxcols) == 2 &
-            length (xcols) == 2 &
+        if (!(length (mincols) == 2 &&
+            length (maxcols) == 2 &&
+            length (xcols) == 2 &&
             length (ycols) == 2)) {
 
             stop (
