@@ -503,7 +503,7 @@ prepare_graph <- function (graph,
 
     # remove any routing points not in edge start nodes:
     from <- nodes_arg_to_pts (from, graph)
-    if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0) {
+    if (methods::is (graph, "dodgr_streetnet_sc") && tp > 0) {
         from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
     }
     from <- from [from %in% graph [[gr_cols$from]]] # nolint
@@ -514,7 +514,7 @@ prepare_graph <- function (graph,
     if (!missing (to)) {
         # remove any routing points not in edge end nodes:
         to <- nodes_arg_to_pts (to, graph)
-        if (methods::is (graph, "dodgr_streetnet_sc") & tp > 0) {
+        if (methods::is (graph, "dodgr_streetnet_sc") && tp > 0) {
             to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
         }
         to <- to [to %in% graph [[gr_cols$to]]] # nolint
@@ -543,7 +543,7 @@ get_random_prefix <- function (prefix = "flow",
 nodes_arg_to_pts <- function (nodes,
                               graph) {
 
-    if (!is.matrix (nodes) & is.numeric (nodes)) {
+    if (!is.matrix (nodes) && is.numeric (nodes)) {
         nodes <- matrix (nodes, ncol = 2)
     }
     if (is.vector (nodes)) {
