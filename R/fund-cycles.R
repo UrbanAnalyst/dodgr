@@ -329,7 +329,7 @@ dodgr_sflines_to_poly <- function (sflines,
                                    graph_max_size = 10000,
                                    expand = 0.05) {
 
-    if (!(methods::is (sflines, "sf") | methods::is (sflines, "sf"))) {
+    if (!(methods::is (sflines, "sf") || methods::is (sflines, "sf"))) {
         stop ("lines must be an object of class 'sf' or 'sfc'")
     }
     if (!methods::is (
