@@ -132,34 +132,7 @@ dodgr_dists_categorical <- function (graph,
 
         if (!proportions_only) {
 
-            if (is.null (from_index$id)) {
-                rnames <- vert_map$vert
-            } else {
-                rnames <- from_index$id
-            }
-            if (is.null (to_index$id)) {
-                cnames <- vert_map$vert
-            } else {
-                cnames <- to_index$id
-            }
-
-
-            d0 <- d [, seq (n)]
-            rownames (d0) <- rnames
-            colnames (d0) <- cnames
-
-            d0 <- list ("distances" = d0)
-            d <- lapply (seq_along (edge_type_table), function (i) {
-                index <- i * n + seq (n) - 1
-                res <- d [, index]
-                rownames (res) <- rnames
-                colnames (res) <- cnames
-                return (res)
-            })
-            names (d) <- names (edge_type_table)
-
-            res <- c (d0, d)
-            class (res) <- append (class (res), "dodgr_dists_categorical")
+            res <- process_categorical_dmat (d, from_index, to_index, vert_map, edge_type_table)
 
         } else {
 
@@ -192,6 +165,41 @@ dodgr_dists_categorical <- function (graph,
     return (res)
 }
 
+process_categorical_dmat <- function (d, from_index, to_index, vert_map, edge_type_table) {
+
+    n <- length (to_index$index)
+
+    if (is.null (from_index$id)) {
+        rnames <- vert_map$vert
+    } else {
+        rnames <- from_index$id
+    }
+    if (is.null (to_index$id)) {
+        cnames <- vert_map$vert
+    } else {
+        cnames <- to_index$id
+    }
+
+
+    d0 <- d [, seq (n)]
+    rownames (d0) <- rnames
+    colnames (d0) <- cnames
+
+    d0 <- list ("distances" = d0)
+    d <- lapply (seq_along (edge_type_table), function (i) {
+                     index <- i * n + seq (n) - 1
+                     res <- d [, index]
+                     rownames (res) <- rnames
+                     colnames (res) <- cnames
+                     return (res)
+        })
+    names (d) <- names (edge_type_table)
+
+    res <- c (d0, d)
+    class (res) <- append (class (res), "dodgr_dists_categorical")
+
+    return (res)
+}
 
 #' Transform a result from 'dodgr_dists_categorical' to summary statistics
 #'
