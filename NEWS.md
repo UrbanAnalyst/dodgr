@@ -1,5 +1,9 @@
 # v 0.2.14.00X
 
+## Major changes:
+
+- `dodgr_paths` pairwise calculation shifted to C++, thanks to @dcooley
+
 ## Minor changes:
 
 - Fix `dodgr_flowmap` to work on both `sf` and `sc` streetnets.

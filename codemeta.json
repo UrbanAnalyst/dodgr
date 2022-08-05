@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.14.053",
+  "version": "0.2.14.054",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.0 (2022-04-22)",
+  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -31,6 +31,11 @@
       "@type": "Person",
       "givenName": "Andreas",
       "familyName": "Petutschnig"
+    },
+    {
+      "@type": "Person",
+      "givenName": "David",
+      "familyName": "Cooley"
     }
   ],
   "contributor": [
@@ -334,7 +339,7 @@
     },
     "SystemRequirements": "C++11, GNU make"
   },
-  "fileSize": "5390.173KB",
+  "fileSize": "5390.6KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",

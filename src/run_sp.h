@@ -77,6 +77,12 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type);
 
+Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
+                           const Rcpp::DataFrame vert_map_in,
+                           Rcpp::IntegerVector fromi,
+                           Rcpp::IntegerVector toi_in,
+                           const std::string& heap_type);
+
 // in run_sp_categorical:
 Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

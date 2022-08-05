@@ -100,17 +100,13 @@ dodgr_paths <- function (graph,
         if (length (from_index$index) != length (to_index$index)) {
             stop ("pairwise paths require from and to to have same length")
         }
-        paths <- list ()
-        for (i in seq_along (from_index$index)) {
-            paths [[i]] <- rcpp_get_paths (
-                graph,
-                vert_map,
-                from_index$index [i],
-                to_index$index [i],
-                heap
-            ) [[1]]
-
-        }
+        paths <- rcpp_get_paths_pairwise (
+            graph,
+            vert_map,
+            from_index$index,
+            to_index$index,
+            heap
+        )
     } else {
         paths <- rcpp_get_paths (
             graph,

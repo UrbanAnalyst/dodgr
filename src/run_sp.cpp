@@ -676,3 +676,83 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     }
     return (res);
 }
+
+
+// [[Rcpp::export]]
+Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
+                           const Rcpp::DataFrame vert_map_in,
+                           Rcpp::IntegerVector fromi,
+                           Rcpp::IntegerVector toi_in,
+                           const std::string& heap_type)
+{
+    std::vector <size_t> toi =
+        Rcpp::as <std::vector <size_t> > ( toi_in);
+    size_t nfrom = static_cast <size_t> (fromi.size ());
+
+    std::vector <std::string> from = graph ["from"];
+    std::vector <std::string> to = graph ["to"];
+    std::vector <double> dist = graph ["d"];
+    std::vector <double> wt = graph ["d_weighted"];
+
+    size_t nedges = static_cast <size_t> (graph.nrow ());
+    std::map <std::string, size_t> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <size_t> vert_map_n = vert_map_in ["id"];
+    size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+            vert_map_n, vert_map);
+
+    std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    Rcpp::List res (nfrom);
+    std::vector<double> w (nverts);
+    std::vector<double> d (nverts);
+    std::vector<long int> prev (nverts);
+  
+    for (size_t i = 0; i < nfrom; i++)
+    {
+        const R_xlen_t i_R = static_cast <R_xlen_t> (i);
+
+        // These lines (re-)initialise the heap, so have to be called for each i
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl(heap_type), g);
+
+        pathfinder->init (g); // specify the graph
+
+        Rcpp::checkUserInterrupt ();
+        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
+        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
+        std::fill (prev.begin(), prev.end(), INFINITE_INT);
+        d [static_cast <size_t> (fromi [i_R])] =
+            w [static_cast <size_t> (fromi [i_R])] = 0.0;
+
+        pathfinder->Dijkstra (d, w, prev,
+                static_cast <size_t> (fromi [i_R]), toi);
+
+        Rcpp::List res1( 1L );
+        std::vector <long int> onePath;
+
+        if (w [toi [i]] < INFINITE_DOUBLE)
+        {
+            long int target = toi_in [i_R]; // target can be -1!
+            while (target < INFINITE_INT)
+            {
+                // Note that targets are all C++ 0-indexed and are converted
+                // directly here to R-style 1-indexes.
+                onePath.push_back (target + 1);
+                target = prev [static_cast <size_t> (target)];
+                if (target < 0 || target == fromi [i_R])
+                    break;
+            }
+        }
+        if (onePath.size () >= 1)
+        {
+            onePath.push_back (static_cast <R_xlen_t> (fromi [i_R] + 1L));
+            std::reverse (onePath.begin (), onePath.end ());
+            res1[0L] = onePath;
+        }
+        res [static_cast <R_xlen_t> (i)] = res1;
+    }
+    return (res);
+}

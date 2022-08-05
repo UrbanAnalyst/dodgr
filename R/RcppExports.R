@@ -299,6 +299,10 @@ rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
+rcpp_get_paths_pairwise <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type)
+}
+
 #' rcpp_get_sp_dists_categorical
 #'
 #' The `graph` must have an `edge_type` column of non-negative integers,
@@ -381,3 +385,4 @@ rcpp_points_index_par <- function(xy, pts) {
 rcpp_route_times <- function(graph, left_side, turn_penalty) {
     .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
+
