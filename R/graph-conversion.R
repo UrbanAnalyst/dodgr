@@ -144,7 +144,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
     }
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
+    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
