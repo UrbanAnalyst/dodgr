@@ -122,23 +122,8 @@ dodgr_centrality <- function (graph,
         "time",
         "time_weighted"
     ))
-    if ("centrality" %in% names (graph)) {
-        warning (
-            "graph already has a 'centrality' column; ",
-            "this will be overwritten"
-        )
-    }
 
-    if (!is.null (vert_wts) &&
-        (!is.vector (vert_wts) ||
-            !is.numeric (vert_wts) ||
-            length (vert_wts) != nrow (dodgr_vertices (graph)))) {
-
-        stop (
-            "vert_wts must be a vector of same length as ",
-            "nrow (dodgr_vertices (graph))"
-        )
-    }
+    centrality_input_check (graph, vert_wts)
 
     if (is.null (dist_threshold)) {
         dist_threshold <- .Machine$double.xmax
@@ -191,7 +176,50 @@ dodgr_centrality <- function (graph,
         0
     )
 
-    # attach result to edge or vertex objects:
+    res <- attach_centrality_to_graph (
+        graph,
+        centrality,
+        edge_map,
+        graph_full,
+        edges,
+        contract
+    )
+
+    if (is_dodgr_cache_on () && edges) {
+        # re-cache graph with centrality measure:
+        attr (res, "px") <- cache_graph (res, gr_cols$edge_id)
+    }
+
+    return (res)
+}
+
+centrality_input_check <- function (graph, vert_wts) {
+
+    if ("centrality" %in% names (graph)) {
+        warning (
+            "graph already has a 'centrality' column; ",
+            "this will be overwritten"
+        )
+    }
+
+    if (!is.null (vert_wts) &&
+        (!is.vector (vert_wts) ||
+            !is.numeric (vert_wts) ||
+            length (vert_wts) != nrow (dodgr_vertices (graph)))) {
+
+        stop (
+            "vert_wts must be a vector of same length as ",
+            "nrow (dodgr_vertices (graph))"
+        )
+    }
+}
+
+#' Attach centrality measures to initial graph
+#'
+#' @noRd
+attach_centrality_to_graph <- function (graph, centrality, edge_map, graph_full,
+                                        edges, contract) {
+
     if (edges) {
         graph$centrality <- centrality
         if (contract) {
@@ -201,11 +229,6 @@ dodgr_centrality <- function (graph,
     } else {
         res <- dodgr_vertices (graph)
         res$centrality <- centrality
-    }
-
-    # re-cache graph:
-    if (is_dodgr_cache_on ()) {
-        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
     }
 
     return (res)
