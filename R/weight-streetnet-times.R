@@ -40,7 +40,7 @@ sc_edge_dist <- function (graph) {
     xy0 <- as.data.frame (graph [, c (".vx0_x", ".vx0_y")])
     xy1 <- as.data.frame (graph [, c (".vx1_x", ".vx1_y")])
     graph$d <- geodist::geodist (xy0, xy1, paired = TRUE, measure = "geodesic")
-    if (".vx0_z" %in% names (graph) & ".vx1_z" %in% names (graph)) {
+    if (".vx0_z" %in% names (graph) && ".vx1_z" %in% names (graph)) {
         graph <- dplyr::mutate (graph, "dz" = .vx1_z - .vx0_z) %>%
             dplyr::select (-c (.vx0_z, .vx1_z))
     }
@@ -79,7 +79,7 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
         return (graph)
     }
 
-    if (!(is.character (wt_profile) | is.data.frame (wt_profile))) {
+    if (!(is.character (wt_profile) || is.data.frame (wt_profile))) {
         return (graph)
     }
 
@@ -87,8 +87,8 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
         wt_profile <- unique (wt_profile$name)
     }
     b <- grep ("oneway.*bicycle|bicycle.*oneway", names (graph))
-    if ("oneway" %in% names (graph) |
-        (length (b) == 1 & wt_profile == "bicycle")) {
+    if ("oneway" %in% names (graph) ||
+        (length (b) == 1 && wt_profile == "bicycle")) {
         index <- which (!graph$oneway %in% c ("no", "yes"))
         if (length (index) > 0) {
             graph$oneway [index] <- "no"
@@ -189,7 +189,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     # gr_cols <- dodgr_graph_cols (graph)
     # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
 
-    if (wt_profile %in% c ("horse", "wheelchair") |
+    if (wt_profile %in% c ("horse", "wheelchair") ||
         !"surface" %in% names (graph)) {
         return (graph)
     }
@@ -227,7 +227,7 @@ weight_by_num_lanes <- function (graph, wt_profile) {
 
     # only weight these profiles:
     profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
-    if (!(wt_profile %in% profile_names | "lanes" %in% names (graph))) {
+    if (!(wt_profile %in% profile_names || "lanes" %in% names (graph))) {
         return (graph)
     } # nocov
 
@@ -259,7 +259,7 @@ calc_edge_time <- function (graph, wt_profile) {
     graph$time <- graph [[gr_cols$d]] / speed_m_per_s
     graph$time_weighted <- graph [[gr_cols$d_weighted]] / speed_m_per_s
 
-    if ("dz" %in% names (graph) &
+    if ("dz" %in% names (graph) &&
         wt_profile %in% c ("foot", "bicycle")) {
         graph <- times_by_incline (graph, wt_profile)
     }
