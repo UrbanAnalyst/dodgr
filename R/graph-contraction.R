@@ -38,7 +38,7 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
     v <- dodgr_vertices (graph)
 
     if (!is.null (verts)) {
-        if (!(length (verts) == 1 | is.vector (verts))) {
+        if (!(length (verts) == 1 || is.vector (verts))) {
             stop ("verts must be a single value or a vector of vertex IDs")
         }
         if (!is.character (verts)) {
@@ -137,7 +137,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
     graph_refill [, gr_cols$d_weighted] <-
         graph_contracted$graph$d_weighted [indx_contr]
-    if (!is.na (gr_cols$time) & !is.na (gr_cols$time_weighted)) {
+    if (!is.na (gr_cols$time) && !is.na (gr_cols$time_weighted)) {
         graph_refill [, gr_cols$time] <-
             graph_contracted$graph$time [indx_contr]
         graph_refill [, gr_cols$time_weighted] <-
@@ -259,7 +259,7 @@ dodgr_uncontract_graph <- function (graph) {
 
     tp <- attr (graph, "turn_penalty")
     tp <- ifelse (is.null (tp), 0, tp)
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
+    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
         # extra code to uncontract the compound turn-angle junctions, including
         # merging extra rows such as flow from compound junctions back into
         # "normal" (non-compound) edges
