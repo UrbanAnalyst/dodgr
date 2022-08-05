@@ -57,6 +57,8 @@ dodgr_flowmap <- function (net, bbox = NULL, linescale = 1) {
     cols <- colorRampPalette (c ("lawngreen", "red")) (ncols)
     cols <- cols [ceiling (net$flow * ncols)]
 
+    # Suppress 'no visible binding' lint messages.
+    from_lon <- from_lat <- to_lon <- to_lat <- NULL
     with (net, segments (from_lon, from_lat, to_lon, to_lat,
         col = cols, lwd = linescale * net$flow
     ))
