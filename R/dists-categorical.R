@@ -132,7 +132,13 @@ dodgr_dists_categorical <- function (graph,
 
         if (!proportions_only) {
 
-            res <- process_categorical_dmat (d, from_index, to_index, vert_map, edge_type_table)
+            res <- process_categorical_dmat (
+                d,
+                from_index,
+                to_index,
+                vert_map,
+                edge_type_table
+            )
 
         } else {
 
@@ -151,21 +157,15 @@ dodgr_dists_categorical <- function (graph,
             heap
         )
 
-        if (is.null (from_index$id)) {
-            rownames (d) <- vert_map$vert
-        } else {
-            rownames (d) <- from_index$id
-        }
-
-        res <- data.frame (d)
-        names (res) <- c ("distance", names (edge_type_table))
+        res <- process_threshold_dmat (d, from_index, vert_map, edge_type_table)
     }
 
 
     return (res)
 }
 
-process_categorical_dmat <- function (d, from_index, to_index, vert_map, edge_type_table) {
+process_categorical_dmat <- function (d, from_index, to_index, vert_map,
+                                      edge_type_table) {
 
     n <- length (to_index$index)
 
@@ -187,16 +187,30 @@ process_categorical_dmat <- function (d, from_index, to_index, vert_map, edge_ty
 
     d0 <- list ("distances" = d0)
     d <- lapply (seq_along (edge_type_table), function (i) {
-                     index <- i * n + seq (n) - 1
-                     res <- d [, index]
-                     rownames (res) <- rnames
-                     colnames (res) <- cnames
-                     return (res)
-        })
+        index <- i * n + seq (n) - 1
+        res <- d [, index]
+        rownames (res) <- rnames
+        colnames (res) <- cnames
+        return (res)
+    })
     names (d) <- names (edge_type_table)
 
     res <- c (d0, d)
     class (res) <- append (class (res), "dodgr_dists_categorical")
+
+    return (res)
+}
+
+process_threshold_dmat <- function (d, from_index, vert_map, edge_type_table) {
+
+    if (is.null (from_index$id)) {
+        rownames (d) <- vert_map$vert
+    } else {
+        rownames (d) <- from_index$id
+    }
+
+    res <- data.frame (d)
+    names (res) <- c ("distance", names (edge_type_table))
 
     return (res)
 }
