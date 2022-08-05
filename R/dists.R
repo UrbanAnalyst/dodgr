@@ -127,7 +127,7 @@ dodgr_dists <- function (graph,
     graph <- hps$graph
 
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) | is.na (gr_cols$to)) {
+    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
         scols <- find_spatial_cols (graph)
         graph$from_id <- scols$xy_id$xy_fr_id
         graph$to_id <- scols$xy_id$xy_to_id
@@ -159,7 +159,7 @@ dodgr_dists <- function (graph,
         message ("Calculating shortest paths ... ", appendLF = FALSE)
     }
 
-    if (parallel & heap == "TriHeapExt") {
+    if (parallel && heap == "TriHeapExt") {
         if (!quiet) {
             message (
                 "Extended TriHeaps can not be calculated in parallel; ",
@@ -230,11 +230,11 @@ get_index_id_cols <- function (graph,
     index <- -1
     id <- NULL
     if (!missing (pts)) {
-        if (is.integer (pts) & is.vector (pts)) {
+        if (is.integer (pts) && is.vector (pts)) {
             index <- pts
-        } else if (is.character (pts) |
-            is.numeric (pts) |
-            is.matrix (pts) |
+        } else if (is.character (pts) ||
+            is.numeric (pts) ||
+            is.matrix (pts) ||
             is.data.frame (pts)) {
             index <- get_pts_index (graph, gr_cols, vert_map, pts)
         } else {
@@ -244,10 +244,10 @@ get_index_id_cols <- function (graph,
             )
         }
 
-        if (length (pts == 2) & is.numeric (pts) &
-            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &
-                any (grepl ("y", names (pts), ignore.case = TRUE))) |
-                (any (grepl ("lon", names (pts), ignore.case = TRUE) &
+        if (length (pts == 2) && is.numeric (pts) &&
+            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &&
+                any (grepl ("y", names (pts), ignore.case = TRUE))) ||
+                (any (grepl ("lon", names (pts), ignore.case = TRUE) &&
                     (any (grepl ("lat", names (pts), ignore.case = TRUE))))))) {
             names (pts) <- NULL
         }
@@ -301,7 +301,7 @@ get_id_cols <- function (pts) {
         } else if (is.matrix (pts)) {
             ids <- pts [, nmc, drop = TRUE]
         }
-    } else if (is.vector (pts) & !is.null (names (pts))) {
+    } else if (is.vector (pts) && !is.null (names (pts))) {
         ids <- names (pts)
     } else if (!is.null (rownames (pts))) {
         ids <- rownames (pts)
@@ -360,7 +360,7 @@ get_pts_index <- function (graph,
                            vert_map,
                            pts) {
 
-    if (!(is.matrix (pts) | is.data.frame (pts))) {
+    if (!(is.matrix (pts) || is.data.frame (pts))) {
         if (!is.numeric (pts)) {
             pts <- matrix (pts, ncol = 1)
         } else {
@@ -397,7 +397,7 @@ get_pts_index <- function (graph,
             grepl ("lon", nms, ignore.case = TRUE))
         iy <- which (grepl ("y", nms, ignore.case = TRUE) |
             grepl ("lat", nms, ignore.case = TRUE))
-        if (length (ix) != 1 | length (iy) != 1) {
+        if (length (ix) != 1 || length (iy) != 1) {
             stop (paste0 (
                 "Unable to determine geographical ",
                 "coordinates in from/to"
@@ -512,7 +512,7 @@ to_from_with_tp <- function (graph, to_from, from = TRUE) {
     tp <- attr (graph, "turn_penalty")
     tp <- ifelse (is.null (tp), 0, tp)
 
-    if (is (graph, "dodgr_streetnet_sc") & tp > 0) {
+    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
         if (!is.null (to_from)) {
             to_from <- nodes_arg_to_pts (to_from, graph)
             to_from <- remap_verts_with_turn_penalty (graph,
