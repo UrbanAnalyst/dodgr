@@ -77,7 +77,7 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE) {
     }
 
     # rcpp_points_index is 0-indexed, so ...
-    indx [rcpp_points_index_par (verts, xy) + 1]
+    indx [rcpp_points_index_par (verts, xy) + 1L]
 }
 
 #' match_points_to_graph
