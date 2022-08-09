@@ -46,8 +46,8 @@ struct OnePointIndex : public RcppParallel::Worker
 //'
 //' Get index of nearest vertices to list of points
 //'
-//' @param graph Rcpp::DataFrame containing the graph
-//' @param pts Rcpp::DataFrame containing the routing points
+//' @param xy Rcpp::DataFrame containing the vertex coordinates of the graph
+//' @param pts Rcpp::DataFrame containing the points to be matched
 //'
 //' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
 //'
