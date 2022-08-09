@@ -166,6 +166,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_points_index_par
+Rcpp::IntegerVector rcpp_points_index_par(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
+RcppExport SEXP _dodgr_rcpp_points_index_par(SEXP xySEXP, SEXP ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_points_index_par(xy, pts));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_get_sp_dists_par
 Rcpp::NumericMatrix rcpp_get_sp_dists_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, const std::string& heap_type, const bool is_spatial);
 RcppExport SEXP _dodgr_rcpp_get_sp_dists_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP heap_typeSEXP, SEXP is_spatialSEXP) {
@@ -313,18 +325,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_points_index_par
-Rcpp::IntegerVector rcpp_points_index_par(const Rcpp::DataFrame& xy, Rcpp::DataFrame& pts);
-RcppExport SEXP _dodgr_rcpp_points_index_par(SEXP xySEXP, SEXP ptsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_points_index_par(xy, pts));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_route_times
 Rcpp::List rcpp_route_times(const Rcpp::DataFrame graph, bool left_side, int turn_penalty);
 RcppExport SEXP _dodgr_rcpp_route_times(SEXP graphSEXP, SEXP left_sideSEXP, SEXP turn_penaltySEXP) {
@@ -351,6 +351,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_sample_graph", (DL_FUNC) &_dodgr_rcpp_sample_graph, 2},
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
     {"_dodgr_rcpp_unique_rownames", (DL_FUNC) &_dodgr_rcpp_unique_rownames, 3},
+    {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
     {"_dodgr_rcpp_get_sp_dists_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_par, 6},
     {"_dodgr_rcpp_get_sp_dists_paired_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_paired_par, 6},
     {"_dodgr_rcpp_get_iso", (DL_FUNC) &_dodgr_rcpp_get_iso, 5},
@@ -361,7 +362,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_get_sp_dists_cat_threshold", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_cat_threshold, 5},
     {"_dodgr_rcpp_gen_hash", (DL_FUNC) &_dodgr_rcpp_gen_hash, 2},
     {"_dodgr_rcpp_sf_as_network", (DL_FUNC) &_dodgr_rcpp_sf_as_network, 2},
-    {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
     {"_dodgr_rcpp_route_times", (DL_FUNC) &_dodgr_rcpp_route_times, 3},
     {NULL, NULL, 0}
 };

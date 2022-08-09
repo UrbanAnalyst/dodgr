@@ -8,7 +8,7 @@ PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
 OBJ_HEAPS = heaps/bheap.o heaps/fheap.o heaps/heap23.o \
     heaps/triheap_ext.o heaps/triheap.o
 OBJ_SRC = centrality.o dgraph.o pathfinders.o dodgr-to-sf.o flows.o fund-cycles.o \
-    graph-contract.o graph.o graph-sample.o RcppExports.o run_sp.o \
+    graph-contract.o graph.o graph-sample.o match-points.o RcppExports.o run_sp.o \
     run_sp_categorical.o sc-as-network.o sf-as-network.o turn_penalty.o
 OBJECTS = $(OBJ_HEAPS) $(OBJ_SRC)
 

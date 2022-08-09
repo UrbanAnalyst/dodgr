@@ -249,6 +249,20 @@ rcpp_unique_rownames <- function(xyfrom, xyto, precision = 10L) {
     .Call(`_dodgr_rcpp_unique_rownames`, xyfrom, xyto, precision)
 }
 
+#' rcpp_points_index_par
+#'
+#' Get index of nearest vertices to list of points
+#'
+#' @param graph Rcpp::DataFrame containing the graph
+#' @param pts Rcpp::DataFrame containing the routing points
+#'
+#' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
+#'
+#' @noRd
+rcpp_points_index_par <- function(xy, pts) {
+    .Call(`_dodgr_rcpp_points_index_par`, xy, pts)
+}
+
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd
@@ -363,20 +377,6 @@ rcpp_gen_hash <- function(n, hash_len) {
 #' @noRd
 rcpp_sf_as_network <- function(sf_lines, pr) {
     .Call(`_dodgr_rcpp_sf_as_network`, sf_lines, pr)
-}
-
-#' rcpp_points_index_par
-#'
-#' Get index of nearest vertices to list of points
-#'
-#' @param graph Rcpp::DataFrame containing the graph
-#' @param pts Rcpp::DataFrame containing the routing points
-#'
-#' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
-#'
-#' @noRd
-rcpp_points_index_par <- function(xy, pts) {
-    .Call(`_dodgr_rcpp_points_index_par`, xy, pts)
 }
 
 #' rcpp_route_times

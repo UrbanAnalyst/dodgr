@@ -24,7 +24,3 @@ void fill_one_row (const R_xlen_t ngeoms, const Rcpp::NumericMatrix &gi,
 
 Rcpp::List rcpp_sf_as_network (const Rcpp::List &sf_lines,
         const Rcpp::DataFrame &pr);
-Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
-        Rcpp::DataFrame &pts);
-Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
-        Rcpp::DataFrame &pts);
