@@ -27,7 +27,7 @@ you do not wish `dodgr`to use all available threads, please reduce the
 number manually by first specifying a value via
 
 ``` r
-RcppParallel::setThreadOptions (numThreads = <desired_number>)
+RcppParallel::setThreadOptions (numThreads = 1L) # or desired number
 ```
 
 ## What’s so special?
@@ -93,7 +93,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.2.12.27'
+#> [1] '0.2.14.46'
 ```
 
 ## Important Note
@@ -144,13 +144,13 @@ head (graph)
 ```
 
 | geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
+|----:|----:|:-----|----:|----:|:-----|----:|----:|-----:|-----:|:----|:----|----:|----:|------:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
 
 The `geom_num` column maps directly onto the sequence of `LINESTRING`
 objects within the `sf`-formatted data. The `highway` column is taken
@@ -170,13 +170,13 @@ head (graph [graph$highway == "path", ])
 ```
 
 | geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 |
+|----:|----:|:-----|----:|----:|:-----|----:|----:|-----:|-----:|:----|:----|----:|----:|------:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
 
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
@@ -300,13 +300,13 @@ head (f)
 ```
 
 | geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |      flow |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|----------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 | 0.1046131 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 129.972181 | 129.972181 | path    | 28565950 |         1 | 93.579970 |     93.579970 | 0.1310037 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 | 0.1046131 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.888670 |   8.888670 | path    | 28565950 |         1 |  6.399843 |      6.399843 | 0.1310037 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 | 0.1046131 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.326536 |   9.326536 | path    | 28565950 |         1 |  6.715106 |      6.715106 | 0.1310037 |
+|----:|---:|:----|----:|----:|:----|----:|----:|----:|----:|:---|:----|----:|----:|-----:|----:|
+|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 2.1365350 |
+|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 0.8081778 |
+|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 2.1365350 |
+|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 0.8081778 |
+|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 2.1365350 |
+|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 0.8081778 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
@@ -325,18 +325,19 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
-
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors`
+package](https://github.com/ropenscilabs/allcontributors) following the
+[all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ### Code
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -381,14 +382,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Authors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -428,13 +426,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/mdsumner">
-<img src="https://avatars.githubusercontent.com/u/4107631?u=c04c3e58dcca3b8c7a49ef4a3ccc6552df195e1b&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/4107631?u=77e928f4bb904a5c2e8927a02194b86662408329&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
@@ -447,12 +443,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amkvasnicka">mkvasnicka</a>
-</td>
-<td align="center">
-<a href="https://github.com/lga455">
-<img src="https://avatars.githubusercontent.com/u/8452822?u=498a6b3125470c20e4057b0f12b794571cfd49e1&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Alga455">lga455</a>
 </td>
 <td align="center">
 <a href="https://github.com/Maschette">
@@ -478,16 +468,14 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
 <img src="https://avatars.githubusercontent.com/u/6937320?u=dcb5b57ddc41cfd15aac6145c80efbfbfcab734d&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adarinchristensen">darinchristensen</a>
 </td>
+</tr>
+<tr>
 <td align="center">
 <a href="https://github.com/romainFr">
 <img src="https://avatars.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""/>
@@ -513,21 +501,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asigmafelix">sigmafelix</a>
 </td>
 <td align="center">
-<a href="https://github.com/JBSP-code">
-<img src="https://avatars.githubusercontent.com/u/28879598?u=13dda47f088a55bc2c0f62ac2e23c264d6397a2c&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AJBSP-code">JBSP-code</a>
-</td>
-<td align="center">
 <a href="https://github.com/polettif">
 <img src="https://avatars.githubusercontent.com/u/17431069?u=757eac2821736acbb02e7c90b456411d256d5780&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/edzer">
 <img src="https://avatars.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&v=4" width="100px;" alt=""/>
@@ -540,6 +518,8 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
 </td>
+</tr>
+<tr>
 <td align="center">
 <a href="https://github.com/LeshunXu">
 <img src="https://avatars.githubusercontent.com/u/48538622?v=4" width="100px;" alt=""/>
@@ -552,15 +532,24 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adeanmarchiori">deanmarchiori</a>
 </td>
+<td align="center">
+<a href="https://github.com/demcortillas">
+<img src="https://avatars.githubusercontent.com/u/41303271?u=de6dad5177d4a0db395a751ba9a4f9acb32c9ef7&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Ademcortillas">demcortillas</a>
+</td>
+<td align="center">
+<a href="https://github.com/Urban-JonathanCohen">
+<img src="https://avatars.githubusercontent.com/u/51330244?u=b67ded6a42ccf69116ed9999ba183b8523e8fde9&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen">Urban-JonathanCohen</a>
+</td>
 </tr>
-
 </table>
-
 
 ### Issue Contributors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -593,9 +582,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton">MartinLHazelton</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
