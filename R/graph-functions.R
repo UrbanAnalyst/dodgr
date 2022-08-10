@@ -18,18 +18,18 @@ dodgr_graph_cols <- function (graph) {
         ncol (graph) >= 11) {
         # columns are always identically structured
         edge_id <- which (nms == "edge_id") %>% null_to_na ()
-        fr_col <- which (nms == "from_id") %>% null_to_na ()
-        to_col <- which (nms == "to_id") %>% null_to_na ()
+        fr_col <- which (nms %in% c ("from", "from_id")) %>% null_to_na ()
+        to_col <- which (nms %in% c ("to", "to_id")) %>% null_to_na ()
         d_col <- which (nms == "d")
         w_col <- which (nms == "d_weighted")
 
-        xfr <- which (nms == "from_lon")
+        xfr <- which (nms %in% c ("xfr", "from_lon"))
         if (length (xfr) == 0) xfr <- NA
-        yfr <- which (nms == "from_lat")
+        yfr <- which (nms %in% c ("yfr", "from_lat"))
         if (length (yfr) == 0) yfr <- NA
-        xto <- which (nms == "to_lon")
+        xto <- which (nms %in% c ("xto", "to_lon"))
         if (length (xto) == 0) xto <- NA
-        yto <- which (nms == "to_lat")
+        yto <- which (nms %in% c ("yto", "to_lat"))
         if (length (yto) == 0) yto <- NA
     } else {
         edge_id <- grep ("edge_id|edge_$", nms) %>% null_to_na ()
