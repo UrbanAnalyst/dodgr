@@ -178,6 +178,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_points_to_edges_par
+Rcpp::IntegerVector rcpp_points_to_edges_par(const Rcpp::DataFrame& graph, Rcpp::DataFrame& pts);
+RcppExport SEXP _dodgr_rcpp_points_to_edges_par(SEXP graphSEXP, SEXP ptsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame& >::type pts(ptsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_points_to_edges_par(graph, pts));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_get_sp_dists_par
 Rcpp::NumericMatrix rcpp_get_sp_dists_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, const std::string& heap_type, const bool is_spatial);
 RcppExport SEXP _dodgr_rcpp_get_sp_dists_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP heap_typeSEXP, SEXP is_spatialSEXP) {
@@ -352,6 +364,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
     {"_dodgr_rcpp_unique_rownames", (DL_FUNC) &_dodgr_rcpp_unique_rownames, 3},
     {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
+    {"_dodgr_rcpp_points_to_edges_par", (DL_FUNC) &_dodgr_rcpp_points_to_edges_par, 2},
     {"_dodgr_rcpp_get_sp_dists_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_par, 6},
     {"_dodgr_rcpp_get_sp_dists_paired_par", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_paired_par, 6},
     {"_dodgr_rcpp_get_iso", (DL_FUNC) &_dodgr_rcpp_get_iso, 5},

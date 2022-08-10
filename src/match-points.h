@@ -11,5 +11,5 @@ constexpr int INFINITE_INT =  std::numeric_limits<int>::max ();
 
 Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
         Rcpp::DataFrame &pts);
-Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
+Rcpp::IntegerVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
         Rcpp::DataFrame &pts);
