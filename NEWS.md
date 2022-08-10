@@ -1,5 +1,9 @@
 # v 0.2.14.00X
 
+## Breaking changes:
+
+- `match_pts_to_graph()` renamed to `match_pts_to_verts()`
+
 ## Major changes:
 
 - `dodgr_paths` pairwise calculation shifted to C++, thanks to @dcooley

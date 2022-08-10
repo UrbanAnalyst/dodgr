@@ -552,7 +552,7 @@ nodes_arg_to_pts <- function (nodes,
     }
     if (ncol (nodes) == 2) {
         verts <- dodgr_vertices (graph)
-        nodes <- verts$id [match_pts_to_graph (verts, nodes)]
+        nodes <- verts$id [match_pts_to_verts (verts, nodes)]
     }
     return (nodes)
 }

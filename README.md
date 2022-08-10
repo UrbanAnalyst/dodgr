@@ -255,12 +255,12 @@ graph <- graph [graph$component == 1, ]
 nrow (graph)
 ```
 
-or by explicitly using the `match_points_to_graph()` function with the
+or by explicitly using the `match_points_to_verts()` function with the
 option `connected = TRUE`:
 
 ``` r
-from <- match_points_to_graph (v, cbind (from_x, from_y), connected = TRUE)
-to <- match_points_to_graph (v, cbind (to_x, to_y), connected = TRUE)
+from <- match_points_to_verts (v, cbind (from_x, from_y), connected = TRUE)
+to <- match_points_to_verts (v, cbind (to_x, to_y), connected = TRUE)
 ```
 
 This function returns an index into the result of `dodgr_vertices`, and

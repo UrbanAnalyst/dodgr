@@ -1,6 +1,6 @@
-#' match_pts_to_graph
+#' match_pts_to_verts
 #'
-#' Match spatial points to a spatial graph which contains vertex coordinates
+#' Match spatial points to the vertices of a spatial graph
 #'
 #' @param verts A `data.frame` of vertices obtained from
 #' `dodgr_vertices(graph)`.
@@ -26,15 +26,15 @@
 #'     x = min (verts$x) + runif (npts) * diff (range (verts$x)),
 #'     y = min (verts$y) + runif (npts) * diff (range (verts$y))
 #' )
-#' pts <- match_pts_to_graph (verts, xy)
+#' pts <- match_pts_to_verts (verts, xy)
 #' pts # an index into verts
 #' pts <- verts$id [pts]
 #' pts # names of those vertices
-match_pts_to_graph <- function (verts, xy, connected = FALSE) {
+match_pts_to_verts <- function (verts, xy, connected = FALSE) {
 
     if (!all (c ("id", "x", "y") %in% names (verts))) {
         message (
-            "First argument to match_pts_to_graph should be result of ",
+            "First argument to match_pts_to_verts should be result of ",
             "dodgr_vertices;\npresuming you've submitted the network ",
             "itself and will now try extracting the vertices"
         )
@@ -80,13 +80,13 @@ match_pts_to_graph <- function (verts, xy, connected = FALSE) {
     indx [rcpp_points_index_par (verts, xy) + 1L]
 }
 
-#' match_points_to_graph
+#' match_points_to_verts
 #'
-#' Alias for \link{match_points_to_graph}
-#' @inherit match_pts_to_graph
+#' Alias for \link{match_pts_to_verts}
+#' @inherit match_pts_to_verts
 #' @family misc
 #' @export
-match_points_to_graph <- function (verts, xy, connected = FALSE) {
+match_points_to_verts <- function (verts, xy, connected = FALSE) {
 
-    match_pts_to_graph (verts, xy, connected = connected)
+    match_pts_to_verts (verts, xy, connected = connected)
 }

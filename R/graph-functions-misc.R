@@ -217,7 +217,7 @@ find_w_col <- function (graph) {
 #' find_xy_col_simple
 #'
 #' Find the x and y cols of a simple data.frame of verts of xy points (used only
-#' in match_pts_to_graph).
+#' in match_pts_to_verts).
 #' @param dfr Either the result of `dodgr_vertices`, or a `data.frame`
 #' or equivalent structure (matrix, \pkg{tibble}) of spatial points.
 #' @return Vector of two values of location of x and y columns
