@@ -40,14 +40,6 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
         )
         verts <- dodgr_vertices (verts)
     }
-    if (!(is.matrix (xy) || is.data.frame (xy))) {
-        stop ("xy must be a matrix or data.frame")
-    }
-    if (!is (xy, "sf")) {
-        if (ncol (xy) != 2) {
-            stop ("xy must have only two columns")
-        }
-    }
 
     indx <- seq (nrow (verts))
     if (connected) {
@@ -57,6 +49,35 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
 
     xyi <- find_xy_col_simple (verts)
     verts <- data.frame (x = verts [indx, xyi [1]], y = verts [indx, xyi [2]])
+
+    xy <- pre_process_xy (xy)
+
+    # rcpp_points_index is 0-indexed, so ...
+    indx [rcpp_points_index_par (verts, xy) + 1L]
+}
+
+#' match_points_to_verts
+#'
+#' Alias for \link{match_pts_to_verts}
+#' @inherit match_pts_to_verts
+#' @family misc
+#' @export
+match_points_to_verts <- function (verts, xy, connected = FALSE) {
+
+    match_pts_to_verts (verts, xy, connected = connected)
+}
+
+pre_process_xy <- function (xy) {
+
+    if (!(is.matrix (xy) || is.data.frame (xy))) {
+        stop ("xy must be a matrix or data.frame")
+    }
+    if (!is (xy, "sf")) {
+        if (ncol (xy) != 2) {
+            stop ("xy must have only two columns")
+        }
+    }
+
     if (is (xy, "tbl")) {
         xy <- data.frame (xy)
     }
@@ -76,19 +97,7 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
         xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
     }
 
-    # rcpp_points_index is 0-indexed, so ...
-    indx [rcpp_points_index_par (verts, xy) + 1L]
-}
-
-#' match_points_to_verts
-#'
-#' Alias for \link{match_pts_to_verts}
-#' @inherit match_pts_to_verts
-#' @family misc
-#' @export
-match_points_to_verts <- function (verts, xy, connected = FALSE) {
-
-    match_pts_to_verts (verts, xy, connected = connected)
+    return (xy)
 }
 
 #' match_pts_to_graph
@@ -122,15 +131,6 @@ match_points_to_verts <- function (verts, xy, connected = FALSE) {
 #' graph [edges, ] # The edges of the graph closest to `xy`
 match_pts_to_graph <- function (graph, xy, connected = FALSE) {
 
-    if (!(is.matrix (xy) || is.data.frame (xy))) {
-        stop ("xy must be a matrix or data.frame")
-    }
-    if (!is (xy, "sf")) {
-        if (ncol (xy) != 2) {
-            stop ("xy must have only two columns")
-        }
-    }
-
     if (!is_graph_spatial (graph)) {
         stop ("Points may only be matched to spatial graphs.")
     }
@@ -139,24 +139,7 @@ match_pts_to_graph <- function (graph, xy, connected = FALSE) {
         graph <- graph [which (graph$component == 1), ]
     }
 
-    if (is (xy, "tbl")) {
-        xy <- data.frame (xy)
-    }
-    if (is (xy, "sf")) {
-        if (!"geometry" %in% names (xy)) {
-            stop ("xy has no sf geometry column")
-        } # nocov
-        if (!is (xy$geometry, "sfc_POINT")) {
-            stop ("xy$geometry must be a collection of sfc_POINT objects")
-        }
-        xy <- unlist (lapply (xy$geometry, as.numeric)) %>%
-            matrix (nrow = 2) %>%
-            t ()
-        xy <- data.frame (x = xy [, 1], y = xy [, 2])
-    } else {
-        xyi <- find_xy_col_simple (xy)
-        xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
-    }
+    xy <- pre_process_xy (xy)
 
     gr_cols <- dodgr_graph_cols (graph)
     gr_cols <- unlist (gr_cols [which (!is.na (gr_cols))])
