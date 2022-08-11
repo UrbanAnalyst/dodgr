@@ -46,6 +46,7 @@ nrow (graph_undir) # the latter is much smaller
 }
 \seealso{
 Other misc: 
+\code{\link{add_nodes_to_graph}()},
 \code{\link{compare_heaps}()},
 \code{\link{dodgr_flowmap}()},
 \code{\link{dodgr_full_cycles}()},

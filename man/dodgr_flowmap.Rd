@@ -42,6 +42,7 @@ dodgr_flowmap (graph_undir)
 }
 \seealso{
 Other misc: 
+\code{\link{add_nodes_to_graph}()},
 \code{\link{compare_heaps}()},
 \code{\link{dodgr_full_cycles}()},
 \code{\link{dodgr_fundamental_cycles}()},

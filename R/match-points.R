@@ -160,3 +160,100 @@ match_points_to_graph <- function (graph, xy, connected = FALSE) {
 
     match_pts_to_graph (graph, xy, connected = connected)
 }
+
+#' Insert new nodes into a graph, breaking edges at point of nearest
+#' intersection.
+#'
+#' The "id" value of each edge to be divided through insertion of new points is
+#' modified to produce two new "id" values with suffixes "_A" and "_B". This
+#' routine presumes graphs to be `dodgr_streetnet` object, with geographical
+#' coordinates.
+#'
+#' @inheritParams match_pts_to_graph
+#' @return A modified version of `graph`, with additional edges formed by
+#' breaking previous edges at nearest penpendicular intersections with the
+#' points, `xy`.
+#' @family misc
+#' @export
+add_nodes_to_graph <- function (graph, xy) {
+
+    index <- match_pts_to_graph (graph, xy)
+
+    gr_cols <- dodgr_graph_cols (graph)
+    gr_cols <- unlist (gr_cols [which (!is.na (gr_cols))])
+    graph_std <- graph [, gr_cols] # standardise column names
+    names (graph_std) <- names (gr_cols)
+
+    # Expand index to include all potentially duplicated edges:
+    index <- lapply (seq_along (index), function (i) {
+        out <- which (
+            (graph_std$from == graph_std$from [index [i]] &
+                graph_std$to == graph_std$to [index [i]]) |
+                (graph_std$from == graph_std$to [index [i]] &
+                    graph_std$to == graph_std$from [index [i]])
+        )
+        cbind (rep (i, length (out)), out)
+    })
+    index <- data.frame (do.call (rbind, index))
+    names (index) <- c ("n", "index")
+
+    genhash <- function (len = 10) {
+        paste0 (sample (c (0:9, letters, LETTERS), size = len), collapse = "")
+    }
+
+    edges_to_split <- graph_std [index$index, ]
+    graph_to_add <- graph [index$index, ]
+
+    graph_std <- graph_std [-index$index, ]
+    graph <- graph [-index$index, ]
+
+    edges_to_split$n <- index$n
+
+    edges_split <- lapply (unique (index$n), function (i) {
+
+        edges_to_split_i <- edges_to_split [which (edges_to_split$n == i), ]
+
+        d_wt <- edges_to_split_i$d_weighted / edges_to_split_i$d
+        t_wt <- edges_to_split_i$time_weighted / edges_to_split_i$time
+        t_scale <- edges_to_split_i$time / edges_to_split_i$d
+
+        new_edges_i <- lapply (seq (nrow (edges_to_split_i)), function (e) {
+
+            edge_i <- rbind (edges_to_split_i [e, ], edges_to_split_i [e, ])
+            edge_i$to [1] <- edge_i$from [2] <- genhash ()
+            edge_i$xto [1] <- xy$x [i]
+            edge_i$yto [1] <- xy$y [i]
+            edge_i$xfr [2] <- xy$x [i]
+            edge_i$yfr [2] <- xy$y [i]
+
+            xy_i <- data.frame (
+                x = c (edge_i [1, "xfr"], edge_i [1, "xto"], edge_i [2, "xto"]),
+                y = c (edge_i [1, "yfr"], edge_i [1, "yto"], edge_i [2, "yto"])
+            )
+            dmat <- geodist::geodist (xy_i)
+            edge_i$d [1] <- dmat [1, 2]
+            edge_i$d [2] <- dmat [2, 3]
+
+            edge_i$d_weighted <- edge_i$d * d_wt
+            edge_i$time <- edge_i$d * t_scale
+            edge_i$time_weighted <- edge_i$time * t_wt
+
+            edge_i$edge_id <- paste0 (edge_i$edge_id, "_", LETTERS [e])
+
+            return (edge_i)
+        })
+
+        return (do.call (rbind, new_edges_i))
+    })
+
+    edges_split <- do.call (rbind, edges_split)
+
+    # Then match edges_split back on to original graph:
+    graph_to_add <- graph_to_add [edges_split$n, ]
+    gr_cols <- gr_cols [which (!is.na (gr_cols))]
+    for (g in seq_along (gr_cols)) {
+        graph_to_add [, gr_cols [g]] <- edges_split [[names (gr_cols) [g]]]
+    }
+
+    return (rbind (graph, graph_to_add))
+}

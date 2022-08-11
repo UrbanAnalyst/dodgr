@@ -38,6 +38,7 @@ compare_heaps (graph, nverts = 1000, replications = 1)
 }
 \seealso{
 Other misc: 
+\code{\link{add_nodes_to_graph}()},
 \code{\link{dodgr_flowmap}()},
 \code{\link{dodgr_full_cycles}()},
 \code{\link{dodgr_fundamental_cycles}()},
