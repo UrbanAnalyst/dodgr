@@ -20,6 +20,9 @@ reference:
 - title: Graph Centrality
   contents:
   - has_concept("centrality")
+- title: Matching Points to Graphs
+  contents:
+  - has_concept("match")
 - title: Miscellaneous Functions
   contents:
   - has_concept("misc")

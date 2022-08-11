@@ -25,22 +25,26 @@ modified to produce two new "id" values with suffixes "_A" and "_B". This
 routine presumes graphs to be \code{dodgr_streetnet} object, with geographical
 coordinates.
 }
+\examples{
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+dim (graph)
+
+verts <- dodgr_vertices (graph)
+set.seed (2)
+npts <- 10
+xy <- data.frame (
+    x = min (verts$x) + runif (npts) * diff (range (verts$x)),
+    y = min (verts$y) + runif (npts) * diff (range (verts$y))
+)
+
+graph <- add_nodes_to_graph (graph, xy)
+dim (graph) # more edges than original
+}
 \seealso{
-Other misc: 
-\code{\link{compare_heaps}()},
-\code{\link{dodgr_flowmap}()},
-\code{\link{dodgr_full_cycles}()},
-\code{\link{dodgr_fundamental_cycles}()},
-\code{\link{dodgr_insert_vertex}()},
-\code{\link{dodgr_sample}()},
-\code{\link{dodgr_sflines_to_poly}()},
-\code{\link{dodgr_vertices}()},
+Other match: 
 \code{\link{match_points_to_graph}()},
 \code{\link{match_points_to_verts}()},
 \code{\link{match_pts_to_graph}()},
-\code{\link{match_pts_to_verts}()},
-\code{\link{merge_directed_graph}()},
-\code{\link{summary.dodgr_dists_categorical}()},
-\code{\link{write_dodgr_wt_profile}()}
+\code{\link{match_pts_to_verts}()}
 }
-\concept{misc}
+\concept{match}

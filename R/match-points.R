@@ -15,7 +15,7 @@
 #' matching.
 #'
 #' @return A vector index into verts
-#' @family misc
+#' @family match
 #' @export
 #' @examples
 #' net <- weight_streetnet (hampi, wt_profile = "foot")
@@ -60,7 +60,7 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
 #'
 #' Alias for \link{match_pts_to_verts}
 #' @inherit match_pts_to_verts
-#' @family misc
+#' @family match
 #' @export
 match_points_to_verts <- function (verts, xy, connected = FALSE) {
 
@@ -117,7 +117,7 @@ pre_process_xy <- function (xy) {
 #' @return A vector index matching the `xy` coordinates to nearest edges. For
 #' bi-directional edges, only one match is returned, and it is up to the user to
 #' identify and suitably process matching edge pairs.
-#' @family misc
+#' @family match
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi, wt_profile = "foot")
@@ -155,7 +155,7 @@ match_pts_to_graph <- function (graph, xy, connected = FALSE) {
 #'
 #' Alias for \link{match_pts_to_graph}
 #' @inherit match_pts_to_graph
-#' @family misc
+#' @family match
 #' @export
 match_points_to_graph <- function (graph, xy, connected = FALSE) {
 
@@ -174,7 +174,21 @@ match_points_to_graph <- function (graph, xy, connected = FALSE) {
 #' @return A modified version of `graph`, with additional edges formed by
 #' breaking previous edges at nearest penpendicular intersections with the
 #' points, `xy`.
-#' @family misc
+#' @family match
+#' @examples
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
+#' dim (graph)
+#'
+#' verts <- dodgr_vertices (graph)
+#' set.seed (2)
+#' npts <- 10
+#' xy <- data.frame (
+#'     x = min (verts$x) + runif (npts) * diff (range (verts$x)),
+#'     y = min (verts$y) + runif (npts) * diff (range (verts$y))
+#' )
+#'
+#' graph <- add_nodes_to_graph (graph, xy)
+#' dim (graph) # more edges than original
 #' @export
 add_nodes_to_graph <- function (graph, xy) {
 
