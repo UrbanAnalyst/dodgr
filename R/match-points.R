@@ -120,8 +120,9 @@ pre_process_xy <- function (xy) {
 #' @family misc
 #' @export
 #' @examples
-#' net <- weight_streetnet (hampi, wt_profile = "foot")
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
 #' # Then generate some random points to match to graph
+#' verts <- dodgr_vertices (graph)
 #' npts <- 10
 #' xy <- data.frame (
 #'     x = min (verts$x) + runif (npts) * diff (range (verts$x)),

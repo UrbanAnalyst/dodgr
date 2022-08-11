@@ -36,8 +36,9 @@ from presuming planar geometry may be ignored; or (ii) Data are re-projected
 to an equivalent planar geometry prior to calling this routine.
 }
 \examples{
-net <- weight_streetnet (hampi, wt_profile = "foot")
+graph <- weight_streetnet (hampi, wt_profile = "foot")
 # Then generate some random points to match to graph
+verts <- dodgr_vertices (graph)
 npts <- 10
 xy <- data.frame (
     x = min (verts$x) + runif (npts) * diff (range (verts$x)),
