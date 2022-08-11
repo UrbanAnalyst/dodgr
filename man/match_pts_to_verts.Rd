@@ -51,7 +51,9 @@ Other misc:
 \code{\link{dodgr_sample}()},
 \code{\link{dodgr_sflines_to_poly}()},
 \code{\link{dodgr_vertices}()},
+\code{\link{match_points_to_graph}()},
 \code{\link{match_points_to_verts}()},
+\code{\link{match_pts_to_graph}()},
 \code{\link{merge_directed_graph}()},
 \code{\link{summary.dodgr_dists_categorical}()},
 \code{\link{write_dodgr_wt_profile}()}

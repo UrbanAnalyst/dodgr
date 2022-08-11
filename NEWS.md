@@ -3,6 +3,7 @@
 ## Breaking changes:
 
 - `match_pts_to_graph()` renamed to `match_pts_to_verts()`
+- New `match_pts_to_graph()` function matches to graph edges, using nearest perpendicular intersection (issue #103)
 
 ## Major changes:
 
