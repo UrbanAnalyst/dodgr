@@ -271,14 +271,19 @@ calc_edge_time <- function (graph, wt_profile) {
 # increase both real and weighted times according to elevation increases:
 times_by_incline <- function (graph, wt_profile) {
 
+    cost_tobler <- function (dz, cost0) {
+        cost <- 1 / (6 * exp (-3.5 * abs (dz + 0.05)))
+        cost / cost0
+    }
+
     if (wt_profile == "foot") {
-        # Uses
+        # Used to just be
         # [Naismith's Rule](https://en.wikipedia.org/wiki/Naismith%27s_rule)
+        # time <- time + dz / 10
+        # but updated to Tobler's hiking rule; see issue #124
         if ("dz" %in% names (graph)) {
-            index <- which (graph$dz > 0)
-            graph$time [index] <- graph$time [index] + graph$dz [index] / 10
-            graph$time_weighted [index] <- graph$time_weighted [index] +
-                graph$dz [index] / 10
+            cost0 <- 1 / (6 * exp (-3.5 * 0.05))
+            graph$time <- graph$time * cost_tobler (graph$dz, cost0)
         }
 
     } else if (wt_profile == "bicycle") {
