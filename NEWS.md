@@ -1,3 +1,9 @@
+# v 0.2.15.00x
+
+## Minor changes:
+
+- Walking cost function in networks with elevation improved (#124)
+
 # v 0.2.15
 
 ## Breaking changes:
