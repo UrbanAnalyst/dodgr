@@ -42,10 +42,12 @@ For a set of `nf` points of origin and `nt` points of destination, flows are
 defined by a simple `nf`-by-`nt` matrix of values, as in the following code:
 ```{r}
 graph <- weight_streetnet (hampi, wt_profile = "foot")
+set.seed (1)
 from <- sample (graph$from_id, size = 10)
 to <- sample (graph$to_id, size = 10)
 flows <- matrix (10 * runif (length (from) * length (to)),
-                 nrow = length (from))
+    nrow = length (from)
+)
 ```
 This `flows` matrix is then submitted to
 [`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
@@ -97,7 +99,8 @@ Resultant graphs produced by
 [`merge_directed_graph()`](https://atfutures.github.io/dodgr/reference/merge_directed_graph.html)
 only include those edges having non-zero flows, and so:
 ```{r}
-nrow (graph_f); nrow (graph_undir) # the latter is much smaller
+nrow (graph_f)
+nrow (graph_undir) # the latter is much smaller
 ```
 The resultant graph can readily be merged with the original graph to regain the
 original data on vertex coordinates through
@@ -113,3 +116,67 @@ graph_f <- graph_f [graph_f$flow > 0, ]
 dodgr_flowmap (graph_f, linescale = 5)
 ```
 ![](hampi-flowmap.png)
+
+## 4. Flows from spatial interaction models
+
+An additional function,
+[`dodgr_flows_si()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html)
+enables flows to be aggregated according to exponential spatial interaction
+models. The function is called just as the `dodgr_flows_aggregate()` call
+demonstrated above, but without the `flows` matrix specifying strengths of
+flows between each pair of points.
+
+```{r flows_si_map1-png, echo = FALSE, eval = FALSE}
+graph_f <- dodgr_flows_si (graph, from = from, to = to)
+graph_undir <- merge_directed_graph (graph_f)
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+graph_f <- graph_f [graph_f$flow > 0, ]
+png (file.path (here::here (), "vignettes", "hampi-flowmap2.png"),
+    width = 480, height = 480, units = "px"
+)
+dodgr_flowmap (graph_f, linescale = 5)
+dev.off (which = dev.cur ())
+```
+```{r flows_si_map1, eval = FALSE}
+graph_f <- dodgr_flows_si (graph, from = from, to = to)
+graph_undir <- merge_directed_graph (graph_f)
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+graph_f <- graph_f [graph_f$flow > 0, ]
+dodgr_flowmap (graph_f, linescale = 5)
+```
+![](hampi-flowmap2.png)
+
+Flows in that graph are are notably lower than in the previous one, because
+that previous one aggregated flows between all pairs of points with no
+attenuation. Spatial interaction models attenuate both attraction based on how
+far apart two points are, as well as flows along paths between those points
+based on an exponential decay model. The documentation for that function
+describes the several ways this attenuation can be controlled, the easiest of
+which is via a single numeric value. Reducing the attenuation gives the
+following result:
+
+```{r flows_si_map2-png, echo = FALSE, eval = FALSE}
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+graph_f <- dodgr_flows_si (graph, from = from, to = to, k = 1e6)
+graph_undir <- merge_directed_graph (graph_f)
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+graph_f <- graph_f [graph_f$flow > 0, ]
+png (file.path (here::here (), "vignettes", "hampi-flowmap3.png"),
+    width = 480, height = 480, units = "px"
+)
+dodgr_flowmap (graph_f, linescale = 5)
+dev.off (which = dev.cur ())
+```
+```{r flows_si_map2, eval = FALSE}
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+graph_f <- dodgr_flows_si (graph, from = from, to = to, k = 1e6)
+graph_undir <- merge_directed_graph (graph_f)
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+graph_f <- graph_f [graph_f$flow > 0, ]
+dodgr_flowmap (graph_f, linescale = 5)
+```
+![](hampi-flowmap3.png)
