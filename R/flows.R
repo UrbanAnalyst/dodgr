@@ -401,6 +401,13 @@ dodgr_flows_si <- function (graph,
     k <- res$k
     nk <- res$nk
 
+    if (is.null (dens_from)) {
+        dens_from <- rep (1, length (from))
+    }
+    if (is.null (dens_to)) {
+        dens_to <- rep (1, length (to))
+    }
+
     if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
