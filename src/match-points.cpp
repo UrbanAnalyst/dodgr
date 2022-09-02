@@ -94,6 +94,7 @@ struct OneEdgeIndex : public RcppParallel::Worker
         {
             double dmin = INFINITE_DOUBLE;
             long int jmin = INFINITE_INT;
+            int which_side = INFINITE_INT;
 
             for (size_t j = 0; j < nxy; j++)
             {
@@ -137,9 +138,12 @@ struct OneEdgeIndex : public RcppParallel::Worker
                 {
                     dmin = dij;
                     jmin = static_cast <long int> (j);
+                    which_side = which_side_of_line (xfr [j], yfr [j],
+                            xto [j], yto [j], pt_x [i], pt_y [i]);
                 }
             }
             index [i] = static_cast <double> (jmin);
+            index [i + npts] = which_side * dmin;
         }
     }
                                    
@@ -206,7 +210,7 @@ Rcpp::NumericVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
     const size_t nxy = static_cast <size_t> (graph.nrow ()),
         npts = static_cast <size_t> (pts.nrow ());
 
-    Rcpp::NumericVector index (npts);
+    Rcpp::NumericVector index (npts * 2L);
 
     // Create parallel worker
     OneEdgeIndex one_edge_indx (RcppParallel::RVector <double> (ptx),

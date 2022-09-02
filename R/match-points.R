@@ -150,8 +150,15 @@ match_pts_to_graph <- function (graph, xy, connected = FALSE) {
     graph <- graph [, gr_cols]
     names (graph) <- names (gr_cols)
 
+    res <- rcpp_points_to_edges_par (graph, xy)
+    index <- seq (nrow (xy))
+
     # rcpp_points_index is 0-indexed, so ...
-    rcpp_points_to_edges_par (graph, xy) + 1L
+    graph_index <- as.integer (res [index]) + 1L
+    # edge_dist not yet used here; see #103
+    # edge_dist <- res [index + nrow (xy)]
+
+    return (graph_index)
 }
 
 #' match_points_to_graph
