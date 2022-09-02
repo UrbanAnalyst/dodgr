@@ -249,6 +249,16 @@ rcpp_unique_rownames <- function(xyfrom, xyto, precision = 10L) {
     .Call(`_dodgr_rcpp_unique_rownames`, xyfrom, xyto, precision)
 }
 
+#' Determine which side of intersecting line a point lies on.
+#'
+#' @param (ax, ay) Coordinates of one end of line
+#' @param (bx, by) Coordinates of other end of line
+#' @param (x, y) Coordinates of point
+#' @return 0 if point on line, -1 if to the left; +1 if to the right.
+#'
+#' @noRd
+NULL
+
 #' Simple match of points to nearest vertices
 #' @noRd
 NULL

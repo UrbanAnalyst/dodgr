@@ -1,5 +1,20 @@
 #include "match-points.h"
 
+//' Determine which side of intersecting line a point lies on.
+//'
+//' @param (ax, ay) Coordinates of one end of line
+//' @param (bx, by) Coordinates of other end of line
+//' @param (x, y) Coordinates of point
+//' @return 0 if point on line, -1 if to the left; +1 if to the right.
+//'
+//' @noRd
+int which_side_of_line (const double ax, const double ay,
+        const double bx, const double by, const double x, const double y)
+{
+    double val = (bx - ax) * (y - ay) - (by - ay) * (x - ax);
+    return (val > 0) ? 1 : ((val < 0) ? -1 : 0);
+}
+
 //' Simple match of points to nearest vertices
 //' @noRd
 struct OnePointIndex : public RcppParallel::Worker
