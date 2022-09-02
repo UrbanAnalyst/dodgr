@@ -155,10 +155,14 @@ match_pts_to_graph <- function (graph, xy, connected = FALSE) {
 
     # rcpp_points_index is 0-indexed, so ...
     graph_index <- as.integer (res [index]) + 1L
-    # edge_dist not yet used here; see #103
-    # edge_dist <- res [index + nrow (xy)]
 
-    return (graph_index)
+    # ret <- data.frame (
+    #    index = graph_index,
+    #    d_signed = signed_intersection_dists (graph, xy, res)
+    # )
+    ret <- graph_index
+
+    return (ret)
 }
 
 #' match_points_to_graph
@@ -170,6 +174,43 @@ match_pts_to_graph <- function (graph, xy, connected = FALSE) {
 match_points_to_graph <- function (graph, xy, connected = FALSE) {
 
     match_pts_to_graph (graph, xy, connected = connected)
+}
+
+#' Get geodesic distances to intersection points for match_pts_to_graph.
+#'
+#' @param res Output of 'rcpp_points_index' function
+#' @noRd
+signed_intersection_dists <- function (graph, xy, res) {
+
+    n <- nrow (xy)
+    index <- seq (n)
+
+    # rcpp_points_index is 0-indexed, so ...
+    graph_index <- as.integer (res [index]) + 1L
+
+    # coordinates not yet used here; see #103
+    xy_intersect <- data.frame (
+        x = res [index + nrow (xy)],
+        y = res [index + 2L * nrow (xy)]
+    )
+
+    d <- geodist::geodist (
+        xy,
+        xy_intersect,
+        paired = TRUE,
+        measure = "geodesic"
+    )
+
+    # Then coordinates of graph edges for sign calculation
+    xy_cols <- c ("xfr", "yfr", "xto", "yto")
+    gxy <- graph [graph_index, xy_cols]
+
+    which_side <- (gxy$xto - gxy$xfr) * (xy_intersect$y - gxy$yfr) -
+        (gxy$yto - gxy$yfr) * (xy_intersect$x - gxy$xfr)
+    which_side [which_side < 0.0] <- -1
+    which_side [which_side > 0.0] <- 1
+
+    return (d * which_side)
 }
 
 #' Insert new nodes into a graph, breaking edges at point of nearest

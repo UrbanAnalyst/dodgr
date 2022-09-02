@@ -93,6 +93,8 @@ struct OneEdgeIndex : public RcppParallel::Worker
         for (std::size_t i = begin; i < end; i++)
         {
             double dmin = INFINITE_DOUBLE;
+            double x_intersect = INFINITE_DOUBLE;
+            double y_intersect = INFINITE_DOUBLE;
             long int jmin = INFINITE_INT;
             int which_side = INFINITE_INT;
 
@@ -101,36 +103,19 @@ struct OneEdgeIndex : public RcppParallel::Worker
                 const double x1 = xfr [j], y1 = yfr [j];
                 const double x2 = xto [j], y2 = yto [j];
 
-                const double A = pt_x [i] - x1;
-                const double B = pt_y [i] - y1;
-                const double C = x2 - x1;
-                const double D = y2 - y1;
+                const double px = x2 - x1;
+                const double py = y2 - y1;
 
-                const double dot = A * C + B * D;
-                const double len_sq = C * C + D * D;
-                double param = -1.0;
-                if (fabs (len_sq) < 1.0e-12)
-                {
-                    param = dot / len_sq;
-                }
+                const double norm = px * px + py * py;
 
-                double xx, yy;
-                if (param < 0.0)
-                {
-                    xx = x1;
-                    yy = y1;
-                } else if (param > 1.0)
-                {
-                    xx = x2;
-                    yy = y2;
-                } else
-                {
-                    xx = x1 + param * C;
-                    yy = y1 + param * D;
-                }
+                double u = ((pt_x [i] - x1) * px + (pt_y [i] - y1) * py) / norm;
+                u = (u > 1) ? 1 : ((u < 0) ? 0 : u);
 
-                const double dx = pt_x [i] - xx;
-                const double dy = pt_y [i] - yy;
+                const double xx = x1 + u * px;
+                const double yy = y1 + u * py;
+
+                const double dx = xx - pt_x [i];
+                const double dy = yy - pt_y [i];
 
                 const double dij = sqrt (dx * dx + dy * dy);
 
@@ -140,10 +125,13 @@ struct OneEdgeIndex : public RcppParallel::Worker
                     jmin = static_cast <long int> (j);
                     which_side = which_side_of_line (xfr [j], yfr [j],
                             xto [j], yto [j], pt_x [i], pt_y [i]);
+                    x_intersect = xx;
+                    y_intersect = yy;
                 }
             }
             index [i] = static_cast <double> (jmin);
-            index [i + npts] = which_side * dmin;
+            index [i + npts] = x_intersect;
+            index [i + 2L * npts] = y_intersect;
         }
     }
                                    
@@ -210,7 +198,11 @@ Rcpp::NumericVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
     const size_t nxy = static_cast <size_t> (graph.nrow ()),
         npts = static_cast <size_t> (pts.nrow ());
 
-    Rcpp::NumericVector index (npts * 2L);
+    // index holds three vectors:
+    // 1. the integer index
+    // 2. the x coordinates of the intersection points
+    // 3. the y coordinates of the intersection points
+    Rcpp::NumericVector index (npts * 3L);
 
     // Create parallel worker
     OneEdgeIndex one_edge_indx (RcppParallel::RVector <double> (ptx),
