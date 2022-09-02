@@ -68,7 +68,7 @@ struct OneEdgeIndex : public RcppParallel::Worker
     const RcppParallel::RVector <double> pt_x, pt_y,
           xfr, yfr, xto, yto;
     const size_t nxy;
-    RcppParallel::RVector <int> index;
+    RcppParallel::RVector <double> index;
 
     // constructor
     OneEdgeIndex (
@@ -79,7 +79,7 @@ struct OneEdgeIndex : public RcppParallel::Worker
             const RcppParallel::RVector <double> xto_in,
             const RcppParallel::RVector <double> yto_in,
             const size_t nxy_in,
-            Rcpp::IntegerVector index_in) :
+            Rcpp::NumericVector index_in) :
         pt_x (pt_x_in), pt_y (pt_y_in),
         xfr (xfr_in), yfr (yfr_in), xto (xto_in), yto (yto_in),
         nxy (nxy_in), index (index_in)
@@ -138,7 +138,7 @@ struct OneEdgeIndex : public RcppParallel::Worker
                     jmin = static_cast <long int> (j);
                 }
             }
-            index [i] = static_cast <int> (jmin);
+            index [i] = static_cast <double> (jmin);
         }
     }
                                    
@@ -191,7 +191,7 @@ Rcpp::IntegerVector rcpp_points_index_par (const Rcpp::DataFrame &xy,
 //'
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::IntegerVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
+Rcpp::NumericVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
         Rcpp::DataFrame &pts)
 {
     Rcpp::NumericVector ptx = pts ["x"];
@@ -205,7 +205,7 @@ Rcpp::IntegerVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
     const size_t npts = static_cast <size_t> (pts.nrow ()),
            nxy = static_cast <size_t> (graph.nrow ());
 
-    Rcpp::IntegerVector index (npts);
+    Rcpp::NumericVector index (npts);
 
     // Create parallel worker
     OneEdgeIndex one_edge_indx (RcppParallel::RVector <double> (ptx),

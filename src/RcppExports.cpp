@@ -179,7 +179,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_points_to_edges_par
-Rcpp::IntegerVector rcpp_points_to_edges_par(const Rcpp::DataFrame& graph, Rcpp::DataFrame& pts);
+Rcpp::NumericVector rcpp_points_to_edges_par(const Rcpp::DataFrame& graph, Rcpp::DataFrame& pts);
 RcppExport SEXP _dodgr_rcpp_points_to_edges_par(SEXP graphSEXP, SEXP ptsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

@@ -14,5 +14,5 @@ int which_side_of_line (const double ax, const double ay,
 
 Rcpp::IntegerVector rcpp_points_index (const Rcpp::DataFrame &xy,
         Rcpp::DataFrame &pts);
-Rcpp::IntegerVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
+Rcpp::NumericVector rcpp_points_to_edges_par (const Rcpp::DataFrame &graph,
         Rcpp::DataFrame &pts);
