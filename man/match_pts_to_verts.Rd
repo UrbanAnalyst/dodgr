@@ -26,8 +26,8 @@ A vector index into verts
 }
 \description{
 Match spatial points to the vertices of a spatial graph. The
-\link{match_pts_to_graph} function matches points to the nearest edge based on
-geometric intersections; this function only matches to the nearest vertex
+\link{match_pts_to_graph} function matches points to the nearest edge based
+on geometric intersections; this function only matches to the nearest vertex
 based on point-to-point distances.
 }
 \examples{

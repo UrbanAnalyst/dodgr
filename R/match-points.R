@@ -1,8 +1,8 @@
 #' match_pts_to_verts
 #'
 #' Match spatial points to the vertices of a spatial graph. The
-#' \link{match_pts_to_graph} function matches points to the nearest edge based on
-#' geometric intersections; this function only matches to the nearest vertex
+#' \link{match_pts_to_graph} function matches points to the nearest edge based
+#' on geometric intersections; this function only matches to the nearest vertex
 #' based on point-to-point distances.
 #'
 #' @param verts A `data.frame` of vertices obtained from
@@ -115,11 +115,16 @@ pre_process_xy <- function (xy) {
 #'
 #' @param graph A `dodgr` graph with spatial coordinates, such as a
 #' `dodgr_streetnet` object.
+#' @param distances If `TRUE`, return a 'data.frame' object with 'index' column
+#' as described in return value; and additional 'dist' column with perpendicular
+#' distance to nearest edge in graph.
 #' @inheritParams match_pts_to_verts
 #'
-#' @return A vector index matching the `xy` coordinates to nearest edges. For
-#' bi-directional edges, only one match is returned, and it is up to the user to
-#' identify and suitably process matching edge pairs.
+#' @return For 'distances = FALSE' (default), a vector index matching the `xy`
+#' coordinates to nearest edges. For bi-directional edges, only one match is
+#' returned, and it is up to the user to identify and suitably process matching
+#' edge pairs. For 'distances = TRUE', a 'data.frame' of two columns, "index"
+#' as described above, and "dist".
 #' @family match
 #' @export
 #' @examples
@@ -133,7 +138,8 @@ pre_process_xy <- function (xy) {
 #' )
 #' edges <- match_pts_to_graph (graph, xy)
 #' graph [edges, ] # The edges of the graph closest to `xy`
-match_pts_to_graph <- function (graph, xy, connected = FALSE) {
+match_pts_to_graph <- function (graph, xy,
+                                connected = FALSE, distances = FALSE) {
 
     if (!is_graph_spatial (graph)) {
         stop ("Points may only be matched to spatial graphs.")
