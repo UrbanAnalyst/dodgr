@@ -132,3 +132,25 @@ test_that ("add nodes to graph", {
     expect_true ((nrow (graph1) - nrow (graph0)) > npts)
     # actually equals 2 * npts when all edges are bi-directional.
 })
+
+test_that ("match with distances", {
+
+    graph0 <- weight_streetnet (hampi, wt_profile = "foot")
+    verts <- dodgr_vertices (graph0)
+    set.seed (1)
+    npts <- 10
+    xy <- data.frame (
+        x = min (verts$x) + runif (npts) * diff (range (verts$x)),
+        y = min (verts$y) + runif (npts) * diff (range (verts$y))
+    )
+
+    expect_silent (
+        res <- match_pts_to_graph (graph0, xy, distances = TRUE)
+    )
+    expect_s3_class (res, "data.frame")
+    expect_equal (ncol (res), 2L)
+    expect_identical (names (res), c ("index", "d_signed"))
+    expect_true (length (which (res$d_signed < 0)) > 0L)
+    expect_true (length (which (res$d_signed > 0)) > 0L)
+    expect_true (length (which (res$d_signed == 0)) > 0L)
+})
