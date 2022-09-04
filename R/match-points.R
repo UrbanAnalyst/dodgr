@@ -162,11 +162,14 @@ match_pts_to_graph <- function (graph, xy,
     # rcpp_points_index is 0-indexed, so ...
     graph_index <- as.integer (res [index]) + 1L
 
-    # ret <- data.frame (
-    #    index = graph_index,
-    #    d_signed = signed_intersection_dists (graph, xy, res)
-    # )
-    ret <- graph_index
+    if (distances) {
+        ret <- data.frame (
+            index = graph_index,
+            d_signed = signed_intersection_dists (graph, xy, res)
+        )
+    } else {
+        ret <- graph_index
+    }
 
     return (ret)
 }
