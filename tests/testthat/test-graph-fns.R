@@ -109,23 +109,25 @@ test_that ("contract graph", {
 })
 
 test_that ("uncontract graph", {
+    clear_dodgr_cache ()
     graph <- weight_streetnet (hampi)
     graph_c <- dodgr_contract_graph (graph)
     graph2 <- dodgr_uncontract_graph (graph_c)
-    expect_identical (graph, graph2)
+    expect_identical (dim (graph), dim (graph2))
+    expect_identical (graph$edge_id, graph2$edge_id)
 
     # dodgr_contract_graph in that case just calls the cached version. This
     # checks re-contraction:
     graph$edge_id <- seq (nrow (graph))
     graph_c <- dodgr_contract_graph (graph)
     graph2 <- dodgr_uncontract_graph (graph_c)
-    expect_identical (graph, graph2)
+    expect_identical (dim (graph), dim (graph2))
+    expect_identical (graph$edge_id, graph2$edge_id)
 
     graph_c$edge_id <- seq (nrow (graph_c))
-    expect_error (
-        graph2 <- dodgr_uncontract_graph (graph_c),
-        "Unable to uncontract this graph because the rows have been changed"
-    )
+    graph2 <- dodgr_uncontract_graph (graph_c)
+    # with no edge ids, graph uncontraction is not possible:
+    expect_equal (nrow (graph2), 0L)
 })
 
 test_that ("compare heaps", {
