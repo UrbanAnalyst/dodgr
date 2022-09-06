@@ -248,7 +248,7 @@ dodgr_uncontract_graph <- function (graph) {
         ))
     } # nocov
 
-    graph_edges <- graph [, gr_cols$edge_id] # used below if rows have been removed
+    graph_edges <- graph [[gr_cols$edge_id]] # used below if rows have been removed
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px
