@@ -22,6 +22,7 @@
 #' graph <- dodgr_contract_graph (graph)
 #' nrow (graph) # 662
 dodgr_contract_graph <- function (graph, verts = NULL) {
+
     if (nrow (graph) == 0) {
         stop ("graph is empty")
     } # nocov
@@ -47,6 +48,7 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
         verts <- verts [which (verts %in% v$id)]
     }
 
+    attr (graph, "hash") <- attr (graph, "hashc") <- NULL
     hash <- get_hash (graph, hash = TRUE)
     hashc <- get_hash (graph, verts = verts, hash = FALSE)
     fname_c <- fs::path (
@@ -235,12 +237,6 @@ dodgr_uncontract_graph <- function (graph) {
     gr_cols <- dodgr_graph_cols (graph)
     hashe_ref <- attr (graph, "hashe")
     hashe <- digest::digest (graph [[gr_cols$edge_id]])
-    if (!identical (hashe, hashe_ref)) {
-        stop (
-            "Unable to uncontract this graph because the rows ",
-            "have been changed"
-        )
-    }
 
     hash <- attr (graph, "hash")
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
@@ -251,6 +247,8 @@ dodgr_uncontract_graph <- function (graph) {
             "the same row structure"
         ))
     } # nocov
+
+    graph_edges <- graph [, gr_cols$edge_id] # used below if rows have been removed
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px
@@ -298,6 +296,16 @@ dodgr_uncontract_graph <- function (graph) {
         graph <- graph [which (!graph [[gr_cols$edge_id]] %in% ec$edge), ]
         graph$.vx0 <- gsub ("_start$", "", graph$.vx0)
         graph$.vx1 <- gsub ("_end$", "", graph$.vx1)
+    }
+
+    # Finally, remove any edges which might have been removed from contracted
+    # graph:
+    if (!identical (hashe, hashe_ref)) {
+        index <- which (edge_map$edge_new %in% graph_edges)
+        index_in <- which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
+        graph <- graph [index_in, ]
+        attr (graph, "hash") <- NULL
+        attr (graph, "hash") <- get_hash (graph, hash = TRUE)
     }
 
     return (graph)
