@@ -364,7 +364,7 @@ void PF::PathFinder::Centrality_edge (
 }
 
 
-//' rcpp_centrality_vertex - parallel function
+//' rcpp_centrality - parallel function
 //'
 //' sample is used to estimate timing, by calculating centrality from just a few
 //' vertices.
