@@ -12,8 +12,17 @@
  * - same algorithm as used in igraph and networkx
  *************************************************************************/
 
-const double epsilon = 1.0e-10; // edge weight comparison == 0
-// see https://github.com/igraph/igraph/blob/master/src/igraph_math.h#L49
+const double epsilon = DBL_MIN; // edge weight comparison == 0
+// see
+// https://github.com/igraph/igraph/blob/96c2cc751063bf3ba7e920e99793956013cef6b5/include/igraph_nongraph.h#L41
+// which defines epsilon as 1e-10. That value is passed to `igraph_cmp_epsilon`,
+// which is defined at
+// https://github.com/igraph/igraph/blob/96c2cc751063bf3ba7e920e99793956013cef6b5/src/math/utils.c#L108
+// and uses a comparison of fabs (diff) < (eps * DBL_MIN),
+// where DBL_MIN is the standard lower, non-zero limit
+// https://en.cppreference.com/w/cpp/types/numeric_limits/min
+// of generally around 1e-308, so (eps * DBL_MIN) is then sub-normal. This code
+// just uses an epsilon equal to DBL_MIN.
 
 // # nocov start
 template <typename T>
