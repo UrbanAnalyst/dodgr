@@ -44,6 +44,16 @@ size_t num_edge_types (const std::vector <size_t> &edge_type);
 
 } // end namespace categorical
 
+namespace centrality {
+
+    struct edge_pair_hash {
+        inline std::size_t operator()(const std::pair <size_t, size_t> & v) const {
+            return v.first * 31 + v.second;
+        }
+    };
+
+} // end namespace centrality
+
 
 Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

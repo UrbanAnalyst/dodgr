@@ -4,6 +4,7 @@
 
 #include <algorithm> // std::fill
 #include <fstream> // file output for parallel jobs
+#include <unordered_set>
 
 /*************************************************************************
  * Direct implementation of
@@ -33,11 +34,21 @@ void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
         const std::vector <T>& dist,
         const std::vector <T>& wt)
 {
+
+    std::unordered_set < std::pair <size_t, size_t>, centrality::edge_pair_hash > edge_set;
+
     for (size_t i = 0; i < nedges; ++i)
     {
         size_t fromi = vert_map.at(from [i]);
         size_t toi = vert_map.at(to [i]);
-        g->addNewEdge (fromi, toi, dist [i], wt [i], i);
+
+        std::pair <size_t, size_t> edge_pair {fromi, toi};
+        if (edge_set.find (edge_pair) == edge_set.end ())
+        {
+            edge_set.emplace (edge_pair);
+            g->addNewEdge (fromi, toi, dist [i], wt [i], i);
+        }
+
     }
 }
 // # nocov end
