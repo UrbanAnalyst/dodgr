@@ -5,3 +5,22 @@ null_to_na <- function (x) {
     }
     return (x)
 }
+
+#' Issue a warning if graph has duplicated edges
+#'
+#' Currently only used in centrality; see #186.
+#'
+#' @noRd
+duplicated_edge_check <- function (graph) {
+
+    gr_cols <- dodgr_graph_cols (graph)
+    fr_name <- names (graph) [gr_cols$from]
+    to_name <- names (graph) [gr_cols$to]
+    fr <- graph [[fr_name]]
+    to <- graph [[to_name]]
+
+    fr_to <- paste0 (fr, "-", to)
+    if (any (duplicated (fr_to))) {
+        warning ("graph has duplicated edges; only the first will be used here.")
+    }
+}

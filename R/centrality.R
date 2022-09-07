@@ -165,6 +165,8 @@ dodgr_centrality <- function (graph,
         graph2$d_weighted <- graph2 [[column]]
     }
 
+    duplicated_edge_check (graph2)
+
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
     centrality <- rcpp_centrality (
