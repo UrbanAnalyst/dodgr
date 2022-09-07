@@ -224,6 +224,19 @@ void PF::PathFinder::Centrality_vertex (
 
         edge = vertices [v].outHead;
 
+        // NOTE: This 'target_set', and the one below in 'centrality_edge', are
+        // only needed for graphs which are submitted with (potentially)
+        // duplicate edges. The set is used to ensure centrality values are only
+        // aggregated once along any set of duplicated edges. The effect of not
+        // doing this is documented at
+        // https://github.com/ATFutures/dodgr/issues/186.
+        //
+        // Nevertheless, the other commits flagged in that issue add a function
+        // to the internal 'inst_graph' function at the top of this file ensures
+        // no duplicated edges are added, so this 'target_set' is not actually
+        // needed. The issue shows that it does not decrease computational
+        // efficiency here, so it's left for the moment, but can easily be
+        // removed later.
         std::unordered_set <size_t> target_set;
 
         while (edge) {
@@ -317,6 +330,7 @@ void PF::PathFinder::Centrality_edge (
 
         edge = vertices [v].outHead;
 
+        // See comment in 'centrality_vertex', above, about this 'target_set'.
         std::unordered_set <size_t> target_set;
 
         while (edge) {
