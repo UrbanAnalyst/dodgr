@@ -3,6 +3,7 @@
 .RData
 inst/doc
 inst/WORDLIST
+data-raw/
 aaa\.Rmd*
 # History files
 .Rhistory
