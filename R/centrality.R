@@ -165,7 +165,10 @@ dodgr_centrality <- function (graph,
         graph2$d_weighted <- graph2 [[column]]
     }
 
-    duplicated_edge_check (graph2)
+    check <- duplicated_edge_check (graph2)
+    if (check) {
+        warning ("graph has duplicated edges; only the first will be used here.")
+    }
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'

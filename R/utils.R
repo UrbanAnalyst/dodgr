@@ -10,6 +10,9 @@ null_to_na <- function (x) {
 #'
 #' Currently only used in centrality; see #186.
 #'
+#' @return Logical flag indicating whether or not graph has duplicated edges;
+#' `TRUE` denotes a graph with duplicated edges; `FALSE` denotes a graph which
+#' passes this check.
 #' @noRd
 duplicated_edge_check <- function (graph) {
 
@@ -20,7 +23,6 @@ duplicated_edge_check <- function (graph) {
     to <- graph [[to_name]]
 
     fr_to <- paste0 (fr, "-", to)
-    if (any (duplicated (fr_to))) {
-        warning ("graph has duplicated edges; only the first will be used here.")
-    }
+
+    return (any (duplicated (fr_to)))
 }
