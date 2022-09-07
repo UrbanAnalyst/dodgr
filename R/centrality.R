@@ -167,7 +167,18 @@ dodgr_centrality <- function (graph,
 
     check <- duplicated_edge_check (graph2)
     if (check) {
-        warning ("graph has duplicated edges; only the first will be used here.")
+        if (interactive ()) {
+            message (paste0 (
+                "Graph has duplicated edges. Only the first will be used here, ",
+                "but it is better to manually remove them first."
+            ))
+            x <- readline ("Do you want to proceed (y/n)? ")
+            if (tolower (substring (x, 1, 1) != "y")) { # nocov
+                stop ("Okay, we'll stop there", call. = FALSE)
+            }
+        } else {
+            warning ("graph has duplicated edges; only the first will be used here.")
+        }
     }
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
