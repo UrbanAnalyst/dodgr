@@ -1,5 +1,10 @@
 # v 0.2.15.00x
 
+## Major changes:
+
+- Additional "distances" parameter added to `match_pts_to_graph()` to return geodesic distance to point of edge intersection.
+- Fixed major bug in centrality calculations (#186)
+
 ## Minor changes:
 
 - Walking cost function in networks with elevation improved (#124)

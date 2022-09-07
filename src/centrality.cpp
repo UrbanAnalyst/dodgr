@@ -212,34 +212,40 @@ void PF::PathFinder::Centrality_vertex (
         v_stack.push_back (v);
 
         edge = vertices [v].outHead;
+
+        std::unordered_set <size_t> target_set;
+
         while (edge) {
 
             size_t et = edge->target;
             double wt = w [v] + edge->wt;
 
-            std::vector <size_t> vert_vec;
-
-            if (w [et] == 0.0) // first connection to et
+            if (target_set.find (et) == target_set.end ())
             {
-                prev_vert [et] = std::vector <size_t> (1L, v);
+                target_set.emplace (et);
 
-                sigma [et] = sigma [v];
-                w [et] = wt;
-                m_heap->insert (et, wt);
-            }  else if (wt < w [et])
-            {
-                prev_vert [et] = std::vector <size_t> (1L, v);
+                if (w [et] == 0.0) // first connection to et
+                {
+                    prev_vert [et] = std::vector <size_t> (1L, v);
 
-                sigma [et] = sigma [v];
-                w [et] = wt;
-                m_heap->decreaseKey (et, wt);
-            } else if (fabs (wt - w [et]) < epsilon)
-            {
-                std::vector <size_t> vert_vec = prev_vert [et];
-                vert_vec.push_back (v);
-                prev_vert [et] = vert_vec;
+                    sigma [et] = sigma [v];
+                    w [et] = wt;
+                    m_heap->insert (et, wt);
+                }  else if (wt < w [et])
+                {
+                    prev_vert [et] = std::vector <size_t> (1L, v);
 
-                sigma [et] += sigma [v];
+                    sigma [et] = sigma [v];
+                    w [et] = wt;
+                    m_heap->decreaseKey (et, wt);
+                } else if (fabs (wt - w [et]) < epsilon)
+                {
+                    std::vector <size_t> vert_vec = prev_vert [et];
+                    vert_vec.push_back (v);
+                    prev_vert [et] = vert_vec;
+
+                    sigma [et] += sigma [v];
+                }
             }
 
             edge = edge->nextOut;
@@ -290,6 +296,7 @@ void PF::PathFinder::Centrality_edge (
     std::vector <std::vector <size_t> > prev_vert (n), prev_edge (n);
 
     while (m_heap->nItems() > 0) {
+
         size_t v = m_heap->deleteMin();
 
         if (w [v] > dist_threshold)
@@ -298,41 +305,49 @@ void PF::PathFinder::Centrality_edge (
         v_stack.push_back (v);
 
         edge = vertices [v].outHead;
+
+        std::unordered_set <size_t> target_set;
+
         while (edge) {
 
             size_t et = edge->target;
             double wt = w [v] + edge->wt;
 
-            // DGraph has no edge iterator, so prev_edge elements contains
-            // pairwise elements of [from vertex, edge_id]
-
-            if (w [et] == 0.0) // first connection to et
+            if (target_set.find (et) == target_set.end ())
             {
-                prev_edge [et] = std::vector <size_t> {v, edge->edge_id};
+                target_set.emplace (et);
 
-                sigma [et] = sigma [v];
-                sigma_edge [edge->edge_id] = sigma [v];
+                // DGraph has no edge iterator, so prev_edge elements contains
+                // pairwise elements of [from vertex, edge_id]
 
-                w [et] = wt;
-                m_heap->insert (et, wt);
-            }  else if (wt < w [et])
-            {
-                prev_edge [et] = std::vector <size_t> {v, edge->edge_id};
+                if (w [et] == 0.0) // first connection to et
+                {
+                    prev_edge [et] = std::vector <size_t> {v, edge->edge_id};
 
-                sigma [et] = sigma [v];
-                sigma_edge [edge->edge_id] = sigma [v];
+                    sigma [et] = sigma [v];
+                    sigma_edge [edge->edge_id] = sigma [v];
 
-                w [et] = wt;
-                m_heap->decreaseKey (et, wt);
-            } else if (fabs (wt - w [et]) < epsilon)
-            {
-                std::vector <size_t> edge_vec = prev_edge [et];
-                edge_vec.push_back (v);
-                edge_vec.push_back (edge->edge_id);
-                prev_edge [et] = edge_vec;
+                    w [et] = wt;
+                    m_heap->insert (et, wt);
+                }  else if (wt < w [et])
+                {
+                    prev_edge [et] = std::vector <size_t> {v, edge->edge_id};
 
-                sigma [et] += sigma [v];
-                sigma_edge [edge->edge_id] += sigma [v];
+                    sigma [et] = sigma [v];
+                    sigma_edge [edge->edge_id] = sigma [v];
+
+                    w [et] = wt;
+                    m_heap->decreaseKey (et, wt);
+                } else if (fabs (wt - w [et]) < epsilon)
+                {
+                    std::vector <size_t> edge_vec = prev_edge [et];
+                    edge_vec.push_back (v);
+                    edge_vec.push_back (edge->edge_id);
+                    prev_edge [et] = edge_vec;
+
+                    sigma [et] += sigma [v];
+                    sigma_edge [edge->edge_id] += sigma [v];
+                }
             }
 
             edge = edge->nextOut;
