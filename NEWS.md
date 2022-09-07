@@ -3,7 +3,7 @@
 ## Major changes:
 
 - Additional "distances" parameter added to `match_pts_to_graph()` to return geodesic distance to point of edge intersection.
-- Fixed major bug in centrality calculations (#186)
+- Fixed major bug in centrality calculations on graphs with duplicated edges (#186).
 
 ## Minor changes:
 
