@@ -4,6 +4,7 @@
 inst/doc
 inst/WORDLIST
 data-raw/
+literature/
 aaa\.Rmd*
 # History files
 .Rhistory
