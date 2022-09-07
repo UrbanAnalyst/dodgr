@@ -197,8 +197,9 @@ void PF::PathFinder::Centrality_vertex (
 
     m_heap->insert (s, -1.0);
 
-    std::vector <int> sigma (n, 0);
-    sigma [s] = 1;
+    // sigma as long int because graphs can be bigger than INT_MAX
+    std::vector <long int> sigma (n, 0);
+    sigma [s] = 1L;
 
     std::vector <std::vector <size_t> > prev_vert (n);
 
@@ -257,10 +258,10 @@ void PF::PathFinder::Centrality_vertex (
         const size_t v = v_stack.back ();
         v_stack.pop_back ();
         std::vector <size_t> vert_vec = prev_vert [v];
-        double tempd = (1.0 + delta [v]) / sigma [v];
+        double tempd = (1.0 + delta [v]) / static_cast <double> (sigma [v]);
         for (auto ws: vert_vec)
         {
-            delta [ws] += sigma [ws] * tempd;
+            delta [ws] += static_cast <double> (sigma [ws]) * tempd;
         }
         if (v != s)
             cent [v] += vert_wt * delta [v];
@@ -287,9 +288,9 @@ void PF::PathFinder::Centrality_edge (
 
     m_heap->insert (s, -1.0);
 
-    std::vector <int> sigma (n, 0);
-    sigma [s] = 1;
-    std::vector <int> sigma_edge (nedges, 0);
+    std::vector <long int> sigma (n, 0);
+    sigma [s] = 1L;
+    std::vector <long int> sigma_edge (nedges, 0);
 
     std::vector <std::vector <size_t> > prev_vert (n), prev_edge (n);
 
@@ -358,15 +359,15 @@ void PF::PathFinder::Centrality_edge (
         const size_t v = v_stack.back ();
         v_stack.pop_back ();
         std::vector <size_t> edge_vec = prev_edge [v];
-        double tempd = (1.0 + delta [v]) / sigma [v];
+        double tempd = (1.0 + delta [v]) / static_cast <double> (sigma [v]);
 
         std::vector <size_t>::iterator it = edge_vec.begin ();
         // The dereferenced edge_vec iterator is simply a direct index
         while (it != edge_vec.end ())
         {
-            delta [*it] += sigma [*it] * tempd;
+            delta [*it] += static_cast <double> (sigma [*it]) * tempd;
             it = std::next (it);
-            cent [*it] += sigma_edge [*it] * tempd * vert_wt;
+            cent [*it] += static_cast <double> (sigma_edge [*it]) * tempd * vert_wt;
             it = std::next (it);
         }
     }
