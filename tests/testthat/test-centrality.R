@@ -3,7 +3,8 @@ context ("centrality")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
     identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
-testthat::skip_on_cran ()
+# testthat::skip_on_cran ()
+testthat::skip_if (!test_all)
 
 test_that ("centrality", {
     graph_full <- weight_streetnet (hampi)
