@@ -123,10 +123,22 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
     wp <- get_profile (wt_profile, wt_profile_file)
     wp <- wp [, c ("way", "value")]
 
-    dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
+    res <- dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
+        dplyr::filter (!is.na (d_weighted)) %>%
         dplyr::select (-value)
+
+    if (wt_profile %in% c ("foot", "bicycle")) {
+        res <- res [-which (res [[wt_profile]] == "no"), ]
+        # Plus remove any untagged "motorway" or "trunk" edges
+        index <- grep ("^(motorway|trunk)", res$highway)
+        if (length (index) > 0L) {
+            res <- res [-index, ]
+        }
+    }
+
+    return (res)
 }
 
 # Set maximum speed for each edge.
