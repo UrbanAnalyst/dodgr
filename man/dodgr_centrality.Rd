@@ -11,7 +11,8 @@ dodgr_centrality(
   column = "d_weighted",
   vert_wts = NULL,
   dist_threshold = NULL,
-  heap = "BHeap"
+  heap = "BHeap",
+  check_graph = TRUE
 )
 }
 \arguments{
@@ -49,6 +50,12 @@ established via the \link{estimate_centrality_threshold} function.}
 Fibonacci Heap (default; 'FHeap'), Binary Heap ('BHeap'),
 Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 ('TriHeapExt', and 2-3 Heap ('Heap23').}
+
+\item{check_graph}{If \code{TRUE}, graph is first checked for duplicate edges,
+which can cause incorrect centrality calculations. If duplicate edges are
+detected in an interactive session, a prompt will ask whether you want to
+proceed or rectify edges first. This value may be set to \code{FALSE} to skip this
+check and the interactive prompt.}
 }
 \value{
 Modified version of graph with additional 'centrality' column added.

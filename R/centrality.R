@@ -31,6 +31,11 @@
 #' Fibonacci Heap (default; 'FHeap'), Binary Heap ('BHeap'),
 #' Trinomial Heap ('TriHeap'), Extended Trinomial Heap
 #' ('TriHeapExt', and 2-3 Heap ('Heap23').
+#' @param check_graph If `TRUE`, graph is first checked for duplicate edges,
+#' which can cause incorrect centrality calculations. If duplicate edges are
+#' detected in an interactive session, a prompt will ask whether you want to
+#' proceed or rectify edges first. This value may be set to `FALSE` to skip this
+#' check and the interactive prompt.
 #' @return Modified version of graph with additional 'centrality' column added.
 #'
 #' @note The `column` parameter is by default `d_weighted`, meaning centrality
@@ -114,7 +119,8 @@ dodgr_centrality <- function (graph,
                               column = "d_weighted",
                               vert_wts = NULL,
                               dist_threshold = NULL,
-                              heap = "BHeap") {
+                              heap = "BHeap",
+                              check_graph = TRUE) {
 
     column <- match.arg (column, c (
         "d_weighted",
@@ -165,20 +171,8 @@ dodgr_centrality <- function (graph,
         graph2$d_weighted <- graph2 [[column]]
     }
 
-    check <- duplicated_edge_check (graph2)
-    if (check) {
-        if (interactive ()) {
-            message (paste0 (
-                "Graph has duplicated edges. Only the first will be used here, ",
-                "but it is better to manually remove them first."
-            ))
-            x <- readline ("Do you want to proceed (y/n)? ")
-            if (tolower (substring (x, 1, 1) != "y")) { # nocov
-                stop ("Okay, we'll stop there", call. = FALSE)
-            }
-        } else {
-            warning ("graph has duplicated edges; only the first will be used here.")
-        }
+    if (check_graph) {
+        duplicated_edge_check (graph2)
     }
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
