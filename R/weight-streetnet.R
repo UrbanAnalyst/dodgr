@@ -172,6 +172,8 @@ weight_streetnet.default <- function (x,
 # ********************************************************************
 
 way_types_to_keep <- c (
+    "bicycle",
+    "foot",
     "highway",
     "oneway",
     "oneway.bicycle",
