@@ -8,6 +8,7 @@
 ## Minor changes:
 
 - Walking cost function in networks with elevation improved (#124)
+- Fixed `weight_streetnet.sc` to respect "bicycle" and "foot" tags for those weighting profiles (#189)
 
 # v 0.2.15
 
