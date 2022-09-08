@@ -51,7 +51,7 @@
 #' @note Realistic routing include factors such as access restrictions, turn
 #' penalties, and effects of incline, can only be implemented when the objects
 #' passed to `weight_streetnet` are of \pkg{sc} ("silicate") format, generated
-#' with \link{dodgr_streetnet_sc}. Restrictions applies to ways (in Open
+#' with \link{dodgr_streetnet_sc}. Restrictions applied to ways (in Open
 #' Streetmap Terminology) may be controlled by ensuring specific columns are
 #' retained in the `dodgr` network with the `keep_cols` argument. For example,
 #' restrictions on access are generally specified by specifying a value for the
@@ -64,14 +64,15 @@
 #' \link{dodgr_streetnet_sc}, and so may be added to the `keep_cols` argument,
 #' include:
 #' \itemize{
-#' \item "highway"
-#' \item "restriction"
 #' \item "access"
 #' \item "bicycle"
+#' \item "foot"
+#' \item "highway"
 #' \item "motorcar"
 #' \item "motor_vehicle"
-#' \item "vehicle"
+#' \item "restriction"
 #' \item "toll"
+#' \item "vehicle"
 #' }
 #'
 #' Restrictions and time-penalties on turns can be implemented from such
