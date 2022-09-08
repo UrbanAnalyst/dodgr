@@ -4,6 +4,7 @@
 
 - Additional "distances" parameter added to `match_pts_to_graph()` to return geodesic distance to point of edge intersection.
 - Fixed major bug in centrality calculations on graphs with duplicated edges (#186).
+- Added new vignette with instructions on parallel thread control
 
 ## Minor changes:
 
