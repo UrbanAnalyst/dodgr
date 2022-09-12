@@ -3,7 +3,6 @@ context ("SC")
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
     identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
-skip_on_cran ()
 skip_if (!test_all)
 
 # library (osmdata)
@@ -24,10 +23,10 @@ test_that ("SC", {
     expect_true (nrow (net_sc) > 0)
 
     net_sf <- weight_streetnet (hampi)
-    expect_equal (nrow (net_sf), nrow (net_sc))
+    expect_true (nrow (net_sf) > nrow (net_sc))
     v_sc <- dodgr_vertices (net_sc)
     v_sf <- dodgr_vertices (net_sf)
-    expect_equal (nrow (v_sf), nrow (v_sc))
+    expect_true (nrow (v_sf) > nrow (v_sc))
 
     class (hsc) <- class (hsc) [!class (hsc) %in% "osmdata_sc"]
     expect_error (
