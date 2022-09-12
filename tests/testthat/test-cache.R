@@ -1,13 +1,13 @@
 context ("cache")
 
-testthat::skip_on_cran ()
-
 # The cache-off tests fail on windows for some reason, both on CRAN and on
 # GitHub runners.
 testthat::skip_on_os ("windows")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
     identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+
+testthat::skip_if (!test_all)
 
 source ("../sc-conversion-fns.R")
 
@@ -50,9 +50,9 @@ test_that ("cache on", {
         turn_penalty = TRUE, left_side = TRUE
     )
     # grapht has extra compound edges for turning angles:
-    expect_true (nrow (grapht) > nrow (graph))
+    expect_equal (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
-    expect_true (nrow (grapht_c) > nrow (graph_c))
+    expect_equal (nrow (grapht_c), nrow (graph_c))
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
         from = pts,
         to = pts,
