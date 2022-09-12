@@ -25,6 +25,7 @@ identical (graph2, graph) # FALSE
 \link{dodgr_to_igraph}
 
 Other conversion: 
+\code{\link{dodgr_deduplicate_graph}()},
 \code{\link{dodgr_to_igraph}()},
 \code{\link{dodgr_to_sfc}()},
 \code{\link{dodgr_to_sf}()},

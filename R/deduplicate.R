@@ -7,6 +7,7 @@
 #' @param graph Any 'dodgr' graph or network.
 #' @return A potentially modified version of graph, with any formerly duplicated
 #' edges reduces to single rows containing minimal weighted distances and times.
+#' @family conversion
 #' @export
 dodgr_deduplicate_graph <- function (graph) {
 

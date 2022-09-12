@@ -43,6 +43,7 @@ dim (xy$dat) # same number of rows as there are geometries
 }
 \seealso{
 Other conversion: 
+\code{\link{dodgr_deduplicate_graph}()},
 \code{\link{dodgr_to_igraph}()},
 \code{\link{dodgr_to_sf}()},
 \code{\link{dodgr_to_tidygraph}()},
