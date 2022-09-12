@@ -10,6 +10,22 @@ rcpp_centrality <- function(graph, vert_map_in, heap_type, dist_threshold, edge_
     .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample)
 }
 
+#' De-duplicate edges by replacing with minimal weighted distances and times
+#'
+#' @param graph Full graph in any form
+#' @param fr_col Name of column holding from edge labels
+#' @param to_col Name of column holding to edge labels
+#' @param d_col Name of column holding weighted distances
+#' @param t_col Name of column holding weighted times (or "" if no weighted
+#' times).
+#' @return A `data.frame` of 3 columns: 'from', 'to', and 'd', where 'd' is the
+#' minimal value taken from all duplicated edges. If 't_col' is specified, the
+#' equivalent minimal times are in the lower half of the result.
+#' @noRd
+rcpp_deduplicate <- function(graph, fr_col, to_col, d_col, t_col) {
+    .Call(`_dodgr_rcpp_deduplicate`, graph, fr_col, to_col, d_col, t_col)
+}
+
 #' Make unordered_set of all new edge names
 #' @noRd
 NULL

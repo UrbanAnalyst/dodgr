@@ -27,6 +27,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_deduplicate
+Rcpp::DataFrame rcpp_deduplicate(const Rcpp::DataFrame& graph, const std::string fr_col, const std::string to_col, const std::string d_col, const std::string t_col);
+RcppExport SEXP _dodgr_rcpp_deduplicate(SEXP graphSEXP, SEXP fr_colSEXP, SEXP to_colSEXP, SEXP d_colSEXP, SEXP t_colSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type fr_col(fr_colSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type to_col(to_colSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type d_col(d_colSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type t_col(t_colSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_deduplicate(graph, fr_col, to_col, d_col, t_col));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_aggregate_to_sf
 Rcpp::List rcpp_aggregate_to_sf(const Rcpp::DataFrame& graph_full, const Rcpp::DataFrame& graph_contr, const Rcpp::DataFrame& edge_map);
 RcppExport SEXP _dodgr_rcpp_aggregate_to_sf(SEXP graph_fullSEXP, SEXP graph_contrSEXP, SEXP edge_mapSEXP) {
@@ -353,6 +368,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 6},
+    {"_dodgr_rcpp_deduplicate", (DL_FUNC) &_dodgr_rcpp_deduplicate, 5},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 7},
