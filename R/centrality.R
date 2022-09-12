@@ -234,6 +234,10 @@ attach_centrality_to_graph <- function (graph, centrality, edge_map, graph_full,
         graph$centrality <- centrality
         if (contract) {
             graph <- uncontract_graph (graph, edge_map, graph_full)
+            graph <- uncompound_junctions (graph, graph_full)
+
+            attr (graph, "hash") <- NULL
+            attr (graph, "hash") <- get_hash (graph, hash = TRUE)
         }
         res <- graph
     } else {
