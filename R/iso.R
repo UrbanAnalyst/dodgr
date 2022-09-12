@@ -95,8 +95,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap") {
     }
     vert_map <- make_vert_map (graph, gr_cols, FALSE)
 
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
+    tp <- get_turn_penalty (graph)
     if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
         if (!is.null (from)) {
             from <- nodes_arg_to_pts (from, graph)

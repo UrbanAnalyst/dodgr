@@ -122,6 +122,10 @@ dodgr_dists <- function (graph,
 
     graph <- tbl_to_df (graph)
 
+    if (get_turn_penalty (graph) > 0.0) {
+        graph <- create_compound_junctions (graph)$graph # don't need compound edges here
+    }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph

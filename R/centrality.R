@@ -131,6 +131,16 @@ dodgr_centrality <- function (graph,
 
     centrality_input_check (graph, vert_wts)
 
+    if (check_graph) {
+        duplicated_edge_check (graph)
+    }
+
+    if (get_turn_penalty (graph) > 0.0) {
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     if (is.null (dist_threshold)) {
         dist_threshold <- .Machine$double.xmax
     }
@@ -138,10 +148,6 @@ dodgr_centrality <- function (graph,
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
-
-    if (check_graph) {
-        duplicated_edge_check (graph)
-    }
 
     gr_cols <- dodgr_graph_cols (graph)
 
@@ -194,6 +200,9 @@ dodgr_centrality <- function (graph,
         edges,
         contract
     )
+    # If 'contract = TRUE`, the return value, `res`, is then uncontracted
+
+    res <- uncompound_junctions (res, "centrality", compound_junction_map)
 
     if (is_dodgr_cache_on () && edges) {
         # re-cache graph with centrality measure:
@@ -234,10 +243,6 @@ attach_centrality_to_graph <- function (graph, centrality, edge_map, graph_full,
         graph$centrality <- centrality
         if (contract) {
             graph <- uncontract_graph (graph, edge_map, graph_full)
-            graph <- uncompound_junctions (graph, graph_full)
-
-            attr (graph, "hash") <- NULL
-            attr (graph, "hash") <- get_hash (graph, hash = TRUE)
         }
         res <- graph
     } else {

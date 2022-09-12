@@ -505,8 +505,7 @@ prepare_graph <- function (graph,
     vert_map <- make_vert_map (graph, gr_cols)
 
     # change from and to just to check conformity
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
+    tp <- get_turn_penalty (graph)
 
     # remove any routing points not in edge start nodes:
     from <- nodes_arg_to_pts (from, graph)
