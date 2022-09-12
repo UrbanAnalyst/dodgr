@@ -36,6 +36,7 @@ dodgr_deduplicate_graph <- function (graph) {
         ft <- paste0 (res$from, "-", res$to)
         ft_t <- paste0 (res_t$from, "-", res_t$to)
         index_t <- match (ft, ft_t)
+        res$t <- NA # necessary to define as numeric
         res$t [index_t] <- res_t$d
     }
 
