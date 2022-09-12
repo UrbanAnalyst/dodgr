@@ -10,14 +10,14 @@ test_that ("centrality", {
     graph_full <- weight_streetnet (hampi)
     graph <- dodgr_contract_graph (graph_full)
 
-    graphc <- dodgr_centrality (graph)
+    graphc <- dodgr_centrality (graph, check_graph = FALSE)
     expect_equal (nrow (graph), nrow (graphc))
     expect_equal (ncol (graph) + 1, ncol (graphc))
     expect_true ("centrality" %in% names (graphc))
     expect_false ("centrality" %in% names (graph))
 
     v <- dodgr_vertices (graph)
-    vc <- dodgr_centrality (graph, edges = FALSE)
+    vc <- dodgr_centrality (graph, edges = FALSE, check_graph = FALSE)
     expect_equal (nrow (v), nrow (vc))
     expect_equal (ncol (v) + 1, ncol (vc))
     expect_true ("centrality" %in% names (vc))
@@ -27,38 +27,38 @@ test_that ("centrality", {
 test_that ("weighted centrality", {
     graph_full <- weight_streetnet (hampi)
     graph <- dodgr_contract_graph (graph_full)
-    graphc0 <- dodgr_centrality (graph)
+    graphc0 <- dodgr_centrality (graph, check_graph = FALSE)
     expect_equal (nrow (graphc0), nrow (graph))
 
     v <- dodgr_vertices (graph)
     set.seed (1)
     vert_wts <- runif (nrow (v))
-    graphc1 <- dodgr_centrality (graph, vert_wts = vert_wts)
+    graphc1 <- dodgr_centrality (graph, vert_wts = vert_wts, check_graph = FALSE)
     expect_equal (nrow (graphc1), nrow (graph))
     expect_true (!all (graphc1$centrality == graphc0$centrality))
 
-    v0 <- dodgr_centrality (graph, edges = FALSE)
+    v0 <- dodgr_centrality (graph, edges = FALSE, check_graph = FALSE)
     expect_equal (nrow (dodgr_vertices (graph)), nrow (v0))
 
     vert_wts <- runif (nrow (v))
-    v1 <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE)
+    v1 <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE, check_graph = FALSE)
     expect_equal (nrow (v1), nrow (v0))
     expect_true (!all (v1$centrality == v0$centrality))
 
     vert_wts <- NULL
     expect_silent (
-        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE)
+        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE, check_graph = FALSE)
     )
 
     vert_wts <- runif (nrow (v)) [-1]
     expect_error (
-        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE),
+        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE, check_graph = FALSE),
         "vert_wts must be a vector of same length"
     )
 
     vert_wts <- "A"
     expect_error (
-        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE),
+        vx <- dodgr_centrality (graph, vert_wts = vert_wts, edges = FALSE, check_graph = FALSE),
         "vert_wts must be a vector of same length"
     )
 })
