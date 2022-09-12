@@ -61,7 +61,7 @@ dodgr_deduplicate_graph <- function (graph) {
 #' `TRUE` denotes a graph with duplicated edges; `FALSE` denotes a graph which
 #' passes this check.
 #' @noRd
-duplicated_edge_check <- function (graph) {
+duplicated_edge_check <- function (graph, proceed = FALSE) {
 
     gr_cols <- dodgr_graph_cols (graph)
     fr_name <- names (graph) [gr_cols$from]
@@ -75,17 +75,21 @@ duplicated_edge_check <- function (graph) {
 
     if (has_duplicates) {
 
+        msg <- paste0 (
+            "Graph has duplicated edges. Only the first will be used here,\n",
+            "but it is better to remove them first with the ",
+            "'dodgr_deduplicate_graph() function."
+        )
         if (interactive ()) {
-            message (paste0 (
-                "Graph has duplicated edges. Only the first will be used here, ",
-                "but it is better to manually remove them first."
-            ))
-            x <- readline ("Do you want to proceed (y/n)? ")
-            if (tolower (substring (x, 1, 1) != "y")) { # nocov
-                stop ("Okay, we'll stop there", call. = FALSE)
+            message (msg)
+            if (!proceed) {
+                x <- readline ("Do you want to proceed (y/n)? ")
+                if (tolower (substring (x, 1, 1) != "y")) { # nocov
+                    stop ("Okay, we'll stop there", call. = FALSE)
+                }
             }
         } else {
-            warning ("graph has duplicated edges; only the first will be used here.")
+            warning (msg)
         }
     }
 
