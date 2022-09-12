@@ -632,8 +632,10 @@ weight_streetnet.sc <- weight_streetnet.SC <-
             "dodgr_streetnet_sc"
         )
 
+        hash <- digest::digest (graph [[gr_cols$edge_id]])
+        attr (graph, "hash") <- hash
+
         if (turn_penalty) {
-            hash <- digest::digest (graph [[gr_cols$edge_id]])
             fname <- fs::path (fs::path_temp (), paste0 (
                 "dodgr_edge_contractions_",
                 hash, ".Rds"
@@ -642,8 +644,6 @@ weight_streetnet.sc <- weight_streetnet.SC <-
             saveRDS (obj, fname)
         }
 
-        hash <- digest::digest (graph [[gr_cols$edge_id]])
-        attr (graph, "hash") <- hash
         if (is_dodgr_cache_on ()) {
             attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
         }
