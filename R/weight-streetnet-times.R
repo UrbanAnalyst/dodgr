@@ -130,7 +130,10 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
         dplyr::select (-value)
 
     if (wt_profile %in% c ("foot", "bicycle")) {
-        res <- res [-which (res [[wt_profile]] == "no"), ]
+        index <- which (res [[wt_profile]] == "no")
+        if (length (index) > 0L) {
+            res <- res [-index, ]
+        }
         # Plus remove any untagged "motorway" or "trunk" edges
         index <- grep ("^(motorway|trunk)", res$highway)
         if (length (index) > 0L) {
