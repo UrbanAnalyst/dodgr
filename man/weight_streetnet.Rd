@@ -138,14 +138,18 @@ include:
 }
 
 Restrictions and time-penalties on turns can be implemented from such
-objects by setting \code{turn_penalty = TRUE}. Resultant graphs are fundamentally
-different from the default for distance-based routing. The result of
-\code{weight_streetnet(..., turn_penalty = TRUE)} should thus \emph{only} be used
-to submit to the \link{dodgr_times} function, and not for any other \code{dodgr}
-functions nor forms of network analysis. Setting \code{turn_penalty = TRUE} will
+objects by setting \code{turn_penalty = TRUE}. Setting \code{turn_penalty = TRUE} will
 honour turn restrictions specified in Open Street Map (unless the "penalties"
 table of \link{weighting_profiles} has \code{restrictions = FALSE} for a specified
-\code{wt_profile}).
+\code{wt_profile}). Resultant graphs are fundamentally different from the default
+for distance-based routing. These graphs may be used directly in the
+\link{dodgr_dists} function. Use in any other functions requires additional
+information obtained in a file in the temporary directory of the current R
+session with a name starting with "dodgr_junctions_", and including the
+value of \code{attr(graph, "hash")}. If graphs with turn penalties are to be used
+in subsequent R sessions, this "dodgr_junctions_" file will need to be moved
+to a more permanent storage location, and then replaced in the temporary
+directory of any subsequent R sessions.
 
 The resultant graph includes only those edges for which the given
 weighting profile specifies finite edge weights. Any edges of types not
