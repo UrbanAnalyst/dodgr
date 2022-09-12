@@ -9,8 +9,6 @@
 #' @noRd
 create_compound_junctions <- function (graph) {
 
-    tp <- attr (graph, "turn_penalty")
-
     left_side <- attr (graph, "left_side")
     wt_profile <- attr (graph, "wt_profile")
     wt_profile_file <- attr (graph, "wt_profile_file")
@@ -165,12 +163,13 @@ remove_turn_restrictions <- function (graph, res) {
 }
 
 
-uncompound_junctions <- function (graph, new_cols, compound_junction_map) {
+uncompound_junctions <- function (graph, new_cols,
+                                  compound_junction_map = NULL) {
 
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
+    tp <- get_turn_penalty (graph)
 
-    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
+    if (is (graph, "dodgr_streetnet_sc") && tp > 0 &&
+        !is.null (compound_junction_map)) {
 
         jm <- compound_junction_map
 

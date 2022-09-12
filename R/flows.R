@@ -149,6 +149,12 @@ dodgr_flows_aggregate <- function (graph,
         contract <- FALSE
     }
 
+    if (get_turn_penalty (graph) > 0.0) {
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
@@ -187,6 +193,7 @@ dodgr_flows_aggregate <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+        graph <- uncompound_junctions (graph, "flow", compound_junction_map)
     }
 
     return (graph)
