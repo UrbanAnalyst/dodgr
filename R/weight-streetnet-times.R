@@ -603,6 +603,12 @@ remove_turn_restrictions <- function (x, graph, res) {
         rr_only$relation_, ]
 
     r_to_df <- function (r) {
+        if (nrow (r) == 0L) {
+            r <- data.frame (matrix (nrow = 0L, ncol = 4L))
+            names (r) <- c ("relation", "node", "from", "to")
+            return (r)
+        }
+
         r <- lapply (
             split (r, f = factor (r$relation_)),
             function (i) {
