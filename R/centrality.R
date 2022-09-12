@@ -139,6 +139,10 @@ dodgr_centrality <- function (graph,
     heap <- hps$heap
     graph <- hps$graph
 
+    if (check_graph) {
+        duplicated_edge_check (graph)
+    }
+
     gr_cols <- dodgr_graph_cols (graph)
 
     if (contract && methods::is (graph, "dodgr_contracted")) {
@@ -169,10 +173,6 @@ dodgr_centrality <- function (graph,
         gr_cols2 <- dodgr_graph_cols (graph2)
         column <- gr_cols2 [[column]]
         graph2$d_weighted <- graph2 [[column]]
-    }
-
-    if (check_graph) {
-        duplicated_edge_check (graph2)
     }
 
     # final '0' is for sampling calculation to estimate speed - non-zero values
