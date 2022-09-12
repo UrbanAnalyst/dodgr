@@ -595,6 +595,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
             ) %>% # modify time
             rm_duplicated_edges () %>%
             sc_duplicate_edges (wt_profile)
+
         cl <- class (graph)
         graph <- dodgr_components (graph) # strips tbl class
         class (graph) <- cl
@@ -607,19 +608,18 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         if (turn_penalty) {
             attr (graph, "turn_penalty") <-
                 get_turn_penalties (wt_profile, wt_profile_file)$turn
-            if (attr (graph, "turn_penalty") > 0) {
-                res <- join_junctions_to_graph (
-                    graph, wt_profile, wt_profile_file,
-                    left_side
-                )
-                if (are_turns_restricted (wt_profile, wt_profile_file)) {
-                    res <- remove_turn_restrictions (x, graph, res)
-                }
-                # res has the expanded graph as well as an edge map from new
-                # cross-junction edges to old single edges. This is cached
-                # below:
-                graph <- res$graph
+
+            res <- join_junctions_to_graph (
+                graph, wt_profile, wt_profile_file,
+                left_side
+            )
+            if (are_turns_restricted (wt_profile, wt_profile_file)) {
+                res <- remove_turn_restrictions (x, graph, res)
             }
+            # res has the expanded graph as well as an edge map from new
+            # cross-junction edges to old single edges. This is cached
+            # below:
+            graph <- res$graph
         }
 
         gr_cols <- dodgr_graph_cols (graph)
