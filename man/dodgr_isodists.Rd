@@ -4,7 +4,13 @@
 \alias{dodgr_isodists}
 \title{dodgr_isodists}
 \usage{
-dodgr_isodists(graph, from = NULL, dlim = NULL, heap = "BHeap")
+dodgr_isodists(
+  graph,
+  from = NULL,
+  dlim = NULL,
+  contract = TRUE,
+  heap = "BHeap"
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -14,6 +20,9 @@ graph (see Notes)}
 be calculated.}
 
 \item{dlim}{Vector of desired limits of isodistances in metres.}
+
+\item{contract}{If \code{TRUE}, calculate isodists only to vertices in the
+contract graph, in other words, only to junction vertices.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
