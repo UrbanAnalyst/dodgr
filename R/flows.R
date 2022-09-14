@@ -159,7 +159,6 @@ dodgr_flows_aggregate <- function (graph,
                 "produce unexpected behaviour."
             )
         }
-        message ("creating compound junctions")
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
