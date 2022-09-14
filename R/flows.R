@@ -149,7 +149,9 @@ dodgr_flows_aggregate <- function (graph,
         contract <- FALSE
     }
 
-    if (get_turn_penalty (graph) > 0.0) {
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
@@ -193,7 +195,9 @@ dodgr_flows_aggregate <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        graph <- uncompound_junctions (graph, "flow", compound_junction_map)
+        if (has_turn_penalty) {
+            graph <- uncompound_junctions (graph, "flow", compound_junction_map)
+        }
     }
 
     return (graph)
@@ -262,6 +266,14 @@ dodgr_flows_disperse <- function (graph,
         dens [is.na (dens)] <- 0
     }
 
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -309,6 +321,10 @@ dodgr_flows_disperse <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+        if (has_turn_penalty) {
+            flow_cols <- grep ("^flow", names (graph), value = TRUE)
+            graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
+        }
     }
 
     return (graph)
