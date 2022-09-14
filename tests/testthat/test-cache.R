@@ -53,21 +53,41 @@ test_that ("cache on", {
     expect_equal (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
     expect_equal (nrow (grapht_c), nrow (graph_c))
-    expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
-        from = pts,
-        to = pts,
-        flow = fmat,
-        contract = FALSE
-    ))
-    expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
+    expect_warning (
+        graphtf <- dodgr_flows_aggregate (grapht_c,
+            from = pts,
+            to = pts,
+            flow = fmat,
+            contract = FALSE
+        ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_error (graphtf <- dodgr_uncontract_graph (graphtf))
+    expect_silent (
+        graphtf <- dodgr_flows_aggregate (grapht,
+            from = pts,
+            to = pts,
+            flow = fmat,
+            contract = FALSE
+        )
+    )
     expect_silent (graphtf <- merge_directed_graph (graphtf))
 
-    expect_silent (graphtf <-
-        dodgr_flows_disperse (grapht_c,
+    expect_warning (
+        graphtf <- dodgr_flows_disperse (
+            grapht_c,
             from = pts,
             dens = rep (1, n)
-        ))
-
+        ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_silent (
+        graphtf <- dodgr_flows_disperse (
+            grapht,
+            from = pts,
+            dens = rep (1, n)
+        )
+    )
 })
 
 test_that ("cache off", {
@@ -106,21 +126,36 @@ test_that ("cache off", {
         left_side = TRUE
     ))
     expect_silent (grapht_c <- dodgr_contract_graph (grapht))
-    expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
+    expect_warning (
+        graphtf <- dodgr_flows_aggregate (
+            grapht_c,
+            from = pts,
+            to = pts,
+            flow = fmat,
+            contract = FALSE
+        ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_error (graphtf <- dodgr_uncontract_graph (graphtf))
+    expect_silent (graphtf <- dodgr_flows_aggregate (grapht,
         from = pts,
         to = pts,
         flow = fmat,
         contract = FALSE
     ))
-    expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (graphtf <- merge_directed_graph (graphtf))
 
-    expect_silent (graphtf <-
-        dodgr_flows_disperse (grapht_c,
+    expect_warning (
+        graphtf <- dodgr_flows_disperse (
+            grapht_c,
             from = pts,
             dens = rep (1, n)
-        ))
+        ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_silent (
+        graphtf <- dodgr_flows_disperse (grapht, from = pts, dens = rep (1, n))
+    )
 
     expect_silent (dodgr_cache_on ())
-
 })

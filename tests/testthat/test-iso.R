@@ -52,7 +52,7 @@ test_that ("turn penalty", {
     d <- dodgr_isodists (net, from = from, dlim)
     # d includes compound vertices with "_start" suffix, and routes
     # differently because of turning angles
-    expect_identical (d0, d)
+    expect_true (!identical (d0, d))
     # expect_true (length (grep ("_start", d$from)) > 0)
     # expect_false (length (grep ("_start", d0$from)) > 0)
 })
