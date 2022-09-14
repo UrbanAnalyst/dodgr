@@ -152,6 +152,13 @@ dodgr_flows_aggregate <- function (graph,
     compound_junction_map <- NULL
     has_turn_penalty <- get_turn_penalty (graph) > 0.0
     if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
@@ -269,6 +276,13 @@ dodgr_flows_disperse <- function (graph,
     compound_junction_map <- NULL
     has_turn_penalty <- get_turn_penalty (graph) > 0.0
     if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
@@ -423,6 +437,13 @@ dodgr_flows_si <- function (graph,
     compound_junction_map <- NULL
     has_turn_penalty <- get_turn_penalty (graph) > 0.0
     if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map

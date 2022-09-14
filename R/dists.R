@@ -123,6 +123,13 @@ dodgr_dists <- function (graph,
     graph <- tbl_to_df (graph)
 
     if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
         graph <- create_compound_junctions (graph)$graph # don't need compound edges here
     }
 

@@ -92,6 +92,13 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     tp <- get_turn_penalty (graph)
     compound_junction_map <- NULL
     if (tp > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
