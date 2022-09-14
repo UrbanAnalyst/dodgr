@@ -80,8 +80,12 @@ dodgr_dists_categorical <- function (graph,
         stop ("graphs with integer edge_type columns may not contain 0s")
     }
 
-    edge_type <- graph$edge_type
     graph <- tbl_to_df (graph)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        graph <- create_compound_junctions (graph)$graph # don't need compound edges here
+    }
+    edge_type <- graph$edge_type
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
