@@ -323,7 +323,11 @@ dodgr_flows_disperse <- function (graph,
         graph <- uncontract_graph (graph, edge_map, graph_full)
         if (has_turn_penalty) {
             flow_cols <- grep ("^flow", names (graph), value = TRUE)
-            graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
+            graph <- uncompound_junctions (
+                graph,
+                flow_cols,
+                compound_junction_map
+            )
         }
     }
 
