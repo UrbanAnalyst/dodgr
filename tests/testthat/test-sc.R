@@ -170,7 +170,6 @@ test_that ("contract with turn angles", {
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
-    expect_error (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (
         graphtf <- dodgr_flows_aggregate (
             grapht,
@@ -183,8 +182,8 @@ test_that ("contract with turn angles", {
 
     # compound junction edges are then removed, as are vertex
     # suffixes:
-    expect_true (length (grep ("_start", graphtf$.vx0)) > 0)
-    expect_true (length (grep ("_end", graphtf$.vx1)) > 0)
+    expect_true (length (grep ("_start", graphtf$.vx0)) == 0)
+    expect_true (length (grep ("_end", graphtf$.vx1)) == 0)
 
     expect_silent (graphtf <- merge_directed_graph (graphtf))
     # this test does not consistently pass:
