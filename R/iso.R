@@ -63,9 +63,10 @@ dodgr_isodists <- function (graph,
     d [d > max (dlim)] <- NA
 
     vert_names <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
+    from_id <- gsub ("\\_(start|end)$", "", dat$from_index$id)
 
     if (!is.null (dat$from_index$id)) {
-        rownames (d) <- dat$from_index$id
+        rownames (d) <- from_id
     } else {
         rownames (d) <- vert_names
     } # nocov
@@ -77,7 +78,7 @@ dodgr_isodists <- function (graph,
     d [d >= 0] <- NA
     d <- -d # convert negative-flagged iso-values to positive
 
-    return (dmat_to_pts (d, dat$from_index$id, dat$v, dlim))
+    return (dmat_to_pts (d, from_id, dat$v, dlim))
 }
 
 iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
