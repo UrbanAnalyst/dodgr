@@ -159,6 +159,7 @@ dodgr_flows_aggregate <- function (graph,
                 "produce unexpected behaviour."
             )
         }
+        message ("creating compound junctions")
         res <- create_compound_junctions (graph)
         graph <- res$graph
         compound_junction_map <- res$edge_map
@@ -202,9 +203,9 @@ dodgr_flows_aggregate <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        if (has_turn_penalty) {
-            graph <- uncompound_junctions (graph, "flow", compound_junction_map)
-        }
+    }
+    if (has_turn_penalty) {
+        graph <- uncompound_junctions (graph, "flow", compound_junction_map)
     }
 
     return (graph)
@@ -335,14 +336,10 @@ dodgr_flows_disperse <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        if (has_turn_penalty) {
-            flow_cols <- grep ("^flow", names (graph), value = TRUE)
-            graph <- uncompound_junctions (
-                graph,
-                flow_cols,
-                compound_junction_map
-            )
-        }
+    }
+    if (has_turn_penalty) {
+        flow_cols <- grep ("^flow", names (graph), value = TRUE)
+        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
     }
 
     return (graph)
@@ -508,14 +505,10 @@ dodgr_flows_si <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        if (has_turn_penalty) {
-            flow_cols <- grep ("^flow", names (graph), value = TRUE)
-            graph <- uncompound_junctions (
-                graph,
-                flow_cols,
-                compound_junction_map
-            )
-        }
+    }
+    if (has_turn_penalty) {
+        flow_cols <- grep ("^flow", names (graph), value = TRUE)
+        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
     }
 
     return (graph)
