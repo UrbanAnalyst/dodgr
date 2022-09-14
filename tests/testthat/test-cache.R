@@ -62,7 +62,6 @@ test_that ("cache on", {
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
-    expect_error (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (
         graphtf <- dodgr_flows_aggregate (grapht,
             from = pts,
@@ -136,7 +135,6 @@ test_that ("cache off", {
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
-    expect_error (graphtf <- dodgr_uncontract_graph (graphtf))
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht,
         from = pts,
         to = pts,
