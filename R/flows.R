@@ -149,6 +149,21 @@ dodgr_flows_aggregate <- function (graph,
         contract <- FALSE
     }
 
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
@@ -187,6 +202,9 @@ dodgr_flows_aggregate <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+    }
+    if (has_turn_penalty) {
+        graph <- uncompound_junctions (graph, "flow", compound_junction_map)
     }
 
     return (graph)
@@ -255,6 +273,21 @@ dodgr_flows_disperse <- function (graph,
         dens [is.na (dens)] <- 0
     }
 
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -302,6 +335,10 @@ dodgr_flows_disperse <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
+    }
+    if (has_turn_penalty) {
+        flow_cols <- grep ("^flow", names (graph), value = TRUE)
+        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
     }
 
     return (graph)
@@ -393,6 +430,21 @@ dodgr_flows_si <- function (graph,
         stop ("'from' must be provided for spatial interaction models.")
     }
 
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+    }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -453,6 +505,10 @@ dodgr_flows_si <- function (graph,
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
     }
+    if (has_turn_penalty) {
+        flow_cols <- grep ("^flow", names (graph), value = TRUE)
+        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
+    }
 
     return (graph)
 }
@@ -505,8 +561,7 @@ prepare_graph <- function (graph,
     vert_map <- make_vert_map (graph, gr_cols)
 
     # change from and to just to check conformity
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
+    tp <- get_turn_penalty (graph)
 
     # remove any routing points not in edge start nodes:
     from <- nodes_arg_to_pts (from, graph)

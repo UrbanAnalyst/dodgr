@@ -122,6 +122,17 @@ dodgr_dists <- function (graph,
 
     graph <- tbl_to_df (graph)
 
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        graph <- create_compound_junctions (graph)$graph # don't need compound edges here
+    }
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -426,22 +437,6 @@ get_pts_index <- function (graph,
     }
 
     pts
-}
-
-#' get_heap
-#'
-#' Match the heap arg and convert graph is necessary
-#' @param heap Name of heap as passed to `dodgr_dists`
-#' @param graph `data.frame` of graph edges
-#' @return List of matched heap arg and potentially converted graph
-#' @noRd
-get_heap <- function (heap,
-                      graph) {
-
-    heaps <- c ("FHeap", "BHeap", "TriHeap", "TriHeapExt", "Heap23", "set")
-    heap <- match.arg (arg = heap, choices = heaps)
-
-    list (heap = heap, graph = graph)
 }
 
 # nocov start

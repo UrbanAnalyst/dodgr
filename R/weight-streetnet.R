@@ -612,18 +612,13 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         if (turn_penalty) {
             attr (graph, "turn_penalty") <-
                 get_turn_penalties (wt_profile, wt_profile_file)$turn
+            attr (graph, "wt_profile") <- wt_profile
+            attr (graph, "wt_profile_file") <- wt_profile_file
+            attr (graph, "left_side") <- left_side
 
-            res <- join_junctions_to_graph (
-                graph, wt_profile, wt_profile_file,
-                left_side
-            )
-            if (are_turns_restricted (wt_profile, wt_profile_file)) {
-                res <- remove_turn_restrictions (x, graph, res)
-            }
-            # res has the expanded graph as well as an edge map from new
-            # cross-junction edges to old single edges. This is cached
-            # below:
-            graph <- res$graph
+            restrictions <- extract_turn_restictions (x)
+            attr (graph, "rw_no") <- restrictions$rw_no
+            attr (graph, "rw_only") <- restrictions$rw_only
         }
 
         gr_cols <- dodgr_graph_cols (graph)
@@ -638,15 +633,6 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
         hash <- digest::digest (graph [[gr_cols$edge_id]])
         attr (graph, "hash") <- hash
-
-        if (turn_penalty) {
-            fname <- fs::path (fs::path_temp (), paste0 (
-                "dodgr_edge_contractions_",
-                hash, ".Rds"
-            ))
-            obj <- res$edge_map
-            saveRDS (obj, fname)
-        }
 
         if (is_dodgr_cache_on ()) {
             attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)

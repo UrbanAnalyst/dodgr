@@ -255,8 +255,6 @@ dodgr_uncontract_graph <- function (graph) {
 
     graph <- uncontract_graph (graph, edge_map, graph_full)
 
-    graph <- uncompound_junctions (graph, graph_full)
-
     # Finally, remove any edges which might have been removed from contracted
     # graph:
     if (!identical (hashe, hashe_ref)) {
@@ -299,54 +297,4 @@ uncontract_graph <- function (graph, edge_map, graph_full) {
     }
 
     return (graph_full)
-}
-
-uncompound_junctions <- function (graph, graph_full) {
-
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
-
-    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
-        # extra code to uncontract the compound turn-angle junctions, including
-        # merging extra rows such as flow from compound junctions back into
-        # "normal" (non-compound) edges
-        hash <- get_hash (graph, hash = TRUE)
-        fname <- fs::path (fs::path_temp (), paste0 (
-            "dodgr_edge_contractions_",
-            hash, ".Rds"
-        ))
-        if (!fs::file_exists (fname)) {
-            stop (paste0 (
-                "Graph must have been contracted in ", # nocov
-                "current R session; and have retained ", # nocov
-                "the same row structure"
-            ))
-        } # nocov
-        ec <- readRDS (fname)
-
-        gr_cols <- dodgr_graph_cols (graph)
-        index_junction <- match (ec$edge, graph [[gr_cols$edge_id]])
-        index_edge_in <- match (ec$e_in, graph [[gr_cols$edge_id]])
-        index_edge_out <- match (ec$e_out, graph [[gr_cols$edge_id]])
-        new_cols <- names (graph) [which (!names (graph) %in%
-            names (graph_full))]
-
-        for (n in new_cols) {
-
-            graph [[n]] [index_edge_in] <-
-                graph [[n]] [index_edge_in] +
-                graph [[n]] [index_junction]
-
-            graph [[n]] [index_edge_out] <-
-                graph [[n]] [index_edge_out] +
-                graph [[n]] [index_junction]
-        }
-
-        # next line removes all the compound turn angle edges:
-        graph <- graph [which (!graph [[gr_cols$edge_id]] %in% ec$edge), ]
-        graph$.vx0 <- gsub ("_start$", "", graph$.vx0)
-        graph$.vx1 <- gsub ("_end$", "", graph$.vx1)
-    }
-
-    return (graph)
 }

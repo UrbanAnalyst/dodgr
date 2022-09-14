@@ -31,10 +31,11 @@ distances and for each edge category; if \code{TRUE}, return single vector of
 proportional distances, like the \code{summary} function applied to full
 results. See Note.}
 
-\item{dlimit}{If \code{TRUE}, and no value to \code{to} is given, distances are
-aggregated from each \code{from} point out to the specified distance limit (in
-the same units as the edge distances of the input graph). The
-\code{proportions_only} argument has no effect when \code{dlimit = TRUE}.}
+\item{dlimit}{If no value to \code{to} is given, distances are aggregated from
+each \code{from} point out to the specified distance limit (in the same units as
+the edge distances of the input graph). \code{dlimit} only has any effect if \code{to}
+is not specified, in which case the \code{proportions_only} argument has no
+effect.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -43,13 +44,14 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
 \value{
-If \code{dlimit = FALSE}, a list of distance matrices of equal dimensions
+If \code{to} is specified, a list of distance matrices of equal dimensions
 (length(from), length(to)), the first of which ("distance") holds the final
 distances, while the rest are one matrix for each unique value of
 "edge_type", holding the distances traversed along those types of edges only.
-If \code{dlimit = TRUE}, a single matrix of total distances along all ways from
-each point, along with distances along each of the different kinds of ways
-specified in the "edge_type" column of the input graph.
+Otherwise, a single matrix of total distances along all ways from each point
+out to the specified value of \code{dlimit}, along with distances along each of
+the different kinds of ways specified in the "edge_type" column of the input
+graph.
 }
 \description{
 Cumulative distances along different edge categories

@@ -6,6 +6,7 @@
 - Fixed major bug in centrality calculations on graphs with duplicated edges (#186).
 - Added new vignette with instructions on parallel thread control
 - New function, `dodgr_deduplicate_graph()` to reduce duplicated edges and insert minimal distances/times (#187)
+- `weight_streetnet` function now returns standard graphs even when `turn_penalty = TRUE`; compound junctions are calculated within each function (#190).
 
 ## Minor changes:
 

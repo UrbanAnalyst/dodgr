@@ -32,7 +32,7 @@ test_that ("isodists", {
     expect_true (length (unique (d$dlim)) <= length (dlim))
 })
 
-skip_on_cran ()
+# skip_on_cran ()
 skip_if (!test_all)
 
 test_that ("turn penalty", {
@@ -48,11 +48,11 @@ test_that ("turn penalty", {
         wt_profile = "bicycle",
         turn_penalty = TRUE
     )
-    expect_true (nrow (net) > nrow (net0))
+    expect_equal (nrow (net), nrow (net0))
     d <- dodgr_isodists (net, from = from, dlim)
     # d includes compound vertices with "_start" suffix, and routes
     # differently because of turning angles
-    expect_false (identical (d0, d))
+    expect_true (!identical (d0, d))
     # expect_true (length (grep ("_start", d$from)) > 0)
     # expect_false (length (grep ("_start", d0$from)) > 0)
 })

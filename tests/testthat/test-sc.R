@@ -156,37 +156,52 @@ test_that ("contract with turn angles", {
         wt_profile = "bicycle",
         turn_penalty = TRUE, left_side = TRUE
     )
-    # grapht has extra compound edges for turning angles:
-    expect_true (nrow (grapht) > nrow (graph))
-    grapht_c <- dodgr_contract_graph (grapht)
-    expect_true (nrow (grapht_c) > nrow (graph_c))
-    expect_silent (graphtf <- dodgr_flows_aggregate (grapht_c,
-        from = pts,
-        to = pts,
-        flow = fmat,
-        contract = FALSE
-    ))
-    # this graph has junction vertices flagged with _start/_end:
-    expect_true (length (grep ("_start", graphtf$.vx0)) > 0)
-    expect_true (length (grep ("_end", graphtf$.vx1)) > 0)
 
-    expect_silent (graphtf <- dodgr_uncontract_graph (graphtf))
+    expect_equal (nrow (grapht), nrow (graph))
+    grapht_c <- dodgr_contract_graph (grapht)
+    expect_equal (nrow (grapht_c), nrow (graph_c))
+    expect_warning (
+        graphtf <- dodgr_flows_aggregate (
+            grapht_c,
+            from = pts,
+            to = pts,
+            flow = fmat,
+            contract = FALSE
+        ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_silent (
+        graphtf <- dodgr_flows_aggregate (
+            grapht,
+            from = pts,
+            to = pts,
+            flow = fmat,
+            contract = FALSE
+        )
+    )
+
     # compound junction edges are then removed, as are vertex
     # suffixes:
-    expect_false (length (grep ("_start", graphtf$.vx0)) > 0)
-    expect_false (length (grep ("_end", graphtf$.vx1)) > 0)
+    expect_true (length (grep ("_start", graphtf$.vx0)) == 0)
+    expect_true (length (grep ("_end", graphtf$.vx1)) == 0)
 
     expect_silent (graphtf <- merge_directed_graph (graphtf))
     # this test does not consistently pass:
     # expect_identical (range (graphf$flow), range (graphtf$flow))
     # TODO: Implement a better alternative
 
-    expect_silent (graphtf <-
-        dodgr_flows_disperse (grapht_c,
-            from = pts,
-            dens = rep (1, n)
-        ))
-
+    expect_warning (
+        graphtf <-
+            dodgr_flows_disperse (
+                grapht_c,
+                from = pts,
+                dens = rep (1, n)
+            ),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+    expect_silent (
+        graphtf <- dodgr_flows_disperse (grapht, from = pts, dens = rep (1, n))
+    )
 })
 
 test_that ("dodgr_times", {
@@ -210,14 +225,14 @@ test_that ("dodgr_times", {
     expect_silent (net_sc2 <- weight_streetnet (hsc,
         turn_penalty = TRUE
     ))
-    expect_true (nrow (net_sc2) > nrow (net_sc))
+    expect_equal (nrow (net_sc2), nrow (net_sc))
     from <- remap_verts_with_turn_penalty (net_sc2, from, from = TRUE)
     to <- remap_verts_with_turn_penalty (net_sc2, to, from = FALSE)
     t2 <- dodgr_times (net_sc2, from = from, to = to)
     r2 <- cor (as.numeric (t1), as.numeric (t2),
         use = "pairwise.complete.obs"
     )
-    expect_true (r2 < 1)
+    # expect_true (r2 < 1)
     expect_true (r2 > 0.95)
     # These times should be longer:
     expect_true (mean (t2 - t1, na.rm = TRUE) > 0)
@@ -230,7 +245,11 @@ test_that ("dodgr_times", {
     to <- sample (v$id, 100)
 
     t1 <- dodgr_times (net_sc2, from = from, to = to)
-    t2 <- dodgr_times (net_sc2_c, from = from, to = to)
+    expect_warning (
+        t2 <- dodgr_times (net_sc2_c, from = from, to = to),
+        "graphs with turn penalties should be submitted in full, not contracted form"
+    )
+
     dtime <- max (abs (t1 - t2), na.rm = TRUE)
     # expect_true (dtime < 1e-6)
     r2 <- cor (as.vector (t1), as.vector (t2),
