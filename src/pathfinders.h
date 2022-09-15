@@ -154,7 +154,7 @@ class PathFinder {
 
     private:
         Heap *m_heap;        // pointer: heap
-        // Convert to vector<bool>? (save memory, might be a performace hit though)
+        // Convert to vector<bool>? (save memory, might be a performance hit though)
         bool *m_open;           // array: frontier set state of vertices
         bool *m_closed;         // also for bi-dir
 
