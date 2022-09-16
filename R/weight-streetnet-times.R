@@ -118,7 +118,7 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
 weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
 
     # no visible binding notes:
-    value <- d <- NULL
+    value <- d <- d_weighted <- NULL
 
     wp <- get_profile (wt_profile, wt_profile_file)
     wp <- wp [, c ("way", "value")]
