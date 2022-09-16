@@ -131,6 +131,11 @@ dodgr_graph_cols <- function (graph) {
 #' @noRd
 convert_graph <- function (graph, gr_cols) {
 
+    tp <- NULL
+    if ("turn_penalty" %in% names (attributes (graph))) {
+        tp <- attr (graph, "turn_penalty")
+    }
+
     keep_cols <- c (
         "edge_id", "from", "to", "d", "d_weighted",
         "time", "time_weighted"
@@ -148,6 +153,10 @@ convert_graph <- function (graph, gr_cols) {
 
     if (!"time_weighted" %in% names (graph)) {
         graph$time_weighted <- graph$time
+    }
+
+    if (is.null (tp)) {
+        attr (graph, "turn_penalty") <- tp
     }
 
     return (graph)

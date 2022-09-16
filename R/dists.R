@@ -166,7 +166,9 @@ dodgr_dists <- function (graph,
         graph [[gr_cols$d_weighted]] <- graph [[gr_cols$time_weighted]]
     }
 
+    tp <- attr (graph, "turn_penalty")
     graph <- convert_graph (graph, gr_cols)
+    attr (graph, "turn_penalty") <- tp
 
     if (!quiet) {
         message ("Calculating shortest paths ... ", appendLF = FALSE)
@@ -582,6 +584,18 @@ calculate_distmat <- function (graph,
             colnames (d) <- to_index$id
         } else {
             colnames (d) <- vert_map$vert
+        }
+
+        if (get_turn_penalty (graph) > 0) {
+
+            index_no_start <- compound_row_col_index (d, "start")
+            index_no_end <- compound_row_col_index (d, "end")
+            if (length (index_no_start) > 0 && length (index_no_end) > 0) {
+                d <- d [-index_no_start, -index_no_end]
+            }
+
+            rownames (d) <- gsub ("\\_(start|end)$", "", rownames (d))
+            colnames (d) <- gsub ("\\_(start|end)$", "", colnames (d))
         }
 
         if (flip) {
