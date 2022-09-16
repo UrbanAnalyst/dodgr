@@ -166,9 +166,7 @@ dodgr_dists <- function (graph,
         graph [[gr_cols$d_weighted]] <- graph [[gr_cols$time_weighted]]
     }
 
-    tp <- attr (graph, "turn_penalty")
     graph <- convert_graph (graph, gr_cols)
-    attr (graph, "turn_penalty") <- tp
 
     if (!quiet) {
         message ("Calculating shortest paths ... ", appendLF = FALSE)
