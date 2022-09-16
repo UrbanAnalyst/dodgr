@@ -155,7 +155,7 @@ convert_graph <- function (graph, gr_cols) {
         graph$time_weighted <- graph$time
     }
 
-    if (is.null (tp)) {
+    if (!is.null (tp)) {
         attr (graph, "turn_penalty") <- tp
     }
 
