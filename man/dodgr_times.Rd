@@ -56,7 +56,7 @@ graph vertices, or combinations to two columns specifying geographical
 combination of names will be accepted (for example, \verb{fromx, fromy},
 \verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
 
-\code{from} and \code{to} values can be either two-column matrices of
+\code{from} and \code{to} values can be either two-column matrices or
 equivalent of longitude and latitude coordinates, or else single columns
 precisely matching node numbers or names given in \code{graph$from} or
 \code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated

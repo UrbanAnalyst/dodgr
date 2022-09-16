@@ -46,7 +46,7 @@
 #' combination of names will be accepted (for example, `fromx, fromy`,
 #' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' `from` and `to` values can be either two-column matrices of
+#' `from` and `to` values can be either two-column matrices or
 #' equivalent of longitude and latitude coordinates, or else single columns
 #' precisely matching node numbers or names given in `graph$from` or
 #' `graph$to`. If `to` is `NULL`, pairwise distances are calculated
