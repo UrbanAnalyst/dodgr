@@ -147,12 +147,20 @@ dodgr_dists <- function (graph,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    # adjust to/from for turn penalty where that exists:
-    from <- to_from_with_tp (graph, from, from = TRUE)
-    to <- to_from_with_tp (graph, to, from = FALSE)
-
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+
+    if (is.null (from)) {
+        from <- graph [[gr_cols$from]] [from_index$index]
+    }
+    if (is.null (to)) {
+        to <- graph [[gr_cols$to]] [to_index$index]
+    }
+    # adjust to/from for turn penalty where that exists:
+    # -> This is actually no redundant because of 'create_compound_junctions'
+    # above, so should be removed at some stage.
+    from <- to_from_with_tp (graph, from, from = TRUE)
+    to <- to_from_with_tp (graph, to, from = FALSE)
 
     if (!shortest) {
         if (is.na (gr_cols$time_weighted)) {
