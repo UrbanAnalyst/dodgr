@@ -63,7 +63,7 @@ dodgr_isodists <- function (graph,
     d [d > max (dlim)] <- NA
 
     vert_names <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
-    from_id <- gsub ("\\_(start|end)$", "", dat$from_index$id)
+    from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
     if (!is.null (dat$from_index$id)) {
         rownames (d) <- from_id
@@ -90,37 +90,8 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     heap <- hps$heap
     graph <- hps$graph
 
-    tp <- get_turn_penalty (graph)
-    compound_junction_map <- NULL
-    if (tp > 0.0) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
-    }
-
     if (!is.null (from)) {
         from <- nodes_arg_to_pts (from, graph)
-    }
-
-    if (contract && !methods::is (graph, "dodgr_contracted")) {
-        graph_full <- graph
-        graph <- dodgr_contract_graph (graph, verts = from)
-        hashc <- get_hash (graph, hash = FALSE)
-        fname_c <- fs::path (
-            fs::path_temp (),
-            paste0 ("dodgr_edge_map_", hashc, ".Rds")
-        )
-        if (!fs::file_exists (fname_c)) {
-            stop ("something went wrong extracting the edge_map ... ")
-        } # nocov
-        edge_map <- readRDS (fname_c)
     }
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -134,13 +105,42 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     }
     vert_map <- make_vert_map (graph, gr_cols, FALSE)
 
-    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
-        if (!is.null (from)) {
-            from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
+    from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
         }
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
+
+        # remap any 'from' and 'to' vertices to compound junction versions:
+        vert_map <- make_vert_map (graph, gr_cols, is_graph_spatial (graph))
+
+        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
+        # return object contains modified 'vert_map', but original vertex table,
+        # not the modified version with these compound junctions
+        # v <- dodgr_vertices (graph)
     }
 
-    from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
+    if (contract && !methods::is (graph, "dodgr_contracted")) {
+        graph_full <- graph
+        graph <- dodgr_contract_graph (graph, verts = from_index$id)
+        hashc <- get_hash (graph, hash = FALSE)
+        fname_c <- fs::path (
+            fs::path_temp (),
+            paste0 ("dodgr_edge_map_", hashc, ".Rds")
+        )
+        if (!fs::file_exists (fname_c)) {
+            stop ("something went wrong extracting the edge_map ... ")
+        } # nocov
+        edge_map <- readRDS (fname_c)
+    }
 
     graph <- convert_graph (graph, gr_cols)
 
@@ -149,7 +149,6 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
         graph = graph,
         vert_map = vert_map,
         from_index = from_index,
-        compound_junction_map = compound_junction_map,
         heap = heap
     )
 }
