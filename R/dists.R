@@ -122,17 +122,6 @@ dodgr_dists <- function (graph,
 
     graph <- tbl_to_df (graph)
 
-    if (get_turn_penalty (graph) > 0.0) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        graph <- create_compound_junctions (graph)$graph # don't need compound edges here
-    }
-
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -147,14 +136,27 @@ dodgr_dists <- function (graph,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    # adjust to/from for turn penalty where that exists:
-    # -> This is actually no redundant because of 'create_compound_junctions'
-    # above, so should be removed at some stage.
-    from <- to_from_with_tp (graph, from, from = TRUE)
-    to <- to_from_with_tp (graph, to, from = FALSE)
-
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
     to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        res <- create_compound_junctions (graph)
+        compound_junctions <- res$edge_map
+        graph <- res$graph
+
+        # remap any 'from' and 'to' vertices to compound junction versions:
+        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
+        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
+    }
 
     if (!shortest) {
         if (is.na (gr_cols$time_weighted)) {
@@ -283,13 +285,16 @@ get_to_from_index <- function (graph,
 
     id <- NULL
     if (is.null (pts)) {
-        index <- seq (nrow (vert_map)) - 1
+        index <- seq (nrow (vert_map)) - 1L
+        if (!is.null (vert_map$vert)) {
+            id <- vert_map$vert
+        }
     } else {
         index_id <- get_index_id_cols (graph, gr_cols, vert_map, pts)
         if (any (is.na (index_id$id))) {
             stop ("Unable to match all routing points to graph vertices")
         }
-        index <- index_id$index - 1 # 0-based
+        index <- index_id$index - 1L # 0-based
         id <- index_id$id
     }
     list (index = index, id = id)
@@ -504,24 +509,6 @@ flip_graph <- function (graph) {
     return (graph)
 }
 
-to_from_with_tp <- function (graph, to_from, from = TRUE) {
-
-    tp <- attr (graph, "turn_penalty")
-    tp <- ifelse (is.null (tp), 0, tp)
-
-    if (is (graph, "dodgr_streetnet_sc") && tp > 0) {
-        if (!is.null (to_from)) {
-            to_from <- nodes_arg_to_pts (to_from, graph)
-            to_from <- remap_verts_with_turn_penalty (graph,
-                to_from,
-                from = from
-            )
-        }
-    }
-
-    return (to_from)
-}
-
 #' Call the actual C++ functions to calculate and return distance matrices
 #' @noRd
 calculate_distmat <- function (graph,
@@ -586,12 +573,6 @@ calculate_distmat <- function (graph,
 
         if (get_turn_penalty (graph) > 0) {
 
-            index_no_start <- compound_row_col_index (d, "start")
-            index_no_end <- compound_row_col_index (d, "end")
-            if (length (index_no_start) > 0 && length (index_no_end) > 0) {
-                d <- d [-index_no_start, -index_no_end]
-            }
-
             rownames (d) <- gsub ("\\_(start|end)$", "", rownames (d))
             colnames (d) <- gsub ("\\_(start|end)$", "", colnames (d))
         }
@@ -602,4 +583,26 @@ calculate_distmat <- function (graph,
     }
 
     return (d)
+}
+
+#' Remap 'from_index' and 'to_index' values on to the compound junctions present
+#' in 'vert_map'.
+#'
+#' @param index Either 'from_index' or 'to_index' calculated
+remap_tf_index_for_tp <- function (index, vert_map, from = TRUE) {
+
+    vert_index <- match (index$id, vert_map$vert)
+    if (from) {
+        vert_index_id <- paste0 (index$id, "_start")
+    } else {
+        vert_index_id <- paste0 (index$id, "_end")
+    }
+    vert_index_comp <- match (vert_index_id, vert_map$vert)
+    na_index <- which (!is.na (vert_index_comp))
+    vert_index [na_index] <- vert_index_comp [na_index]
+
+    index$index <- vert_index
+    index$id [na_index] <- vert_index_id [na_index]
+
+    return (index)
 }

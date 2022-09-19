@@ -92,16 +92,6 @@ dodgr_dists_categorical <- function (graph,
 
     graph <- tbl_to_df (graph)
 
-    if (get_turn_penalty (graph) > 0.0) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        graph <- create_compound_junctions (graph)$graph # don't need compound edges here
-    }
     edge_type <- graph$edge_type
 
     hps <- get_heap (heap, graph)
@@ -122,11 +112,27 @@ dodgr_dists_categorical <- function (graph,
 
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    from <- to_from_with_tp (graph, from, from = TRUE) # turn penalty
     from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
-    if (!is.null (to)) {
-        to <- to_from_with_tp (graph, to, from = FALSE)
-        to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+    to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        res <- create_compound_junctions (graph)
+        compound_junctions <- res$edge_map
+        graph <- res$graph
+        edge_type <- graph$edge_type
+
+        # remap any 'from' and 'to' vertices to compound junction versions:
+        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
+        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
     }
 
     graph <- convert_graph (graph, gr_cols)
@@ -201,6 +207,9 @@ process_categorical_dmat <- function (d, from_index, to_index, vert_map,
         cnames <- to_index$id
     }
 
+    # compound turn-penalty junctions:
+    rnames <- gsub ("\\_start$", "", rnames)
+    cnames <- gsub ("\\_end$", "", cnames)
 
     d0 <- d [, seq (n)]
     rownames (d0) <- rnames
@@ -229,6 +238,7 @@ process_threshold_dmat <- function (d, from_index, vert_map, edge_type_table) {
     } else {
         rownames (d) <- from_index$id
     }
+    rownames (d) <- gsub ("\\_start$", "", rownames (d))
 
     res <- data.frame (d)
     names (res) <- c ("distance", names (edge_type_table))
