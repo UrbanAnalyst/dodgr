@@ -601,7 +601,7 @@ remap_tf_index_for_tp <- function (index, vert_map, from = TRUE) {
     na_index <- which (!is.na (vert_index_comp))
     vert_index [na_index] <- vert_index_comp [na_index]
 
-    index$index <- vert_index
+    index$index <- vert_index - 1L # zero-based
     index$id [na_index] <- vert_index_id [na_index]
 
     return (index)
