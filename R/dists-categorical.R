@@ -123,9 +123,7 @@ dodgr_dists_categorical <- function (graph,
                 "produce unexpected behaviour."
             )
         }
-        res <- create_compound_junctions (graph)
-        compound_junctions <- res$edge_map
-        graph <- res$graph
+        graph <- create_compound_junctions (graph)$graph
         edge_type <- graph$edge_type
 
         # remap any 'from' and 'to' vertices to compound junction versions:
