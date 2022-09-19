@@ -163,6 +163,14 @@ remove_turn_restrictions <- function (graph, res) {
 }
 
 
+#' Aggregate edge values across compound junctions back on to original edges.
+#'
+#' This function is only called in the flow aggregation routines, which differ
+#' in their handling of compound junctions. For flow routines, graphs are simply
+#' created with compound junctions added, and subsequent flows re-mapped using
+#' this function.
+#'
+#' @noRd
 uncompound_junctions <- function (graph, new_cols,
                                   compound_junction_map = NULL) {
 
