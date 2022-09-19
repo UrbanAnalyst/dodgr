@@ -591,9 +591,13 @@ remap_tf_index_for_tp <- function (index, vert_map, from = TRUE) {
 
     vert_index <- match (index$id, vert_map$vert)
     if (from) {
-        vert_index_id <- paste0 (index$id, "_start")
+        no_start <- which (!grepl ("\\_start$", index$id))
+        vert_index_id <- index$id
+        vert_index_id [no_start] <- paste0 (index$id [no_start], "_start")
     } else {
-        vert_index_id <- paste0 (index$id, "_end")
+        no_end <- which (!grepl ("\\_end$", index$id))
+        vert_index_id <- index$id
+        vert_index_id [no_end] <- paste0 (index$id [no_end], "_end")
     }
     vert_index_comp <- match (vert_index_id, vert_map$vert)
     na_index <- which (!is.na (vert_index_comp))
