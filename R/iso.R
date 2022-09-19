@@ -115,9 +115,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
                 "produce unexpected behaviour."
             )
         }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
+        graph <- create_compound_junctions (graph)$graph
 
         # remap any 'from' and 'to' vertices to compound junction versions:
         vert_map <- make_vert_map (graph, gr_cols, is_graph_spatial (graph))
