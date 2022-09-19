@@ -147,9 +147,7 @@ dodgr_dists <- function (graph,
                 "produce unexpected behaviour."
             )
         }
-        res <- create_compound_junctions (graph)
-        compound_junctions <- res$edge_map
-        graph <- res$graph
+        res <- create_compound_junctions (graph)$graph
 
         # remap any 'from' and 'to' vertices to compound junction versions:
         vert_map <- make_vert_map (graph, gr_cols, is_spatial)
