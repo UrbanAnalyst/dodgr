@@ -291,11 +291,11 @@ dodgr_isoverts <- function (graph,
     d [index] [d [index] < 0] <- -d [index] [d [index] < 0]
 
     if (!is.null (dat$from_index$id)) {
-        rownames (d) <- dat$from_index$id
+        rownames (d) <- gsub ("\\_start$", "", dat$from_index$id)
     } else {
-        rownames (d) <- dat$vert_map$vert
+        rownames (d) <- gsub ("\\_start$", "", dat$vert_map$vert)
     }
-    colnames (d) <- dat$vert_map$vert
+    colnames (d) <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
 
     # convert d-values to the *next highest* specified dlim value. breaks need
     # to start < 0 to include 0 in lowest class
