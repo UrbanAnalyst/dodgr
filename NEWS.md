@@ -1,6 +1,10 @@
 
 # v 0.2.16.00X (dev)
 
+## Minor changes:
+
+- Fix weighting networks for motorcars to adhere to OSM "maxspeed" values where those are given, rather than profile values (#193)
+
 # v 0.2.16
 
 ## Major changes:
