@@ -181,56 +181,72 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     maxspeed [index] <- maxspeed_numeric
 
     graph$maxspeed <- maxspeed
-    # Those are the OSM values, which must then be combined with values
-    # determined from the specified profile. The lowest value is ultimately
-    # chosen.
-    wp <- get_profile (wt_profile, wt_profile_file)
+    # Those are the OSM values. Edges which do not specify maxspeed values are
+    # then allocated the values defined by the specified profile, except for
+    # "motorcar" profiles, which replace maxspeeds with median values for each
+    # way type.
+    if (wt_profile == "motorcar") {
 
-    wp_index <- match (graph$highway, wp$way)
-    graph_index <- which (!is.na (wp_index))
-    wp_index <- wp_index [graph_index]
-    maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
-    maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i) {
-        ifelse (all (is.na (i)),
-            NA_real_,
-            min (i, na.rm = TRUE)
+        med_speeds <- vapply (
+            unique (graph$highway), function (h) {
+                median (graph$maxspeed [graph$highway == h], na.rm = TRUE)
+            },
+            numeric (1L)
         )
-    })
+        wp_index <- match (graph$highway, names (med_speeds))
+        index <- which (is.na (graph$maxspeed))
+        graph$maxspeed [index] <- med_speeds [wp_index [index]]
 
-    na_highways <- wp$way [which (is.na (wp$max_speed))]
-    graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
-    # Also set weighted distance for all these to NA:
-    # gr_cols <- dodgr_graph_cols (graph)
-    # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+    } else {
 
-    if (wt_profile %in% c ("horse", "wheelchair") ||
-        !"surface" %in% names (graph)) {
-        return (graph)
+        wp <- get_profile (wt_profile, wt_profile_file)
+
+        wp_index <- match (graph$highway, wp$way)
+        graph_index <- which (!is.na (wp_index))
+        wp_index <- wp_index [graph_index]
+        maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
+        maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
+        graph$maxspeed <- apply (maxspeed, 1, function (i) {
+            ifelse (all (is.na (i)),
+                NA_real_,
+                min (i, na.rm = TRUE)
+            )
+        })
+
+        na_highways <- wp$way [which (is.na (wp$max_speed))]
+        graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
+        # Also set weighted distance for all these to NA:
+        # gr_cols <- dodgr_graph_cols (graph)
+        # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+
+        if (wt_profile %in% c ("horse", "wheelchair") ||
+            !"surface" %in% names (graph)) {
+            return (graph)
+        }
+
+        # And then repeat for max speeds according to surface profiles
+        s <- get_surface_speeds (wt_profile, wt_profile_file)
+        s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
+        surf_vals <- unique (graph$surface [graph$surface != "NA"])
+        surf_speeds <- s$max_speed [match (surf_vals, s$value)]
+        surf_vals <- surf_vals [!is.na (surf_speeds)]
+        surf_speeds <- surf_speeds [!is.na (surf_speeds)]
+
+        surf_index <- match (graph$surface, surf_vals)
+        graph_index <- which (!is.na (surf_index))
+        surf_index <- surf_index [graph_index]
+        maxspeed <- cbind (
+            as.numeric (graph$maxspeed),
+            rep (NA_real_, nrow (graph))
+        )
+        maxspeed [graph_index, 2] <- surf_speeds [surf_index]
+        graph$maxspeed <- apply (maxspeed, 1, function (i) {
+            ifelse (all (is.na (i)),
+                NA_real_,
+                min (i, na.rm = TRUE)
+            )
+        })
     }
-
-    # And then repeat for max speeds according to surface profiles
-    s <- get_surface_speeds (wt_profile, wt_profile_file)
-    s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
-    surf_vals <- unique (graph$surface [graph$surface != "NA"])
-    surf_speeds <- s$max_speed [match (surf_vals, s$value)]
-    surf_vals <- surf_vals [!is.na (surf_speeds)]
-    surf_speeds <- surf_speeds [!is.na (surf_speeds)]
-
-    surf_index <- match (graph$surface, surf_vals)
-    graph_index <- which (!is.na (surf_index))
-    surf_index <- surf_index [graph_index]
-    maxspeed <- cbind (
-        as.numeric (graph$maxspeed),
-        rep (NA_real_, nrow (graph))
-    )
-    maxspeed [graph_index, 2] <- surf_speeds [surf_index]
-    graph$maxspeed <- apply (maxspeed, 1, function (i) {
-        ifelse (all (is.na (i)),
-            NA_real_,
-            min (i, na.rm = TRUE)
-        )
-    })
 
     graph$surface <- NULL
 
