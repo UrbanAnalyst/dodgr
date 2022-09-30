@@ -197,34 +197,42 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
         index <- which (is.na (graph$maxspeed))
         graph$maxspeed [index] <- med_speeds [wp_index [index]]
 
+    }
+
+    # Then fill any NA maxspeed values from weight profile
+    wp <- get_profile (wt_profile, wt_profile_file)
+
+    wp_index <- match (graph$highway, wp$way)
+    graph_index <- which (!is.na (wp_index))
+    wp_index <- wp_index [graph_index]
+    maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
+    maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
+    if (wt_profile == "motorcar") {
+        index <- which (is.na (maxspeed [, 1]))
+        graph$maxspeed [index] <- maxspeed [, 2]
     } else {
-
-        wp <- get_profile (wt_profile, wt_profile_file)
-
-        wp_index <- match (graph$highway, wp$way)
-        graph_index <- which (!is.na (wp_index))
-        wp_index <- wp_index [graph_index]
-        maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
-        maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
+        # choose minimal maxspeed value
         graph$maxspeed <- apply (maxspeed, 1, function (i) {
             ifelse (all (is.na (i)),
                 NA_real_,
                 min (i, na.rm = TRUE)
             )
         })
+    }
 
-        na_highways <- wp$way [which (is.na (wp$max_speed))]
-        graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
-        # Also set weighted distance for all these to NA:
-        # gr_cols <- dodgr_graph_cols (graph)
-        # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+    na_highways <- wp$way [which (is.na (wp$max_speed))]
+    graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
+    # Also set weighted distance for all these to NA:
+    # gr_cols <- dodgr_graph_cols (graph)
+    # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
 
-        if (wt_profile %in% c ("horse", "wheelchair") ||
-            !"surface" %in% names (graph)) {
-            return (graph)
-        }
+    if (wt_profile %in% c ("horse", "wheelchair") ||
+        !"surface" %in% names (graph)) {
+        return (graph)
+    }
 
-        # And then repeat for max speeds according to surface profiles
+    # And then repeat for max speeds according to surface profiles
+    if (wt_profile != "motorcar") {
         s <- get_surface_speeds (wt_profile, wt_profile_file)
         s <- s [s$name == wt_profile, c ("key", "value", "max_speed")]
         surf_vals <- unique (graph$surface [graph$surface != "NA"])
