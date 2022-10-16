@@ -617,8 +617,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
             attr (graph, "left_side") <- left_side
 
             restrictions <- extract_turn_restictions (x)
-            attr (graph, "rw_no") <- restrictions$rw_no
-            attr (graph, "rw_only") <- restrictions$rw_only
+            attr (graph, "turn_restrictions_no") <- restrictions$rw_no
+            attr (graph, "turn_restrictions_only") <- restrictions$rw_only
         }
 
         gr_cols <- dodgr_graph_cols (graph)
