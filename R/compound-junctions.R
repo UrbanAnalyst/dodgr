@@ -35,7 +35,11 @@ get_turn_penalty <- function (graph) {
 join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
                                      left_side = FALSE) {
 
-    turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
+    turn_penalty <- attr (graph, "turn_penalty")
+    if (is.null (turn_penalty) & !is.null (wt_profile_file)) {
+        turn_penalty <- get_turn_penalties (wt_profile, wt_profile_file)$turn
+    }
+
     resbind <- edge_map <- NULL
 
     if (turn_penalty > 0) {
