@@ -96,6 +96,7 @@ following options:
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
 remotes::install_git ("https://git.sr.ht/~mpadge/dodgr")
+remotes::install_git ("https://codeberg.org/ATFutures/dodgr")
 remotes::install_bitbucket ("atfutures/dodgr")
 remotes::install_gitlab ("atfutures1/dodgr")
 remotes::install_github ("ATFutures/dodgr")
