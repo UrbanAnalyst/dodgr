@@ -136,8 +136,8 @@ dodgr_dists <- function (graph,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    from_index <- get_to_from_index (graph, vert_map, gr_cols, from)
-    to_index <- get_to_from_index (graph, vert_map, gr_cols, to)
+    from_index <- get_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
+    to_index <- get_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
     if (get_turn_penalty (graph) > 0.0) {
         if (methods::is (graph, "dodgr_contracted")) {
@@ -279,7 +279,8 @@ get_index_id_cols <- function (graph,
 get_to_from_index <- function (graph,
                                vert_map,
                                gr_cols,
-                               pts) {
+                               pts,
+                               from = TRUE) {
 
     id <- NULL
     if (is.null (pts)) {
@@ -294,6 +295,16 @@ get_to_from_index <- function (graph,
         }
         index <- index_id$index - 1L # 0-based
         id <- index_id$id
+    }
+
+    if (!is.null (id)) {
+        if (from) {
+            i <- which (id %in% graph [[gr_cols$from]])
+        } else {
+            i <- which (id %in% graph [[gr_cols$to]])
+        }
+        index <- index [i]
+        id <- id [i]
     }
     list (index = index, id = id)
 }

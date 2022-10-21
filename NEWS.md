@@ -3,6 +3,7 @@
 
 ## Minor changes:
 
+- Fix bug in distances when from or to default to all vertices
 - Fix weighting networks for motorcars to adhere to OSM "maxspeed" values where those are given, rather than profile values (#193)
 
 # v 0.2.16
