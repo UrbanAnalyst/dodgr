@@ -298,11 +298,14 @@ get_to_from_index <- function (graph,
     }
 
     if (!is.null (id)) {
-        if (from) {
-            i <- which (id %in% graph [[gr_cols$from]])
-        } else {
-            i <- which (id %in% graph [[gr_cols$to]])
+
+        tflab <- ifelse (from, "from", "to")
+
+        i <- which (id %in% graph [[gr_cols [[tflab]]]])
+        if (length (i) == 0) {
+            i <- which (vert_map$vert [index] %in% graph [[gr_cols [[tflab]]]])
         }
+
         index <- index [i]
         id <- id [i]
     }
