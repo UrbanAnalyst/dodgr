@@ -91,13 +91,13 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
     if ("oneway" %in% names (graph) ||
         (length (bikeflags) == 1 && wt_profile == "bicycle")) {
 
-        graph <- set_oneway_bike_flags (graph, bikeflags)
+        graph <- set_oneway_bike_flags (graph, bikeflags, wt_profile)
     }
 
     return (graph)
 }
 
-set_oneway_bike_flags <- function (graph, bikeflags) {
+set_oneway_bike_flags <- function (graph, bikeflags, wt_profile) {
 
     index <- which (!graph$oneway %in% c ("no", "yes"))
     if (length (index) > 0) {
