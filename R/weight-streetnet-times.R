@@ -189,7 +189,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
 
         med_speeds <- vapply (
             unique (graph$highway), function (h) {
-                median (graph$maxspeed [graph$highway == h], na.rm = TRUE)
+                stats::median (graph$maxspeed [graph$highway == h], na.rm = TRUE)
             },
             numeric (1L)
         )
