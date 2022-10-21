@@ -59,9 +59,9 @@ combination of names will be accepted (for example, \verb{fromx, fromy},
 \code{from} and \code{to} values can be either two-column matrices or
 equivalent of longitude and latitude coordinates, or else single columns
 precisely matching node numbers or names given in \code{graph$from} or
-\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated
-between all points specified in \code{from}. If both \code{from} and \code{to} are \code{NULL},
-pairwise distances are calculated between all nodes in \code{graph}.
+\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated from all
+\code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
+\code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.
 
 Calculations in parallel (\code{parallel = TRUE}) ought very generally be
 advantageous. For small graphs, calculating distances in parallel is likely

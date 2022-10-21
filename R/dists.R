@@ -49,9 +49,9 @@
 #' `from` and `to` values can be either two-column matrices or
 #' equivalent of longitude and latitude coordinates, or else single columns
 #' precisely matching node numbers or names given in `graph$from` or
-#' `graph$to`. If `to` is `NULL`, pairwise distances are calculated
-#' between all points specified in `from`. If both `from` and `to` are `NULL`,
-#' pairwise distances are calculated between all nodes in `graph`.
+#' `graph$to`. If `to` is `NULL`, pairwise distances are calculated from all
+#' `from` points to all other nodes in `graph`. If both `from` and `to` are
+#' `NULL`, pairwise distances are calculated between all nodes in `graph`.
 #'
 #' Calculations in parallel (`parallel = TRUE`) ought very generally be
 #' advantageous. For small graphs, calculating distances in parallel is likely
