@@ -86,32 +86,42 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
     if (!is.character (wt_profile)) {
         wt_profile <- unique (wt_profile$name)
     }
-    b <- grep ("oneway.*bicycle|bicycle.*oneway", names (graph))
+
+    bikeflags <- grep ("oneway.*bicycle|bicycle.*oneway", names (graph))
     if ("oneway" %in% names (graph) ||
-        (length (b) == 1 && wt_profile == "bicycle")) {
-        index <- which (!graph$oneway %in% c ("no", "yes"))
+        (length (bikeflags) == 1 && wt_profile == "bicycle")) {
+
+        graph <- set_oneway_bike_flags (graph, bikeflags)
+    }
+
+    return (graph)
+}
+
+set_oneway_bike_flags <- function (graph, bikeflags) {
+
+    index <- which (!graph$oneway %in% c ("no", "yes"))
+    if (length (index) > 0) {
+        graph$oneway [index] <- "no"
+    }
+    graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
+
+    if (length (bikeflags) == 1) {
+        # oneway:bicycle doesn't enquote properly, so:
+        names (graph) [bikeflags] <- "oneway_bicycle"
+
+        index <- which (!graph$oneway_bicycle %in% c ("no", "yes"))
         if (length (index) > 0) {
-            graph$oneway [index] <- "no"
+            graph$oneway_bicycle [index] <- "no"
         }
-        graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
+        graph$oneway_bicycle <-
+            ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
 
-        if (length (b) == 1) {
-            # oneway:bicycle doesn't enquote properly, so:
-            names (graph) [b] <- "oneway_bicycle"
-
-            index <- which (!graph$oneway_bicycle %in% c ("no", "yes"))
-            if (length (index) > 0) {
-                graph$oneway_bicycle [index] <- "no"
-            }
-            graph$oneway_bicycle <-
-                ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
-
-            if (wt_profile == "bicycle") {
-                graph$oneway <- graph$oneway_bicycle
-                graph$oneway_bicycle <- NULL
-            }
+        if (wt_profile == "bicycle") {
+            graph$oneway <- graph$oneway_bicycle
+            graph$oneway_bicycle <- NULL
         }
     }
+
     return (graph)
 }
 
@@ -162,7 +172,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     ))
     maxspeed [index] <- maxspeed [index] * 1.609344
 
-    index <- seq (nrow (graph)) [!(seq (nrow (graph)) %in% index)]
+    index <- seq_len (nrow (graph)) [!(seq_len (nrow (graph)) %in% index)]
     maxspeed_char <- graph$maxspeed [index] # character string
     # some maxspeeds have two values, where the 1st is generally the "default"
     # value. This gsub extracts those only:
@@ -189,7 +199,9 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
 
         med_speeds <- vapply (
             unique (graph$highway), function (h) {
-                stats::median (graph$maxspeed [graph$highway == h], na.rm = TRUE)
+                stats::median (graph$maxspeed [graph$highway == h],
+                    na.rm = TRUE
+                )
             },
             numeric (1L)
         )
@@ -393,7 +405,7 @@ rm_duplicated_edges <- function (graph) {
             i [2]
         )
     })
-    graph [!seq (nrow (graph)) %in% removes, ]
+    graph [!seq_len (nrow (graph)) %in% removes, ]
 }
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated
@@ -405,7 +417,7 @@ sc_duplicate_edges <- function (x, wt_profile) {
         "hgv", "psv"
     )
 
-    index <- seq (nrow (x))
+    index <- seq_len (nrow (x))
     if (wt_profile %in% oneway_modes) {
         x$oneway [x$junction == "roundabout"] <- TRUE # #175
         index <- which (!x$oneway)
