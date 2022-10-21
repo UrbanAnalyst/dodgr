@@ -601,6 +601,7 @@ calculate_distmat <- function (graph,
 #' in 'vert_map'.
 #'
 #' @param index Either 'from_index' or 'to_index' calculated
+#' @noRd
 remap_tf_index_for_tp <- function (index, vert_map, from = TRUE) {
 
     vert_index <- match (index$id, vert_map$vert)
