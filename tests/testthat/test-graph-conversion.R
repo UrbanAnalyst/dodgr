@@ -17,10 +17,7 @@ test_that ("igraph", {
     )
 
     graph$from_id <- graph$to_id <- NULL
-    expect_error (
-        graph_i <- dodgr_to_igraph (graph),
-        "Some vertex names in edge list are not listed in vertex data frame"
-    )
+    expect_silent (graph_i <- dodgr_to_igraph (graph))
 })
 
 test_that ("tidyraph", {
