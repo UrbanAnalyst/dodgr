@@ -188,6 +188,9 @@ dodgr_flows_aggregate <- function (graph,
     g <- prepare_graph (graph, from, to)
     if (!is.matrix (flows)) {
         flows <- matrix (flows, nrow = length (g$from_index))
+    } else if (!(nrow (flows) == length (g$from_index) &&
+        ncol (flows) == length (g$to_index))) {
+        stop ("flows matrix not compatible with 'from'/'to' arguments")
     }
 
     if (!quiet) {
