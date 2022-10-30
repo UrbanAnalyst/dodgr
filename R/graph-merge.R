@@ -64,7 +64,8 @@ merge_directed_graph <- function (graph, col_names = c ("flow")) {
     } # nolint
     class (graph) <- c (class (graph), "dodgr_merged")
 
-    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+    attr (graph, "hash") <-
+        digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
 
     return (graph)
 }

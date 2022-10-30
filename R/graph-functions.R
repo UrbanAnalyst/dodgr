@@ -229,7 +229,7 @@ dodgr_vertices <- function (graph) {
         if (is.na (gr_cols$edge_id)) {
             hash <- "" # nocov
         } else {
-            hash <- digest::digest (graph [[gr_cols$edge_id]])
+            hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
         }
     }
 
@@ -384,7 +384,8 @@ dodgr_sample <- function (graph, nverts = 1000) {
         graph <- graph [sort (indx), ]
     }
 
-    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+    attr (graph, "hash") <-
+        digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
 
     return (graph)
 }
@@ -448,7 +449,8 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
             graph [index21 + 1, gr_cols$from] <- randid (charvec, 10)
     }
 
-    attr (graph, "hash") <- digest::digest (graph [[gr_cols$edge_id]])
+    attr (graph, "hash") <-
+        digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
 
     return (graph)
 }
