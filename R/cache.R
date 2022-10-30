@@ -4,13 +4,13 @@ get_hash <- function (graph, verts = NULL, hash = TRUE) {
         hash <- attr (graph, "hash")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
-            hash <- digest::digest (graph [[gr_cols$edge_id]])
+            hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
         }
     } else {
         hash <- attr (graph, "hashc")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
-            hash <- digest::digest (list (graph [[gr_cols$edge_id]], verts))
+            hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph), verts))
         }
     }
     return (hash)
