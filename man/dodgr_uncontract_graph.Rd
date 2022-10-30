@@ -21,11 +21,11 @@ on to the original graph, as demonstrated in the example.
 }
 \examples{
 graph0 <- weight_streetnet (hampi)
-nrow (graph0) # 5,845
+nrow (graph0) # 6,813
 graph1 <- dodgr_contract_graph (graph0)
-nrow (graph1) # 686
+nrow (graph1) # 760
 graph2 <- dodgr_uncontract_graph (graph1)
-nrow (graph2) # 5,845
+nrow (graph2) # 6,813
 
 # Insert new data on to the contracted graph and uncontract it:
 graph1$new_col <- runif (nrow (graph1))
