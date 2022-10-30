@@ -10,6 +10,7 @@ if (!test_all) {
 }
 
 test_that ("save and load", {
+    clear_dodgr_cache ()
     net0 <- weight_streetnet (hampi)
     f <- file.path (tempdir (), "junk")
     expect_silent (
