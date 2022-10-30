@@ -248,7 +248,8 @@ dodgr_uncontract_graph <- function (graph) {
         ))
     } # nocov
 
-    graph_edges <- graph [[gr_cols$edge_id]] # used below if rows have been removed
+    # used below if rows have been removed
+    graph_edges <- graph [[gr_cols$edge_id]]
 
     graph_full <- readRDS (fname)
     attr (graph_full, "px") <- px
@@ -259,7 +260,8 @@ dodgr_uncontract_graph <- function (graph) {
     # graph:
     if (!identical (hashe, hashe_ref)) {
         index <- which (edge_map$edge_new %in% graph_edges)
-        index_in <- which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
+        index_in <-
+            which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
         graph <- graph [index_in, ]
         attr (graph, "hash") <- NULL
         attr (graph, "hash") <- get_hash (graph, hash = TRUE)
