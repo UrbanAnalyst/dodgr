@@ -328,19 +328,17 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the
-[`allcontributors`
-package](https://github.com/ropenscilabs/allcontributors) following the
-[all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -385,11 +383,14 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
+
 </table>
+
 
 ### Issue Authors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -434,6 +435,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
@@ -446,12 +449,6 @@ Contributions of any kind are welcome!
 <img src="https://avatars.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amkvasnicka">mkvasnicka</a>
-</td>
-<td align="center">
-<a href="https://github.com/Maschette">
-<img src="https://avatars.githubusercontent.com/u/14663215?u=93694159d02e924e6413bd067d7746f1d16d64c1&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AMaschette">Maschette</a>
 </td>
 <td align="center">
 <a href="https://github.com/orlando-sabogal">
@@ -477,14 +474,16 @@ Contributions of any kind are welcome!
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adarinchristensen">darinchristensen</a>
 </td>
-</tr>
-<tr>
 <td align="center">
 <a href="https://github.com/romainFr">
 <img src="https://avatars.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/dcooley">
 <img src="https://avatars.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&v=4" width="100px;" alt=""/>
@@ -521,14 +520,16 @@ Contributions of any kind are welcome!
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo">FlxPo</a>
 </td>
-</tr>
-<tr>
 <td align="center">
 <a href="https://github.com/LeshunXu">
 <img src="https://avatars.githubusercontent.com/u/48538622?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3ALeshunXu">LeshunXu</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/deanmarchiori">
 <img src="https://avatars.githubusercontent.com/u/9559770?u=5abd6534fd7f1cf94a54f894cdb12e017db1a9af&v=4" width="100px;" alt=""/>
@@ -547,12 +548,21 @@ Contributions of any kind are welcome!
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen">Urban-JonathanCohen</a>
 </td>
+<td align="center">
+<a href="https://github.com/sriramab">
+<img src="https://avatars.githubusercontent.com/u/12668606?u=491fa9e3858bf66cae79d0cfa19a7e78145be4ae&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asriramab">sriramab</a>
+</td>
 </tr>
+
 </table>
+
 
 ### Issue Contributors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -562,7 +572,7 @@ Contributions of any kind are welcome!
 </td>
 <td align="center">
 <a href="https://github.com/coatless">
-<img src="https://avatars.githubusercontent.com/u/833642?u=4f003526aa302417ef486034c4a7f95267d49637&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/833642?u=d7a2ccb381bd1517d2d51778670ef227cbd8d3aa&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Acoatless">coatless</a>
 </td>
@@ -585,7 +595,9 @@ Contributions of any kind are welcome!
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton">MartinLHazelton</a>
 </td>
 </tr>
+
 </table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
