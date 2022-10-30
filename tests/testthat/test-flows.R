@@ -67,10 +67,11 @@ test_that ("flow points", {
     graph <- weight_streetnet (hampi)
     v <- dodgr_vertices (graph)
     set.seed (1)
-    from <- v [sample (nrow (v), size = 10), c ("x", "y")]
-    to <- v [sample (nrow (v), size = 10), c ("x", "y")]
-    flows <- matrix (10 * runif (length (from) * length (to)),
-        nrow = length (from)
+    npts <- 10L
+    from <- v [sample (nrow (v), size = npts), c ("x", "y")]
+    to <- v [sample (nrow (v), size = npts), c ("x", "y")]
+    flows <- matrix (10 * runif (nrow (from) * nrow (to)),
+        nrow = nrow (from)
     )
 
     expect_silent (graph2 <- dodgr_flows_aggregate (graph,
@@ -79,6 +80,18 @@ test_that ("flow points", {
     ))
     expect_true ("flow" %in% names (graph2))
     expect_true (ncol (graph2) == (ncol (graph) + 1))
+
+    npts_half <- floor (npts / 2)
+    flows <- flows [seq_len (npts_half), seq_len (npts_half)]
+    expect_error (
+        graph3 <- dodgr_flows_aggregate (
+            graph,
+            from = from,
+            to = to,
+            flows = flows
+        ),
+        "flows matrix is not compatible with 'from'/'to' arguments"
+    )
 })
 
 test_that ("flows disperse", {
