@@ -244,7 +244,7 @@ dodgr_full_cycles <- function (graph,
     v <- dodgr_vertices (graphc)
 
     # edge_map <- get_edge_map (graphc) # TODO: Implement this
-    hashc <- get_hash (graphc, hash = FALSE)
+    hashc <- get_hash (graphc, contracted = TRUE)
     fname_c <- fs::path (
         fs::path_temp (),
         paste0 ("dodgr_edge_map_", hashc, ".Rds")

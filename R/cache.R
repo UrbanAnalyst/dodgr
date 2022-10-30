@@ -1,6 +1,6 @@
-get_hash <- function (graph, verts = NULL, hash = TRUE) {
+get_hash <- function (graph, verts = NULL, contracted = FALSE) {
 
-    if (hash) {
+    if (!contracted) {
         hash <- attr (graph, "hash")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
@@ -18,7 +18,7 @@ get_hash <- function (graph, verts = NULL, hash = TRUE) {
 
 get_edge_map <- function (graph) {
 
-    hashc <- get_hash (graph, hash = FALSE)
+    hashc <- get_hash (graph, contracted = TRUE)
     if (is.null (hashc)) {
         stop ("something went wrong extracting the edge map")
     } # nocov

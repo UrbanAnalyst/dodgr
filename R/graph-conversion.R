@@ -30,7 +30,7 @@ dodgr_to_sf <- function (graph) {
 
     graph <- tbl_to_df (graph)
     attr (graph, "hash") <- NULL
-    attr (graph, "hash") <- get_hash (graph, hash = TRUE)
+    attr (graph, "hash") <- get_hash (graph, contracted = FALSE)
 
     requireNamespace ("sf")
     res <- dodgr_to_sfc (graph)

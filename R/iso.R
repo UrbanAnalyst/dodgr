@@ -129,7 +129,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     if (contract && !methods::is (graph, "dodgr_contracted")) {
         graph_full <- graph
         graph <- dodgr_contract_graph (graph, verts = from_index$id)
-        hashc <- get_hash (graph, hash = FALSE)
+        hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
             paste0 ("dodgr_edge_map_", hashc, ".Rds")

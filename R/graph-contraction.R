@@ -49,8 +49,8 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
     }
 
     attr (graph, "hash") <- attr (graph, "hashc") <- NULL
-    hash <- get_hash (graph, hash = TRUE)
-    hashc <- get_hash (graph, verts = verts, hash = FALSE)
+    hash <- get_hash (graph, contracted = FALSE)
+    hashc <- get_hash (graph, verts = verts, contracted = TRUE)
     fname_c <- fs::path (
         fs::path_temp (),
         paste0 ("dodgr_graphc_", hashc, ".Rds")
@@ -264,7 +264,7 @@ dodgr_uncontract_graph <- function (graph) {
             which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
         graph <- graph [index_in, ]
         attr (graph, "hash") <- NULL
-        attr (graph, "hash") <- get_hash (graph, hash = TRUE)
+        attr (graph, "hash") <- get_hash (graph, contracted = FALSE)
     }
 
     return (graph)

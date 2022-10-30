@@ -174,7 +174,7 @@ dodgr_flows_aggregate <- function (graph,
     if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
-        hashc <- get_hash (graph, hash = FALSE)
+        hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
             paste0 ("dodgr_edge_map_", hashc, ".Rds")
@@ -298,7 +298,7 @@ dodgr_flows_disperse <- function (graph,
     if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from)
-        hashc <- get_hash (graph, hash = FALSE)
+        hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
             paste0 ("dodgr_edge_map_", hashc, ".Rds")
@@ -466,7 +466,7 @@ dodgr_flows_si <- function (graph,
     if (contract) {
         graph_full <- graph
         graph <- contract_graph_with_pts (graph, from, to)
-        hashc <- get_hash (graph, hash = FALSE)
+        hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
             paste0 ("dodgr_edge_map_", hashc, ".Rds")
