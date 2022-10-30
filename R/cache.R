@@ -1,21 +1,13 @@
-#' UP TO HERE
-
-get_hash <- function (graph, verts = NULL, hash = TRUE, force = TRUE) {
-
-    hash <- NULL
+get_hash <- function (graph, verts = NULL, hash = TRUE) {
 
     if (hash) {
-        if (!force) {
-            hash <- attr (graph, "hash")
-        }
+        hash <- attr (graph, "hash")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
         }
     } else {
-        if (!force) {
-            hash <- attr (graph, "hashc")
-        }
+        hash <- attr (graph, "hashc")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph), verts))
