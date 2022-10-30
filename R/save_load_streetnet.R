@@ -61,7 +61,7 @@ dodgr_save_streetnet <- function (net, filename = NULL) {
     # the full graph plus default NULL vertices:
     gr_cols <- dodgr_graph_cols (net)
     edge_col <- gr_cols$edge_id
-    hashc <- digest::digest (list (net [[gr_cols$edge_id]], names (net), NULL))
+    hashc <- get_hash (net, contracted = TRUE, verts = NULL, force = TRUE)
 
     fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
     if (fs::file_exists (fname_c)) {

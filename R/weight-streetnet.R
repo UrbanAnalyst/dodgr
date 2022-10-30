@@ -293,7 +293,7 @@ weight_streetnet.sf <- function (x,
     class (graph) <- c (class (graph), "dodgr_streetnet")
     attr (graph, "turn_penalty") <- FALSE
 
-    hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
+    hash <- get_hash (graph, contracted = FALSE, force = TRUE)
     attr (graph, "hash") <- hash
     if (is_dodgr_cache_on ()) {
         attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
@@ -631,8 +631,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
             "dodgr_streetnet_sc"
         )
 
-        hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
-        attr (graph, "hash") <- hash
+        attr (graph, "hash") <-
+            get_hash (graph, contracted = FALSE, force = TRUE)
 
         if (is_dodgr_cache_on ()) {
             attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)

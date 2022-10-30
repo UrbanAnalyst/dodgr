@@ -1,13 +1,16 @@
-get_hash <- function (graph, verts = NULL, contracted = FALSE) {
+get_hash <- function (graph, verts = NULL, contracted = FALSE, force = FALSE) {
+
+    hash <- NULL
+    if (!force) {
+        hash <- attr (graph, ifelse (contracted, "hashc", "hash"))
+    }
 
     if (!contracted) {
-        hash <- attr (graph, "hash")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
         }
     } else {
-        hash <- attr (graph, "hashc")
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
             hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph), verts))
