@@ -3,6 +3,7 @@
 
 ## Minor changes:
 
+- Fix bug in graph contraction which prevented in picking up additional data columns (#194; thanks to @sriramab)
 - Fix bug in caching mechanism which stopped graph conversion routines (like `dodgr_to_sf`) from carrying across extra columns (#194; thanks to @sriramab)
 - Fix bug in distances when from or to default to all vertices
 - Fix weighting networks for motorcars to adhere to OSM "maxspeed" values where those are given, rather than profile values (#193)
