@@ -205,7 +205,7 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
 #' original edges. The "edge_map" component of `graph_contracted` is also
 #' modified to remove the corresponding items.
 #' @noRd
-rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
+rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) { # nolint
 
     gr_cols_index <- unlist (gr_cols)
     gr_cols_index <- gr_cols_index [-which (names (gr_cols_index) == "edge_id")]
@@ -218,7 +218,9 @@ rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
         return (graph_contracted)
     }
 
-    graph_extra <- graph_extra [which (graph_extra$edge_id %in% graph_contracted$edge_map$edge_old), ]
+    graph_extra <- graph_extra [
+        which (graph_extra$edge_id %in% graph_contracted$edge_map$edge_old),
+    ]
     index <- match (graph_extra$edge_id, graph_contracted$edge_map$edge_old)
     graph_extra$edge_new <- graph_contracted$edge_map$edge_new [index]
 
@@ -315,7 +317,8 @@ dodgr_uncontract_graph <- function (graph) {
         index_in <-
             which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
         graph <- graph [index_in, ]
-        attr (graph, "hash") <- get_hash (graph, contracted = FALSE, force = TRUE)
+        attr (graph, "hash") <-
+            get_hash (graph, contracted = FALSE, force = TRUE)
     }
 
     return (graph)
