@@ -48,9 +48,8 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
         verts <- verts [which (verts %in% v$id)]
     }
 
-    attr (graph, "hash") <- attr (graph, "hashc") <- NULL
-    hash <- get_hash (graph, contracted = FALSE)
-    hashc <- get_hash (graph, verts = verts, contracted = TRUE)
+    hash <- get_hash (graph, contracted = FALSE, force = TRUE)
+    hashc <- get_hash (graph, verts = verts, contracted = TRUE, force = TRUE)
     fname_c <- fs::path (
         fs::path_temp (),
         paste0 ("dodgr_graphc_", hashc, ".Rds")
