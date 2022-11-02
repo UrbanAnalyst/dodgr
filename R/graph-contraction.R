@@ -114,6 +114,9 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     graph2 <- convert_graph (graph, gr_cols)
     graph_contracted <- rcpp_contract_graph (graph2, verts)
 
+    graph_contracted <-
+        rm_edges_with_heterogenous_data (graph, graph_contracted, gr_cols)
+
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:
@@ -192,6 +195,56 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
         edge_map = graph_contracted$edge_map,
         junctions = junctions
     ))
+}
+
+#' Graph contraction must ignore any compound edges along which any additional
+#' data columns change (see #194).
+#'
+#' @return A modified version of `graph_contracted`, removing any formerly
+#' contracted edges which should not be, and expanding them back out to their
+#' original edges. The "edge_map" component of `graph_contracted` is also
+#' modified to remove the corresponding items.
+#' @noRd
+rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
+
+    gr_cols_index <- unlist (gr_cols)
+    gr_cols_index <- gr_cols_index [-which (names (gr_cols_index) == "edge_id")]
+    rm_these <- c ("geom_num", "highway", "way_id")
+    rm_these <- rm_these [which (rm_these %in% names (graph))]
+    gr_cols_index <- sort (c (gr_cols_index, match (rm_these, names (graph))))
+    graph_extra <- graph [, -gr_cols_index, drop = FALSE]
+    data_index <- which (!names (graph_extra) %in% c ("edge_id", "edge_new"))
+    if (length (data_index) == 0L) {
+        return (graph_contracted)
+    }
+
+    graph_extra <- graph_extra [which (graph_extra$edge_id %in% graph_contracted$edge_map$edge_old), ]
+    index <- match (graph_extra$edge_id, graph_contracted$edge_map$edge_old)
+    graph_extra$edge_new <- graph_contracted$edge_map$edge_new [index]
+
+    graph_extra <- split (graph_extra, f = factor (graph_extra$edge_new))
+    graph_extra <- lapply (graph_extra, function (i) {
+        unique (i [, data_index, drop = FALSE])
+    })
+    lens <- vapply (graph_extra, nrow, integer (1L))
+    index_heterog <- names (lens) [which (lens > 1L)]
+
+    edge_map_heterog <- graph_contracted$edge_map [
+        graph_contracted$edge_map$edge_new %in% index_heterog,
+    ]
+    index_out <- match (index_heterog, graph_contracted$graph$edge_id)
+    index_in <- match (edge_map_heterog$edge_old, graph [, gr_cols$edge_id])
+    graph2 <- convert_graph (graph, gr_cols)
+    names (graph2) <- names (graph_contracted$graph)
+    graph_contracted$graph <- rbind (
+        graph_contracted$graph [-index_out, , drop = FALSE],
+        graph2 [index_in, , drop = FALSE]
+    )
+    edge_map_index <-
+        match (edge_map_heterog$edge_old, graph_contracted$edge_map$edge_old)
+    graph_contracted$edge_map <- graph_contracted$edge_map [-edge_map_index, ]
+
+    return (graph_contracted)
 }
 
 #' dodgr_uncontract_graph
