@@ -263,8 +263,7 @@ dodgr_uncontract_graph <- function (graph) {
         index_in <-
             which (graph [[gr_cols$edge_id]] %in% edge_map$edge_old [index])
         graph <- graph [index_in, ]
-        attr (graph, "hash") <- NULL
-        attr (graph, "hash") <- get_hash (graph, contracted = FALSE)
+        attr (graph, "hash") <- get_hash (graph, contracted = FALSE, force = TRUE)
     }
 
     return (graph)
