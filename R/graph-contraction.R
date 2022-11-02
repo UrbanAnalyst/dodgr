@@ -213,7 +213,8 @@ rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
     rm_these <- rm_these [which (rm_these %in% names (graph))]
     gr_cols_index <- sort (c (gr_cols_index, match (rm_these, names (graph))))
     graph_extra <- graph [, -gr_cols_index, drop = FALSE]
-    data_index <- which (!names (graph_extra) %in% c ("edge_id", "edge_new"))
+    data_index <- which (!names (graph_extra) %in%
+        c ("edge_id", "edge_new", "edge_", "object_"))
     if (length (data_index) == 0L) {
         return (graph_contracted)
     }
@@ -230,6 +231,9 @@ rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
     })
     lens <- vapply (graph_extra, nrow, integer (1L))
     index_heterog <- names (lens) [which (lens > 1L)]
+    if (length (index_heterog) == 0L) {
+        return (graph_contracted)
+    }
 
     edge_map_heterog <- graph_contracted$edge_map [
         graph_contracted$edge_map$edge_new %in% index_heterog,
