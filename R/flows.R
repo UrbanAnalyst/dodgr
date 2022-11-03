@@ -159,13 +159,8 @@ dodgr_flows_aggregate <- function (graph,
     if (!identical (class (from), class (to))) {
         stop ("from and to must be the same class of object.")
     }
+    graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
-        scols <- find_spatial_cols (graph)
-        graph$from_id <- scols$xy_id$xy_fr_id
-        graph$to_id <- scols$xy_id$xy_to_id
-        gr_cols <- dodgr_graph_cols (graph)
-    }
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
