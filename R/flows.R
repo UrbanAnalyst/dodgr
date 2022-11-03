@@ -149,21 +149,6 @@ dodgr_flows_aggregate <- function (graph,
         contract <- FALSE
     }
 
-    compound_junction_map <- NULL
-    has_turn_penalty <- get_turn_penalty (graph) > 0.0
-    if (has_turn_penalty) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
-    }
-
     if (any (is.na (flows))) {
         flows [is.na (flows)] <- 0
     }
@@ -188,7 +173,9 @@ dodgr_flows_aggregate <- function (graph,
         fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
     to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
-    if (get_turn_penalty (graph) > 0.0) {
+    compound_junction_map <- NULL
+    has_turn_penalty <- get_turn_penalty (graph) > 0.0
+    if (has_turn_penalty) {
         if (methods::is (graph, "dodgr_contracted")) {
             warning (
                 "graphs with turn penalties should be submitted in full, ",
@@ -196,7 +183,9 @@ dodgr_flows_aggregate <- function (graph,
                 "produce unexpected behaviour."
             )
         }
-        graph <- create_compound_junctions (graph)$graph
+        res <- create_compound_junctions (graph)
+        graph <- res$graph
+        compound_junction_map <- res$edge_map
 
         # remap any 'from' and 'to' vertices to compound junction versions:
         vert_map <- make_vert_map (graph, gr_cols, is_spatial)
