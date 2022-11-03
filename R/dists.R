@@ -207,52 +207,6 @@ dodgr_distances <- function (graph,
     )
 }
 
-#' get_index_id_cols
-#'
-#' Get an index of `pts` matching `vert_map`, as well as the
-#' corresonding names of those `pts`
-#'
-#' @return list of `index`, which is 0-based for C++, and corresponding
-#' `id` values.
-#' @noRd
-get_index_id_cols <- function (graph,
-                               gr_cols,
-                               vert_map,
-                               pts) {
-
-    index <- -1
-    id <- NULL
-    if (!missing (pts)) {
-        if (is.integer (pts) && is.vector (pts)) {
-            index <- pts
-        } else if (is.character (pts) ||
-            is.numeric (pts) ||
-            is.matrix (pts) ||
-            is.data.frame (pts)) {
-            index <- get_pts_index (graph, gr_cols, vert_map, pts)
-        } else {
-            stop (
-                "routing points are of unknown form; must be either ",
-                "character, matrix, or integer"
-            )
-        }
-
-        if (length (pts == 2) && is.numeric (pts) &&
-            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &&
-                any (grepl ("y", names (pts), ignore.case = TRUE))) ||
-                (any (grepl ("lon", names (pts), ignore.case = TRUE) &&
-                    (any (grepl ("lat", names (pts), ignore.case = TRUE))))))) {
-            names (pts) <- NULL
-        }
-
-        id <- get_id_cols (pts)
-        if (is.null (id)) {
-            id <- vert_map$vert [index]
-        } # index is 1-based
-    }
-    list (index = index, id = id)
-}
-
 #' Get lists of 'from' and 'to' indices, potentially mapped on to compound
 #' junctions for graphs with turn penalties.
 #'
@@ -324,6 +278,52 @@ fill_to_from_index <- function (graph,
 
         index <- index [i]
         id <- id [i]
+    }
+    list (index = index, id = id)
+}
+
+#' get_index_id_cols
+#'
+#' Get an index of `pts` matching `vert_map`, as well as the
+#' corresonding names of those `pts`
+#'
+#' @return list of `index`, which is 0-based for C++, and corresponding
+#' `id` values.
+#' @noRd
+get_index_id_cols <- function (graph,
+                               gr_cols,
+                               vert_map,
+                               pts) {
+
+    index <- -1
+    id <- NULL
+    if (!missing (pts)) {
+        if (is.integer (pts) && is.vector (pts)) {
+            index <- pts
+        } else if (is.character (pts) ||
+            is.numeric (pts) ||
+            is.matrix (pts) ||
+            is.data.frame (pts)) {
+            index <- get_pts_index (graph, gr_cols, vert_map, pts)
+        } else {
+            stop (
+                "routing points are of unknown form; must be either ",
+                "character, matrix, or integer"
+            )
+        }
+
+        if (length (pts == 2) && is.numeric (pts) &&
+            ((any (grepl ("x", names (pts), ignore.case = TRUE)) &&
+                any (grepl ("y", names (pts), ignore.case = TRUE))) ||
+                (any (grepl ("lon", names (pts), ignore.case = TRUE) &&
+                    (any (grepl ("lat", names (pts), ignore.case = TRUE))))))) {
+            names (pts) <- NULL
+        }
+
+        id <- get_id_cols (pts)
+        if (is.null (id)) {
+            id <- vert_map$vert [index]
+        } # index is 1-based
     }
     list (index = index, id = id)
 }
