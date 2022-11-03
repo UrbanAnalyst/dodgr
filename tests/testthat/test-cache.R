@@ -38,7 +38,7 @@ test_that ("cache on", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat,
+        flows = fmat,
         contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
@@ -57,7 +57,7 @@ test_that ("cache on", {
         graphtf <- dodgr_flows_aggregate (grapht_c,
             from = pts,
             to = pts,
-            flow = fmat,
+            flows = fmat,
             contract = FALSE
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
@@ -66,7 +66,7 @@ test_that ("cache on", {
         graphtf <- dodgr_flows_aggregate (grapht,
             from = pts,
             to = pts,
-            flow = fmat,
+            flows = fmat,
             contract = FALSE
         )
     )
@@ -112,7 +112,7 @@ test_that ("cache off", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat,
+        flows = fmat,
         contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
@@ -130,7 +130,7 @@ test_that ("cache off", {
             grapht_c,
             from = pts,
             to = pts,
-            flow = fmat,
+            flows = fmat,
             contract = FALSE
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
@@ -138,7 +138,7 @@ test_that ("cache off", {
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht,
         from = pts,
         to = pts,
-        flow = fmat,
+        flows = fmat,
         contract = FALSE
     ))
     expect_silent (graphtf <- merge_directed_graph (graphtf))
