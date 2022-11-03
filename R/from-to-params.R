@@ -35,7 +35,7 @@ to_from_index_with_tp <- function (graph, from, to) {
         }
         res <- create_compound_junctions (graph)
         graph_compound <- res$graph
-        compound_junction_map <- res$compound_junction_map
+        compound_junction_map <- res$edge_map
 
         # remap any 'from' and 'to' vertices to compound junction versions:
         vert_map <- make_vert_map (graph_compound, gr_cols, is_spatial)
