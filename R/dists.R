@@ -130,6 +130,9 @@ dodgr_dists <- function (graph,
     gr_cols <- dodgr_graph_cols (graph)
     is_spatial <- is_graph_spatial (graph)
     to_from_indices <- to_from_index_with_tp (graph, from, to)
+    if (to_from_indices$compound) {
+        graph <- to_from_indices$graph_compound
+    }
 
     if (!shortest) {
         if (is.na (gr_cols$time_weighted)) {
@@ -206,7 +209,8 @@ dodgr_distances <- function (graph,
 #' junctions for graphs with turn penalties.
 #'
 #' This function calls the following `fill_to_from_index` to generate the actual
-#' values.
+#' values. For graphs with turn penalties, it also returns the modified version
+#' of the graph including compound junctions.
 #' @noRd
 to_from_index_with_tp <- function (graph, from, to) {
 
@@ -218,7 +222,9 @@ to_from_index_with_tp <- function (graph, from, to) {
         fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
     to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
-    if (get_turn_penalty (graph) > 0.0) {
+    compound <- (get_turn_penalty (graph) > 0.0)
+    graph_compound <- NULL
+    if (compound) {
         if (methods::is (graph, "dodgr_contracted")) {
             warning (
                 "graphs with turn penalties should be submitted in full, ",
@@ -226,16 +232,19 @@ to_from_index_with_tp <- function (graph, from, to) {
                 "produce unexpected behaviour."
             )
         }
-        graph <- create_compound_junctions (graph)$graph
+        graph_compound <- create_compound_junctions (graph)$graph
 
         # remap any 'from' and 'to' vertices to compound junction versions:
-        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+        vert_map <- make_vert_map (graph_ret, gr_cols, is_spatial)
 
         from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
         to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
     }
 
-    return (list (from = from_index, to = to_index, vert_map = vert_map))
+    return (list (
+        from = from_index, to = to_index, vert_map = vert_map,
+        compound = compound, graph_compound = graph_compound
+    ))
 }
 
 #' fill_to_from_index
