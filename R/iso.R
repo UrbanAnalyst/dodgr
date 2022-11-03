@@ -94,15 +94,8 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
         from <- nodes_arg_to_pts (from, graph)
     }
 
+    graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
-        # nocov start - this is only tested on SC, so this never happens
-        scols <- find_spatial_cols (graph)
-        graph$from_id <- scols$xy_id$xy_fr_id
-        graph$to_id <- scols$xy_id$xy_to_id
-        gr_cols <- dodgr_graph_cols (graph)
-        # nocov end - TODO: Test this
-    }
     vert_map <- make_vert_map (graph, gr_cols, FALSE)
 
     from_index <- fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
