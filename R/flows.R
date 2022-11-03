@@ -159,6 +159,8 @@ dodgr_flows_aggregate <- function (graph,
     if (!identical (class (from), class (to))) {
         stop ("from and to must be the same class of object.")
     }
+    check_for_flow_col (graph)
+
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
     is_spatial <- is_graph_spatial (graph)
@@ -274,6 +276,8 @@ dodgr_flows_disperse <- function (graph,
     if (any (is.na (dens))) {
         dens [is.na (dens)] <- 0
     }
+
+    check_for_flow_col (graph)
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
@@ -427,6 +431,7 @@ dodgr_flows_si <- function (graph,
         stop ("'from' must be provided for spatial interaction models.")
     }
 
+    check_for_flow_col (graph)
 
     res <- check_k (k, from)
     k <- res$k
@@ -506,6 +511,14 @@ dodgr_flows_si <- function (graph,
     return (graph)
 }
 
+check_for_flow_col <- function (graph) {
+    if ("flow" %in% names (graph)) {
+        warning (
+            "graph already has a 'flow' column; ",
+            "this will be overwritten"
+        )
+    }
+}
 
 check_k <- function (k, from) {
 
