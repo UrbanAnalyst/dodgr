@@ -171,9 +171,43 @@ dodgr_flows_aggregate <- function (graph,
     heap <- hps$heap
     graph <- hps$graph
 
+    if (!identical (class (from), class (to))) {
+        stop ("from and to must be the same class of object.")
+    }
+    gr_cols <- dodgr_graph_cols (graph)
+    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
+        scols <- find_spatial_cols (graph)
+        graph$from_id <- scols$xy_id$xy_fr_id
+        graph$to_id <- scols$xy_id$xy_to_id
+        gr_cols <- dodgr_graph_cols (graph)
+    }
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+    from_index <-
+        get_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
+    to_index <- get_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        graph <- create_compound_junctions (graph)$graph
+
+        # remap any 'from' and 'to' vertices to compound junction versions:
+        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
+        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
+    }
+
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, from, to)
+        graph <- contract_graph_with_pts (graph, from_index$id, to_index$id)
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -185,7 +219,7 @@ dodgr_flows_aggregate <- function (graph,
         edge_map <- readRDS (fname_c)
     }
 
-    g <- prepare_graph (graph, from, to)
+    g <- prepare_graph (graph, from_index$id, to_index$id)
     if (!is.matrix (flows)) {
         flows <- matrix (flows, nrow = length (g$from_index))
     } else if (!(nrow (flows) == length (g$from_index) &&
