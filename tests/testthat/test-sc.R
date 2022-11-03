@@ -145,7 +145,7 @@ test_that ("contract with turn angles", {
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
         from = pts,
         to = pts,
-        flow = fmat,
+        flows = fmat,
         contract = FALSE
     ))
     expect_silent (graphf <- dodgr_uncontract_graph (graphf))
@@ -165,7 +165,7 @@ test_that ("contract with turn angles", {
             grapht_c,
             from = pts,
             to = pts,
-            flow = fmat,
+            flows = fmat,
             contract = FALSE
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
@@ -175,7 +175,7 @@ test_that ("contract with turn angles", {
             grapht,
             from = pts,
             to = pts,
-            flow = fmat,
+            flows = fmat,
             contract = FALSE
         )
     )
