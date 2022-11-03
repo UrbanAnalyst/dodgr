@@ -185,8 +185,8 @@ dodgr_flows_aggregate <- function (graph,
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     from_index <-
-        get_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
-    to_index <- get_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
+        fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
+    to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
     if (get_turn_penalty (graph) > 0.0) {
         if (methods::is (graph, "dodgr_contracted")) {
@@ -549,6 +549,7 @@ dodgr_flows_si <- function (graph,
 
     return (graph)
 }
+
 
 check_k <- function (k,
                      from) {

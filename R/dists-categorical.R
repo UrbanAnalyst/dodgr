@@ -112,8 +112,8 @@ dodgr_dists_categorical <- function (graph,
 
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    from_index <- get_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
-    to_index <- get_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
+    from_index <- fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
+    to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
     if (get_turn_penalty (graph) > 0.0) {
         if (methods::is (graph, "dodgr_contracted")) {
