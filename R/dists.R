@@ -235,7 +235,7 @@ to_from_index_with_tp <- function (graph, from, to) {
         graph_compound <- create_compound_junctions (graph)$graph
 
         # remap any 'from' and 'to' vertices to compound junction versions:
-        vert_map <- make_vert_map (graph_ret, gr_cols, is_spatial)
+        vert_map <- make_vert_map (graph_compound, gr_cols, is_spatial)
 
         from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
         to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
