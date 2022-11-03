@@ -96,32 +96,14 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
 
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    vert_map <- make_vert_map (graph, gr_cols, FALSE)
-
-    from_index <- fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
-
-    if (get_turn_penalty (graph) > 0.0) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        graph <- create_compound_junctions (graph)$graph
-
-        # remap any 'from' and 'to' vertices to compound junction versions:
-        vert_map <- make_vert_map (graph, gr_cols, is_graph_spatial (graph))
-
-        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
-        # return object contains modified 'vert_map', but original vertex table,
-        # not the modified version with these compound junctions
-        # v <- dodgr_vertices (graph)
+    to_from_indices <- to_from_index_with_tp (graph, from, to = NULL)
+    if (to_from_indices$compound) {
+        graph <- to_from_indices$graph_compound
     }
 
     if (contract && !methods::is (graph, "dodgr_contracted")) {
         graph_full <- graph
-        graph <- dodgr_contract_graph (graph, verts = from_index$id)
+        graph <- dodgr_contract_graph (graph, verts = to_from_indices$from$id)
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -138,8 +120,8 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     list (
         v = v,
         graph = graph,
-        vert_map = vert_map,
-        from_index = from_index,
+        vert_map = to_from_indices$vert_map,
+        from_index = to_from_indices$from,
         heap = heap
     )
 }
