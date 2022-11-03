@@ -164,34 +164,14 @@ dodgr_flows_aggregate <- function (graph,
     is_spatial <- is_graph_spatial (graph)
     vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
-    from_index <-
-        fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
-    to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
-
-    compound_junction_map <- NULL
-    has_turn_penalty <- get_turn_penalty (graph) > 0.0
-    if (has_turn_penalty) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
-
-        # remap any 'from' and 'to' vertices to compound junction versions:
-        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
-
-        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
-        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
+    to_from_indices <- to_from_index_with_tp (graph, from, to)
+    if (to_from_indices$compound) {
+        graph <- to_from_indices$graph_compound
     }
 
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, from_index$id, to_index$id)
+        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to_from_indices$to$id)
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -203,11 +183,12 @@ dodgr_flows_aggregate <- function (graph,
         edge_map <- readRDS (fname_c)
     }
 
-    g <- prepare_graph (graph, from_index$id, to_index$id)
+    graph2 <- convert_graph (graph, gr_cols)
+
     if (!is.matrix (flows)) {
-        flows <- matrix (flows, nrow = length (g$from_index))
-    } else if (!(nrow (flows) == length (g$from_index) &&
-        ncol (flows) == length (g$to_index))) {
+        flows <- matrix (flows, nrow = length (to_from_indices$from$index))
+    } else if (!(nrow (flows) == length (to_from_indices$from$index) &&
+        ncol (flows) == length (to_from_indices$to$index))) {
         stop ("flows matrix is not compatible with 'from'/'to' arguments")
     }
 
@@ -216,16 +197,16 @@ dodgr_flows_aggregate <- function (graph,
     }
 
     graph$flow <- rcpp_flows_aggregate_par (
-        g$graph, g$vert_map,
-        g$from_index, g$to_index,
+        graph2, to_from_indices$vert_map,
+        to_from_indices$from$index, to_from_indices$to$index,
         flows, norm_sums, tol, heap
     )
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
     }
-    if (has_turn_penalty) {
-        graph <- uncompound_junctions (graph, "flow", compound_junction_map)
+    if (to_from_indices$compound) {
+        graph <- uncompound_junctions (graph, "flow", to_from_indices$compound_junction_map)
     }
 
     return (graph)
@@ -294,28 +275,23 @@ dodgr_flows_disperse <- function (graph,
         dens [is.na (dens)] <- 0
     }
 
-    compound_junction_map <- NULL
-    has_turn_penalty <- get_turn_penalty (graph) > 0.0
-    if (has_turn_penalty) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
-    }
-
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
 
+    graph <- preprocess_spatial_cols (graph)
+    gr_cols <- dodgr_graph_cols (graph)
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+    to_from_indices <- to_from_index_with_tp (graph, from, to = NULL)
+    if (to_from_indices$compound) {
+        graph <- to_from_indices$graph_compound
+    }
+
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, from)
+        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to = NULL)
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -327,7 +303,7 @@ dodgr_flows_disperse <- function (graph,
         edge_map <- readRDS (fname_c)
     }
 
-    g <- prepare_graph (graph, from)
+    graph2 <- convert_graph (graph, gr_cols)
 
     if (!is.matrix (dens)) {
         dens <- as.matrix (dens)
@@ -338,9 +314,9 @@ dodgr_flows_disperse <- function (graph,
     }
 
     f <- rcpp_flows_disperse_par (
-        g$graph,
-        g$vert_map,
-        g$from_index,
+        graph2,
+        to_from_indices$vert_map,
+        to_from_indices$from$index,
         k,
         dens,
         tol,
@@ -357,9 +333,9 @@ dodgr_flows_disperse <- function (graph,
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
     }
-    if (has_turn_penalty) {
+    if (to_from_indices$compound) {
         flow_cols <- grep ("^flow", names (graph), value = TRUE)
-        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
+        graph <- uncompound_junctions (graph, flow_cols, to_from_indices$compound_junction_map)
     }
 
     return (graph)
@@ -451,28 +427,24 @@ dodgr_flows_si <- function (graph,
         stop ("'from' must be provided for spatial interaction models.")
     }
 
-    compound_junction_map <- NULL
-    has_turn_penalty <- get_turn_penalty (graph) > 0.0
-    if (has_turn_penalty) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        res <- create_compound_junctions (graph)
-        graph <- res$graph
-        compound_junction_map <- res$edge_map
-    }
+
+    res <- check_k (k, from)
+    k <- res$k
+    nk <- res$nk
 
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
 
-    res <- check_k (k, from)
-    k <- res$k
-    nk <- res$nk
+    graph <- preprocess_spatial_cols (graph)
+    gr_cols <- dodgr_graph_cols (graph)
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+    to_from_indices <- to_from_index_with_tp (graph, from, to)
+    if (to_from_indices$compound) {
+        graph <- to_from_indices$graph_compound
+    }
 
     if (is.null (dens_from)) {
         dens_from <- rep (1, length (from))
@@ -483,7 +455,7 @@ dodgr_flows_si <- function (graph,
 
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, from, to)
+        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to_from_indices$to$id)
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -495,17 +467,17 @@ dodgr_flows_si <- function (graph,
         edge_map <- readRDS (fname_c)
     }
 
-    g <- prepare_graph (graph, from, to)
+    graph2 <- convert_graph (graph, gr_cols)
 
     if (!quiet) {
         message ("\nAggregating flows ... ", appendLF = FALSE)
     }
 
     f <- rcpp_flows_si (
-        g$graph,
-        g$vert_map,
-        g$from_index,
-        g$to_index,
+        graph2,
+        to_from_indices$vert_map,
+        to_from_indices$from$index,
+        to_from_indices$to$index,
         k,
         dens_from,
         dens_to,
@@ -526,17 +498,16 @@ dodgr_flows_si <- function (graph,
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
     }
-    if (has_turn_penalty) {
+    if (to_from_indices$compound) {
         flow_cols <- grep ("^flow", names (graph), value = TRUE)
-        graph <- uncompound_junctions (graph, flow_cols, compound_junction_map)
+        graph <- uncompound_junctions (graph, flow_cols, to_from_indices$compound_junction_map)
     }
 
     return (graph)
 }
 
 
-check_k <- function (k,
-                     from) {
+check_k <- function (k, from) {
 
     nk <- 1
 
@@ -564,56 +535,6 @@ check_k <- function (k,
     }
 
     list (k = k, nk = nk)
-}
-
-# transform input graph and (from, to) arguments to standard forms for passing
-# to C++ routines
-prepare_graph <- function (graph,
-                           from,
-                           to) {
-
-    if ("flow" %in% names (graph)) {
-        warning (
-            "graph already has a 'flow' column; ",
-            "this will be overwritten"
-        )
-    }
-
-    gr_cols <- dodgr_graph_cols (graph)
-    vert_map <- make_vert_map (graph, gr_cols)
-
-    # change from and to just to check conformity
-    tp <- get_turn_penalty (graph)
-
-    # remove any routing points not in edge start nodes:
-    from <- nodes_arg_to_pts (from, graph)
-    if (methods::is (graph, "dodgr_streetnet_sc") && tp > 0) {
-        from <- remap_verts_with_turn_penalty (graph, from, from = TRUE)
-    }
-    from <- from [from %in% graph [[gr_cols$from]]] # nolint
-    index_id <- get_index_id_cols (graph, gr_cols, vert_map, from)
-    from_index <- index_id$index - 1 # 0-based
-
-    to_index <- NULL
-    if (!missing (to)) {
-        # remove any routing points not in edge end nodes:
-        to <- nodes_arg_to_pts (to, graph)
-        if (methods::is (graph, "dodgr_streetnet_sc") && tp > 0) {
-            to <- remap_verts_with_turn_penalty (graph, to, from = FALSE)
-        }
-        to <- to [to %in% graph [[gr_cols$to]]] # nolint
-        index_id <- get_index_id_cols (graph, gr_cols, vert_map, to)
-        to_index <- index_id$index - 1 # 0-based
-    }
-
-    graph2 <- convert_graph (graph, gr_cols)
-
-    list (
-        graph = graph2,
-        vert_map = vert_map,
-        from_index = from_index,
-        to_index = to_index
-    )
 }
 
 get_random_prefix <- function (prefix = "flow",
