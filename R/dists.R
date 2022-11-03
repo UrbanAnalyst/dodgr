@@ -223,7 +223,7 @@ to_from_index_with_tp <- function (graph, from, to) {
     to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
 
     compound <- (get_turn_penalty (graph) > 0.0)
-    graph_compound <- NULL
+    graph_compound <- compound_junction_map <- NULL
     if (compound) {
         if (methods::is (graph, "dodgr_contracted")) {
             warning (
@@ -232,7 +232,9 @@ to_from_index_with_tp <- function (graph, from, to) {
                 "produce unexpected behaviour."
             )
         }
-        graph_compound <- create_compound_junctions (graph)$graph
+        res <- create_compound_junctions (graph)
+        graph_compound <- res$graph
+        compound_junction_map <- res$compound_junction_map
 
         # remap any 'from' and 'to' vertices to compound junction versions:
         vert_map <- make_vert_map (graph_compound, gr_cols, is_spatial)
@@ -243,7 +245,8 @@ to_from_index_with_tp <- function (graph, from, to) {
 
     return (list (
         from = from_index, to = to_index, vert_map = vert_map,
-        compound = compound, graph_compound = graph_compound
+        compound = compound, graph_compound = graph_compound,
+        compound_junction_map = compound_junction_map
     ))
 }
 
