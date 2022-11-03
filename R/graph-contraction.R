@@ -9,6 +9,9 @@
 #' `from_x`) or `stop_lon`).
 #' @param verts Optional list of vertices to be retained as routing points.
 #' These must match the `from` and `to` columns of `graph`.
+#' @param nocache If `FALSE` (default), load cached version of contracted graph
+#' if previously calculated and cached. If `TRUE`, then re-contract graph even
+#' if previously calculated version has been stored in cache.
 #'
 #' @return A contracted version of the original `graph`, containing the same
 #' number of columns, but with each row representing an edge between two
@@ -21,7 +24,7 @@
 #' nrow (graph) # 5,973
 #' graph <- dodgr_contract_graph (graph)
 #' nrow (graph) # 662
-dodgr_contract_graph <- function (graph, verts = NULL) {
+dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
 
     if (nrow (graph) == 0) {
         stop ("graph is empty")
@@ -55,7 +58,7 @@ dodgr_contract_graph <- function (graph, verts = NULL) {
         paste0 ("dodgr_graphc_", hashc, ".Rds")
     )
 
-    if (fs::file_exists (fname_c)) {
+    if (fs::file_exists (fname_c) && !nocache) {
         graph_contracted <- list (graph = readRDS (fname_c))
     } else {
         fname <- fs::path (

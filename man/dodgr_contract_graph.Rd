@@ -4,7 +4,7 @@
 \alias{dodgr_contract_graph}
 \title{dodgr_contract_graph}
 \usage{
-dodgr_contract_graph(graph, verts = NULL)
+dodgr_contract_graph(graph, verts = NULL, nocache = FALSE)
 }
 \arguments{
 \item{graph}{A flat table of graph edges. Must contain columns labelled
@@ -14,6 +14,10 @@ similarly labelled columns of spatial coordinates (for example
 
 \item{verts}{Optional list of vertices to be retained as routing points.
 These must match the \code{from} and \code{to} columns of \code{graph}.}
+
+\item{nocache}{If \code{FALSE} (default), load cached version of contracted graph
+if previously calculated and cached. If \code{TRUE}, then re-contract graph even
+if previously calculated version has been stored in cache.}
 }
 \value{
 A contracted version of the original \code{graph}, containing the same
