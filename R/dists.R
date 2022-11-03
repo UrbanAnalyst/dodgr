@@ -126,13 +126,8 @@ dodgr_dists <- function (graph,
     heap <- hps$heap
     graph <- hps$graph
 
+    graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    if (is.na (gr_cols$from) || is.na (gr_cols$to)) {
-        scols <- find_spatial_cols (graph)
-        graph$from_id <- scols$xy_id$xy_fr_id
-        graph$to_id <- scols$xy_id$xy_to_id
-        gr_cols <- dodgr_graph_cols (graph)
-    }
     is_spatial <- is_graph_spatial (graph)
     to_from_indices <- to_from_index_with_tp (graph, from, to)
 
