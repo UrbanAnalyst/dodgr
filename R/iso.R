@@ -102,17 +102,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     }
 
     if (contract && !methods::is (graph, "dodgr_contracted")) {
-        graph_full <- graph
         graph <- dodgr_contract_graph (graph, verts = to_from_indices$from$id)
-        hashc <- get_hash (graph, contracted = TRUE)
-        fname_c <- fs::path (
-            fs::path_temp (),
-            paste0 ("dodgr_edge_map_", hashc, ".Rds")
-        )
-        if (!fs::file_exists (fname_c)) {
-            stop ("something went wrong extracting the edge_map ... ")
-        } # nocov
-        edge_map <- readRDS (fname_c)
     }
 
     graph <- convert_graph (graph, gr_cols)
@@ -291,7 +281,7 @@ dmat_to_pts <- function (d, from, v, dlim) {
 
     pt_names <- colnames (d)
     pts <- list ()
-    for (i in seq (nrow (d))) {
+    for (i in seq_len (nrow (d))) {
         o <- v [match (from [i], v$id), ]
         pts [[i]] <- lapply (dlim, function (j) {
             res <- pt_names [which (d [i, ] == j)]
