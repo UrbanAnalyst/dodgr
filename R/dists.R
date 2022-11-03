@@ -134,28 +134,7 @@ dodgr_dists <- function (graph,
         gr_cols <- dodgr_graph_cols (graph)
     }
     is_spatial <- is_graph_spatial (graph)
-    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
-
-    from_index <-
-        fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
-    to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
-
-    if (get_turn_penalty (graph) > 0.0) {
-        if (methods::is (graph, "dodgr_contracted")) {
-            warning (
-                "graphs with turn penalties should be submitted in full, ",
-                "not contracted form;\nsubmitting contracted graphs may ",
-                "produce unexpected behaviour."
-            )
-        }
-        graph <- create_compound_junctions (graph)$graph
-
-        # remap any 'from' and 'to' vertices to compound junction versions:
-        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
-
-        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
-        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
-    }
+    to_from_indices <- to_from_index_with_tp (graph, from, to)
 
     if (!shortest) {
         if (is.na (gr_cols$time_weighted)) {
@@ -185,9 +164,9 @@ dodgr_dists <- function (graph,
 
     d <- calculate_distmat (
         graph,
-        vert_map,
-        from_index,
-        to_index,
+        to_from_indices$vert_map,
+        to_from_indices$from,
+        to_from_indices$to,
         heap,
         is_spatial,
         parallel,
@@ -272,6 +251,42 @@ get_index_id_cols <- function (graph,
         } # index is 1-based
     }
     list (index = index, id = id)
+}
+
+#' Get lists of 'from' and 'to' indices, potentially mapped on to compound
+#' junctions for graphs with turn penalties.
+#'
+#' This function calls the following `fill_to_from_index` to generate the actual
+#' values.
+#' @noRd
+to_from_index_with_tp <- function (graph, from, to) {
+
+    gr_cols <- dodgr_graph_cols (graph)
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+    from_index <-
+        fill_to_from_index (graph, vert_map, gr_cols, from, from = TRUE)
+    to_index <- fill_to_from_index (graph, vert_map, gr_cols, to, from = FALSE)
+
+    if (get_turn_penalty (graph) > 0.0) {
+        if (methods::is (graph, "dodgr_contracted")) {
+            warning (
+                "graphs with turn penalties should be submitted in full, ",
+                "not contracted form;\nsubmitting contracted graphs may ",
+                "produce unexpected behaviour."
+            )
+        }
+        graph <- create_compound_junctions (graph)$graph
+
+        # remap any 'from' and 'to' vertices to compound junction versions:
+        vert_map <- make_vert_map (graph, gr_cols, is_spatial)
+
+        from_index <- remap_tf_index_for_tp (from_index, vert_map, from = TRUE)
+        to_index <- remap_tf_index_for_tp (to_index, vert_map, from = FALSE)
+    }
+
+    return (list (from = from_index, to = to_index, vert_map = vert_map))
 }
 
 #' fill_to_from_index
