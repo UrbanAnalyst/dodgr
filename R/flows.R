@@ -163,8 +163,6 @@ dodgr_flows_aggregate <- function (graph,
 
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    is_spatial <- is_graph_spatial (graph)
-    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     to_from_indices <- to_from_index_with_tp (graph, from, to)
     if (to_from_indices$compound) {
@@ -173,7 +171,11 @@ dodgr_flows_aggregate <- function (graph,
 
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to_from_indices$to$id)
+        graph <- contract_graph_with_pts (
+            graph,
+            to_from_indices$from$id,
+            to_from_indices$to$id
+        )
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -208,7 +210,11 @@ dodgr_flows_aggregate <- function (graph,
         graph <- uncontract_graph (graph, edge_map, graph_full)
     }
     if (to_from_indices$compound) {
-        graph <- uncompound_junctions (graph, "flow", to_from_indices$compound_junction_map)
+        graph <- uncompound_junctions (
+            graph,
+            "flow",
+            to_from_indices$compound_junction_map
+        )
     }
 
     return (graph)
@@ -285,8 +291,6 @@ dodgr_flows_disperse <- function (graph,
 
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    is_spatial <- is_graph_spatial (graph)
-    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     to_from_indices <- to_from_index_with_tp (graph, from, to = NULL)
     if (to_from_indices$compound) {
@@ -295,7 +299,11 @@ dodgr_flows_disperse <- function (graph,
 
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to = NULL)
+        graph <- contract_graph_with_pts (
+            graph,
+            to_from_indices$from$id,
+            to = NULL
+        )
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -339,7 +347,11 @@ dodgr_flows_disperse <- function (graph,
     }
     if (to_from_indices$compound) {
         flow_cols <- grep ("^flow", names (graph), value = TRUE)
-        graph <- uncompound_junctions (graph, flow_cols, to_from_indices$compound_junction_map)
+        graph <- uncompound_junctions (
+            graph,
+            flow_cols,
+            to_from_indices$compound_junction_map
+        )
     }
 
     return (graph)
@@ -443,8 +455,6 @@ dodgr_flows_si <- function (graph,
 
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    is_spatial <- is_graph_spatial (graph)
-    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     to_from_indices <- to_from_index_with_tp (graph, from, to)
     if (to_from_indices$compound) {
@@ -460,7 +470,11 @@ dodgr_flows_si <- function (graph,
 
     if (contract) {
         graph_full <- graph
-        graph <- contract_graph_with_pts (graph, to_from_indices$from$id, to_from_indices$to$id)
+        graph <- contract_graph_with_pts (
+            graph,
+            to_from_indices$from$id,
+            to_from_indices$to$id
+        )
         hashc <- get_hash (graph, contracted = TRUE)
         fname_c <- fs::path (
             fs::path_temp (),
@@ -505,7 +519,11 @@ dodgr_flows_si <- function (graph,
     }
     if (to_from_indices$compound) {
         flow_cols <- grep ("^flow", names (graph), value = TRUE)
-        graph <- uncompound_junctions (graph, flow_cols, to_from_indices$compound_junction_map)
+        graph <- uncompound_junctions (
+            graph,
+            flow_cols,
+            to_from_indices$compound_junction_map
+        )
     }
 
     return (graph)
