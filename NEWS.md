@@ -1,5 +1,5 @@
 
-# v 0.2.16.00X (dev)
+# v 0.2.17
 
 ## Minor changes:
 
@@ -8,6 +8,8 @@
 - Fix bug in caching mechanism which stopped graph conversion routines (like `dodgr_to_sf`) from carrying across extra columns (#194; thanks to @sriramab)
 - Fix bug in distances when from or to default to all vertices
 - Fix weighting networks for motorcars to adhere to OSM "maxspeed" values where those are given, rather than profile values (#193)
+
+---
 
 # v 0.2.16
 
