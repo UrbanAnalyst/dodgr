@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.17",
+  "version": "0.2.17.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -339,7 +339,7 @@
     },
     "SystemRequirements": "C++11, GNU make"
   },
-  "fileSize": "5757.308KB",
+  "fileSize": "5757.338KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
