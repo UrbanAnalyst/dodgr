@@ -75,18 +75,6 @@ fill_to_from_index <- function (graph,
         id <- index_id$id
     }
 
-    if (!is.null (id)) {
-
-        tflab <- ifelse (from, "from", "to")
-
-        i <- which (id %in% graph [[gr_cols [[tflab]]]])
-        if (length (i) == 0) {
-            i <- which (vert_map$vert [index] %in% graph [[gr_cols [[tflab]]]])
-        }
-
-        index <- index [i]
-        id <- id [i]
-    }
     list (index = index, id = id)
 }
 

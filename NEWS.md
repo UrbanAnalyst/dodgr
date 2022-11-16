@@ -1,5 +1,9 @@
 # v 0.2.17.00x (dev)
 
+## Minor changes:
+
+- Minor bug fix in matching to/from points for routing.
+
 ---
 
 # v 0.2.17
