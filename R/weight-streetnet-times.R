@@ -219,9 +219,10 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     wp_index <- wp_index [graph_index]
     maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
     maxspeed [graph_index, 2] <- wp$max_speed [wp_index]
+
     if (wt_profile == "motorcar") {
         index <- which (is.na (maxspeed [, 1]))
-        graph$maxspeed [index] <- maxspeed [, 2]
+        graph$maxspeed [index] <- maxspeed [index, 2]
     } else {
         # choose minimal maxspeed value
         graph$maxspeed <- apply (maxspeed, 1, function (i) {
