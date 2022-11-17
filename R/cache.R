@@ -1,5 +1,13 @@
 get_hash <- function (graph, verts = NULL, contracted = FALSE, force = FALSE) {
 
+    if (methods::is (graph, "dodgr_contracted")) {
+        hash <- attr (graph, "hashc")
+        if (is.null (hash)) {
+            stop ("Error extracting hash from contracted graph.", call. = FALSE)
+        }
+        return (hash)
+    }
+
     hash <- NULL
     if (!force) {
         hash <- attr (graph, ifelse (contracted, "hashc", "hash"))
