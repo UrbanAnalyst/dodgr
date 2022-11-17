@@ -74,17 +74,25 @@ cache_graph <- function (graph, edge_col) {
         saveRDS (graph, fname)
 
         # The hash for the contracted graph is generated from the edge IDs of
-        # the full graph plus default NULL vertices:
-        hashc <- digest::digest (list (graph [[edge_col]], NULL))
+        # the full graph plus default NULL vertices. Internal functions can not
+        # be called here, so code copied directly from `get_hash`:
+        # hashc <- get_hash (graph, verts = NULL, contracted = TRUE, force = TRUE)
+        hashc <- digest::digest (list (graph [[edge_col]], names (graph), NULL))
 
         graphc <- dodgr::dodgr_contract_graph (graph)
         fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
-        saveRDS (graphc, fname_c)
+        # graph contraction generally writes that graph already:
+        if (!fs::file_exists (fname_c)) {
+            saveRDS (graphc, fname_c)
+        }
 
         hashe <- attr (graphc, "hashe")
         verts <- dodgr::dodgr_vertices (graphc)
         fname_v <- fs::path (td, paste0 ("dodgr_verts_", hashe, ".Rds"))
-        saveRDS (verts, fname_v)
+        # But the vertices of the contracted graph are not generally written:
+        if (!fs::file_exists (fname_v)) {
+            saveRDS (verts, fname_v)
+        }
 
         fname_e <- paste0 ("dodgr_edge_map_", hashc, ".Rds")
         fname_e_fr <- fs::path (fs::path_temp (), fname_e)

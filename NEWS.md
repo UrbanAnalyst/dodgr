@@ -3,6 +3,7 @@
 ## Minor changes:
 
 - Minor bug fix in matching to/from points for routing.
+- Minor bug fix with caching contracted graphs
 
 ---
 
