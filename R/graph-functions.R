@@ -233,10 +233,19 @@ dodgr_vertices <- function (graph) {
         }
     }
 
+    verts_up_to_date <- FALSE
+
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_verts_", hash, ".Rds"))
     if (hash != "" && fs::file_exists (fname)) {
         verts <- readRDS (fname)
-    } else {
+        # Then double-check to ensure those vertices match current graph:
+        gr_cols <- dodgr_graph_cols (graph)
+        graph_verts <- unique (c (graph [[gr_cols$from]], graph [[gr_cols$to]]))
+        verts_up_to_date <-
+            (all (graph_verts %in% verts$id) && all (verts$id %in% graph_verts))
+    }
+
+    if (!verts_up_to_date) {
         verts <- dodgr_vertices_internal (graph)
         saveRDS (verts, fname)
     }

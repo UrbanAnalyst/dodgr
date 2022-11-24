@@ -5,6 +5,7 @@
 - Minor bug fix in matching to/from points for routing.
 - Minor bug fix with caching contracted graphs
 - Minor bug fix matching OSM max speed values for motorcar routing.
+- Minor bug fix implements additional check in `dodgr_vertices` to re-calculate if cached vertices don't match current graph.
 
 ---
 
