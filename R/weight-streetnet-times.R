@@ -410,7 +410,10 @@ rm_duplicated_edges <- function (graph) {
 }
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated
-# for non-oneway
+# for non-oneway. Note that strict accordance with oneway flags for "bicycle"
+# routing can generate unroutable networks. The following implements the more
+# realistic procedure of duplicting oneway edges for bicycle routing, but at
+# twice the weighted distance/time values.
 sc_duplicate_edges <- function (x, wt_profile) {
 
     oneway_modes <- c (
@@ -429,6 +432,19 @@ sc_duplicate_edges <- function (x, wt_profile) {
     xnew <- swap_cols (xnew, ".vx0_x", ".vx1_x")
     xnew <- swap_cols (xnew, ".vx0_y", ".vx1_y")
     xnew$edge_ <- rcpp_gen_hash (nrow (xnew), 10)
+
+    if (wt_profile == "bicycle") {
+        index <- which (x$oneway)
+        xnew2 <- x [index, ]
+        xnew2 <- swap_cols (xnew2, ".vx0", ".vx1")
+        xnew2 <- swap_cols (xnew2, ".vx0_x", ".vx1_x")
+        xnew2 <- swap_cols (xnew2, ".vx0_y", ".vx1_y")
+        xnew2$edge_ <- rcpp_gen_hash (nrow (xnew2), 10)
+        xnew2$d_weighted <- xnew2$d * 2
+        xnew2$time_weighted <- xnew2$time * 2
+
+        xnew <- rbind (xnew, xnew2)
+    }
 
     res <- rbind (x, xnew)
     res$oneway <- NULL
