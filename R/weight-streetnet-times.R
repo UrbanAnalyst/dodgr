@@ -389,24 +389,26 @@ sc_traffic_lights <- function (graph, x, wt_profile, wt_profile_file) {
 rm_duplicated_edges <- function (graph) {
 
     gr_cols <- dodgr_graph_cols (graph)
-    ft <- graph [, c (gr_cols$from, gr_cols$to)]
-    index <- cbind (
-        which (duplicated (ft)),
-        which (duplicated (ft, fromLast = TRUE))
-    )
+    ft <- paste0 (graph [[gr_cols$from]], "-", graph [[gr_cols$to]])
+    ft_un <- unique (ft)
+    ft_dupl <- ft [which (duplicated (ft))]
 
-    index <- cbind (
-        which (duplicated (graph [, c (".vx0", ".vx1")])),
-        which (duplicated (graph [, c (".vx0", ".vx1")], fromLast = TRUE))
-    )
+    # Get dual indices into ft of duplicate entries:
+    i1 <- match (ft_dupl, ft)
+    ft_mod <- ft
+    ft_mod [i1] <- paste0 (ft_mod [i1], "---")
+    i2 <- match (ft_dupl, ft_mod)
+
+    index <- cbind (i1, i2)
+
     removes <- apply (index, 1, function (i) {
         ifelse (
-            graph$time [i [1]] > graph$time [i [2]],
+            graph [[gr_cols$d]] [i [1]] > graph [[gr_cols$d]] [i [2]],
             i [1],
             i [2]
         )
     })
-    graph [!seq_len (nrow (graph)) %in% removes, ]
+    graph [-removes, ]
 }
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated

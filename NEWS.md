@@ -7,6 +7,7 @@
 - Minor bug fix matching OSM max speed values for motorcar routing.
 - Minor bug fix implements additional check in `dodgr_vertices` to re-calculate if cached vertices don't match current graph.
 - Allow contra-flow when weighting bicycle networks; otherwise networks can end up unroutable.
+- Bug fix in `remove_duplicated_edges()` for SC-class networks.
 
 ---
 
