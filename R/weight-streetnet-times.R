@@ -408,7 +408,10 @@ rm_duplicated_edges <- function (graph) {
             i [2]
         )
     })
-    graph [-removes, ]
+    if (length (removes) > 0L) {
+        graph <- graph [-removes, ]
+    }
+    return (graph)
 }
 
 # up to that point, all edges are non-duplicated, and so need to be duplicated
