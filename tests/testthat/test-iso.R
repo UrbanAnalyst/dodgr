@@ -14,7 +14,7 @@ test_that ("isodists", {
     # This all exists just to test the next line:
     requireNamespace ("geodist")
     requireNamespace ("dplyr")
-    expect_silent (net <- weight_streetnet (hsc,
+    expect_no_message (net <- weight_streetnet (hsc,
         wt_profile = "bicycle"
     ))
     npts <- 100
