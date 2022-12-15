@@ -46,7 +46,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     sf,
-    testthat,
+    testthat (>= 3.1.6),
     tidygraph
 LinkingTo:
     Rcpp,
