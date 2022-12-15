@@ -50,6 +50,8 @@ repos:
           #-   id: lintr
     -   id: readme-rmd-rendered
     -   id: parsable-R
+        additional_dependencies:
+          - R.cache
     -   id: no-browser-statement
     -   id: no-debug-statement
     -   id: deps-in-desc
