@@ -329,6 +329,7 @@ routing](https://atfutures.github.io/dodgr/articles/times.html)
 ## Contributors
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -371,11 +372,21 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/ATFutures/dodgr/commits?author=JimShady">JimShady</a>
 </td>
 <td align="center">
+<a href="https://github.com/DavisVaughan">
+<img src="https://avatars.githubusercontent.com/u/19150088?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ATFutures/dodgr/commits?author=DavisVaughan">DavisVaughan</a>
+</td>
+<td align="center">
 <a href="https://github.com/layik">
 <img src="https://avatars.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/commits?author=layik">layik</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/virgesmith">
 <img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
@@ -400,7 +411,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/rafapereirabr">
-<img src="https://avatars.githubusercontent.com/u/7448421?u=9a760f26e72cd66150784babc5da6862e7775542&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/7448421?u=01aed495e612154e54be4c51221e706cdff7779d&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Arafapereirabr">rafapereirabr</a>
 </td>
@@ -550,7 +561,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/sriramab">
-<img src="https://avatars.githubusercontent.com/u/12668606?u=491fa9e3858bf66cae79d0cfa19a7e78145be4ae&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/12668606?u=353aaf316777539836fbd9b9f8e7ec5ae6527666&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asriramab">sriramab</a>
 </td>
