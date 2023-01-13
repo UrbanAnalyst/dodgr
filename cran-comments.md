@@ -1,4 +1,4 @@
-# CRAN notes for dodgr_0.2.18 submission
+# CRAN notes for dodgr_0.2.19 submission
 
 This submission generates the following NOTES on some systems:
 
