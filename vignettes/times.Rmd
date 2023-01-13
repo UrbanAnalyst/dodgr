@@ -76,8 +76,8 @@ the new [`osmdata`](https://github.com/ropensci/osmdata) function,
 [`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html).
 This function requires a locally-stored GeoTIFF-formatted elevation data file
 to be downloaded from the [Consortium for Spatial
-Information](https://srtm.csi.cgiar.org/srtmdata/), or any other source. These
-data may then be appended by calling
+Information](https://cgiarcsi.community/data/srtm-90m-digital-elevation-database-v4-1/),
+or any other source. These data may then be appended by calling
 [`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html),
 and specifying the name of this file. While time-based routing is possible with
 [`sf`](https://cran.r-project.org/package=sf) format data, it is currently not
