@@ -1,5 +1,9 @@
 # v 0.2.18.00x (dev)
 
+---
+
+# v 0.2.119
+
 ## Minor changes:
 
 - Changes to align with new dplyr version (#198; thanks to @DavisVaughan)
