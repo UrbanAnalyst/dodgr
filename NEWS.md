@@ -1,8 +1,12 @@
-# v 0.2.18.00x (dev)
+# v 0.2.19.00x (dev)
+
+## Minor changes:
+
+- Minor change to weight_streetnet.sc to suppress dplyr left_join warnings
 
 ---
 
-# v 0.2.119
+# v 0.2.19
 
 ## Minor changes:
 

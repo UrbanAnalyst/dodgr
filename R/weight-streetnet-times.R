@@ -26,9 +26,17 @@ extract_sc_edges_xy <- function (x) {
         rename1 <- rename1 [1:2]
     }
 
-    dplyr::left_join (x$edge, x$vertex, by = c (".vx0" = "vertex_")) %>%
+    dplyr::left_join (
+        x$edge, x$vertex,
+        by = c (".vx0" = "vertex_"),
+        multiple = "all"
+    ) %>%
         dplyr::rename (!!rename0) %>%
-        dplyr::left_join (x$vertex, by = c (".vx1" = "vertex_")) %>%
+        dplyr::left_join (
+            x$vertex,
+            by = c (".vx1" = "vertex_"),
+            multiple = "all"
+        ) %>%
         dplyr::rename (!!rename1)
 }
 
