@@ -2,7 +2,7 @@
 % Please edit documentation in R/times.R
 \name{dodgr_times}
 \alias{dodgr_times}
-\title{dodgr_times}
+\title{Calculate matrix of pair-wise travel times between points.}
 \usage{
 dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE, heap = "BHeap")
 }

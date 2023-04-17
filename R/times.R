@@ -1,5 +1,3 @@
-#' dodgr_times
-#'
 #' Calculate matrix of pair-wise travel times between points.
 #'
 #' @inherit dodgr_dists
