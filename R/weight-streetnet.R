@@ -571,6 +571,8 @@ weight_streetnet.sc <- weight_streetnet.SC <-
         requireNamespace ("dplyr")
         check_sc (x)
 
+        x$vertex <- x$vertex [which (!duplicated (x$vertex)), ]
+
         graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
             sc_edge_dist () %>% # append dist
             extract_sc_edges_highways (
