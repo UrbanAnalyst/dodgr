@@ -2,7 +2,7 @@
 % Please edit documentation in R/dists-categorical.R
 \name{summary.dodgr_dists_categorical}
 \alias{summary.dodgr_dists_categorical}
-\title{Transform a result from 'dodgr_dists_categorical' to summary statistics}
+\title{Transform a result from \link{dodgr_dists_categorical} to summary statistics}
 \usage{
 \method{summary}{dodgr_dists_categorical}(object, ...)
 }
@@ -15,7 +15,7 @@
 The summary statistics (invisibly)
 }
 \description{
-Transform a result from 'dodgr_dists_categorical' to summary statistics
+Transform a result from \link{dodgr_dists_categorical} to summary statistics
 }
 \seealso{
 Other misc: 

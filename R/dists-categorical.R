@@ -244,7 +244,7 @@ process_threshold_dmat <- function (d, from_index, vert_map, edge_type_table) {
     return (res)
 }
 
-#' Transform a result from 'dodgr_dists_categorical' to summary statistics
+#' Transform a result from \link{dodgr_dists_categorical} to summary statistics
 #'
 #' @param object A 'dodgr_dists_categorical' object
 #' @param ... Extra parameters currently not used
