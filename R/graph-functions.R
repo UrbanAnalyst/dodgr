@@ -373,7 +373,7 @@ dodgr_sample <- function (graph, nverts = 1000) {
     verts <- unique (c (graph [, fr], graph [, to]))
     gr_cols <- dodgr_graph_cols (graph)
     if (is.na (gr_cols$edge_id)) {
-        graph$edge_id <- seq (nrow (graph))
+        graph$edge_id <- seq_len (nrow (graph))
         gr_cols <- dodgr_graph_cols (graph)
     }
 
