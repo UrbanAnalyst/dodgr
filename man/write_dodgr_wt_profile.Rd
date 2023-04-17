@@ -2,7 +2,7 @@
 % Please edit documentation in R/weighting_profiles.R
 \name{write_dodgr_wt_profile}
 \alias{write_dodgr_wt_profile}
-\title{write_dodgr_wt_profile}
+\title{Write \code{dodgr} weighting profiles to local file.}
 \usage{
 write_dodgr_wt_profile(file = NULL)
 }
