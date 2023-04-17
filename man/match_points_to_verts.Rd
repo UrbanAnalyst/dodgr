@@ -2,7 +2,7 @@
 % Please edit documentation in R/match-points.R
 \name{match_points_to_verts}
 \alias{match_points_to_verts}
-\title{match_points_to_verts}
+\title{Alias for \link{match_pts_to_verts}}
 \usage{
 match_points_to_verts(verts, xy, connected = FALSE)
 }
@@ -25,7 +25,9 @@ matching.}
 A vector index into verts
 }
 \description{
-Alias for \link{match_pts_to_verts}
+The \link{match_pts_to_graph} function matches points to the nearest edge based
+on geometric intersections; this function only matches to the nearest vertex
+based on point-to-point distances.
 }
 \examples{
 net <- weight_streetnet (hampi, wt_profile = "foot")

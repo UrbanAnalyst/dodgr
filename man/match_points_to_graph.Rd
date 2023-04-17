@@ -2,7 +2,7 @@
 % Please edit documentation in R/match-points.R
 \name{match_points_to_graph}
 \alias{match_points_to_graph}
-\title{match_points_to_graph}
+\title{Alias for \link{match_pts_to_graph}}
 \usage{
 match_points_to_graph(graph, xy, connected = FALSE)
 }
@@ -36,7 +36,13 @@ where nearest point of bisection lies beyond the actual edge).
 }
 }
 \description{
-Alias for \link{match_pts_to_graph}
+Match spatial points to the edges of a spatial graph, through finding the
+edge with the closest perpendicular intersection. NOTE: Intersections are
+calculated geometrically, and presume planar geometry. It is up to users of
+projected geometrical data, such as those within a \code{dodgr_streetnet} object,
+to ensure that either: (i) Data span an sufficiently small area that errors
+from presuming planar geometry may be ignored; or (ii) Data are re-projected
+to an equivalent planar geometry prior to calling this routine.
 }
 \examples{
 graph <- weight_streetnet (hampi, wt_profile = "foot")

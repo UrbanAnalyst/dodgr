@@ -2,7 +2,7 @@
 % Please edit documentation in R/match-points.R
 \name{match_pts_to_graph}
 \alias{match_pts_to_graph}
-\title{match_pts_to_graph}
+\title{Match spatial points to the edges of a spatial graph.}
 \usage{
 match_pts_to_graph(graph, xy, connected = FALSE, distances = FALSE)
 }

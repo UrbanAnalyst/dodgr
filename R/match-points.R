@@ -1,7 +1,6 @@
-#' match_pts_to_verts
+#' Match spatial points to the vertices of a spatial graph.
 #'
-#' Match spatial points to the vertices of a spatial graph. The
-#' \link{match_pts_to_graph} function matches points to the nearest edge based
+#' The \link{match_pts_to_graph} function matches points to the nearest edge based
 #' on geometric intersections; this function only matches to the nearest vertex
 #' based on point-to-point distances.
 #'
@@ -59,9 +58,8 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
     indx [rcpp_points_index_par (verts, xy) + 1L]
 }
 
-#' match_points_to_verts
-#'
 #' Alias for \link{match_pts_to_verts}
+#'
 #' @inherit match_pts_to_verts
 #' @family match
 #' @export
@@ -103,7 +101,7 @@ pre_process_xy <- function (xy) {
     return (xy)
 }
 
-#' match_pts_to_graph
+#' Match spatial points to the edges of a spatial graph.
 #'
 #' Match spatial points to the edges of a spatial graph, through finding the
 #' edge with the closest perpendicular intersection. NOTE: Intersections are
@@ -182,9 +180,8 @@ match_pts_to_graph <- function (graph, xy,
     return (ret)
 }
 
-#' match_points_to_graph
-#'
 #' Alias for \link{match_pts_to_graph}
+#'
 #' @inherit match_pts_to_graph
 #' @family match
 #' @export
