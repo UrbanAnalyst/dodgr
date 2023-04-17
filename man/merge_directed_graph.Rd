@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-merge.R
 \name{merge_directed_graph}
 \alias{merge_directed_graph}
-\title{merge_directed_graph}
+\title{Merge directed edges into equivalent undirected edges.}
 \usage{
 merge_directed_graph(graph, col_names = c("flow"))
 }

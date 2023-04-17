@@ -1,4 +1,4 @@
-#' merge_directed_graph
+#' Merge directed edges into equivalent undirected edges.
 #'
 #' Merge directed edges into equivalent undirected values by aggregating across
 #' directions. This function is primarily intended to aid visualisation of
