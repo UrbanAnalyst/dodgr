@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-functions.R
 \name{dodgr_components}
 \alias{dodgr_components}
-\title{dodgr_components}
+\title{Identify connected components of graph.}
 \usage{
 dodgr_components(graph)
 }

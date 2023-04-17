@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-functions.R
 \name{dodgr_insert_vertex}
 \alias{dodgr_insert_vertex}
-\title{dodgr_insert_vertex}
+\title{Insert a new node or vertex into a network}
 \usage{
 dodgr_insert_vertex(graph, v1, v2, x = NULL, y = NULL)
 }

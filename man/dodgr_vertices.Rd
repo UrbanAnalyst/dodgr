@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-functions.R
 \name{dodgr_vertices}
 \alias{dodgr_vertices}
-\title{dodgr_vertices}
+\title{Extract vertices of graph, including spatial coordinates if included.}
 \usage{
 dodgr_vertices(graph)
 }
@@ -16,7 +16,7 @@ similarly labelled columns of spatial coordinates (for example
 A \code{data.frame} of vertices with unique numbers (\code{n}).
 }
 \description{
-Extract vertices of graph, including spatial coordinates if included
+Extract vertices of graph, including spatial coordinates if included.
 }
 \note{
 Values of \code{n} are 0-indexed

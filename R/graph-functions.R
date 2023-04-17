@@ -1,5 +1,3 @@
-#' dodgr_graph_cols
-#'
 #' Identify the essential columns of the graph table (data.frame, tibble,
 #' whatever) to be analysed in the C++ routines.
 #'
@@ -125,9 +123,8 @@ dodgr_graph_cols <- function (graph) {
     return (as.list (ret))
 }
 
-#' convert_graph
-#'
 #' Convert graph to a standard form suitable for submission to C++ routines
+#'
 #' @noRd
 convert_graph <- function (graph, gr_cols) {
 
@@ -180,9 +177,7 @@ tbl_to_df <- function (graph) {
 
 
 
-#' dodgr_vertices
-#'
-#' Extract vertices of graph, including spatial coordinates if included
+#' Extract vertices of graph, including spatial coordinates if included.
 #'
 #' @param graph A flat table of graph edges. Must contain columns labelled
 #' `from` and `to`, or `start` and `stop`. May also contain
@@ -309,7 +304,7 @@ dodgr_vertices_internal <- function (graph) {
 }
 
 
-#' dodgr_components
+#' Identify connected components of graph.
 #'
 #' Identify connected components of graph and add corresponding `component`
 #' column to `data.frame`.
@@ -348,8 +343,6 @@ dodgr_components <- function (graph) {
     return (graph)
 }
 
-#' dodgr_sample
-#'
 #' Sample a random but connected sub-component of a graph
 #'
 #' @param graph A flat table of graph edges. Must contain columns labelled
@@ -398,8 +391,6 @@ dodgr_sample <- function (graph, nverts = 1000) {
     return (graph)
 }
 
-#' dodgr_insert_vertex
-#'
 #' Insert a new node or vertex into a network
 #'
 #' @param v1 Vertex defining start of graph edge along which new vertex is to be
