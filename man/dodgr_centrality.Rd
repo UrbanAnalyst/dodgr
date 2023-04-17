@@ -2,7 +2,7 @@
 % Please edit documentation in R/centrality.R
 \name{dodgr_centrality}
 \alias{dodgr_centrality}
-\title{dodgr_centrality}
+\title{Calculate betweenness centrality for a 'dodgr' network.}
 \usage{
 dodgr_centrality(
   graph,
@@ -61,8 +61,7 @@ check and the interactive prompt.}
 Modified version of graph with additional 'centrality' column added.
 }
 \description{
-Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
-edge-based form.
+Centrality can be calculated in either vertex- or edge-based form.
 }
 \note{
 The \code{column} parameter is by default \code{d_weighted}, meaning centrality

@@ -2,7 +2,8 @@
 % Please edit documentation in R/centrality.R
 \name{estimate_centrality_threshold}
 \alias{estimate_centrality_threshold}
-\title{estimate_centrality_threshold}
+\title{Estimate a value for the 'dist_threshold' parameter of the
+\link{dodgr_centrality} function.}
 \usage{
 estimate_centrality_threshold(graph, tolerance = 0.001)
 }
@@ -21,8 +22,7 @@ decreasing values of 'tolerance'
 A single value for 'dist_threshold' giving the required tolerance.
 }
 \description{
-Estimate a value for the 'dist_threshold' parameter of the
-\link{dodgr_centrality} function. Providing distance thresholds to this
+Providing distance thresholds to this
 function generally provides considerably speed gains, and results in
 approximations of centrality. This function enables the determination of
 values of 'dist_threshold' corresponding to specific degrees of accuracy.

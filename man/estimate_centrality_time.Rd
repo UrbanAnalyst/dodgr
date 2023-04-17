@@ -2,7 +2,7 @@
 % Please edit documentation in R/centrality.R
 \name{estimate_centrality_time}
 \alias{estimate_centrality_time}
-\title{estimate_centrality_time}
+\title{Estimate time required for a planned centrality calculation.}
 \usage{
 estimate_centrality_time(
   graph,

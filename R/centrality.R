@@ -1,7 +1,6 @@
-#' dodgr_centrality
+#' Calculate betweenness centrality for a 'dodgr' network.
 #'
-#' Calculate betweenness centrality for a 'dodgr' network, in either vertex- or
-#' edge-based form.
+#' Centrality can be calculated in either vertex- or edge-based form.
 #'
 #' @param graph 'data.frame' or equivalent object representing the network
 #' graph (see Details)
@@ -253,10 +252,10 @@ attach_centrality_to_graph <- function (graph, centrality, edge_map, graph_full,
     return (res)
 }
 
-#' estimate_centrality_threshold
-#'
 #' Estimate a value for the 'dist_threshold' parameter of the
-#' \link{dodgr_centrality} function. Providing distance thresholds to this
+#' \link{dodgr_centrality} function.
+#'
+#' Providing distance thresholds to this
 #' function generally provides considerably speed gains, and results in
 #' approximations of centrality. This function enables the determination of
 #' values of 'dist_threshold' corresponding to specific degrees of accuracy.
@@ -344,7 +343,7 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
     # nocov end
 }
 
-#' estimate_centrality_time
+#' Estimate time required for a planned centrality calculation.
 #'
 #' The 'dodgr' centrality functions are designed to be applied to potentially
 #' very large graphs, and may take considerable time to execute. This helper
