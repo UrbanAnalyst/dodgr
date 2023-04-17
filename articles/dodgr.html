@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.19.036</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.19.038</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -485,7 +485,7 @@ compute.</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_sample.html">dodgr_sample</a></span> <span class="op">(</span><span class="va">graph</span>, nverts <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">graph_sub</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 197</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 199</span></span></code></pre>
 <p>The random sample has around twice as many edges as vertices, in
 accordance with the statistics calculated above.</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
@@ -660,17 +660,17 @@ vertices).</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 11 × 6</span></span></span>
 <span><span class="co">##    expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   2.67ms   3.01ms      331.   38.23KB     8.49</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   2.83ms   3.13ms      319.   38.23KB    10.8 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 2.97ms   3.15ms      317.   38.23KB    10.8 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              2.55ms    2.9ms      345.   41.28KB    10.8 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  2.96ms   3.18ms      313.   38.23KB    10.9 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        2.52ms   2.75ms      363.    6.07KB    10.8 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        2.44ms   2.73ms      368.    6.07KB    13.2 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted      2.42ms    2.7ms      371.    6.07KB    10.8 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   2.17ms   2.48ms      405.    6.07KB    13.1 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       2.32ms   2.72ms      369.    6.07KB    13.1 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                656.24µs 878.75µs     <span style="text-decoration: underline;">1</span>138.  390.95KB    15.3</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   2.19ms   2.46ms      393.    42.3KB     8.41</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   2.36ms   2.59ms      355.    42.3KB     9.34</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 2.28ms   2.54ms      371.    42.3KB    10.9 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              2.02ms   2.35ms      385.    45.4KB     8.52</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  2.35ms    2.6ms      341.    42.3KB     8.58</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        1.83ms    2.1ms      456.    15.2KB    10.9 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.85ms   2.11ms      436.    15.2KB    11.0 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted       1.9ms   2.15ms      430.    15.2KB    10.8 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.54ms   1.87ms      504.    15.2KB    13.3 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       1.87ms    2.1ms      440.    15.2KB    10.9 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                856.68µs 990.99µs      933.   394.2KB    13.1</span></span></code></pre>
 <p>The key column of that <code>data.frame</code> is
 <code>relative</code>, which quantifies the relative performance of each
 test in relation to the best which is given a score of 1.
@@ -746,8 +746,8 @@ in routing efficiency can then be seen with the following code</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">##   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full         21.6ms  22.95ms      43.5    1.24MB     2.07</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   3.69ms   4.15ms     242.   285.47KB     6.36</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        21.74ms  23.69ms      41.7    1.24MB     0   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   3.67ms   4.14ms     240.   285.47KB     8.64</span></span></code></pre>
 <p>And contracting the graph has a similar effect of speeding up
 pairwise routing between these 100 points. All routing algorithms scale
 non-linearly with size, and relative improvements in efficiency will be
@@ -769,12 +769,12 @@ contracted graphs:</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">verts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="fu"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">id</span>, size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">verts</span><span class="op">)</span> <span class="co"># a character vector</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "1376768322" "7793307898" "571423206"  "4474520517" "3697943906"</span></span>
-<span><span class="co">## [6] "1398747991"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "4035136517" "8632923868" "2195425044" "2398957868" "2398957532"</span></span>
+<span><span class="co">## [6] "571423195"</span></span></code></pre>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">verts</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 958</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 946</span></span></code></pre>
 <p>Retaining the nominated vertices yields a graph with considerably
 more edges than the fully contracted graph excluding these vertices. The
 <a href="https://atfutures.github.io/dodgr/reference/dodgr_distances.html"><code>dodgr_distances()</code></a>
@@ -825,37 +825,58 @@ these, first take some small samples of <code>from</code> and
 contains 5 vectors. An example is,</p>
 <div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dp</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##   [1] "8618022297" "8618022296" "8618022286" "8618022302" "1668645441"</span></span>
-<span><span class="co">##   [6] "8618022260" "1668645436" "8615501945" "339574837"  "339577272" </span></span>
-<span><span class="co">##  [11] "1148815093" "339577274"  "8632923846" "339574829"  "8615528134"</span></span>
-<span><span class="co">##  [16] "1376768626" "8615528135" "1376768985" "8615528133" "1376768324"</span></span>
-<span><span class="co">##  [21] "1376768690" "8615528132" "1376769039" "8615528130" "8615528131"</span></span>
-<span><span class="co">##  [26] "8615528129" "1376768478" "8615528128" "1560930407" "8615528126"</span></span>
-<span><span class="co">##  [31] "8615528125" "8615528127" "1376768586" "1376768946" "8615528124"</span></span>
-<span><span class="co">##  [36] "1376768369" "8615528121" "8615528122" "8615528123" "1376768738"</span></span>
-<span><span class="co">##  [41] "2717241312" "2717241323" "2717241306" "2717241321" "2717241309"</span></span>
-<span><span class="co">##  [46] "2717241332" "2717241339" "2717241317" "2717241331" "2717241300"</span></span>
-<span><span class="co">##  [51] "2717241302" "6410121124" "1376768559" "1376768918" "1376769209"</span></span>
-<span><span class="co">##  [56] "1376768614" "1376768975" "1376768398" "7794426716" "1376768862"</span></span>
-<span><span class="co">##  [61] "1376768464" "1376768828" "1376769110" "3697937607" "3697937608"</span></span>
-<span><span class="co">##  [66] "3697937609" "3697937616" "3697937612" "3697937611" "3697937613"</span></span>
-<span><span class="co">##  [71] "3697937614" "3697937615" "3697937610" "3697937571" "3697938325"</span></span>
-<span><span class="co">##  [76] "3697938326" "3697938327" "3697938328" "3697938332" "3697938329"</span></span>
-<span><span class="co">##  [81] "3697938330" "3697938331" "3697938336" "3697938337" "3697938338"</span></span>
-<span><span class="co">##  [86] "3697938333" "3697938334" "3697938335" "3697938022" "3697938021"</span></span>
-<span><span class="co">##  [91] "8616917039" "8616917040" "3697938023" "8616917041" "3697938024"</span></span>
-<span><span class="co">##  [96] "338904455"  "2398957843" "338908589"  "8616917042" "8616917043"</span></span>
-<span><span class="co">## [101] "8616917044" "1148814896" "286632900"  "2398957865" "7808713128"</span></span>
-<span><span class="co">## [106] "286632901"  "2398957883" "2398957885" "339574320"  "2627477682"</span></span>
-<span><span class="co">## [111] "2627477678" "3456932070" "2627477679" "2627477677" "2627477680"</span></span>
-<span><span class="co">## [116] "2627477681" "4474520825" "977478643"  "339059758"  "245631133" </span></span>
-<span><span class="co">## [121] "4474520824" "1676740773" "977478675"  "339059754"  "2636414338"</span></span>
-<span><span class="co">## [126] "2636414331" "339318467"  "2636414337" "339318470"  "339318471" </span></span>
-<span><span class="co">## [131] "339318473"  "339318476"  "339318477"  "339318478"  "339318479" </span></span>
-<span><span class="co">## [136] "339932419"  "339932421"  "571423835"  "7799710784" "571423836" </span></span>
-<span><span class="co">## [141] "571423837"  "3921517058" "3921517059" "3921517060" "3921517061"</span></span>
-<span><span class="co">## [146] "3921517062" "3921517063" "2627465898" "2627465897" "7799710903"</span></span>
-<span><span class="co">## [151] "7799710906" "7799710905" "7799710904" "2627465901" "2627465902"</span></span></code></pre>
+<pre><code><span><span class="co">##   [1] "8615501938" "8616917033" "339577486"  "2398957815" "4035136525"</span></span>
+<span><span class="co">##   [6] "8616917034" "2398957817" "1054865512" "2398957821" "2398957822"</span></span>
+<span><span class="co">##  [11] "338904633"  "2398957824" "338904630"  "1148815092" "2398957827"</span></span>
+<span><span class="co">##  [16] "2398957829" "338904628"  "2398957830" "1054866750" "2398957833"</span></span>
+<span><span class="co">##  [21] "1148815271" "2398957836" "1148814749" "2398957839" "1054862659"</span></span>
+<span><span class="co">##  [26] "338904455"  "3697938024" "8616917041" "3697938023" "8616917040"</span></span>
+<span><span class="co">##  [31] "8616917039" "3697938021" "3697938022" "3697938335" "3697938334"</span></span>
+<span><span class="co">##  [36] "3697938333" "3697938338" "3697938337" "3697938336" "3697938331"</span></span>
+<span><span class="co">##  [41] "3697938330" "3697938329" "3697938332" "3697938328" "3697938327"</span></span>
+<span><span class="co">##  [46] "3697938326" "3697938325" "3697937571" "3697937610" "3697937615"</span></span>
+<span><span class="co">##  [51] "3697937614" "3697937613" "3697937611" "3697937612" "3697937616"</span></span>
+<span><span class="co">##  [56] "3697937609" "3697937608" "3697937607" "1376769110" "1376768521"</span></span>
+<span><span class="co">##  [61] "7799710961" "7799710962" "1376768883" "7799710963" "1376768309"</span></span>
+<span><span class="co">##  [66] "7799710965" "1376768766" "7799710964" "1376769150" "1376768556"</span></span>
+<span><span class="co">##  [71] "7799710966" "1376768915" "7799710967" "7799710968" "7799710969"</span></span>
+<span><span class="co">##  [76] "1376769206" "7799710974" "7799710970" "1376768611" "7799710973"</span></span>
+<span><span class="co">##  [81] "7799710976" "1376768971" "7799710975" "1376768395" "7799710977"</span></span>
+<span><span class="co">##  [86] "7799710978" "7799710979" "1376768859" "7799710980" "1376769235"</span></span>
+<span><span class="co">##  [91] "7799710981" "7799710982" "1376768641" "7799710983" "7799710984"</span></span>
+<span><span class="co">##  [96] "1376769001" "1376768341" "7799710985" "7799710986" "1376768709"</span></span>
+<span><span class="co">## [101] "1376769061" "1376768498" "7799710996" "7799710994" "7799710995"</span></span>
+<span><span class="co">## [106] "1376768949" "1376768372" "7799710997" "7799710998" "1376768741"</span></span>
+<span><span class="co">## [111] "1376769127" "7799711001" "7799710999" "7799711000" "1376768426"</span></span>
+<span><span class="co">## [116] "7799711003" "7799711002" "7799711004" "1376768796" "7799711005"</span></span>
+<span><span class="co">## [121] "7799711006" "1376769182" "7799711009" "7799711007" "7799711008"</span></span>
+<span><span class="co">## [126] "1376768589" "7799711010" "1376769033" "1376768471" "7799711013"</span></span>
+<span><span class="co">## [131] "7799711012" "1376768835" "1376769213" "7799711016" "7799711014"</span></span>
+<span><span class="co">## [136] "7799711015" "1376768528" "7799711017" "1376768891" "1376768317"</span></span>
+<span><span class="co">## [141] "7799711020" "7799711018" "7799711019" "1376768683" "7799711021"</span></span>
+<span><span class="co">## [146] "7799711022" "1376769157" "1376768563" "1376768922" "7799711024"</span></span>
+<span><span class="co">## [151] "7799711023" "7799711025" "1376768347" "7799711026" "1376768618"</span></span>
+<span><span class="co">## [156] "7799711027" "7799711028" "1376768979" "7799711029" "7799711030"</span></span>
+<span><span class="co">## [161] "1376768402" "7799711031" "1376768772" "7799711032" "1376769241"</span></span>
+<span><span class="co">## [166] "7799711033" "1376768649" "1376769009" "7799711047" "1376768433"</span></span>
+<span><span class="co">## [171] "7799711043" "7799711044" "1376768716" "7799711045" "7799711046"</span></span>
+<span><span class="co">## [176] "1376769071" "7799711041" "7799711040" "7799711039" "7799711037"</span></span>
+<span><span class="co">## [181] "7799711038" "1376768503" "1376768866" "1376768379" "7799711054"</span></span>
+<span><span class="co">## [186] "7799711055" "1376768748" "1376769131" "7799711057" "7799711056"</span></span>
+<span><span class="co">## [191] "1376768536" "1376768804" "1376769189" "1376768596" "7799711058"</span></span>
+<span><span class="co">## [196] "1376768956" "1376768335" "7799711059" "7799711060" "1376768701"</span></span>
+<span><span class="co">## [201] "7799711061" "7799711062" "1376769050" "7799711063" "7799711064"</span></span>
+<span><span class="co">## [206] "1376768489" "7799711065" "1376768758" "1376769141" "7799711068"</span></span>
+<span><span class="co">## [211] "7799711066" "7799711067" "1376768547" "7799711069" "7799711070"</span></span>
+<span><span class="co">## [216] "1376768908" "7799711071" "7799711074" "1376768419" "7799711073"</span></span>
+<span><span class="co">## [221] "7799711072" "1376768789" "1376769175" "7799711079" "7799711078"</span></span>
+<span><span class="co">## [226] "7799711080" "1376768581" "7799711081" "1376768851" "1376769229"</span></span>
+<span><span class="co">## [231] "7799711083" "7799711082" "7799711084" "1376768635" "1376768995"</span></span>
+<span><span class="co">## [236] "7799711086" "7799711085" "1376768519" "1376768881" "7799711090"</span></span>
+<span><span class="co">## [241] "1376768306" "1376768674" "7799711092" "1376768941" "7799711091"</span></span>
+<span><span class="co">## [246] "1376768365" "7799711093" "1376768734" "7799711094" "1376769106"</span></span>
+<span><span class="co">## [251] "7799711096" "7799711095" "7799711097" "1376768608" "7799711098"</span></span>
+<span><span class="co">## [256] "1376768968" "7799711101" "7799711102" "1376768392" "7799711103"</span></span></code></pre>
 <p>For spatial graphs, the coordinates of these paths can be obtained by
 extracting the vertices with <code><a href="../reference/dodgr_vertices.html">dodgr_vertices()</a></code> and matching
 the vertex IDs:</p>
@@ -864,12 +885,12 @@ the vertex IDs:</p>
 <span><span class="va">path1</span> <span class="op">&lt;-</span> <span class="va">verts</span> <span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span> <span class="op">(</span><span class="va">dp</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">verts</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">path1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              id        x        y component    n</span></span>
-<span><span class="co">## 6544 8618022297 76.46893 15.31786         1 3218</span></span>
-<span><span class="co">## 6546 8618022296 76.46903 15.31787         1 3219</span></span>
-<span><span class="co">## 6529 8618022286 76.46903 15.31780         1 3209</span></span>
-<span><span class="co">## 6530 8618022302 76.46905 15.31780         1 3210</span></span>
-<span><span class="co">## 2941 1668645441 76.46915 15.31780         1 1480</span></span>
-<span><span class="co">## 2942 8618022260 76.46917 15.31780         1 1481</span></span></code></pre>
+<span><span class="co">## 3386 8615501938 76.46026 15.32894         1 1699</span></span>
+<span><span class="co">## 3384 8616917033 76.46028 15.32901         1 1698</span></span>
+<span><span class="co">## 691   339577486 76.46031 15.32906         1  351</span></span>
+<span><span class="co">## 3380 2398957815 76.46035 15.32913         1 1697</span></span>
+<span><span class="co">## 3378 4035136525 76.46040 15.32921         1 1696</span></span>
+<span><span class="co">## 3376 8616917034 76.46043 15.32929         1 1695</span></span></code></pre>
 <p>Paths calculated on contracted graphs will of course have fewer
 vertices than those calculated on full graphs.</p>
 </div>
