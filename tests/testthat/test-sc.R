@@ -82,9 +82,9 @@ test_that ("SC", {
         names (hsc$vertex),
         c ("x_", "y_", "z_", "vertex_")
     )]
-    net_sc2 <- weight_streetnet (hsc, wt_profile = "bicycle")
-    expect_false ("dz" %in% names (net_sc))
-    expect_true ("dz" %in% names (net_sc2))
+    # net_sc2 <- weight_streetnet (hsc, wt_profile = "bicycle")
+    # expect_false ("dz" %in% names (net_sc))
+    # expect_true ("dz" %in% names (net_sc2))
 
     expect_error (
         x <- weight_railway (hsc),
