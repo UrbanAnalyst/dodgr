@@ -1,4 +1,4 @@
-#' dodgr_contract_graph
+#' Contract graph to junction vertices only.
 #'
 #' Removes redundant (straight-line) vertices from graph, leaving only junction
 #' vertices.
@@ -256,7 +256,7 @@ rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
     return (graph_contracted)
 }
 
-#' dodgr_uncontract_graph
+#' Re-expand a contracted graph.
 #'
 #' Revert a contracted graph created with \link{dodgr_contract_graph} back to
 #' the full, uncontracted version. This function is mostly used for the side

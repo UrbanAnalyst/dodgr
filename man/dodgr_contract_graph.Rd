@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-contraction.R
 \name{dodgr_contract_graph}
 \alias{dodgr_contract_graph}
-\title{dodgr_contract_graph}
+\title{Contract graph to junction vertices only.}
 \usage{
 dodgr_contract_graph(graph, verts = NULL, nocache = FALSE)
 }

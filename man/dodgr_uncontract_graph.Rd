@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-contraction.R
 \name{dodgr_uncontract_graph}
 \alias{dodgr_uncontract_graph}
-\title{dodgr_uncontract_graph}
+\title{Re-expand a contracted graph.}
 \usage{
 dodgr_uncontract_graph(graph)
 }
