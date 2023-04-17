@@ -2,7 +2,7 @@
 % Please edit documentation in R/fund-cycles.R
 \name{dodgr_fundamental_cycles}
 \alias{dodgr_fundamental_cycles}
-\title{dodgr_fundamental_cycles}
+\title{Calculate fundamental cycles in a graph.}
 \usage{
 dodgr_fundamental_cycles(
   graph,

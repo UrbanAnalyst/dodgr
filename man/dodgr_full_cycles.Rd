@@ -2,7 +2,7 @@
 % Please edit documentation in R/fund-cycles.R
 \name{dodgr_full_cycles}
 \alias{dodgr_full_cycles}
-\title{dodgr_full_cycles}
+\title{Calculate fundamental cycles on a FULL (that is, non-contracted) graph.}
 \usage{
 dodgr_full_cycles(graph, graph_max_size = 10000, expand = 0.05)
 }

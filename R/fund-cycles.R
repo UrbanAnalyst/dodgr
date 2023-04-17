@@ -7,8 +7,6 @@ flatten_list <- function (x) {
     return (x2)
 }
 
-#' dodgr_fundamental_cycles
-#'
 #' Calculate fundamental cycles in a graph.
 #'
 #' @param graph `data.frame` or equivalent object representing the contracted
@@ -211,9 +209,8 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand) {
     list (bb_list = bb_list, bb_indices = bb_indices)
 }
 
-#' dodgr_full_cycles
-#'
 #' Calculate fundamental cycles on a FULL (that is, non-contracted) graph.
+#'
 #' @inheritParams dodgr_fundamental_cycles
 #' @note This function converts the `graph` to its contracted form, calculates
 #' the fundamental cycles on that version, and then expands these cycles back
@@ -315,8 +312,6 @@ dodgr_full_cycles <- function (graph,
 
 
 
-#' dodgr_sflines_to_poly
-#'
 #' Convert \pkg{sf} `LINESTRING` objects to `POLYGON` objects representing all
 #' fundamental cycles within the `LINESTRING` objects.
 #'

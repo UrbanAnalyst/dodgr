@@ -2,7 +2,8 @@
 % Please edit documentation in R/fund-cycles.R
 \name{dodgr_sflines_to_poly}
 \alias{dodgr_sflines_to_poly}
-\title{dodgr_sflines_to_poly}
+\title{Convert \pkg{sf} \code{LINESTRING} objects to \code{POLYGON} objects representing all
+fundamental cycles within the \code{LINESTRING} objects.}
 \usage{
 dodgr_sflines_to_poly(sflines, graph_max_size = 10000, expand = 0.05)
 }
