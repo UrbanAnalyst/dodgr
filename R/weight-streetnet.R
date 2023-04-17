@@ -239,7 +239,7 @@ weight_streetnet.sf <- function (x,
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
     graph <- data.frame (
         geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
-        edge_id = seq (nrow (dat$character_values)),
+        edge_id = seq_len (nrow (dat$character_values)),
         from_id = as.character (dat$character_values [, 1]),
         from_lon = dat$numeric_values [, 2],
         from_lat = dat$numeric_values [, 3],
@@ -339,7 +339,7 @@ check_highway_osmid <- function (x, wt_profile) {
                 "x appears to have no ID column; ",
                 "sequential edge numbers will be used."
             )
-            x$osm_id <- seq (nrow (x))
+            x$osm_id <- seq_len (nrow (x))
         }
     }
 
@@ -541,7 +541,7 @@ add_extra_sf_columns <- function (graph, x) {
     x [[attr (x, "sf_column")]] <- NULL
     x <- data.frame (x, stringsAsFactors = FALSE)
     # that still sometimes produces factors, so:
-    for (i in seq (ncol (x))) {
+    for (i in seq_len (ncol (x))) {
         x [, i] <- paste0 (x [, i])
     }
     graph [, col_index_graph] <- x [row_index, col_index_x]
@@ -735,7 +735,7 @@ weight_railway <- function (x,
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
     graph <- data.frame (
         geom_num = dat$numeric_values [, 1] + 1, # 1-indexed!
-        edge_id = seq (nrow (dat$character_values)),
+        edge_id = seq_len (nrow (dat$character_values)),
         from_id = as.character (dat$character_values [, 1]),
         from_lon = dat$numeric_values [, 2],
         from_lat = dat$numeric_values [, 3],
