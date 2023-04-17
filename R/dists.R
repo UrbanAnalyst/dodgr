@@ -428,11 +428,12 @@ graph_from_pts <- function (from,
                             quiet = TRUE) {
 
     if (!quiet) {
-        message (paste0 (
-            "No graph submitted to dodgr_dists; ",
-            "downloading street network ... "
-        ),
-        appendLF = FALSE
+        message (
+            paste0 (
+                "No graph submitted to dodgr_dists; ",
+                "downloading street network ... "
+            ),
+            appendLF = FALSE
         )
     }
 
