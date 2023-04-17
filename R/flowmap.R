@@ -1,6 +1,7 @@
-#' dodgr_flowmap
+#' Create a map of `dodgr` flows.
 #'
-#' Map the output of \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
+#' Create a map of the output of \link{dodgr_flows_aggregate} or
+#' \link{dodgr_flows_disperse}
 #'
 #' @param net A street network with a `flow` column obtained from
 #' \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}

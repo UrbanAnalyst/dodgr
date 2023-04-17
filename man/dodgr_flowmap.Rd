@@ -2,7 +2,7 @@
 % Please edit documentation in R/flowmap.R
 \name{dodgr_flowmap}
 \alias{dodgr_flowmap}
-\title{dodgr_flowmap}
+\title{Create a map of \code{dodgr} flows.}
 \usage{
 dodgr_flowmap(net, bbox = NULL, linescale = 1)
 }
@@ -16,7 +16,8 @@ of \code{net}}
 \item{linescale}{Maximal thickness of plotted lines}
 }
 \description{
-Map the output of \link{dodgr_flows_aggregate} or \link{dodgr_flows_disperse}
+Create a map of the output of \link{dodgr_flows_aggregate} or
+\link{dodgr_flows_disperse}
 }
 \note{
 \code{net} should be first passed through \code{merge_directed_graph}
