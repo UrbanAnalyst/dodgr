@@ -1,4 +1,4 @@
-#' dodgr.
+#' Distances On Directed GRaphs ("dodgr")
 #'
 #' Distances on dual-weighted directed graphs using priority-queue shortest
 #' paths. Weighted directed graphs have weights from A to B which may differ
@@ -54,7 +54,7 @@
 #' @useDynLib dodgr, .registration = TRUE
 NULL
 
-#' weighting_profiles
+#' Weighting profiles used to route different modes of transport.
 #'
 #' Collection of weighting profiles used to adjust the routing process to
 #' different means of transport. Modified from data taken from the Routino
@@ -74,7 +74,7 @@ NULL
 #' @references <https://www.routino.org/xml/routino-profiles.xml>
 NULL
 
-#' hampi
+#' Sample street network from Hampi, India.
 #'
 #' A sample street network from the township of Hampi, Karnataka, India.
 #'
@@ -96,7 +96,7 @@ NULL
 #' net <- weight_streetnet (hampi, wt_profile = "foot")
 NULL
 
-#' os_roads_bristol
+#' Sample street network from Bristol, U.K.
 #'
 #' A sample street network for Bristol, U.K., from the Ordnance Survey.
 #'

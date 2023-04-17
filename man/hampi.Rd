@@ -3,7 +3,7 @@
 \docType{data}
 \name{hampi}
 \alias{hampi}
-\title{hampi}
+\title{Sample street network from Hampi, India.}
 \format{
 A Simple Features \code{sf} \code{data.frame} containing the street
 network of Hampi.

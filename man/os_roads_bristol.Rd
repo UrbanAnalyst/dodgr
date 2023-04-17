@@ -3,7 +3,7 @@
 \docType{data}
 \name{os_roads_bristol}
 \alias{os_roads_bristol}
-\title{os_roads_bristol}
+\title{Sample street network from Bristol, U.K.}
 \format{
 A Simple Features \code{sf} \code{data.frame} representing
 motorways in Bristol, UK.

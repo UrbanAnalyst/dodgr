@@ -3,7 +3,7 @@
 \docType{data}
 \name{weighting_profiles}
 \alias{weighting_profiles}
-\title{weighting_profiles}
+\title{Weighting profiles used to route different modes of transport.}
 \format{
 List of \code{data.frame} objects with profile names, means of transport
 and weights.
