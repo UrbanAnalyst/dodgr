@@ -1,6 +1,6 @@
 # nocov start
 
-#' dodgr_streetnet
+#' Extract a street network in \pkg{sf}-format for a given location.
 #'
 #' Use the `osmdata` package to extract the street network for a given
 #' location. For routing between a given set of points (passed as `pts`),
@@ -85,7 +85,7 @@ dodgr_streetnet <- function (bbox,
     return (net$osm_lines)
 }
 
-#' dodgr_streetnet_sc
+#' Extract a street network in \pkg{silicate}-format for a given location.
 #'
 #' Use the `osmdata` package to extract the street network for a given
 #' location and return it in `SC`-format. For routing between a given set of

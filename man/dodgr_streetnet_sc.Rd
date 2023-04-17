@@ -2,7 +2,7 @@
 % Please edit documentation in R/dodgr-streetnet.R
 \name{dodgr_streetnet_sc}
 \alias{dodgr_streetnet_sc}
-\title{dodgr_streetnet_sc}
+\title{Extract a street network in \pkg{silicate}-format for a given location.}
 \usage{
 dodgr_streetnet_sc(bbox, pts = NULL, expand = 0.05, quiet = TRUE)
 }
