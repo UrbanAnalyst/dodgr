@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.19.016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.19.021</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -158,17 +158,17 @@
           
           <code><a href="dodgr_components.html">dodgr_components()</a></code> 
         </dt>
-        <dd>dodgr_components</dd>
+        <dd>Identify connected components of graph.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_contract_graph.html">dodgr_contract_graph()</a></code> 
         </dt>
-        <dd>dodgr_contract_graph</dd>
+        <dd>Contract graph to junction vertices only.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_uncontract_graph.html">dodgr_uncontract_graph()</a></code> 
         </dt>
-        <dd>dodgr_uncontract_graph</dd>
+        <dd>Re-expand a contracted graph.</dd>
       </dl></div><div class="section level2">
       <h2 id="functions-to-convert-graphs">Functions to Convert Graphs<a class="anchor" aria-label="anchor" href="#functions-to-convert-graphs"></a></h2>
       
@@ -189,27 +189,27 @@
           
           <code><a href="dodgr_to_igraph.html">dodgr_to_igraph()</a></code> 
         </dt>
-        <dd>dodgr_to_igraph</dd>
+        <dd>Convert a <code>dodgr</code> graph to an <span class="pkg">igraph</span>.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_to_sf.html">dodgr_to_sf()</a></code> 
         </dt>
-        <dd>dodgr_to_sf</dd>
+        <dd>Convert a <code>dodgr</code> graph into an equivalent <span class="pkg">sf</span> object.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_to_sfc.html">dodgr_to_sfc()</a></code> 
         </dt>
-        <dd>dodgr_to_sfc</dd>
+        <dd>Convert a <code>dodgr</code> graph into an equivalent <code><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">sf::sfc</a></code> object.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_to_tidygraph.html">dodgr_to_tidygraph()</a></code> 
         </dt>
-        <dd>dodgr_to_tidygraph</dd>
+        <dd>Convert a <code>dodgr</code> graph to an <span class="pkg">tidygraph</span>.</dd>
       </dl><dl><dt>
           
           <code><a href="igraph_to_dodgr.html">igraph_to_dodgr()</a></code> 
         </dt>
-        <dd>igraph_to_dodgr</dd>
+        <dd>Convert a <span class="pkg">igraph</span> network to an equivalent <code>dodgr</code> representation.</dd>
       </dl></div><div class="section level2">
       <h2 id="graph-centrality">Graph Centrality<a class="anchor" aria-label="anchor" href="#graph-centrality"></a></h2>
       
@@ -299,32 +299,33 @@ intersection.</dd>
           
           <code><a href="dodgr_full_cycles.html">dodgr_full_cycles()</a></code> 
         </dt>
-        <dd>dodgr_full_cycles</dd>
+        <dd>Calculate fundamental cycles on a FULL (that is, non-contracted) graph.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_fundamental_cycles.html">dodgr_fundamental_cycles()</a></code> 
         </dt>
-        <dd>dodgr_fundamental_cycles</dd>
+        <dd>Calculate fundamental cycles in a graph.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_insert_vertex.html">dodgr_insert_vertex()</a></code> 
         </dt>
-        <dd>dodgr_insert_vertex</dd>
+        <dd>Insert a new node or vertex into a network</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_sample.html">dodgr_sample()</a></code> 
         </dt>
-        <dd>dodgr_sample</dd>
+        <dd>Sample a random but connected sub-component of a graph</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_sflines_to_poly.html">dodgr_sflines_to_poly()</a></code> 
         </dt>
-        <dd>dodgr_sflines_to_poly</dd>
+        <dd>Convert <span class="pkg">sf</span> <code>LINESTRING</code> objects to <code>POLYGON</code> objects representing all
+fundamental cycles within the <code>LINESTRING</code> objects.</dd>
       </dl><dl><dt>
           
           <code><a href="dodgr_vertices.html">dodgr_vertices()</a></code> 
         </dt>
-        <dd>dodgr_vertices</dd>
+        <dd>Extract vertices of graph, including spatial coordinates if included.</dd>
       </dl><dl><dt>
           
           <code><a href="merge_directed_graph.html">merge_directed_graph()</a></code> 
