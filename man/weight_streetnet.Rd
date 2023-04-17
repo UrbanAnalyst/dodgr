@@ -5,7 +5,7 @@
 \alias{weight_streetnet.default}
 \alias{weight_streetnet.sf}
 \alias{weight_streetnet.sc}
-\title{weight_streetnet}
+\title{Weight a street network according to a specified weighting profile.}
 \usage{
 weight_streetnet(
   x,

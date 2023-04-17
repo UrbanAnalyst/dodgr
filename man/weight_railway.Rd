@@ -2,7 +2,7 @@
 % Please edit documentation in R/weight-streetnet.R
 \name{weight_railway}
 \alias{weight_railway}
-\title{weight_railway}
+\title{Weight a network for routing along railways.}
 \usage{
 weight_railway(
   x,

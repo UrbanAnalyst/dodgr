@@ -1,4 +1,4 @@
-#' weight_streetnet
+#' Weight a street network according to a specified weighting profile.
 #'
 #' Weight (or re-weight) an \pkg{sf} or `SC` (`silicate`)-formatted OSM street
 #' network according to a named profile, selected from (foot, horse, wheelchair,
@@ -645,7 +645,7 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 # **********************     weight railway     **********************
 # ********************************************************************
 
-#' weight_railway
+#' Weight a network for routing along railways.
 #'
 #' Weight (or re-weight) an `sf`-formatted OSM street network for routing
 #' along railways.
