@@ -1,0 +1,14 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  dists-categorical: dists-categorical.html
+  dodgr: dodgr.html
+  flows: flows.html
+  parallel: parallel.html
+  times: times.html
+last_built: 2023-04-17T10:04Z
+urls:
+  reference: https://atfutures.github.io/dodgr/reference
+  article: https://atfutures.github.io/dodgr/articles
+
