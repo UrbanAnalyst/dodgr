@@ -75,7 +75,7 @@ dodgr_to_sfc <- function (graph) {
     # force sequential IDs. TODO: Allow non-sequential by replacing indices in
     # src/dodgr_to_sf::get_edge_to_vert_maps with maps to sequential indices.
     gr_cols <- dodgr_graph_cols (graph)
-    graph [[gr_cols$edge_id]] <- seq (nrow (graph))
+    graph [[gr_cols$edge_id]] <- seq_len (nrow (graph))
 
     # hard-code column names for Rcpp routine:
     names (graph) [gr_cols$edge_id] <- "edge_id"
@@ -191,11 +191,12 @@ igraph_to_dodgr <- function (graph) {
     }
     vi <- data.frame (do.call (cbind, vi), stringsAsFactors = FALSE)
 
-    res <- data.frame (cbind (
-        igraph::get.edgelist (graph),
-        do.call (cbind, ei)
-    ),
-    stringsAsFactors = FALSE
+    res <- data.frame (
+        cbind (
+            igraph::get.edgelist (graph),
+            do.call (cbind, ei)
+        ),
+        stringsAsFactors = FALSE
     )
     names (res) [1:2] <- c ("from_id", "to_id")
 
@@ -209,7 +210,7 @@ igraph_to_dodgr <- function (graph) {
         res [, i] <- convert_col (res, i)
     }
 
-    res <- cbind ("edge_id" = seq (nrow (res)), res)
+    res <- cbind ("edge_id" = seq_len (nrow (res)), res)
 
     return (res)
 }
