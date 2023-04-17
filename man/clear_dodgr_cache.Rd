@@ -2,7 +2,7 @@
 % Please edit documentation in R/cache.R
 \name{clear_dodgr_cache}
 \alias{clear_dodgr_cache}
-\title{clear_dodgr_cache}
+\title{Remove cached versions of \code{dodgr} graphs.}
 \usage{
 clear_dodgr_cache()
 }
@@ -10,13 +10,12 @@ clear_dodgr_cache()
 Nothing; the function silently clears any cached objects
 }
 \description{
-Remove cached versions of \code{dodgr} graphs. This function should generally
-\emph{not} be needed, except if graph structure has been directly modified
-other than through \code{dodgr} functions; for example by modifying edge weights
-or distances. Graphs are cached based on the vector of edge IDs, so manual
-changes to any other attributes will not necessarily be translated into
-changes in \code{dodgr} output unless the cached versions are cleared using this
-function. See
+This function should generally \emph{not} be needed, except if graph
+structure has been directly modified other than through \code{dodgr} functions;
+for example by modifying edge weights or distances. Graphs are cached based
+on the vector of edge IDs, so manual changes to any other attributes will not
+necessarily be translated into changes in \code{dodgr} output unless the cached
+versions are cleared using this function. See
 \url{https://github.com/ATFutures/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
 for details of caching process.
 }

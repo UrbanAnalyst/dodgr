@@ -2,7 +2,7 @@
 % Please edit documentation in R/cache.R
 \name{dodgr_cache_off}
 \alias{dodgr_cache_off}
-\title{dodgr_cache_off}
+\title{Turn off all dodgr caching in current session.}
 \usage{
 dodgr_cache_off()
 }
@@ -10,9 +10,8 @@ dodgr_cache_off()
 Nothing; the function invisibly returns \code{TRUE} if successful.
 }
 \description{
-Turn off all dodgr caching in current session. This is useful is speed is
-paramount, and if graph contraction is not needed. Caching can be switched
-back on with \link{dodgr_cache_on}.
+This function is useful is speed is paramount, and if graph contraction is
+not needed. Caching can be switched back on with \link{dodgr_cache_on}.
 }
 \seealso{
 Other cache: 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cache.R
 \name{dodgr_cache_on}
 \alias{dodgr_cache_on}
-\title{dodgr_cache_on}
+\title{Turn on all dodgr caching in current session.}
 \usage{
 dodgr_cache_on()
 }
@@ -10,8 +10,8 @@ dodgr_cache_on()
 Nothing; the function invisibly returns \code{TRUE} if successful.
 }
 \description{
-Turn on all dodgr caching in current session. This will only have an effect
-after caching has been turned off with \link{dodgr_cache_off}.
+This will only have an effect after caching has been turned off with
+\link{dodgr_cache_off}.
 }
 \seealso{
 Other cache: 

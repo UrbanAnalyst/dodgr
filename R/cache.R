@@ -43,16 +43,19 @@ get_edge_map <- function (graph) {
     readRDS (fname_c)
 }
 
-# cache on initial construction with weight_streetnet. This pre-calculates and
-# caches the contracted graph *with no additional intermediate vertices* (that
-# is, the result of `dodgr_contract_graph (graph, verts = NULL)`). Later calls
-# with explicit additional vertices will generate different hashes and so will
-# be re-contracted and cached directly in `dodgr_contract_graph`.
-#
-# A copy of the original (full) graph is also copied to a file named with the
-# hash of the edge map. This is needed for graph uncontraction, so that just the
-# contracted graph and edge map can be submitted, the original graph re-loaded,
-# and the uncontracted version returned.
+#' cache on initial construction with weight_streetnet.
+#'
+#' This pre-calculates and caches the contracted graph *with no additional
+#' intermediate vertices* (that is, the result of `dodgr_contract_graph (graph,
+#' verts = NULL)`). Later calls with explicit additional vertices will generate
+#' different hashes and so will be re-contracted and cached directly in
+#' `dodgr_contract_graph`.
+#'
+#' A copy of the original (full) graph is also copied to a file named with the
+#' hash of the edge map. This is needed for graph uncontraction, so that just the
+#' contracted graph and edge map can be submitted, the original graph re-loaded,
+#' and the uncontracted version returned.
+#' @noRd
 cache_graph <- function (graph, edge_col) {
 
     td <- fs::path_temp ()
@@ -116,15 +119,14 @@ cache_graph <- function (graph, edge_col) {
     return (res) # R6 processx object
 }
 
-#' clear_dodgr_cache
+#' Remove cached versions of `dodgr` graphs.
 #'
-#' Remove cached versions of `dodgr` graphs. This function should generally
-#' \emph{not} be needed, except if graph structure has been directly modified
-#' other than through `dodgr` functions; for example by modifying edge weights
-#' or distances. Graphs are cached based on the vector of edge IDs, so manual
-#' changes to any other attributes will not necessarily be translated into
-#' changes in `dodgr` output unless the cached versions are cleared using this
-#' function. See
+#' This function should generally \emph{not} be needed, except if graph
+#' structure has been directly modified other than through `dodgr` functions;
+#' for example by modifying edge weights or distances. Graphs are cached based
+#' on the vector of edge IDs, so manual changes to any other attributes will not
+#' necessarily be translated into changes in `dodgr` output unless the cached
+#' versions are cleared using this function. See
 #' \url{https://github.com/ATFutures/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
 #' for details of caching process.
 #'
@@ -142,11 +144,10 @@ clear_dodgr_cache <- function () {
     }
 }
 
-#' dodgr_cache_off
+#' Turn off all dodgr caching in current session.
 #'
-#' Turn off all dodgr caching in current session. This is useful is speed is
-#' paramount, and if graph contraction is not needed. Caching can be switched
-#' back on with \link{dodgr_cache_on}.
+#' This function is useful is speed is paramount, and if graph contraction is
+#' not needed. Caching can be switched back on with \link{dodgr_cache_on}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
 #' @family cache
 #' @export
@@ -154,10 +155,10 @@ dodgr_cache_off <- function () {
     Sys.setenv ("DODGR_CACHE" = "FALSE")
 }
 
-#' dodgr_cache_on
+#' Turn on all dodgr caching in current session.
 #'
-#' Turn on all dodgr caching in current session. This will only have an effect
-#' after caching has been turned off with \link{dodgr_cache_off}.
+#' This will only have an effect after caching has been turned off with
+#' \link{dodgr_cache_off}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
 #' @family cache
 #' @export
