@@ -23,7 +23,7 @@ test_that ("SC", {
     expect_true (nrow (net_sc) > 0)
 
     net_sf <- weight_streetnet (hampi)
-    expect_true (nrow (net_sf) < nrow (net_sc))
+    expect_true (nrow (net_sf) > nrow (net_sc)) # sf has duplicated edges
     v_sc <- dodgr_vertices (net_sc)
     v_sf <- dodgr_vertices (net_sf)
     expect_true (nrow (v_sf) > nrow (v_sc))
