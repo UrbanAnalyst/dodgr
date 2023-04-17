@@ -9,6 +9,7 @@ sf_to_sc <- function (x) {
                        "y_" = pts [, 2],
                        "vertex_" = rownames (pts),
                        stringsAsFactors = FALSE)
+    pts <- pts [which (!duplicated (pts)), ]
 
     edge <- lapply (x$geometry, function (i)
                      cbind (rownames (i) [1:(nrow (i) - 1)],
