@@ -2,7 +2,7 @@
 % Please edit documentation in R/iso.R
 \name{dodgr_isoverts}
 \alias{dodgr_isoverts}
-\title{dodgr_isoverts}
+\title{Calculate isodistance or isochrone contours from specified points.}
 \usage{
 dodgr_isoverts(graph, from = NULL, dlim = NULL, tlim = NULL, heap = "BHeap")
 }
@@ -33,9 +33,8 @@ maximal number of available cores or threads. This number can be reduced by
 specifying a value via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \description{
-Calculate isodistance or isochrone contours from specified points, and return
-lists of all network vertices contained within the contours. Function is
-fully vectorized to calculate accept vectors of central points and vectors
+Returns lists of all network vertices contained within the contours. Function
+is fully vectorized to calculate accept vectors of central points and vectors
 defining multiple isochrone thresholds. Provide one or more \code{dlim} values for
 isodistances, or one or more \code{tlim} values for isochrones.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/iso.R
 \name{dodgr_isochrones}
 \alias{dodgr_isochrones}
-\title{dodgr_isochrones}
+\title{Calculate isochrone contours from specified points.}
 \usage{
 dodgr_isochrones(graph, from = NULL, tlim = NULL, heap = "BHeap")
 }
@@ -32,9 +32,8 @@ maximal number of available cores or threads. This number can be reduced by
 specifying a value via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \description{
-Calculate isochrone contours from specified points. Function is fully
-vectorized to calculate accept vectors of central points and vectors
-defining multiple isochrone thresholds.
+Function is fully vectorized to calculate accept vectors of central points
+and vectors defining multiple isochrone thresholds.
 }
 \note{
 Isodists are calculated by default using parallel computation with the

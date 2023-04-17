@@ -1,8 +1,7 @@
-#' dodgr_isodists
+#' Calculate isodistance contours from specified points.
 #'
-#' Calculate isodistance contours from specified points. Function is fully
-#' vectorized to calculate accept vectors of central points and vectors
-#' defining multiple isodistances.
+#' Function is fully vectorized to calculate accept vectors of central points
+#' and vectors defining multiple isodistances.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Notes)
@@ -116,11 +115,10 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
     )
 }
 
-#' dodgr_isochrones
+#' Calculate isochrone contours from specified points.
 #'
-#' Calculate isochrone contours from specified points. Function is fully
-#' vectorized to calculate accept vectors of central points and vectors
-#' defining multiple isochrone thresholds.
+#' Function is fully vectorized to calculate accept vectors of central points
+#' and vectors defining multiple isochrone thresholds.
 #'
 #' @inherit dodgr_isodists
 #'
@@ -171,11 +169,10 @@ dodgr_isochrones <- function (graph,
     return (res)
 }
 
-#' dodgr_isoverts
+#' Calculate isodistance or isochrone contours from specified points.
 #'
-#' Calculate isodistance or isochrone contours from specified points, and return
-#' lists of all network vertices contained within the contours. Function is
-#' fully vectorized to calculate accept vectors of central points and vectors
+#' Returns lists of all network vertices contained within the contours. Function
+#' is fully vectorized to calculate accept vectors of central points and vectors
 #' defining multiple isochrone thresholds. Provide one or more `dlim` values for
 #' isodistances, or one or more `tlim` values for isochrones.
 #'

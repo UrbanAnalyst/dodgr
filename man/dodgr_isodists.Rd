@@ -2,7 +2,7 @@
 % Please edit documentation in R/iso.R
 \name{dodgr_isodists}
 \alias{dodgr_isodists}
-\title{dodgr_isodists}
+\title{Calculate isodistance contours from specified points.}
 \usage{
 dodgr_isodists(
   graph,
@@ -37,9 +37,8 @@ associated coordinates of the series of points from each \code{from} point at th
 specified isodistances.
 }
 \description{
-Calculate isodistance contours from specified points. Function is fully
-vectorized to calculate accept vectors of central points and vectors
-defining multiple isodistances.
+Function is fully vectorized to calculate accept vectors of central points
+and vectors defining multiple isodistances.
 }
 \note{
 Isodists are calculated by default using parallel computation with the
