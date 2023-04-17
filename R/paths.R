@@ -1,5 +1,3 @@
-#' dodgr_paths
-#'
 #' Calculate lists of pair-wise shortest paths between points.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
