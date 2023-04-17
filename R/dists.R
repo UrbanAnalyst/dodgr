@@ -1,5 +1,3 @@
-#' dodgr_dists
-#'
 #' Calculate matrix of pair-wise distances between points.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
@@ -179,7 +177,7 @@ dodgr_dists <- function (graph,
     return (d)
 }
 
-#' dodgr_distances
+#' Calculate matrix of pair-wise distances between points.
 #'
 #' Alias for \link{dodgr_dists}
 #' @inherit dodgr_dists
@@ -205,10 +203,9 @@ dodgr_distances <- function (graph,
     )
 }
 
-#' get_index_id_cols
+#' Get an index of `pts` matching `vert_map`.
 #'
-#' Get an index of `pts` matching `vert_map`, as well as the
-#' corresonding names of those `pts`
+#' Also returns the corresonding names of those `pts`
 #'
 #' @return list of `index`, which is 0-based for C++, and corresponding
 #' `id` values.
@@ -252,12 +249,9 @@ get_index_id_cols <- function (graph,
 }
 
 
-#' get_id_cols
+#' Get the ID columns or rownames of from or to points
 #'
-#' Get the ID columns or rownames from a matrix or data.frame of from or to
-#' points
-#'
-#' @param pts The `from` or `to` args passed to `dodgr_dists`
+#' @param pts The `from` or `to` args passed to `dodgr_dists`.
 #' @return Character vector of names of points, if they exist in `pts`
 #' @noRd
 get_id_cols <- function (pts) {
@@ -278,9 +272,8 @@ get_id_cols <- function (pts) {
     return (ids)
 }
 
-#' make_vert_map
-#'
 #' Map unique vertex names to sequential numbers in matrix
+#'
 #' @noRd
 make_vert_map <- function (graph,
                            gr_cols,
@@ -310,10 +303,8 @@ make_vert_map <- function (graph,
     return (res)
 }
 
-#' get_pts_index
-#'
-#' Convert `from` or `to` args of `dodgr_dists` to indices into
-#' `vert_map`
+#' Convert `from` or `to` args of \link{dodgr_dists} to indices into
+#' \link{dodgr_vertices}.
 #'
 #' @param graph A dodgr graph
 #' @param vert_map Two-column `data.frame` of unique vertices and
@@ -421,10 +412,9 @@ get_pts_index_rect <- function (pts, graph, gr_cols) {
 
 # nocov start
 
-#' graph_from_pts
-#'
 #' Download a street network when `graph` not passed to `dodgr_dists`,
 #' by using the lists of from and to points.
+#'
 #' @param from Arg passed to `dodgr_dists`
 #' @param to Arg passed to `dodgr_dists`
 #' @param expand Factor by which street network is to be expanded beyond range
@@ -466,11 +456,10 @@ graph_from_pts <- function (from,
 
 # nocov end
 
-#' flip_graph
+#' Flip from and two vertices of a graph.
 #'
-#' Flip from and two vertices of a graph. This is only called from
-#' `dodgr_distances`, and only on converted graph, so just needs to switch from
-#' and to vertex columns.
+#' This is only called from `dodgr_distances`, and only on converted graph, so
+#' just needs to switch from and to vertex columns.
 #' @noRd
 flip_graph <- function (graph) {
 

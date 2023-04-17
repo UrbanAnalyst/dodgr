@@ -2,7 +2,7 @@
 % Please edit documentation in R/dists.R
 \name{dodgr_distances}
 \alias{dodgr_distances}
-\title{dodgr_distances}
+\title{Calculate matrix of pair-wise distances between points.}
 \usage{
 dodgr_distances(
   graph,
