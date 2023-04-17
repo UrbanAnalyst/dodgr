@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare-heaps.R
 \name{compare_heaps}
 \alias{compare_heaps}
-\title{compare_heaps}
+\title{Compare timings of different sort heaps for a given input graph.}
 \usage{
 compare_heaps(graph, nverts = 100, replications = 2)
 }
@@ -20,7 +20,7 @@ Result of \code{bench::mark} comparison.
 }
 \description{
 Perform timing comparison between different kinds of heaps as well as with
-equivalent \code{igraph} routine \code{distances}. To do this, a random
+equivalent routines from the \pkg{igraph} package. To do this, a random
 sub-graph containing a defined number of vertices is first selected.
 Alternatively, this random sub-graph can be pre-generated with the
 \code{dodgr_sample} function and passed directly.
