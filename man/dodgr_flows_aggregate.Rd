@@ -2,7 +2,7 @@
 % Please edit documentation in R/flows.R
 \name{dodgr_flows_aggregate}
 \alias{dodgr_flows_aggregate}
-\title{dodgr_flows_aggregate}
+\title{Aggregate flows throughout a network.}
 \usage{
 dodgr_flows_aggregate(
   graph,

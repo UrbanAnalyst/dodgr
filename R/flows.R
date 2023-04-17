@@ -1,4 +1,4 @@
-#' dodgr_flows_aggregate
+#' Aggregate flows throughout a network.
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
 #' between all pairs of `from` and `to` points.
@@ -220,7 +220,7 @@ dodgr_flows_aggregate <- function (graph,
     return (graph)
 }
 
-#' dodgr_flows_disperse
+#' Aggregate flows dispersed from each point in a network.
 #'
 #' Disperse flows throughout a network based on a input vectors of origin points
 #' and associated densities
@@ -357,11 +357,11 @@ dodgr_flows_disperse <- function (graph,
     return (graph)
 }
 
-#' dodgr_flows_si
+#' Aggregate flows throughout a network using a spatial interaction model.
 #'
-#' Aggregate flows throughout a network based using an exponential Spatial
-#' Interaction (SI) model between a specified set of origin and destination
-#' points, and associated vectors of densities.
+#' Aggregate flows throughout a network using an exponential Spatial Interaction
+#' (SI) model between a specified set of origin and destination points, and
+#' associated vectors of densities.
 #'
 #' @inheritParams dodgr_flows_aggregate
 #' @param k Width of exponential spatial interaction function (exp (-d / k)),

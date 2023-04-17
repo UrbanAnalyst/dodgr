@@ -2,7 +2,7 @@
 % Please edit documentation in R/flows.R
 \name{dodgr_flows_disperse}
 \alias{dodgr_flows_disperse}
-\title{dodgr_flows_disperse}
+\title{Aggregate flows dispersed from each point in a network.}
 \usage{
 dodgr_flows_disperse(
   graph,
