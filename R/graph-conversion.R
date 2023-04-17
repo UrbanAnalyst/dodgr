@@ -1,10 +1,9 @@
-#' dodgr_to_sf
+#' Convert a `dodgr` graph into an equivalent \pkg{sf} object.
 #'
-#' Convert a `dodgr` graph into an equivalent \pkg{sf} object.  Works by
-#' aggregating edges into `LINESTRING` objects representing longest sequences
-#' between all junction nodes. The resultant objects will generally contain more
-#' `LINESTRING` objects than the original \pkg{sf} object, because the former
-#' will be bisected at every junction point.
+#' Works by aggregating edges into `LINESTRING` objects representing longest
+#' sequences between all junction nodes. The resultant objects will generally
+#' contain more `LINESTRING` objects than the original \pkg{sf} object, because
+#' the former will be bisected at every junction point.
 #'
 #' @param graph A `dodgr` graph
 #' @return Equivalent object of class \pkg{sf}.
@@ -36,7 +35,7 @@ dodgr_to_sf <- function (graph) {
     sf::st_sf (res$dat, geometry = res$geometry, crs = 4326)
 }
 
-#' dodgr_to_sfc
+#' Convert a `dodgr` graph into an equivalent `sf::sfc` object.
 #'
 #' Convert a `dodgr` graph into a `list` composed of
 #' two objects: `dat`, a `data.frame`; and
@@ -116,8 +115,6 @@ dodgr_to_sfc <- function (graph) {
     return (list (dat = gc, geometry = geometry))
 }
 
-#' dodgr_to_igraph
-#'
 #' Convert a `dodgr` graph to an \pkg{igraph}.
 #'
 #' @param graph A `dodgr` graph
@@ -164,8 +161,6 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
     igraph::graph_from_data_frame (graph, directed = TRUE, vertices = v)
 }
 
-#' igraph_to_dodgr
-#'
 #' Convert a \pkg{igraph} network to an equivalent `dodgr` representation.
 #'
 #' @param graph An \pkg{igraph} network
@@ -236,8 +231,6 @@ convert_col <- function (x, n = 3) {
 }
 
 
-#' dodgr_to_tidygraph
-#'
 #' Convert a `dodgr` graph to an \pkg{tidygraph}.
 #'
 #' @param graph A `dodgr` graph

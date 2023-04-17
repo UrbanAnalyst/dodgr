@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-conversion.R
 \name{dodgr_to_igraph}
 \alias{dodgr_to_igraph}
-\title{dodgr_to_igraph}
+\title{Convert a \code{dodgr} graph to an \pkg{igraph}.}
 \usage{
 dodgr_to_igraph(graph, weight_column = "d")
 }

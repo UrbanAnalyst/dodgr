@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-conversion.R
 \name{dodgr_to_sfc}
 \alias{dodgr_to_sfc}
-\title{dodgr_to_sfc}
+\title{Convert a \code{dodgr} graph into an equivalent \code{sf::sfc} object.}
 \usage{
 dodgr_to_sfc(graph)
 }

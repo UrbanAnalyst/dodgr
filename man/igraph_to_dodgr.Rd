@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-conversion.R
 \name{igraph_to_dodgr}
 \alias{igraph_to_dodgr}
-\title{igraph_to_dodgr}
+\title{Convert a \pkg{igraph} network to an equivalent \code{dodgr} representation.}
 \usage{
 igraph_to_dodgr(graph)
 }

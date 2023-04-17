@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-conversion.R
 \name{dodgr_to_tidygraph}
 \alias{dodgr_to_tidygraph}
-\title{dodgr_to_tidygraph}
+\title{Convert a \code{dodgr} graph to an \pkg{tidygraph}.}
 \usage{
 dodgr_to_tidygraph(graph)
 }

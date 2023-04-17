@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph-conversion.R
 \name{dodgr_to_sf}
 \alias{dodgr_to_sf}
-\title{dodgr_to_sf}
+\title{Convert a \code{dodgr} graph into an equivalent \pkg{sf} object.}
 \usage{
 dodgr_to_sf(graph)
 }
@@ -13,11 +13,10 @@ dodgr_to_sf(graph)
 Equivalent object of class \pkg{sf}.
 }
 \description{
-Convert a \code{dodgr} graph into an equivalent \pkg{sf} object.  Works by
-aggregating edges into \code{LINESTRING} objects representing longest sequences
-between all junction nodes. The resultant objects will generally contain more
-\code{LINESTRING} objects than the original \pkg{sf} object, because the former
-will be bisected at every junction point.
+Works by aggregating edges into \code{LINESTRING} objects representing longest
+sequences between all junction nodes. The resultant objects will generally
+contain more \code{LINESTRING} objects than the original \pkg{sf} object, because
+the former will be bisected at every junction point.
 }
 \note{
 Requires the \pkg{sf} package to be installed.
