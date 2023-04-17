@@ -25,9 +25,9 @@ matching.}
 A vector index into verts
 }
 \description{
-The \link{match_pts_to_graph} function matches points to the nearest edge based
-on geometric intersections; this function only matches to the nearest vertex
-based on point-to-point distances.
+The \link{match_pts_to_graph} function matches points to the nearest edge
+based on geometric intersections; this function only matches to the nearest
+vertex based on point-to-point distances.
 }
 \examples{
 net <- weight_streetnet (hampi, wt_profile = "foot")

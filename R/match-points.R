@@ -1,8 +1,8 @@
 #' Match spatial points to the vertices of a spatial graph.
 #'
-#' The \link{match_pts_to_graph} function matches points to the nearest edge based
-#' on geometric intersections; this function only matches to the nearest vertex
-#' based on point-to-point distances.
+#' The \link{match_pts_to_graph} function matches points to the nearest edge
+#' based on geometric intersections; this function only matches to the nearest
+#' vertex based on point-to-point distances.
 #'
 #' @param verts A `data.frame` of vertices obtained from
 #' `dodgr_vertices(graph)`.
@@ -43,7 +43,7 @@ match_pts_to_verts <- function (verts, xy, connected = FALSE) {
         verts <- dodgr_vertices (verts)
     }
 
-    indx <- seq (nrow (verts))
+    indx <- seq_len (nrow (verts))
     if (connected) {
         vertsi <- verts [which (verts$component == 1), ]
         indx <- match (vertsi$id, verts$id)
@@ -163,7 +163,7 @@ match_pts_to_graph <- function (graph, xy,
     names (graph) <- names (gr_cols)
 
     res <- rcpp_points_to_edges_par (graph, xy)
-    index <- seq (nrow (xy))
+    index <- seq_len (nrow (xy))
 
     # rcpp_points_index is 0-indexed, so ...
     graph_index <- as.integer (res [index]) + 1L
@@ -297,7 +297,7 @@ add_nodes_to_graph <- function (graph, xy) {
         t_wt <- edges_to_split_i$time_weighted / edges_to_split_i$time
         t_scale <- edges_to_split_i$time / edges_to_split_i$d
 
-        new_edges_i <- lapply (seq (nrow (edges_to_split_i)), function (e) {
+        new_edges_i <- lapply (seq_len (nrow (edges_to_split_i)), function (e) {
 
             edge_i <- rbind (edges_to_split_i [e, ], edges_to_split_i [e, ])
             edge_i$to [1] <- edge_i$from [2] <- genhash ()
