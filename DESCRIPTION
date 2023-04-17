@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.2.19.004
+Version: 0.2.19.005
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
     person("Andreas", "Petutschnig", role = "aut"),
@@ -58,5 +58,5 @@ Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 SystemRequirements: C++11, GNU make
