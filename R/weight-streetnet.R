@@ -567,81 +567,81 @@ weight_streetnet.sc <- function (x,
                                  keep_cols = NULL,
                                  left_side = FALSE) {
 
-        requireNamespace ("geodist")
-        requireNamespace ("dplyr")
-        check_sc (x)
+    requireNamespace ("geodist")
+    requireNamespace ("dplyr")
+    check_sc (x)
 
-        x$vertex <- x$vertex [which (!duplicated (x$vertex)), ]
+    x$vertex <- x$vertex [which (!duplicated (x$vertex)), ]
 
-        graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
-            sc_edge_dist () %>% # append dist
-            extract_sc_edges_highways (
-                x,
-                wt_profile,
-                wt_profile_file,
-                c (
-                    way_types_to_keep,
-                    keep_cols
-                )
-            ) %>% # hw key-val pairs
-            weight_sc_edges (
-                wt_profile,
-                wt_profile_file
-            ) %>% # add d_weighted col
-            set_maxspeed (
-                wt_profile,
-                wt_profile_file
-            ) %>% # modify d_weighted
-            weight_by_num_lanes (wt_profile) %>%
-            calc_edge_time (wt_profile) %>% # add time
-            sc_traffic_lights (
-                x,
-                wt_profile,
-                wt_profile_file
-            ) %>% # modify time
-            rm_duplicated_edges () %>%
-            sc_duplicate_edges (wt_profile)
+    graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
+        sc_edge_dist () %>% # append dist
+        extract_sc_edges_highways (
+            x,
+            wt_profile,
+            wt_profile_file,
+            c (
+                way_types_to_keep,
+                keep_cols
+            )
+        ) %>% # hw key-val pairs
+        weight_sc_edges (
+            wt_profile,
+            wt_profile_file
+        ) %>% # add d_weighted col
+        set_maxspeed (
+            wt_profile,
+            wt_profile_file
+        ) %>% # modify d_weighted
+        weight_by_num_lanes (wt_profile) %>%
+        calc_edge_time (wt_profile) %>% # add time
+        sc_traffic_lights (
+            x,
+            wt_profile,
+            wt_profile_file
+        ) %>% # modify time
+        rm_duplicated_edges () %>%
+        sc_duplicate_edges (wt_profile)
 
-        cl <- class (graph)
-        graph <- dodgr_components (graph) # strips tbl class
-        class (graph) <- cl
+    cl <- class (graph)
+    graph <- dodgr_components (graph) # strips tbl class
+    class (graph) <- cl
 
-        gr_cols <- dodgr_graph_cols (graph)
-        graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
+    gr_cols <- dodgr_graph_cols (graph)
+    graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
 
-        attr (graph, "turn_penalty") <- 0
+    attr (graph, "turn_penalty") <- 0
 
-        if (turn_penalty) {
-            attr (graph, "turn_penalty") <-
-                get_turn_penalties (wt_profile, wt_profile_file)$turn
-            attr (graph, "wt_profile") <- wt_profile
-            attr (graph, "wt_profile_file") <- wt_profile_file
-            attr (graph, "left_side") <- left_side
+    if (turn_penalty) {
+        attr (graph, "turn_penalty") <-
+            get_turn_penalties (wt_profile, wt_profile_file)$turn
+        attr (graph, "wt_profile") <- wt_profile
+        attr (graph, "wt_profile_file") <- wt_profile_file
+        attr (graph, "left_side") <- left_side
 
-            restrictions <- extract_turn_restictions (x)
-            attr (graph, "turn_restrictions_no") <- restrictions$rw_no
-            attr (graph, "turn_restrictions_only") <- restrictions$rw_only
-        }
-
-        gr_cols <- dodgr_graph_cols (graph)
-        graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]]) |
-            !is.na (graph [[gr_cols$time]])), ]
-
-        class (graph) <- c (
-            class (graph),
-            "dodgr_streetnet",
-            "dodgr_streetnet_sc"
-        )
-
-        attr (graph, "hash") <-
-            get_hash (graph, contracted = FALSE, force = TRUE)
-
-        if (is_dodgr_cache_on ()) {
-            attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
-        }
-
-        return (graph)
+        restrictions <- extract_turn_restictions (x)
+        attr (graph, "turn_restrictions_no") <- restrictions$rw_no
+        attr (graph, "turn_restrictions_only") <- restrictions$rw_only
     }
+
+    gr_cols <- dodgr_graph_cols (graph)
+    graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]]) |
+        !is.na (graph [[gr_cols$time]])), ]
+
+    class (graph) <- c (
+        class (graph),
+        "dodgr_streetnet",
+        "dodgr_streetnet_sc"
+    )
+
+    attr (graph, "hash") <-
+        get_hash (graph, contracted = FALSE, force = TRUE)
+
+    if (is_dodgr_cache_on ()) {
+        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+    }
+
+    return (graph)
+}
 
 #' @name weight_streetnet
 #' @family extraction
