@@ -558,14 +558,14 @@ add_extra_sf_columns <- function (graph, x) {
 #' @name weight_streetnet
 #' @family extraction
 #' @export
-weight_streetnet.sc <- weight_streetnet.SC <-
-    function (x, wt_profile = "bicycle",
-              wt_profile_file = NULL,
-              turn_penalty = FALSE,
-              type_col = "highway",
-              id_col = "osm_id",
-              keep_cols = NULL,
-              left_side = FALSE) {
+weight_streetnet.sc <- function (x,
+                                 wt_profile = "bicycle",
+                                 wt_profile_file = NULL,
+                                 turn_penalty = FALSE,
+                                 type_col = "highway",
+                                 id_col = "osm_id",
+                                 keep_cols = NULL,
+                                 left_side = FALSE) {
 
         requireNamespace ("geodist")
         requireNamespace ("dplyr")
@@ -642,6 +642,30 @@ weight_streetnet.sc <- weight_streetnet.SC <-
 
         return (graph)
     }
+
+#' @name weight_streetnet
+#' @family extraction
+#' @export
+weight_streetnet.SC <- function (x,
+                                 wt_profile = "bicycle",
+                                 wt_profile_file = NULL,
+                                 turn_penalty = FALSE,
+                                 type_col = "highway",
+                                 id_col = "osm_id",
+                                 keep_cols = NULL,
+                                 left_side = FALSE) {
+
+    weight_streetnet.sc (
+        x,
+        wt_profile = wt_profile,
+        wt_profile_file = wt_profile_file,
+        turn_penalty = turn_penalty,
+        type_col = type_col,
+        id_col = id_col,
+        keep_cols = keep_cols,
+        left_side = left_side
+    )
+}
 
 # ********************************************************************
 # **********************     weight railway     **********************

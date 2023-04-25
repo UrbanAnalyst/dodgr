@@ -5,6 +5,7 @@
 \alias{weight_streetnet.default}
 \alias{weight_streetnet.sf}
 \alias{weight_streetnet.sc}
+\alias{weight_streetnet.SC}
 \title{Weight a street network according to a specified weighting profile.}
 \usage{
 weight_streetnet(
@@ -41,6 +42,17 @@ weight_streetnet(
 )
 
 \method{weight_streetnet}{sc}(
+  x,
+  wt_profile = "bicycle",
+  wt_profile_file = NULL,
+  turn_penalty = FALSE,
+  type_col = "highway",
+  id_col = "osm_id",
+  keep_cols = NULL,
+  left_side = FALSE
+)
+
+\method{weight_streetnet}{SC}(
   x,
   wt_profile = "bicycle",
   wt_profile_file = NULL,
@@ -206,6 +218,11 @@ graph <- weight_streetnet (
 }
 \seealso{
 \link{write_dodgr_wt_profile}, \link{dodgr_times}
+
+Other extraction: 
+\code{\link{dodgr_streetnet_sc}()},
+\code{\link{dodgr_streetnet}()},
+\code{\link{weight_railway}()}
 
 Other extraction: 
 \code{\link{dodgr_streetnet_sc}()},
