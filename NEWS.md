@@ -1,8 +1,14 @@
 # v 0.2.19.00x (dev)
 
+## Major changes:
+
+- Fixed GitHub updates of package website (does not affect CRAN release).
+
 ## Minor changes:
 
+- General documentation updates.
 - Minor change to weight_streetnet.sc to suppress dplyr left_join warnings
+- Minor fixes to tests.
 
 ---
 
