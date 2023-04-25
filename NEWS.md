@@ -9,6 +9,7 @@
 - General documentation updates.
 - Minor change to weight_streetnet.sc to suppress dplyr left_join warnings
 - Minor fixes to tests.
+- Update citation file to match new CRAN requirements (#204).
 
 ---
 

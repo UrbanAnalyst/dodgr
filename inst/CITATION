@@ -1,15 +1,13 @@
 citHeader("To cite dodgr in publications use:")
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
         journal = "Transport Findings",
         doi = "10.32866/6945",
         publisher = "Network Design Lab",
         title = "dodgr: An R package for network flow aggregation",
-        author = personList(as.person("Mark Padgham")),
+        author = person("Mark Padgham"),
         year = "2019",
         month = "2",
-
-        textVersion  =
         paste("Mark Padgham (2019)",
             "dodgr: An R package for network flow aggregation",
             "Transport Findings, 2(14).",
