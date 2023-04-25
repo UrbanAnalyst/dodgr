@@ -380,6 +380,19 @@ rcpp_get_sp_dists_categorical <- function(graph, vert_map_in, fromi, toi_in, hea
     .Call(`_dodgr_rcpp_get_sp_dists_categorical`, graph, vert_map_in, fromi, toi_in, heap_type, proportions_only)
 }
 
+#' rcpp_get_sp_dists_categ_paired
+#'
+#' Pairwise version of 'get_sp_dists_categorical'. The `graph` must have an
+#'`edge_type` column of non-negative integers, with 0 denoting edges which are
+#' not aggregated, and all other values defining aggregation categories.
+#'
+#' Implemented in parallal form only; no single-threaded version, and
+#' only for AStar (so graphs must be spatial).
+#' @noRd
+rcpp_get_sp_dists_categ_paired <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_categ_paired`, graph, vert_map_in, fromi, toi_in, heap_type)
+}
+
 #' rcpp_get_sp_dists_cat_threshold
 #'
 #' The `graph` must have an `edge_type` column of non-negative integers,

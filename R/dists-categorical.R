@@ -9,6 +9,11 @@
 #' distances and for each edge category; if `TRUE`, return single vector of
 #' proportional distances, like the `summary` function applied to full
 #' results. See Note.
+#' @param pairwise If `TRUE`, calculate distances only between the ordered
+#' pairs of `from` and `to`. In this case, neither the `proportions_only` nor
+#' `dlimit` parameters have any effect, and the result is a single matrix with
+#' one row for each pair of `from`-`to` points, and one column for each
+#' category.
 #' @param dlimit If no value to `to` is given, distances are aggregated from
 #' each `from` point out to the specified distance limit (in the same units as
 #' the edge distances of the input graph). `dlimit` only has any effect if `to`
@@ -54,14 +59,21 @@
 #' sapply (d, dim)
 #' # 9 distance matrices, all of same dimensions, first of which is standard
 #' # distance matrix
-#' # s <- summary (d) # print summary as proportions along each "edge_type"
+#' s <- summary (d) # print summary as proportions along each "edge_type"
 #' # or directly calculate proportions only
 #' dodgr_dists_categorical (graph, from, to,
 #'     proportions_only = TRUE
 #' )
 #'
+#' # Pairwise distances return single matrix with number of rows equal to 'from'
+#' # / 'to', and number of columns equal to number of edge types plus one for
+#' # total distances.
+#' d <- dodgr_dists_categorical (graph, from, to, pairwise = TRUE)
+#' class (d)
+#' dim (d)
+#'
 #' # The 'dlimit' parameter can be used to calculate total distances along each
-#' # category of edges from a set of points:
+#' # category of edges from a set of points out to specified threshold:
 #' dlimit <- 2000 # in metres
 #' d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
 #' dim (d) # length(from), length(unique(edge_type)) + 1
@@ -71,6 +83,7 @@ dodgr_dists_categorical <- function (graph,
                                      from = NULL,
                                      to = NULL,
                                      proportions_only = FALSE,
+                                     pairwise = FALSE,
                                      dlimit = NULL,
                                      heap = "BHeap",
                                      quiet = TRUE) {
@@ -144,33 +157,48 @@ dodgr_dists_categorical <- function (graph,
 
     if (!is.null (to)) {
 
-        d <- rcpp_get_sp_dists_categorical (
-            graph,
-            vert_map,
-            from_index$index,
-            to_index$index,
-            heap,
-            proportions_only
-        )
+        if (pairwise) {
 
-        n <- length (to)
-
-        if (!proportions_only) {
-
-            res <- process_categorical_dmat (
-                d,
-                from_index,
-                to_index,
+            res <- rcpp_get_sp_dists_categ_paired (
+                graph,
                 vert_map,
-                edge_type_table
+                from_index$index,
+                to_index$index,
+                heap
             )
+            colnames (res) <- c ("total", names (edge_type_table))
+            rownames (res) <- paste0 (from_index$id, "-", to_index$id)
 
         } else {
 
-            res <- apply (d, 2, sum)
-            res [2:length (res)] <- res [2:length (res)] / res [1]
-            res <- res [-1]
-            names (res) <- names (edge_type_table)
+            d <- rcpp_get_sp_dists_categorical (
+                graph,
+                vert_map,
+                from_index$index,
+                to_index$index,
+                heap,
+                proportions_only
+            )
+
+            n <- length (to)
+
+            if (!proportions_only) {
+
+                res <- process_categorical_dmat (
+                    d,
+                    from_index,
+                    to_index,
+                    vert_map,
+                    edge_type_table
+                )
+
+            } else {
+
+                res <- apply (d, 2, sum)
+                res [2:length (res)] <- res [2:length (res)] / res [1]
+                res <- res [-1]
+                names (res) <- names (edge_type_table)
+            }
         }
     } else {
 

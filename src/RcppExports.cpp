@@ -313,6 +313,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_get_sp_dists_categ_paired
+Rcpp::NumericMatrix rcpp_get_sp_dists_categ_paired(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi_in, const std::string& heap_type);
+RcppExport SEXP _dodgr_rcpp_get_sp_dists_categ_paired(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toi_inSEXP, SEXP heap_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type toi_in(toi_inSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type heap_type(heap_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_sp_dists_categ_paired(graph, vert_map_in, fromi, toi_in, heap_type));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_get_sp_dists_cat_threshold
 Rcpp::NumericMatrix rcpp_get_sp_dists_cat_threshold(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, const double dlimit, const std::string& heap_type);
 RcppExport SEXP _dodgr_rcpp_get_sp_dists_cat_threshold(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP dlimitSEXP, SEXP heap_typeSEXP) {
@@ -388,6 +403,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_get_paths", (DL_FUNC) &_dodgr_rcpp_get_paths, 5},
     {"_dodgr_rcpp_get_paths_pairwise", (DL_FUNC) &_dodgr_rcpp_get_paths_pairwise, 5},
     {"_dodgr_rcpp_get_sp_dists_categorical", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_categorical, 6},
+    {"_dodgr_rcpp_get_sp_dists_categ_paired", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_categ_paired, 5},
     {"_dodgr_rcpp_get_sp_dists_cat_threshold", (DL_FUNC) &_dodgr_rcpp_get_sp_dists_cat_threshold, 5},
     {"_dodgr_rcpp_gen_hash", (DL_FUNC) &_dodgr_rcpp_gen_hash, 2},
     {"_dodgr_rcpp_sf_as_network", (DL_FUNC) &_dodgr_rcpp_sf_as_network, 2},
