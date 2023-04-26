@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.19.044",
+  "version": "0.2.20.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
+  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -340,16 +340,15 @@
     },
     "SystemRequirements": "C++11, GNU make"
   },
-  "fileSize": "5760.537KB",
+  "fileSize": "28156.314KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
       "datePublished": "2019",
       "author": [
         {
-          "@type": "Person",
-          "givenName": "Mark",
-          "familyName": "Padgham"
+          "@type": "Organization",
+          "name": "Mark Padgham"
         }
       ],
       "name": "dodgr: An R package for network flow aggregation",
@@ -360,10 +359,7 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "name": "Transport Findings"
         }
       }
@@ -371,18 +367,8 @@
   ],
   "releaseNotes": "https://github.com/ATFutures/dodgr/blob/master/NEWS.md",
   "readme": "https://github.com/ATFutures/dodgr/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check",
-    "https://app.codecov.io/gh/ATFutures/dodgr"
-  ],
+  "contIntegration": ["https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/ATFutures/dodgr"],
   "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": [
-    "distance",
-    "street-networks",
-    "shortest-paths",
-    "r",
-    "router",
-    "openstreetmap"
-  ],
+  "keywords": ["distance", "street-networks", "shortest-paths", "r", "router", "openstreetmap"],
   "relatedLink": "https://CRAN.R-project.org/package=dodgr"
 }
