@@ -51,7 +51,12 @@ test_that ("categorical dists", {
     expect_true (all (dims [2, ] == nt))
 
     expect_message (
-        d2 <- dodgr_dists_categorical (graph, from = from, to = to, quiet = FALSE),
+        d2 <- dodgr_dists_categorical (
+            graph,
+            from = from,
+            to = to,
+            quiet = FALSE
+        ),
         "Calculating shortest paths ..."
     )
     expect_identical (d, d2)
