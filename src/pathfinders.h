@@ -112,6 +112,12 @@ class PathFinder {
                 std::vector<long int>& prev,
                 const size_t v0,
                 const std::vector <size_t> &to_index);
+        void DijkstraNearest (
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                const size_t v0,
+                const std::vector <size_t> &to_index);
         void DijkstraLimit ( // run_sp_categorical
                 std::vector<double>& d,
                 std::vector<double>& w,

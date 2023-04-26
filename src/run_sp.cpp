@@ -131,6 +131,60 @@ struct OneDist : public RcppParallel::Worker
                                    
 };
 
+struct OneDistNearest : public RcppParallel::Worker
+{
+    RcppParallel::RVector <int> dp_fromi;
+    const std::vector <size_t> toi;
+    const size_t nverts;
+    const std::shared_ptr <DGraph> g;
+    const std::string heap_type;
+
+    RcppParallel::RVector <double> dout;
+
+    // constructor
+    OneDistNearest (
+            const RcppParallel::RVector <int> fromi,
+            const std::vector <size_t> toi_in,
+            const size_t nverts_in,
+            const std::shared_ptr <DGraph> g_in,
+            const std::string & heap_type_in,
+            RcppParallel::RVector <double> dout_in) :
+        dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
+        g (g_in), heap_type (heap_type_in),
+        dout (dout_in)
+    {
+    }
+
+    // Parallel function operator
+    void operator() (std::size_t begin, std::size_t end)
+    {
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <long int> prev (nverts);
+
+        std::vector <double> heuristic (nverts, 0.0);
+
+        for (std::size_t i = begin; i < end; i++)
+        {
+            size_t from_i = static_cast <size_t> (dp_fromi [i]);
+
+            pathfinder->DijkstraNearest (d, w, prev, from_i, toi);
+
+            for (size_t j = 0; j < toi.size (); j++)
+            {
+                if (w [toi [j]] < INFINITE_DOUBLE)
+                {
+                    dout [i] = d [toi [j]];
+                }
+            }
+        }
+    }
+                                   
+};
+
 struct OneDistPaired : public RcppParallel::Worker
 {
     RcppParallel::RVector <int> dp_fromtoi;
@@ -401,7 +455,52 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
     return (dout);
 }
 
-//' rcpp_get_sp_dists_par
+//' rcpp_get_sp_dists_nearest
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_get_sp_dists_nearest (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi_in,
+        const std::string& heap_type)
+{
+    std::vector <size_t> toi =
+        Rcpp::as <std::vector <size_t> > (toi_in);
+
+    size_t nfrom = static_cast <size_t> (fromi.size ());
+    size_t nto = static_cast <size_t> (toi.size ());
+
+    const std::vector <std::string> from = graph ["from"];
+    const std::vector <std::string> to = graph ["to"];
+    const std::vector <double> dist = graph ["d"];
+    const std::vector <double> wt = graph ["d_weighted"];
+
+    const size_t nedges = static_cast <size_t> (graph.nrow ());
+    std::map <std::string, size_t> vert_map;
+    std::vector <std::string> vert_map_id = vert_map_in ["vert"];
+    std::vector <size_t> vert_map_n = vert_map_in ["id"];
+    const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
+            vert_map_n, vert_map);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map, from, to, dist, wt);
+
+    Rcpp::NumericVector dout = Rcpp::NumericVector (2 * nfrom,
+            Rcpp::NumericVector::get_na ());
+
+    // Create parallel worker
+    OneDistNearest one_dist (RcppParallel::RVector <int> (fromi), toi,
+            nverts, g, heap_type,
+            RcppParallel::RVector <double> (dout));
+
+    size_t chunk_size = run_sp::get_chunk_size (nfrom);
+    RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
+    
+    return (dout);
+}
+
+//' rcpp_get_sp_dists_paired_par
 //'
 //' @noRd
 // [[Rcpp::export]]

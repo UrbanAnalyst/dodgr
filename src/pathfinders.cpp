@@ -158,6 +158,45 @@ void PF::PathFinder::Dijkstra (
     delete [] is_target;
 }
 
+// Modified Dijkstra that stops as soon as first target is reached. Used to find
+// minimal distance to nearest one of set of possible targets.
+void PF::PathFinder::DijkstraNearest (
+        std::vector<double>& d,
+        std::vector<double>& w,
+        std::vector<long int>& prev,
+        const size_t v0,
+        const std::vector <size_t> &to_index)
+{
+    const DGraphEdge *edge;
+
+    const size_t n = m_graph->nVertices();
+    const std::vector<DGraphVertex>& vertices = m_graph->vertices();
+
+    PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
+    m_heap->insert (v0, 0.0);
+
+    size_t n_reached = 0;
+    const size_t n_targets = to_index.size ();
+    bool *is_target = new bool [n];
+    std::fill (is_target, is_target + n, false);
+    for (auto t: to_index)
+        is_target [t] = true;
+
+    while (m_heap->nItems() > 0) {
+        size_t v = m_heap->deleteMin();
+
+        m_closed [v] = true;
+        m_open [v] = false;
+
+        edge = vertices [v].outHead;
+        scan_edges (edge, d, w, prev, m_open, m_closed, v);
+
+        if (is_target [v])
+            break;
+    } // end while nItems > 0
+    delete [] is_target;
+}
+
 // Modified pathfinder only out to specified distance limit. Done as separate
 // routine to avoid costs of the `if` clause in general non-limited case.
 void PF::PathFinder::DijkstraLimit (
