@@ -136,6 +136,7 @@ struct OneDistNearest : public RcppParallel::Worker
     RcppParallel::RVector <int> dp_fromi;
     const std::vector <size_t> toi;
     const size_t nverts;
+    const size_t nfrom;
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
 
@@ -146,10 +147,12 @@ struct OneDistNearest : public RcppParallel::Worker
             const RcppParallel::RVector <int> fromi,
             const std::vector <size_t> toi_in,
             const size_t nverts_in,
+            const size_t nfrom_in,
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             RcppParallel::RVector <double> dout_in) :
-        dp_fromi (fromi), toi (toi_in), nverts (nverts_in),
+        dp_fromi (fromi), toi (toi_in),
+        nverts (nverts_in), nfrom (nfrom_in),
         g (g_in), heap_type (heap_type_in),
         dout (dout_in)
     {
@@ -178,6 +181,7 @@ struct OneDistNearest : public RcppParallel::Worker
                 if (w [toi [j]] < INFINITE_DOUBLE)
                 {
                     dout [i] = d [toi [j]];
+                    dout [i + nfrom] = toi [j];
                 }
             }
         }
@@ -491,7 +495,7 @@ Rcpp::NumericVector rcpp_get_sp_dists_nearest (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneDistNearest one_dist (RcppParallel::RVector <int> (fromi), toi,
-            nverts, g, heap_type,
+            nverts, nfrom, g, heap_type,
             RcppParallel::RVector <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);

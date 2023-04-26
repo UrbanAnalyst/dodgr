@@ -164,17 +164,17 @@ dodgr_dists_nearest <- function (graph,
         to_from_indices$to$index,
         heap
     )
+    index <- seq_along (to_from_indices$from$index)
+    nearest_index <- as.integer (d [index + length (index)])
+    d <- d [index]
+    nearest_index <- match (nearest_index, to_from_indices$to$index)
+    nearest_ids <- to_from_indices$to$id [nearest_index]
+    nearest_ids <- gsub ("\\_(start|end)$", "", nearest_ids)
 
-    if (!is.null (to_from_indices$from$id)) {
-        names (d) <- to_from_indices$from$id
-    } else {
-        names (d) <- vert_map$vert
-    }
-
-    if (get_turn_penalty (graph) > 0) {
-
-        names (d) <- gsub ("\\_(start|end)$", "", names (d))
-    }
-
-    return (d)
+    return (data.frame (
+        from = to_from_indices$from$id,
+        to = nearest_ids,
+        d = d,
+        stringsAsFactors = FALSE
+    ))
 }
