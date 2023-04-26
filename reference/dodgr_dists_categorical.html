@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +59,7 @@
 <span>  from <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  to <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  proportions_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pairwise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  dlimit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  heap <span class="op">=</span> <span class="st">"BHeap"</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -89,6 +90,14 @@ calculated (see Notes)</p></dd>
 distances and for each edge category; if <code>TRUE</code>, return single vector of
 proportional distances, like the <code>summary</code> function applied to full
 results. See Note.</p></dd>
+
+
+<dt>pairwise</dt>
+<dd><p>If <code>TRUE</code>, calculate distances only between the ordered
+pairs of <code>from</code> and <code>to</code>. In this case, neither the <code>proportions_only</code> nor
+<code>dlimit</code> parameters have any effect, and the result is a single matrix with
+one row for each pair of <code>from</code>-<code>to</code> points, and one column for each
+category.</p></dd>
 
 
 <dt>dlimit</dt>
@@ -142,6 +151,7 @@ and can only be stopped by killing the R process.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other distances: 
 <code><a href="dodgr_distances.html">dodgr_distances</a>()</code>,
+<code><a href="dodgr_dists_nearest.html">dodgr_dists_nearest</a>()</code>,
 <code><a href="dodgr_dists.html">dodgr_dists</a>()</code>,
 <code><a href="dodgr_flows_aggregate.html">dodgr_flows_aggregate</a>()</code>,
 <code><a href="dodgr_flows_disperse.html">dodgr_flows_disperse</a>()</code>,
@@ -179,7 +189,16 @@ and can only be stopped by killing the R process.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]          100</span>
 <span class="r-in"><span><span class="co"># 9 distance matrices, all of same dimensions, first of which is standard</span></span></span>
 <span class="r-in"><span><span class="co"># distance matrix</span></span></span>
-<span class="r-in"><span><span class="co"># s &lt;- summary (d) # print summary as proportions along each "edge_type"</span></span></span>
+<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="co"># print summary as proportions along each "edge_type"</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Proportional distances along each kind of edge:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   path: 0.8947</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   primary: 0.0061</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   residential: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   secondary: 0.0158</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   service: 0.057</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   steps: 3e-04</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   track: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   unclassified: 0</span>
 <span class="r-in"><span><span class="co"># or directly calculate proportions only</span></span></span>
 <span class="r-in"><span><span class="fu">dodgr_dists_categorical</span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span></span>
 <span class="r-in"><span>    proportions_only <span class="op">=</span> <span class="cn">TRUE</span></span></span>
@@ -189,8 +208,17 @@ and can only be stopped by killing the R process.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        track unclassified </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0.00000000   0.03283126 </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Pairwise distances return single matrix with number of rows equal to 'from'</span></span></span>
+<span class="r-in"><span><span class="co"># / 'to', and number of columns equal to number of edge types plus one for</span></span></span>
+<span class="r-in"><span><span class="co"># total distances.</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">dodgr_dists_categorical</span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>, pairwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "matrix" "array" </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100   9</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The 'dlimit' parameter can be used to calculate total distances along each</span></span></span>
-<span class="r-in"><span><span class="co"># category of edges from a set of points:</span></span></span>
+<span class="r-in"><span><span class="co"># category of edges from a set of points out to specified threshold:</span></span></span>
 <span class="r-in"><span><span class="va">dlimit</span> <span class="op">&lt;-</span> <span class="fl">2000</span> <span class="co"># in metres</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">dodgr_dists_categorical</span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, dlimit <span class="op">=</span> <span class="va">dlimit</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="co"># length(from), length(unique(edge_type)) + 1</span></span></span>

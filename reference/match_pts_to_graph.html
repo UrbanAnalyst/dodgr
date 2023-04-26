@@ -22,7 +22,7 @@ to an equivalent planar geometry prior to calling this routine."><!-- mathjax --
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,38 +142,38 @@ where nearest point of bisection lies beyond the actual edge).</p></li>
 <span class="r-in"><span><span class="va">edges</span> <span class="op">&lt;-</span> <span class="fu">match_pts_to_graph</span> <span class="op">(</span><span class="va">graph</span>, <span class="va">xy</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">graph</span> <span class="op">[</span><span class="va">edges</span>, <span class="op">]</span> <span class="co"># The edges of the graph closest to `xy`</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        geom_num edge_id    from_id from_lon from_lat      to_id   to_lon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207        203    6207 1388481924 76.38383 15.34743 1388482509 76.38860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481         89    3481 7793307898 76.43574 15.31712 2588146109 76.43894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6209        203    6209 1388482509 76.38860 15.34745 1204772662 76.38895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6247        203    6247 1204772780 76.40951 15.35236 1204772868 76.41809</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1157         35    1157 1388483314 76.45692 15.35031  977490139 76.45748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481.1       89    3481 7793307898 76.43574 15.31712 2588146109 76.43894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5913        183    5913 1376768773 76.47616 15.30970  313796433 76.47604</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4745        133    4745 2398957576 76.47415 15.31172 1427594104 76.47425</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3395         89    3395 2588119056 76.42341 15.31717 2588146107 76.42349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207.1      203    6207 1388481924 76.38383 15.34743 1388482509 76.38860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          to_lat         d d_weighted      highway    way_id component      time</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207   15.34745 511.92811 1023.85621      primary 835018468         2 368.58824</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481   15.31720 343.54155  429.42694 unclassified 252786290         1 247.34992</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6209   15.34748  38.16886   76.33773      primary 835018468         2  27.48158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6247   15.35157 925.87357 1851.74714      primary 835018468         2 666.62897</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1157   15.35036  61.05412  122.10824      primary  53658844         2  43.95897</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481.1 15.31720 343.54155  429.42694 unclassified 252786290         1 247.34992</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5913   15.30953  23.13809   46.27618      primary 652570479         1  16.65942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4745   15.31121  58.13286   96.88811    secondary 327102382         1  41.85566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3395   15.31746  33.00845   41.26056 unclassified 252786290         1  23.76608</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207.1 15.34745 511.92811 1023.85621      primary 835018468         2 368.58824</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        time_weighted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207       737.17647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481       309.18740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6209        54.96316</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6247      1333.25794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1157        87.91793</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3481.1     309.18740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5913        33.31885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4745        69.75944</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3395        29.70760</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6207.1     737.17647</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3395.1       89    3395 2588119056 76.42341 15.31717 2588146107 76.42349</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6199        203    6199 6025347259 76.37261 15.34499 7769271419 76.37263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6247        203    6247 1204772780 76.40951 15.35236 1204772868 76.41809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3433         89    3433 2588146085 76.42675 15.31926 2588146132 76.42707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 449          15     449  339574165 76.45639 15.33193 2627476985 76.45658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6233        203    6233 1204772781 76.39982 15.35266 1204772873 76.40114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189           2     189 2398957688 76.47753 15.31697 2398957689 76.47750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4251        107    4251 2627486257 76.47162 15.35917 2627486261 76.47163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5517        169    5517 4506481406 76.46174 15.31509 4506481407 76.46154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          to_lat          d  d_weighted      highway    way_id component</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3395   15.31746  33.008446   41.260558 unclassified 252786290         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3395.1 15.31746  33.008446   41.260558 unclassified 252786290         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6199   15.34499   2.646247    5.292493      primary 835018468         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6247   15.35157 925.873570 1851.747140      primary 835018468         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3433   15.31947  41.578689   51.973361 unclassified 252786290         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 449    15.33146  55.802911   69.753639 unclassified  30704675         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6233   15.35250 142.943194  285.886389      primary 835018468         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189    15.31703   7.740161    7.740161         path  30643853         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4251   15.35948  33.652296   35.423470        track 257147579         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5517   15.31516  23.364604   24.594320        track 454003193         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              time time_weighted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3395    23.766081     29.707601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3395.1  23.766081     29.707601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6199     1.905298      3.810595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6247   666.628970   1333.257941</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3433    29.936656     37.420820</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 449     40.178096     50.222620</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6233   102.919100    205.838200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189     13.932290     13.932290</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4251    24.229653     25.504898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5517    16.822515     17.707911</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
