@@ -320,7 +320,14 @@ rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi_in, heap_type, 
     .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial)
 }
 
-#' rcpp_get_sp_dists_par
+#' rcpp_get_sp_dists_nearest
+#'
+#' @noRd
+rcpp_get_sp_dists_nearest <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_nearest`, graph, vert_map_in, fromi, toi_in, heap_type)
+}
+
+#' rcpp_get_sp_dists_paired_par
 #'
 #' @noRd
 rcpp_get_sp_dists_paired_par <- function(graph, vert_map_in, fromi, toi, heap_type, is_spatial) {
@@ -378,6 +385,19 @@ rcpp_get_paths_pairwise <- function(graph, vert_map_in, fromi, toi_in, heap_type
 #' @noRd
 rcpp_get_sp_dists_categorical <- function(graph, vert_map_in, fromi, toi_in, heap_type, proportions_only) {
     .Call(`_dodgr_rcpp_get_sp_dists_categorical`, graph, vert_map_in, fromi, toi_in, heap_type, proportions_only)
+}
+
+#' rcpp_get_sp_dists_categ_paired
+#'
+#' Pairwise version of 'get_sp_dists_categorical'. The `graph` must have an
+#'`edge_type` column of non-negative integers, with 0 denoting edges which are
+#' not aggregated, and all other values defining aggregation categories.
+#'
+#' Implemented in parallal form only; no single-threaded version, and
+#' only for AStar (so graphs must be spatial).
+#' @noRd
+rcpp_get_sp_dists_categ_paired <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_categ_paired`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
 #' rcpp_get_sp_dists_cat_threshold

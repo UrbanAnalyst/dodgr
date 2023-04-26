@@ -9,6 +9,7 @@ dodgr_dists_categorical(
   from = NULL,
   to = NULL,
   proportions_only = FALSE,
+  pairwise = FALSE,
   dlimit = NULL,
   heap = "BHeap",
   quiet = TRUE
@@ -30,6 +31,12 @@ calculated (see Notes)}
 distances and for each edge category; if \code{TRUE}, return single vector of
 proportional distances, like the \code{summary} function applied to full
 results. See Note.}
+
+\item{pairwise}{If \code{TRUE}, calculate distances only between the ordered
+pairs of \code{from} and \code{to}. In this case, neither the \code{proportions_only} nor
+\code{dlimit} parameters have any effect, and the result is a single matrix with
+one row for each pair of \code{from}-\code{to} points, and one column for each
+category.}
 
 \item{dlimit}{If no value to \code{to} is given, distances are aggregated from
 each \code{from} point out to the specified distance limit (in the same units as
@@ -89,14 +96,21 @@ length (d)
 sapply (d, dim)
 # 9 distance matrices, all of same dimensions, first of which is standard
 # distance matrix
-# s <- summary (d) # print summary as proportions along each "edge_type"
+s <- summary (d) # print summary as proportions along each "edge_type"
 # or directly calculate proportions only
 dodgr_dists_categorical (graph, from, to,
     proportions_only = TRUE
 )
 
+# Pairwise distances return single matrix with number of rows equal to 'from'
+# / 'to', and number of columns equal to number of edge types plus one for
+# total distances.
+d <- dodgr_dists_categorical (graph, from, to, pairwise = TRUE)
+class (d)
+dim (d)
+
 # The 'dlimit' parameter can be used to calculate total distances along each
-# category of edges from a set of points:
+# category of edges from a set of points out to specified threshold:
 dlimit <- 2000 # in metres
 d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
 dim (d) # length(from), length(unique(edge_type)) + 1
@@ -104,6 +118,7 @@ dim (d) # length(from), length(unique(edge_type)) + 1
 \seealso{
 Other distances: 
 \code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists_nearest}()},
 \code{\link{dodgr_dists}()},
 \code{\link{dodgr_flows_aggregate}()},
 \code{\link{dodgr_flows_disperse}()},
