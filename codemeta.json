@@ -340,7 +340,11 @@
     },
     "SystemRequirements": "C++11, GNU make"
   },
+<<<<<<< HEAD
   "fileSize": "28156.314KB",
+=======
+  "fileSize": "28124.324KB",
+>>>>>>> 0b4bd47e1729f244d53494eaa752de8d15ccee65
   "citation": [
     {
       "@type": "ScholarlyArticle",
