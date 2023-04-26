@@ -125,3 +125,35 @@ test_that ("categorical threshold", {
         expect_true (all (d [, i] <= d [, 1]))
     }
 })
+
+test_that ("categorical pairwise", {
+
+    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- graph [graph$component == 1, ]
+
+    v <- dodgr_vertices (graph)
+    set.seed (1L)
+    from <- sample (v$id, size = 100)
+    to <- sample (v$id, size = 100)
+
+    graph$edge_type <- graph$highway
+
+    expect_silent (
+        d <- dodgr_dists_categorical (graph, from, to, pairwise = TRUE)
+    )
+
+    expect_is (d, "matrix")
+    expect_equal (nrow (d), length (from))
+    expect_equal (ncol (d), length (unique (graph$edge_type)) + 1L)
+
+    # d [, 1] is distance; all other cols are edge-type-specific
+    for (i in 2:ncol (d)) {
+        expect_true (all (d [, i] <= d [, 1]))
+    }
+
+    # rownames are "<from>-<to>":
+    from_id <- gsub ("\\-.*$", "", rownames (d))
+    to_id <- gsub ("^.*\\-", "", rownames (d))
+    expect_identical (from_id, from)
+    expect_identical (to_id, to)
+})
