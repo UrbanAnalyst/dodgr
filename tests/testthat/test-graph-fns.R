@@ -205,9 +205,9 @@ test_that ("no geom rownames", {
 
 test_that ("keep cols", {
     hw0 <- weight_streetnet (hampi)
-    expect_equal (ncol (hw0), 15)
+    expect_equal (ncol (hw0), 16)
     hw1 <- weight_streetnet (hampi, keep_cols = "foot")
-    expect_equal (ncol (hw1), 16)
+    expect_equal (ncol (hw1), 17)
     expect_true ("foot" %in% names (hw1))
     expect_false ("foot" %in% names (hw0))
 

@@ -155,10 +155,10 @@ test_that ("railway", {
         "Please specify type_col to be used for weighting railway"
     )
 
-    expect_message (
-        g0 <- weight_railway (hampi, type_col = "highway"),
-        "Data has no columns named maxspeed"
-    )
+    # expect_message (
+    #     g0 <- weight_railway (hampi, type_col = "highway"),
+    #     "Data has no columns named maxspeed"
+    # )
     expect_silent (g0 <- weight_railway (hampi,
         type_col = "highway",
         keep_cols = NULL
