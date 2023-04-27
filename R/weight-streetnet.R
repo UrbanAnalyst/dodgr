@@ -20,8 +20,8 @@
 #' `data.frame` object which provides unique identifiers for each highway
 #' (default works with `osmdata` objects).
 #' @param keep_cols Vectors of columns from `x` to be kept in the resultant
-#' `dodgr` network; vector can be either names or indices of desired columns
-#' (see notes).
+#' `dodgr` network; vector can be either names, regex-patterns,  or indices of
+#' desired columns (see notes).
 #' @param turn_penalty Including time penalty on edges for turning across
 #' oncoming traffic at intersections (see Note).
 #' @param left_side Does traffic travel on the left side of the road (`TRUE`) or
@@ -276,6 +276,14 @@ weight_streetnet.sf <- function (x,
 
     graph <- dodgr_components (graph)
 
+    if (!is.null (wt_profile_name)) {
+        if (wt_profile_name == "bicycle") {
+            if (is.integer (keep_cols)) {
+                keep_cols <- names (x) [keep_cols]
+            }
+            keep_cols <- unique (c (keep_cols, c ("^bicycle", "^cycleway")))
+        }
+    }
     if (length (keep_cols) > 0) {
         graph <- reinsert_keep_cols (x, graph, keep_cols)
     }
@@ -476,28 +484,29 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols) {
 
     keep_names <- NULL
     if (is.character (keep_cols)) {
-        keep_names <- keep_cols
-        keep_cols <- match (keep_cols, names (sf_lines))
+        keep_cols <- lapply (keep_cols, function (i) grep (i, names (sf_lines)))
+        keep_cols <- sort (unique (unlist (keep_cols)))
+        keep_names <- names (sf_lines) [keep_cols]
         # NA is no keep_cols match
     } else if (is.numeric (keep_cols)) {
-        keep_names <- names (sf_lines) [keep_cols]
+        if (min (keep_cols) < 1 || max (keep_cols) > nrow (sf_lines)) {
+            stop (
+                "Numeric keep_cols must index into columns of 'sf' input",
+                call. = FALSE
+            )
+            keep_names <- names (sf_lines) [keep_cols]
+        }
     } else {
-        stop ("keep_cols must be either character or numeric")
+        stop ("keep_cols must be either character or numeric", .call = FALSE)
     }
-    indx <- which (is.na (keep_cols))
-    if (length (indx) > 0) {
-        message (
-            "Data has no columns named ",
-            paste0 (keep_names, collapse = ", ")
-        )
-    }
-    keep_cols <- keep_cols [!is.na (keep_cols)]
+    index <- which (!is.na (keep_cols))
+    keep_cols <- keep_cols [index]
+    keep_names <- keep_names [index]
     if (length (keep_cols) > 0) {
         indx <- match (graph$geom_num, seq (sf_lines$geometry))
-        for (k in seq (keep_names)) {
-            graph [[keep_names [k]]] <- sf_lines [indx, keep_cols [k], # nolint
-                drop = TRUE
-            ]
+        for (k in seq_along (keep_cols)) {
+            graph [[keep_names [k]]] <-
+                sf_lines [indx, keep_cols [k], drop = TRUE]
         }
     }
 
