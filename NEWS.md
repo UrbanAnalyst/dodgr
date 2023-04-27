@@ -1,4 +1,17 @@
-# v 0.2.19.00x (dev)
+# v 0.2.20.00X (dev)
+
+## Major changes:
+
+- New `pairwise` parameter added to `dodgr_dists_categorical` (#201)
+- New function: `dodgr_dists_nearest()` (#203)
+- Updated `weight_streenet()` function for `wt_profile="bicycle"` to return
+  many more bicycle-relevant columns (#207).
+
+## Minor changes:
+
+---
+
+# v 0.2.20
 
 ## Major changes:
 
