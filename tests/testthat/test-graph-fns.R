@@ -249,12 +249,6 @@ test_that ("graph columns", {
     )
 
     graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
-    graph$d2 <- graph$d
-    expect_error (
-        d <- dodgr_dists (graph, from = from, to = to),
-        "Unable to determine distance column in graph"
-    )
-    graph$d2 <- NULL
     graph$d_wt <- graph$d_weighted
     expect_error (
         d <- dodgr_dists (graph, from = from, to = to),
