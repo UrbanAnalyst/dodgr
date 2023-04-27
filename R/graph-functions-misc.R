@@ -200,7 +200,9 @@ find_d_col <- function (graph) {
             tolower (substring (names (graph), 2, 2)) != "_"
     )
     if (length (d_col) != 1) {
-        d_col <- which (tolower (substring (names (graph), 1, 2)) == "di")
+        d_nms <- names (graph) [d_col]
+        d_col <- d_col [which (nchar (d_nms) == 1 |
+            tolower (substring (d_nms, 1L, 4L)) == "dist")]
     }
 
     if (length (d_col) != 1) {

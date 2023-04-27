@@ -582,6 +582,16 @@ weight_streetnet.sc <- function (x,
 
     x$vertex <- x$vertex [which (!duplicated (x$vertex)), ]
 
+    if (wt_profile == "bicycle") {
+        if (is.integer (keep_cols)) {
+            stop (
+                "keep_cols for 'sc' networks must be names of columns, not indices",
+                call. = FALSE
+            )
+        }
+        keep_cols <- unique (c (keep_cols, c ("^bicycle", "^cycleway")))
+    }
+
     graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
         sc_edge_dist () %>% # append dist
         extract_sc_edges_highways (
