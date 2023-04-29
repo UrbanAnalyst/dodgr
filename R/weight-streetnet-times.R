@@ -69,8 +69,7 @@ extract_sc_edges_highways <- function (graph, x, wt_profile, wt_profile_file,
     if (length (keep_cols) > 0L) {
 
         keys <- unique (x$object$key)
-        keep_names <- lapply (keep_cols, function (i) grep (i, keys, value = TRUE))
-        keep_names <- sort (unique (unlist (keep_names)))
+        keep_names <- unique (keep_cols [which (keep_cols %in% keys)])
     }
 
     graph <- dplyr::left_join (graph, x$object_link_edge, by = "edge_") %>%

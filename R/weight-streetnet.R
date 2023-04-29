@@ -281,7 +281,13 @@ weight_streetnet.sf <- function (x,
             if (is.integer (keep_cols)) {
                 keep_cols <- names (x) [keep_cols]
             }
-            keep_cols <- unique (c (keep_cols, c ("^bicycle", "^cycleway")))
+            keep_cols <- unique (c (keep_cols, c (
+                "bicycle",
+                "cycleway",
+                "cycleway:left",
+                "cycleway:right"
+            )))
+
         }
     }
     if (length (keep_cols) > 0) {
@@ -484,7 +490,7 @@ reinsert_keep_cols <- function (sf_lines, graph, keep_cols) {
 
     keep_names <- NULL
     if (is.character (keep_cols)) {
-        keep_cols <- lapply (keep_cols, function (i) grep (i, names (sf_lines)))
+        keep_cols <- lapply (keep_cols, function (i) match (i, names (sf_lines)))
         keep_cols <- sort (unique (unlist (keep_cols)))
         keep_names <- names (sf_lines) [keep_cols]
         # NA is no keep_cols match
@@ -589,8 +595,14 @@ weight_streetnet.sc <- function (x,
                 call. = FALSE
             )
         }
-        keep_cols <- unique (c (keep_cols, c ("^bicycle", "^cycleway")))
+        keep_cols <- unique (c (keep_cols, c (
+            "bicycle",
+            "cycleway",
+            "cycleway:left",
+            "cycleway:right"
+        )))
     }
+    keep_cols <- unique (c (way_types_to_keep, keep_cols))
 
     graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
         sc_edge_dist () %>% # append dist
@@ -598,10 +610,7 @@ weight_streetnet.sc <- function (x,
             x,
             wt_profile,
             wt_profile_file,
-            c (
-                way_types_to_keep,
-                keep_cols
-            )
+            keep_cols
         ) %>% # hw key-val pairs
         weight_sc_edges (
             wt_profile,
