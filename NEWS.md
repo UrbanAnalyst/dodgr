@@ -9,8 +9,8 @@
 
 ## Minor changes:
 
-- Fix bug that issued warning in weight_streetnet.sc if no "lanes" column
-  present.
+- Fix bugs that issued warnings in weight_streetnet.sc if no "lanes" or
+  "junction" columns present.
 
 ---
 
