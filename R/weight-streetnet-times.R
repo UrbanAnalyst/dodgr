@@ -293,7 +293,7 @@ weight_by_num_lanes <- function (graph, wt_profile) {
 
     # only weight these profiles:
     profile_names <- c ("foot", "bicycle", "wheelchair", "horse")
-    if (!(wt_profile %in% profile_names || "lanes" %in% names (graph))) {
+    if (!(wt_profile %in% profile_names && "lanes" %in% names (graph))) {
         return (graph)
     } # nocov
 

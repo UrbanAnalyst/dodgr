@@ -9,6 +9,9 @@
 
 ## Minor changes:
 
+- Fix bug that issued warning in weight_streetnet.sc if no "lanes" column
+  present.
+
 ---
 
 # v 0.2.20
