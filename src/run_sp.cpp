@@ -161,17 +161,15 @@ struct OneDistNearest : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts);
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts);
+            std::vector <long int> prev (nverts);
+
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             pathfinder->DijkstraNearest (d, w, prev, from_i, toi);
