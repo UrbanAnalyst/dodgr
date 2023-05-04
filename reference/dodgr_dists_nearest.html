@@ -14,7 +14,7 @@ nearest one of series of 'to' points."><!-- mathjax --><script src="https://cdnj
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.012</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,6 @@ nearest one of series of 'to' points.</p>
 <span>  to <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shortest <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  heap <span class="op">=</span> <span class="st">"BHeap"</span>,</span>
-<span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,11 +96,6 @@ rather than shortest routes (see Notes).</p></dd>
 <dd><p>Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
 <code>Trinomial Heap (</code>TriHeap<code>), Extended Trinomial Heap (</code>TriHeapExt<code>, and 2-3 Heap (</code>Heap23`).</p></dd>
-
-
-<dt>parallel</dt>
-<dd><p>If <code>TRUE</code>, perform routing calculation in parallel (see
-details)</p></dd>
 
 
 <dt>quiet</dt>
@@ -145,15 +139,7 @@ precisely matching node numbers or names given in <code>graph$from</code> or
 <code>graph$to</code>. If <code>to</code> is <code>NULL</code>, pairwise distances are calculated from all
 <code>from</code> points to all other nodes in <code>graph</code>. If both <code>from</code> and <code>to</code> are
 <code>NULL</code>, pairwise distances are calculated between all nodes in <code>graph</code>.</p>
-<p>Calculations in parallel (<code>parallel = TRUE</code>) ought very generally be
-advantageous. For small graphs, calculating distances in parallel is likely
-to offer relatively little gain in speed, but increases from parallel
-computation will generally markedly increase with increasing graph sizes.
-By default, parallel computation uses the maximal number of available cores
-or threads. This number can be reduced by specifying a value via
-<code>RcppParallel::setThreadOptions (numThreads = &lt;desired_number&gt;)</code>. Parallel
-calculations are, however, not able to be interrupted (for example, by
-<code>Ctrl-C</code>), and can only be stopped by killing the R process.</p>
+<p>Calculations are always calculated in parallel, using multiple threads.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
