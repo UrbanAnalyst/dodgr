@@ -92,17 +92,17 @@ struct OneDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts);
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts);
+            std::vector <long int> prev (nverts);
+
+            std::vector <double> heuristic (nverts, 0.0);
+
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             if (is_spatial)
@@ -221,17 +221,17 @@ struct OneDistPaired : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts);
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts);
+            std::vector <long int> prev (nverts);
+
+            std::vector <double> heuristic (nverts, 0.0);
+
             const size_t from_i = static_cast <size_t> (dp_fromtoi [i]);
             const std::vector <size_t> to_i = {static_cast <size_t> (dp_fromtoi [nfrom + i])};
 
@@ -307,17 +307,17 @@ struct OneIso : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts);
-        std::vector <long int> prev (nverts);
-
         const double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
 
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts);
+            std::vector <long int> prev (nverts);
+
             std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
             std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
             std::fill (prev.begin (), prev.end (), INFINITE_INT);
