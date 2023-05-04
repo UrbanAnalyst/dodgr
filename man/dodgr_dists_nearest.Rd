@@ -11,7 +11,6 @@ dodgr_dists_nearest(
   to = NULL,
   shortest = TRUE,
   heap = "BHeap",
-  parallel = TRUE,
   quiet = TRUE
 )
 }
@@ -31,9 +30,6 @@ rather than shortest routes (see Notes).}
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \verb{Trinomial Heap (}TriHeap\verb{), Extended Trinomial Heap (}TriHeapExt\verb{, and 2-3 Heap (}Heap23`).}
-
-\item{parallel}{If \code{TRUE}, perform routing calculation in parallel (see
-details)}
 
 \item{quiet}{If \code{FALSE}, display progress messages on screen.}
 }
@@ -78,15 +74,7 @@ precisely matching node numbers or names given in \code{graph$from} or
 \code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
 \code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.
 
-Calculations in parallel (\code{parallel = TRUE}) ought very generally be
-advantageous. For small graphs, calculating distances in parallel is likely
-to offer relatively little gain in speed, but increases from parallel
-computation will generally markedly increase with increasing graph sizes.
-By default, parallel computation uses the maximal number of available cores
-or threads. This number can be reduced by specifying a value via
-\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}. Parallel
-calculations are, however, not able to be interrupted (for example, by
-\code{Ctrl-C}), and can only be stopped by killing the R process.
+Calculations are always calculated in parallel, using multiple threads.
 }
 \examples{
 # A simple graph

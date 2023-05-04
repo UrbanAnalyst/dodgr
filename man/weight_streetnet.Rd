@@ -87,8 +87,8 @@ which designates different types of highways to be used for weighting
 (default works with \code{osmdata} objects).}
 
 \item{keep_cols}{Vectors of columns from \code{x} to be kept in the resultant
-\code{dodgr} network; vector can be either names or indices of desired columns
-(see notes).}
+\code{dodgr} network; vector can be either names, regex-patterns,  or indices of
+desired columns (see notes).}
 
 \item{left_side}{Does traffic travel on the left side of the road (\code{TRUE}) or
 the right side (\code{FALSE})? - only has effect on turn angle calculations for

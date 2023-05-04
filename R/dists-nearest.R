@@ -13,8 +13,6 @@
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @param parallel If `TRUE`, perform routing calculation in parallel (see
-#' details)
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @return Vector of distances, one element for each 'from' point giving the
 #' distance to the nearest 'to' point.
@@ -51,15 +49,7 @@
 #' `from` points to all other nodes in `graph`. If both `from` and `to` are
 #' `NULL`, pairwise distances are calculated between all nodes in `graph`.
 #'
-#' Calculations in parallel (`parallel = TRUE`) ought very generally be
-#' advantageous. For small graphs, calculating distances in parallel is likely
-#' to offer relatively little gain in speed, but increases from parallel
-#' computation will generally markedly increase with increasing graph sizes.
-#' By default, parallel computation uses the maximal number of available cores
-#' or threads. This number can be reduced by specifying a value via
-#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`. Parallel
-#' calculations are, however, not able to be interrupted (for example, by
-#' `Ctrl-C`), and can only be stopped by killing the R process.
+#' Calculations are always calculated in parallel, using multiple threads.
 #'
 #' @family distances
 #' @export
@@ -114,7 +104,6 @@ dodgr_dists_nearest <- function (graph,
                                  to = NULL,
                                  shortest = TRUE,
                                  heap = "BHeap",
-                                 parallel = TRUE,
                                  quiet = TRUE) {
 
     graph <- tbl_to_df (graph)
@@ -125,7 +114,6 @@ dodgr_dists_nearest <- function (graph,
 
     graph <- preprocess_spatial_cols (graph)
     gr_cols <- dodgr_graph_cols (graph)
-    is_spatial <- is_graph_spatial (graph)
     to_from_indices <- to_from_index_with_tp (graph, from, to)
     if (to_from_indices$compound) {
         graph <- to_from_indices$graph_compound
@@ -147,14 +135,11 @@ dodgr_dists_nearest <- function (graph,
         message ("Calculating shortest paths ... ", appendLF = FALSE)
     }
 
-    if (parallel && heap == "TriHeapExt") {
-        if (!quiet) {
-            message (
-                "Extended TriHeaps can not be calculated in parallel; ",
-                "reverting to serial calculation"
-            )
-        }
-        parallel <- FALSE
+    if (heap == "TriHeapExt") {
+        stop (
+            "Extended TriHeaps can not be calculated in parallel.",
+            call. = FALSE
+        )
     }
 
     d <- rcpp_get_sp_dists_nearest (
