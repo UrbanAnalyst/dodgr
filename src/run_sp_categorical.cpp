@@ -368,21 +368,20 @@ void PF::PathFinder::AStarEdgeType (std::vector<double>& d,
     // resizing.
     const DGraphEdge *edge;
 
-    const size_t n = m_graph->nVertices();
+    const size_t nverts = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
-    PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
+    PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, nverts);
     m_heap->insert (v0, heur [v0]);
     // initialise v0 values for all edge_types
-    const size_t num_edge_types = d.size () / n - 1L;
-    const size_t nverts = w.size ();
+    const size_t num_edge_types = d.size () / nverts - 1L;
     for (size_t i = 1; i <= num_edge_types; i++)
         d [v0 + i * nverts] = 0.0;
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
-    bool *is_target = new bool [n];
-    std::fill (is_target, is_target + n, false);
+    bool *is_target = new bool [nverts];
+    std::fill (is_target, is_target + nverts, false);
     for (auto t: to_index)
         is_target [t] = true;
 
@@ -413,8 +412,8 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
         const size_t &v0,
         const std::vector<double> &heur)    // heuristic for A*
 {
-    const size_t n = w.size ();
-    const size_t num_edge_types = d.size () / n - 1L;
+    const size_t nverts = w.size ();
+    const size_t num_edge_types = d.size () / nverts - 1L;
 
     while (edge) {
 
@@ -429,9 +428,9 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
                 // iterate over rest of matrix for each edge_type
                 for (size_t i = 1; i <= num_edge_types; i++) {
                     if (i == edge_id)
-                        d [et + edge_id * n] = d [v0 + edge_id * n] + edge->dist;
+                        d [et + edge_id * nverts] = d [v0 + edge_id * nverts] + edge->dist;
                     else // carry over without incrementing dist
-                        d [et + i * n] = d [v0 + i * n];
+                        d [et + i * nverts] = d [v0 + i * nverts];
                 }
 
                 w [et] = wt;
