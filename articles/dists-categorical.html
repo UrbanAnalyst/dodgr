@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.019</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.020</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -190,8 +190,8 @@ faster queries, as illustrated in the following benchmark:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   expression   min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.834  0.834</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.342  0.343</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       1.13   1.13 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.460  0.471</span></span></code></pre>
 <p>The default value of <code>proportions_only = FALSE</code> should be
 used only if additional information from the distance matrices
 themselves is required or desired. Examples of such additional
@@ -280,11 +280,11 @@ the three modes:</p>
 <span>             dlimit <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, dlimit <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span>,</span>
 <span>             check <span class="op">=</span> <span class="cn">FALSE</span>, time_unit <span class="op">=</span> <span class="st">"s"</span><span class="op">)</span> <span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
-<span><span class="co">##   expression    min median</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.832  0.832 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.344  0.345 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.094<span style="text-decoration: underline;">1</span> 0.094<span style="text-decoration: underline;">4</span></span></span></code></pre>
+<span><span class="co">##   expression   min median</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       1.14   1.14 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.474  0.480</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.129  0.133</span></span></code></pre>
 <p>Finally, note that the efficiency of distance-threshold queries
 scales non-linearly with increases in <code>dlimit</code>, with queries
 quickly becoming less efficient for larger values of
