@@ -62,6 +62,36 @@ test_that ("categorical dists", {
     expect_identical (d, d2)
 })
 
+test_that ("categorical dists results", {
+
+    net <- weight_streetnet (hampi, wt_profile = "foot")
+    v <- dodgr_vertices (net)
+    set.seed (1L)
+    from <- sample (v$id, 20)
+    to <- sample (v$id, 20)
+
+    net$edge_type <- net$highway
+    d0 <- dodgr_dists_categorical (net, from, to, proportions_only = FALSE, pairwise = FALSE)
+    # Sums of all "type" matrices should equal main "distances" matrix:
+    types <- which (names (d0) != "distances")
+    d_types <- lapply (types, function (i) colSums (d0 [[i]]))
+    d_types <- colSums (do.call (rbind, d_types))
+    d_total <- colSums (d0$distances)
+    expect_true (all (abs (d_total - d_types) < 1e-6))
+
+    d1 <- dodgr_dists_categorical (net, from, to, proportions_only = FALSE, pairwise = TRUE)
+    index_rows <- which (d1 [, 1] > 0)
+    index_cols <- which (colnames (d1) != "total")
+    d_total <- d1 [index_rows, 1L]
+    d_types <- rowSums (d1 [index_rows, index_cols])
+    expect_true (all (abs (d_total - d_types) < 1e-6))
+
+    p0 <- dodgr_dists_categorical (net, from, to, proportions_only = TRUE)
+    dp <- vapply (d0, function (i) sum (colSums (i)), numeric (1L))
+    p1 <- dp [-1] / dp [1]
+    expect_true (all (abs (p0 - p1) < 1e-6))
+})
+
 test_that ("categorical dists summary", {
 
     expect_silent (graph <- weight_streetnet (hampi))
