@@ -160,14 +160,11 @@ struct OnePairedCategoricalDist : public RcppParallel::Worker
             }
             pathfinder->AStarEdgeType (d, w, prev, heuristic, from_i, to_i);
 
-            if (w [to_i [0]] < INFINITE_DOUBLE)
+            for (size_t k = 0; k <= num_edge_types; k++)
             {
-                for (size_t k = 0; k < num_edge_types; k++)
-                {
-                    const double dto = d [to_i [0] + k * nverts];
-                    if (dto < INFINITE_DOUBLE)
-                        dout (i, k) = dto;
-                }
+                const double dto = d [to_i [0] + k * nverts];
+                if (dto < INFINITE_DOUBLE)
+                    dout (i, k) = dto;
             }
         }
     }
@@ -236,17 +233,14 @@ struct OneCategory : public RcppParallel::Worker
 
             for (size_t j = 0; j < toi.size (); j++)
             {
-                if (w [toi [j]] < INFINITE_DOUBLE)
+                for (size_t k = 0; k <= num_edge_types; k++)
                 {
-                    for (size_t k = 0; k <= num_edge_types; k++)
-                    {
-                        const double dto = d [toi [j] + k * nverts];
-                        if (dto < INFINITE_DOUBLE) {
-                            if (Rcpp::NumericMatrix::is_na (dout (i, k)))
-                                dout (i, k) = dto;
-                            else
-                                dout (i, k) += dto;
-                        }
+                    const double dto = d [toi [j] + k * nverts];
+                    if (dto < INFINITE_DOUBLE) {
+                        if (Rcpp::NumericMatrix::is_na (dout (i, k)))
+                            dout (i, k) = dto;
+                        else
+                            dout (i, k) += dto;
                     }
                 }
             }
