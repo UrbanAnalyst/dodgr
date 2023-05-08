@@ -63,19 +63,19 @@ struct OneCategoricalDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts * (num_edge_types + 1));
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         const size_t nto = toi.size ();
 
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts * (num_edge_types + 1));
+            std::vector <long int> prev (nverts);
+
+            std::vector <double> heuristic (nverts, 0.0);
+
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             // only implemented for spatial graphs
@@ -141,17 +141,17 @@ struct OnePairedCategoricalDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts * (num_edge_types + 1));
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts * (num_edge_types + 1));
+            std::vector <long int> prev (nverts);
+
+            std::vector <double> heuristic (nverts, 0.0);
+
             const size_t from_i = static_cast <size_t> (dp_fromi [i]);
             const std::vector <size_t> to_i = { toi [i] };
 
@@ -216,17 +216,17 @@ struct OneCategory : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts * (num_edge_types + 1));
-        std::vector <long int> prev (nverts);
-
-        std::vector <double> heuristic (nverts, 0.0);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts * (num_edge_types + 1));
+            std::vector <long int> prev (nverts);
+
+            std::vector <double> heuristic (nverts, 0.0);
+
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             // only implemented for spatial graphs
@@ -293,15 +293,15 @@ struct OneCatThreshold : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        std::shared_ptr<PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl (heap_type), g);
-        std::vector <double> w (nverts);
-        std::vector <double> d (nverts * (num_edge_types + 1));
-        std::vector <long int> prev (nverts);
-
         for (std::size_t i = begin; i < end; i++)
         {
+            std::shared_ptr<PF::PathFinder> pathfinder =
+                std::make_shared <PF::PathFinder> (nverts,
+                        *run_sp::getHeapImpl (heap_type), g);
+            std::vector <double> w (nverts);
+            std::vector <double> d (nverts * (num_edge_types + 1));
+            std::vector <long int> prev (nverts);
+
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             pathfinder->DijkstraLimitEdgeType (d, w, prev, from_i, dlimit);
