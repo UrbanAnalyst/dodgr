@@ -22,15 +22,15 @@ be part of the same connected component may decrease the spatial accuracy of
 matching.}
 
 \item{distances}{If \code{TRUE}, return a 'data.frame' object with 'index' column
-as described in return value; and additional 'dist' column with perpendicular
-distance to nearest edge in graph. See description of return value for
-details.}
+as described in return value; and additional columns with perpendicular
+distance to nearest edge in graph, and coordinates of points of intersection.
+See description of return value for details.}
 }
 \value{
 For \code{distances = FALSE} (default), a vector index matching the \code{xy}
 coordinates to nearest edges. For bi-directional edges, only one match is
 returned, and it is up to the user to identify and suitably process matching
-edge pairs. For 'distances = TRUE', a 'data.frame' of two columns:
+edge pairs. For 'distances = TRUE', a 'data.frame' of four columns:
 \itemize{
 \item "index" The index of closest edges in "graph", as described above.
 \item "d_signed" The perpendicular distance from ech point to the nearest
@@ -38,6 +38,8 @@ edge, with negative distances denoting points to the left of edges, and
 positive distances denoting points to the right. Distances of zero denote
 points lying precisely on the line of an edge (potentially including cases
 where nearest point of bisection lies beyond the actual edge).
+\item "x" The x-coordinate of the point of intersection.
+\item "y" The y-coordinate of the point of intersection.
 }
 }
 \description{

@@ -114,15 +114,15 @@ pre_process_xy <- function (xy) {
 #' @param graph A `dodgr` graph with spatial coordinates, such as a
 #' `dodgr_streetnet` object.
 #' @param distances If `TRUE`, return a 'data.frame' object with 'index' column
-#' as described in return value; and additional 'dist' column with perpendicular
-#' distance to nearest edge in graph. See description of return value for
-#' details.
+#' as described in return value; and additional columns with perpendicular
+#' distance to nearest edge in graph, and coordinates of points of intersection.
+#' See description of return value for details.
 #' @inheritParams match_pts_to_verts
 #'
 #' @return For `distances = FALSE` (default), a vector index matching the `xy`
 #' coordinates to nearest edges. For bi-directional edges, only one match is
 #' returned, and it is up to the user to identify and suitably process matching
-#' edge pairs. For 'distances = TRUE', a 'data.frame' of two columns:
+#' edge pairs. For 'distances = TRUE', a 'data.frame' of four columns:
 #' \itemize{
 #' \item "index" The index of closest edges in "graph", as described above.
 #' \item "d_signed" The perpendicular distance from ech point to the nearest
@@ -130,6 +130,8 @@ pre_process_xy <- function (xy) {
 #' positive distances denoting points to the right. Distances of zero denote
 #' points lying precisely on the line of an edge (potentially including cases
 #' where nearest point of bisection lies beyond the actual edge).
+#' \item "x" The x-coordinate of the point of intersection.
+#' \item "y" The y-coordinate of the point of intersection.
 #' }
 #' @family match
 #' @export
@@ -171,7 +173,7 @@ match_pts_to_graph <- function (graph, xy,
     if (distances) {
         ret <- data.frame (
             index = graph_index,
-            d_signed = signed_intersection_dists (graph, xy, res)
+            signed_intersection_dists (graph, xy, res)
         )
     } else {
         ret <- graph_index
@@ -202,7 +204,6 @@ signed_intersection_dists <- function (graph, xy, res) {
     # rcpp_points_index is 0-indexed, so ...
     graph_index <- as.integer (res [index]) + 1L
 
-    # coordinates not yet used here; see #103
     xy_intersect <- data.frame (
         x = res [index + nrow (xy)],
         y = res [index + 2L * nrow (xy)]
@@ -224,7 +225,7 @@ signed_intersection_dists <- function (graph, xy, res) {
     which_side [which_side < 0.0] <- -1
     which_side [which_side > 0.0] <- 1
 
-    return (d * which_side)
+    return (cbind (d_signed = d * which_side, xy_intersect))
 }
 
 #' Insert new nodes into a graph, breaking edges at point of nearest
