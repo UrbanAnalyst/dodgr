@@ -22,7 +22,7 @@ be part of the same connected component may decrease the spatial accuracy of
 matching.}
 }
 \value{
-For 'distances = FALSE' (default), a vector index matching the \code{xy}
+For \code{distances = FALSE} (default), a vector index matching the \code{xy}
 coordinates to nearest edges. For bi-directional edges, only one match is
 returned, and it is up to the user to identify and suitably process matching
 edge pairs. For 'distances = TRUE', a 'data.frame' of two columns:

@@ -119,7 +119,7 @@ pre_process_xy <- function (xy) {
 #' details.
 #' @inheritParams match_pts_to_verts
 #'
-#' @return For 'distances = FALSE' (default), a vector index matching the `xy`
+#' @return For `distances = FALSE` (default), a vector index matching the `xy`
 #' coordinates to nearest edges. For bi-directional edges, only one match is
 #' returned, and it is up to the user to identify and suitably process matching
 #' edge pairs. For 'distances = TRUE', a 'data.frame' of two columns:
