@@ -6,6 +6,7 @@
 - New function: `dodgr_dists_nearest()` (#203)
 - Updated `weight_streenet()` function for `wt_profile="bicycle"` to return
   many more bicycle-relevant columns (#207).
+- Fix major bug in categorical dists routines that gave wrong values (#201; thanks to @xiaofanliang)
 
 ## Minor changes:
 
