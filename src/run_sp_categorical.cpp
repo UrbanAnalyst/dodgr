@@ -63,8 +63,6 @@ struct OneCategoricalDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
-        const size_t nto = toi.size ();
-
         for (std::size_t i = begin; i < end; i++)
         {
             std::shared_ptr<PF::PathFinder> pathfinder =
@@ -89,13 +87,11 @@ struct OneCategoricalDist : public RcppParallel::Worker
 
             for (size_t j = 0; j < toi.size (); j++)
             {
-                if (w [toi [j]] < INFINITE_DOUBLE)
-                {
-                    for (size_t k = 0; k < num_edge_types; k++)
+                for (size_t k = 0; k <= num_edge_types; k++) {
+                    const double dto = d [toi [j] + k * nverts];
+                    if (dto < INFINITE_DOUBLE)
                     {
-                        const double dto = d [toi [j] + k * nverts];
-                        if (dto < INFINITE_DOUBLE)
-                            dout (i, j + k * nto) = dto;
+                        dout (i, j + k * toi.size ()) = dto;
                     }
                 }
             }
@@ -573,7 +569,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = categorical::get_num_edge_types (edge_type);
+    const size_t num_edge_types = categorical::get_num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -591,9 +587,9 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
 
     size_t ncol;
     if (proportions_only)
-        ncol = num_types + 1L;
+        ncol = num_edge_types + 1L;
     else
-        ncol = nto * (num_types + 1L);
+        ncol = nto * (num_edge_types + 1L);
 
     Rcpp::NumericVector na_vec = Rcpp::NumericVector (nfrom * ncol,
             Rcpp::NumericVector::get_na ());
@@ -606,18 +602,17 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
     {
         OneCategory one_dist (RcppParallel::RVector <int> (fromi), toi,
                 edge_type, nverts, vx, vy,
-                g, heap_type, num_types,
+                g, heap_type, num_edge_types,
                 RcppParallel::RMatrix <double> (dout));
         RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
     } else
     {
         OneCategoricalDist one_dist (RcppParallel::RVector <int> (fromi),
                 toi, edge_type, nverts, vx, vy,
-                g, heap_type, num_types,
+                g, heap_type, num_edge_types,
                 RcppParallel::RMatrix <double> (dout));
         RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
     }
-
     
     return (dout);
 }
