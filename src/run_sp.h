@@ -40,7 +40,7 @@ size_t get_chunk_size (const size_t nfrom);
 
 namespace categorical {
 
-size_t num_edge_types (const std::vector <size_t> &edge_type);
+size_t get_num_edge_types (const std::vector <size_t> &edge_type);
 
 } // end namespace categorical
 

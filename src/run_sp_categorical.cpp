@@ -347,7 +347,7 @@ struct OneCatThreshold : public RcppParallel::Worker
                                    
 };
 
-size_t categorical::num_edge_types (const std::vector <size_t> &edge_type)
+size_t categorical::get_num_edge_types (const std::vector <size_t> &edge_type)
 {
     std::unordered_set <size_t> type_set;
     for (auto e: edge_type)
@@ -573,7 +573,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_categorical (const Rcpp::DataFrame graph,
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = categorical::num_edge_types (edge_type);
+    const size_t num_types = categorical::get_num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -654,7 +654,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_categ_paired (const Rcpp::DataFrame graph,
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = categorical::num_edge_types (edge_type);
+    const size_t num_types = categorical::get_num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
@@ -712,7 +712,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_cat_threshold (const Rcpp::DataFrame graph
     const std::vector <double> wt = graph ["d_weighted"];
     const std::vector <size_t> edge_type = graph ["edge_type"];
 
-    const size_t num_types = categorical::num_edge_types (edge_type);
+    const size_t num_types = categorical::get_num_edge_types (edge_type);
 
     const size_t nedges = static_cast <size_t> (graph.nrow ());
     std::map <std::string, size_t> vert_map;
