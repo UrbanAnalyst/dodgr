@@ -213,7 +213,6 @@ dodgr_dists_categorical <- function (graph,
         res <- process_threshold_dmat (d, from_index, vert_map, edge_type_table)
     }
 
-
     return (res)
 }
 
@@ -237,13 +236,13 @@ process_categorical_dmat <- function (d, from_index, to_index, vert_map,
     rnames <- gsub ("\\_start$", "", rnames)
     cnames <- gsub ("\\_end$", "", cnames)
 
-    d0 <- d [, seq (n)]
+    d0 <- d [, seq_len (n)]
     rownames (d0) <- rnames
     colnames (d0) <- cnames
 
     d0 <- list ("distances" = d0)
     d <- lapply (seq_along (edge_type_table), function (i) {
-        index <- i * n + seq (n) - 1
+        index <- i * n + seq (n)
         res <- d [, index]
         rownames (res) <- rnames
         colnames (res) <- cnames
