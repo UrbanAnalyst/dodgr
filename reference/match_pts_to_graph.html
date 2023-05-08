@@ -22,7 +22,7 @@ to an equivalent planar geometry prior to calling this routine."><!-- mathjax --
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.022</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.20.023</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,9 +99,9 @@ matching.</p></dd>
 
 <dt>distances</dt>
 <dd><p>If <code>TRUE</code>, return a 'data.frame' object with 'index' column
-as described in return value; and additional 'dist' column with perpendicular
-distance to nearest edge in graph. See description of return value for
-details.</p></dd>
+as described in return value; and additional columns with perpendicular
+distance to nearest edge in graph, and coordinates of points of intersection.
+See description of return value for details.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -113,12 +113,14 @@ details.</p></dd>
 
 <p>coordinates to nearest edges. For bi-directional edges, only one match is
 returned, and it is up to the user to identify and suitably process matching
-edge pairs. For 'distances = TRUE', a 'data.frame' of two columns:</p><ul><li><p>"index" The index of closest edges in "graph", as described above.</p></li>
+edge pairs. For 'distances = TRUE', a 'data.frame' of four columns:</p><ul><li><p>"index" The index of closest edges in "graph", as described above.</p></li>
 <li><p>"d_signed" The perpendicular distance from ech point to the nearest
 edge, with negative distances denoting points to the left of edges, and
 positive distances denoting points to the right. Distances of zero denote
 points lying precisely on the line of an edge (potentially including cases
 where nearest point of bisection lies beyond the actual edge).</p></li>
+<li><p>"x" The x-coordinate of the point of intersection.</p></li>
+<li><p>"y" The y-coordinate of the point of intersection.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
