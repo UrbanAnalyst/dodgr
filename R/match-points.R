@@ -260,7 +260,10 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' @export
 add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
 
-    index <- match_pts_to_graph (graph, xy)
+    pts <- match_pts_to_graph (graph, xy, distances = TRUE)
+    xy <- pre_process_xy (xy)
+    pts$x0 <- xy [, 1]
+    pts$y0 <- xy [, 2]
 
     gr_cols <- dodgr_graph_cols (graph)
     gr_cols <- unlist (gr_cols [which (!is.na (gr_cols))])
@@ -268,12 +271,12 @@ add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
     names (graph_std) <- names (gr_cols)
 
     # Expand index to include all potentially bi-directional edges:
-    index <- lapply (seq_along (index), function (i) {
+    index <- lapply (seq_along (pts$index), function (i) {
         out <- which (
-            (graph_std$from == graph_std$from [index [i]] &
-                graph_std$to == graph_std$to [index [i]]) |
-                (graph_std$from == graph_std$to [index [i]] &
-                    graph_std$to == graph_std$from [index [i]])
+            (graph_std$from == graph_std$from [pts$index [i]] &
+                graph_std$to == graph_std$to [pts$index [i]]) |
+                (graph_std$from == graph_std$to [pts$index [i]] &
+                    graph_std$to == graph_std$from [pts$index [i]])
         )
         cbind (rep (i, length (out)), out)
     })
@@ -302,12 +305,13 @@ add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
 
         new_edges_i <- lapply (seq_len (nrow (edges_to_split_i)), function (e) {
 
+            # Split edges either side of perpendicular points of intersection:
             edge_i <- edges_to_split_i [c (e, e), ]
             edge_i$to [1] <- edge_i$from [2] <- genhash ()
-            edge_i$xto [1] <- xy$x [i]
-            edge_i$yto [1] <- xy$y [i]
-            edge_i$xfr [2] <- xy$x [i]
-            edge_i$yfr [2] <- xy$y [i]
+            edge_i$xto [1] <- pts$x [i]
+            edge_i$yto [1] <- pts$y [i]
+            edge_i$xfr [2] <- pts$x [i]
+            edge_i$yfr [2] <- pts$y [i]
 
             xy_i <- data.frame (
                 x = c (edge_i [1, "xfr"], edge_i [1, "xto"], edge_i [2, "xto"]),
@@ -315,18 +319,66 @@ add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
             )
             dmat <- geodist::geodist (xy_i)
 
+            d_i <- geodist::geodist (
+                pts [i, c ("x", "y")],
+                pts [i, c ("x0", "y0")]
+            )
+            d_i <- as.numeric (d_i [1, 1])
+
             if (any (dmat [upper.tri (dmat)] < dist_tol)) {
-                return (edges_to_split_i [e, ])
+
+                edge_i <- edges_to_split_i [e, ]
+                edge_i_new <- rbind (edge_i, edge_i) # for edges to new point
+                # Reverse 2nd edge:
+                edge_i_new$from [2] <- edge_i_new$to [1]
+                edge_i_new$to [2] <- edge_i_new$from [1]
+                edge_i_new$xfr [2] <- edge_i_new$xto [1]
+                edge_i_new$xto [2] <- edge_i_new$xfr [1]
+                edge_i_new$yfr [2] <- edge_i_new$yto [1]
+                edge_i_new$yto [2] <- edge_i_new$yfr [1]
+
+                d_i_min <- c (1, 1, 2) [which.min (dmat [upper.tri (dmat)])]
+                if (d_i_min == 1) {
+                    edge_i_new <- edge_i_new [2:1, ]
+                }
+
+            } else {
+
+                edge_i$d [1] <- dmat [1, 2]
+                edge_i$d [2] <- dmat [2, 3]
+
+                edge_i$d_weighted <- edge_i$d * d_wt
+                edge_i$time <- edge_i$d * t_scale
+                edge_i$time_weighted <- edge_i$time * t_wt
+
+                edge_i$edge_id <- paste0 (
+                    edge_i$edge_id,
+                    "_",
+                    LETTERS [seq_len (nrow (edge_i))]
+                )
+
+                edge_i_new <- edge_i # already 2 rows
             }
 
-            edge_i$d [1] <- dmat [1, 2]
-            edge_i$d [2] <- dmat [2, 3]
+            # Then add edges out to new point:
+            edge_i_new$from [1] <- edge_i_new$to [2] <- genhash (10L)
+            edge_i_new$xfr [1] <- pts$x0 [i]
+            edge_i_new$yfr [1] <- pts$y0 [i]
+            edge_i_new$xto [2] <- pts$x0 [i]
+            edge_i_new$yto [2] <- pts$y0 [i]
 
-            edge_i$d_weighted <- edge_i$d * d_wt
-            edge_i$time <- edge_i$d * t_scale
-            edge_i$time_weighted <- edge_i$time * t_wt
+            edge_i_new$d <- d_i
+            edge_i_new$d_weighted <- d_i * d_wt
+            edge_i_new$time <- d_i * t_scale
+            edge_i_new$time_weighted <- edge_i_new$time * t_wt
 
-            edge_i$edge_id <- paste0 (edge_i$edge_id, "_", LETTERS [e])
+            edge_i_new$edge_id <- vapply (
+                seq_len (nrow (edge_i_new)),
+                function (i) genhash (10),
+                character (1L)
+            )
+
+            edge_i <- rbind (edge_i, edge_i_new)
 
             return (edge_i)
         })
