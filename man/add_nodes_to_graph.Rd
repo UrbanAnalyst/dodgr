@@ -5,7 +5,7 @@
 \title{Insert new nodes into a graph, breaking edges at point of nearest
 intersection.}
 \usage{
-add_nodes_to_graph(graph, xy, dist_tol = 0.000001)
+add_nodes_to_graph(graph, xy, dist_tol = 0.000001, intersections_only = FALSE)
 }
 \arguments{
 \item{graph}{A \code{dodgr} graph with spatial coordinates, such as a
@@ -16,6 +16,8 @@ matrix or \pkg{sf}-formatted \code{data.frame}.}
 
 \item{dist_tol}{Only insert new nodes if they are further from existing nodes
 than this distance, expressed in units of the distance column of \code{graph}.}
+
+\item{intersections_only}{If \code{FALSE}}
 }
 \value{
 A modified version of \code{graph}, with additional edges formed by
@@ -23,10 +25,22 @@ breaking previous edges at nearest perpendicular intersections with the
 points, \code{xy}.
 }
 \description{
-The "id" value of each edge to be divided through insertion of new points is
-modified to produce two new "id" values with suffixes "_A" and "_B". This
-routine presumes graphs to be \code{dodgr_streetnet} object, with geographical
-coordinates.
+Note that this routine presumes graphs to be \code{dodgr_streetnet} object, with
+geographical coordinates.
+}
+\details{
+This inserts new nodes by extending lines from each input point to the edge
+with the closest point of perpendicular intersection. That edge is then split
+at that point of intersection, creating two new edges (or four for directed
+edges). If \code{intersections_only = FALSE} (default), then additional edges are
+inserted from those intersection points to the input points. If
+\code{intersections_only = TRUE}, then nodes are added by splitting graph edges at
+points of nearest perpendicular intersection, without adding additional edges
+out to the actual input points.
+
+In the former case, the properties of those new edges, such as distance and
+time weightings, are inherited from the edges which are intersected, and may
+need to be manually modified after calling this function.
 }
 \examples{
 graph <- weight_streetnet (hampi, wt_profile = "foot")

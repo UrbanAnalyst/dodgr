@@ -231,14 +231,26 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' Insert new nodes into a graph, breaking edges at point of nearest
 #' intersection.
 #'
-#' The "id" value of each edge to be divided through insertion of new points is
-#' modified to produce two new "id" values with suffixes "_A" and "_B". This
-#' routine presumes graphs to be `dodgr_streetnet` object, with geographical
-#' coordinates.
+#' Note that this routine presumes graphs to be `dodgr_streetnet` object, with
+#' geographical coordinates.
+#'
+#' This inserts new nodes by extending lines from each input point to the edge
+#' with the closest point of perpendicular intersection. That edge is then split
+#' at that point of intersection, creating two new edges (or four for directed
+#' edges). If `intersections_only = FALSE` (default), then additional edges are
+#' inserted from those intersection points to the input points. If
+#' `intersections_only = TRUE`, then nodes are added by splitting graph edges at
+#' points of nearest perpendicular intersection, without adding additional edges
+#' out to the actual input points.
+#'
+#' In the former case, the properties of those new edges, such as distance and
+#' time weightings, are inherited from the edges which are intersected, and may
+#' need to be manually modified after calling this function.
 #'
 #' @inheritParams match_pts_to_graph
 #' @param dist_tol Only insert new nodes if they are further from existing nodes
 #' than this distance, expressed in units of the distance column of `graph`.
+#' @param intersections_only If `FALSE`
 #' @return A modified version of `graph`, with additional edges formed by
 #' breaking previous edges at nearest perpendicular intersections with the
 #' points, `xy`.
@@ -258,7 +270,10 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' graph <- add_nodes_to_graph (graph, xy)
 #' dim (graph) # more edges than original
 #' @export
-add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
+add_nodes_to_graph <- function (graph,
+                                xy,
+                                dist_tol = 1e-6,
+                                intersections_only = FALSE) {
 
     pts <- match_pts_to_graph (graph, xy, distances = TRUE)
     xy <- pre_process_xy (xy)
@@ -360,25 +375,28 @@ add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
                 edge_i_new <- edge_i # already 2 rows
             }
 
-            # Then add edges out to new point:
-            edge_i_new$from [1] <- edge_i_new$to [2] <- genhash (10L)
-            edge_i_new$xfr [1] <- pts$x0 [i]
-            edge_i_new$yfr [1] <- pts$y0 [i]
-            edge_i_new$xto [2] <- pts$x0 [i]
-            edge_i_new$yto [2] <- pts$y0 [i]
+            if (!intersections_only) {
 
-            edge_i_new$d <- d_i
-            edge_i_new$d_weighted <- d_i * d_wt
-            edge_i_new$time <- d_i * t_scale
-            edge_i_new$time_weighted <- edge_i_new$time * t_wt
+                # Then add edges out to new point:
+                edge_i_new$from [1] <- edge_i_new$to [2] <- genhash (10L)
+                edge_i_new$xfr [1] <- pts$x0 [i]
+                edge_i_new$yfr [1] <- pts$y0 [i]
+                edge_i_new$xto [2] <- pts$x0 [i]
+                edge_i_new$yto [2] <- pts$y0 [i]
 
-            edge_i_new$edge_id <- vapply (
-                seq_len (nrow (edge_i_new)),
-                function (i) genhash (10),
-                character (1L)
-            )
+                edge_i_new$d <- d_i
+                edge_i_new$d_weighted <- d_i * d_wt
+                edge_i_new$time <- d_i * t_scale
+                edge_i_new$time_weighted <- edge_i_new$time * t_wt
 
-            edge_i <- rbind (edge_i, edge_i_new)
+                edge_i_new$edge_id <- vapply (
+                    seq_len (nrow (edge_i_new)),
+                    function (i) genhash (10),
+                    character (1L)
+                )
+
+                edge_i <- rbind (edge_i, edge_i_new)
+            }
 
             return (edge_i)
         })
