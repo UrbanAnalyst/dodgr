@@ -5,7 +5,7 @@
 \title{Insert new nodes into a graph, breaking edges at point of nearest
 intersection.}
 \usage{
-add_nodes_to_graph(graph, xy)
+add_nodes_to_graph(graph, xy, dist_tol = 0.000001)
 }
 \arguments{
 \item{graph}{A \code{dodgr} graph with spatial coordinates, such as a
@@ -13,6 +13,9 @@ add_nodes_to_graph(graph, xy)
 
 \item{xy}{coordinates of points to be matched to the vertices, either as
 matrix or \pkg{sf}-formatted \code{data.frame}.}
+
+\item{dist_tol}{Only insert new nodes if they are further from existing nodes
+than this distance, expressed in units of the distance column of \code{graph}.}
 }
 \value{
 A modified version of \code{graph}, with additional edges formed by

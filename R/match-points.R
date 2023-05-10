@@ -237,6 +237,8 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' coordinates.
 #'
 #' @inheritParams match_pts_to_graph
+#' @param dist_tol Only insert new nodes if they are further from existing nodes
+#' than this distance, expressed in units of the distance column of `graph`.
 #' @return A modified version of `graph`, with additional edges formed by
 #' breaking previous edges at nearest penpendicular intersections with the
 #' points, `xy`.
@@ -256,7 +258,7 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' graph <- add_nodes_to_graph (graph, xy)
 #' dim (graph) # more edges than original
 #' @export
-add_nodes_to_graph <- function (graph, xy) {
+add_nodes_to_graph <- function (graph, xy, dist_tol = 1e-6) {
 
     index <- match_pts_to_graph (graph, xy)
 
@@ -265,7 +267,7 @@ add_nodes_to_graph <- function (graph, xy) {
     graph_std <- graph [, gr_cols] # standardise column names
     names (graph_std) <- names (gr_cols)
 
-    # Expand index to include all potentially duplicated edges:
+    # Expand index to include all potentially bi-directional edges:
     index <- lapply (seq_along (index), function (i) {
         out <- which (
             (graph_std$from == graph_std$from [index [i]] &
@@ -300,7 +302,7 @@ add_nodes_to_graph <- function (graph, xy) {
 
         new_edges_i <- lapply (seq_len (nrow (edges_to_split_i)), function (e) {
 
-            edge_i <- rbind (edges_to_split_i [e, ], edges_to_split_i [e, ])
+            edge_i <- edges_to_split_i [c (e, e), ]
             edge_i$to [1] <- edge_i$from [2] <- genhash ()
             edge_i$xto [1] <- xy$x [i]
             edge_i$yto [1] <- xy$y [i]
@@ -312,6 +314,11 @@ add_nodes_to_graph <- function (graph, xy) {
                 y = c (edge_i [1, "yfr"], edge_i [1, "yto"], edge_i [2, "yto"])
             )
             dmat <- geodist::geodist (xy_i)
+
+            if (any (dmat [upper.tri (dmat)] < dist_tol)) {
+                return (edges_to_split_i [e, ])
+            }
+
             edge_i$d [1] <- dmat [1, 2]
             edge_i$d [2] <- dmat [2, 3]
 
