@@ -7,6 +7,8 @@
 - Updated `weight_streenet()` function for `wt_profile="bicycle"` to return
   many more bicycle-relevant columns (#207).
 - Fix major bug in categorical dists routines that gave wrong values (#201; thanks to @xiaofanliang)
+- Fix bug in `add_nodes_to_graph`, #103
+- Add 2 new parameters to `add_nodes_to_graph`, "dist_tol" and "intersections_only" (#103)
 
 ## Minor changes:
 
