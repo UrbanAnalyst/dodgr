@@ -240,7 +240,7 @@ signed_intersection_dists <- function (graph, xy, res) {
 #' @param dist_tol Only insert new nodes if they are further from existing nodes
 #' than this distance, expressed in units of the distance column of `graph`.
 #' @return A modified version of `graph`, with additional edges formed by
-#' breaking previous edges at nearest penpendicular intersections with the
+#' breaking previous edges at nearest perpendicular intersections with the
 #' points, `xy`.
 #' @family match
 #' @examples

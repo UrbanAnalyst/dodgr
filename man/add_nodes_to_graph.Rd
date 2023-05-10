@@ -19,7 +19,7 @@ than this distance, expressed in units of the distance column of \code{graph}.}
 }
 \value{
 A modified version of \code{graph}, with additional edges formed by
-breaking previous edges at nearest penpendicular intersections with the
+breaking previous edges at nearest perpendicular intersections with the
 points, \code{xy}.
 }
 \description{
