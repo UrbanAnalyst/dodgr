@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ATFutures/dodgr",
   "issueTracker": "https://github.com/ATFutures/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.20.028",
+  "version": "0.2.20.029",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
+  "runtimePlatform": "R version 4.3.0 (2023-04-21)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -338,9 +338,9 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=RcppParallel"
     },
-    "SystemRequirements": "C++11, GNU make"
+    "SystemRequirements": "GNU make"
   },
-  "fileSize": "31377.214KB",
+  "fileSize": "28161.556KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
