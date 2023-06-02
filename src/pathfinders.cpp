@@ -175,8 +175,6 @@ void PF::PathFinder::DijkstraNearest (
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     m_heap->insert (v0, 0.0);
 
-    size_t n_reached = 0;
-    const size_t n_targets = to_index.size ();
     bool *is_target = new bool [n];
     std::fill (is_target, is_target + n, false);
     for (auto t: to_index)
