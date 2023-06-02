@@ -1,8 +1,6 @@
-# CRAN notes for dodgr_0.2.20 submission
+# CRAN notes for dodgr_0.2.21 submission
 
-This submission rectifies a previous submission which generated a note
-regarding possibly invalid URL. Although that URL was valid, this submission
-replaces it with another which should avoid that note.
+This submission removes 'CXX_STD=CXX11' statements from all Makevars files, as requested.
 
 This submission generates the following NOTES on some systems:
 
