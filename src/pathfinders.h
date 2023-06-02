@@ -37,7 +37,7 @@ struct DijkstraEdge
 
 struct by_wt
 {
-    bool operator () (const DijkstraEdge& lhs, const DijkstraEdge& rhs)
+    bool operator () (const DijkstraEdge& lhs, const DijkstraEdge& rhs) const
     {
         if (fabs (lhs._wt - rhs._wt) < 1.0e-12)
             return lhs._i < rhs._i;

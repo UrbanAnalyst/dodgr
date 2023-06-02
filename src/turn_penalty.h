@@ -21,7 +21,7 @@ struct OneCompoundEdge {
 // https://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
 struct clockwise_sort
 {
-    bool operator () (const OneEdge &a, const OneEdge &b)
+    bool operator () (const OneEdge &a, const OneEdge &b) const
     {
         if (a.x >= 0.0 && b.x < 0.0)
             return true;
