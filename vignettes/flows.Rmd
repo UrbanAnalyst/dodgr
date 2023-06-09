@@ -21,10 +21,10 @@ library (dodgr)
 The `dodgr`package includes three functions for allocating and aggregating
 flows throughout network, based on defined properties of a set of origin and
 destination points. The three primary functions for flows are
-[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
-[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html),
 and
-[`dodgr_flows_si()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html),
+[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html),
 each of which is now described in detail.
 
 ## 1 Flow Aggregation
@@ -34,7 +34,7 @@ network from a set of origin (`from`) and destination (`to`) points.  Flows
 commonly arise in origin-destination matrices used in transport studies, but may
 be any kind of generic flows on graphs. A flow matrix specifies the flow between
 each pair of origin and destination points, and the
-[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
 function aggregates all of these flows throughout a network and assigns a
 resultant aggregate flow to each edge.
 
@@ -50,7 +50,7 @@ flows <- matrix (10 * runif (length (from) * length (to)),
 )
 ```
 This `flows` matrix is then submitted to
-[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
 which simply appends an additional column of `flows` to the submitted `graph`:
 ```{r}
 graph_f <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
@@ -65,12 +65,12 @@ summary (graph_f$flow)
 ## 2 Flow Dispersal
 
 The second function,
-[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html),
 uses only a vector a origin (`from`) points, and aggregates flows as they
 disperse throughout the network
 according to a simple exponential model. In place of the matrix of flows
 required by
-[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
 dispersal requires an equivalent vector of densities dispersing from all origin
 (`from`) points. This is illustrated in
 the following code, using the same graph as the previous example.
@@ -83,9 +83,9 @@ summary (graph_f$flow)
 ## 3 Merging directed flows
 
 Note that flows from both
-[`dodgr_flows_aggregate()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
 and
-[`dodgr_flows_disperse()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
 are *directed*, so the flow from 'A' to 'B' will not necessarily equal the flow
 from 'B' to 'A'. It is often desirable to aggregate flows in an undirected
 manner, for example for visualisations where plotting pairs of directed flows
@@ -96,7 +96,7 @@ function:
 graph_undir <- merge_directed_graph (graph_f)
 ```
 Resultant graphs produced by
-[`merge_directed_graph()`](https://atfutures.github.io/dodgr/reference/merge_directed_graph.html)
+[`merge_directed_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.html)
 only include those edges having non-zero flows, and so:
 ```{r}
 nrow (graph_f)
@@ -109,7 +109,7 @@ graph <- graph [graph_undir$edge_id, ]
 graph$flow <- graph_undir$flow
 ```
 This graph may then be used to visualise flows with the
-[`dodgr_flowmap()`](https://atfutures.github.io/dodgr/reference/dodgr_flowmap.html)
+[`dodgr_flowmap()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.html)
 function:
 ```{r flowmap, eval = FALSE}
 graph_f <- graph_f [graph_f$flow > 0, ]
@@ -120,7 +120,7 @@ dodgr_flowmap (graph_f, linescale = 5)
 ## 4. Flows from spatial interaction models
 
 An additional function,
-[`dodgr_flows_si()`](https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html)
+[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html)
 enables flows to be aggregated according to exponential spatial interaction
 models. The function is called just as the `dodgr_flows_aggregate()` call
 demonstrated above, but without the `flows` matrix specifying strengths of

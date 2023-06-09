@@ -11,7 +11,7 @@ dodgr_flows_aggregate(
   flows,
   contract = TRUE,
   heap = "BHeap",
-  tol = 1e-12,
+  tol = 0.000000000001,
   norm_sums = TRUE,
   quiet = TRUE
 )

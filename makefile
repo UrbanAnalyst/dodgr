@@ -1,4 +1,4 @@
-LFILE = README
+RFILE = README
 VIGNETTE = parallel
 
 all: init vignette
@@ -12,11 +12,12 @@ site:
 vignette:
 	echo "pkgdown::build_article('$(VIGNETTE)',quiet=FALSE)" | R --no-save -q
 
-knith: $(LFILE).Rmd
-	echo "rmarkdown::render('$(LFILE).Rmd',output_file='$(LFILE).html')" | R --no-save -q
+knith: $(RFILE).Rmd
+	echo "rmarkdown::render('$(RFILE).Rmd',output_file='$(RFILE).html')" | R --no-save -q
 
-knitr: $(LFILE).Rmd
-	echo "rmarkdown::render('$(LFILE).Rmd', output_format = rmarkdown::md_document (variant = 'gfm'))" | R --no-save -q
+doc: clean
+	Rscript -e 'devtools::document()'
+	Rscript -e 'rmarkdown::render("$(RFILE).Rmd",rmarkdown::md_document(variant="gfm"))'
 
 open:
 	xdg-open docs/articles/$(VIGNETTE).html &

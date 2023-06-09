@@ -5,7 +5,7 @@
 \title{Insert new nodes into a graph, breaking edges at point of nearest
 intersection.}
 \usage{
-add_nodes_to_graph(graph, xy, dist_tol = 1e-06, intersections_only = FALSE)
+add_nodes_to_graph(graph, xy, dist_tol = 0.000001, intersections_only = FALSE)
 }
 \arguments{
 \item{graph}{A \code{dodgr} graph with spatial coordinates, such as a

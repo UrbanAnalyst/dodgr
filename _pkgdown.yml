@@ -1,4 +1,4 @@
-url: https://atfutures.github.io/dodgr
+url: https://UrbanAnalyst.github.io/dodgr
 title: dodgr
 
 template:
@@ -48,4 +48,4 @@ navbar:
     href: reference/index.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/ATFutures/dodgr
+    href: https://github.com/UrbanAnalyst/dodgr

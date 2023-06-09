@@ -19,13 +19,13 @@ library (dodgr)
 ```
 
 The [`dodgr_dists_categorical`
-function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
 enables multiple distances to be aggregated along distinct categories of edges
 with a single query. This is particularly useful to examine information on
 proportions of total distances routed along different edge categories. The
 following three sub-sections describe the three main uses and interfaces of the
 [`dodgr_dists_categorical`
-function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html).
+function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html).
 Each of these requires an input `graph` to have an additional column named
 `"edge_type"`, which labels discrete categories of edges. These can be any kind
 of discrete labels at all, from integer values to character labels or factors.
@@ -35,21 +35,21 @@ The labels are retained in the result, as demonstrated below.
 
 The "default" interface of the 
 [`dodgr_dists_categorical`
-function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
 requires the same three mandatory parameters as 
-[`dodgr_distances`](https://atfutures.github.io/dodgr/reference/dodgr_dists.html), of
+[`dodgr_distances`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html), of
 
 1. A weighted `graph` on which the distances are to be calculated;
 2. A vector of `from` points from which distances are to be calculated; and
 3. A corresponding vector of `to` points.
 
 As for 
-[`dodgr_distances`](https://atfutures.github.io/dodgr/reference/dodgr_dists.html),
+[`dodgr_distances`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html),
 the `from` and `to` arguments can be either vertex identifiers (generally as
 `from_id` and `to_id` columns of the input `graph`), or two-column coordinates
 for spatial graphs. The following code illustrates the procedure, using the
 internal data set,
-[`hampi`](https://atfutures.github.io/dodgr/reference/hampi.html), from the
+[`hampi`](https://UrbanAnalyst.github.io/dodgr/reference/hampi.html), from the
 settlement of Hampi in the middle of a national park in the Deccan Plains of
 India. The following code also reduces the network to the largest connected
 component only, to ensure all points are mutually reachable.
@@ -123,7 +123,7 @@ the distributions of the various distance metrics, as further examined below.
 # 3. Proportional Distances within a Threshold Distance
 
 The third and final use of the [`dodgr_dists_categorical`
-function](https://atfutures.github.io/dodgr/reference/dodgr_dists_categorical.html)
+function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
 is through the `dlimit` parameter, used to specify a distance threshold below
 which categorical distances are to be aggregated. This is useful to examine
 relative proportions of different edges types necessary in travelling in any
@@ -134,9 +134,9 @@ distances are aggregated along all possible routes away from each `from` point,
 out to the specified `dlimit`. The value of `dlimit` must be specified relative
 to the edge distance values contained in the input graph. For spatial graphs
 obtained with [`dodgr_streetnet()` or
-`dodgr_streetnet_sc()`](https://atfutures.github.io/dodgr/reference/dodgr_streetnet.html),
+`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html),
 for example, as well as the internal [`hampi`
-data](https://atfutures.github.io/dodgr/reference/hampi.html), these distances
+data](https://UrbanAnalyst.github.io/dodgr/reference/hampi.html), these distances
 are in metres, and so `dlimit` must be specified in metres.
 
 The result is then a single matrix in which each row represents one of the
@@ -154,7 +154,7 @@ head (d)
 The row names of the resultant `data.frame` are the vertex identifiers
 specified in the `from` parameter. Such results can easily be combined with
 spatial information on the vertices obtained from the [`dodgr_vertices()`
-function](https://atfutures.github.io/dodgr/reference/dodgr_vertices.html) to
+function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html) to
 generate spatial maps of relative proportions around each point in a graph or
 network. Summary statistics can also readily be extracted, for example,
 

@@ -1,5 +1,9 @@
 # v 0.2.21.00X (dev)
 
+## Major changes:
+
+- Transfer repository from 'atfutures/dodgr' -> 'urbananalyst/dodgr'
+
 ---
 
 # v 0.2.21

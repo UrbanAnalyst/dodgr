@@ -14,7 +14,7 @@ dodgr_flows_si(
   contract = TRUE,
   norm_sums = TRUE,
   heap = "BHeap",
-  tol = 1e-12,
+  tol = 0.000000000001,
   quiet = TRUE
 )
 }
