@@ -40,7 +40,7 @@
     
     <a class="navbar-brand me-2" href="index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
 
       <ul class="navbar-nav">
 <li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/ATFutures/dodgr">
+  <a class="external-link nav-link" href="https://github.com/UrbanAnalyst/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -92,7 +92,7 @@
 <p>Four aspects. First, while other packages exist for calculating distances on directed graphs, notably <a href="https://igraph.org/r/" class="external-link"><code>igraph</code></a>, even that otherwise fabulous package does not (readily) permit analysis of <em>dual-weighted</em> graphs. Dual-weighted graphs have two sets of weights for each edge, so routing can be evaluated with one set of weights, while distances can be calculated with the other. A canonical example is a street network, where <em>weighted distances</em> are assigned depending on mode of transport (for example, weighted distances for pedestrians on multi-lane vehicular roads are longer than equivalent distances along isolated walking paths), yet the desired output remains direct, unweighted distances. Accurate calculation of distances on street networks requires a dual-weighted representation. In <strong>R</strong>, <code>dodgr</code> is currently the only package that offers this functionality (without excessive data wrangling).</p>
 <p>Second, while <a href="https://igraph.org/r/" class="external-link"><code>igraph</code></a> and almost all other routing packages are primarily designed for one-to-one routing, <code>dodgr</code> is specifically designed for many-to-many routing, and will generally outperform equivalent packages in large routing tasks.</p>
 <p>Third, <code>dodgr</code> goes beyond the functionality of comparable packages through including routines to aggregate flows throughout a network, through specifying origins, destinations, and flow densities between each pair of points. Alternatively, flows can be aggregated according to a network dispersal model from a set of origin points and associated densities, and a user-specified dispersal model.</p>
-<p>Fourth and finally, <code>dodgr</code> implements highly realistic and fully-customisable profiles for routing through street networks with various modes of transport, and using either distance- or time-based routing. Routing can include such factors as waiting times at traffic lights, delays for turning across oncoming traffic, access restrictions, and the effects of elevation on both cyclists and pedestrians. See the dedicated vignette on <a href="https://atfutures.github.io/dodgr/articles/times.html">street networks and time-based routing</a> for more detail.</p>
+<p>Fourth and finally, <code>dodgr</code> implements highly realistic and fully-customisable profiles for routing through street networks with various modes of transport, and using either distance- or time-based routing. Routing can include such factors as waiting times at traffic lights, delays for turning across oncoming traffic, access restrictions, and the effects of elevation on both cyclists and pedestrians. See the dedicated vignette on <a href="https://UrbanAnalyst.github.io/dodgr/articles/times.html">street networks and time-based routing</a> for more detail.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -104,15 +104,15 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_git</span> <span class="op">(</span><span class="st">"https://git.sr.ht/~mpadge/dodgr"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_git</span> <span class="op">(</span><span class="st">"https://codeberg.org/ATFutures/dodgr"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_bitbucket</span> <span class="op">(</span><span class="st">"atfutures/dodgr"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_gitlab</span> <span class="op">(</span><span class="st">"atfutures1/dodgr"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span> <span class="op">(</span><span class="st">"ATFutures/dodgr"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_git</span> <span class="op">(</span><span class="st">"https://codeberg.org/UrbanAnalyst/dodgr"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_bitbucket</span> <span class="op">(</span><span class="st">"UrbanAnalyst/dodgr"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_gitlab</span> <span class="op">(</span><span class="st">"UrbanAnalyst/dodgr"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span> <span class="op">(</span><span class="st">"UrbanAnalyst/dodgr"</span><span class="op">)</span></span></code></pre></div>
 <p>Then load with</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/ATFutures/dodgr" class="external-link">dodgr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/UrbanAnalyst/dodgr" class="external-link">dodgr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span> <span class="op">(</span><span class="st">"dodgr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] '0.2.16.6'</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] '0.2.21'</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="important-note">Important Note<a class="anchor" aria-label="anchor" href="#important-note"></a>
@@ -425,7 +425,7 @@
 <div class="section level2">
 <h2 id="usage-distances-and-times">Usage: Distances and Times<a class="anchor" aria-label="anchor" href="#usage-distances-and-times"></a>
 </h2>
-<p>The many-to-many nature of <code>dodgr</code> means that the function to calculate distances, <a href="https://atfutures.github.io/dodgr/reference/dodgr_distances.html"><code>dodgr_distances()</code></a> or, for street networks, times, <a href="https://atfutures.github.io/dodgr/reference/dodgr_times.html"><code>dodgr_times()</code></a>, accepts two vectors or matrices of routing points as inputs (describing origins and destinations), and returns a corresponding matrix of pairwise distances. If an input graph has columns for both distances and weighted distances, and/or times and weighted times, the weighted versions are used to determine the effectively shortest or fastest routes through a network, while actual distances or times are summed along the routes to calculate final values. It is of course also possible to calculate distances along fastest routes, times along shortest routes, or any combination thereof, as detailed in the package vignette on <a href="https://atfutures.github.io/dodgr/articles/times.html">street networks and time-based routing</a>.</p>
+<p>The many-to-many nature of <code>dodgr</code> means that the function to calculate distances, <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html"><code>dodgr_distances()</code></a> or, for street networks, times, <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html"><code>dodgr_times()</code></a>, accepts two vectors or matrices of routing points as inputs (describing origins and destinations), and returns a corresponding matrix of pairwise distances. If an input graph has columns for both distances and weighted distances, and/or times and weighted times, the weighted versions are used to determine the effectively shortest or fastest routes through a network, while actual distances or times are summed along the routes to calculate final values. It is of course also possible to calculate distances along fastest routes, times along shortest routes, or any combination thereof, as detailed in the package vignette on <a href="https://UrbanAnalyst.github.io/dodgr/articles/times.html">street networks and time-based routing</a>.</p>
 <p>Routing points can, for example, be randomly selected from the vertices of a graph. The vertices can in turn be extracted with the <code><a href="reference/dodgr_vertices.html">dodgr_vertices()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
@@ -588,7 +588,7 @@
 <td align="right">1</td>
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
-<td align="right">0.9960589</td>
+<td align="right">0.5815996</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -606,7 +606,7 @@
 <td align="right">1</td>
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
-<td align="right">0.0000000</td>
+<td align="right">2.3630118</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -624,7 +624,7 @@
 <td align="right">1</td>
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
-<td align="right">0.9960589</td>
+<td align="right">0.5815996</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -642,7 +642,7 @@
 <td align="right">1</td>
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
-<td align="right">0.0000000</td>
+<td align="right">2.3630118</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -660,7 +660,7 @@
 <td align="right">1</td>
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
-<td align="right">0.9960589</td>
+<td align="right">0.5815996</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -678,7 +678,7 @@
 <td align="right">1</td>
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
-<td align="right">0.0000000</td>
+<td align="right">2.3630118</td>
 </tr>
 </tbody>
 </table>
@@ -689,7 +689,7 @@
 <div class="section level2">
 <h2 id="further-detail">Further detail<a class="anchor" aria-label="anchor" href="#further-detail"></a>
 </h2>
-<p>For more detail, see the <a href="https://atfutures.github.io/dodgr/articles/dodgr.html">main package vignette</a>, and the second vignette on <a href="https://atfutures.github.io/dodgr/articles/times.html">street networks and time-based routing</a></p>
+<p>For more detail, see the <a href="https://UrbanAnalyst.github.io/dodgr/articles/dodgr.html">main package vignette</a>, and the second vignette on <a href="https://UrbanAnalyst.github.io/dodgr/articles/times.html">street networks and time-based routing</a></p>
 </div>
 <div class="section level2">
 <h2 id="contributors">Contributors<a class="anchor" aria-label="anchor" href="#contributors"></a>
@@ -703,25 +703,25 @@
 </h3>
 <table class="table"><tr>
 <td align="center">
-<a href="https://github.com/mpadge" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=mpadge" class="external-link">mpadge</a>
+<a href="https://github.com/mpadge" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=mpadge" class="external-link">mpadge</a>
 </td>
 <td align="center">
-<a href="https://github.com/karpfen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=karpfen" class="external-link">karpfen</a>
+<a href="https://github.com/karpfen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/11758039?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=karpfen" class="external-link">karpfen</a>
 </td>
 <td align="center">
-<a href="https://github.com/Robinlovelace" class="external-link"> <img src="https://avatars.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=Robinlovelace" class="external-link">Robinlovelace</a>
+<a href="https://github.com/Robinlovelace" class="external-link"> <img src="https://avatars.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=Robinlovelace" class="external-link">Robinlovelace</a>
 </td>
 <td align="center">
-<a href="https://github.com/agila5" class="external-link"> <img src="https://avatars.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=agila5" class="external-link">agila5</a>
+<a href="https://github.com/agila5" class="external-link"> <img src="https://avatars.githubusercontent.com/u/22221146?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=agila5" class="external-link">agila5</a>
 </td>
 <td align="center">
-<a href="https://github.com/JimShady" class="external-link"> <img src="https://avatars.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=JimShady" class="external-link">JimShady</a>
+<a href="https://github.com/JimShady" class="external-link"> <img src="https://avatars.githubusercontent.com/u/2901470?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=JimShady" class="external-link">JimShady</a>
 </td>
 <td align="center">
-<a href="https://github.com/DavisVaughan" class="external-link"> <img src="https://avatars.githubusercontent.com/u/19150088?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=DavisVaughan" class="external-link">DavisVaughan</a>
+<a href="https://github.com/DavisVaughan" class="external-link"> <img src="https://avatars.githubusercontent.com/u/19150088?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=DavisVaughan" class="external-link">DavisVaughan</a>
 </td>
 <td align="center">
-<a href="https://github.com/layik" class="external-link"> <img src="https://avatars.githubusercontent.com/u/408568?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/commits?author=layik" class="external-link">layik</a>
+<a href="https://github.com/layik" class="external-link"> <img src="https://avatars.githubusercontent.com/u/408568?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/commits?author=layik" class="external-link">layik</a>
 </td>
 </tr></table>
 </div>
@@ -731,88 +731,88 @@
 <table class="table">
 <tr>
 <td align="center">
-<a href="https://github.com/chrjangit" class="external-link"> <img src="https://avatars.githubusercontent.com/u/13800425?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Achrjangit" class="external-link">chrjangit</a>
+<a href="https://github.com/chrjangit" class="external-link"> <img src="https://avatars.githubusercontent.com/u/13800425?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Achrjangit" class="external-link">chrjangit</a>
 </td>
 <td align="center">
-<a href="https://github.com/rafapereirabr" class="external-link"> <img src="https://avatars.githubusercontent.com/u/7448421?u=01aed495e612154e54be4c51221e706cdff7779d&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Arafapereirabr" class="external-link">rafapereirabr</a>
+<a href="https://github.com/rafapereirabr" class="external-link"> <img src="https://avatars.githubusercontent.com/u/7448421?u=01aed495e612154e54be4c51221e706cdff7779d&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Arafapereirabr" class="external-link">rafapereirabr</a>
 </td>
 <td align="center">
-<a href="https://github.com/chrijo" class="external-link"> <img src="https://avatars.githubusercontent.com/u/37801457?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Achrijo" class="external-link">chrijo</a>
+<a href="https://github.com/chrijo" class="external-link"> <img src="https://avatars.githubusercontent.com/u/37801457?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Achrijo" class="external-link">chrijo</a>
 </td>
 <td align="center">
-<a href="https://github.com/dataandcrowd" class="external-link"> <img src="https://avatars.githubusercontent.com/u/25252172?u=2c62dac1ac9bfef3f26ee56c3d63b18dccc553a3&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adataandcrowd" class="external-link">dataandcrowd</a>
+<a href="https://github.com/dataandcrowd" class="external-link"> <img src="https://avatars.githubusercontent.com/u/25252172?u=2c62dac1ac9bfef3f26ee56c3d63b18dccc553a3&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adataandcrowd" class="external-link">dataandcrowd</a>
 </td>
 <td align="center">
-<a href="https://github.com/mem48" class="external-link"> <img src="https://avatars.githubusercontent.com/u/15819577?u=0c128db4e7567656c23e83e4314111fcea424526&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amem48" class="external-link">mem48</a>
+<a href="https://github.com/mem48" class="external-link"> <img src="https://avatars.githubusercontent.com/u/15819577?u=0c128db4e7567656c23e83e4314111fcea424526&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Amem48" class="external-link">mem48</a>
 </td>
 <td align="center">
-<a href="https://github.com/fzenoni" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6040873?u=bf32b8c1bc7ffc30c34bb09a1b0ae0f851414a48&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Afzenoni" class="external-link">fzenoni</a>
+<a href="https://github.com/fzenoni" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6040873?u=bf32b8c1bc7ffc30c34bb09a1b0ae0f851414a48&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Afzenoni" class="external-link">fzenoni</a>
 </td>
 <td align="center">
-<a href="https://github.com/mdsumner" class="external-link"> <img src="https://avatars.githubusercontent.com/u/4107631?u=77e928f4bb904a5c2e8927a02194b86662408329&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amdsumner" class="external-link">mdsumner</a>
-</td>
-</tr>
-<tr>
-<td align="center">
-<a href="https://github.com/nacnudus" class="external-link"> <img src="https://avatars.githubusercontent.com/u/3522552?u=53524b68ca89335d9079b7272ee6c2b0afda340a&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Anacnudus" class="external-link">nacnudus</a>
-</td>
-<td align="center">
-<a href="https://github.com/mkvasnicka" class="external-link"> <img src="https://avatars.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Amkvasnicka" class="external-link">mkvasnicka</a>
-</td>
-<td align="center">
-<a href="https://github.com/orlando-sabogal" class="external-link"> <img src="https://avatars.githubusercontent.com/u/7365739?u=f6ac9be2676c4b2cedcc047715c292248b468d3e&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Aorlando-sabogal" class="external-link">orlando-sabogal</a>
-</td>
-<td align="center">
-<a href="https://github.com/tbuckl" class="external-link"> <img src="https://avatars.githubusercontent.com/u/98956?u=9580c2ee3c03cbbe44ac8180b0f6a6725b0415f0&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Atbuckl" class="external-link">tbuckl</a>
-</td>
-<td align="center">
-<a href="https://github.com/douglascm" class="external-link"> <img src="https://avatars.githubusercontent.com/u/29764356?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adouglascm" class="external-link">douglascm</a>
-</td>
-<td align="center">
-<a href="https://github.com/darinchristensen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6937320?u=dcb5b57ddc41cfd15aac6145c80efbfbfcab734d&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adarinchristensen" class="external-link">darinchristensen</a>
-</td>
-<td align="center">
-<a href="https://github.com/romainFr" class="external-link"> <img src="https://avatars.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AromainFr" class="external-link">romainFr</a>
+<a href="https://github.com/mdsumner" class="external-link"> <img src="https://avatars.githubusercontent.com/u/4107631?u=77e928f4bb904a5c2e8927a02194b86662408329&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Amdsumner" class="external-link">mdsumner</a>
 </td>
 </tr>
 <tr>
 <td align="center">
-<a href="https://github.com/dcooley" class="external-link"> <img src="https://avatars.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adcooley" class="external-link">dcooley</a>
+<a href="https://github.com/nacnudus" class="external-link"> <img src="https://avatars.githubusercontent.com/u/3522552?u=53524b68ca89335d9079b7272ee6c2b0afda340a&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Anacnudus" class="external-link">nacnudus</a>
 </td>
 <td align="center">
-<a href="https://github.com/Hussein-Mahfouz" class="external-link"> <img src="https://avatars.githubusercontent.com/u/45176416?u=ceef68f4fec4aed25b069522e8c90fde3629c7f0&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AHussein-Mahfouz" class="external-link">Hussein-Mahfouz</a>
+<a href="https://github.com/mkvasnicka" class="external-link"> <img src="https://avatars.githubusercontent.com/u/8019045?u=16ba8f6406bcb20ade64481fbc177998bd1549fb&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Amkvasnicka" class="external-link">mkvasnicka</a>
 </td>
 <td align="center">
-<a href="https://github.com/sigmafelix" class="external-link"> <img src="https://avatars.githubusercontent.com/u/25448786?u=fe2158c4bd573cf9aeb7efb7cf5c2c6bca2d8560&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asigmafelix" class="external-link">sigmafelix</a>
+<a href="https://github.com/orlando-sabogal" class="external-link"> <img src="https://avatars.githubusercontent.com/u/7365739?u=f6ac9be2676c4b2cedcc047715c292248b468d3e&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aorlando-sabogal" class="external-link">orlando-sabogal</a>
 </td>
 <td align="center">
-<a href="https://github.com/polettif" class="external-link"> <img src="https://avatars.githubusercontent.com/u/17431069?u=757eac2821736acbb02e7c90b456411d256d5780&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Apolettif" class="external-link">polettif</a>
+<a href="https://github.com/tbuckl" class="external-link"> <img src="https://avatars.githubusercontent.com/u/98956?u=9580c2ee3c03cbbe44ac8180b0f6a6725b0415f0&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Atbuckl" class="external-link">tbuckl</a>
 </td>
 <td align="center">
-<a href="https://github.com/edzer" class="external-link"> <img src="https://avatars.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Aedzer" class="external-link">edzer</a>
+<a href="https://github.com/douglascm" class="external-link"> <img src="https://avatars.githubusercontent.com/u/29764356?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adouglascm" class="external-link">douglascm</a>
 </td>
 <td align="center">
-<a href="https://github.com/FlxPo" class="external-link"> <img src="https://avatars.githubusercontent.com/u/5145583?u=cbd02ee0a0fa0447429f38bd7e3a1da57c841239&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AFlxPo" class="external-link">FlxPo</a>
+<a href="https://github.com/darinchristensen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/6937320?u=dcb5b57ddc41cfd15aac6145c80efbfbfcab734d&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adarinchristensen" class="external-link">darinchristensen</a>
 </td>
 <td align="center">
-<a href="https://github.com/LeshunXu" class="external-link"> <img src="https://avatars.githubusercontent.com/u/48538622?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3ALeshunXu" class="external-link">LeshunXu</a>
+<a href="https://github.com/romainFr" class="external-link"> <img src="https://avatars.githubusercontent.com/u/1626262?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AromainFr" class="external-link">romainFr</a>
 </td>
 </tr>
 <tr>
 <td align="center">
-<a href="https://github.com/deanmarchiori" class="external-link"> <img src="https://avatars.githubusercontent.com/u/9559770?u=5abd6534fd7f1cf94a54f894cdb12e017db1a9af&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Adeanmarchiori" class="external-link">deanmarchiori</a>
+<a href="https://github.com/dcooley" class="external-link"> <img src="https://avatars.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adcooley" class="external-link">dcooley</a>
 </td>
 <td align="center">
-<a href="https://github.com/demcortillas" class="external-link"> <img src="https://avatars.githubusercontent.com/u/41303271?u=de6dad5177d4a0db395a751ba9a4f9acb32c9ef7&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Ademcortillas" class="external-link">demcortillas</a>
+<a href="https://github.com/Hussein-Mahfouz" class="external-link"> <img src="https://avatars.githubusercontent.com/u/45176416?u=ceef68f4fec4aed25b069522e8c90fde3629c7f0&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AHussein-Mahfouz" class="external-link">Hussein-Mahfouz</a>
 </td>
 <td align="center">
-<a href="https://github.com/Urban-JonathanCohen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/51330244?u=b67ded6a42ccf69116ed9999ba183b8523e8fde9&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen" class="external-link">Urban-JonathanCohen</a>
+<a href="https://github.com/sigmafelix" class="external-link"> <img src="https://avatars.githubusercontent.com/u/25448786?u=fe2158c4bd573cf9aeb7efb7cf5c2c6bca2d8560&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Asigmafelix" class="external-link">sigmafelix</a>
 </td>
 <td align="center">
-<a href="https://github.com/sriramab" class="external-link"> <img src="https://avatars.githubusercontent.com/u/12668606?u=353aaf316777539836fbd9b9f8e7ec5ae6527666&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Asriramab" class="external-link">sriramab</a>
+<a href="https://github.com/polettif" class="external-link"> <img src="https://avatars.githubusercontent.com/u/17431069?u=757eac2821736acbb02e7c90b456411d256d5780&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Apolettif" class="external-link">polettif</a>
 </td>
 <td align="center">
-<a href="https://github.com/xiaofanliang" class="external-link"> <img src="https://avatars.githubusercontent.com/u/22874361?u=7d6ade584aeaf34e1fde47c400ffae1a82b79a25&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang" class="external-link">xiaofanliang</a>
+<a href="https://github.com/edzer" class="external-link"> <img src="https://avatars.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aedzer" class="external-link">edzer</a>
+</td>
+<td align="center">
+<a href="https://github.com/FlxPo" class="external-link"> <img src="https://avatars.githubusercontent.com/u/5145583?u=cbd02ee0a0fa0447429f38bd7e3a1da57c841239&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AFlxPo" class="external-link">FlxPo</a>
+</td>
+<td align="center">
+<a href="https://github.com/LeshunXu" class="external-link"> <img src="https://avatars.githubusercontent.com/u/48538622?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ALeshunXu" class="external-link">LeshunXu</a>
+</td>
+</tr>
+<tr>
+<td align="center">
+<a href="https://github.com/deanmarchiori" class="external-link"> <img src="https://avatars.githubusercontent.com/u/9559770?u=5abd6534fd7f1cf94a54f894cdb12e017db1a9af&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adeanmarchiori" class="external-link">deanmarchiori</a>
+</td>
+<td align="center">
+<a href="https://github.com/demcortillas" class="external-link"> <img src="https://avatars.githubusercontent.com/u/41303271?u=de6dad5177d4a0db395a751ba9a4f9acb32c9ef7&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ademcortillas" class="external-link">demcortillas</a>
+</td>
+<td align="center">
+<a href="https://github.com/Urban-JonathanCohen" class="external-link"> <img src="https://avatars.githubusercontent.com/u/51330244?u=b67ded6a42ccf69116ed9999ba183b8523e8fde9&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen" class="external-link">Urban-JonathanCohen</a>
+</td>
+<td align="center">
+<a href="https://github.com/sriramab" class="external-link"> <img src="https://avatars.githubusercontent.com/u/12668606?u=353aaf316777539836fbd9b9f8e7ec5ae6527666&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Asriramab" class="external-link">sriramab</a>
+</td>
+<td align="center">
+<a href="https://github.com/xiaofanliang" class="external-link"> <img src="https://avatars.githubusercontent.com/u/22874361?u=7d6ade584aeaf34e1fde47c400ffae1a82b79a25&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang" class="external-link">xiaofanliang</a>
 </td>
 </tr>
 </table>
@@ -822,22 +822,22 @@
 </h3>
 <table class="table"><tr>
 <td align="center">
-<a href="https://github.com/virgesmith" class="external-link"> <img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Avirgesmith" class="external-link">virgesmith</a>
+<a href="https://github.com/virgesmith" class="external-link"> <img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Avirgesmith" class="external-link">virgesmith</a>
 </td>
 <td align="center">
-<a href="https://github.com/richardellison" class="external-link"> <img src="https://avatars.githubusercontent.com/u/10625733?u=8d7cd55a61f1a1b3f9973ddff5adbb45e0b193c6&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Arichardellison" class="external-link">richardellison</a>
+<a href="https://github.com/richardellison" class="external-link"> <img src="https://avatars.githubusercontent.com/u/10625733?u=8d7cd55a61f1a1b3f9973ddff5adbb45e0b193c6&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Arichardellison" class="external-link">richardellison</a>
 </td>
 <td align="center">
-<a href="https://github.com/coatless" class="external-link"> <img src="https://avatars.githubusercontent.com/u/833642?u=d7a2ccb381bd1517d2d51778670ef227cbd8d3aa&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Acoatless" class="external-link">coatless</a>
+<a href="https://github.com/coatless" class="external-link"> <img src="https://avatars.githubusercontent.com/u/833642?u=d7a2ccb381bd1517d2d51778670ef227cbd8d3aa&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Acoatless" class="external-link">coatless</a>
 </td>
 <td align="center">
-<a href="https://github.com/znmeb" class="external-link"> <img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb" class="external-link">znmeb</a>
+<a href="https://github.com/znmeb" class="external-link"> <img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb" class="external-link">znmeb</a>
 </td>
 <td align="center">
-<a href="https://github.com/yihui" class="external-link"> <img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3Ayihui" class="external-link">yihui</a>
+<a href="https://github.com/yihui" class="external-link"> <img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Ayihui" class="external-link">yihui</a>
 </td>
 <td align="center">
-<a href="https://github.com/MartinLHazelton" class="external-link"> <img src="https://avatars.githubusercontent.com/u/36397695?u=bc2261049e9b33f2c5d8e25f0bd56d4b1d6275df&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/ATFutures/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton" class="external-link">MartinLHazelton</a>
+<a href="https://github.com/MartinLHazelton" class="external-link"> <img src="https://avatars.githubusercontent.com/u/36397695?u=bc2261049e9b33f2c5d8e25f0bd56d4b1d6275df&amp;v=4" width="100px;" alt=""></a><br><a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton" class="external-link">MartinLHazelton</a>
 </td>
 </tr></table>
 <!-- markdownlint-enable --><!-- prettier-ignore-end --><!-- ALL-CONTRIBUTORS-LIST:END -->
@@ -849,8 +849,8 @@
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://cloud.r-project.org/package=dodgr" class="external-link">View on CRAN</a></li>
-<li><a href="https://github.com/ATFutures/dodgr/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/ATFutures/dodgr/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/UrbanAnalyst/dodgr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/UrbanAnalyst/dodgr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -888,8 +888,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/atfutures/dodgr/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/atfutures/dodgr/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://app.codecov.io/gh/ATFutures/dodgr" class="external-link"><img src="https://codecov.io/gh/ATFutures/dodgr/branch/main/graph/badge.svg" alt="codecov"></a></li>
+<li><a href="https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check" class="external-link"><img src="https://github.com/UrbanAnalyst/dodgr/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://app.codecov.io/gh/UrbanAnalyst/dodgr" class="external-link"><img src="https://codecov.io/gh/UrbanAnalyst/dodgr/branch/main/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
 </ul>
 </div>

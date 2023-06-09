@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@
 
       <ul class="navbar-nav">
 <li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/ATFutures/dodgr">
+  <a class="external-link nav-link" href="https://github.com/UrbanAnalyst/dodgr">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -72,9 +72,9 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2023-06-02</h4>
+            <h4 data-toc-skip class="date">2023-06-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/ATFutures/dodgr/blob/HEAD/vignettes/flows.Rmd" class="external-link"><code>vignettes/flows.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/HEAD/vignettes/flows.Rmd" class="external-link"><code>vignettes/flows.Rmd</code></a></small>
       <div class="d-none name"><code>flows.Rmd</code></div>
     </div>
 
@@ -83,9 +83,9 @@ Padgham</h4>
 <p>The <code>dodgr</code>package includes three functions for allocating
 and aggregating flows throughout network, based on defined properties of
 a set of origin and destination points. The three primary functions for
-flows are <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
-<a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html"><code>dodgr_flows_disperse()</code></a>,
-and <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html"><code>dodgr_flows_si()</code></a>,
+flows are <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
+<a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html"><code>dodgr_flows_disperse()</code></a>,
+and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html"><code>dodgr_flows_si()</code></a>,
 each of which is now described in detail.</p>
 <div class="section level2">
 <h2 id="flow-aggregation">1 Flow Aggregation<a class="anchor" aria-label="anchor" href="#flow-aggregation"></a>
@@ -95,7 +95,7 @@ network from a set of origin (<code>from</code>) and destination
 (<code>to</code>) points. Flows commonly arise in origin-destination
 matrices used in transport studies, but may be any kind of generic flows
 on graphs. A flow matrix specifies the flow between each pair of origin
-and destination points, and the <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>
+and destination points, and the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>
 function aggregates all of these flows throughout a network and assigns
 a resultant aggregate flow to each edge.</p>
 <p>For a set of <code>nf</code> points of origin and <code>nt</code>
@@ -110,7 +110,7 @@ code:</p>
 <span><span class="va">flows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span> <span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">from</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">to</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">from</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>This <code>flows</code> matrix is then submitted to <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
+<p>This <code>flows</code> matrix is then submitted to <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
 which simply appends an additional column of <code>flows</code> to the
 submitted <code>graph</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -140,10 +140,10 @@ very few points in the graph.</p>
 <div class="section level2">
 <h2 id="flow-dispersal">2 Flow Dispersal<a class="anchor" aria-label="anchor" href="#flow-dispersal"></a>
 </h2>
-<p>The second function, <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_disperse.html"><code>dodgr_flows_disperse()</code></a>,
+<p>The second function, <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html"><code>dodgr_flows_disperse()</code></a>,
 uses only a vector a origin (<code>from</code>) points, and aggregates
 flows as they disperse throughout the network according to a simple
-exponential model. In place of the matrix of flows required by <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
+exponential model. In place of the matrix of flows required by <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>,
 dispersal requires an equivalent vector of densities dispersing from all
 origin (<code>from</code>) points. This is illustrated in the following
 code, using the same graph as the previous example.</p>
@@ -157,8 +157,8 @@ code, using the same graph as the previous example.</p>
 <div class="section level2">
 <h2 id="merging-directed-flows">3 Merging directed flows<a class="anchor" aria-label="anchor" href="#merging-directed-flows"></a>
 </h2>
-<p>Note that flows from both <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>
-and <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_disperse()</code></a>
+<p>Note that flows from both <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_aggregate()</code></a>
+and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html"><code>dodgr_flows_disperse()</code></a>
 are <em>directed</em>, so the flow from ‘A’ to ‘B’ will not necessarily
 equal the flow from ‘B’ to ‘A’. It is often desirable to aggregate flows
 in an undirected manner, for example for visualisations where plotting
@@ -167,7 +167,7 @@ large graphs. Directed flows can be aggregated to equivalent undirected
 flows with the <code><a href="../reference/merge_directed_graph.html">merge_directed_graph()</a></code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph_undir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/merge_directed_graph.html">merge_directed_graph</a></span> <span class="op">(</span><span class="va">graph_f</span><span class="op">)</span></span></code></pre></div>
-<p>Resultant graphs produced by <a href="https://atfutures.github.io/dodgr/reference/merge_directed_graph.html"><code>merge_directed_graph()</code></a>
+<p>Resultant graphs produced by <a href="https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.html"><code>merge_directed_graph()</code></a>
 only include those edges having non-zero flows, and so:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">graph_f</span><span class="op">)</span></span></code></pre></div>
@@ -180,7 +180,7 @@ regain the original data on vertex coordinates through</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">graph</span> <span class="op">[</span><span class="va">graph_undir</span><span class="op">$</span><span class="va">edge_id</span>, <span class="op">]</span></span>
 <span><span class="va">graph</span><span class="op">$</span><span class="va">flow</span> <span class="op">&lt;-</span> <span class="va">graph_undir</span><span class="op">$</span><span class="va">flow</span></span></code></pre></div>
-<p>This graph may then be used to visualise flows with the <a href="https://atfutures.github.io/dodgr/reference/dodgr_flowmap.html"><code>dodgr_flowmap()</code></a>
+<p>This graph may then be used to visualise flows with the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.html"><code>dodgr_flowmap()</code></a>
 function:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph_f</span> <span class="op">&lt;-</span> <span class="va">graph_f</span> <span class="op">[</span><span class="va">graph_f</span><span class="op">$</span><span class="va">flow</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span></span>
@@ -190,7 +190,7 @@ function:</p>
 <div class="section level2">
 <h2 id="flows-from-spatial-interaction-models">4. Flows from spatial interaction models<a class="anchor" aria-label="anchor" href="#flows-from-spatial-interaction-models"></a>
 </h2>
-<p>An additional function, <a href="https://atfutures.github.io/dodgr/reference/dodgr_flows_si.html"><code>dodgr_flows_si()</code></a>
+<p>An additional function, <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html"><code>dodgr_flows_si()</code></a>
 enables flows to be aggregated according to exponential spatial
 interaction models. The function is called just as the
 <code><a href="../reference/dodgr_flows_aggregate.html">dodgr_flows_aggregate()</a></code> call demonstrated above, but
