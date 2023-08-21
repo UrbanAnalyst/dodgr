@@ -3,6 +3,7 @@
 \docType{package}
 \name{dodgr}
 \alias{dodgr}
+\alias{dodgr-package}
 \title{Distances On Directed GRaphs ("dodgr")}
 \description{
 Distances on dual-weighted directed graphs using priority-queue shortest
@@ -53,4 +54,30 @@ priority queue heap structures for a given type of graph.
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/UrbanAnalyst/dodgr}
+  \item Report bugs at \url{https://github.com/UrbanAnalyst/dodgr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Mark Padgham \email{mark.padgham@email.com}
+
+Authors:
+\itemize{
+  \item Andreas Petutschnig
+  \item David Cooley
+}
+
+Other contributors:
+\itemize{
+  \item Robin Lovelace [contributor]
+  \item Andrew Smith [contributor]
+  \item Malcolm Morgan [contributor]
+  \item Shane Saunders (Original author of included code for priority heaps) [copyright holder]
+}
+
+}
 \concept{package}

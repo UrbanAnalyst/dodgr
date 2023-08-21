@@ -52,7 +52,7 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib dodgr, .registration = TRUE
-NULL
+"_PACKAGE"
 
 #' Weighting profiles used to route different modes of transport.
 #'
