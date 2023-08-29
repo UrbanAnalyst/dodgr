@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.3.0.003
+Version: 0.3.0.004
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
     person("Andreas", "Petutschnig", role = "aut"),
