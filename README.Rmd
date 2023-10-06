@@ -299,6 +299,7 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -529,6 +530,28 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/22874361?u=7d6ade584aeaf34e1fde47c400ffae1a82b79a25&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang">xiaofanliang</a>
+</td>
+<td align="center">
+<a href="https://github.com/grobins">
+<img src="https://avatars.githubusercontent.com/u/4343493?u=9fed1343a8e4d13ab57adf763969fbf804320171&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Agrobins">grobins</a>
+</td>
+<td align="center">
+<a href="https://github.com/jucardwell">
+<img src="https://avatars.githubusercontent.com/u/91475282?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajucardwell">jucardwell</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/diegoteca">
+<img src="https://avatars.githubusercontent.com/u/39192686?u=cca8991aa0bcabb4a3547aa81eacf99efcabcbfb&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adiegoteca">diegoteca</a>
 </td>
 </tr>
 

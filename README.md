@@ -328,19 +328,17 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the
-[`allcontributors`
-package](https://github.com/ropenscilabs/allcontributors) following the
-[all-contributors](https://allcontributors.org) specification.
-Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropenscilabs/allcontributors) following the [all-contributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -385,11 +383,14 @@ Contributions of any kind are welcome!
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=layik">layik</a>
 </td>
 </tr>
+
 </table>
+
 
 ### Issue Authors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -434,6 +435,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
@@ -478,6 +481,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/dcooley">
@@ -522,6 +527,8 @@ Contributions of any kind are welcome!
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ALeshunXu">LeshunXu</a>
 </td>
 </tr>
+
+
 <tr>
 <td align="center">
 <a href="https://github.com/deanmarchiori">
@@ -553,12 +560,37 @@ Contributions of any kind are welcome!
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang">xiaofanliang</a>
 </td>
+<td align="center">
+<a href="https://github.com/grobins">
+<img src="https://avatars.githubusercontent.com/u/4343493?u=9fed1343a8e4d13ab57adf763969fbf804320171&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Agrobins">grobins</a>
+</td>
+<td align="center">
+<a href="https://github.com/jucardwell">
+<img src="https://avatars.githubusercontent.com/u/91475282?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajucardwell">jucardwell</a>
+</td>
 </tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/diegoteca">
+<img src="https://avatars.githubusercontent.com/u/39192686?u=cca8991aa0bcabb4a3547aa81eacf99efcabcbfb&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adiegoteca">diegoteca</a>
+</td>
+</tr>
+
 </table>
+
 
 ### Issue Contributors
 
 <table>
+
 <tr>
 <td align="center">
 <a href="https://github.com/virgesmith">
@@ -597,7 +629,9 @@ Contributions of any kind are welcome!
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton">MartinLHazelton</a>
 </td>
 </tr>
+
 </table>
+
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
