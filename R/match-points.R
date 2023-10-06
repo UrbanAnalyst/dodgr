@@ -329,8 +329,8 @@ add_nodes_to_graph <- function (graph,
             edge_i$yfr [2] <- pts$y [i]
 
             xy_i <- data.frame (
-                x = c (edge_i [1, "xfr"], edge_i [1, "xto"], edge_i [2, "xto"]),
-                y = c (edge_i [1, "yfr"], edge_i [1, "yto"], edge_i [2, "yto"])
+                x = as.numeric (c (edge_i [1, "xfr"], edge_i [1, "xto"], edge_i [2, "xto"])),
+                y = as.numeric (c (edge_i [1, "yfr"], edge_i [1, "yto"], edge_i [2, "yto"]))
             )
             dmat <- geodist::geodist (xy_i)
 

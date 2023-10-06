@@ -4,6 +4,10 @@
 
 - Transfer repository from 'atfutures/dodgr' -> 'urbananalyst/dodgr'
 
+## Minor changes:
+
+- Fix bug in `add_nodes_to_graph` with "sc" networks (#217, thanks to @diegoteca)
+
 ---
 
 # v 0.2.21
