@@ -349,7 +349,7 @@ times_by_incline <- function (graph, wt_profile) {
         # but updated to Tobler's hiking rule; see issue #124
         if ("dz" %in% names (graph)) {
             cost0 <- 1 / (6 * exp (-3.5 * 0.05))
-            graph$time <- graph$time * cost_tobler (graph$dz, cost0)
+            graph$time <- graph$time * cost_tobler (graph$dz / graph$d, cost0)
         }
 
     } else if (wt_profile == "bicycle") {

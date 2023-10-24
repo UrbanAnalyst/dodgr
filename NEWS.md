@@ -7,6 +7,7 @@
 ## Minor changes:
 
 - Fix bug in `add_nodes_to_graph` with "sc" networks (#217, thanks to @diegoteca)
+- Fix bug in Tobler cost function for effect of slopes on walking times (#219, thanks to @xtimbeau).
 
 ---
 
