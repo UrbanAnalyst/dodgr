@@ -326,8 +326,8 @@ vignette](https://UrbanAnalyst.github.io/dodgr/articles/dodgr.html), and
 the second vignette on [street networks and time-based
 routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
-## Contributors
 
+## Contributors
 
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -377,16 +377,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=DavisVaughan">DavisVaughan</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/layik">
 <img src="https://avatars.githubusercontent.com/u/408568?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=layik">layik</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/olivroy">
 <img src="https://avatars.githubusercontent.com/u/52606734?v=4" width="100px;" alt=""/>
@@ -439,16 +439,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Afzenoni">fzenoni</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/mdsumner">
 <img src="https://avatars.githubusercontent.com/u/4107631?u=77e928f4bb904a5c2e8927a02194b86662408329&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Amdsumner">mdsumner</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/nacnudus">
 <img src="https://avatars.githubusercontent.com/u/3522552?u=53524b68ca89335d9079b7272ee6c2b0afda340a&v=4" width="100px;" alt=""/>
@@ -479,6 +479,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
 <img src="https://avatars.githubusercontent.com/u/6937320?u=dcb5b57ddc41cfd15aac6145c80efbfbfcab734d&v=4" width="100px;" alt=""/>
@@ -491,10 +495,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AromainFr">romainFr</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/dcooley">
 <img src="https://avatars.githubusercontent.com/u/8093396?u=2c8d9162f246d90d433034d212b29a19e0f245c1&v=4" width="100px;" alt=""/>
@@ -519,6 +519,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/edzer">
 <img src="https://avatars.githubusercontent.com/u/520851?u=9bc892c3523be428dc211f2ccbcf04e8e0e564ff&v=4" width="100px;" alt=""/>
@@ -537,10 +541,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ALeshunXu">LeshunXu</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/deanmarchiori">
 <img src="https://avatars.githubusercontent.com/u/9559770?u=5abd6534fd7f1cf94a54f894cdb12e017db1a9af&v=4" width="100px;" alt=""/>
@@ -559,6 +559,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen">Urban-JonathanCohen</a>
 </td>
+</tr>
+
+
+<tr>
 <td align="center">
 <a href="https://github.com/sriramab">
 <img src="https://avatars.githubusercontent.com/u/12668606?u=353aaf316777539836fbd9b9f8e7ec5ae6527666&v=4" width="100px;" alt=""/>
@@ -583,10 +587,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajucardwell">jucardwell</a>
 </td>
-</tr>
-
-
-<tr>
 <td align="center">
 <a href="https://github.com/diegoteca">
 <img src="https://avatars.githubusercontent.com/u/39192686?u=cca8991aa0bcabb4a3547aa81eacf99efcabcbfb&v=4" width="100px;" alt=""/>
