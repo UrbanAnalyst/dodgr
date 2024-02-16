@@ -28,8 +28,8 @@ graphi <- dodgr_to_igraph (graph)
 
 Other conversion: 
 \code{\link{dodgr_deduplicate_graph}()},
-\code{\link{dodgr_to_sfc}()},
 \code{\link{dodgr_to_sf}()},
+\code{\link{dodgr_to_sfc}()},
 \code{\link{dodgr_to_tidygraph}()},
 \code{\link{igraph_to_dodgr}()}
 }

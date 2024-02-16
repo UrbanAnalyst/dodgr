@@ -118,8 +118,8 @@ dim (d) # length(from), length(unique(edge_type)) + 1
 \seealso{
 Other distances: 
 \code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists_nearest}()},
 \code{\link{dodgr_dists}()},
+\code{\link{dodgr_dists_nearest}()},
 \code{\link{dodgr_flows_aggregate}()},
 \code{\link{dodgr_flows_disperse}()},
 \code{\link{dodgr_flows_si}()},

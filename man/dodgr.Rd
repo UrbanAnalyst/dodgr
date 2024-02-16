@@ -2,8 +2,8 @@
 % Please edit documentation in R/dodgr-package.R
 \docType{package}
 \name{dodgr}
-\alias{dodgr}
 \alias{dodgr-package}
+\alias{dodgr}
 \title{Distances On Directed GRaphs ("dodgr")}
 \description{
 Distances on dual-weighted directed graphs using priority-queue shortest
@@ -58,6 +58,7 @@ priority queue heap structures for a given type of graph.
 Useful links:
 \itemize{
   \item \url{https://github.com/UrbanAnalyst/dodgr}
+  \item \url{https://urbananalyst.github.io/dodgr/}
   \item Report bugs at \url{https://github.com/UrbanAnalyst/dodgr/issues}
 }
 

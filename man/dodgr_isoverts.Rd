@@ -54,9 +54,9 @@ x <- dodgr_isoverts (graph, from = from, tlim)
 \seealso{
 Other distances: 
 \code{\link{dodgr_distances}()},
+\code{\link{dodgr_dists}()},
 \code{\link{dodgr_dists_categorical}()},
 \code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_dists}()},
 \code{\link{dodgr_flows_aggregate}()},
 \code{\link{dodgr_flows_disperse}()},
 \code{\link{dodgr_flows_si}()},
