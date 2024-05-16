@@ -19,7 +19,9 @@
 #' @param quiet If `FALSE`, display progress messages on screen.
 #' @return List of list of paths tracing all connections between nodes such that
 #' if `x <- dodgr_paths (graph, from, to)`, then the path between
-#' `from[i]` and `to[j]` is `x [[i]] [[j]]`.
+#' `from[i]` and `to[j]` is `x [[i]] [[j]]`. Each individual path is then a
+#' vector of integers indexing into the rows of `graph` if `vertices = FALSE`,
+#' or into the rows of `dodgr_vertices (graph)` if `vertices = TRUE`.
 #'
 #' @note `graph` must minimally contain four columns of `from`,
 #' `to`, `dist`. If an additional column named `weight` or

@@ -42,7 +42,9 @@ Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
 \value{
 List of list of paths tracing all connections between nodes such that
 if \code{x <- dodgr_paths (graph, from, to)}, then the path between
-\code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}.
+\code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}. Each individual path is then a
+vector of integers indexing into the rows of \code{graph} if \code{vertices = FALSE},
+or into the rows of \code{dodgr_vertices (graph)} if \code{vertices = TRUE}.
 }
 \description{
 Calculate lists of pair-wise shortest paths between points.
