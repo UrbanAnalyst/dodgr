@@ -55,17 +55,9 @@ dodgr_isodists <- function (graph,
 
     dat <- iso_pre (graph, from, heap, contract = contract)
 
-    # expand dlim to an extra value to capture max boundary
-    if (length (dlim) == 1) {
-        dlim_exp <- c (dlim, dlim + dlim / 4) # nocov
-    } else {
-        dlim_exp <- c (dlim, dlim [length (dlim)] + dlim [length (dlim)] -
-            dlim [length (dlim) - 1])
-    }
-
     d <- rcpp_get_iso (
         dat$graph, dat$vert_map, dat$from_index$index,
-        sort (dlim_exp), dat$heap
+        dlim, dat$heap
     )
     d [d > max (dlim)] <- NA
 
@@ -78,12 +70,6 @@ dodgr_isodists <- function (graph,
         rownames (d) <- vert_names
     } # nocov
     colnames (d) <- vert_names
-
-    # verts ON isohulls are flagged with negative values at isodistance;
-    # terminal verts are also negative at their specified distance; all other
-    # points inside any hulls are positive. The latter are removed here:
-    d [d >= 0] <- NA
-    d <- -d # convert negative-flagged iso-values to positive
 
     return (dmat_to_pts (d, from_id, dat$v, dlim, convex = convex))
 }
@@ -294,20 +280,33 @@ dodgr_isoverts <- function (graph,
 dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
 
     pt_names <- colnames (d)
+    xy_mult <- 1e6 # concaveman works with integers
+    v$x <- v$x * xy_mult
+    v$y <- v$y * xy_mult
+
     pts <- list ()
-    for (i in seq_len (nrow (d))) {
+    for (i in seq_len (nrow (d))) { # The "from" vertices
         o <- v [match (from [i], v$id), ]
         pts [[i]] <- lapply (dlim, function (j) {
-            res <- pt_names [which (d [i, ] == j)]
-            # Then any additional terminal vertices
-            index <- which (!d [i, ] %in% dlim &
-                d [i, ] < j)
-            res <- c (res, pt_names [index])
-            res <- v [match (res, v$id), ]
-            if (nrow (res) > 0) {
+            pts_j <- pt_names [which (d [i, ] <= j)]
+            pts_xy <- v [match (pts_j, v$id), c ("x", "y")]
+            h0 <- grDevices::chull (pts_xy)
+            hull <- rcpp_concaveman (pts_xy, h0, 0.1, 5)
+            hull <- hull [which (!(hull$x == 0 & hull$y == 0)), ]
+            res <- NULL
+            if (length (hull) > 0) {
+                # Then match back to `pts_j`:
+                index <- vapply (seq_len (nrow (hull)), function (h) {
+                    pts_x <- which (as.integer (pts_xy$x) == hull$x [h])
+                    pts_y <- which (as.integer (pts_xy$y) == hull$y [h])
+                    pts_tab <- table (c (pts_x, pts_y))
+                    as.integer (names (pts_tab) [which.max (pts_tab)])
+                }, integer (1L))
+                res <- v [index, ]
                 res$from <- o$id
-                res <- order_points (res, o)
                 res$dlim <- j
+                res$x <- res$x / xy_mult
+                res$y <- res$y / xy_mult
                 res <- res [, c (
                     "from",
                     "dlim",
@@ -321,20 +320,6 @@ dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
         names (pts [[i]]) <- paste (dlim)
     }
     names (pts) <- rownames (d)
-
-    # pts are then nested lists of [[from]] [[dlim]]
-
-    if (convex) {
-        pts <- lapply (pts, function (pt_from) {
-            lapply (pt_from, function (pt_dlim) {
-                h <- grDevices::chull (pt_dlim [, c ("x", "y")])
-                if (length (h) > 1) {
-                    h <- c (h, h [1])
-                }
-                pt_dlim [h, ]
-            })
-        })
-    }
 
     # flatten lists:
     pts <- do.call (rbind, lapply (pts, function (i) do.call (rbind, i)))
