@@ -15,7 +15,9 @@ dodgr_isodists(
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
-graph (see Notes)}
+graph. For \code{dodgr} street networks, this may be a network derived from either
+\pkg{sf} or \pkg{silicate} ("sc") data, generated with
+\link{weight_streetnet}.}
 
 \item{from}{Vector or matrix of points \strong{from} which isodistances are to
 be calculated.}

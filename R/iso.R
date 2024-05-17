@@ -4,7 +4,9 @@
 #' and vectors defining multiple isodistances.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
-#' graph (see Notes)
+#' graph. For `dodgr` street networks, this may be a network derived from either
+#' \pkg{sf} or \pkg{silicate} ("sc") data, generated with
+#' \link{weight_streetnet}.
 #' @param from Vector or matrix of points **from** which isodistances are to
 #' be calculated.
 #' @param dlim Vector of desired limits of isodistances in metres.
@@ -128,6 +130,10 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
 #'
 #' @inherit dodgr_isodists
 #'
+#' @param graph `data.frame` or equivalent object representing the network
+#' graph. For `dodgr` street networks, this must be a network derived from
+#' \pkg{silicate} ("sc") data, generated with \link{weight_streetnet}. This
+#' function does not work with networks derived from \pkg{sf} data.
 #' @param from Vector or matrix of points **from** which isochrones are to
 #' be calculated.
 #' @param tlim Vector of desired limits of isochrones in seconds
@@ -185,6 +191,10 @@ dodgr_isochrones <- function (graph,
 #'
 #' @inheritParams dodgr_isodists
 #'
+#' @param graph `data.frame` or equivalent object representing the network
+#' graph. For `dodgr` street networks, this must be a network derived from
+#' \pkg{silicate} ("sc") data, generated with \link{weight_streetnet}. This
+#' function does not work with networks derived from \pkg{sf} data.
 #' @param from Vector or matrix of points **from** which isodistances or
 #' isochrones are to be calculated.
 #' @param tlim Vector of desired limits of isochrones in seconds

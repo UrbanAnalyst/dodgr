@@ -7,9 +7,13 @@
 dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE, heap = "BHeap")
 }
 \arguments{
-\item{graph}{A \code{dodgr} network returned from the \link{weight_streetnet}
-function using a network obtained with the \pkg{osmdata} \code{osmdata_sc}
-function, possibly contracted with \link{dodgr_contract_graph}.}
+\item{graph}{\code{data.frame} or equivalent object representing the network
+graph (see Notes). For \code{dodgr} street networks, this may be a network derived
+from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
+\link{weight_streetnet}. Note, however, that networks derived from \pkg{sf}
+data will generally not produce reliable estimates of times. Accurate
+estimates can only be guaranteed by using networks derived from
+\pkg{silicate} ("sc") data.}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
 be calculated (see Notes)}

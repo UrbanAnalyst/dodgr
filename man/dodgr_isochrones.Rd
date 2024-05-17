@@ -14,7 +14,9 @@ dodgr_isochrones(
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
-graph (see Notes)}
+graph. For \code{dodgr} street networks, this must be a network derived from
+\pkg{silicate} ("sc") data, generated with \link{weight_streetnet}. This
+function does not work with networks derived from \pkg{sf} data.}
 
 \item{from}{Vector or matrix of points \strong{from} which isochrones are to
 be calculated.}

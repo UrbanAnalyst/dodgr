@@ -1,7 +1,9 @@
 #' Calculate matrix of pair-wise distances between points.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
-#' graph (see Notes)
+#' graph (see Notes). For `dodgr` street networks, this may be a network derived
+#' from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
+#' \link{weight_streetnet}.
 #' @param from Vector or matrix of points **from** which route distances are to
 #' be calculated (see Notes)
 #' @param to Vector or matrix of points **to** which route distances are to be
