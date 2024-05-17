@@ -10,6 +10,11 @@
 #' @param dlim Vector of desired limits of isodistances in metres.
 #' @param contract If `TRUE`, calculate isodists only to vertices in the
 #' contract graph, in other words, only to junction vertices.
+#' @param convex If `FALSE` (the default), return all network points lying
+#' adjacent to the specified `dlim` values. The polygon defined by such points
+#' may be highly irregular, especially for small values of `dlim`. Using
+#' `convex = TRUE` reduces the full set of points to only those lying on the
+#' convex hull, and will result in more regular and strictly convex polygons.
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' Trinomial Heap (`TriHeap`), Extended Trinomial Heap
@@ -36,6 +41,7 @@ dodgr_isodists <- function (graph,
                             from = NULL,
                             dlim = NULL,
                             contract = TRUE,
+                            convex = FALSE,
                             heap = "BHeap") {
 
     if (is.null (dlim)) {
@@ -153,6 +159,7 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
 dodgr_isochrones <- function (graph,
                               from = NULL,
                               tlim = NULL,
+                              convex = FALSE,
                               heap = "BHeap") {
 
     if (!methods::is (graph, "dodgr_streetnet_sc")) {
@@ -164,7 +171,7 @@ dodgr_isochrones <- function (graph,
     graph$d_weighted <- graph$time_weighted
     graph$d <- graph$time
 
-    res <- dodgr_isodists (graph, from = from, dlim = tlim, heap = heap)
+    res <- dodgr_isodists (graph, from = from, dlim = tlim, convex = convex, heap = heap)
     names (res) [names (res) == "dlim"] <- "tlim"
     return (res)
 }

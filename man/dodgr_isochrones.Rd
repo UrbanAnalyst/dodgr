@@ -4,7 +4,13 @@
 \alias{dodgr_isochrones}
 \title{Calculate isochrone contours from specified points.}
 \usage{
-dodgr_isochrones(graph, from = NULL, tlim = NULL, heap = "BHeap")
+dodgr_isochrones(
+  graph,
+  from = NULL,
+  tlim = NULL,
+  convex = FALSE,
+  heap = "BHeap"
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -14,6 +20,12 @@ graph (see Notes)}
 be calculated.}
 
 \item{tlim}{Vector of desired limits of isochrones in seconds}
+
+\item{convex}{If \code{FALSE} (the default), return all network points lying
+adjacent to the specified \code{dlim} values. The polygon defined by such points
+may be highly irregular, especially for small values of \code{dlim}. Using
+\code{convex = TRUE} reduces the full set of points to only those lying on the
+convex hull, and will result in more regular and strictly convex polygons.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
