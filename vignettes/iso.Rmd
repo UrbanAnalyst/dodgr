@@ -1,0 +1,119 @@
+---
+title: "dodgr isochrones, isodists, and isoverts"
+author: "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        number_sections: false
+        theme: flatly
+vignette: >
+  %\VignetteIndexEntry{4 dodgr-iso}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r pkg-load, echo = FALSE, message = FALSE}
+library (dodgr)
+```
+
+The `dodgr`package includes three functions for calculating iso-contours from
+one or more points of origin:
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+for contours of equal distance;
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+for contours of equal time; and
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+to return full set of vertices within defined isodistance or isochrone contours.
+
+Each of these functions is fully vectorised to accept both multiple origin
+points and multiple contours. Each returns a single `data.frame` object, with
+a column specifying either the distance or time limit (as `dlim` for 
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html),
+or `tlim` for
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)).
+The functions are also internally parallelised for efficient calculation.
+
+## dodgr_isodists
+
+The 
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+function calculates contours of equal distance from one or more points of origin.
+```{r isodists}
+graph <- weight_streetnet (hampi)
+from <- sample (graph$from_id, size = 100)
+dlim <- c (1, 2, 5, 10, 20) * 100
+d <- dodgr_isodists (graph, from = from, dlim)
+dim (d)
+knitr::kable (head (d))
+```
+
+This function returns in this case a `data.frame` with the columns shown above
+and `r format (nrow (d), big.mark = ",")` points defining the isodistance
+contours from each origin (`from`) point, at the specified distances of 
+`r paste0 (dlim, collapse = ", ")` metres. There are naturally more points
+defining the contours at longer distances:
+```{r isodist-table}
+table (d$dlim)
+```
+The points defining the contours are arranged in an anticlockwise order around
+each point of origin, and so can be directly visualised using base graphics
+functions. This is easier to see by using just a single point of origin:
+
+```{r isodist-plot-fakey, eval = FALSE}
+from <- sample (graph$from_id, size = 1)
+dlim <- c (1, 2, 5, 10, 20) * 100
+d <- dodgr_isodists (graph, from = from, dlim)
+cols <- terrain.colors (length (dlim))
+index <- which (d$dlim == max (d$dlim)) # plot max contour first
+plot (
+    d$x [index], d$y [index], "l",
+    col = cols [1],
+    xlab = "longitude", ylab = "latitude"
+)
+for (i in seq (dlim) [-1]) {
+    index <- which (d$dlim == rev (dlim) [i])
+    lines (d$x [index], d$y [index], col = cols [i], lwd = i + 1)
+}
+```
+```{r isodist-plot, echo = FALSE}
+from <- "2398957885" # 26 rows
+dlim <- c (1, 2, 5, 10, 20) * 100
+d <- dodgr_isodists (graph, from = from, dlim)
+cols <- terrain.colors (length (dlim))
+index <- which (d$dlim == max (d$dlim)) # plot max contour first
+plot (
+    d$x [index], d$y [index], "l",
+    col = cols [1],
+    xlab = "longitude", ylab = "latitude"
+)
+for (i in seq (dlim) [-1]) {
+    index <- which (d$dlim == rev (dlim) [i])
+    lines (d$x [index], d$y [index], col = cols [i], lwd = i + 1)
+}
+```
+
+The contours are convex hulls, so can not be guaranteed to entirely contain all
+internal contours, as that plot clearly reveals. The 
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+function includes an additional `convex` parameter to return strictly convex
+isodistance (or isochrone) polygons. Specifying `convex = TRUE` in call to
+`dodgr_isodists` above results in these polygons:
+
+```{r isodist-plot-convex, echo = FALSE}
+from <- "2398957885" # 26 rows
+dlim <- c (1, 2, 5, 10, 20) * 100
+d <- dodgr_isodists (graph, from = from, dlim, convex = TRUE)
+cols <- terrain.colors (length (dlim))
+index <- which (d$dlim == max (d$dlim)) # plot max contour first
+plot (
+    d$x [index], d$y [index], "l",
+    col = cols [1],
+    xlab = "longitude", ylab = "latitude"
+)
+for (i in seq (dlim) [-1]) {
+    index <- which (d$dlim == rev (dlim) [i])
+    lines (d$x [index], d$y [index], col = cols [i], lwd = i + 1)
+}
+```
