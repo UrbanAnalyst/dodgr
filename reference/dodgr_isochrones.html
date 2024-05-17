@@ -12,7 +12,7 @@ and vectors defining multiple isochrone thresholds."><!-- mathjax --><script src
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.021</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.023</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,9 @@ and vectors defining multiple isochrone thresholds.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>graph</dt>
 <dd><p><code>data.frame</code> or equivalent object representing the network
-graph (see Notes)</p></dd>
+graph. For <code>dodgr</code> street networks, this must be a network derived from
+<span class="pkg">silicate</span> ("sc") data, generated with <a href="weight_streetnet.html">weight_streetnet</a>. This
+function does not work with networks derived from <span class="pkg">sf</span> data.</p></dd>
 
 
 <dt>from</dt>
