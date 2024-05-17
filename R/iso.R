@@ -83,7 +83,7 @@ dodgr_isodists <- function (graph,
     d [d >= 0] <- NA
     d <- -d # convert negative-flagged iso-values to positive
 
-    return (dmat_to_pts (d, from_id, dat$v, dlim))
+    return (dmat_to_pts (d, from_id, dat$v, dlim, convex = convex))
 }
 
 iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
@@ -272,7 +272,7 @@ dodgr_isoverts <- function (graph,
     index <- match (f, attr (f, "levels"))
     d [na_index] <- breaks [-1] [index]
 
-    res <- dmat_to_pts (d, dat$from_index$id, dat$v, dlim)
+    res <- dmat_to_pts (d, dat$from_index$id, dat$v, dlim, convex = FALSE)
     if (has_tlim) {
         names (res) [names (res) == "dlim"] <- "tlim"
     }
@@ -281,7 +281,7 @@ dodgr_isoverts <- function (graph,
 
 # convert distance matrix with values equal to various isodistances into list of
 # lists of points ordered around the central points
-dmat_to_pts <- function (d, from, v, dlim) {
+dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
 
     pt_names <- colnames (d)
     pts <- list ()
@@ -312,8 +312,19 @@ dmat_to_pts <- function (d, from, v, dlim) {
     }
     names (pts) <- rownames (d)
 
-    # flatten lists
+    # pts are then nested lists of [[from]] [[dlim]]
+
+    if (convex) {
+        pts <- lapply (pts, function (pt_from) {
+            lapply (pt_from, function (pt_dlim) {
+                pt_dlim [grDevices::chull (pt_dlim [, c ("x", "y")]), ]
+            })
+        })
+    }
+
+    # flatten lists:
     pts <- do.call (rbind, lapply (pts, function (i) do.call (rbind, i)))
+
     rownames (pts) <- NULL
 
     return (pts)
