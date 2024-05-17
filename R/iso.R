@@ -327,7 +327,11 @@ dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
     if (convex) {
         pts <- lapply (pts, function (pt_from) {
             lapply (pt_from, function (pt_dlim) {
-                pt_dlim [grDevices::chull (pt_dlim [, c ("x", "y")]), ]
+                h <- grDevices::chull (pt_dlim [, c ("x", "y")])
+                if (length (h) > 1) {
+                    h <- c (h, h [1])
+                }
+                pt_dlim [h, ]
             })
         })
     }
