@@ -1,5 +1,5 @@
 RFILE = README
-VIGNETTE = parallel
+VIGNETTE = iso
 
 all: init vignette
 
@@ -11,6 +11,9 @@ site:
 
 vignette:
 	echo "pkgdown::build_article('$(VIGNETTE)',quiet=FALSE)" | R --no-save -q
+
+vignettes:
+	echo "pkgdown::build_articles(quiet=FALSE)" | R --no-save -q
 
 knith: $(RFILE).Rmd
 	echo "rmarkdown::render('$(RFILE).Rmd',output_file='$(RFILE).html')" | R --no-save -q
