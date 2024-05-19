@@ -3,7 +3,7 @@
 //' rcpp_concaveman
 //' @noRd 
 // [[Rcpp::export]]
-Rcpp::DataFrame rcpp_concaveman (Rcpp::DataFrame xy, Rcpp::IntegerVector hull_in,
+Rcpp::DataFrame rcpp_concaveman (Rcpp::DataFrame xy, Rcpp::NumericVector hull_in,
         const double concavity, const double length_threshold)
 {
     std::vector <double> x = xy ["x"], y = xy ["y"];
@@ -22,7 +22,7 @@ Rcpp::DataFrame rcpp_concaveman (Rcpp::DataFrame xy, Rcpp::IntegerVector hull_in
     auto concave_points = concaveman <T, 16> (points, hull,
             concavity, length_threshold);
 
-    Rcpp::IntegerVector xout (concave_points.size ()),
+    Rcpp::NumericVector xout (concave_points.size ()),
         yout (concave_points.size ());
     for (int i = 0; i < concave_points.size (); i++)
     {

@@ -28,13 +28,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_concaveman
-Rcpp::DataFrame rcpp_concaveman(Rcpp::DataFrame xy, Rcpp::IntegerVector hull_in, const double concavity, const double length_threshold);
+Rcpp::DataFrame rcpp_concaveman(Rcpp::DataFrame xy, Rcpp::NumericVector hull_in, const double concavity, const double length_threshold);
 RcppExport SEXP _dodgr_rcpp_concaveman(SEXP xySEXP, SEXP hull_inSEXP, SEXP concavitySEXP, SEXP length_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type hull_in(hull_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type hull_in(hull_inSEXP);
     Rcpp::traits::input_parameter< const double >::type concavity(concavitySEXP);
     Rcpp::traits::input_parameter< const double >::type length_threshold(length_thresholdSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_concaveman(xy, hull_in, concavity, length_threshold));
