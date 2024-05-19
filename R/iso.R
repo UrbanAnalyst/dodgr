@@ -294,13 +294,8 @@ dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
-                index <- vapply (seq_len (nrow (hull)), function (h) {
-                    pts_x <- which (abs (pts_xy$x - hull$x [h]) < zeroval)
-                    pts_y <- which (abs (pts_xy$y - hull$y [h]) < zeroval)
-                    pts_tab <- table (c (pts_x, pts_y))
-                    as.integer (names (pts_tab) [which.max (pts_tab)])
-                }, integer (1L))
-                res <- v [index, ]
+                index <- geodist::geodist_min (hull, v [, c ("x", "y")])
+                res <- v [c (index, index [1]), ]
                 res$from <- o$id
                 res$dlim <- j
                 res <- res [, c (
