@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.3.0.028
+Version: 0.3.0.029
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
     person("Andreas", "Petutschnig", role = "aut"),
@@ -51,6 +51,8 @@ LinkingTo:
     Rcpp,
     RcppParallel,
     RcppThread
+Remotes:
+    hypertidy/geodist
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

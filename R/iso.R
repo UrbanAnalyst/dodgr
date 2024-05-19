@@ -280,9 +280,6 @@ dodgr_isoverts <- function (graph,
 dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
 
     pt_names <- colnames (d)
-    xy_mult <- 1e6 # concaveman works with integers
-    v$x <- v$x * xy_mult
-    v$y <- v$y * xy_mult
 
     pts <- list ()
     for (i in seq_len (nrow (d))) { # The "from" vertices
@@ -292,21 +289,20 @@ dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
             pts_xy <- v [match (pts_j, v$id), c ("x", "y")]
             h0 <- grDevices::chull (pts_xy)
             hull <- rcpp_concaveman (pts_xy, h0, 0.1, 5)
-            hull <- hull [which (!(hull$x == 0 & hull$y == 0)), ]
+            zeroval <- 1e-10
+            hull <- hull [which (abs (hull$x) > zeroval & abs (hull$y) > zeroval), ]
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
                 index <- vapply (seq_len (nrow (hull)), function (h) {
-                    pts_x <- which (as.integer (pts_xy$x) == hull$x [h])
-                    pts_y <- which (as.integer (pts_xy$y) == hull$y [h])
+                    pts_x <- which (abs (pts_xy$x - hull$x [h]) < zeroval)
+                    pts_y <- which (abs (pts_xy$y - hull$y [h]) < zeroval)
                     pts_tab <- table (c (pts_x, pts_y))
                     as.integer (names (pts_tab) [which.max (pts_tab)])
                 }, integer (1L))
                 res <- v [index, ]
                 res$from <- o$id
                 res$dlim <- j
-                res$x <- res$x / xy_mult
-                res$y <- res$y / xy_mult
                 res <- res [, c (
                     "from",
                     "dlim",
