@@ -6,8 +6,7 @@
   "name": "dodgr: Distances on Directed Graphs",
   "codeRepository": "https://github.com/UrbanAnalyst/dodgr",
   "issueTracker": "https://github.com/UrbanAnalyst/dodgr/issues",
-  "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.3.0.032",
+  "version": "0.3.0.034",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",

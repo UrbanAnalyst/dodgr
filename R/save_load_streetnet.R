@@ -1,4 +1,3 @@
-
 #' Save a weighted streetnet to a local file
 #'
 #' The \link{weight_streetnet} function returns a single `data.frame` object,
@@ -7,7 +6,7 @@
 #' automatically calculates and caches a contracted version of the same graph,
 #' to enable rapid conversion between contracted and uncontracted forms. This
 #' function saves all of these items in a single `.Rds` file, so that a the
-#' result of a link{weight_streetnet} call can be rapidly loaded into a
+#' result of a \link{weight_streetnet} call can be rapidly loaded into a
 #' workspace in subsequent sessions, rather than re-calculating the entire
 #' weighted network.
 #'

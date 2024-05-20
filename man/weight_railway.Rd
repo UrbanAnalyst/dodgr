@@ -20,7 +20,7 @@ objects, typically extracted with \link{dodgr_streetnet}.}
 which designates different types of railways to be used for weighting
 (default works with \code{osmdata} objects).}
 
-\item{id_col}{Specify column of the code{sf} \code{data.frame} object which
+\item{id_col}{Specify column of the \pkg{sf} \code{data.frame} object which
 provides unique identifiers for each railway (default works with
 \code{osmdata} objects).}
 
