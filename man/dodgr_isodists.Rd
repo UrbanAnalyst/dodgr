@@ -9,7 +9,6 @@ dodgr_isodists(
   from = NULL,
   dlim = NULL,
   contract = TRUE,
-  convex = FALSE,
   heap = "BHeap"
 )
 }
@@ -26,12 +25,6 @@ be calculated.}
 
 \item{contract}{If \code{TRUE}, calculate isodists only to vertices in the
 contract graph, in other words, only to junction vertices.}
-
-\item{convex}{If \code{FALSE} (the default), return all network points lying
-adjacent to the specified \code{dlim} values. The polygon defined by such points
-may be highly irregular, especially for small values of \code{dlim}. Using
-\code{convex = TRUE} reduces the full set of points to only those lying on the
-convex hull, and will result in more regular and strictly convex polygons.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
