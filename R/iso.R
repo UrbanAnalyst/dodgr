@@ -287,15 +287,14 @@ dmat_to_pts <- function (d, from, v, dlim, convex = FALSE) {
         pts [[i]] <- lapply (dlim, function (j) {
             pts_j <- pt_names [which (d [i, ] <= j)]
             pts_xy <- v [match (pts_j, v$id), c ("x", "y")]
-            h0 <- grDevices::chull (pts_xy)
-            hull <- rcpp_concaveman (pts_xy, h0, 0.1, 5)
-            zeroval <- 1e-10
-            hull <- hull [which (abs (hull$x) > zeroval & abs (hull$y) > zeroval), ]
+            h0 <- grDevices::chull (pts_xy) - 1L # 0-indexed
+            hull <- rcpp_concaveman (pts_xy, h0, 1000, 5)
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
                 index <- geodist::geodist_min (hull, v [, c ("x", "y")])
                 res <- v [c (index, index [1]), ]
+
                 res$from <- o$id
                 res$dlim <- j
                 res <- res [, c (
