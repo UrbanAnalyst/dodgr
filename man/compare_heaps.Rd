@@ -8,7 +8,7 @@ compare_heaps(graph, nverts = 100, replications = 2)
 }
 \arguments{
 \item{graph}{\code{data.frame} object representing the network graph (or a
-sub-sample selected with code{dodgr_sample})}
+sub-sample selected with \code{dodgr_sample})}
 
 \item{nverts}{Number of vertices used to generate random sub-graph. If a
 non-numeric value is given, the whole graph will be used.}

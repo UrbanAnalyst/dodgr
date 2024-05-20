@@ -21,7 +21,7 @@ match edges in the \code{data.frame} to objects in the original input data. It
 automatically calculates and caches a contracted version of the same graph,
 to enable rapid conversion between contracted and uncontracted forms. This
 function saves all of these items in a single \code{.Rds} file, so that a the
-result of a link{weight_streetnet} call can be rapidly loaded into a
+result of a \link{weight_streetnet} call can be rapidly loaded into a
 workspace in subsequent sessions, rather than re-calculating the entire
 weighted network.
 }

@@ -16,7 +16,7 @@
 #' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of highways to be used for weighting
 #' (default works with `osmdata` objects).
-#' @param id_col For `sf`-formatted data only: Specify column of the code{sf}
+#' @param id_col For `sf`-formatted data only: Specify column of the \pkg{sf}
 #' `data.frame` object which provides unique identifiers for each highway
 #' (default works with `osmdata` objects).
 #' @param keep_cols Vectors of columns from `x` to be kept in the resultant
@@ -709,7 +709,7 @@ weight_streetnet.SC <- function (x,
 #' @param type_col Specify column of the `sf` `data.frame` object
 #' which designates different types of railways to be used for weighting
 #' (default works with `osmdata` objects).
-#' @param id_col Specify column of the code{sf} `data.frame` object which
+#' @param id_col Specify column of the \pkg{sf} `data.frame` object which
 #' provides unique identifiers for each railway (default works with
 #' `osmdata` objects).
 #' @param keep_cols Vectors of columns from `sf_lines` to be kept in the
