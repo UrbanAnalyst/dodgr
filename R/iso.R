@@ -47,9 +47,11 @@ dodgr_isodists <- function (graph,
         stop ("dlim must be numeric")
     }
 
+    requireNamespace ("memoise")
+
     dat <- iso_pre (graph, from, heap, contract = contract)
 
-    d <- iso_calculate (dat, dlim)
+    d <- m_iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
     return (dmat_to_pts (d, from_id, dat$v, dlim))
@@ -110,6 +112,8 @@ iso_calculate <- function (dat, dlim) {
 
     return (d)
 }
+
+m_iso_calculate <- memoise::memoise (iso_calculate)
 
 #' Calculate isochrone contours from specified points.
 #'
