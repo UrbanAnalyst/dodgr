@@ -323,25 +323,3 @@ dmat_to_hulls <- function (d, from, v, dlim) {
 
     return (pts)
 }
-
-# order points around circle
-order_points <- function (pts, origin) {
-
-    dx <- pts$x - origin$x
-    dy <- pts$y - origin$y
-    theta <- rep (NA, nrow (pts))
-
-    index <- which (dx > 0 & dy >= 0)
-    theta [index] <- atan (dy [index] / dx [index])
-    index <- which (dx > 0 & dy < 0)
-    theta [index] <- 2 * pi + atan (dy [index] / dx [index])
-    index <- which (dx < 0)
-    theta [index] <- pi + atan (dy [index] / dx [index])
-    index <- which (dx == 0 & dy >= 0)
-    theta [index] <- 0
-    index <- which (dx == 0 & dy < 0)
-    theta [index] <- 3 * pi / 2
-
-    pts <- pts [order (theta), c ("from", "id", "x", "y")]
-    rbind (pts, pts [1, ])
-}
