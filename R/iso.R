@@ -49,21 +49,8 @@ dodgr_isodists <- function (graph,
 
     dat <- iso_pre (graph, from, heap, contract = contract)
 
-    d <- rcpp_get_iso (
-        dat$graph, dat$vert_map, dat$from_index$index,
-        dlim, dat$heap
-    )
-    d [d > max (dlim)] <- NA
-
-    vert_names <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
+    d <- iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
-
-    if (!is.null (dat$from_index$id)) {
-        rownames (d) <- from_id
-    } else {
-        rownames (d) <- vert_names
-    } # nocov
-    colnames (d) <- vert_names
 
     return (dmat_to_pts (d, from_id, dat$v, dlim))
 }
@@ -101,6 +88,27 @@ iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
         from_index = to_from_indices$from,
         heap = heap
     )
+}
+
+iso_calculate <- function (dat, dlim) {
+
+    d <- rcpp_get_iso (
+        dat$graph, dat$vert_map, dat$from_index$index,
+        dlim, dat$heap
+    )
+    d [d > max (dlim)] <- NA
+
+    vert_names <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
+    from_id <- gsub ("\\_start$", "", dat$from_index$id)
+
+    if (!is.null (dat$from_index$id)) {
+        rownames (d) <- from_id
+    } else {
+        rownames (d) <- vert_names
+    } # nocov
+    colnames (d) <- vert_names
+
+    return (d)
 }
 
 #' Calculate isochrone contours from specified points.
