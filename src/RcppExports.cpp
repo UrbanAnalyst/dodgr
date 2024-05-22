@@ -27,6 +27,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_concaveman
+Rcpp::DataFrame rcpp_concaveman(Rcpp::DataFrame xy, Rcpp::NumericVector hull_in, const double concavity, const double length_threshold);
+RcppExport SEXP _dodgr_rcpp_concaveman(SEXP xySEXP, SEXP hull_inSEXP, SEXP concavitySEXP, SEXP length_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type hull_in(hull_inSEXP);
+    Rcpp::traits::input_parameter< const double >::type concavity(concavitySEXP);
+    Rcpp::traits::input_parameter< const double >::type length_threshold(length_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_concaveman(xy, hull_in, concavity, length_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_deduplicate
 Rcpp::DataFrame rcpp_deduplicate(const Rcpp::DataFrame& graph, const std::string fr_col, const std::string to_col, const std::string d_col, const std::string t_col);
 RcppExport SEXP _dodgr_rcpp_deduplicate(SEXP graphSEXP, SEXP fr_colSEXP, SEXP to_colSEXP, SEXP d_colSEXP, SEXP t_colSEXP) {
@@ -398,6 +412,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 6},
+    {"_dodgr_rcpp_concaveman", (DL_FUNC) &_dodgr_rcpp_concaveman, 4},
     {"_dodgr_rcpp_deduplicate", (DL_FUNC) &_dodgr_rcpp_deduplicate, 5},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},

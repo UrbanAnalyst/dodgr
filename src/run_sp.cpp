@@ -348,13 +348,7 @@ struct OneIso : public RcppParallel::Worker
                 } else if (prev [j] < INFINITE_INT && d [j] < dlimit_max)
                 {
                     size_t st_prev = static_cast <size_t> (prev [j]);
-                    for (auto k: dlimit)
-                    {
-                        if (d [j] > k && d [st_prev] < k)
-                            dout (i, st_prev) = -k; // flag isohull verts with -k
-                        else
-                            dout (i, j) = d [j]; // distance of other internal verts
-                    }
+                    dout (i, j) = d [j];
                 }
             }
         }
