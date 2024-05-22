@@ -12,7 +12,7 @@ and vectors defining multiple isochrone thresholds."><!-- mathjax --><script src
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.034</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,13 +57,7 @@ and vectors defining multiple isochrone thresholds.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dodgr_isochrones</span><span class="op">(</span></span>
-<span>  <span class="va">graph</span>,</span>
-<span>  from <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tlim <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  convex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  heap <span class="op">=</span> <span class="st">"BHeap"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dodgr_isochrones</span><span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="cn">NULL</span>, tlim <span class="op">=</span> <span class="cn">NULL</span>, heap <span class="op">=</span> <span class="st">"BHeap"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -82,14 +76,6 @@ be calculated.</p></dd>
 
 <dt>tlim</dt>
 <dd><p>Vector of desired limits of isochrones in seconds</p></dd>
-
-
-<dt>convex</dt>
-<dd><p>If <code>FALSE</code> (the default), return all network points lying
-adjacent to the specified <code>dlim</code> values. The polygon defined by such points
-may be highly irregular, especially for small values of <code>dlim</code>. Using
-<code>convex = TRUE</code> reduces the full set of points to only those lying on the
-convex hull, and will result in more regular and strictly convex polygons.</p></dd>
 
 
 <dt>heap</dt>

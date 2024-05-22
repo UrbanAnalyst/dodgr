@@ -12,7 +12,7 @@ and vectors defining multiple isodistances."><!-- mathjax --><script src="https:
     
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.034</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.047</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,8 +61,9 @@ and vectors defining multiple isodistances.</p>
 <span>  <span class="va">graph</span>,</span>
 <span>  from <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dlim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  concavity <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  length_threshold <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  contract <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  convex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  heap <span class="op">=</span> <span class="st">"BHeap"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,17 +86,22 @@ be calculated.</p></dd>
 <dd><p>Vector of desired limits of isodistances in metres.</p></dd>
 
 
+<dt>concavity</dt>
+<dd><p>A value between 0 and 1, with 0 giving (generally smoother
+but less detailed) convex iso-contours and 1 giving highly concave (and
+generally more detailed) contours.</p></dd>
+
+
+<dt>length_threshold</dt>
+<dd><p>The minimal length of a segment of the iso-contour
+to be made more convex according to the 'concavity` parameter.. Low values
+will produce highly detailed hulls which may cause problems; if in doubt, or
+if odd results appear, increase this value.</p></dd>
+
+
 <dt>contract</dt>
 <dd><p>If <code>TRUE</code>, calculate isodists only to vertices in the
 contract graph, in other words, only to junction vertices.</p></dd>
-
-
-<dt>convex</dt>
-<dd><p>If <code>FALSE</code> (the default), return all network points lying
-adjacent to the specified <code>dlim</code> values. The polygon defined by such points
-may be highly irregular, especially for small values of <code>dlim</code>. Using
-<code>convex = TRUE</code> reduces the full set of points to only those lying on the
-convex hull, and will result in more regular and strictly convex polygons.</p></dd>
 
 
 <dt>heap</dt>
