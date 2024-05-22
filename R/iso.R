@@ -59,8 +59,6 @@ dodgr_isodists <- function (graph,
     # Then adjust to inverse value:
     concavity <- 1 / max (concavity, 1e-6)
 
-    requireNamespace ("memoise")
-
     dat <- iso_pre (graph, from, heap, contract = contract)
 
     d <- m_iso_calculate (dat, dlim)
@@ -125,6 +123,7 @@ iso_calculate <- function (dat, dlim) {
     return (d)
 }
 
+requireNamespace ("memoise")
 m_iso_calculate <- memoise::memoise (iso_calculate)
 
 #' Calculate isochrone contours from specified points.
