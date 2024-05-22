@@ -123,7 +123,6 @@ iso_calculate <- function (dat, dlim) {
     return (d)
 }
 
-requireNamespace ("memoise")
 m_iso_calculate <- memoise::memoise (iso_calculate)
 
 #' Calculate isochrone contours from specified points.
