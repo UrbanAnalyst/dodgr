@@ -251,49 +251,14 @@ dodgr_isoverts <- function (graph,
 
     dat <- iso_pre (graph, from, heap)
 
-    # expand dlim to an extra value to capture max boundary
-    if (length (dlim) == 1) {
-        dlim_exp <- c (dlim, dlim + dlim / 4)
-    } else {
-        dlim_exp <- c (dlim, dlim [length (dlim)] + dlim [length (dlim)] -
-            dlim [length (dlim) - 1])
-    }
+    d <- m_iso_calculate (dat, dlim)
+    from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
-    d <- rcpp_get_iso (
-        dat$graph,
-        dat$vert_map,
-        dat$from_index$index,
-        sort (dlim_exp),
-        dat$heap
-    )
-    d [d > max (dlim)] <- NA
-    index <- which (!is.na (d))
-    d [index] [d [index] < 0] <- -d [index] [d [index] < 0]
-
-    if (!is.null (dat$from_index$id)) {
-        rownames (d) <- gsub ("\\_start$", "", dat$from_index$id)
-    } else {
-        rownames (d) <- gsub ("\\_start$", "", dat$vert_map$vert)
-    }
-    colnames (d) <- gsub ("\\_(start|end)$", "", dat$vert_map$vert)
-
-    # convert d-values to the *next highest* specified dlim value. breaks need
-    # to start < 0 to include 0 in lowest class
-    breaks <- c (-0.001, dlim)
-    na_index <- which (!is.na (d))
-    f <- cut (d [na_index], breaks = breaks)
-    index <- match (f, attr (f, "levels"))
-    d [na_index] <- breaks [-1] [index]
-
-    res <- dmat_to_hulls (d, dat$from_index$id, dat$v, dlim)
-    if (has_tlim) {
-        names (res) [names (res) == "dlim"] <- "tlim"
-    }
-    return (res)
+    return (dmat_to_pts (d, from_id, dat$v, dlim))
 }
 
 # convert distance matrix with values equal to various isodistances into list of
-# lists of points ordered around the central points
+# lists of points defining the iso-contour hulls ordered around the central points
 dmat_to_hulls <- function (d, from, v, dlim, concavity, length_threshold) {
 
     pt_names <- colnames (d)
@@ -322,6 +287,41 @@ dmat_to_hulls <- function (d, from, v, dlim, concavity, length_threshold) {
                     "y"
                 )]
             }
+            return (res)
+        })
+        names (pts [[i]]) <- paste (dlim)
+    }
+    names (pts) <- rownames (d)
+
+    # flatten lists:
+    pts <- do.call (rbind, lapply (pts, function (i) do.call (rbind, i)))
+
+    rownames (pts) <- NULL
+
+    return (pts)
+}
+
+# convert distance matrix with values equal to various isodistances into list of
+# lists of points
+dmat_to_pts <- function (d, from, v, dlim) {
+
+    pt_names <- colnames (d)
+
+    pts <- list ()
+    for (i in seq_len (nrow (d))) { # The "from" vertices
+        o <- v [match (from [i], v$id), ]
+        pts [[i]] <- lapply (dlim, function (j) {
+            pts_j <- pt_names [which (d [i, ] <= j)]
+            res <- v [match (pts_j, v$id), ]
+            res$from <- o$id
+            res$dlim <- j
+            res <- res [, c (
+                "from",
+                "dlim",
+                "id",
+                "x",
+                "y"
+            )]
             return (res)
         })
         names (pts [[i]]) <- paste (dlim)
