@@ -31,14 +31,15 @@ test_that ("isodists", {
     expect_true ((npts - length (unique (d$from))) >= 0)
     expect_true (length (unique (d$dlim)) <= length (dlim))
 
-    # expect_silent (dc <- dodgr_isodists (net, from = from, dlim = dlim, convex = TRUE))
-    # expect_true (nrow (dc) < nrow (d))
-    # expect_identical (names (dc), names (d))
-    # expect_identical (sort (unique (d$dlim)), sort (unique (dc$dlim)))
+    expect_silent (dc <- dodgr_isodists (net, from = from, dlim = dlim, concavity = 0.1))
+    expect_true (nrow (dc) > nrow (d)) # More detail in contours
+    expect_identical (names (dc), names (d))
+    expect_identical (sort (unique (d$dlim)), sort (unique (dc$dlim)))
     # # Exepct numbers of points in all 'convex = T' polygons to be less:
-    # nd <- vapply (dlim, function (i) length (which (d$dlim == i)), integer (1L))
-    # ndc <- vapply (dlim, function (i) length (which (dc$dlim == i)), integer (1L))
-    # expect_true (all (ndc < nd))
+    nd <- vapply (dlim, function (i) length (which (d$dlim == i)), integer (1L))
+    ndc <- vapply (dlim, function (i) length (which (dc$dlim == i)), integer (1L))
+    expect_true (all (ndc >= nd))
+    expect_true (any (ndc > nd))
 })
 
 # skip_on_cran ()
