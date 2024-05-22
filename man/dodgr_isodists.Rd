@@ -8,6 +8,7 @@ dodgr_isodists(
   graph,
   from = NULL,
   dlim = NULL,
+  concavity = 0,
   contract = TRUE,
   heap = "BHeap"
 )
@@ -22,6 +23,10 @@ graph. For \code{dodgr} street networks, this may be a network derived from eith
 be calculated.}
 
 \item{dlim}{Vector of desired limits of isodistances in metres.}
+
+\item{concavity}{A value between 0 and 1, with 0 giving (generally smoother
+but less detailed) convex iso-contours and 1 giving highly concave (and
+generally more detailed) contours.}
 
 \item{contract}{If \code{TRUE}, calculate isodists only to vertices in the
 contract graph, in other words, only to junction vertices.}

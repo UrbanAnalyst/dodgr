@@ -10,6 +10,9 @@
 #' @param from Vector or matrix of points **from** which isodistances are to
 #' be calculated.
 #' @param dlim Vector of desired limits of isodistances in metres.
+#' @param concavity A value between 0 and 1, with 0 giving (generally smoother
+#' but less detailed) convex iso-contours and 1 giving highly concave (and
+#' generally more detailed) contours.
 #' @param contract If `TRUE`, calculate isodists only to vertices in the
 #' contract graph, in other words, only to junction vertices.
 #' @param heap Type of heap to use in priority queue. Options include
@@ -37,6 +40,7 @@
 dodgr_isodists <- function (graph,
                             from = NULL,
                             dlim = NULL,
+                            concavity = 0,
                             contract = TRUE,
                             heap = "BHeap") {
 
@@ -46,6 +50,9 @@ dodgr_isodists <- function (graph,
     if (!is.numeric (dlim)) {
         stop ("dlim must be numeric")
     }
+    concavity <- check_concavity (concavity)
+    # Then adjust to inverse value:
+    concavity <- 1 / max (concavity, 1e-6)
 
     requireNamespace ("memoise")
 
@@ -54,7 +61,7 @@ dodgr_isodists <- function (graph,
     d <- m_iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
-    return (dmat_to_hulls (d, from_id, dat$v, dlim))
+    return (dmat_to_hulls (d, from_id, dat$v, dlim, concavity))
 }
 
 iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
@@ -282,7 +289,7 @@ dodgr_isoverts <- function (graph,
 
 # convert distance matrix with values equal to various isodistances into list of
 # lists of points ordered around the central points
-dmat_to_hulls <- function (d, from, v, dlim) {
+dmat_to_hulls <- function (d, from, v, dlim, concavity) {
 
     pt_names <- colnames (d)
 
@@ -293,7 +300,7 @@ dmat_to_hulls <- function (d, from, v, dlim) {
             pts_j <- pt_names [which (d [i, ] <= j)]
             pts_xy <- v [match (pts_j, v$id), c ("x", "y")]
             h0 <- grDevices::chull (pts_xy) - 1L # 0-indexed
-            hull <- rcpp_concaveman (pts_xy, h0, 1000, 5)
+            hull <- rcpp_concaveman (pts_xy, h0, concavity, 2)
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
@@ -322,4 +329,15 @@ dmat_to_hulls <- function (d, from, v, dlim) {
     rownames (pts) <- NULL
 
     return (pts)
+}
+
+check_concavity <- function (concavity) {
+    if (!(is.numeric (concavity) || length (concavity) > 1)) {
+        stop ("concavity must be numeric")
+    }
+    if (concavity < 0 || concavity > 1) {
+        message ("concavity must be between 0 and 1; setting to default of 0")
+        concavity <- 0
+    }
+    return (concavity)
 }
