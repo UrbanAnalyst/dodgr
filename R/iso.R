@@ -254,7 +254,11 @@ dodgr_isoverts <- function (graph,
     d <- m_iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
-    return (dmat_to_pts (d, from_id, dat$v, dlim))
+    res <- dmat_to_pts (d, from_id, dat$v, dlim)
+    if (has_tlim) {
+        names (res) [which (names (res) == "dlim")] <- "tlim"
+    }
+    return (res)
 }
 
 # convert distance matrix with values equal to various isodistances into list of
