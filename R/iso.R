@@ -13,6 +13,10 @@
 #' @param concavity A value between 0 and 1, with 0 giving (generally smoother
 #' but less detailed) convex iso-contours and 1 giving highly concave (and
 #' generally more detailed) contours.
+#' @param length_threshold The minimal length of a segment of the iso-contour
+#' to be made more convex according to the 'concavity` parameter.. Low values
+#' will produce highly detailed hulls which may cause problems; if in doubt, or
+#' if odd results appear, increase this value.
 #' @param contract If `TRUE`, calculate isodists only to vertices in the
 #' contract graph, in other words, only to junction vertices.
 #' @param heap Type of heap to use in priority queue. Options include
@@ -41,6 +45,7 @@ dodgr_isodists <- function (graph,
                             from = NULL,
                             dlim = NULL,
                             concavity = 0,
+                            length_threshold = 0,
                             contract = TRUE,
                             heap = "BHeap") {
 
@@ -61,7 +66,7 @@ dodgr_isodists <- function (graph,
     d <- m_iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
-    return (dmat_to_hulls (d, from_id, dat$v, dlim, concavity))
+    return (dmat_to_hulls (d, from_id, dat$v, dlim, concavity, length_threshold))
 }
 
 iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
@@ -289,7 +294,7 @@ dodgr_isoverts <- function (graph,
 
 # convert distance matrix with values equal to various isodistances into list of
 # lists of points ordered around the central points
-dmat_to_hulls <- function (d, from, v, dlim, concavity) {
+dmat_to_hulls <- function (d, from, v, dlim, concavity, length_threshold) {
 
     pt_names <- colnames (d)
 
@@ -300,7 +305,7 @@ dmat_to_hulls <- function (d, from, v, dlim, concavity) {
             pts_j <- pt_names [which (d [i, ] <= j)]
             pts_xy <- v [match (pts_j, v$id), c ("x", "y")]
             h0 <- grDevices::chull (pts_xy) - 1L # 0-indexed
-            hull <- rcpp_concaveman (pts_xy, h0, concavity, 2)
+            hull <- rcpp_concaveman (pts_xy, h0, concavity, length_threshold)
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
