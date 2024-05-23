@@ -68,6 +68,8 @@ weight_railway <- function (x,
         )
     } # nocov
 
+    requireNamespace ("geodist")
+
     if (is.null (names (x$geometry))) {
         names (x$geometry) <- x$osm_id
     } # nocov
