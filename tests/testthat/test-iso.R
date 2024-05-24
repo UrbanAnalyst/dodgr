@@ -40,6 +40,11 @@ test_that ("isodists", {
     ndc <- vapply (dlim, function (i) length (which (dc$dlim == i)), integer (1L))
     expect_true (all (ndc >= nd))
     expect_true (any (ndc > nd))
+
+    expect_silent (v <- dodgr_isoverts (net, from = from, dlim = dlim))
+    expect_true (nrow (v) > nrow (dc))
+    expect_identical (names (v), names (dc))
+    expect_identical (sort (unique (v$dlim)), sort (unique (dc$dlim)))
 })
 
 # skip_on_cran ()
