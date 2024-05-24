@@ -170,6 +170,8 @@ m_iso_calculate <- memoise::memoise (iso_calculate)
 dodgr_isochrones <- function (graph,
                               from = NULL,
                               tlim = NULL,
+                              concavity = 0,
+                              length_threshold = 0,
                               heap = "BHeap") {
 
     if (!methods::is (graph, "dodgr_streetnet_sc")) {
@@ -181,7 +183,11 @@ dodgr_isochrones <- function (graph,
     graph$d_weighted <- graph$time_weighted
     graph$d <- graph$time
 
-    res <- dodgr_isodists (graph, from = from, dlim = tlim, heap = heap)
+    res <- dodgr_isodists (
+        graph,
+        from = from, dlim = tlim,
+        concavity = concavity, length_threshold = length_threshold, heap = heap
+    )
     names (res) [names (res) == "dlim"] <- "tlim"
     return (res)
 }
