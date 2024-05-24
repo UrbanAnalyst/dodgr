@@ -14,17 +14,23 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r knitr-opts, echo = FALSE}
+opts <- knitr::opts_chunk$get ()
+knitr::opts_chunk$set (fig.height = 6)
+```
+
 ```{r pkg-load, echo = FALSE, message = FALSE}
 library (dodgr)
 ```
 
 The `dodgr`package includes three functions for calculating iso-contours from
 one or more points of origin:
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+
+- [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
 for contours of equal distance;
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+- [`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
 for contours of equal time; and
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+- [`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
 to return full set of vertices within defined isodistance or isochrone contours.
 
 Each of these functions is fully vectorised to accept both multiple origin
@@ -61,29 +67,12 @@ The points defining the contours are arranged in an anticlockwise order around
 each point of origin, and so can be directly visualised using base graphics
 functions. This is easier to see by using just a single point of origin:
 
-```{r isodist-plot-fakey, eval = FALSE}
-set.seed (42)
-from <- sample (graph$from_id, size = 1)
-dlim <- c (1, 2, 5, 10, 20) * 100
-d <- dodgr_isodists (graph, from = from, dlim)
-cols <- terrain.colors (length (dlim))
-index <- which (d$dlim == max (d$dlim)) # plot max contour first
-plot (
-    d$x [index], d$y [index], "l",
-    col = cols [1],
-    xlab = "longitude", ylab = "latitude"
-)
-for (i in seq (dlim) [-1]) {
-    index <- which (d$dlim == rev (dlim) [i])
-    lines (d$x [index], d$y [index], col = cols [i], lwd = i + 1)
-}
-```
-```{r isodist-plot, echo = FALSE}
+```{r isodist-plot, echo = TRUE}
 set.seed (1)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim)
-cols <- terrain.colors (length (dlim))
+cols <- terrain.colors (length (dlim) + 2) # + 2 to avoid light colours at end of scale.
 index <- which (d$dlim == max (d$dlim)) # plot max contour first
 plot (
     d$x [index], d$y [index], "l",
@@ -96,20 +85,24 @@ for (i in seq (dlim) [-1]) {
 }
 ```
 
+### The `concavity` parameter
+
 The default contours are convex hulls. The
 [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
-function includes an additional `concavity` parameter to return generate concave 
-isodistance (or isochrone) polygons, defaulting to a value of 0 for no
+and
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+functions include an additional `concavity` parameter to return generate concave 
+isodistance or isochrone polygons, defaulting to a value of 0 for no
 concavity. Changing this value can generate concave contours like in the
 following results:
 
-```{r isodist-plot-convex, echo = FALSE}
+```{r isodist-plot-concave, echo = TRUE}
 set.seed (1)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim, concavity = 0.5)
 cols <- terrain.colors (length (dlim))
-index <- which (d$dlim == max (d$dlim)) # plot max contour first
+index <- which (d$dlim == max (d$dlim))
 plot (
     d$x [index], d$y [index], "l",
     col = cols [1],
@@ -119,4 +112,53 @@ for (i in seq (dlim) [-1]) {
     index <- which (d$dlim == rev (dlim) [i])
     lines (d$x [index], d$y [index], col = cols [i], lwd = i + 1)
 }
+```
+
+The calculation of `isodists` or `isochrone` values is cached, so different
+values of the `concavity` parameter can be trialled without needing to
+re-calculate the underlying values:
+
+```{r iso-caching}
+set.seed (2)
+from <- sample (graph$from_id, size = 1)
+dlim <- c (1, 2, 5, 10, 20) * 100
+system.time ( # Initial call calculates distances to all points:
+    d <- dodgr_isodists (graph, from = from, dlim, concavity = 0.5)
+)
+system.time ( # Subsequent call uses cached values:
+    d <- dodgr_isodists (graph, from = from, dlim, concavity = 0.75)
+)
+```
+
+The `concavity` parameter has a default value of 0 for strictly convex
+polygons. Values closer to 1 generate more concave polygons. The following code
+demonstrates the effect of increasing values of this parameter.
+
+```{r concavity}
+set.seed (5)
+from <- sample (graph$from_id, size = 1)
+dlim <- 2000
+concavity <- 0:4 / 4
+d <- lapply (concavity, function (i) dodgr_isodists (graph, from = from, dlim, concavity = i))
+cols <- terrain.colors (length (d) + 2)
+plot (
+    d [[1]]$x, d [[1]]$y,
+    type = "l",
+    col = cols [1], lwd = 5,
+    xlab = "longitude", ylab = "latitude"
+)
+for (i in seq_along (d) [-1]) {
+    lines (
+        d [[i]]$x, d [[i]]$y,
+        col = cols [i], lwd = 6 - i, lty = i
+    )
+}
+v <- dodgr_vertices (graph)
+v_from <- v [match (from, v$id), ]
+points (v_from [, c ("x", "y")], pch = 19, col = "red", cex = 2)
+```
+
+```{r knitr-opts-reset, echo = FALSE}
+opts <- knitr::opts_chunk$get ()
+knitr::opts_chunk$set (fig.height = opts$fig.height)
 ```
