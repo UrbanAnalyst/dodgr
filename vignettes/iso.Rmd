@@ -62,6 +62,7 @@ each point of origin, and so can be directly visualised using base graphics
 functions. This is easier to see by using just a single point of origin:
 
 ```{r isodist-plot-fakey, eval = FALSE}
+set.seed (42)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim)
@@ -78,7 +79,8 @@ for (i in seq (dlim) [-1]) {
 }
 ```
 ```{r isodist-plot, echo = FALSE}
-from <- "2398957885" # 26 rows
+set.seed (1)
+from <- sample (graph$from_id, size = 1)
 dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim)
 cols <- terrain.colors (length (dlim))
@@ -94,17 +96,18 @@ for (i in seq (dlim) [-1]) {
 }
 ```
 
-The contours are convex hulls, so can not be guaranteed to entirely contain all
-internal contours, as that plot clearly reveals. The
+The default contours are convex hulls. The
 [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
-function includes an additional `convex` parameter to return strictly convex
-isodistance (or isochrone) polygons. Specifying `convex = TRUE` in call to
-`dodgr_isodists` above results in these polygons:
+function includes an additional `concavity` parameter to return generate concave 
+isodistance (or isochrone) polygons, defaulting to a value of 0 for no
+concavity. Changing this value can generate concave contours like in the
+following results:
 
 ```{r isodist-plot-convex, echo = FALSE}
-from <- "2398957885" # 26 rows
+set.seed (1)
+from <- sample (graph$from_id, size = 1)
 dlim <- c (1, 2, 5, 10, 20) * 100
-d <- dodgr_isodists (graph, from = from, dlim, convex = TRUE)
+d <- dodgr_isodists (graph, from = from, dlim, concavity = 0.5)
 cols <- terrain.colors (length (dlim))
 index <- which (d$dlim == max (d$dlim)) # plot max contour first
 plot (
