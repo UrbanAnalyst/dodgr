@@ -2,7 +2,7 @@
 title: "dodgr isochrones, isodists, and isoverts"
 author: "Mark Padgham"
 date: "`r Sys.Date()`"
-output: 
+output:
     html_document:
         toc: true
         toc_float: true
@@ -37,7 +37,7 @@ The functions are also internally parallelised for efficient calculation.
 
 ## dodgr_isodists
 
-The 
+The
 [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
 function calculates contours of equal distance from one or more points of origin.
 ```{r isodists}
@@ -51,7 +51,7 @@ knitr::kable (head (d))
 
 This function returns in this case a `data.frame` with the columns shown above
 and `r format (nrow (d), big.mark = ",")` points defining the isodistance
-contours from each origin (`from`) point, at the specified distances of 
+contours from each origin (`from`) point, at the specified distances of
 `r paste0 (dlim, collapse = ", ")` metres. There are naturally more points
 defining the contours at longer distances:
 ```{r isodist-table}
@@ -95,7 +95,7 @@ for (i in seq (dlim) [-1]) {
 ```
 
 The contours are convex hulls, so can not be guaranteed to entirely contain all
-internal contours, as that plot clearly reveals. The 
+internal contours, as that plot clearly reveals. The
 [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
 function includes an additional `convex` parameter to return strictly convex
 isodistance (or isochrone) polygons. Specifying `convex = TRUE` in call to
