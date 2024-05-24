@@ -41,6 +41,30 @@ or `tlim` for
 [`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)).
 The functions are also internally parallelised for efficient calculation.
 
+## Input formats
+
+The [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+function accepts arbitrary input, either as a generic `dodgr` `data.frame`
+(with a "distance" column), or as street networks derived from applying the
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+function to either [`sf`](https://r-spatial.github.io/sf) or
+[`st`](https://hypertidy.github.io/silicate) objects. Time-based calculations
+in `dodgr` are only possible when applied to street networks dervied from 
+[`st`](https://hypertidy.github.io/silicate) objects, because equivalent
+`sf`-based objects can only provide crude estimates of journey times. The time-specific functions 
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+and
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+thus only accept `dodgr` street networks derived from `sc` data. The following
+table summarises the requirements of these functions:
+
+Function | Input type
+--- | ---
+dodgr_isodists | Either `sf` or `sc` format data
+dodgr_ isochrones | Only `sc` format data
+dodgr_isoverts | Only `sc` format data
+
+
 ## dodgr_isodists
 
 The
