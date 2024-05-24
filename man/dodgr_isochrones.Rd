@@ -4,7 +4,14 @@
 \alias{dodgr_isochrones}
 \title{Calculate isochrone contours from specified points.}
 \usage{
-dodgr_isochrones(graph, from = NULL, tlim = NULL, heap = "BHeap")
+dodgr_isochrones(
+  graph,
+  from = NULL,
+  tlim = NULL,
+  concavity = 0,
+  length_threshold = 0,
+  heap = "BHeap"
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -16,6 +23,15 @@ function does not work with networks derived from \pkg{sf} data.}
 be calculated.}
 
 \item{tlim}{Vector of desired limits of isochrones in seconds}
+
+\item{concavity}{A value between 0 and 1, with 0 giving (generally smoother
+but less detailed) convex iso-contours and 1 giving highly concave (and
+generally more detailed) contours.}
+
+\item{length_threshold}{The minimal length of a segment of the iso-contour
+to be made more convex according to the 'concavity` parameter.. Low values
+will produce highly detailed hulls which may cause problems; if in doubt, or
+if odd results appear, increase this value.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
