@@ -8,8 +8,9 @@ dodgr_isodists(
   graph,
   from = NULL,
   dlim = NULL,
+  concavity = 0,
+  length_threshold = 0,
   contract = TRUE,
-  convex = FALSE,
   heap = "BHeap"
 )
 }
@@ -24,14 +25,17 @@ be calculated.}
 
 \item{dlim}{Vector of desired limits of isodistances in metres.}
 
+\item{concavity}{A value between 0 and 1, with 0 giving (generally smoother
+but less detailed) convex iso-contours and 1 giving highly concave (and
+generally more detailed) contours.}
+
+\item{length_threshold}{The minimal length of a segment of the iso-contour
+to be made more convex according to the 'concavity` parameter.. Low values
+will produce highly detailed hulls which may cause problems; if in doubt, or
+if odd results appear, increase this value.}
+
 \item{contract}{If \code{TRUE}, calculate isodists only to vertices in the
 contract graph, in other words, only to junction vertices.}
-
-\item{convex}{If \code{FALSE} (the default), return all network points lying
-adjacent to the specified \code{dlim} values. The polygon defined by such points
-may be highly irregular, especially for small values of \code{dlim}. Using
-\code{convex = TRUE} reduces the full set of points to only those lying on the
-convex hull, and will result in more regular and strictly convex polygons.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
