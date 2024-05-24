@@ -16,7 +16,7 @@ for example by modifying edge weights or distances. Graphs are cached based
 on the vector of edge IDs, so manual changes to any other attributes will not
 necessarily be translated into changes in \code{dodgr} output unless the cached
 versions are cleared using this function. See
-\url{https://github.com/ATFutures/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
+\url{https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
 for details of caching process.
 }
 \seealso{

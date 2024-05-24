@@ -3,7 +3,7 @@
 ## Opening issues
 
 The easiest way to note any behavioural curiosities or to request any new
-features is by opening a [github issue](https://github.com/ATFutures/dodgr/issues).
+features is by opening a [github issue](https://github.com/UrbanAnalyst/dodgr/issues).
 
 
 ## Development guidelines
@@ -51,5 +51,5 @@ with a space between `function` and `()`. That's it.
 
 We want to encourage a warm, welcoming, and safe environment for contributing to
 this project. See the
-[code of conduct](https://github.com/ATFutures/dodgr/blob/master/CONDUCT.md) for
+[code of conduct](https://github.com/UrbanAnalyst/dodgr/blob/master/CONDUCT.md) for
 more information.

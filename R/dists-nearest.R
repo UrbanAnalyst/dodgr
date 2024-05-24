@@ -71,7 +71,7 @@
 #'
 #' \dontrun{
 #' # a more complex street network example, thanks to @chrijo; see
-#' # https://github.com/ATFutures/dodgr/issues/47
+#' # https://github.com/UrbanAnalyst/dodgr/issues/47
 #'
 #' xy <- rbind (
 #'     c (7.005994, 51.45774), # limbeckerplatz 1 essen germany
