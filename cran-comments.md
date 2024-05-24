@@ -1,9 +1,8 @@
-# CRAN notes for dodgr_0.2.21 submission
-
-This submission removes 'CXX_STD=CXX11' statements from all Makevars files, as requested.
+# CRAN notes for dodgr_0.4.0 submission
 
 This submission generates the following NOTES on some systems:
 
+- Possibly invalid URLs, all of which are GitHub because of "Too Many Requests," and not because of the URLs themselves.
 * "GNU make is a SystemRequirements", which is unavoidable because of the need to remove compiled object files in src sub-directories.
 - Size Notes, which are also unavoidable as they are largely due to size of compiled "libs".
 
