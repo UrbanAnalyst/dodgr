@@ -5,9 +5,10 @@ articles:
   dists-categorical: dists-categorical.html
   dodgr: dodgr.html
   flows: flows.html
+  iso: iso.html
   parallel: parallel.html
   times: times.html
-last_built: 2024-05-24T09:39Z
+last_built: 2024-05-24T10:28Z
 urls:
   reference: https://UrbanAnalyst.github.io/dodgr/reference
   article: https://UrbanAnalyst.github.io/dodgr/articles
