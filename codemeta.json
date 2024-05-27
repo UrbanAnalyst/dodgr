@@ -4,16 +4,17 @@
   "identifier": "dodgr",
   "description": "Distances on dual-weighted directed graphs using priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>). Weighted directed graphs have weights from A to B which may differ from those from B to A. Dual-weighted directed graphs have two sets of such weights. A canonical example is a street network to be used for routing in which routes are calculated by weighting distances according to the type of way and mode of transport, yet lengths of routes must be calculated from direct distances.",
   "name": "dodgr: Distances on Directed Graphs",
+  "relatedLink": ["https://urbananalyst.github.io/dodgr/", "https://CRAN.R-project.org/package=dodgr"],
   "codeRepository": "https://github.com/UrbanAnalyst/dodgr",
   "issueTracker": "https://github.com/UrbanAnalyst/dodgr/issues",
-  "version": "0.3.0.060",
   "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "0.4.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.0 (2023-04-21)",
+  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -99,6 +100,7 @@
       "@type": "SoftwareApplication",
       "identifier": "geodist",
       "name": "geodist",
+      "version": ">= 0.1.0",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -190,18 +192,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "roxygen2",
-      "name": "roxygen2",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=roxygen2"
     },
     {
       "@type": "SoftwareApplication",
@@ -298,10 +288,22 @@
     },
     "6": {
       "@type": "SoftwareApplication",
+      "identifier": "memoise",
+      "name": "memoise",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=memoise"
+    },
+    "7": {
+      "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "osmdata",
       "name": "osmdata",
@@ -313,7 +315,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=osmdata"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -326,7 +328,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "RcppParallel",
       "name": "RcppParallel",
@@ -340,7 +342,7 @@
     },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "27938.114KB",
+  "fileSize": "34031.449KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -359,10 +361,7 @@
         "@type": "PublicationIssue",
         "datePublished": "2019",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "name": "Transport Findings"
         }
       }
@@ -370,18 +369,7 @@
   ],
   "releaseNotes": "https://github.com/UrbanAnalyst/dodgr/blob/master/NEWS.md",
   "readme": "https://github.com/UrbanAnalyst/dodgr/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check",
-    "https://app.codecov.io/gh/UrbanAnalyst/dodgr"
-  ],
+  "contIntegration": ["https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check", "https://app.codecov.io/gh/UrbanAnalyst/dodgr"],
   "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": [
-    "distance",
-    "street-networks",
-    "shortest-paths",
-    "r",
-    "router",
-    "openstreetmap"
-  ],
-  "relatedLink": "https://CRAN.R-project.org/package=dodgr"
+  "keywords": ["distance", "street-networks", "shortest-paths", "r", "router", "openstreetmap"]
 }
