@@ -330,6 +330,7 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 ## Contributors
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -463,7 +464,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/orlando-sabogal">
-<img src="https://avatars.githubusercontent.com/u/7365739?u=f6ac9be2676c4b2cedcc047715c292248b468d3e&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/7365739?u=047a8fa924d2be94b99e88e83c2634668ae1f005&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aorlando-sabogal">orlando-sabogal</a>
 </td>
@@ -598,6 +599,22 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/54633745?u=578caa070217a333e22be67990e42e8bdf434512&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axtimbeau">xtimbeau</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/pasipasi123">
+<img src="https://avatars.githubusercontent.com/u/34722481?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Apasipasi123">pasipasi123</a>
+</td>
+<td align="center">
+<a href="https://github.com/jamiedtor">
+<img src="https://avatars.githubusercontent.com/u/90428083?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajamiedtor">jamiedtor</a>
 </td>
 </tr>
 
