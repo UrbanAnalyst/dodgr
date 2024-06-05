@@ -291,6 +291,7 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -575,6 +576,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/90428083?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajamiedtor">jamiedtor</a>
+</td>
+<td align="center">
+<a href="https://github.com/chinhqho">
+<img src="https://avatars.githubusercontent.com/u/47441312?u=577d1dca03b4bb904bb45f1e6205b11144c900cd&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Achinhqho">chinhqho</a>
 </td>
 </tr>
 
