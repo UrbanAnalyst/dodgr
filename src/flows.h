@@ -30,6 +30,15 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
         const double tol,
         const std::string heap_type);
 
+Rcpp::NumericVector rcpp_flows_aggregate_pairwise (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        Rcpp::NumericVector flows,
+        const bool norm_sums,
+        const double tol,
+        const std::string heap_type);
+
 Rcpp::NumericVector rcpp_flows_disperse_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
