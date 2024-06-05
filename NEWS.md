@@ -1,5 +1,11 @@
 # v 0.4.0.00x (dev version)
 
+## Minor changes
+
+- `dodgr_flows_aggregate()` now has a `pairwise` parameter, to enable flows to
+  be aggregated only along paths connecting each pair of `from` and `to`
+  points. Thanks to @chinhqho via #229
+
 ---
 
 # v 0.4.0
