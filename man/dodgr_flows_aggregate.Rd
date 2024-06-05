@@ -9,6 +9,7 @@ dodgr_flows_aggregate(
   from,
   to,
   flows,
+  pairwise = FALSE,
   contract = TRUE,
   heap = "BHeap",
   tol = 0.000000000001,
@@ -28,6 +29,12 @@ calculated (see Details)}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
 \code{ncol(flows)==length(to)}.}
+
+\item{pairwise}{If \code{TRUE}, aggregate flows only only paths connecting the
+ordered pairs of \code{from} and \code{to}. In this case, both \code{from} and \code{to} must be
+of the same length, and \code{flows} must be either a vector of the same length,
+or a matrix with only one column and same number of rows. \code{flows} then
+quantifies the flows between each pair of \code{from} and \code{to} points.}
 
 \item{contract}{If \code{TRUE} (default), calculate flows on contracted graph
 before mapping them back on to the original full graph (recommended as this

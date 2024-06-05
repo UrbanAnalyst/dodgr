@@ -11,6 +11,11 @@
 #' calculated (see Details)
 #' @param flows Matrix of flows with `nrow(flows)==length(from)` and
 #' `ncol(flows)==length(to)`.
+#' @param pairwise If `TRUE`, aggregate flows only only paths connecting the
+#' ordered pairs of `from` and `to`. In this case, both `from` and `to` must be
+#' of the same length, and `flows` must be either a vector of the same length,
+#' or a matrix with only one column and same number of rows. `flows` then
+#' quantifies the flows between each pair of `from` and `to` points.
 #' @param contract If `TRUE` (default), calculate flows on contracted graph
 #' before mapping them back on to the original full graph (recommended as this
 #' will generally be much faster). `FALSE` should only be used if the `graph`
@@ -139,6 +144,7 @@ dodgr_flows_aggregate <- function (graph,
                                    from,
                                    to,
                                    flows,
+                                   pairwise = FALSE,
                                    contract = TRUE,
                                    heap = "BHeap",
                                    tol = 1e-12,
