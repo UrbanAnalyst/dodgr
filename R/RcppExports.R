@@ -90,6 +90,30 @@ rcpp_flows_aggregate_par <- function (graph, vert_map_in, fromi, toi_in, flows, 
     .Call (`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type)
 }
 
+#' rcpp_flows_aggregate_pairwise
+#'
+#' Pairwise version of flows_aggregate_par
+#'
+#' @param graph The data.frame holding the graph edges
+#' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+#' index of vertices
+#' @param fromi Index into vert_map_in of vertex numbers
+#' @param toi Index into vert_map_in of vertex numbers
+#' @param tol Relative tolerance in terms of flows below which targets
+#' (to-vertices) are not considered.
+#'
+#' @note The parallelisation is achieved by dumping the results of each thread
+#' to a file, with aggregation performed at the end by simply reading back and
+#' aggregating all files. There is no way to aggregate into a single vector
+#' because threads have to be independent. The only danger with this approach
+#' is that multiple threads may generate the same file names, but with names 10
+#' characters long, that chance should be 1 / 62 ^ 10.
+#'
+#' @noRd
+rcpp_flows_aggregate_pairwise <- function (graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type) {
+    .Call (`_dodgr_rcpp_flows_aggregate_pairwise`, graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type)
+}
+
 #' rcpp_flows_disperse_par
 #'
 #' Modified version of \code{rcpp_flows_aggregate} that aggregates flows to all

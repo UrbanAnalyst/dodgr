@@ -87,6 +87,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_flows_aggregate_pairwise
+Rcpp::NumericVector rcpp_flows_aggregate_pairwise(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::IntegerVector toi, Rcpp::NumericVector flows, const bool norm_sums, const double tol, const std::string heap_type);
+RcppExport SEXP _dodgr_rcpp_flows_aggregate_pairwise(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP toiSEXP, SEXP flowsSEXP, SEXP norm_sumsSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type graph(graphSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame >::type vert_map_in(vert_map_inSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type fromi(fromiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type toi(toiSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type flows(flowsSEXP);
+    Rcpp::traits::input_parameter< const bool >::type norm_sums(norm_sumsSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type heap_type(heap_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_flows_aggregate_pairwise(graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_flows_disperse_par
 Rcpp::NumericVector rcpp_flows_disperse_par(const Rcpp::DataFrame graph, const Rcpp::DataFrame vert_map_in, Rcpp::IntegerVector fromi, Rcpp::NumericVector k, Rcpp::NumericVector dens, const double& tol, std::string heap_type);
 RcppExport SEXP _dodgr_rcpp_flows_disperse_par(SEXP graphSEXP, SEXP vert_map_inSEXP, SEXP fromiSEXP, SEXP kSEXP, SEXP densSEXP, SEXP tolSEXP, SEXP heap_typeSEXP) {
@@ -416,6 +434,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_deduplicate", (DL_FUNC) &_dodgr_rcpp_deduplicate, 5},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},
+    {"_dodgr_rcpp_flows_aggregate_pairwise", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_pairwise, 8},
     {"_dodgr_rcpp_flows_disperse_par", (DL_FUNC) &_dodgr_rcpp_flows_disperse_par, 7},
     {"_dodgr_rcpp_flows_si", (DL_FUNC) &_dodgr_rcpp_flows_si, 10},
     {"_dodgr_rcpp_fundamental_cycles", (DL_FUNC) &_dodgr_rcpp_fundamental_cycles, 2},

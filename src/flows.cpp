@@ -745,6 +745,82 @@ Rcpp::NumericVector rcpp_flows_aggregate_par (const Rcpp::DataFrame graph,
 }
 
 
+//' rcpp_flows_aggregate_pairwise
+//'
+//' Pairwise version of flows_aggregate_par
+//'
+//' @param graph The data.frame holding the graph edges
+//' @param vert_map_in map from <std::string> vertex ID to (0-indexed) integer
+//' index of vertices
+//' @param fromi Index into vert_map_in of vertex numbers
+//' @param toi Index into vert_map_in of vertex numbers
+//' @param tol Relative tolerance in terms of flows below which targets
+//' (to-vertices) are not considered.
+//'
+//' @note The parallelisation is achieved by dumping the results of each thread
+//' to a file, with aggregation performed at the end by simply reading back and
+//' aggregating all files. There is no way to aggregate into a single vector
+//' because threads have to be independent. The only danger with this approach
+//' is that multiple threads may generate the same file names, but with names 10
+//' characters long, that chance should be 1 / 62 ^ 10.
+//'
+//' @noRd
+// [[Rcpp::export]]
+Rcpp::NumericVector rcpp_flows_aggregate_pairwise (const Rcpp::DataFrame graph,
+        const Rcpp::DataFrame vert_map_in,
+        Rcpp::IntegerVector fromi,
+        Rcpp::IntegerVector toi,
+        Rcpp::NumericVector flows,
+        const bool norm_sums,
+        const double tol,
+        const std::string heap_type)
+{
+    if (fromi.size () != toi.size ())
+        Rcpp::stop ("pairwise dists must have from.size == to.size");
+    long int n = fromi.size ();
+    size_t n_st = static_cast <size_t> (n);
+
+    const std::vector <std::string> from = graph ["from"];
+    const std::vector <std::string> to = graph ["to"];
+    const std::vector <double> dist = graph ["d"];
+    const std::vector <double> wt = graph ["d_weighted"];
+
+    const size_t nedges = static_cast <size_t> (graph.nrow ());
+    const std::vector <std::string> vert_name = vert_map_in ["vert"];
+    const std::vector <size_t> vert_indx = vert_map_in ["id"];
+    // Make map from vertex name to integer index
+    std::map <std::string, size_t> vert_map_i;
+    const size_t nverts = run_sp::make_vert_map (vert_map_in, vert_name,
+            vert_indx, vert_map_i);
+
+    std::unordered_map <std::string, size_t> verts_to_edge_map;
+    std::unordered_map <std::string, double> verts_to_dist_map;
+    run_sp::make_vert_to_edge_maps (from, to, wt, verts_to_edge_map, verts_to_dist_map);
+
+    std::shared_ptr <DGraph> g = std::make_shared <DGraph> (nverts);
+    inst_graph (g, nedges, vert_map_i, from, to, dist, wt);
+
+    // Paired (fromi, toi) in a single vector
+    Rcpp::IntegerVector fromto (2 * n_st);
+    for (int i = 0; i < n; i++)
+    {
+        size_t i_t = static_cast <size_t> (i);
+        fromto [i] = fromi (i_t);
+        fromto [i + n] = toi (i_t);
+    }
+
+    // Create parallel worker
+    OneAggregatePaired oneAggregatePaired (RcppParallel::RVector <int> (fromto),
+            RcppParallel::RVector <double> (flows), vert_name, verts_to_edge_map,
+            n_st, nverts, nedges, norm_sums, tol, heap_type, g);
+
+    size_t chunk_size = run_sp::get_chunk_size (n_st);
+    RcppParallel::parallelReduce (0, n_st, oneAggregatePaired, chunk_size);
+
+    return Rcpp::wrap (oneAggregatePaired.output);
+}
+
+
 
 //' rcpp_flows_disperse_par
 //'
