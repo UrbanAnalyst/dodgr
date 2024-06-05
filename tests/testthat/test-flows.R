@@ -63,6 +63,31 @@ test_that ("flows aggregate", {
     expect_equal (graph5$flow, graph4$flow)
 })
 
+test_that ("pairwise aggregation", {
+    graph <- weight_streetnet (hampi)
+    graphc <- dodgr_contract_graph (graph)
+    set.seed (1)
+    n <- 10
+    from <- sample (graphc$from_id, size = n)
+    to <- sample (graphc$to_id, size = 2 * n)
+    to <- to [!to %in% from] [seq_len (n)]
+    flowmat <- matrix (10 * runif (n^2), nrow = n)
+    flowvec <- 10 * runif (n)
+
+    graph0 <- dodgr_flows_aggregate (
+        graph,
+        from = from, to = to, flows = flowmat
+    )
+    graph1 <- dodgr_flows_aggregate (
+        graph,
+        from = from, to = to, flows = flowvec, pairwise = TRUE
+    )
+    index0 <- which (graph0$flow > 0)
+    index1 <- which (graph1$flow > 0)
+    expect_true (length (index0) > length (index1))
+    expect_true (mean (graph0$flow [index0]) > mean (graph1$flow [index1]))
+})
+
 test_that ("flow points", {
     graph <- weight_streetnet (hampi)
     v <- dodgr_vertices (graph)
