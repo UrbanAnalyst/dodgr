@@ -193,7 +193,7 @@ igraph_to_dodgr <- function (graph) {
 
     res <- data.frame (
         cbind (
-            igraph::get.edgelist (graph),
+            igraph::as_edgelist (graph),
             do.call (cbind, ei)
         ),
         stringsAsFactors = FALSE

@@ -5,6 +5,8 @@
 - `dodgr_flows_aggregate()` now has a `pairwise` parameter, to enable flows to
   be aggregated only along paths connecting each pair of `from` and `to`
   points. Thanks to @chinhqho via #229
+- Update `igraph::get.edgelist` -> `as_edgelist` (#229) to suppress warnings
+  from igraph conversion functions.
 
 ---
 
