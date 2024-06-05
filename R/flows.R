@@ -201,16 +201,39 @@ dodgr_flows_aggregate <- function (graph,
         ncol (flows) == length (to_from_indices$to$index))) {
         stop ("flows matrix is not compatible with 'from'/'to' arguments")
     }
+    if (pairwise) {
+        if (length (from) != length (to)) {
+            stop (
+                "'from' and 'to' must be the same length ",
+                "when using 'pairwise = TRUE'.",
+                call. = FALSE
+            )
+        }
+        if (nrow (flows) != length (from)) {
+            stop (
+                "'flows' must be the same length as 'from' and 'to'",
+                call. = FALSE
+            )
+        }
+    }
 
     if (!quiet) {
         message ("\nAggregating flows ... ", appendLF = FALSE)
     }
 
-    graph$flow <- rcpp_flows_aggregate_par (
-        graph2, to_from_indices$vert_map,
-        to_from_indices$from$index, to_from_indices$to$index,
-        flows, norm_sums, tol, heap
-    )
+    if (pairwise) {
+        graph$flow <- rcpp_flows_aggregate_pairwise (
+            graph2, to_from_indices$vert_map,
+            to_from_indices$from$index, to_from_indices$to$index,
+            flows, norm_sums, tol, heap
+        )
+    } else {
+        graph$flow <- rcpp_flows_aggregate_par (
+            graph2, to_from_indices$vert_map,
+            to_from_indices$from$index, to_from_indices$to$index,
+            flows, norm_sums, tol, heap
+        )
+    }
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
