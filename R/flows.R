@@ -202,19 +202,7 @@ dodgr_flows_aggregate <- function (graph,
         stop ("flows matrix is not compatible with 'from'/'to' arguments")
     }
     if (pairwise) {
-        if (length (from) != length (to)) {
-            stop (
-                "'from' and 'to' must be the same length ",
-                "when using 'pairwise = TRUE'.",
-                call. = FALSE
-            )
-        }
-        if (nrow (flows) != length (from)) {
-            stop (
-                "'flows' must be the same length as 'from' and 'to'",
-                call. = FALSE
-            )
-        }
+        check_pairwise_from_to (from, to, flows)
     }
 
     if (!quiet) {
@@ -595,6 +583,26 @@ check_k <- function (k, from) {
     }
 
     list (k = k, nk = nk)
+}
+
+check_pairwise_from_to <- function (from, to, flows) {
+
+    nf <- ifelse (is.vector (from), length (from), nrow (from))
+    nt <- ifelse (is.vector (to), length (to), nrow (to))
+
+    if (nf != nt) {
+        stop (
+            "'from' and 'to' must be the same length or dimensions",
+            "when using 'pairwise = TRUE'.",
+            call. = FALSE
+        )
+    }
+    if (nrow (flows) != nf) {
+        stop (
+            "'flows' must be the same length or dimensions as 'from' and 'to'",
+            call. = FALSE
+        )
+    }
 }
 
 get_random_prefix <- function (prefix = "flow",
