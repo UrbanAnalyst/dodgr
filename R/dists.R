@@ -227,7 +227,8 @@ get_index_id_cols <- function (graph,
             is.matrix (pts) ||
             is.data.frame (pts)) {
             index <- get_pts_index (graph, gr_cols, vert_map, pts)
-            if (is.matrix (pts) || is.data.frame (pts)) {
+            if ((is.matrix (pts) || is.data.frame (pts)) &&
+                !any (duplicated (index))) {
                 rownames (pts) <- vert_map$vert [index]
             }
         } else {
