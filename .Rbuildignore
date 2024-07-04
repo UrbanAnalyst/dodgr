@@ -1,3 +1,4 @@
+.ccls-cache/
 ^.*\.Rproj$
 ^CONDUCT\.md$
 ^CONTRIBUTING\.md$
