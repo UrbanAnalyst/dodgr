@@ -78,6 +78,7 @@ Other contributors:
   \item Andrew Smith [contributor]
   \item Malcolm Morgan [contributor]
   \item Shane Saunders (Original author of included code for priority heaps) [copyright holder]
+  \item Stanislaw Adaszewski (author of include concaveman-cpp code) [copyright holder]
 }
 
 }

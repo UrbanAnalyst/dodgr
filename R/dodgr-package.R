@@ -46,6 +46,7 @@
 #' @importFrom graphics plot
 #' @importFrom grDevices colorRampPalette
 #' @importFrom magrittr %>%
+#' @importFrom memoise memoise
 #' @importFrom methods is
 #' @importFrom osmdata add_osm_feature getbb opq osmdata_sf osm_poly2line
 #' @importFrom osmdata trim_osmdata

@@ -1,5 +1,9 @@
 # CRAN notes for dodgr_0.4.0 submission
 
+This submission fixes previous warnings on
+
+It also rectifies one NOTE on namespace imports not used.
+
 This submission generates the following NOTES on some systems:
 
 - Possibly invalid URLs, all of which are GitHub because of "Too Many Requests," and not because of the URLs themselves.
