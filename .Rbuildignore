@@ -8,6 +8,7 @@
 ^\.Rproj\.user$
 ^\.github$
 ^\.hooks$
+^\.lintr$
 ^\.pre-commit-config\.yaml$
 ^\.travis\.yml$
 ^_pkgdown\.yml$
