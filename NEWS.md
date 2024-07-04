@@ -7,6 +7,7 @@
   points. Thanks to @chinhqho via #229
 - Update `igraph::get.edgelist` -> `as_edgelist` (#229) to suppress warnings
   from igraph conversion functions.
+- Minor tweak to bundled src/concaveman to remove CRAN warning from new gcc 14.x (#235)
 
 ---
 

@@ -1,6 +1,6 @@
-# CRAN notes for dodgr_0.4.0 submission
+# CRAN notes for dodgr_0.4.1 submission
 
-This submission fixes previous warnings on
+This submission fixes previous warnings from g++ 14.x which arose on CRAN Fedora checks.
 
 It also rectifies one NOTE on namespace imports not used.
 
