@@ -1,207 +1,71 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/404.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/dists-categorical.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/dodgr.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/flows.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/iso.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/parallel.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/articles/times.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/index.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/add_nodes_to_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/clear_dodgr_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_cache_off.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_cache_on.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_centrality.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_components.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_deduplicate_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_nearest.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_full_cycles.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_fundamental_cycles.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_insert_vertex.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_load_streetnet.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_sample.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_save_streetnet.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_sflines_to_poly.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_igraph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_sf.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_sfc.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_tidygraph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_uncontract_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/estimate_centrality_threshold.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/estimate_centrality_time.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/hampi.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/igraph_to_dodgr.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/match_points_to_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/match_points_to_verts.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/match_pts_to_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/match_pts_to_verts.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/os_roads_bristol.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/summary.dodgr_dists_categorical.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/weighting_profiles.html</loc>
-  </url>
-  <url>
-    <loc>https://UrbanAnalyst.github.io/dodgr/reference/write_dodgr_wt_profile.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/404.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/CONDUCT.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/CONTRIBUTING.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/dists-categorical.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/dodgr.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/flows.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/index.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/iso.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/parallel.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/articles/times.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/authors.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/index.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/news/index.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/add_nodes_to_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/clear_dodgr_cache.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_cache_off.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_cache_on.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_centrality.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_components.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_deduplicate_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_nearest.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_full_cycles.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_fundamental_cycles.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_insert_vertex.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_load_streetnet.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_sample.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_save_streetnet.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_sflines_to_poly.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_igraph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_sf.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_sfc.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_to_tidygraph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_uncontract_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/estimate_centrality_threshold.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/estimate_centrality_time.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/hampi.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/igraph_to_dodgr.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/index.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/match_points_to_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/match_points_to_verts.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/match_pts_to_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/match_pts_to_verts.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/os_roads_bristol.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/pipe.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/summary.dodgr_dists_categorical.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/weighting_profiles.html</loc></url>
+<url><loc>https://UrbanAnalyst.github.io/dodgr/reference/write_dodgr_wt_profile.html</loc></url>
 </urlset>
+
