@@ -3,6 +3,7 @@
 ## Minor changes
 
 - Fix bug in graph contraction that left duplicated edges (#236, thanks to @Robinlovelace).
+- Fix minor bug in de-duplication discovered via #236.
 
 ---
 
