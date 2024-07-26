@@ -120,6 +120,12 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     graph_contracted <-
         rm_edges_with_heterogenous_data (graph, graph_contracted, gr_cols)
 
+    # Contracted graph can still contain duplicated edges. Deduplication
+    # reduces all duplicates to shortest weighted distance.
+    graph_contracted$graph <- dodgr_deduplicate_graph (graph_contracted$graph)
+    index <- which (graph_contracted$edge_map$edge_new %in% graph_contracted$graph$edge_id)
+    graph_contracted$edge_map <- graph_contracted$edge_map [index, ]
+
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
     # get matching indices into both contracted and original graph:

@@ -1,5 +1,9 @@
 # v 0.4.1.00x (dev version)
 
+## Minor changes
+
+- Fix bug in graph contraction that left duplicated edges (#236, thanks to @Robinlovelace).
+
 ---
 
 # v 0.4.1
