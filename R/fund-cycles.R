@@ -335,6 +335,7 @@ dodgr_sflines_to_poly <- function (sflines,
     }
 
     graph <- weight_streetnet (sflines, wt_profile = 1)
+    graph <- dodgr_deduplicate_graph (graph)
     # Different graph components need to be analysed seperately, and an
     # arbitrary decision is made here to only consider components with > 100
     # edges - smaller ones are unlikely to have any cycles.
