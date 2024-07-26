@@ -160,7 +160,7 @@ test_that ("contract with turn angles", {
 
     expect_equal (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
-    expect_equal (nrow (grapht_c), nrow (graph_c))
+    expect_true (nrow (graph_c) <= nrow (grapht_c))
     expect_warning (
         graphtf <- dodgr_flows_aggregate (
             grapht_c,

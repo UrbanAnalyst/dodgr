@@ -125,6 +125,10 @@ test_that ("cache off", {
         left_side = TRUE
     ))
     expect_silent (grapht_c <- dodgr_contract_graph (grapht))
+    # De-duplication of graph contraction can remove points, so:
+    index <- which (pts %in% grapht_c$.vx0 & pts %in% grapht_c$.vx1)
+    pts <- pts [index]
+    fmat <- fmat [index, index]
     expect_warning (
         graphtf <- dodgr_flows_aggregate (
             grapht_c,
@@ -147,12 +151,12 @@ test_that ("cache off", {
         graphtf <- dodgr_flows_disperse (
             grapht_c,
             from = pts,
-            dens = rep (1, n)
+            dens = rep (1, length (pts))
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
     expect_silent (
-        graphtf <- dodgr_flows_disperse (grapht, from = pts, dens = rep (1, n))
+        graphtf <- dodgr_flows_disperse (grapht, from = pts, dens = rep (1, length (pts)))
     )
 
     expect_silent (dodgr_cache_on ())
