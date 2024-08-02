@@ -2,6 +2,7 @@
 ^.*\.Rproj$
 ^CONDUCT\.md$
 ^CONTRIBUTING\.md$
+^Meta$
 ^README-.*\.png$
 ^README\.Rmd$
 ^README\.html$
@@ -16,6 +17,7 @@
 ^appveyor\.yml$
 ^codemeta\.json$
 ^cran-comments.md$
+^doc$
 ^inst/WORDLIST$
 ^makefile$
 ^tests/valgrind-script.R$
