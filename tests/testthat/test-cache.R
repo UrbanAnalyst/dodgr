@@ -4,7 +4,7 @@ context ("cache")
 # GitHub runners.
 testthat::skip_on_os ("windows")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
     identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 testthat::skip_if (!test_all)
@@ -28,10 +28,11 @@ test_that ("cache on", {
     expect_silent (graph_c <- dodgr_contract_graph (graph))
     expect_silent (v <- dodgr_vertices (graph_c))
 
-    n <- 100
+    n0 <- 100
     set.seed (1)
-    pts <- sample (v$id, size = n)
+    pts <- sample (v$id, size = n0)
     pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
+    n <- length (pts)
     fmat <- array (1, dim = c (n, n))
 
     # aggregate flows from graph without turning angles:
@@ -53,10 +54,11 @@ test_that ("cache on", {
     expect_equal (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
     pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
+    n <- length (pts)
     fmat <- array (1, dim = c (n, n))
-    expect_true (nrow (graph_c) <= nrow (grapht_c))
-    # This test fails on some GitHub runners:
+    # These tests fail on some GitHub runners:
     if (test_all) {
+        expect_true (nrow (graph_c) <= nrow (grapht_c))
         expect_warning (
             graphtf <- dodgr_flows_aggregate (grapht_c,
                 from = pts,
