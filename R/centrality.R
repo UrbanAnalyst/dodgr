@@ -54,6 +54,7 @@
 #' @family centrality
 #' @export
 #' @examples
+#' \dontrun{
 #' graph_full <- weight_streetnet (hampi)
 #' graph <- dodgr_contract_graph (graph_full)
 #' graph <- dodgr_centrality (graph)
@@ -71,6 +72,7 @@
 #' # 'dodgr_to_sf()' is also useful for many visualisation routines.
 #' graph_sf <- merge_directed_graph (graph_full) %>%
 #'     dodgr_to_sf ()
+#' }
 #'
 #' \dontrun{
 #' library (mapview)

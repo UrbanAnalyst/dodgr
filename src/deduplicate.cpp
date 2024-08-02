@@ -42,7 +42,10 @@ Rcpp::DataFrame rcpp_deduplicate (const Rcpp::DataFrame &graph, const std::strin
     const std::vector <std::string> fr = graph [fr_col];
     const std::vector <std::string> to = graph [to_col];
     const std::vector <double> d = graph [d_col];
-    const std::vector <double> t = graph [t_col];
+    std::vector <double> t (graph.nrow ());
+    if (has_time) {
+        std::vector <double> t = graph [t_col];
+    }
     
     const size_t n = static_cast <size_t> (graph.nrow ());
 

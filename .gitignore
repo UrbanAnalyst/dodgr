@@ -19,3 +19,5 @@ aaa\.Rmd*
 # compiled object files
 *.o
 *.so
+/doc/
+/Meta/
