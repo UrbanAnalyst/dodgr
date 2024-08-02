@@ -186,7 +186,11 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     # and finally replicate the uncontracted edges of graph in graph_contracted
     indx_uncontr <- which (!graph [, gr_cols$edge_id] %in%
         graph_contracted$edge_map$edge_old)
-    graph_refill <- rbind (graph_refill, graph [indx_uncontr, ])
+    graph_uncontr <- graph [indx_uncontr, ]
+    graph_uncontr_ft <- paste0 (graph_uncontr$from_id, "_", graph_uncontr$to_id)
+    graph_refill_ft <- paste0 (graph_refill$from_id, "_", graph_refill$to_id)
+    graph_uncontr <- graph_uncontr [which (!graph_uncontr_ft %in% graph_refill_ft), ]
+    graph_refill <- rbind (graph_refill, graph_uncontr)
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE))) {
         ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))

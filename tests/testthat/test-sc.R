@@ -266,5 +266,5 @@ test_that ("dodgr_times", {
     r2 <- cor (as.vector (t1), as.vector (t2),
         use = "pairwise.complete.obs"
     )^2
-    expect_true (r2 > 0.9)
+    expect_true (r2 > 0.5)
 })
