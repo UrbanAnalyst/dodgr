@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.017</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -255,13 +255,13 @@ values:</p>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.228   0.000   0.228</span></span></code></pre>
+<span><span class="co">##   0.226   0.000   0.225</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span> <span class="op">(</span> <span class="co"># Subsequent call uses cached values:</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.036   0.000   0.037</span></span></code></pre>
+<span><span class="co">##   0.039   0.000   0.039</span></span></code></pre>
 <p>The <code>concavity</code> parameter has a default value of 0 for
 strictly convex polygons. Values closer to 1 generate more concave
 polygons. The following code demonstrates the effect of increasing
