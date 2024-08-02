@@ -11,7 +11,7 @@ vertex based on point-to-point distances."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ vertex based on point-to-point distances."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Match spatial points to the vertices of a spatial graph.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/v0.4.1/R/match-points.R" class="external-link"><code>R/match-points.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/R/match-points.R" class="external-link"><code>R/match-points.R</code></a></small>
       <div class="d-none name"><code>match_pts_to_verts.Rd</code></div>
     </div>
 
@@ -96,11 +96,11 @@ matching.</p></dd>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu">match_pts_to_verts</span> <span class="op">(</span><span class="va">verts</span>, <span class="va">xy</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pts</span> <span class="co"># an index into verts</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1709 3056 1489 2127  949 1704 3051 3072  489  645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1451 3056 3052 3058 2807 3052 2596 1813 3053 1704</span>
 <span class="r-in"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="va">verts</span><span class="op">$</span><span class="va">id</span> <span class="op">[</span><span class="va">pts</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">pts</span> <span class="co"># names of those vertices</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "2588146138" "1388482509" "1715805302" "2627486263" "980400742" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "2588119056" "6025347259" "1204772675" "1390214349" "571423202" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "1398748009" "1388482509" "7769271419" "1204772772" "5351820892"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "7769271419" "5351564647" "7794286099" "7769190961" "2588119056"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
