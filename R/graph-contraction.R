@@ -269,9 +269,19 @@ rm_edges_with_heterogenous_data <- function (graph, graph_contracted, gr_cols) {
 #' Re-expand a contracted graph.
 #'
 #' Revert a contracted graph created with \link{dodgr_contract_graph} back to
-#' the full, uncontracted version. This function is mostly used for the side
+#' a full, uncontracted version. This function is mostly used for the side
 #' effect of mapping any new columns inserted on to the contracted graph back
 #' on to the original graph, as demonstrated in the example.
+#'
+#' Note that this function will generally *not* recover original graphs
+#' submitted to \link{dodgr_contract_graph}. Specifically, the sequence
+#' `dodgr_contract_graph(graph) |> dodgr_uncontract_graph()` will generally
+#' produce a graph with fewer edges than the original. This is because graphs
+#' may have multiple paths between a given pair of points. Contraction will
+#' reduce these to the single path with the shortest weighted distance (or
+#' time), and uncontraction will restore only that single edge with shortest
+#' weighted distance, and not any original edges which may have had longer
+#' weighted distances.
 #'
 #' @param graph A contracted graph created from \link{dodgr_contract_graph}.
 #'
