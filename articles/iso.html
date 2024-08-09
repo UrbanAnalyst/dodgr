@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2024-08-02</h4>
+            <h4 data-toc-skip class="date">2024-08-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/iso.Rmd" class="external-link"><code>vignettes/iso.Rmd</code></a></small>
       <div class="d-none name"><code>iso.Rmd</code></div>
@@ -130,7 +130,7 @@ of origin.</p>
 <span><span class="va">dlim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 2531    5</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 2527    5</span></span></code></pre>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -187,7 +187,7 @@ of origin.</p>
 </tbody>
 </table>
 <p>This function returns in this case a <code>data.frame</code> with the
-columns shown above and 2,531 points defining the isodistance contours
+columns shown above and 2,527 points defining the isodistance contours
 from each origin (<code>from</code>) point, at the specified distances
 of 200, 500, 1000, 2000 metres. There are naturally more points defining
 the contours at longer distances:</p>
@@ -195,7 +195,7 @@ the contours at longer distances:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span> <span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">dlim</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  200  500 1000 2000 </span></span>
-<span><span class="co">##  403  562  689  877</span></span></code></pre>
+<span><span class="co">##  403  561  689  874</span></span></code></pre>
 <p>The points defining the contours are arranged in an anticlockwise
 order around each point of origin, and so can be directly visualised
 using base graphics functions. This is easier to see by using just a
@@ -255,13 +255,13 @@ values:</p>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.265   0.000   0.266</span></span></code></pre>
+<span><span class="co">##   0.238   0.000   0.238</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span> <span class="op">(</span> <span class="co"># Subsequent call uses cached values:</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.037   0.000   0.037</span></span></code></pre>
+<span><span class="co">##   0.038   0.000   0.038</span></span></code></pre>
 <p>The <code>concavity</code> parameter has a default value of 0 for
 strictly convex polygons. Values closer to 1 generate more concave
 polygons. The following code demonstrates the effect of increasing

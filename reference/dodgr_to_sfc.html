@@ -21,7 +21,7 @@ junction point."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,11 +102,11 @@ object - <a href="dodgr_to_sf.html">dodgr_to_sf</a> does requires <span class="p
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">hw</span><span class="op">)</span> <span class="co"># 5.845 edges</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6813   16</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="va">xy</span><span class="op">$</span><span class="va">geometry</span><span class="op">)</span> <span class="co"># more linestrings aggregated from those edges</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 744</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">hampi</span><span class="op">)</span> <span class="co"># than the 191 linestrings in original sf object</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 236</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">xy</span><span class="op">$</span><span class="va">dat</span><span class="op">)</span> <span class="co"># same number of rows as there are geometries</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 860  16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 744  16</span>
 <span class="r-in"><span><span class="co"># The dodgr_to_sf function then just implements this final conversion:</span></span></span>
 <span class="r-in"><span><span class="co"># sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)</span></span></span>
 </code></pre></div>

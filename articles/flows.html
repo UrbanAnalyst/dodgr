@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2024-08-02</h4>
+            <h4 data-toc-skip class="date">2024-08-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/flows.Rmd" class="external-link"><code>vignettes/flows.Rmd</code></a></small>
       <div class="d-none name"><code>flows.Rmd</code></div>
@@ -132,7 +132,7 @@ code, using the same graph as the previous example.</p>
 <span><span class="va">graph_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_flows_disperse.html">dodgr_flows_disperse</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, dens <span class="op">=</span> <span class="va">dens</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span> <span class="op">(</span><span class="va">graph_f</span><span class="op">$</span><span class="va">flow</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. </span></span>
-<span><span class="co">## 0.000e+00 0.000e+00 8.545e-05 8.195e-03 9.395e-03 1.446e-01</span></span></code></pre>
+<span><span class="co">## 0.000e+00 0.000e+00 7.548e-05 8.656e-03 1.013e-02 1.581e-01</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="merging-directed-flows">3 Merging directed flows<a class="anchor" aria-label="anchor" href="#merging-directed-flows"></a>
@@ -154,7 +154,7 @@ only include those edges having non-zero flows, and so:</p>
 <pre><code><span><span class="co">## [1] 6813</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">graph_undir</span><span class="op">)</span> <span class="co"># the latter is much smaller</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 3103</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 3069</span></span></code></pre>
 <p>The resultant graph can readily be merged with the original graph to
 regain the original data on vertex coordinates through</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
