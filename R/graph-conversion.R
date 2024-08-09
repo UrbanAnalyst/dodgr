@@ -89,6 +89,13 @@ dodgr_to_sfc <- function (graph) {
 
     gc <- dodgr_contract_graph (graph, nocache = TRUE)
     edge_map <- get_edge_map (gc)
+    if (nrow (edge_map) == 0L) {
+        stop (
+            "Graph has already been contracted, and can not be ",
+            "converted to 'sf'",
+            call. = FALSE
+        )
+    }
     geometry <- rcpp_aggregate_to_sf (graph, gc, edge_map)
 
     # geometry has full WKT representation of CRS via osmdata, but still
