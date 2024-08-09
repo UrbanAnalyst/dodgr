@@ -123,51 +123,46 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     # Contracted graph can still contain duplicated edges. Deduplication
     # reduces all duplicates to shortest weighted distance.
     graph_contracted$graph <- dodgr_deduplicate_graph (graph_contracted$graph)
-    index <- which (graph_contracted$edge_map$edge_new %in% graph_contracted$graph$edge_id)
-    graph_contracted$edge_map <- graph_contracted$edge_map [index, ]
+    index <- which (!graph_contracted$edge_map$edge_new %in% graph_contracted$graph$edge_id)
+    graph_contracted$edge_map <- graph_contracted$edge_map [-(index), ]
 
     # graph_contracted$graph has only 5 cols of (edge_id, from, to, d, w). These
     # have to be matched onto original graph.  This is done by using edge_map to
-    # get matching indices into both contracted and original graph:
-    indx_contr <- match (
-        graph_contracted$edge_map$edge_new,
-        graph_contracted$graph$edge_id
+    # map new contracted "edge_id" values to first matching edge or original graph.
+    index_to_orig_edges <- match (graph_contracted$graph$edge_id, graph [[gr_cols$edge_id]])
+    index_na <- which (is.na (index_to_orig_edges)) # contracted edges
+    index_to_contracted_edges <- match (
+        graph_contracted$graph$edge_id [index_na],
+        graph_contracted$edge_map$edge_new
     )
-    indx_orig <- match (
-        graph_contracted$edge_map$edge_old,
-        graph [, gr_cols$edge_id]
-    )
-    # Then reduce the latter only to the corresponding first non-repeated values
-    # of the former.
-    indx_orig <- indx_orig [which (!duplicated (indx_contr))]
+    old_edges <- graph_contracted$edge_map$edge_old [index_to_contracted_edges]
+    index_to_orig_edges [index_na] <- match (old_edges, graph [[gr_cols$edge_id]])
 
-    indx_contr <- unique (indx_contr)
-    graph_refill <- graph [indx_orig, ]
+    graph_refill <- graph [index_to_orig_edges, ]
+
     graph_refill [, gr_cols$edge_id] <-
-        graph_contracted$graph$edge_id [indx_contr]
-    graph_refill [, gr_cols$from] <- graph_contracted$graph$from [indx_contr]
-    graph_refill [, gr_cols$to] <- graph_contracted$graph$to [indx_contr]
-    graph_refill [, gr_cols$d] <- graph_contracted$graph$d [indx_contr]
+        graph_contracted$graph$edge_id
+    graph_refill [, gr_cols$from] <- graph_contracted$graph$from
+    graph_refill [, gr_cols$to] <- graph_contracted$graph$to
+    graph_refill [, gr_cols$d] <- graph_contracted$graph$d
     graph_refill [, gr_cols$d_weighted] <-
-        graph_contracted$graph$d_weighted [indx_contr]
+        graph_contracted$graph$d_weighted
     if (!is.na (gr_cols$time) && !is.na (gr_cols$time_weighted)) {
         graph_refill [, gr_cols$time] <-
-            graph_contracted$graph$time [indx_contr]
+            graph_contracted$graph$time
         graph_refill [, gr_cols$time_weighted] <-
-            graph_contracted$graph$timew [indx_contr]
+            graph_contracted$graph$timew
     }
 
     # Then re-insert spatial coordinates
     if (is_graph_spatial (graph)) {
         spcols <- find_spatial_cols (graph)$fr_col
-        indx <- match (graph_contracted$graph$from [indx_contr], graph2$from)
-        graph_refill [, spcols [1]] <- graph [indx, spcols [1]] # nolint
-        graph_refill [, spcols [2]] <- graph [indx, spcols [2]] # nolint
+        graph_refill [, spcols [1]] <- graph [index_to_orig_edges, spcols [1]] # nolint
+        graph_refill [, spcols [2]] <- graph [index_to_orig_edges, spcols [2]] # nolint
 
         spcols <- find_spatial_cols (graph)$to_col
-        indx <- match (graph_contracted$graph$to [indx_contr], graph2$to)
-        graph_refill [, spcols [1]] <- graph [indx, spcols [1]] # nolint
-        graph_refill [, spcols [2]] <- graph [indx, spcols [2]] # nolint
+        graph_refill [, spcols [1]] <- graph [index_to_orig_edges, spcols [1]] # nolint
+        graph_refill [, spcols [2]] <- graph [index_to_orig_edges, spcols [2]] # nolint
         # This code matches way_id values to those in original graph, but that's
         # kind of arbitrary because with duplicated ways the ID matching can
         # never be systematically controlled
@@ -182,15 +177,6 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
         #    graph_refill$way_id [indx2] <- graph$way_id [indx]
         # }
     }
-
-    # and finally replicate the uncontracted edges of graph in graph_contracted
-    indx_uncontr <- which (!graph [, gr_cols$edge_id] %in%
-        graph_contracted$edge_map$edge_old)
-    graph_uncontr <- graph [indx_uncontr, ]
-    graph_uncontr_ft <- paste0 (graph_uncontr$from_id, "_", graph_uncontr$to_id)
-    graph_refill_ft <- paste0 (graph_refill$from_id, "_", graph_refill$to_id)
-    graph_uncontr <- graph_uncontr [which (!graph_uncontr_ft %in% graph_refill_ft), ]
-    graph_refill <- rbind (graph_refill, graph_uncontr)
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE))) {
         ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
