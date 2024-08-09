@@ -48,7 +48,7 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
         if (!is.character (verts)) {
             message (
                 "'verts' will be presumed to be character labels",
-                "matching 'id' columns of 'dodgr_vertices()'."
+                " matching 'id' columns of 'dodgr_vertices()'."
             )
             verts <- paste0 (verts)
         }

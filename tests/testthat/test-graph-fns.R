@@ -104,7 +104,10 @@ test_that ("contract graph", {
     )
 
     verts <- as.numeric (verts [, 1])
-    expect_silent (graph_c4 <- dodgr_contract_graph (graph, verts = verts))
+    expect_message (
+        graph_c4 <- dodgr_contract_graph (graph, verts = verts),
+        "'verts' will be presumed to be character labels matching"
+    )
     expect_identical (graph_c2, graph_c4)
 })
 
