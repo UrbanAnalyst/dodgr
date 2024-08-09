@@ -46,6 +46,10 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
             stop ("verts must be a single value or a vector of vertex IDs")
         }
         if (!is.character (verts)) {
+            message (
+                "'verts' will be presumed to be character labels",
+                "matching 'id' columns of 'dodgr_vertices()'."
+            )
             verts <- paste0 (verts)
         }
         verts <- verts [which (verts %in% v$id)]
