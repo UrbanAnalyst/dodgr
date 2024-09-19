@@ -304,7 +304,7 @@ weight_streetnet.sf <- function (x,
     gr_cols <- dodgr_graph_cols (graph)
     graph <- graph [which (!is.na (graph [[gr_cols$d_weighted]])), ]
 
-    class (graph) <- c (class (graph), "dodgr_streetnet")
+    class (graph) <- c ("dodgr_streetnet", class (graph))
     attr (graph, "turn_penalty") <- FALSE
 
     hash <- get_hash (graph, contracted = FALSE, force = TRUE)
@@ -656,9 +656,9 @@ weight_streetnet.sc <- function (x,
         !is.na (graph [[gr_cols$time]])), ]
 
     class (graph) <- c (
-        class (graph),
         "dodgr_streetnet",
-        "dodgr_streetnet_sc"
+        "dodgr_streetnet_sc",
+        class (graph)
     )
 
     attr (graph, "hash") <-

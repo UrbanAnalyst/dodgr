@@ -2,6 +2,7 @@
 
 ## Minor changes
 
+- Pre-pend class structure of `dodgr_streetnet` objects to `data.frame`, rather than append; thanks to @agila5 (#244).
 - Fix bug in graph contraction that left duplicated edges (#236, thanks to @Robinlovelace).
 - Fix minor bug in de-duplication discovered via #236.
 
