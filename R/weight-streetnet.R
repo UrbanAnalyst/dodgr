@@ -2,8 +2,8 @@
 #'
 #' Weight (or re-weight) an \pkg{sf} or `SC` (`silicate`)-formatted OSM street
 #' network according to a named profile, selected from (foot, horse, wheelchair,
-#' bicycle, moped, motorcycle, motorcar, goods, hgv, psv), or a cusstomized
-#' version dervied from those.
+#' bicycle, moped, motorcycle, motorcar, goods, hgv, psv), or a customized
+#' version derived from those.
 #'
 #' @param x A street network represented either as `sf` `LINESTRING`
 #' objects, typically extracted with \link{dodgr_streetnet}, or as an `SC`
