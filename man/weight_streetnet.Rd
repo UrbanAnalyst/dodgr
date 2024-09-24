@@ -107,8 +107,8 @@ account for networks generated with the \pkg{osmdata} function
 \description{
 Weight (or re-weight) an \pkg{sf} or \code{SC} (\code{silicate})-formatted OSM street
 network according to a named profile, selected from (foot, horse, wheelchair,
-bicycle, moped, motorcycle, motorcar, goods, hgv, psv), or a cusstomized
-version dervied from those.
+bicycle, moped, motorcycle, motorcar, goods, hgv, psv), or a customized
+version derived from those.
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
