@@ -2,6 +2,7 @@
 
 ## Minor changes
 
+- `weight_streetnet` now raises a warning (instead of an error) in case the input `sf` object has mixed geometry types instead of only `LINESTRING`. The function filters only the geometries having `LINESTRING` type (#246, thanks to @agila5).
 - Pre-pend class structure of `dodgr_streetnet` objects to `data.frame`, rather than append; thanks to @agila5 (#244).
 - Fix bug in graph contraction that left duplicated edges (#236, thanks to @Robinlovelace).
 - Fix minor bug in de-duplication discovered via #236.
