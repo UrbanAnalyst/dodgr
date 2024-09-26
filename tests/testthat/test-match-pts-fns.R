@@ -8,6 +8,7 @@ clear_dodgr_cache ()
 
 test_that ("points to verts", {
 
+    set.seed (1L)
     bb <- attr (hampi$geometry, "bbox")
     n <- 100
     x <- bb [1] + (bb [3] - bb [1]) * runif (n)
