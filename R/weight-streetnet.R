@@ -238,7 +238,34 @@ weight_streetnet.sf <- function (x,
     # Then rename geom_column to "geometry" for the C++ routine
     names (x) [match (geom_column, names (x))] <- "geometry"
     attr (x, "sf_column") <- "geometry"
-
+    
+    # Currently, the C++ routine only works with LINESTRING geometries (as
+    # documented in the docs). The following code tests the type of the geometry
+    # column. See #246 for more details. 
+    idx_LINESTRING <- inherits(x [["geometry"]], "sfc_LINESTRING")
+    
+    if (!idx_LINESTRING) { 
+      # Now can assume that at least one of the geometries included in
+      # x[["geometry"]] is not a LINESTRING. We are going to raise a warning
+      # message and filter the LINESTRING geometries
+      warning(
+        "At least one of the input geometries is not a LINESTRING. Discarding them.", 
+        call. = FALSE
+      )
+    
+      idx_LINESTRING <- vapply(
+        x [["geometry"]], 
+        inherits, 
+        logical(1),
+        what = "LINESTRING"
+      )
+      x <- x[idx_LINESTRING, ]
+      
+      if (nrow(x) == 0L) {
+        stop("No input geometry has LINESTRING type", call. = FALSE)
+      }
+    }
+      
     wp <- get_wt_profile (x, wt_profile, wt_profile_file)
     # convert oneway and oneway*bicycle values to boolean (fn is in
     # wt_streetnet-times.R):
