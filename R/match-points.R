@@ -79,9 +79,6 @@ pre_process_xy <- function (xy) {
         }
     }
 
-    if (is (xy, "tbl")) {
-        xy <- data.frame (xy)
-    }
     if (is (xy, "sf")) {
         if (!"geometry" %in% names (xy)) {
             stop ("xy has no sf geometry column")
@@ -93,6 +90,8 @@ pre_process_xy <- function (xy) {
             matrix (nrow = 2) %>%
             t ()
         xy <- data.frame (x = xy [, 1], y = xy [, 2])
+    } else if (is (xy, "tbl")) {
+        xy <- data.frame (xy)
     } else {
         xyi <- find_xy_col_simple (xy)
         xy <- data.frame (x = xy [, xyi [1]], y = xy [, xyi [2]])
