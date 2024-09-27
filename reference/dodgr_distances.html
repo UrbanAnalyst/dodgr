@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.031</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.032</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,11 +124,11 @@ graph vertices, or combinations to two columns specifying geographical
 (longitude and latitude) coordinates. In the latter case, almost any sensible
 combination of names will be accepted (for example, <code>fromx, fromy</code>,
 <code>from_x, from_y</code>, or <code>fr_lat, fr_lon</code>.)</p>
-<p><code>from</code> and <code>to</code> parameters passed to this function  can be either:</p><ul><li><p>Single character vectors precisely matching node numbers or names
+<p>The <code>from</code> and <code>to</code> parameters passed to this function  can be either:</p><ul><li><p>Single character vectors precisely matching node numbers or names
 given in <code>graph$from</code> or <code>graph$to</code>.</p></li>
 <li><p>Single vectors of integer-ish values, in which case these will be
 presumed to specify indices into <a href="dodgr_vertices.html">dodgr_vertices</a>, and NOT to
-correspond to values in the "from" to "to" columns of the graph.</p></li>
+correspond to values in the "from" or "to" columns of the graph.</p></li>
 <li><p>matrices or equivalent of longitude and latitude coordinates, in which
 case these will be matched on to the nearest coordinates of "from" and "to"
 points in the graph.</p></li>
