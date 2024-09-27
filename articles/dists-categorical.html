@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.032</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.033</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -170,8 +170,8 @@ faster queries, as illustrated in the following benchmark:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   expression   min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.484  0.487</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.264  0.265</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.487  0.488</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.262  0.264</span></span></code></pre>
 <p>The default value of <code>proportions_only = FALSE</code> should be
 used only if additional information from the distance matrices
 themselves is required or desired. Examples of such additional
@@ -262,9 +262,9 @@ the three modes:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">##   expression    min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.492  0.495 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.267  0.268 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.067<span style="text-decoration: underline;">8</span> 0.069<span style="text-decoration: underline;">7</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.496  0.498 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.267  0.267 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.068<span style="text-decoration: underline;">9</span> 0.073<span style="text-decoration: underline;">0</span></span></span></code></pre>
 <p>Finally, note that the efficiency of distance-threshold queries
 scales non-linearly with increases in <code>dlimit</code>, with queries
 quickly becoming less efficient for larger values of

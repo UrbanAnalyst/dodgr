@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.032</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.033</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -128,7 +128,8 @@ combination of names will be accepted (for example, <code>fromx, fromy</code>,
 given in <code>graph$from</code> or <code>graph$to</code>.</p></li>
 <li><p>Single vectors of integer-ish values, in which case these will be
 presumed to specify indices into <a href="dodgr_vertices.html">dodgr_vertices</a>, and NOT to
-correspond to values in the "from" or "to" columns of the graph.</p></li>
+correspond to values in the "from" or "to" columns of the graph. See the
+example below for a demonstration.</p></li>
 <li><p>matrices or equivalent of longitude and latitude coordinates, in which
 case these will be matched on to the nearest coordinates of "from" and "to"
 points in the graph.</p></li>
@@ -175,6 +176,26 @@ calculations are, however, not able to be interrupted (for example, by
 <span class="r-out co"><span class="r-pr">#&gt;</span> B 2 0 1 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C 2 2 0 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> D 1 2 2 0</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example of "from" and "to" as integer-ish values, in which case they are</span></span></span>
+<span class="r-in"><span><span class="co"># interpreted to index into "dodgr_vertices()":</span></span></span>
+<span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span> <span class="op">(</span></span></span>
+<span class="r-in"><span>    from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    d <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dodgr_dists.html">dodgr_dists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2</span>
+<span class="r-in"><span><span class="co"># That then gives distance from "1" to "3" because the vertices are built</span></span></span>
+<span class="r-in"><span><span class="co"># sequentially along "graph$from":</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   id n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  3 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  4 3</span>
+<span class="r-in"><span><span class="co"># And vertex$id [2] is "3"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># A larger example from the included [hampi()] data.</span></span></span>
 <span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span><span class="op">)</span></span></span>
