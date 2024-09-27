@@ -133,7 +133,7 @@ the \code{keep_cols} argument, include:
 Realistic routing including factors such as access restrictions, turn
 penalties, and effects of incline, can only be implemented when the objects
 passed to \code{weight_streetnet} are of \pkg{sc} ("silicate") format, generated
-with \link{dodgr_streetnet_sc}. Restrictions applied to ways (in OSMM
+with \link{dodgr_streetnet_sc}. Restrictions applied to ways (in OSM
 terminology) may be controlled by ensuring specific columns are retained in
 the \code{dodgr} network with the \code{keep_cols} argument. For example, restrictions
 on access are generally specified by specifying a value for the key of
