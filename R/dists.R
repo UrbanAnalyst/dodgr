@@ -331,7 +331,7 @@ get_pts_index <- function (graph,
             pts <- matrix (pts, ncol = 1)
         } else {
             nms <- names (pts)
-            if (is.null (nms)) {
+            if (is.null (nms) && length (pts) > 1L) {
                 nms <- c ("x", "y")
             }
             pts <- matrix (pts, nrow = 1) # vector of (x,y) vals
