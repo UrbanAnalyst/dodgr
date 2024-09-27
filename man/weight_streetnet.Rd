@@ -157,14 +157,14 @@ accompanying cache files will generally error.)
 Some key-value pairs may also directly influence not just the value of the
 graph produced by this function, but also its size. Among these are "oneway"
 flags. Without these flags, each edge will be represented in \emph{directed} form,
-and so as two rows of the graph for A -> B and B -> A. If a way is tagged in
-OSM as "oneway" = "yes", and if oneway flags are respected for a chosen
-weighting profile (which, for example, they are generally not for pedestrian
-or "foot" weighting), then only one edge will be returned representing
-travel in the direction permitted within the OSM data. Thus weighting a
-network which includes "oneway" flags, and using a weighting profile which
-respects these, will generate a graph with fewer rows than a graph produced
-by ignoring those "oneway" flags.
+and so as two rows of the graph: one for A -> B, and one for B -> A. If a
+way is tagged in OSM as "oneway" = "yes", and if oneway flags are respected
+for a chosen weighting profile (which, for example, they are generally not
+for pedestrian or "foot" weighting), then only one edge will be returned
+representing travel in the direction permitted within the OSM data. Thus
+weighting a network which includes "oneway" flags, and using a weighting
+profile which respects these, will generate a graph with fewer rows than a
+graph produced by ignoring those "oneway" flags.
 }
 \note{
 Names for the \code{wt_profile} parameter are taken from
