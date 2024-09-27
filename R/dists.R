@@ -46,12 +46,21 @@
 #' combination of names will be accepted (for example, `fromx, fromy`,
 #' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' `from` and `to` values can be either two-column matrices or
-#' equivalent of longitude and latitude coordinates, or else single columns
-#' precisely matching node numbers or names given in `graph$from` or
-#' `graph$to`. If `to` is `NULL`, pairwise distances are calculated from all
-#' `from` points to all other nodes in `graph`. If both `from` and `to` are
-#' `NULL`, pairwise distances are calculated between all nodes in `graph`.
+#' `from` and `to` parameters passed to this function  can be either:
+#' \itemize{
+#' \item Single character vectors precisely matching node numbers or names
+#' given in `graph$from` or `graph$to`.
+#' \item Single vectors of integer-ish values, in which case these will be
+#' presumed to specify indices into \link{dodgr_vertices}, and NOT to
+#' correspond to values in the "from" to "to" columns of the graph.
+#' \item matrices or equivalent of longitude and latitude coordinates, in which
+#' case these will be matched on to the nearest coordinates of "from" and "to"
+#' points in the graph.
+#' }
+#'
+#' If `to` is `NULL`, pairwise distances will be calculated from all `from`
+#' points to all other nodes in `graph`. If both `from` and `to` are `NULL`,
+#' pairwise distances are calculated between all nodes in `graph`.
 #'
 #' Calculations in parallel (`parallel = TRUE`) ought very generally be
 #' advantageous. For small graphs, calculating distances in parallel is likely

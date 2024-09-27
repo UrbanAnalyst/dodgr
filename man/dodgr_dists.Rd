@@ -74,12 +74,21 @@ graph vertices, or combinations to two columns specifying geographical
 combination of names will be accepted (for example, \verb{fromx, fromy},
 \verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
 
-\code{from} and \code{to} values can be either two-column matrices or
-equivalent of longitude and latitude coordinates, or else single columns
-precisely matching node numbers or names given in \code{graph$from} or
-\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated from all
-\code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
-\code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.
+\code{from} and \code{to} parameters passed to this function  can be either:
+\itemize{
+\item Single character vectors precisely matching node numbers or names
+given in \code{graph$from} or \code{graph$to}.
+\item Single vectors of integer-ish values, in which case these will be
+presumed to specify indices into \link{dodgr_vertices}, and NOT to
+correspond to values in the "from" to "to" columns of the graph.
+\item matrices or equivalent of longitude and latitude coordinates, in which
+case these will be matched on to the nearest coordinates of "from" and "to"
+points in the graph.
+}
+
+If \code{to} is \code{NULL}, pairwise distances will be calculated from all \code{from}
+points to all other nodes in \code{graph}. If both \code{from} and \code{to} are \code{NULL},
+pairwise distances are calculated between all nodes in \code{graph}.
 
 Calculations in parallel (\code{parallel = TRUE}) ought very generally be
 advantageous. For small graphs, calculating distances in parallel is likely
