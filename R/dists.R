@@ -46,13 +46,13 @@
 #' combination of names will be accepted (for example, `fromx, fromy`,
 #' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' `from` and `to` parameters passed to this function  can be either:
+#' The `from` and `to` parameters passed to this function  can be either:
 #' \itemize{
 #' \item Single character vectors precisely matching node numbers or names
 #' given in `graph$from` or `graph$to`.
 #' \item Single vectors of integer-ish values, in which case these will be
 #' presumed to specify indices into \link{dodgr_vertices}, and NOT to
-#' correspond to values in the "from" to "to" columns of the graph.
+#' correspond to values in the "from" or "to" columns of the graph.
 #' \item matrices or equivalent of longitude and latitude coordinates, in which
 #' case these will be matched on to the nearest coordinates of "from" and "to"
 #' points in the graph.
