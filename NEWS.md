@@ -6,6 +6,8 @@
 - Pre-pend class structure of `dodgr_streetnet` objects to `data.frame`, rather than append; thanks to @agila5 (#244).
 - Fix bug in graph contraction that left duplicated edges (#236, thanks to @Robinlovelace).
 - Fix minor bug in de-duplication discovered via #236.
+- Update documentation for `weight_streetnet`; #245 thanks to @agila5
+- Update documentation for "from" and "to" parameters of dists and other fns; #254 thanks to @luukvdmeer
 
 ---
 
