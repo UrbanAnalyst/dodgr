@@ -74,12 +74,22 @@ graph vertices, or combinations to two columns specifying geographical
 combination of names will be accepted (for example, \verb{fromx, fromy},
 \verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
 
-\code{from} and \code{to} values can be either two-column matrices or
-equivalent of longitude and latitude coordinates, or else single columns
-precisely matching node numbers or names given in \code{graph$from} or
-\code{graph$to}. If \code{to} is \code{NULL}, pairwise distances are calculated from all
-\code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
-\code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.
+The \code{from} and \code{to} parameters passed to this function  can be either:
+\itemize{
+\item Single character vectors precisely matching node numbers or names
+given in \code{graph$from} or \code{graph$to}.
+\item Single vectors of integer-ish values, in which case these will be
+presumed to specify indices into \link{dodgr_vertices}, and NOT to
+correspond to values in the "from" or "to" columns of the graph. See the
+example below for a demonstration.
+\item matrices or equivalent of longitude and latitude coordinates, in which
+case these will be matched on to the nearest coordinates of "from" and "to"
+points in the graph.
+}
+
+If \code{to} is \code{NULL}, pairwise distances will be calculated from all \code{from}
+points to all other nodes in \code{graph}. If both \code{from} and \code{to} are \code{NULL},
+pairwise distances are calculated between all nodes in \code{graph}.
 
 Calculations in parallel (\code{parallel = TRUE}) ought very generally be
 advantageous. For small graphs, calculating distances in parallel is likely
@@ -99,6 +109,19 @@ graph <- data.frame (
     d = c (1, 2, 1, 3, 2, 1, 2, 1)
 )
 dodgr_dists (graph)
+
+# Example of "from" and "to" as integer-ish values, in which case they are
+# interpreted to index into "dodgr_vertices()":
+graph <- data.frame (
+    from = c (1, 3, 2, 2, 3, 3, 4, 4),
+    to = c (2, 1, 3, 4, 2, 4, 3, 1),
+    d = c (1, 2, 1, 3, 2, 1, 2, 1)
+)
+dodgr_dists (graph, from = 1, to = 2)
+# That then gives distance from "1" to "3" because the vertices are built
+# sequentially along "graph$from":
+dodgr_vertices (graph)
+# And vertex$id [2] is "3"
 
 # A larger example from the included [hampi()] data.
 graph <- weight_streetnet (hampi)

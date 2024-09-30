@@ -189,6 +189,48 @@ test_that ("all dists", {
     expect_equal (nrow (d), nrow (v))
 })
 
+test_that ("to-from-as-integerish", {
+    # Integer-ish to-from cols (#254 from @luukvdmeer)
+    graph <- data.frame (
+        from = c (1, 2, 2, 2, 3, 3, 4, 4),
+        to = c (2, 1, 3, 4, 2, 4, 3, 1),
+        d = c (1, 2, 1, 3, 2, 1, 2, 1)
+    )
+    expect_silent (d0 <- dodgr_dists (graph, from = 1, to = 2))
+    expect_silent (d1 <- dodgr_dists (graph, from = 1L, to = 2L))
+    expect_identical (d0, d1)
+    v <- dodgr_vertices (graph)
+    # Verts are numeric, but 'graph$from' has them in sequence, so:
+    expect_identical (v$id, as.numeric (seq_along (unique (graph$from))))
+
+    graph <- data.frame (
+        from = c (1, 3, 2, 2, 3, 3, 4, 4), # no longer in sequence!
+        to = c (2, 1, 3, 4, 2, 4, 3, 1),
+        d = c (1, 2, 1, 3, 2, 1, 2, 1)
+    )
+    expect_silent (d2 <- dodgr_dists (graph, from = 1, to = 2))
+    expect_silent (d3 <- dodgr_dists (graph, from = 1L, to = 2L))
+    v <- dodgr_vertices (graph)
+    expect_false (identical (v$id, as.numeric (seq_along (unique (graph$from)))))
+    expect_true (rownames (d2) == "1")
+    expect_true (rownames (d3) == "1")
+    expect_false (colnames (d2) == "2")
+    expect_false (colnames (d3) == "2")
+    real_id <- v$id [2] # = 3
+    expect_true (colnames (d2) == as.character (real_id))
+    expect_true (colnames (d3) == as.character (real_id))
+
+    graph <- data.frame (
+        from = as.character (c (1, 3, 2, 2, 3, 3, 4, 4)),
+        to = as.character (c (2, 1, 3, 4, 2, 4, 3, 1)),
+        d = c (1, 2, 1, 3, 2, 1, 2, 1)
+    )
+    d4 <- dodgr_dists (graph, from = "1", to = "2")
+    expect_equal (rownames (d4), "1")
+    expect_equal (colnames (d4), "2")
+
+})
+
 test_that ("to-from-cols", {
     graph <- weight_streetnet (hampi)
     nf <- 100

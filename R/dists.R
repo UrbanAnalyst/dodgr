@@ -46,12 +46,22 @@
 #' combination of names will be accepted (for example, `fromx, fromy`,
 #' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
-#' `from` and `to` values can be either two-column matrices or
-#' equivalent of longitude and latitude coordinates, or else single columns
-#' precisely matching node numbers or names given in `graph$from` or
-#' `graph$to`. If `to` is `NULL`, pairwise distances are calculated from all
-#' `from` points to all other nodes in `graph`. If both `from` and `to` are
-#' `NULL`, pairwise distances are calculated between all nodes in `graph`.
+#' The `from` and `to` parameters passed to this function  can be either:
+#' \itemize{
+#' \item Single character vectors precisely matching node numbers or names
+#' given in `graph$from` or `graph$to`.
+#' \item Single vectors of integer-ish values, in which case these will be
+#' presumed to specify indices into \link{dodgr_vertices}, and NOT to
+#' correspond to values in the "from" or "to" columns of the graph. See the
+#' example below for a demonstration.
+#' \item matrices or equivalent of longitude and latitude coordinates, in which
+#' case these will be matched on to the nearest coordinates of "from" and "to"
+#' points in the graph.
+#' }
+#'
+#' If `to` is `NULL`, pairwise distances will be calculated from all `from`
+#' points to all other nodes in `graph`. If both `from` and `to` are `NULL`,
+#' pairwise distances are calculated between all nodes in `graph`.
 #'
 #' Calculations in parallel (`parallel = TRUE`) ought very generally be
 #' advantageous. For small graphs, calculating distances in parallel is likely
@@ -73,6 +83,19 @@
 #'     d = c (1, 2, 1, 3, 2, 1, 2, 1)
 #' )
 #' dodgr_dists (graph)
+#'
+#' # Example of "from" and "to" as integer-ish values, in which case they are
+#' # interpreted to index into "dodgr_vertices()":
+#' graph <- data.frame (
+#'     from = c (1, 3, 2, 2, 3, 3, 4, 4),
+#'     to = c (2, 1, 3, 4, 2, 4, 3, 1),
+#'     d = c (1, 2, 1, 3, 2, 1, 2, 1)
+#' )
+#' dodgr_dists (graph, from = 1, to = 2)
+#' # That then gives distance from "1" to "3" because the vertices are built
+#' # sequentially along "graph$from":
+#' dodgr_vertices (graph)
+#' # And vertex$id [2] is "3"
 #'
 #' # A larger example from the included [hampi()] data.
 #' graph <- weight_streetnet (hampi)
@@ -331,7 +354,7 @@ get_pts_index <- function (graph,
             pts <- matrix (pts, ncol = 1)
         } else {
             nms <- names (pts)
-            if (is.null (nms)) {
+            if (is.null (nms) && length (pts) > 1L) {
                 nms <- c ("x", "y")
             }
             pts <- matrix (pts, nrow = 1) # vector of (x,y) vals
