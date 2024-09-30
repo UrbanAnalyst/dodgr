@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.033</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1.036</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,22 +58,50 @@
 <dd><p><code>data.frame</code> or equivalent object representing the network
 graph (see Notes). For <code>dodgr</code> street networks, this may be a network derived
 from either <span class="pkg">sf</span> or <span class="pkg">silicate</span> ("sc") data, generated with
-<a href="weight_streetnet.html">weight_streetnet</a>.</p></dd>
+<a href="weight_streetnet.html">weight_streetnet</a>.</p>
+<p>The <code>from</code> and <code>to</code> columns of <code>graph</code> may be either single
+columns of numeric or character values specifying the numbers or names of
+graph vertices, or combinations to two columns specifying geographical
+(longitude and latitude,) coordinates. In the latter case, almost any sensible
+combination of names will be accepted (for example, <code>fromx, fromy</code>,
+<code>from_x, from_y</code>, or <code>fr_lat, fr_lon</code>.)</p>
+<p>Note that longitude and latitude values are always interpreted in 'dodgr' to
+be in EPSG:4326 / WSG84 coordinates. Any other kinds of coordinates should
+first be reprojected to EPSG:4326 before submitting to any 'dodgr' routines.</p>
+<p>See further information in Details.</p></dd>
 
 
 <dt id="arg-from">from<a class="anchor" aria-label="anchor" href="#arg-from"></a></dt>
 <dd><p>Vector or matrix of points <strong>from</strong> which route distances are to
-be calculated (see Notes)</p></dd>
+be calculated, specified as one of the following:</p><ul><li><p>Single character vector precisely matching node numbers or names
+given in <code>graph$from</code> or <code>graph$to</code>.</p></li>
+<li><p>Single vector of integer-ish values, in which case these will be
+presumed to specify indices into <a href="dodgr_vertices.html">dodgr_vertices</a>, and NOT to
+correspond to values in the 'from' or 'to' columns of the graph. See the
+example below for a demonstration.</p></li>
+<li><p>Matrix or equivalent of longitude and latitude coordinates, in which
+case these will be matched on to the nearest coordinates of 'from' and 'to'
+points in the graph.</p></li>
+</ul></dd>
 
 
 <dt id="arg-to">to<a class="anchor" aria-label="anchor" href="#arg-to"></a></dt>
 <dd><p>Vector or matrix of points <strong>to</strong> which route distances are to be
-calculated (see Notes)</p></dd>
+calculated. If <code>to</code> is <code>NULL</code>, pairwise distances will be calculated from
+all <code>from</code> points to all other nodes in <code>graph</code>. If both <code>from</code> and <code>to</code> are
+<code>NULL</code>, pairwise distances are calculated between all nodes in <code>graph</code>.</p></dd>
 
 
 <dt id="arg-shortest">shortest<a class="anchor" aria-label="anchor" href="#arg-shortest"></a></dt>
 <dd><p>If <code>FALSE</code>, calculate distances along the <em>fastest</em>
-rather than shortest routes (see Notes).</p></dd>
+rather than shortest routes. For street networks produced with
+<a href="weight_streetnet.html">weight_streetnet</a>, distances may also be calculated along the
+<em>fastest</em> routes with the <code>shortest = FALSE</code> option. Graphs must in
+this case have columns of <code>time</code> and <code>time_weighted</code>. Note that the fastest
+routes will only be approximate when derived from <span class="pkg">sf</span>-format data
+generated with the <span class="pkg">osmdata</span> function <code>osmdata_sf()</code>, and will be much
+more accurate when derived from <code>sc</code>-format data generated with
+<code>osmdata_sc()</code>. See <a href="weight_streetnet.html">weight_streetnet</a> for details.</p></dd>
 
 
 <dt id="arg-pairwise">pairwise<a class="anchor" aria-label="anchor" href="#arg-pairwise"></a></dt>
@@ -88,8 +116,16 @@ Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
-<dd><p>If <code>TRUE</code>, perform routing calculation in parallel (see
-details)</p></dd>
+<dd><p>If <code>TRUE</code>, perform routing calculation in parallel.
+Calculations in parallel ought very generally be advantageous. For small
+graphs, calculating distances in parallel is likely to offer relatively
+little gain in speed, but increases from parallel computation will generally
+markedly increase with increasing graph sizes. By default, parallel
+computation uses the maximal number of available cores or threads. This
+number can be reduced by specifying a value via
+<code>RcppParallel::setThreadOptions (numThreads = &lt;desired_number&gt;)</code>. Parallel
+calculations are, however, not able to be interrupted (for example, by
+<code>Ctrl-C</code>), and can only be stopped by killing the R process.</p></dd>
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
@@ -101,7 +137,7 @@ details)</p></dd>
     <p>square matrix of distances between nodes</p>
     </div>
     <div class="section level2">
-    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>graph</code> must minimally contain three columns of <code>from</code>,
 <code>to</code>, <code>dist</code>. If an additional column named <code>weight</code> or
 <code>wt</code> is present, shortest paths are calculated according to values
@@ -111,40 +147,6 @@ by default according to values of <code>dist</code>. That is, paths between any 
 points will be calculated according to the minimal total sum of <code>weight</code>
 values (if present), while reported distances will be total sums of <code>dist</code>
 values.</p>
-<p>For street networks produced with <a href="weight_streetnet.html">weight_streetnet</a>, distances may also
-be calculated along the <em>fastest</em> routes with the <code>shortest = FALSE</code>
-option. Graphs must in this case have columns of <code>time</code> and <code>time_weighted</code>.
-Note that the fastest routes will only be approximate when derived from
-<span class="pkg">sf</span>-format data generated with the <span class="pkg">osmdata</span> function
-<code>osmdata_sf()</code>, and will be much more accurate when derived from <code>sc</code>-format
-data generated with <code>osmdata_sc()</code>. See <a href="weight_streetnet.html">weight_streetnet</a> for details.</p>
-<p>The <code>from</code> and <code>to</code> columns of <code>graph</code> may be either single
-columns of numeric or character values specifying the numbers or names of
-graph vertices, or combinations to two columns specifying geographical
-(longitude and latitude) coordinates. In the latter case, almost any sensible
-combination of names will be accepted (for example, <code>fromx, fromy</code>,
-<code>from_x, from_y</code>, or <code>fr_lat, fr_lon</code>.)</p>
-<p>The <code>from</code> and <code>to</code> parameters passed to this function  can be either:</p><ul><li><p>Single character vectors precisely matching node numbers or names
-given in <code>graph$from</code> or <code>graph$to</code>.</p></li>
-<li><p>Single vectors of integer-ish values, in which case these will be
-presumed to specify indices into <a href="dodgr_vertices.html">dodgr_vertices</a>, and NOT to
-correspond to values in the "from" or "to" columns of the graph. See the
-example below for a demonstration.</p></li>
-<li><p>matrices or equivalent of longitude and latitude coordinates, in which
-case these will be matched on to the nearest coordinates of "from" and "to"
-points in the graph.</p></li>
-</ul><p>If <code>to</code> is <code>NULL</code>, pairwise distances will be calculated from all <code>from</code>
-points to all other nodes in <code>graph</code>. If both <code>from</code> and <code>to</code> are <code>NULL</code>,
-pairwise distances are calculated between all nodes in <code>graph</code>.</p>
-<p>Calculations in parallel (<code>parallel = TRUE</code>) ought very generally be
-advantageous. For small graphs, calculating distances in parallel is likely
-to offer relatively little gain in speed, but increases from parallel
-computation will generally markedly increase with increasing graph sizes.
-By default, parallel computation uses the maximal number of available cores
-or threads. This number can be reduced by specifying a value via
-<code>RcppParallel::setThreadOptions (numThreads = &lt;desired_number&gt;)</code>. Parallel
-calculations are, however, not able to be interrupted (for example, by
-<code>Ctrl-C</code>), and can only be stopped by killing the R process.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
