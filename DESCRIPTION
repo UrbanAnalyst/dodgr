@@ -11,7 +11,8 @@ Authors@R: c(
     person("Shane", "Saunders", role = "cph",
            comment = "Original author of included code for priority heaps"),
     person("Stanislaw", "Adaszewski", role = "cph",
-           comment = "author of include concaveman-cpp code")
+           comment = "author of include concaveman-cpp code"), 
+    person("Andrea", "Gilardi", role="ctb", comment = c(ORCID = "0000-0002-9424-7439"))
   )
 Description: Distances on dual-weighted directed graphs using
     priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).
