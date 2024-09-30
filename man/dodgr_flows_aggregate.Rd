@@ -22,10 +22,23 @@ dodgr_flows_aggregate(
 graph (see Details)}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
-be calculated (see Notes)}
+be calculated, specified as one of the following:
+\itemize{
+\item Single character vector precisely matching node numbers or names
+given in \code{graph$from} or \code{graph$to}.
+\item Single vector of integer-ish values, in which case these will be
+presumed to specify indices into \link{dodgr_vertices}, and NOT to
+correspond to values in the 'from' or 'to' columns of the graph. See the
+example below for a demonstration.
+\item Matrix or equivalent of longitude and latitude coordinates, in which
+case these will be matched on to the nearest coordinates of 'from' and 'to'
+points in the graph.
+}}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
-calculated (see Notes)}
+calculated. If \code{to} is \code{NULL}, pairwise distances will be calculated from
+all \code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
+\code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
 \code{ncol(flows)==length(to)}.}

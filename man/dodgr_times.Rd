@@ -10,19 +10,49 @@ dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE, heap = "BHeap")
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Notes). For \code{dodgr} street networks, this may be a network derived
 from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
-\link{weight_streetnet}. Note, however, that networks derived from \pkg{sf}
-data will generally not produce reliable estimates of times. Accurate
-estimates can only be guaranteed by using networks derived from
-\pkg{silicate} ("sc") data.}
+\link{weight_streetnet}.
+
+The \code{from} and \code{to} columns of \code{graph} may be either single
+columns of numeric or character values specifying the numbers or names of
+graph vertices, or combinations to two columns specifying geographical
+(longitude and latitude,) coordinates. In the latter case, almost any sensible
+combination of names will be accepted (for example, \verb{fromx, fromy},
+\verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
+
+Note that longitude and latitude values are always interpreted in 'dodgr' to
+be in EPSG:4326 / WSG84 coordinates. Any other kinds of coordinates should
+first be reprojected to EPSG:4326 before submitting to any 'dodgr' routines.
+
+See further information in Details.}
 
 \item{from}{Vector or matrix of points \strong{from} which route distances are to
-be calculated (see Notes)}
+be calculated, specified as one of the following:
+\itemize{
+\item Single character vector precisely matching node numbers or names
+given in \code{graph$from} or \code{graph$to}.
+\item Single vector of integer-ish values, in which case these will be
+presumed to specify indices into \link{dodgr_vertices}, and NOT to
+correspond to values in the 'from' or 'to' columns of the graph. See the
+example below for a demonstration.
+\item Matrix or equivalent of longitude and latitude coordinates, in which
+case these will be matched on to the nearest coordinates of 'from' and 'to'
+points in the graph.
+}}
 
 \item{to}{Vector or matrix of points \strong{to} which route distances are to be
-calculated (see Notes)}
+calculated. If \code{to} is \code{NULL}, pairwise distances will be calculated from
+all \code{from} points to all other nodes in \code{graph}. If both \code{from} and \code{to} are
+\code{NULL}, pairwise distances are calculated between all nodes in \code{graph}.}
 
-\item{shortest}{If \code{TRUE}, calculate times along the \emph{shortest} rather
-than fastest paths.}
+\item{shortest}{If \code{FALSE}, calculate distances along the \emph{fastest}
+rather than shortest routes. For street networks produced with
+\link{weight_streetnet}, distances may also be calculated along the
+\emph{fastest} routes with the \code{shortest = FALSE} option. Graphs must in
+this case have columns of \code{time} and \code{time_weighted}. Note that the fastest
+routes will only be approximate when derived from \pkg{sf}-format data
+generated with the \pkg{osmdata} function \code{osmdata_sf()}, and will be much
+more accurate when derived from \code{sc}-format data generated with
+\code{osmdata_sc()}. See \link{weight_streetnet} for details.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
@@ -34,7 +64,7 @@ square matrix of distances between nodes
 \description{
 Calculate matrix of pair-wise travel times between points.
 }
-\note{
+\details{
 \code{graph} must minimally contain three columns of \code{from},
 \code{to}, \code{dist}. If an additional column named \code{weight} or
 \code{wt} is present, shortest paths are calculated according to values
@@ -44,48 +74,6 @@ by default according to values of \code{dist}. That is, paths between any pair o
 points will be calculated according to the minimal total sum of \code{weight}
 values (if present), while reported distances will be total sums of \code{dist}
 values.
-
-For street networks produced with \link{weight_streetnet}, distances may also
-be calculated along the \emph{fastest} routes with the \code{shortest = FALSE}
-option. Graphs must in this case have columns of \code{time} and \code{time_weighted}.
-Note that the fastest routes will only be approximate when derived from
-\pkg{sf}-format data generated with the \pkg{osmdata} function
-\code{osmdata_sf()}, and will be much more accurate when derived from \code{sc}-format
-data generated with \code{osmdata_sc()}. See \link{weight_streetnet} for details.
-
-The \code{from} and \code{to} columns of \code{graph} may be either single
-columns of numeric or character values specifying the numbers or names of
-graph vertices, or combinations to two columns specifying geographical
-(longitude and latitude) coordinates. In the latter case, almost any sensible
-combination of names will be accepted (for example, \verb{fromx, fromy},
-\verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
-
-The \code{from} and \code{to} parameters passed to this function  can be either:
-\itemize{
-\item Single character vectors precisely matching node numbers or names
-given in \code{graph$from} or \code{graph$to}.
-\item Single vectors of integer-ish values, in which case these will be
-presumed to specify indices into \link{dodgr_vertices}, and NOT to
-correspond to values in the "from" or "to" columns of the graph. See the
-example below for a demonstration.
-\item matrices or equivalent of longitude and latitude coordinates, in which
-case these will be matched on to the nearest coordinates of "from" and "to"
-points in the graph.
-}
-
-If \code{to} is \code{NULL}, pairwise distances will be calculated from all \code{from}
-points to all other nodes in \code{graph}. If both \code{from} and \code{to} are \code{NULL},
-pairwise distances are calculated between all nodes in \code{graph}.
-
-Calculations in parallel (\code{parallel = TRUE}) ought very generally be
-advantageous. For small graphs, calculating distances in parallel is likely
-to offer relatively little gain in speed, but increases from parallel
-computation will generally markedly increase with increasing graph sizes.
-By default, parallel computation uses the maximal number of available cores
-or threads. This number can be reduced by specifying a value via
-\verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}. Parallel
-calculations are, however, not able to be interrupted (for example, by
-\code{Ctrl-C}), and can only be stopped by killing the R process.
 }
 \examples{
 # A simple graph

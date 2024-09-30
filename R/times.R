@@ -1,15 +1,7 @@
 #' Calculate matrix of pair-wise travel times between points.
 #'
 #' @inherit dodgr_dists
-#' @param graph `data.frame` or equivalent object representing the network
-#' graph (see Notes). For `dodgr` street networks, this may be a network derived
-#' from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
-#' \link{weight_streetnet}. Note, however, that networks derived from \pkg{sf}
-#' data will generally not produce reliable estimates of times. Accurate
-#' estimates can only be guaranteed by using networks derived from
-#' \pkg{silicate} ("sc") data.
-#' @param shortest If `TRUE`, calculate times along the \emph{shortest} rather
-#' than fastest paths.
+#' @inheritParams dodgr_dists
 #'
 #' @family distances
 #' @export

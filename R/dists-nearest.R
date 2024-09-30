@@ -1,19 +1,7 @@
 #' Calculate vector of shortest distances from a series of 'from' points to
 #' nearest one of series of 'to' points.
 #'
-#' @param graph `data.frame` or equivalent object representing the network
-#' graph (see Notes)
-#' @param from Vector or matrix of points **from** which route distances are to
-#' be calculated (see Notes)
-#' @param to Vector or matrix of points **to** which shortest route distances
-#' are to be calculated to nearest 'to' point only.
-#' @param shortest If `FALSE`, calculate distances along the \emph{fastest}
-#' rather than shortest routes (see Notes).
-#' @param heap Type of heap to use in priority queue. Options include
-#' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
-#' `Trinomial Heap (`TriHeap`), Extended Trinomial Heap
-#' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @param quiet If `FALSE`, display progress messages on screen.
+#' @inheritParams dodgr_dists
 #' @return Vector of distances, one element for each 'from' point giving the
 #' distance to the nearest 'to' point.
 #'

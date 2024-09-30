@@ -4,24 +4,73 @@
 #' graph (see Notes). For `dodgr` street networks, this may be a network derived
 #' from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
 #' \link{weight_streetnet}.
+#'
+#' The `from` and `to` columns of `graph` may be either single
+#' columns of numeric or character values specifying the numbers or names of
+#' graph vertices, or combinations to two columns specifying geographical
+#' (longitude and latitude,) coordinates. In the latter case, almost any sensible
+#' combination of names will be accepted (for example, `fromx, fromy`,
+#' `from_x, from_y`, or `fr_lat, fr_lon`.)
+#'
+#' Note that longitude and latitude values are always interpreted in 'dodgr' to
+#' be in EPSG:4326 / WSG84 coordinates. Any other kinds of coordinates should
+#' first be reprojected to EPSG:4326 before submitting to any 'dodgr' routines.
+#'
+#' See further information in Details.
+#'
 #' @param from Vector or matrix of points **from** which route distances are to
-#' be calculated (see Notes)
+#' be calculated, specified as one of the following:
+#' \itemize{
+#' \item Single character vector precisely matching node numbers or names
+#' given in `graph$from` or `graph$to`.
+#' \item Single vector of integer-ish values, in which case these will be
+#' presumed to specify indices into \link{dodgr_vertices}, and NOT to
+#' correspond to values in the 'from' or 'to' columns of the graph. See the
+#' example below for a demonstration.
+#' \item Matrix or equivalent of longitude and latitude coordinates, in which
+#' case these will be matched on to the nearest coordinates of 'from' and 'to'
+#' points in the graph.
+#' }
+#'
 #' @param to Vector or matrix of points **to** which route distances are to be
-#' calculated (see Notes)
+#' calculated. If `to` is `NULL`, pairwise distances will be calculated from
+#' all `from` points to all other nodes in `graph`. If both `from` and `to` are
+#' `NULL`, pairwise distances are calculated between all nodes in `graph`.
+#'
 #' @param shortest If `FALSE`, calculate distances along the \emph{fastest}
-#' rather than shortest routes (see Notes).
+#' rather than shortest routes. For street networks produced with
+#' \link{weight_streetnet}, distances may also be calculated along the
+#' \emph{fastest} routes with the `shortest = FALSE` option. Graphs must in
+#' this case have columns of `time` and `time_weighted`. Note that the fastest
+#' routes will only be approximate when derived from \pkg{sf}-format data
+#' generated with the \pkg{osmdata} function `osmdata_sf()`, and will be much
+#' more accurate when derived from `sc`-format data generated with
+#' `osmdata_sc()`. See \link{weight_streetnet} for details.
+#'
 #' @param pairwise If `TRUE`, calculate distances only between the ordered
 #' pairs of `from` and `to`.
+#'
 #' @param heap Type of heap to use in priority queue. Options include
 #' Fibonacci Heap (default; `FHeap`), Binary Heap (`BHeap`),
 #' `Trinomial Heap (`TriHeap`), Extended Trinomial Heap
 #' (`TriHeapExt`, and 2-3 Heap (`Heap23`).
-#' @param parallel If `TRUE`, perform routing calculation in parallel (see
-#' details)
+#'
+#' @param parallel If `TRUE`, perform routing calculation in parallel.
+#' Calculations in parallel ought very generally be advantageous. For small
+#' graphs, calculating distances in parallel is likely to offer relatively
+#' little gain in speed, but increases from parallel computation will generally
+#' markedly increase with increasing graph sizes. By default, parallel
+#' computation uses the maximal number of available cores or threads. This
+#' number can be reduced by specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`. Parallel
+#' calculations are, however, not able to be interrupted (for example, by
+#' `Ctrl-C`), and can only be stopped by killing the R process.
+#'
 #' @param quiet If `FALSE`, display progress messages on screen.
+#'
 #' @return square matrix of distances between nodes
 #'
-#' @note `graph` must minimally contain three columns of `from`,
+#' @details `graph` must minimally contain three columns of `from`,
 #' `to`, `dist`. If an additional column named `weight` or
 #' `wt` is present, shortest paths are calculated according to values
 #' specified in that column; otherwise according to `dist` values. Either
@@ -30,48 +79,6 @@
 #' points will be calculated according to the minimal total sum of `weight`
 #' values (if present), while reported distances will be total sums of `dist`
 #' values.
-#'
-#' For street networks produced with \link{weight_streetnet}, distances may also
-#' be calculated along the \emph{fastest} routes with the `shortest = FALSE`
-#' option. Graphs must in this case have columns of `time` and `time_weighted`.
-#' Note that the fastest routes will only be approximate when derived from
-#' \pkg{sf}-format data generated with the \pkg{osmdata} function
-#' `osmdata_sf()`, and will be much more accurate when derived from `sc`-format
-#' data generated with `osmdata_sc()`. See \link{weight_streetnet} for details.
-#'
-#' The `from` and `to` columns of `graph` may be either single
-#' columns of numeric or character values specifying the numbers or names of
-#' graph vertices, or combinations to two columns specifying geographical
-#' (longitude and latitude) coordinates. In the latter case, almost any sensible
-#' combination of names will be accepted (for example, `fromx, fromy`,
-#' `from_x, from_y`, or `fr_lat, fr_lon`.)
-#'
-#' The `from` and `to` parameters passed to this function  can be either:
-#' \itemize{
-#' \item Single character vectors precisely matching node numbers or names
-#' given in `graph$from` or `graph$to`.
-#' \item Single vectors of integer-ish values, in which case these will be
-#' presumed to specify indices into \link{dodgr_vertices}, and NOT to
-#' correspond to values in the "from" or "to" columns of the graph. See the
-#' example below for a demonstration.
-#' \item matrices or equivalent of longitude and latitude coordinates, in which
-#' case these will be matched on to the nearest coordinates of "from" and "to"
-#' points in the graph.
-#' }
-#'
-#' If `to` is `NULL`, pairwise distances will be calculated from all `from`
-#' points to all other nodes in `graph`. If both `from` and `to` are `NULL`,
-#' pairwise distances are calculated between all nodes in `graph`.
-#'
-#' Calculations in parallel (`parallel = TRUE`) ought very generally be
-#' advantageous. For small graphs, calculating distances in parallel is likely
-#' to offer relatively little gain in speed, but increases from parallel
-#' computation will generally markedly increase with increasing graph sizes.
-#' By default, parallel computation uses the maximal number of available cores
-#' or threads. This number can be reduced by specifying a value via
-#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`. Parallel
-#' calculations are, however, not able to be interrupted (for example, by
-#' `Ctrl-C`), and can only be stopped by killing the R process.
 #'
 #' @family distances
 #' @export
