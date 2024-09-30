@@ -22,11 +22,11 @@ dodgr_flows_si(
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points \strong{from} which aggregate flows are to
-be calculated (see Details)}
+\item{from}{Vector or matrix of points \strong{from} which route distances are to
+be calculated (see Notes)}
 
-\item{to}{Vector or matrix of points \strong{to} which aggregate flows are to be
-calculated (see Details)}
+\item{to}{Vector or matrix of points \strong{to} which route distances are to be
+calculated (see Notes)}
 
 \item{k}{Width of exponential spatial interaction function (exp (-d / k)),
 in units of 'd', specified in one of 3 forms: (i) a single value; (ii) a

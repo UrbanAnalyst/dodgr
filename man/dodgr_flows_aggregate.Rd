@@ -21,11 +21,11 @@ dodgr_flows_aggregate(
 \item{graph}{\code{data.frame} or equivalent object representing the network
 graph (see Details)}
 
-\item{from}{Vector or matrix of points \strong{from} which aggregate flows are to
-be calculated (see Details)}
+\item{from}{Vector or matrix of points \strong{from} which route distances are to
+be calculated (see Notes)}
 
-\item{to}{Vector or matrix of points \strong{to} which aggregate flows are to be
-calculated (see Details)}
+\item{to}{Vector or matrix of points \strong{to} which route distances are to be
+calculated (see Notes)}
 
 \item{flows}{Matrix of flows with \code{nrow(flows)==length(from)} and
 \code{ncol(flows)==length(to)}.}

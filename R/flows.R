@@ -5,10 +5,6 @@
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
-#' @param from Vector or matrix of points **from** which aggregate flows are to
-#' be calculated (see Details)
-#' @param to Vector or matrix of points **to** which aggregate flows are to be
-#' calculated (see Details)
 #' @param flows Matrix of flows with `nrow(flows)==length(from)` and
 #' `ncol(flows)==length(to)`.
 #' @param pairwise If `TRUE`, aggregate flows only only paths connecting the
@@ -29,8 +25,10 @@
 #' when flow matrices represent spatial interaction models, in which case this
 #' parameter effectively reduces the radius from each `from` point over which
 #' flows are aggregated. To remove any such effect, set `tol = 0`.
-#' @param quiet If `FALSE`, display progress messages on screen.
-#' @inheritParams dodgr_flows_si
+#' @param norm_sums Standardise sums from all origin points, so sum of flows
+#' throughout entire network equals sum of densities from all origins (see
+#' Note).
+#' @inheritParams dodgr_dists
 #' @return Modified version of graph with additional `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
@@ -392,9 +390,6 @@ dodgr_flows_disperse <- function (graph,
 #' for each 'from' point, so 'nrow(k)==length(from)'. See Note.
 #' @param dens_from Vector of densities at origin ('from') points
 #' @param dens_to Vector of densities at destination ('to') points
-#' @param norm_sums Standardise sums from all origin points, so sum of flows
-#' throughout entire network equals sum of densities from all origins (see
-#' Note).
 #' @return Modified version of graph with additional `flow` column added.
 #'
 #' @note Spatial Interaction models are often fitted through trialling a range
