@@ -1,7 +1,16 @@
 #' Aggregate flows throughout a network.
 #'
 #' Aggregate flows throughout a network based on an input matrix of flows
-#' between all pairs of `from` and `to` points.
+#' between all pairs of `from` and `to` points. Flows are calculated by default
+#' on contracted graphs, via the `contract = TRUE` parameter. (These are
+#' derived by reducing the input graph down to junction vertices only, by
+#' joining all intermediate edges between each junction.) If changes to the
+#' input graph do not prompt changes to resultant flows, and the default
+#' `contract = TRUE` is used, it may be that calculations are using previously
+#' cached versions of the contracted graph. If so, please use either
+#' \link{clear_dodgr_cache} to remove the cached version, or
+#' \link{dodgr_cache_off} prior to initial graph construction to switch the
+#' cache off completely.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph (see Details)
@@ -240,7 +249,15 @@ dodgr_flows_aggregate <- function (graph,
 #' Aggregate flows dispersed from each point in a network.
 #'
 #' Disperse flows throughout a network based on a input vectors of origin points
-#' and associated densities
+#' and associated densities. Flows are calculated by default on contracted
+#' graphs, via the `contract = TRUE` parameter. (These are derived by reducing
+#' the input graph down to junction vertices only, by joining all intermediate
+#' edges between each junction.) If changes to the input graph do not prompt
+#' changes to resultant flows, and the default `contract = TRUE` is used, it
+#' may be that calculations are using previously cached versions of the
+#' contracted graph. If so, please use either \link{clear_dodgr_cache} to
+#' remove the cached version, or \link{dodgr_cache_off} prior to initial graph
+#' construction to switch the cache off completely.
 #'
 #' @inheritParams dodgr_flows_aggregate
 #' @param graph `data.frame` or equivalent object representing the network
@@ -380,7 +397,15 @@ dodgr_flows_disperse <- function (graph,
 #'
 #' Aggregate flows throughout a network using an exponential Spatial Interaction
 #' (SI) model between a specified set of origin and destination points, and
-#' associated vectors of densities.
+#' associated vectors of densities. Flows are calculated by default on
+#' contracted graphs, via the `contract = TRUE` parameter. (These are derived
+#' by reducing the input graph down to junction vertices only, by joining all
+#' intermediate edges between each junction.) If changes to the input graph do
+#' not prompt changes to resultant flows, and the default `contract = TRUE` is
+#' used, it may be that calculations are using previously cached versions of
+#' the contracted graph. If so, please use either \link{clear_dodgr_cache} to
+#' remove the cached version, or \link{dodgr_cache_off} prior to initial graph
+#' construction to switch the cache off completely.
 #'
 #' @inheritParams dodgr_flows_aggregate
 #' @param k Width of exponential spatial interaction function (exp (-d / k)),

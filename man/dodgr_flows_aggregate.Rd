@@ -76,7 +76,16 @@ Modified version of graph with additional \code{flow} column added.
 }
 \description{
 Aggregate flows throughout a network based on an input matrix of flows
-between all pairs of \code{from} and \code{to} points.
+between all pairs of \code{from} and \code{to} points. Flows are calculated by default
+on contracted graphs, via the \code{contract = TRUE} parameter. (These are
+derived by reducing the input graph down to junction vertices only, by
+joining all intermediate edges between each junction.) If changes to the
+input graph do not prompt changes to resultant flows, and the default
+\code{contract = TRUE} is used, it may be that calculations are using previously
+cached versions of the contracted graph. If so, please use either
+\link{clear_dodgr_cache} to remove the cached version, or
+\link{dodgr_cache_off} prior to initial graph construction to switch the
+cache off completely.
 }
 \note{
 Spatial Interaction models are often fitted through trialling a range
