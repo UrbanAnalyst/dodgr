@@ -77,6 +77,7 @@ Other contributors:
   \item Robin Lovelace [contributor]
   \item Andrew Smith [contributor]
   \item Malcolm Morgan [contributor]
+  \item Andrea Gilardi (\href{https://orcid.org/0000-0002-9424-7439}{ORCID}) [contributor]
   \item Shane Saunders (Original author of included code for priority heaps) [copyright holder]
   \item Stanislaw Adaszewski (author of include concaveman-cpp code) [copyright holder]
 }
