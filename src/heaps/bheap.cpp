@@ -2,7 +2,6 @@
  * ----------------------------------------------------------------------------
  *  Mark Padgham, adapted from code by Shane Saunders
  */
-#include <cstdlib>
 #include "bheap.h"
 
 /* This implementation stores the binary heap in a 1 dimensional array. */
