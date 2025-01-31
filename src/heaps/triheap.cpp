@@ -10,7 +10,6 @@
  */
 
 #include "triheap.h"
-#include <cstdlib>
 #include <cmath>
 #if SHOW_trih
 #include <cstdio>

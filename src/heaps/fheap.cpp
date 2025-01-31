@@ -2,7 +2,6 @@
  * ----------------------------------------------------------------------------
  * Mark Padgham, adapted from code by Shane Saunders
  */
-#include <cstdlib>
 #include <cmath>
 #if defined(FHEAP_DUMP) && FHEAP_DUMP > 0
 #include <cstdio>

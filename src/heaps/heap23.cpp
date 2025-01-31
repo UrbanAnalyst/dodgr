@@ -9,7 +9,6 @@
  * nodes.  In this implementation, the child pointer points to the highest
  * dimension child node.
  */
-#include <cstdlib>
 #include <cmath>
 #include <cstdio>
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
