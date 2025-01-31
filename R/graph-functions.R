@@ -461,7 +461,12 @@ insert_one_edge <- function (graph, index, x, y, gr_cols) {
         y <- (graph [[gr_cols$yfr]] [index] +
             graph [[gr_cols$yto]] [index]) / 2
     }
-    expand_index <- c (1:index, index, (index + 1):nrow (graph))
+    expand_index <- c (
+        seq_len (index),
+        index,
+        seq_len (nrow (graph)) [-seq_len (index)]
+    )
+
     graph <- graph [expand_index, ]
     graph [index, gr_cols$xto] <- x
     graph [index, gr_cols$yto] <- y
