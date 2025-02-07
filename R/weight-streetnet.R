@@ -392,11 +392,22 @@ weight_streetnet.sf <- function (x,
     return (graph)
 }
 
-# changed type_col and id_col to expected values of "highway" and "osm_id"
+# Internal function used to change type_col and id_col to expected values of
+# "highway" and "osm_id". Not expected to be directly used out of that context,
+# and only called twice in the main function above for exactly that effect.
 change_col_names <- function (x, colvar, expected) {
 
+    stopifnot (length (colvar) == 1L)
+    stopifnot (length (expected) == 1L)
+
+    if (expected %in% names (x)) {
+        stop ("Graph already has a column named '", expected, "'")
+    }
+
     if (colvar != expected) {
-        names (x) [which (names (x) == colvar)] <- expected
+        matches <- which (names (x) == colvar)
+        stopifnot (length (matches) == 1L)
+        names (x) [matches] <- expected
     }
     return (x)
 }
