@@ -400,11 +400,10 @@ change_col_names <- function (x, colvar, expected) {
     stopifnot (length (colvar) == 1L)
     stopifnot (length (expected) == 1L)
 
-    if (expected %in% names (x)) {
-        stop ("Graph already has a column named '", expected, "'")
-    }
-
     if (colvar != expected) {
+        if (expected %in% names (x)) {
+            stop ("Graph already has a column named '", expected, "'")
+        }
         matches <- which (names (x) == colvar)
         stopifnot (length (matches) == 1L)
         names (x) [matches] <- expected
