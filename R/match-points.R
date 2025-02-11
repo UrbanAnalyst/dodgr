@@ -222,7 +222,7 @@ signed_intersection_dists <- function (graph, xy, res) {
     which_side <- (gxy$xto - gxy$xfr) * (xy_intersect$y - gxy$yfr) -
         (gxy$yto - gxy$yfr) * (xy_intersect$x - gxy$xfr)
     which_side [which_side < 0.0] <- -1
-    which_side [which_side > 0.0] <- 1
+    which_side [which_side >= 0.0] <- 1
 
     return (cbind (d_signed = d * which_side, xy_intersect))
 }
