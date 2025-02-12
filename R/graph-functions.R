@@ -10,7 +10,7 @@
 dodgr_graph_cols <- function (graph) {
 
     nms <- names (graph)
-    component <- grep ("comp", nms) %>% null_to_na ()
+    component <- find_component_col (graph)
     if (methods::is (graph, "dodgr_streetnet") &&
         !methods::is (graph, "dodgr_streetnet_sc") &&
         ncol (graph) >= 11) {
@@ -30,7 +30,7 @@ dodgr_graph_cols <- function (graph) {
         yto <- which (nms %in% c ("yto", "to_lat"))
         if (length (yto) == 0) yto <- NA
     } else {
-        edge_id <- grep ("edge_id|edge_$", nms) %>% null_to_na ()
+        edge_id <- find_edge_id_col(graph)
 
         d_col <- find_d_col (graph)
         w_col <- find_w_col (graph)
