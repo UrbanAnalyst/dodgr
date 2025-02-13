@@ -1,5 +1,5 @@
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL", "false"), "true") ||
-    identical (Sys.getenv ("GITHUB_WORKFLOW", "nope"), "test-coverage"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
+    identical (Sys.getenv ("GITHUB_JOB"), "test-coverage"))
 
 testthat::skip_on_cran ()
 
