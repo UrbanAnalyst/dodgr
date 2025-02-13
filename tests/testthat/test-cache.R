@@ -1,11 +1,9 @@
-context ("cache")
-
 # The cache-off tests fail on windows for some reason, both on CRAN and on
 # GitHub runners.
 testthat::skip_on_os ("windows")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
-    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL", "false"), "true") ||
+    identical (Sys.getenv ("GITHUB_WORKFLOW", "nope"), "test-coverage"))
 
 testthat::skip_if (!test_all)
 
