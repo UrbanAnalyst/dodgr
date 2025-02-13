@@ -313,7 +313,6 @@ find_edge_id_col <- function (graph) {
 find_component_col <- function (graph) {
     # First try exact match
     comp_col <- grep ("^component$", names (graph), ignore.case = TRUE)
-    
     # If no exact match, try broader pattern
     if (length (comp_col) != 1) {
         comp_col <- grep ("comp", names (graph), ignore.case = TRUE)
