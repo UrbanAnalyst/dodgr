@@ -318,7 +318,6 @@ find_component_col <- function (graph) {
     # If no exact match, try broader pattern
     if (length (comp_col) != 1) {
         comp_col <- grep ("comp", names (graph), ignore.case = TRUE)
-        
         if (length (comp_col) > 1) {
             stop ("Unable to determine unique column for components")
         } else if (length (comp_col) == 0) {
