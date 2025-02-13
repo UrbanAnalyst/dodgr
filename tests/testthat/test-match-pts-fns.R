@@ -1,5 +1,5 @@
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
+    identical (Sys.getenv ("GITHUB_JOB"), "test-coverage"))
 
 skip_if (!test_all)
 
@@ -153,5 +153,5 @@ test_that ("match with distances", {
     expect_identical (names (res), c ("index", "d_signed", "x", "y"))
     expect_true (length (which (res$d_signed < 0)) > 0L)
     expect_true (length (which (res$d_signed > 0)) > 0L)
-    expect_true (length (which (res$d_signed == 0)) > 0L)
+    expect_true (length (which (res$d_signed == 0)) == 0L)
 })

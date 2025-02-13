@@ -1,10 +1,8 @@
-context ("save and load")
-
 testthat::skip_on_cran ()
 testthat::skip_on_os ("mac")
 
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
+    identical (Sys.getenv ("GITHUB_JOB"), "test-coverage"))
 
 if (!test_all) {
     RcppParallel::setThreadOptions (numThreads = 2)
