@@ -288,3 +288,38 @@ remap_verts_with_turn_penalty <- function (graph, pts, from = TRUE) {
 
     return (pts)
 }
+
+#' Get single graph column containing the edge ID
+#' @noRd
+find_edge_id_col <- function (graph) {
+    # First try exact matches
+    edge_id_col <- grep ("^edge\\_id$", names (graph), ignore.case = TRUE)
+    # If no exact match, try broader patterns
+    if (length (edge_id_col) != 1) {
+        # Look for columns ending in edge_id or edge
+        edge_id_col <- grep ("^edge\\_$|edge$", names (graph), ignore.case = TRUE)
+        if (length (edge_id_col) > 1) {
+            stop ("Unable to determine unique column for edge IDs")
+        } else if (length (edge_id_col) == 0) {
+            edge_id_col <- NA_integer_
+        }
+    }
+    return (edge_id_col)
+}
+
+#' Get single graph column containing component IDs
+#' @noRd
+find_component_col <- function (graph) {
+    # First try exact match
+    comp_col <- grep ("^component$", names (graph), ignore.case = TRUE)
+    # If no exact match, try broader pattern
+    if (length (comp_col) != 1) {
+        comp_col <- grep ("comp", names (graph), ignore.case = TRUE)
+        if (length (comp_col) > 1) {
+            stop ("Unable to determine unique column for components")
+        } else if (length (comp_col) == 0) {
+            comp_col <- NA_integer_
+        }
+    }
+    return (comp_col)
+}
