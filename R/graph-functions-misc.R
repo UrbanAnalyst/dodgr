@@ -299,7 +299,6 @@ find_edge_id_col <- function (graph) {
     if (length (edge_id_col) != 1) {
         # Look for columns ending in edge_id or edge
         edge_id_col <- grep ("^edge\\_$|edge$", names (graph), ignore.case = TRUE)
-        
         if (length (edge_id_col) > 1) {
             stop ("Unable to determine unique column for edge IDs")
         } else if (length (edge_id_col) == 0) {
