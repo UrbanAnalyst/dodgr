@@ -293,7 +293,7 @@ remap_verts_with_turn_penalty <- function (graph, pts, from = TRUE) {
 #' @noRd
 find_edge_id_col <- function (graph) {
     # First try exact matches
-    edge_id_col <- grep ("^edge_id$", names (graph), ignore.case = TRUE)
+    edge_id_col <- grep ("^edge\\_id$", names (graph), ignore.case = TRUE)
     # If no exact match, try broader patterns
     if (length (edge_id_col) != 1) {
         # Look for columns ending in edge_id or edge
