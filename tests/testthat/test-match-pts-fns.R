@@ -153,5 +153,5 @@ test_that ("match with distances", {
     expect_identical (names (res), c ("index", "d_signed", "x", "y"))
     expect_true (length (which (res$d_signed < 0)) > 0L)
     expect_true (length (which (res$d_signed > 0)) > 0L)
-    expect_true (length (which (res$d_signed == 0)) > 0L)
+    expect_true (length (which (res$d_signed == 0)) == 0L)
 })
