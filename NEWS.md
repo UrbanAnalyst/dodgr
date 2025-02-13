@@ -10,6 +10,7 @@
 - Update documentation for `weight_streetnet`; #245 thanks to @agila5
 - Update documentation for "from" and "to" parameters of dists and other fns; #254 thanks to @luukvdmeer
 - Fix bug in 'change_col_names'; #262 thanks to @leoniedu
+- Fix bug in 'match_pts_to_graph'; #266 thanks to @leoniedu
 
 ---
 

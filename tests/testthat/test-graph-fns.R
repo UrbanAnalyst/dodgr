@@ -265,6 +265,22 @@ test_that ("graph columns", {
         "graph appears to have non-numeric longitudes and latitudes"
     )
 
+    graph <- data.frame (weight_streetnet (hampi))
+    names (graph) [names (graph) == "edge_id"] <- "firstedge"
+    graph$secondedge <- graph$firstedge
+    expect_error (
+        d <- dodgr_dists (graph, from = from, to = to),
+        "Unable to determine unique column for edge IDs"
+    )
+
+    graph <- data.frame (weight_streetnet (hampi))
+    names (graph) [names (graph) == "component"] <- "comp1"
+    graph$comp2 <- graph$comp1
+    expect_error (
+        d <- dodgr_dists (graph, from = from, to = to),
+        "Unable to determine unique column for components"
+    )
+
     graph <- data.frame (weight_streetnet (hampi)) # rm dodgr_streetnet class
     class (graph) <- c (class (graph), "tbl")
     expect_silent (d <- dodgr_dists (graph, from = from, to = to))
