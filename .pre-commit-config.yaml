@@ -76,6 +76,10 @@ repos:
         name: Version has been incremeneted in DESCRIPTION
         entry: .hooks/description
         language: script
+    -   id: Commit via PR only
+        name: Commit made to non-main branch
+        entry: .hooks/no-commit-to-main
+        language: script
 
 ci:
     autoupdate_schedule: monthly
