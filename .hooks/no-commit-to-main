@@ -1,0 +1,6 @@
+#!/usr/bin/env Rscript
+
+# do not commit to main branch
+on_main <- identical (gert::git_branch (), "main")
+if (on_main)
+    stop ("main branch is protected on GitHub; commits must be made via PR from other branch")

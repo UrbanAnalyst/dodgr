@@ -11,7 +11,7 @@
   "codeRepository": "https://github.com/UrbanAnalyst/dodgr",
   "issueTracker": "https://github.com/UrbanAnalyst/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.4.1.052",
+  "version": "0.4.1.054",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
