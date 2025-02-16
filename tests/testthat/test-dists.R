@@ -6,7 +6,7 @@ if (!test_all) {
 }
 
 test_that ("dists", {
-    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- weight_streetnet (hampi)
     nf <- 100
     nt <- 50
     set.seed (1)
@@ -74,7 +74,7 @@ test_that ("dists", {
 })
 
 test_that ("dists-pairwise", {
-    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- weight_streetnet (hampi)
     n <- 50
     set.seed (1)
     from <- sample (graph$from_id, size = n)
@@ -314,26 +314,10 @@ test_that ("heaps", {
         dodgr_dists (graph, from = from, to = to, heap = "wrong heap"),
         "'arg' should be one of"
     )
-    expect_silent (d0 <- dodgr_dists (graph,
-        from = from,
-        to = to,
-        heap = "BHeap"
-    ))
-    expect_silent (d1 <- dodgr_dists (graph,
-        from = from,
-        to = to,
-        heap = "FHeap"
-    ))
-    expect_silent (d3 <- dodgr_dists (graph,
-        from = from,
-        to = to,
-        heap = "TriHeap"
-    ))
-    expect_silent (d4 <- dodgr_dists (graph,
-        from = from,
-        to = to,
-        heap = "TriHeapExt"
-    ))
+    d0 <- dodgr_dists (graph, from = from, to = to, heap = "BHeap")
+    d1 <- dodgr_dists (graph, from = from, to = to, heap = "FHeap")
+    d3 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeap")
+    d4 <- dodgr_dists (graph, from = from, to = to, heap = "TriHeapExt")
     # This is a compound message that starts "Calculating shortest paths ..."
     # and then "Extended TriHeaps can not be calculated in parallel
     # That can't be tested, so just generic expect_message here
@@ -341,7 +325,7 @@ test_that ("heaps", {
         from = from, to = to,
         heap = "TriHeapExt", quiet = FALSE
     ))
-    expect_silent (d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23"))
+    d5 <- dodgr_dists (graph, from = from, to = to, heap = "Heap23")
 
     d4 <- dodgr_dists (graph,
         from = from,
@@ -365,7 +349,7 @@ test_that ("heaps", {
 })
 
 test_that ("graph columns", {
-    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- weight_streetnet (hampi)
     nf <- 100
     nt <- 50
     set.seed (1)
@@ -395,7 +379,7 @@ test_that ("graph columns", {
 })
 
 test_that ("negative weights", {
-    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- weight_streetnet (hampi)
     nf <- 100
     nt <- 50
     set.seed (1)

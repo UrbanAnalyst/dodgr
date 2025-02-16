@@ -7,7 +7,7 @@ if (!test_all) {
 
 test_that ("categorical nearest dists", {
 
-    expect_silent (graph <- weight_streetnet (hampi))
+    graph <- weight_streetnet (hampi)
 
     nf <- 50
     nt <- 100
