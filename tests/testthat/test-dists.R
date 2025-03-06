@@ -305,11 +305,11 @@ test_that ("dists with no edge ids", {
 })
 
 test_that ("heaps", {
-    graph <- weight_streetnet (hampi)
-    nf <- 100
-    nt <- 50
-    from <- sample (graph$from_id, size = nf)
-    to <- sample (graph$to_id, size = nt)
+        graph <- weight_streetnet (hampi)
+        nf <- 100
+        nt <- 50
+        from <- sample (graph$from_id, size = nf)
+        to <- sample (graph$to_id, size = nt)
     expect_error (
         dodgr_dists (graph, from = from, to = to, heap = "wrong heap"),
         "'arg' should be one of"
@@ -362,7 +362,7 @@ test_that ("heaps", {
 
     # expect_identical (d0, d6)
     expect_identical (d0, d7)
-})
+    })
 
 test_that ("graph columns", {
     expect_silent (graph <- weight_streetnet (hampi))
@@ -406,4 +406,72 @@ test_that ("negative weights", {
     nneg <- 100
     graph$d_weighted [sample (nrow (graph), nneg)] <- -runif (nneg)
     expect_silent (d1 <- dodgr_distances (graph, from = from, to = to))
+})
+
+test_that ("weighted-distances", {
+    graph <- weight_streetnet (hampi)
+    print("Graph columns:")
+    print(names(graph))
+    print("Sample of d and d_weighted:")
+    print(head(data.frame(d = graph$d, d_weighted = graph$d_weighted)))
+    
+    nf <- 10
+    nt <- 5
+    set.seed (1)
+    from <- sample (graph$from_id, size = nf)
+    to <- sample (graph$to_id, size = nt)
+    
+    d_geom <- dodgr_dists(graph, from = from, to = to, return_weighted = FALSE)
+    d_weighted <- dodgr_dists(graph, from = from, to = to, return_weighted = TRUE)
+    
+    print("Sample of distances:")
+    print(data.frame(
+        geometric = d_geom[1,],
+        weighted = d_weighted[1,]
+    ))
+    
+    # Both matrices should have same dimensions
+    expect_equal(dim(d_geom), dim(d_weighted))
+    # Weighted distances should be >= geometric distances
+    expect_true(all(d_weighted >= d_geom, na.rm = TRUE))
+    # Default should match return_weighted = FALSE
+    d_default <- dodgr_dists(graph, from = from, to = to)
+    expect_identical(d_default, d_geom)
+    
+    # Compare with dodgr_paths weighted distances
+    paths <- dodgr_paths(graph, from = from[1], to = to, vertices = FALSE)
+    print("First path edge IDs:")
+    print(paths[[1]][[1]])
+    print("Corresponding d values:")
+    print(graph$d[paths[[1]][[1]]])
+    print("Corresponding d_weighted values:")
+    print(graph$d_weighted[paths[[1]][[1]]])
+    
+    path_distances <- vapply(paths[[1]], function(p) {
+        if (is.null(p)) return(NA_real_)
+        sum(graph$d_weighted[p])
+    }, numeric(1))
+    expect_equal(as.numeric(d_weighted[1,]), as.numeric(path_distances))
+    
+    # Compare with dodgr_paths weighted distances
+    paths <- dodgr_paths(graph, from = from[1], to = to)
+    path_distances <- numeric(length(to))
+    for (i in seq_along(to)) {
+        path <- paths[[1]][[paste0(from[1], "-", to[i])]]
+        if (is.null(path)) {
+            path_distances[i] <- NA_real_
+        } else {
+            # Convert vertex sequence to edge sequence
+            edges <- data.frame(
+                from_id = path[-length(path)],
+                to_id = path[-1]
+            )
+            # Match edges to graph and sum weighted distances
+            path_distances[i] <- sum(graph$d_weighted[match(
+                paste(edges$from_id, edges$to_id, sep="-"),
+                paste(graph$from_id, graph$to_id, sep="-")
+            )])
+        }
+    }
+    expect_equal(as.numeric(d_weighted[1,]), as.numeric(path_distances))
 })

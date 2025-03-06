@@ -68,6 +68,8 @@
 #'
 #' @param quiet If `FALSE`, display progress messages on screen.
 #'
+#' @param return_weighted If TRUE, returns the weighted distances used for path calculation instead of geometric distances
+#'
 #' @return square matrix of distances between nodes
 #'
 #' @details `graph` must minimally contain three columns of `from`,
@@ -148,7 +150,8 @@ dodgr_dists <- function (graph,
                          pairwise = FALSE,
                          heap = "BHeap",
                          parallel = TRUE,
-                         quiet = TRUE) {
+                         quiet = TRUE,
+                         return_weighted = FALSE) {
 
     graph <- tbl_to_df (graph)
 
@@ -198,7 +201,8 @@ dodgr_dists <- function (graph,
         heap,
         is_spatial,
         parallel,
-        pairwise
+        pairwise,
+        return_weighted
     )
 
 
@@ -222,7 +226,8 @@ dodgr_distances <- function (graph,
                              pairwise = FALSE,
                              heap = "BHeap",
                              parallel = TRUE,
-                             quiet = TRUE) {
+                             quiet = TRUE,
+                             return_weighted = FALSE) {
 
     dodgr_dists (graph,
         from,
@@ -231,7 +236,8 @@ dodgr_distances <- function (graph,
         pairwise = pairwise,
         heap = heap,
         parallel = parallel,
-        quiet = quiet
+        quiet = quiet,
+        return_weighted = return_weighted
     )
 }
 
@@ -517,7 +523,8 @@ calculate_distmat <- function (graph,
                                heap,
                                is_spatial,
                                parallel = TRUE,
-                               pairwise = FALSE) {
+                               pairwise = FALSE,
+                               return_weighted = FALSE) {
 
     flip <- FALSE
     if (length (from_index$index) > length (to_index$index)) {
@@ -536,7 +543,8 @@ calculate_distmat <- function (graph,
                 from_index$index,
                 to_index$index,
                 heap,
-                is_spatial
+                is_spatial,
+                return_weighted
             )
         } else {
             d <- rcpp_get_sp_dists_par (
@@ -545,7 +553,8 @@ calculate_distmat <- function (graph,
                 from_index$index,
                 to_index$index,
                 heap,
-                is_spatial
+                is_spatial,
+                return_weighted
             )
         }
     } else {
@@ -554,7 +563,8 @@ calculate_distmat <- function (graph,
             vert_map,
             from_index$index,
             to_index$index,
-            heap
+            heap,
+            return_weighted
         )
     }
 

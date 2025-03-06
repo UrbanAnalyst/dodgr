@@ -59,27 +59,31 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
-        const std::string& heap_type);
+        const std::string& heap_type,
+        const bool return_weighted);
 
 Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
         const std::string& heap_type,
-        const bool is_spatial);
+        const bool is_spatial,
+        const bool return_weighted);
 
 Rcpp::NumericVector rcpp_get_sp_dists_nearest (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi_in,
-        const std::string& heap_type);
+        const std::string& heap_type,
+        const bool return_weighted);
 
 Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type,
-        const bool is_spatial);
+        const bool is_spatial,
+        const bool return_weighted);
 
 Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
         const Rcpp::DataFrame vert_map_in,

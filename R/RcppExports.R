@@ -6,14 +6,14 @@
 #' sample is used to estimate timing, by calculating centrality from just a few
 #' vertices.
 #' @noRd
-rcpp_centrality <- function (graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample) {
-    .Call (`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample)
+rcpp_centrality <- function(graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample) {
+    .Call(`_dodgr_rcpp_centrality`, graph, vert_map_in, heap_type, dist_threshold, edge_centrality, sample)
 }
 
 #' rcpp_concaveman
-#' @noRd
-rcpp_concaveman <- function (xy, hull_in, concavity, length_threshold) {
-    .Call (`_dodgr_rcpp_concaveman`, xy, hull_in, concavity, length_threshold)
+#' @noRd 
+rcpp_concaveman <- function(xy, hull_in, concavity, length_threshold) {
+    .Call(`_dodgr_rcpp_concaveman`, xy, hull_in, concavity, length_threshold)
 }
 
 #' De-duplicate edges by replacing with minimal weighted distances and times
@@ -28,8 +28,8 @@ rcpp_concaveman <- function (xy, hull_in, concavity, length_threshold) {
 #' minimal value taken from all duplicated edges. If 't_col' is specified, the
 #' equivalent minimal times are in the lower half of the result.
 #' @noRd
-rcpp_deduplicate <- function (graph, fr_col, to_col, d_col, t_col) {
-    .Call (`_dodgr_rcpp_deduplicate`, graph, fr_col, to_col, d_col, t_col)
+rcpp_deduplicate <- function(graph, fr_col, to_col, d_col, t_col) {
+    .Call(`_dodgr_rcpp_deduplicate`, graph, fr_col, to_col, d_col, t_col)
 }
 
 #' Make unordered_set of all new edge names
@@ -64,8 +64,8 @@ NULL
 #' @return Rcpp::List object of `sf::LINESTRING` geoms
 #'
 #' @noRd
-rcpp_aggregate_to_sf <- function (graph_full, graph_contr, edge_map) {
-    .Call (`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
+rcpp_aggregate_to_sf <- function(graph_full, graph_contr, edge_map) {
+    .Call(`_dodgr_rcpp_aggregate_to_sf`, graph_full, graph_contr, edge_map)
 }
 
 #' rcpp_flows_aggregate_par
@@ -86,8 +86,8 @@ rcpp_aggregate_to_sf <- function (graph_full, graph_contr, edge_map) {
 #' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_par <- function (graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type) {
-    .Call (`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type)
+rcpp_flows_aggregate_par <- function(graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_aggregate_par`, graph, vert_map_in, fromi, toi_in, flows, norm_sums, tol, heap_type)
 }
 
 #' rcpp_flows_aggregate_pairwise
@@ -110,8 +110,8 @@ rcpp_flows_aggregate_par <- function (graph, vert_map_in, fromi, toi_in, flows, 
 #' characters long, that chance should be 1 / 62 ^ 10.
 #'
 #' @noRd
-rcpp_flows_aggregate_pairwise <- function (graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type) {
-    .Call (`_dodgr_rcpp_flows_aggregate_pairwise`, graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type)
+rcpp_flows_aggregate_pairwise <- function(graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_aggregate_pairwise`, graph, vert_map_in, fromi, toi, flows, norm_sums, tol, heap_type)
 }
 
 #' rcpp_flows_disperse_par
@@ -132,8 +132,8 @@ rcpp_flows_aggregate_pairwise <- function (graph, vert_map_in, fromi, toi, flows
 #' between each pair of from and to points.
 #'
 #' @noRd
-rcpp_flows_disperse_par <- function (graph, vert_map_in, fromi, k, dens, tol, heap_type) {
-    .Call (`_dodgr_rcpp_flows_disperse_par`, graph, vert_map_in, fromi, k, dens, tol, heap_type)
+rcpp_flows_disperse_par <- function(graph, vert_map_in, fromi, k, dens, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_disperse_par`, graph, vert_map_in, fromi, k, dens, tol, heap_type)
 }
 
 #' rcpp_flows_si
@@ -149,13 +149,13 @@ rcpp_flows_disperse_par <- function (graph, vert_map_in, fromi, k, dens, tol, he
 #' (to-vertices) are not considered.
 #'
 #' @noRd
-rcpp_flows_si <- function (graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type) {
-    .Call (`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type)
+rcpp_flows_si <- function(graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type) {
+    .Call(`_dodgr_rcpp_flows_si`, graph, vert_map_in, fromi, toi_in, kvec, dens_from, dens_to, norm_sums, tol, heap_type)
 }
 
 #' @noRd
-rcpp_fundamental_cycles <- function (graph, verts) {
-    .Call (`_dodgr_rcpp_fundamental_cycles`, graph, verts)
+rcpp_fundamental_cycles <- function(graph, verts) {
+    .Call(`_dodgr_rcpp_fundamental_cycles`, graph, verts)
 }
 
 #' get_to_from
@@ -170,7 +170,7 @@ NULL
 #' same_hwy_type
 #'
 #' Determine whether two edges represent the same weight category (type of
-#' highway for street networks, for example). Categories are not retained in
+#' highway for street networks, for example). Categories are not retained in 
 #' converted graphs, but can be discerned by comparing ratios of weighted to
 #' non-weighted distances.
 #' @noRd
@@ -188,8 +188,8 @@ NULL
 #' original and contracted graph.
 #'
 #' @noRd
-rcpp_contract_graph <- function (graph, vertlist_in) {
-    .Call (`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
+rcpp_contract_graph <- function(graph, vertlist_in) {
+    .Call(`_dodgr_rcpp_contract_graph`, graph, vertlist_in)
 }
 
 #' rcpp_merge_cols
@@ -203,8 +203,8 @@ rcpp_contract_graph <- function (graph, vertlist_in) {
 #' those edges to be retained in the directed graph.
 #'
 #' @noRd
-rcpp_merge_cols <- function (graph) {
-    .Call (`_dodgr_rcpp_merge_cols`, graph)
+rcpp_merge_cols <- function(graph) {
+    .Call(`_dodgr_rcpp_merge_cols`, graph)
 }
 
 #' sample_one_edge_no_comps
@@ -213,7 +213,7 @@ rcpp_merge_cols <- function (graph) {
 #' in \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
-#' @return std::vector of 2 elements: [0] with value of largest connected
+#' @return std::vector of 2 elements: [0] with value of largest connected 
 #' component; [1] with random index to one edge that is part of that component.
 #' @noRd
 NULL
@@ -240,8 +240,8 @@ NULL
 #' @return Smaller sub-set of \code{graph}
 #'
 #' @noRd
-rcpp_sample_graph <- function (graph, nverts_to_sample) {
-    .Call (`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
+rcpp_sample_graph <- function(graph, nverts_to_sample) {
+    .Call(`_dodgr_rcpp_sample_graph`, graph, nverts_to_sample)
 }
 
 #' graph_has_components
@@ -253,7 +253,7 @@ NULL
 
 #' @name graph_from_df
 #'
-#' Convert a standard graph data.frame into an object of class graph. Graphs
+#' Convert a standard graph data.frame into an object of class graph. Graphs 
 #' are standardised with the function \code{dodgr_convert_graph()$graph}, and
 #' contain only the four columns [from, to, d, w]
 #'
@@ -263,7 +263,7 @@ NULL
 #' identify_graph_components
 #'
 #' Identify initial graph components for each **vertex**
-#' Identification for edges is subsequently perrformed with
+#' Identification for edges is subsequently perrformed with 
 #' \code{rcpp_get_component_vector}.
 #'
 #' @param v unordered_map <vertex_id_t, vertex_t>
@@ -281,8 +281,8 @@ NULL
 #' @return Two vectors: one of edge IDs and one of corresponding component
 #' numbers
 #' @noRd
-rcpp_get_component_vector <- function (graph) {
-    .Call (`_dodgr_rcpp_get_component_vector`, graph)
+rcpp_get_component_vector <- function(graph) {
+    .Call(`_dodgr_rcpp_get_component_vector`, graph)
 }
 
 #' rcpp_unique_rownames
@@ -291,8 +291,8 @@ rcpp_get_component_vector <- function (graph) {
 #' rounded to <precision>. Used when vertices have no ID values.
 #'
 #' @noRd
-rcpp_unique_rownames <- function (xyfrom, xyto, precision = 10L) {
-    .Call (`_dodgr_rcpp_unique_rownames`, xyfrom, xyto, precision)
+rcpp_unique_rownames <- function(xyfrom, xyto, precision = 10L) {
+    .Call(`_dodgr_rcpp_unique_rownames`, xyfrom, xyto, precision)
 }
 
 #' Determine which side of intersecting line a point lies on.
@@ -325,8 +325,8 @@ NULL
 #' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
 #'
 #' @noRd
-rcpp_points_index_par <- function (xy, pts) {
-    .Call (`_dodgr_rcpp_points_index_par`, xy, pts)
+rcpp_points_index_par <- function(xy, pts) {
+    .Call(`_dodgr_rcpp_points_index_par`, xy, pts)
 }
 
 #' rcpp_points_to_edges_par
@@ -339,43 +339,43 @@ rcpp_points_index_par <- function (xy, pts) {
 #' @return 0-indexed Rcpp::NumericVector index into graph of nearest points
 #'
 #' @noRd
-rcpp_points_to_edges_par <- function (graph, pts) {
-    .Call (`_dodgr_rcpp_points_to_edges_par`, graph, pts)
+rcpp_points_to_edges_par <- function(graph, pts) {
+    .Call(`_dodgr_rcpp_points_to_edges_par`, graph, pts)
 }
 
 #' rcpp_get_sp_dists_par
 #'
 #' @noRd
-rcpp_get_sp_dists_par <- function (graph, vert_map_in, fromi, toi_in, heap_type, is_spatial) {
-    .Call (`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial)
+rcpp_get_sp_dists_par <- function(graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, return_weighted) {
+    .Call(`_dodgr_rcpp_get_sp_dists_par`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, return_weighted)
 }
 
 #' rcpp_get_sp_dists_nearest
 #'
 #' @noRd
-rcpp_get_sp_dists_nearest <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_sp_dists_nearest`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_sp_dists_nearest <- function(graph, vert_map_in, fromi, toi_in, heap_type, return_weighted) {
+    .Call(`_dodgr_rcpp_get_sp_dists_nearest`, graph, vert_map_in, fromi, toi_in, heap_type, return_weighted)
 }
 
 #' rcpp_get_sp_dists_paired_par
 #'
 #' @noRd
-rcpp_get_sp_dists_paired_par <- function (graph, vert_map_in, fromi, toi, heap_type, is_spatial) {
-    .Call (`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial)
+rcpp_get_sp_dists_paired_par <- function(graph, vert_map_in, fromi, toi, heap_type, is_spatial, return_weighted) {
+    .Call(`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial, return_weighted)
 }
 
 #' rcpp_get_iso
 #'
 #' @noRd
-rcpp_get_iso <- function (graph, vert_map_in, fromi, dlim, heap_type) {
-    .Call (`_dodgr_rcpp_get_iso`, graph, vert_map_in, fromi, dlim, heap_type)
+rcpp_get_iso <- function(graph, vert_map_in, fromi, dlim, heap_type) {
+    .Call(`_dodgr_rcpp_get_iso`, graph, vert_map_in, fromi, dlim, heap_type)
 }
 
 #' rcpp_get_sp_dists
 #'
 #' @noRd
-rcpp_get_sp_dists <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_sp_dists <- function(graph, vert_map_in, fromi, toi_in, heap_type, return_weighted) {
+    .Call(`_dodgr_rcpp_get_sp_dists`, graph, vert_map_in, fromi, toi_in, heap_type, return_weighted)
 }
 
 #' rcpp_get_paths
@@ -396,12 +396,12 @@ rcpp_get_sp_dists <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
 #' @note Returns 1-indexed values indexing directly into the R input
 #'
 #' @noRd
-rcpp_get_paths <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_paths <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
-rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_paths_pairwise <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
 #' rcpp_get_sp_dists_categorical
@@ -413,21 +413,21 @@ rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_typ
 #' Implemented in parallal form only; no single-threaded version, and
 #' only for AStar (so graphs must be spatial).
 #' @noRd
-rcpp_get_sp_dists_categorical <- function (graph, vert_map_in, fromi, toi_in, heap_type, proportions_only) {
-    .Call (`_dodgr_rcpp_get_sp_dists_categorical`, graph, vert_map_in, fromi, toi_in, heap_type, proportions_only)
+rcpp_get_sp_dists_categorical <- function(graph, vert_map_in, fromi, toi_in, heap_type, proportions_only) {
+    .Call(`_dodgr_rcpp_get_sp_dists_categorical`, graph, vert_map_in, fromi, toi_in, heap_type, proportions_only)
 }
 
 #' rcpp_get_sp_dists_categ_paired
 #'
 #' Pairwise version of 'get_sp_dists_categorical'. The `graph` must have an
-#' `edge_type` column of non-negative integers, with 0 denoting edges which are
+#'`edge_type` column of non-negative integers, with 0 denoting edges which are
 #' not aggregated, and all other values defining aggregation categories.
 #'
 #' Implemented in parallal form only; no single-threaded version, and
 #' only for AStar (so graphs must be spatial).
 #' @noRd
-rcpp_get_sp_dists_categ_paired <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_sp_dists_categ_paired`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_sp_dists_categ_paired <- function(graph, vert_map_in, fromi, toi_in, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_categ_paired`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
 #' rcpp_get_sp_dists_cat_threshold
@@ -439,8 +439,8 @@ rcpp_get_sp_dists_categ_paired <- function (graph, vert_map_in, fromi, toi_in, h
 #' Implemented in parallal form only; no single-threaded version, and
 #' only for AStar (so graphs must be spatial).
 #' @noRd
-rcpp_get_sp_dists_cat_threshold <- function (graph, vert_map_in, fromi, dlimit, heap_type) {
-    .Call (`_dodgr_rcpp_get_sp_dists_cat_threshold`, graph, vert_map_in, fromi, dlimit, heap_type)
+rcpp_get_sp_dists_cat_threshold <- function(graph, vert_map_in, fromi, dlimit, heap_type) {
+    .Call(`_dodgr_rcpp_get_sp_dists_cat_threshold`, graph, vert_map_in, fromi, dlimit, heap_type)
 }
 
 #' rcpp_gen_hash
@@ -448,8 +448,8 @@ rcpp_get_sp_dists_cat_threshold <- function (graph, vert_map_in, fromi, dlimit, 
 #' Efficient generation of long sequences of hash keys
 #'
 #' @noRd
-rcpp_gen_hash <- function (n, hash_len) {
-    .Call (`_dodgr_rcpp_gen_hash`, n, hash_len)
+rcpp_gen_hash <- function(n, hash_len) {
+    .Call(`_dodgr_rcpp_gen_hash`, n, hash_len)
 }
 
 #' rcpp_sf_as_network
@@ -475,13 +475,14 @@ rcpp_gen_hash <- function (n, hash_len) {
 #' 4. OSM way ID
 #'
 #' @noRd
-rcpp_sf_as_network <- function (sf_lines, pr) {
-    .Call (`_dodgr_rcpp_sf_as_network`, sf_lines, pr)
+rcpp_sf_as_network <- function(sf_lines, pr) {
+    .Call(`_dodgr_rcpp_sf_as_network`, sf_lines, pr)
 }
 
 #' rcpp_route_times
 #'
 #' @noRd
-rcpp_route_times <- function (graph, left_side, turn_penalty) {
-    .Call (`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
+rcpp_route_times <- function(graph, left_side, turn_penalty) {
+    .Call(`_dodgr_rcpp_route_times`, graph, left_side, turn_penalty)
 }
+
