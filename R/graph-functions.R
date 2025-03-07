@@ -503,10 +503,11 @@ insert_one_edge <- function (graph, index, x, y, gr_cols) {
     graph [index + 1, gr_cols$d_weighted] <- d2 * wt
 
     if (!is.na (gr_cols$time)) {
-        graph [index, gr_cols$time] <- graph [index, gr_cols$d] *
+        index2 <- c (index, index+1)
+        graph [index2, gr_cols$time] <- graph [index2, gr_cols$d] *
             time_scale
-        graph [index, gr_cols$time_weighted] <-
-            graph [index, gr_cols$time] * time_wt
+        graph [index2, gr_cols$time_weighted] <-
+            graph [index2, gr_cols$time] * time_wt
     }
 
     graph$edge_id [index] <- paste0 (graph$edge_id [index], "_a")
