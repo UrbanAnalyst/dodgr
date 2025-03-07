@@ -186,9 +186,9 @@ match_pts_to_graph <- function (graph, xy,
 #' @inherit match_pts_to_graph
 #' @family match
 #' @export
-match_points_to_graph <- function (graph, xy, connected = FALSE) {
+match_points_to_graph <- function (graph, xy, connected = FALSE, distances = FALSE) {
 
-    match_pts_to_graph (graph, xy, connected = connected)
+    match_pts_to_graph (graph, xy, connected = connected, distances = distances)
 }
 
 #' Get geodesic distances to intersection points for match_pts_to_graph.
