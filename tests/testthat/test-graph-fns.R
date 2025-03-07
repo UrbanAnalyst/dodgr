@@ -46,6 +46,10 @@ test_that ("insert_vertex", {
     expect_silent (graph2 <- dodgr_insert_vertex (graph, v1 = v1, v2 = v2))
     # graph should have two more rows added:
     expect_equal (nrow (graph2) - 2, nrow (graph))
+    # graphs should have the same total distance
+    expect_equal (sum (graph$d), sum (graph2$d))
+    # graphs should have the same total time
+    expect_equal (sum (graph$time), sum (graph2$time))
 })
 
 test_that ("components", {
