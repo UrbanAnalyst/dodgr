@@ -4,7 +4,7 @@
 \alias{match_points_to_graph}
 \title{Alias for \link{match_pts_to_graph}}
 \usage{
-match_points_to_graph(graph, xy, connected = FALSE)
+match_points_to_graph(graph, xy, connected = FALSE, distances = FALSE)
 }
 \arguments{
 \item{graph}{A \code{dodgr} graph with spatial coordinates, such as a
@@ -20,6 +20,11 @@ component of graph? If \code{FALSE} and these points are to be used for a
 not part of the same connected component. On the other hand, forcing them to
 be part of the same connected component may decrease the spatial accuracy of
 matching.}
+
+\item{distances}{If \code{TRUE}, return a 'data.frame' object with 'index' column
+as described in return value; and additional columns with perpendicular
+distance to nearest edge in graph, and coordinates of points of intersection.
+See description of return value for details.}
 }
 \value{
 For \code{distances = FALSE} (default), a vector index matching the \code{xy}
