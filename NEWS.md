@@ -1,5 +1,9 @@
 # v 0.4.2.00x (dev version)
 
+## Minor changes
+
+- Fix updating of edge times in `insert_one_edge`; #278 thanks to @leoniedu
+
 ---
 
 # v 0.4.2
