@@ -255,13 +255,13 @@ values:</p>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.222   0.000   0.223</span></span></code></pre>
+<span><span class="co">##   0.217   0.001   0.218</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span> <span class="op">(</span> <span class="co"># Subsequent call uses cached values:</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.036   0.000   0.036</span></span></code></pre>
+<span><span class="co">##   0.035   0.001   0.035</span></span></code></pre>
 <p>The <code>concavity</code> parameter has a default value of 0 for
 strictly convex polygons. Values closer to 1 generate more concave
 polygons. The following code demonstrates the effect of increasing
