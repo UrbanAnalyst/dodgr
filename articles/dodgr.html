@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2025-03-10</h4>
+            <h4 data-toc-skip class="date">2025-03-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/dodgr.Rmd" class="external-link"><code>vignettes/dodgr.Rmd</code></a></small>
       <div class="d-none name"><code>dodgr.Rmd</code></div>
@@ -642,17 +642,17 @@ vertices).</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 11 × 6</span></span></span>
 <span><span class="co">##    expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.47ms   1.52ms      656.    45.3KB     15.8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   1.49ms   1.55ms      640.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                  1.5ms   1.55ms      641.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.35ms    1.4ms      708.    48.4KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  1.51ms   1.56ms      633.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted         1.3ms   1.34ms      738.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted         1.3ms   1.35ms      736.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted       1.3ms   1.36ms      726.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.05ms   1.09ms      909.    20.1KB     21.5</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       1.31ms   1.37ms      721.    20.1KB     17.2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                673.31µs 718.77µs     <span style="text-decoration: underline;">1</span>379.   485.2KB     21.6</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.49ms   1.54ms      646.    45.3KB     15.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                    1.5ms   1.56ms      638.    45.3KB     14.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 1.52ms   1.57ms      633.    45.3KB     14.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.35ms    1.4ms      711.    48.4KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                   1.5ms   1.56ms      636.    45.3KB     14.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        1.29ms   1.34ms      742.    20.1KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.31ms   1.35ms      734.    20.1KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted      1.31ms   1.36ms      733.    20.1KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.06ms    1.1ms      900.    20.1KB     21.6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted        1.3ms   1.36ms      733.    20.1KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                693.42µs 734.77µs     <span style="text-decoration: underline;">1</span>348.   485.2KB     19.3</span></span></code></pre>
 <p>The key column of that <code>data.frame</code> is
 <code>relative</code>, which quantifies the relative performance of each
 test in relation to the best which is given a score of 1.
@@ -731,8 +731,8 @@ in routing efficiency can then be seen with the following code</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">##   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        12.71ms  13.17ms      76.3    1.24MB     2.39</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   2.42ms   2.61ms     370.   280.59KB     2.02</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        12.73ms  13.25ms      75.7    1.24MB     2.16</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   2.45ms   2.56ms     383.   280.59KB     2.03</span></span></code></pre>
 <p>And contracting the graph has a similar effect of speeding up
 pairwise routing between these 100 points. All routing algorithms scale
 non-linearly with size, and relative improvements in efficiency will be
