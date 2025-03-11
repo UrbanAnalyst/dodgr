@@ -9,6 +9,7 @@ Authors@R: c(
     person("Andrew", "Smith", role = "ctb"),
     person("Malcolm", "Morgan", role = "ctb"),
     person("Andrea", "Gilardi", role="ctb", comment = c(ORCID = "0000-0002-9424-7439")),
+    person("Eduardo", "Leoni", role="ctb", comment = c(ORCID = "0000-0003-0955-5232")),
     person("Shane", "Saunders", role = "cph",
            comment = "Original author of included code for priority heaps"),
     person("Stanislaw", "Adaszewski", role = "cph",
