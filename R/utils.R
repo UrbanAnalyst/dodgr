@@ -46,12 +46,16 @@ get_geodist_measure <- function (graph) {
         dmax <- max_spatial_dist (graph) / 1000
         measure <- ifelse (dmax < 100, "cheap", "haversine")
 
-        if (!nzchar (measure_list)) {
-            measure_list <- NULL
+        # This is also called at the start of SC construction, before graph has
+        # any hash.
+        if (!is.null (hash)) {
+            if (!nzchar (measure_list)) {
+                measure_list <- NULL
+            }
+            measure_list <- c (measure_list, measure)
+            names (measure_list) [length (measure_list)] <- eval (hash)
+            options ("dodgr_dist_measure" = measure_list)
         }
-        measure_list <- c (measure_list, measure)
-        names (measure_list) [length (measure_list)] <- eval (hash)
-        options ("dodgr_dist_measure" = measure_list)
     }
 
     return (measure)
