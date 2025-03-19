@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.021</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2025-03-11</h4>
+            <h4 data-toc-skip class="date">2025-03-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/flows.Rmd" class="external-link"><code>vignettes/flows.Rmd</code></a></small>
       <div class="d-none name"><code>flows.Rmd</code></div>
@@ -104,12 +104,12 @@ submitted <code>graph</code>:</p>
 <span><span class="co">## 5        1       5 2398958028 76.47621 15.34174 1427116077 76.47628 15.34179</span></span>
 <span><span class="co">## 6        1       6 1427116077 76.47628 15.34179 2398958028 76.47621 15.34174</span></span>
 <span><span class="co">##            d d_weighted highway   way_id component      time time_weighted flow</span></span>
-<span><span class="co">## 1 130.000241 130.000241    path 28565950         1 93.600174     93.600174    0</span></span>
-<span><span class="co">## 2 130.000241 130.000241    path 28565950         1 93.600174     93.600174    0</span></span>
-<span><span class="co">## 3   8.890622   8.890622    path 28565950         1  6.401248      6.401248    0</span></span>
-<span><span class="co">## 4   8.890622   8.890622    path 28565950         1  6.401248      6.401248    0</span></span>
-<span><span class="co">## 5   9.307736   9.307736    path 28565950         1  6.701570      6.701570    0</span></span>
-<span><span class="co">## 6   9.307736   9.307736    path 28565950         1  6.701570      6.701570    0</span></span></code></pre>
+<span><span class="co">## 1 129.761207 129.761207    path 28565950         1 93.428069     93.428069    0</span></span>
+<span><span class="co">## 2 129.761207 129.761207    path 28565950         1 93.428069     93.428069    0</span></span>
+<span><span class="co">## 3   8.874244   8.874244    path 28565950         1  6.389455      6.389455    0</span></span>
+<span><span class="co">## 4   8.874244   8.874244    path 28565950         1  6.389455      6.389455    0</span></span>
+<span><span class="co">## 5   9.311222   9.311222    path 28565950         1  6.704080      6.704080    0</span></span>
+<span><span class="co">## 6   9.311222   9.311222    path 28565950         1  6.704080      6.704080    0</span></span></code></pre>
 <p>Most flows are zero because they have only been calculated between
 very few points in the graph.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -132,7 +132,7 @@ code, using the same graph as the previous example.</p>
 <span><span class="va">graph_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_flows_disperse.html">dodgr_flows_disperse</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, dens <span class="op">=</span> <span class="va">dens</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span> <span class="op">(</span><span class="va">graph_f</span><span class="op">$</span><span class="va">flow</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. </span></span>
-<span><span class="co">## 0.000e+00 0.000e+00 7.548e-05 8.656e-03 1.013e-02 1.581e-01</span></span></code></pre>
+<span><span class="co">## 0.000e+00 0.000e+00 7.549e-05 8.658e-03 1.010e-02 1.587e-01</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="merging-directed-flows">3 Merging directed flows<a class="anchor" aria-label="anchor" href="#merging-directed-flows"></a>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.021</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2025-03-11</h4>
+            <h4 data-toc-skip class="date">2025-03-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/dodgr.Rmd" class="external-link"><code>vignettes/dodgr.Rmd</code></a></small>
       <div class="d-none name"><code>dodgr.Rmd</code></div>
@@ -257,12 +257,12 @@ by</p>
 <span><span class="co">## 5        1       5 2398958028 76.47621 15.34174 1427116077 76.47628 15.34179</span></span>
 <span><span class="co">## 6        1       6 1427116077 76.47628 15.34179 2398958028 76.47621 15.34174</span></span>
 <span><span class="co">##            d d_weighted highway   way_id component      time time_weighted</span></span>
-<span><span class="co">## 1 130.000241 130.000241    path 28565950         1 93.600174     93.600174</span></span>
-<span><span class="co">## 2 130.000241 130.000241    path 28565950         1 93.600174     93.600174</span></span>
-<span><span class="co">## 3   8.890622   8.890622    path 28565950         1  6.401248      6.401248</span></span>
-<span><span class="co">## 4   8.890622   8.890622    path 28565950         1  6.401248      6.401248</span></span>
-<span><span class="co">## 5   9.307736   9.307736    path 28565950         1  6.701570      6.701570</span></span>
-<span><span class="co">## 6   9.307736   9.307736    path 28565950         1  6.701570      6.701570</span></span></code></pre>
+<span><span class="co">## 1 129.761207 129.761207    path 28565950         1 93.428069     93.428069</span></span>
+<span><span class="co">## 2 129.761207 129.761207    path 28565950         1 93.428069     93.428069</span></span>
+<span><span class="co">## 3   8.874244   8.874244    path 28565950         1  6.389455      6.389455</span></span>
+<span><span class="co">## 4   8.874244   8.874244    path 28565950         1  6.389455      6.389455</span></span>
+<span><span class="co">## 5   9.311222   9.311222    path 28565950         1  6.704080      6.704080</span></span>
+<span><span class="co">## 6   9.311222   9.311222    path 28565950         1  6.704080      6.704080</span></span></code></pre>
 <p>Note that the actual graph contains around 30 times as many edges as
 there are streets, indicating that each street is composed on average of
 around 30 individual segments. The individual points or vertices from
@@ -323,12 +323,12 @@ a minimal (non-spatial) structure of four columns, and then
 <span><span class="va">graph_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_components.html">dodgr_components</a></span> <span class="op">(</span><span class="va">graph_min</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">graph_min</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   edge_id    from_id      to_id          d component</span></span>
-<span><span class="co">## 1       1  339318500  339318502 130.000241         1</span></span>
-<span><span class="co">## 2       2  339318502  339318500 130.000241         1</span></span>
-<span><span class="co">## 3       3  339318502 2398958028   8.890622         1</span></span>
-<span><span class="co">## 4       4 2398958028  339318502   8.890622         1</span></span>
-<span><span class="co">## 5       5 2398958028 1427116077   9.307736         1</span></span>
-<span><span class="co">## 6       6 1427116077 2398958028   9.307736         1</span></span></code></pre>
+<span><span class="co">## 1       1  339318500  339318502 129.761207         1</span></span>
+<span><span class="co">## 2       2  339318502  339318500 129.761207         1</span></span>
+<span><span class="co">## 3       3  339318502 2398958028   8.874244         1</span></span>
+<span><span class="co">## 4       4 2398958028  339318502   8.874244         1</span></span>
+<span><span class="co">## 5       5 2398958028 1427116077   9.311222         1</span></span>
+<span><span class="co">## 6       6 1427116077 2398958028   9.311222         1</span></span></code></pre>
 <p>The <code>component</code> column column can be used to select or
 filter any component in a graph. It is particularly useful to ensure
 routing calculations consider only connected vertices through simply
@@ -516,7 +516,7 @@ graph:</p>
 <code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_dists.html">dodgr_dists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">xy</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span> <span class="op">(</span><span class="va">d</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1]  100 3337</span></span></code></pre>
-<pre><code><span><span class="co">## [1]     0.00 14926.04</span></span></code></pre>
+<pre><code><span><span class="co">## [1]     0.00 14915.93</span></span></code></pre>
 <p>If the <code>to</code> argument is also specified, the matrix
 returned will have rows matching <code>from</code> and columns matching
 <code>to</code></p>
@@ -584,12 +584,12 @@ considered above, these vertex names were contained in the columns,
 <div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">graph</span> <span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span> <span class="op">(</span><span class="st">"from_id"</span>, <span class="st">"to_id"</span>, <span class="st">"d"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      from_id      to_id          d</span></span>
-<span><span class="co">## 1  339318500  339318502 130.000241</span></span>
-<span><span class="co">## 2  339318502  339318500 130.000241</span></span>
-<span><span class="co">## 3  339318502 2398958028   8.890622</span></span>
-<span><span class="co">## 4 2398958028  339318502   8.890622</span></span>
-<span><span class="co">## 5 2398958028 1427116077   9.307736</span></span>
-<span><span class="co">## 6 1427116077 2398958028   9.307736</span></span></code></pre>
+<span><span class="co">## 1  339318500  339318502 129.761207</span></span>
+<span><span class="co">## 2  339318502  339318500 129.761207</span></span>
+<span><span class="co">## 3  339318502 2398958028   8.874244</span></span>
+<span><span class="co">## 4 2398958028  339318502   8.874244</span></span>
+<span><span class="co">## 5 2398958028 1427116077   9.311222</span></span>
+<span><span class="co">## 6 1427116077 2398958028   9.311222</span></span></code></pre>
 <p>in which case the <code>from</code> values submitted to
 <code><a href="../reference/dodgr_dists.html">dodgr_dists()</a></code> (and <code>to</code>, if given) must directly
 name the vertices in the <code>from_id</code> and <code>to_id</code>
@@ -642,17 +642,17 @@ vertices).</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 11 × 6</span></span></span>
 <span><span class="co">##    expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.49ms   1.54ms      646.    45.3KB     15.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                    1.5ms   1.56ms      638.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 1.52ms   1.57ms      633.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.35ms    1.4ms      711.    48.4KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                   1.5ms   1.56ms      636.    45.3KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        1.29ms   1.34ms      742.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.31ms   1.35ms      734.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted      1.31ms   1.36ms      733.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.06ms    1.1ms      900.    20.1KB     21.6</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted        1.3ms   1.36ms      733.    20.1KB     17.1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                693.42µs 734.77µs     <span style="text-decoration: underline;">1</span>348.   485.2KB     19.3</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.51ms   1.56ms      632.    45.3KB     15.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   1.53ms   1.59ms      624.    45.3KB     15.0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 1.52ms   1.59ms      625.    45.3KB     14.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.38ms   1.43ms      696.    48.4KB     17.2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  1.55ms   1.61ms      619.    45.3KB     15.0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        1.33ms   1.39ms      709.    20.1KB     17.1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.34ms    1.4ms      710.    20.1KB     17.2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted      1.35ms   1.41ms      701.    20.1KB     17.3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted    1.1ms   1.14ms      873.    20.1KB     21.6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       1.35ms   1.41ms      705.    20.1KB     17.2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                688.78µs 736.13µs     <span style="text-decoration: underline;">1</span>346.   485.2KB     21.6</span></span></code></pre>
 <p>The key column of that <code>data.frame</code> is
 <code>relative</code>, which quantifies the relative performance of each
 test in relation to the best which is given a score of 1.
@@ -731,8 +731,8 @@ in routing efficiency can then be seen with the following code</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">##   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        12.73ms  13.25ms      75.7    1.24MB     2.16</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   2.45ms   2.56ms     383.   280.59KB     2.03</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        12.85ms  13.04ms      75.8    1.24MB     2.45</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   2.48ms   2.61ms     368.   280.59KB     2.02</span></span></code></pre>
 <p>And contracting the graph has a similar effect of speeding up
 pairwise routing between these 100 points. All routing algorithms scale
 non-linearly with size, and relative improvements in efficiency will be
@@ -790,12 +790,12 @@ as sequences of vertex names. Consider the following example,</p>
 <span><span class="co">## 5        1       5 2398958028 76.47621 15.34174 1427116077 76.47628 15.34179</span></span>
 <span><span class="co">## 6        1       6 1427116077 76.47628 15.34179 2398958028 76.47621 15.34174</span></span>
 <span><span class="co">##            d d_weighted highway   way_id component      time time_weighted</span></span>
-<span><span class="co">## 1 130.000241 130.000241    path 28565950         1 93.600174     93.600174</span></span>
-<span><span class="co">## 2 130.000241 130.000241    path 28565950         1 93.600174     93.600174</span></span>
-<span><span class="co">## 3   8.890622   8.890622    path 28565950         1  6.401248      6.401248</span></span>
-<span><span class="co">## 4   8.890622   8.890622    path 28565950         1  6.401248      6.401248</span></span>
-<span><span class="co">## 5   9.307736   9.307736    path 28565950         1  6.701570      6.701570</span></span>
-<span><span class="co">## 6   9.307736   9.307736    path 28565950         1  6.701570      6.701570</span></span></code></pre>
+<span><span class="co">## 1 129.761207 129.761207    path 28565950         1 93.428069     93.428069</span></span>
+<span><span class="co">## 2 129.761207 129.761207    path 28565950         1 93.428069     93.428069</span></span>
+<span><span class="co">## 3   8.874244   8.874244    path 28565950         1  6.389455      6.389455</span></span>
+<span><span class="co">## 4   8.874244   8.874244    path 28565950         1  6.389455      6.389455</span></span>
+<span><span class="co">## 5   9.311222   9.311222    path 28565950         1  6.704080      6.704080</span></span>
+<span><span class="co">## 6   9.311222   9.311222    path 28565950         1  6.704080      6.704080</span></span></code></pre>
 <p>The columns of <code>from_id</code> and <code>to_id</code> contain
 the names of the vertices. To extract shortest paths between some of
 these, first take some small samples of <code>from</code> and

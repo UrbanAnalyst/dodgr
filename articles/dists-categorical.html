@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.021</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2025-03-11</h4>
+            <h4 data-toc-skip class="date">2025-03-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/dists-categorical.Rmd" class="external-link"><code>vignettes/dists-categorical.Rmd</code></a></small>
       <div class="d-none name"><code>dists-categorical.Rmd</code></div>
@@ -135,11 +135,11 @@ distances along each category of edges into overall proportions:</p>
 <span><span class="co">##   path: 0.5133</span></span>
 <span><span class="co">##   primary: 0.016</span></span>
 <span><span class="co">##   residential: 4e-04</span></span>
-<span><span class="co">##   secondary: 0.1559</span></span>
+<span><span class="co">##   secondary: 0.1561</span></span>
 <span><span class="co">##   service: 0.0607</span></span>
 <span><span class="co">##   steps: 0.0018</span></span>
 <span><span class="co">##   track: 0.1018</span></span>
-<span><span class="co">##   unclassified: 0.15</span></span></code></pre>
+<span><span class="co">##   unclassified: 0.1499</span></span></code></pre>
 <p>Those statistics clearly highlight the fact that Hampi is a
 pedestrian town - most ways are either paths or tracks, with a new
 “secondary” ways for access vehicles.</p>
@@ -155,9 +155,9 @@ return those:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
 <span>                         proportions_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         path      primary  residential    secondary      service        steps </span></span>
-<span><span class="co">## 0.5133387472 0.0159931421 0.0004095266 0.1558683424 0.0607239796 0.0018185703 </span></span>
+<span><span class="co">## 0.5132876816 0.0160100421 0.0004094553 0.1561029152 0.0606822224 0.0018216492 </span></span>
 <span><span class="co">##        track unclassified </span></span>
-<span><span class="co">## 0.1018482816 0.1499994102</span></span></code></pre>
+<span><span class="co">## 0.1017594638 0.1499265705</span></span></code></pre>
 <p>Queries with <code>proportions_only = TRUE</code> are constructed in
 a different way in the underlying C++ code that avoids storing the full
 list of matrices in memory. For most jobs, this should translate to
@@ -170,8 +170,8 @@ faster queries, as illustrated in the following benchmark:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   expression   min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.485  0.490</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.263  0.269</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.482  0.486</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.264  0.264</span></span></code></pre>
 <p>The default value of <code>proportions_only = FALSE</code> should be
 used only if additional information from the distance matrices
 themselves is required or desired. Examples of such additional
@@ -209,17 +209,17 @@ distances. The following code illustrates:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             distance     path primary residential secondary   service steps</span></span>
-<span><span class="co">## 339318500  12081.132 9374.439       0           0         0 2621.8834     0</span></span>
-<span><span class="co">## 339318502   4136.047 3520.947       0           0         0  615.1004     0</span></span>
-<span><span class="co">## 2398958028  4153.829 3538.728       0           0         0  615.1004     0</span></span>
-<span><span class="co">## 1427116077  6172.783 5142.914       0           0         0  963.0322     0</span></span>
-<span><span class="co">## 7799710916  4191.254 3576.153       0           0         0  615.1004     0</span></span>
-<span><span class="co">## 339318503   6211.668 5596.568       0           0         0  615.1004     0</span></span>
+<span><span class="co">## 339318500  12085.012 9382.223       0           0         0 2617.6145     0</span></span>
+<span><span class="co">## 339318502   4136.151 3522.017       0           0         0  614.1342     0</span></span>
+<span><span class="co">## 2398958028  4153.900 3539.766       0           0         0  614.1342     0</span></span>
+<span><span class="co">## 1427116077  6173.306 5144.681       0           0         0  961.4988     0</span></span>
+<span><span class="co">## 7799710916  4191.346 3577.212       0           0         0  614.1342     0</span></span>
+<span><span class="co">## 339318503   6215.252 5601.117       0           0         0  614.1342     0</span></span>
 <span><span class="co">##            track unclassified</span></span>
-<span><span class="co">## 339318500      0     84.80908</span></span>
+<span><span class="co">## 339318500      0     85.17409</span></span>
 <span><span class="co">## 339318502      0      0.00000</span></span>
 <span><span class="co">## 2398958028     0      0.00000</span></span>
-<span><span class="co">## 1427116077     0     66.83674</span></span>
+<span><span class="co">## 1427116077     0     67.12613</span></span>
 <span><span class="co">## 7799710916     0      0.00000</span></span>
 <span><span class="co">## 339318503      0      0.00000</span></span></code></pre>
 <p>The row names of the resultant <code>data.frame</code> are the vertex
@@ -262,9 +262,9 @@ the three modes:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">##   expression    min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.482  0.488 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.272  0.273 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.071<span style="text-decoration: underline;">9</span> 0.072<span style="text-decoration: underline;">9</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.493  0.494 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.266  0.266 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.068<span style="text-decoration: underline;">1</span> 0.072<span style="text-decoration: underline;">1</span></span></span></code></pre>
 <p>Finally, note that the efficiency of distance-threshold queries
 scales non-linearly with increases in <code>dlimit</code>, with queries
 quickly becoming less efficient for larger values of
