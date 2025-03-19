@@ -325,10 +325,14 @@ weight_streetnet.sf <- function (x,
         stringsAsFactors = FALSE
     )
 
+    # Get geodist measure, noting that graph has no hash at this stage, so full
+    # calculation will be executed.
+    measure <- get_geodist_measure (graph)
+
     graph$d <- geodist::geodist (graph [, c ("from_lon", "from_lat")],
         graph [, c ("to_lon", "to_lat")],
         paired = TRUE,
-        measure = "geodesic"
+        measure = measure
     )
     graph$d_weighted <- graph$d * dat$numeric_values [, 6]
 

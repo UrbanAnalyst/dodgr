@@ -191,7 +191,7 @@ match_points_to_graph <- function (graph, xy, connected = FALSE, distances = FAL
     match_pts_to_graph (graph, xy, connected = connected, distances = distances)
 }
 
-#' Get geodesic distances to intersection points for match_pts_to_graph.
+#' Get  distances to intersection points for match_pts_to_graph.
 #'
 #' @param res Output of 'rcpp_points_index' function
 #' @noRd
@@ -208,11 +208,13 @@ signed_intersection_dists <- function (graph, xy, res) {
         y = res [index + 2L * nrow (xy)]
     )
 
+    measure <- get_geodist_measure (graph)
+
     d <- geodist::geodist (
         xy,
         xy_intersect,
         paired = TRUE,
-        measure = "geodesic"
+        measure = measure
     )
 
     # Then coordinates of graph edges for sign calculation
@@ -274,6 +276,8 @@ add_nodes_to_graph <- function (graph,
                                 dist_tol = 1e-6,
                                 intersections_only = FALSE) {
 
+    measure <- get_geodist_measure (graph)
+
     pts <- match_pts_to_graph (graph, xy, distances = TRUE)
     xy <- pre_process_xy (xy)
     pts$x0 <- xy [, 1]
@@ -331,11 +335,12 @@ add_nodes_to_graph <- function (graph,
                 x = as.numeric (c (edge_i [1, "xfr"], edge_i [1, "xto"], edge_i [2, "xto"])),
                 y = as.numeric (c (edge_i [1, "yfr"], edge_i [1, "yto"], edge_i [2, "yto"]))
             )
-            dmat <- geodist::geodist (xy_i)
+            dmat <- geodist::geodist (xy_i, measure = measure)
 
             d_i <- geodist::geodist (
                 pts [i, c ("x", "y")],
-                pts [i, c ("x0", "y0")]
+                pts [i, c ("x0", "y0")],
+                measure = measure
             )
             d_i <- as.numeric (d_i [1, 1])
 
