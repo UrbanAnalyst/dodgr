@@ -38,7 +38,10 @@ get_geodist_measure <- function (graph) {
 
     hash <- attr (graph, "hash")
     measure_list <- getOption ("dodgr_dist_measure", "")
-    has_measure <- any (nzchar (measure_list)) && hash %in% names (measure_list)
+    has_measure <- !is.null (hash)
+    if (has_measure) {
+        has_measure <- any (nzchar (measure_list)) && hash %in% names (measure_list)
+    }
 
     if (has_measure) {
         measure <- measure_list [[hash]]
