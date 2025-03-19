@@ -2,7 +2,7 @@
 
 ## Minor changes
 
-
+- "geodist" package is now a hard dependency ("Imports" not "Suggests").
 - Add @leoniedu as package contributor (#282).
 - Fix updating of edge times in `insert_one_edge`; #278 thanks to @leoniedu
 

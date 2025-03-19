@@ -33,6 +33,7 @@ Imports:
     callr,
     digest,
     fs,
+    geodist (>= 0.1.0),
     magrittr,
     memoise,
     methods,
@@ -42,7 +43,6 @@ Imports:
 Suggests:
     bench,
     dplyr,
-    geodist (>= 0.1.0),
     ggplot2,
     igraph,
     igraphdata,
