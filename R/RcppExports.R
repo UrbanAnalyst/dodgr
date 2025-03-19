@@ -32,6 +32,13 @@ rcpp_deduplicate <- function (graph, fr_col, to_col, d_col, t_col) {
     .Call (`_dodgr_rcpp_deduplicate`, graph, fr_col, to_col, d_col, t_col)
 }
 
+#' rcpp_dist_max
+#'
+#' @noRd
+rcpp_dist_max <- function (graph) {
+    .Call (`_dodgr_rcpp_dist_max`, graph)
+}
+
 #' Make unordered_set of all new edge names
 #' @noRd
 NULL

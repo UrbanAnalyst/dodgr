@@ -105,3 +105,11 @@ find_spatial_cols <- function (graph) {
         )
     )
 }
+
+max_spatial_dist <- function (graph) {
+
+    sp_cols <- find_spatial_cols (graph)
+    graph_xy <- graph [, c (sp_cols$fr_col, sp_cols$to_col)]
+
+    dist_max (graph_xy)
+}

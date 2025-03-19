@@ -56,6 +56,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_dist_max
+Rcpp::NumericVector rcpp_dist_max(const Rcpp::DataFrame& graph);
+RcppExport SEXP _dodgr_rcpp_dist_max(SEXP graphSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_dist_max(graph));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_aggregate_to_sf
 Rcpp::List rcpp_aggregate_to_sf(const Rcpp::DataFrame& graph_full, const Rcpp::DataFrame& graph_contr, const Rcpp::DataFrame& edge_map);
 RcppExport SEXP _dodgr_rcpp_aggregate_to_sf(SEXP graph_fullSEXP, SEXP graph_contrSEXP, SEXP edge_mapSEXP) {
@@ -432,6 +443,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_centrality", (DL_FUNC) &_dodgr_rcpp_centrality, 6},
     {"_dodgr_rcpp_concaveman", (DL_FUNC) &_dodgr_rcpp_concaveman, 4},
     {"_dodgr_rcpp_deduplicate", (DL_FUNC) &_dodgr_rcpp_deduplicate, 5},
+    {"_dodgr_rcpp_dist_max", (DL_FUNC) &_dodgr_rcpp_dist_max, 1},
     {"_dodgr_rcpp_aggregate_to_sf", (DL_FUNC) &_dodgr_rcpp_aggregate_to_sf, 3},
     {"_dodgr_rcpp_flows_aggregate_par", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_par, 8},
     {"_dodgr_rcpp_flows_aggregate_pairwise", (DL_FUNC) &_dodgr_rcpp_flows_aggregate_pairwise, 8},
