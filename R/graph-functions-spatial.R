@@ -122,6 +122,10 @@ max_spatial_dist <- function (graph) {
     xylims <- c (rx [1], ry [1], rx [2], ry [2])
 
     suppressMessages (
-        geodist::geodist (xylims [1:2], xylims [3:4], measure = "haversine") [1, 1]
+        geodist::geodist (
+            xylims [1:2],
+            xylims [3:4],
+            measure = "haversine"
+        ) [1, 1]
     )
 }
