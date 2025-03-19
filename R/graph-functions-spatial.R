@@ -110,6 +110,8 @@ max_spatial_dist <- function (graph) {
 
     sp_cols <- find_spatial_cols (graph)
     graph_xy <- graph [, c (sp_cols$fr_col, sp_cols$to_col)]
+    # Rename because 'sc' have different names:
+    names (graph_xy) <- c ("from_lon", "from_lat", "to_lon", "to_lat")
 
     rx <- range (c (
         range (graph_xy$from_lon),
