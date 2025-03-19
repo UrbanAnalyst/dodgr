@@ -1,6 +1,7 @@
 test_that ("geodist measure", {
 
-    expect_null (getOption ("dodgr_dist_measure"))
+    # Reset any measures stored in options:
+    options ("dodgr_dist_measure" = NULL)
 
     graph <- weight_streetnet (hampi)
     st0 <- system.time (
