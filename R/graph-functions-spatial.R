@@ -111,5 +111,17 @@ max_spatial_dist <- function (graph) {
     sp_cols <- find_spatial_cols (graph)
     graph_xy <- graph [, c (sp_cols$fr_col, sp_cols$to_col)]
 
-    dist_max (graph_xy)
+    rx <- range (c (
+        range (graph_xy$from_lon),
+        range (graph_xy$to_lon)
+    ))
+    ry <- range (c (
+        range (graph_xy$from_lat),
+        range (graph_xy$to_lat)
+    ))
+    xylims <- c (rx [1], ry [1], rx [2], ry [2])
+
+    suppressMessages (
+        geodist::geodist (xylims [1:2], xylims [3:4], measure = "haversine") [1, 1]
+    )
 }
