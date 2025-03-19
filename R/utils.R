@@ -20,3 +20,19 @@ get_heap <- function (heap,
 
     list (heap = heap, graph = graph)
 }
+
+#' Get appropriate measure for geodist distances.
+#'
+#' Default measure is "cheap", but that becomes inaccurate beyond around 100km.
+#' This function works out the approximate maximal graph distances, and
+#' determines an appropriate measure based on that. Note that "geodesic"
+#' distances are not used, as calculation times for those are enormously longer
+#' than either cheap or Haversine.
+#'
+#' @return "cheap" if maximal distances are < 100km, otherwise "haversine".
+#' @noRd
+get_geodist_measure <- function (graph) {
+
+    dmax <- max_spatial_dist (graph) / 1000
+    ifelse (dmax < 100, "cheap", "haversine")
+}
