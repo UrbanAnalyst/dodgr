@@ -10,7 +10,6 @@ source ("../sc-conversion-fns.R")
 test_that ("isodists", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
-    requireNamespace ("geodist")
     requireNamespace ("dplyr")
     net <- weight_streetnet (hsc,
         wt_profile = "bicycle"

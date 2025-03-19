@@ -482,7 +482,6 @@ insert_one_edge <- function (graph, index, x, y, gr_cols) {
         y = graph [[gr_cols$yto]] [index + 1]
     )
     if (is_graph_spatial (graph)) {
-        requireNamespace ("geodist")
         d1 <- geodist::geodist (xy1, c (x = x, y = y), measure = "geodesic")
         d2 <- geodist::geodist (xy2, c (x = x, y = y), measure = "geodesic")
     } else {

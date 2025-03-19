@@ -668,7 +668,6 @@ weight_streetnet.sc <- function (x,
                                  keep_cols = NULL,
                                  left_side = FALSE) {
 
-    requireNamespace ("geodist")
     requireNamespace ("dplyr")
     check_sc (x)
 

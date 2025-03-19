@@ -15,7 +15,6 @@ if (!test_all) {
 
 test_that ("cache on", {
     expect_silent (hsc <- sf_to_sc (hampi))
-    requireNamespace ("geodist")
     requireNamespace ("dplyr")
     expect_silent (graph <- weight_streetnet (hsc))
     expect_message (

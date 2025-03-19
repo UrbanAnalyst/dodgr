@@ -56,8 +56,6 @@ dodgr_isodists <- function (graph,
         stop ("dlim must be numeric")
     }
 
-    requireNamespace ("geodist")
-
     concavity <- check_concavity (concavity)
     # Then adjust to inverse value:
     concavity <- 1 / max (concavity, 1e-6)
