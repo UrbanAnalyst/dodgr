@@ -1,8 +1,12 @@
 # v 0.4.2.00x (dev version)
 
+## Major changes
+
+- All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". No distances are calculated with geodesic distances. Distances in graphs may differ from values calculated with previous versions.
+
 ## Minor changes
 
-
+- "geodist" package is now a hard dependency ("Imports" not "Suggests").
 - Add @leoniedu as package contributor (#282).
 - Fix updating of edge times in `insert_one_edge`; #278 thanks to @leoniedu
 

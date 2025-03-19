@@ -16,7 +16,6 @@ source ("../sc-conversion-fns.R")
 test_that ("SC", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
-    requireNamespace ("geodist")
     requireNamespace ("dplyr")
     expect_silent (net_sc <- weight_streetnet (hsc))
     expect_is (net_sc, "data.frame")

@@ -56,8 +56,6 @@ dodgr_isodists <- function (graph,
         stop ("dlim must be numeric")
     }
 
-    requireNamespace ("geodist")
-
     concavity <- check_concavity (concavity)
     # Then adjust to inverse value:
     concavity <- 1 / max (concavity, 1e-6)
@@ -67,7 +65,17 @@ dodgr_isodists <- function (graph,
     d <- m_iso_calculate (dat, dlim)
     from_id <- gsub ("\\_start$", "", dat$from_index$id)
 
-    return (dmat_to_hulls (d, from_id, dat$v, dlim, concavity, length_threshold))
+    measure <- get_geodist_measure (graph)
+
+    return (dmat_to_hulls (
+        d,
+        from_id,
+        dat$v,
+        dlim,
+        concavity,
+        length_threshold,
+        measure
+    ))
 }
 
 iso_pre <- function (graph, from = NULL, heap = "BHeap", contract = TRUE) {
@@ -268,9 +276,16 @@ dodgr_isoverts <- function (graph,
     return (res)
 }
 
-# convert distance matrix with values equal to various isodistances into list of
-# lists of points defining the iso-contour hulls ordered around the central points
-dmat_to_hulls <- function (d, from, v, dlim, concavity, length_threshold) {
+# convert distance matrix with values equal to various isodistances into list
+# of lists of points defining the iso-contour hulls ordered around the central
+# points
+dmat_to_hulls <- function (d,
+                           from,
+                           v,
+                           dlim,
+                           concavity,
+                           length_threshold,
+                           measure) {
 
     pt_names <- colnames (d)
 
@@ -285,7 +300,11 @@ dmat_to_hulls <- function (d, from, v, dlim, concavity, length_threshold) {
             res <- NULL
             if (length (hull) > 0) {
                 # Then match back to `pts_j`:
-                index <- geodist::geodist_min (hull, v [, c ("x", "y")])
+                index <- geodist::geodist_min (
+                    hull,
+                    v [, c ("x", "y")],
+                    measure = measure
+                )
                 res <- v [c (index, index [1]), ]
 
                 res$from <- o$id
