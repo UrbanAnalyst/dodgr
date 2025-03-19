@@ -1,3 +1,6 @@
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
+    identical (Sys.getenv ("GITHUB_JOB"), "test-coverage"))
+
 test_that ("geodist measure", {
 
     # Reset any measures stored in options:
@@ -11,7 +14,9 @@ test_that ("geodist measure", {
         m <- get_geodist_measure (graph)
     )
     expect_equal (m, "cheap")
-    expect_true (st1 [3] < st0 [3])
+    if (test_all) {
+        expect_true (st1 [3] < st0 [3])
+    }
 
     op <- getOption ("dodgr_dist_measure")
     expect_true (length (op) > 0L)

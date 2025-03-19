@@ -2,7 +2,7 @@
 
 ## Major changes
 
-- All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". No distances are calculated with geodesic distances.
+- All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". No distances are calculated with geodesic distances. Distances in graphs may differ from values calculated with previous versions.
 
 ## Minor changes
 
