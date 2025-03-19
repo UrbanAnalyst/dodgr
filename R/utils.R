@@ -52,7 +52,7 @@ get_geodist_measure <- function (graph) {
         # This is also called at the start of SC construction, before graph has
         # any hash.
         if (!is.null (hash)) {
-            if (!nzchar (measure_list)) {
+            if (!any (nzchar (measure_list))) {
                 measure_list <- NULL
             }
             measure_list <- c (measure_list, measure)
