@@ -5,7 +5,9 @@
 #' @noRd
 find_fr_col <- function (graph) {
 
-    grep ("^fr|fr$|^sta|.vx0", names (graph), ignore.case = TRUE)
+    cols <- grep ("^fr|fr$|^sta|.vx0", names (graph), ignore.case = TRUE)
+    # Remove any "z" columns with altitude values:
+    cols [which (!grepl ("\\_z$", names (graph) [cols], ignore.case = TRUE))]
 }
 
 #' Get graph columns containing the to vertex
@@ -13,7 +15,8 @@ find_fr_col <- function (graph) {
 #' @noRd
 find_to_col <- function (graph) {
 
-    grep ("^to|to$|^sto|.vx1", names (graph), ignore.case = TRUE)
+    cols <- grep ("^to|to$|^sto|.vx1", names (graph), ignore.case = TRUE)
+    cols [which (!grepl ("\\_z$", names (graph) [cols], ignore.case = TRUE))]
 }
 
 #' Get single graph column containing the ID of the from vertex
