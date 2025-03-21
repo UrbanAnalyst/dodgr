@@ -56,6 +56,7 @@ graph <- weight_railway (dat$osm_lines)
 \seealso{
 Other extraction: 
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_streetnet}()}
 }

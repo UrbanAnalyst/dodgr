@@ -38,12 +38,18 @@ get_geodist_measure <- function (graph) {
 
     hash <- attr (graph, "hash")
     measure_list <- getOption ("dodgr_dist_measure", "")
+
     has_measure <- !is.null (hash)
-    if (has_measure) {
+    has_single_measure <- FALSE
+    if ("all" %in% names (measure_list)) {
+        has_single_measure <- TRUE
+    } else if (has_measure) {
         has_measure <- any (nzchar (measure_list)) && hash %in% names (measure_list)
     }
 
-    if (has_measure) {
+    if (has_single_measure) {
+        measure <- measure_list [["all"]]
+    } else if (has_measure) {
         measure <- measure_list [[hash]]
     } else {
         dmax <- max_spatial_dist (graph) / 1000
@@ -62,4 +68,42 @@ get_geodist_measure <- function (graph) {
     }
 
     return (measure)
+}
+
+#' Force \link{weight_streetnet} to use geodesic distances.
+#'
+#' Distances by default are Mapbox "cheap" distances if maximal network
+#' distances are < 100km, otherwise Haversine distances. Calling this function
+#' forces all calls to \link{weight_streetnet} from that point on to use
+#' geodesic distances. These are more computationally expensive to calculate,
+#' and weighting networks will likely take more time.
+#'
+#' @param unset Calling this function with `unset = TRUE` reverts distance
+#' calculations to those described above, rather than geodesic.
+#' @return Nothing; the function is called for its side-effect only of setting
+#' distance calculations to geodesic.
+#'
+#' @family extraction
+#' @export
+dodgr_streetnet_geodesic <- function (unset = FALSE) {
+
+    if (unset) {
+        options ("dodgr_dist_measure" = NULL)
+        msg <- "revert to default measures"
+    } else {
+        options ("dodgr_dist_measure" = c (all = "geodesic"))
+        msg <- "use the geodesic measure"
+    }
+
+    objs <- ls (envir = .GlobalEnv)
+    objs_are_graphs <- vapply (objs, function (o) {
+        inherits (get (o), "dodgr_streetnet")
+    }, logical (1L))
+    if (any (objs_are_graphs)) {
+        message (
+            "Only graphs created from this point on with ",
+            "'weight_streetnet()' will ",
+            msg
+        )
+    }
 }

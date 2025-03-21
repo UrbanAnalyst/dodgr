@@ -2,7 +2,8 @@
 
 ## Major changes
 
-- All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". No distances are calculated with geodesic distances. Distances in graphs may differ from values calculated with previous versions.
+- All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". Distances (and therefore times) in graphs may differ from values calculated with previous versions. See #284; thanks to @leoniedu
+- New function added, `dodgr_streetnet_geodesic()`, to force edge distances in `weight_streetnet()` to use geodesic distances (more accurate, but slower calculations). See #284; thanks to @leoniedu
 
 ## Minor changes
 
@@ -62,7 +63,7 @@
 
 - New `pairwise` parameter added to `dodgr_dists_categorical` (#201)
 - New function: `dodgr_dists_nearest()` (#203)
-- Updated `weight_streenet()` function for `wt_profile="bicycle"` to return
+- Updated `weight_streetnet()` function for `wt_profile="bicycle"` to return
   many more bicycle-relevant columns (#207).
 - Fix major bug in categorical dists routines that gave wrong values (#201; thanks to @xiaofanliang)
 - Fix bug in `add_nodes_to_graph`, #103

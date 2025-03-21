@@ -269,3 +269,47 @@ test_that ("weight_streetnet runs with non-LINESTRING sfc", {
         "not a LINESTRING"
     )
 })
+
+test_that ("geodesic distances", {
+
+    skip_if_not_installed ("sf")
+
+    expect_error (
+        get_geodist_measure ("a"),
+        "Graph appears to be spatial yet unable to extract coordinates"
+    )
+
+
+    options ("dodgr_dist_measure" = NULL)
+    graph <- weight_streetnet (hampi)
+    expect_equal (get_geodist_measure (graph), "cheap")
+
+    msg <- paste0 (
+        "Only graphs created from this point on with ",
+        "\\'weight_streetnet\\(\\)\\' will use the geodesic ",
+        "measure."
+    )
+    # graphs don't exist in test environments:
+    # expect_message (dodgr_streetnet_geodesic (), msg)
+    dodgr_streetnet_geodesic ()
+    expect_equal (get_geodist_measure (graph), "geodesic")
+    op <- getOption ("dodgr_dist_measure")
+    expect_length (op, 1L)
+    expect_named (op, "all")
+    expect_equal (op, c (all = "geodesic"))
+
+    graph_gd <- weight_streetnet (hampi)
+    dist_diff <- graph$d - graph_gd$d
+    # SD of difference in distances should be > 10cm:
+    expect_true (sd (dist_diff) > 0.1)
+
+    msg <- paste0 (
+        "Only graphs created from this point on with ",
+        "\\'weight_streetnet\\(\\)\\' will revert to ",
+        "default measures"
+    )
+    # expect_message (dodgr_streetnet_geodesic (unset = TRUE), msg)
+    dodgr_streetnet_geodesic (unset = TRUE)
+    op <- getOption ("dodgr_dist_measure")
+    expect_null (op)
+})
