@@ -57,8 +57,8 @@ priority queue heap structures for a given type of graph.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://UrbanAnalyst.github.io/dodgr/}
   \item \url{https://github.com/UrbanAnalyst/dodgr}
-  \item \url{https://urbananalyst.github.io/dodgr/}
   \item Report bugs at \url{https://github.com/UrbanAnalyst/dodgr/issues}
 }
 

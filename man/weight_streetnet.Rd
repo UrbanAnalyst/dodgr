@@ -286,32 +286,32 @@ graph <- weight_streetnet (
 \link{write_dodgr_wt_profile}, \link{dodgr_times}
 
 Other extraction: 
-\code{\link{dodgr_dists_geodesic}()},
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_railway}()}
 
 Other extraction: 
-\code{\link{dodgr_dists_geodesic}()},
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_railway}()}
 
 Other extraction: 
-\code{\link{dodgr_dists_geodesic}()},
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_railway}()}
 
 Other extraction: 
-\code{\link{dodgr_dists_geodesic}()},
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_railway}()}
 
 Other extraction: 
-\code{\link{dodgr_dists_geodesic}()},
 \code{\link{dodgr_streetnet}()},
+\code{\link{dodgr_streetnet_geodesic}()},
 \code{\link{dodgr_streetnet_sc}()},
 \code{\link{weight_railway}()}
 }

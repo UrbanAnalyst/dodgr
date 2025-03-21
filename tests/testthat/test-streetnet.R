@@ -290,8 +290,8 @@ test_that ("geodesic distances", {
         "measure."
     )
     # graphs don't exist in test environments:
-    # expect_message (dodgr_dists_geodesic (), msg)
-    dodgr_dists_geodesic ()
+    # expect_message (dodgr_streetnet_geodesic (), msg)
+    dodgr_streetnet_geodesic ()
     expect_equal (get_geodist_measure (graph), "geodesic")
     op <- getOption ("dodgr_dist_measure")
     expect_length (op, 1L)
@@ -308,8 +308,8 @@ test_that ("geodesic distances", {
         "\\'weight_streetnet\\(\\)\\' will revert to ",
         "default measures"
     )
-    # expect_message (dodgr_dists_geodesic (unset = TRUE), msg)
-    dodgr_dists_geodesic (unset = TRUE)
+    # expect_message (dodgr_streetnet_geodesic (unset = TRUE), msg)
+    dodgr_streetnet_geodesic (unset = TRUE)
     op <- getOption ("dodgr_dist_measure")
     expect_null (op)
 })

@@ -85,7 +85,7 @@ get_geodist_measure <- function (graph) {
 #'
 #' @family extraction
 #' @export
-dodgr_dists_geodesic <- function (unset = FALSE) {
+dodgr_streetnet_geodesic <- function (unset = FALSE) {
 
     if (unset) {
         options ("dodgr_dist_measure" = NULL)
