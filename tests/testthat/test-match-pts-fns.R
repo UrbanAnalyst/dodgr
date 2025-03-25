@@ -132,6 +132,12 @@ test_that ("add nodes to graph", {
     expect_identical (colnames (graph0), colnames (graph1))
     expect_true ((nrow (graph1) - nrow (graph0)) > npts)
     # actually equals 2 * npts when all edges are bi-directional.
+
+    # Should be able to insert multiple repeated nodes in graphs with
+    # duplicated edges (see #285):
+    graph2 <- rbind (graph0, graph0)
+    graph3 <- add_nodes_to_graph (graph2, xy)
+    expect_true (nrow (graph3) - nrow (graph2) > npts)
 })
 
 test_that ("match with distances", {
