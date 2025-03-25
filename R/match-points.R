@@ -366,9 +366,9 @@ add_nodes_to_graph <- function (graph,
                 edge_i$d [1] <- dmat [1, 2]
                 edge_i$d [2] <- dmat [2, 3]
 
-                edge_i$d_weighted <- edge_i$d * d_wt
-                edge_i$time <- edge_i$d * t_scale
-                edge_i$time_weighted <- edge_i$time * t_wt
+                edge_i$d_weighted <- edge_i$d * d_wt [c (e, e)]
+                edge_i$time <- edge_i$d * t_scale [c (e, e)]
+                edge_i$time_weighted <- edge_i$time * t_wt [c (e, e)]
 
                 edge_i$edge_id <- paste0 (
                     edge_i$edge_id,
@@ -389,9 +389,9 @@ add_nodes_to_graph <- function (graph,
                 edge_i_new$yto [2] <- pts$y0 [i]
 
                 edge_i_new$d <- d_i
-                edge_i_new$d_weighted <- d_i * d_wt
-                edge_i_new$time <- d_i * t_scale
-                edge_i_new$time_weighted <- edge_i_new$time * t_wt
+                edge_i_new$d_weighted <- d_i * d_wt [c (e, e)]
+                edge_i_new$time <- d_i * t_scale [c (e, e)]
+                edge_i_new$time_weighted <- edge_i_new$time * t_wt [c (e, e)]
 
                 edge_i_new$edge_id <- vapply (
                     seq_len (nrow (edge_i_new)),
