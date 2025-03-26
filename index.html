@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.028</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.029</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span> <span class="op">(</span><span class="va"><a href="https://UrbanAnalyst.github.io/dodgr/">dodgr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span> <span class="op">(</span><span class="st">"dodgr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] '0.2.21'</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] '0.4.2'</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="important-note">Important Note<a class="anchor" aria-label="anchor" href="#important-note"></a>
@@ -97,7 +97,7 @@
 <span><span class="co">#&gt; [1] 236  15</span></span>
 <span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "data.frame"      "dodgr_streetnet"</span></span>
+<span><span class="co">#&gt; [1] "dodgr_streetnet" "data.frame"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 6813   15</span></span></code></pre></div>
 <p>The <code>sf</code>-format network contained 236 <code>LINESTRING</code> objects, with the <code><a href="reference/weight_streetnet.html">weight_streetnet()</a></code> function decomposing these into 6,813 distinct edges, indicating that the <code>sf</code> representation had around 29 edges or segments in each <code>LINESTRING</code> object. The <code>dodgr</code> network then looks like this:</p>
@@ -518,7 +518,7 @@
 <col width="6%">
 <col width="6%">
 <col width="8%">
-<col width="6%">
+<col width="5%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">geom_num</th>
@@ -555,7 +555,7 @@
 <td align="right">1</td>
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
-<td align="right">0.5815996</td>
+<td align="right">1.316455</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -573,7 +573,7 @@
 <td align="right">1</td>
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
-<td align="right">2.3630118</td>
+<td align="right">0.000000</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -591,7 +591,7 @@
 <td align="right">1</td>
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
-<td align="right">0.5815996</td>
+<td align="right">1.316455</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -609,7 +609,7 @@
 <td align="right">1</td>
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
-<td align="right">2.3630118</td>
+<td align="right">0.000000</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -627,7 +627,7 @@
 <td align="right">1</td>
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
-<td align="right">0.5815996</td>
+<td align="right">1.316455</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
@@ -645,7 +645,7 @@
 <td align="right">1</td>
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
-<td align="right">2.3630118</td>
+<td align="right">0.000000</td>
 </tr>
 </tbody>
 </table>
