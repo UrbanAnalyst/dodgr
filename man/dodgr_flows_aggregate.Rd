@@ -185,17 +185,8 @@ plot (gsf ["flow"])
 }
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
+Other flows: 
 \code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
-\code{\link{dodgr_paths}()},
-\code{\link{dodgr_times}()}
+\code{\link{dodgr_flows_si}()}
 }
-\concept{distances}
+\concept{flows}

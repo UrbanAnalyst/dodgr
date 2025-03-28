@@ -5,9 +5,15 @@ template:
   bootstrap: 5
 
 reference:
-- title: Main functions
+- title: Main distance and time functions
   contents:
   - has_concept("distances")
+- title: Main flow functions
+  contents:
+  - has_concept("flows")
+- title: Main iso functions
+  contents:
+  - has_concept("iso")
 - title: Functions to Obtain Graphs
   contents:
   - has_concept("extraction")

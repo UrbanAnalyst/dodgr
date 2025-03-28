@@ -97,12 +97,6 @@ Other distances:
 \code{\link{dodgr_dists}()},
 \code{\link{dodgr_dists_categorical}()},
 \code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
 \code{\link{dodgr_times}()}
 }
 \concept{distances}

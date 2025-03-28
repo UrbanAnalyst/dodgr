@@ -34,7 +34,7 @@
 #' specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -161,7 +161,7 @@ m_iso_calculate <- memoise::memoise (iso_calculate)
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' \dontrun{
@@ -226,7 +226,7 @@ dodgr_isochrones <- function (graph,
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' \dontrun{
