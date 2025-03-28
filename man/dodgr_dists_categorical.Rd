@@ -87,6 +87,9 @@ and "b"), then the function will return two additional distance matrices,
 one of total lengths of distances between all pairs of points traversed
 along edges of the first type, "a", and one of aggregated distances along
 edges of type "b".
+
+See the description of \link{dodgr_distances} for details on the expected
+format of input graphs.
 }
 \note{
 The "edge_type" column in the graph can contain any kind of discrete or

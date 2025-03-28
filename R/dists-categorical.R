@@ -14,6 +14,9 @@
 #' along edges of the first type, "a", and one of aggregated distances along
 #' edges of type "b".
 #'
+#' See the description of \link{dodgr_distances} for details on the expected
+#' format of input graphs.
+#'
 #' @inheritParams dodgr_dists
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph which must have a column named "edge_type" which labels categories of
