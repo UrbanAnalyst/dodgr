@@ -75,10 +75,10 @@ Note).}
 Modified version of graph with additional \code{flow} column added.
 }
 \description{
-Aggregate flows throughout a network based on an input matrix of flows
-between all pairs of \code{from} and \code{to} points. Flows are calculated by default
-on contracted graphs, via the \code{contract = TRUE} parameter. (These are
-derived by reducing the input graph down to junction vertices only, by
+Aggregate flows throughout a network based on an input matrix
+of flows between all pairs of \code{from} and \code{to} points. Flows are calculated
+by default on contracted graphs, via the \code{contract = TRUE} parameter. (These
+are derived by reducing the input graph down to junction vertices only, by
 joining all intermediate edges between each junction.) If changes to the
 input graph do not prompt changes to resultant flows, and the default
 \code{contract = TRUE} is used, it may be that calculations are using previously
@@ -88,16 +88,6 @@ cached versions of the contracted graph. If so, please use either
 cache off completely.
 }
 \note{
-Spatial Interaction models are often fitted through trialling a range
-of values of 'k'. The specification above allows fitting multiple values of
-'k' to be done with a single call, in a way that is far more efficient than
-making multiple calls. A matrix of 'k' values may be entered, with each
-column holding a different vector of values, one for each 'from' point. For a
-matrix of 'k' values having 'n' columns, the return object will be a modified
-version in the input 'graph', with an additional 'n' columns, named 'flow1',
-'flow2', ... up to 'n'. These columns must be subsequently matched by the
-user back on to the corresponding columns of the matrix of 'k' values.
-
 The \code{norm_sums} parameter should be used whenever densities at origins
 and destinations are absolute values, and ensures that the sum of resultant
 flow values throughout the entire network equals the sum of densities at all
