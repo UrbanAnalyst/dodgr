@@ -77,29 +77,45 @@ flows are aggregated. To remove any such effect, set \code{tol = 0}.}
 Modified version of graph with additional \code{flow} column added.
 }
 \description{
-Aggregate flows throughout a network using an exponential Spatial Interaction
-(SI) model between a specified set of origin and destination points, and
-associated vectors of densities. Flows are calculated by default on
-contracted graphs, via the \code{contract = TRUE} parameter. (These are derived
-by reducing the input graph down to junction vertices only, by joining all
-intermediate edges between each junction.) If changes to the input graph do
-not prompt changes to resultant flows, and the default \code{contract = TRUE} is
-used, it may be that calculations are using previously cached versions of
-the contracted graph. If so, please use either \link{clear_dodgr_cache} to
-remove the cached version, or \link{dodgr_cache_off} prior to initial graph
-construction to switch the cache off completely.
+Aggregate flows throughout a network using an exponential
+Spatial Interaction (SI) model between a specified set of origin and
+destination points, and associated vectors of densities. Spatial
+interactions are implemented using an exponential decay, controlled by a
+parameter, \code{k}, so that interactions decay with \code{exp(-d / k)}, where \code{d} is
+distance. The algorithm allows for efficient fitting of multiple interaction
+models for different coefficients to be fitted with a single call. Values of
+the interaction coefficients, \code{k}, may take one of the following forms:
+
+\itemize{
+\item A single numeric value (> 0), with interactions along all paths
+calculated with that single value. Return object (see below) will then have
+a single additional column named "flow".
+\item A vector of length equal to the number of \code{from} points, with
+interactions from each point then calculated using the corresponding value
+of \code{k}. Return object has single additional "flow" column.
+\item A vector of any other length (that is, >  1 yet different to number of
+\code{from} points), in which case different interaction models will be fitted
+for each of the \code{n} specified values, and the resultant return object will
+have an additional 'n' columns, named 'flow1', 'flow2', ... up to 'n'. These
+columns must be subsequently matched by the user back on to the
+corresponding 'k' values.
+\item A matrix with number of rows equal to the number of \code{from} points, and
+any number of columns. Each column will then specify a distinct interaction
+model, with different values from each row applied to the corresponding
+\code{from} points. The return value will then be the same as the previous
+version, with an additional \code{n} columns, "flow1" to "flow\if{html}{\out{<n>}}".
+}
+
+Flows are calculated by default on contracted graphs, via the \code{contract = TRUE} parameter. (These are derived by reducing the input graph down to
+junction vertices only, by joining all intermediate edges between each
+junction.) If changes to the input graph do not prompt changes to resultant
+flows, and the default \code{contract = TRUE} is used, it may be that
+calculations are using previously cached versions of the contracted graph.
+If so, please use either \link{clear_dodgr_cache} to remove the cached
+version, or \link{dodgr_cache_off} prior to initial graph construction to
+switch the cache off completely.
 }
 \note{
-Spatial Interaction models are often fitted through trialling a range
-of values of 'k'. The specification above allows fitting multiple values of
-'k' to be done with a single call, in a way that is far more efficient than
-making multiple calls. A matrix of 'k' values may be entered, with each
-column holding a different vector of values, one for each 'from' point. For a
-matrix of 'k' values having 'n' columns, the return object will be a modified
-version in the input 'graph', with an additional 'n' columns, named 'flow1',
-'flow2', ... up to 'n'. These columns must be subsequently matched by the
-user back on to the corresponding columns of the matrix of 'k' values.
-
 The \code{norm_sums} parameter should be used whenever densities at origins
 and destinations are absolute values, and ensures that the sum of resultant
 flow values throughout the entire network equals the sum of densities at all
@@ -120,14 +136,21 @@ anywhere in a network within machine tolerance. Such cases may result in sums
 of output flows being less than sums of input densities.
 }
 \examples{
+# This is generally needed to explore different values of `k` on same graph:
+dodgr_cache_off ()
+
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 10)
-to <- sample (graph$to_id, size = 5)
-to <- to [!to \%in\% from]
-flows <- matrix (10 * runif (length (from) * length (to)),
-    nrow = length (from)
+to <- sample (graph$from_id, size = 20)
+dens_from <- runif (length (from))
+dens_to <- runif (length (to))
+graph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to
 )
-graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 # graph then has an additonal 'flows' column of aggregate flows along all
 # edges. These flows are directed, and can be aggregated to equivalent
 # undirected flows on an equivalent undirected graph with:
@@ -135,6 +158,51 @@ graph_undir <- merge_directed_graph (graph)
 # This graph will only include those edges having non-zero flows, and so:
 nrow (graph)
 nrow (graph_undir) # the latter is much smaller
+
+# ----- One dispersal coefficient for each origin point:
+# Remove `flow` column to avoid warning about over-writing values:
+raph$flow <- NULL
+ <- runif (length (from))
+raph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+rep ("^flow", names (graph), value = TRUE)
+# single dispersal model; single "flow" column
+
+# ----- Multiple models, muliple dispersal coefficients:
+ <- 1:5
+raph$flow <- NULL
+raph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+rep ("^flow", names (graph), value = TRUE)
+# Rm all flow columns:
+raph [grep ("^flow", names (graph), value = TRUE)] <- NULL
+
+# Multiple models with unique coefficient at each origin point:
+ <- matrix (runif (length (from) * 5), ncol = 5)
+im (k)
+raph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+rep ("^flow", names (graph), value = TRUE)
+# 5 "flow" columns again, but this time different dispersal coefficients each
+# each origin point.
 }
 \seealso{
 Other distances: 

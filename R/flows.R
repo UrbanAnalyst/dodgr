@@ -502,14 +502,21 @@ dodgr_flows_disperse <- function (graph,
 #' @family distances
 #' @export
 #' @examples
+#' # This is generally needed to explore different values of `k` on same graph:
+#' dodgr_cache_off ()
+#'
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
-#' to <- sample (graph$to_id, size = 5)
-#' to <- to [!to %in% from]
-#' flows <- matrix (10 * runif (length (from) * length (to)),
-#'     nrow = length (from)
+#' to <- sample (graph$from_id, size = 20)
+#' dens_from <- runif (length (from))
+#' dens_to <- runif (length (to))
+#' graph <- dodgr_flows_si (
+#'     graph,
+#'     from = from,
+#'     to = to,
+#'     dens_from = dens_from,
+#'     dens_to = dens_to
 #' )
-#' graph <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 #' # graph then has an additonal 'flows' column of aggregate flows along all
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
@@ -517,6 +524,51 @@ dodgr_flows_disperse <- function (graph,
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph)
 #' nrow (graph_undir) # the latter is much smaller
+#'
+#' # ----- One dispersal coefficient for each origin point:
+#' # Remove `flow` column to avoid warning about over-writing values:
+#' raph$flow <- NULL
+#'  <- runif (length (from))
+#' raph <- dodgr_flows_si (
+#'     graph,
+#'     from = from,
+#'     to = to,
+#'     dens_from = dens_from,
+#'     dens_to = dens_to,
+#'     k = k
+#' )
+#' rep ("^flow", names (graph), value = TRUE)
+#' # single dispersal model; single "flow" column
+#'
+#' # ----- Multiple models, muliple dispersal coefficients:
+#'  <- 1:5
+#' raph$flow <- NULL
+#' raph <- dodgr_flows_si (
+#'     graph,
+#'     from = from,
+#'     to = to,
+#'     dens_from = dens_from,
+#'     dens_to = dens_to,
+#'     k = k
+#' )
+#' rep ("^flow", names (graph), value = TRUE)
+#' # Rm all flow columns:
+#' raph [grep ("^flow", names (graph), value = TRUE)] <- NULL
+#'
+#' # Multiple models with unique coefficient at each origin point:
+#'  <- matrix (runif (length (from) * 5), ncol = 5)
+#' im (k)
+#' raph <- dodgr_flows_si (
+#'     graph,
+#'     from = from,
+#'     to = to,
+#'     dens_from = dens_from,
+#'     dens_to = dens_to,
+#'     k = k
+#' )
+#' rep ("^flow", names (graph), value = TRUE)
+#' # 5 "flow" columns again, but this time different dispersal coefficients each
+#' # each origin point.
 dodgr_flows_si <- function (graph,
                             from,
                             to,
