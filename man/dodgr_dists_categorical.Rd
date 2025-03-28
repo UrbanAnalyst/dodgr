@@ -74,7 +74,22 @@ the different kinds of ways specified in the "edge_type" column of the input
 graph.
 }
 \description{
-Cumulative distances along different edge categories
+The main \link{dodgr_distances} function calculates distances
+between input sets of origin and destination points, and returns a single
+matrix of numeric distances. This function aggregates distances along
+categories of edges or segments, and returns an overall distance matrix
+(identical to the result of \link{dodgr_distances}), along with one
+additional matrix for each edge category.
+
+Edges types must be specified in a column of the input graph named
+"edge_type". If this has two types of values (for example, "a"
+and "b"), then the function will return two additional distance matrices,
+one of total lengths of distances between all pairs of points traversed
+along edges of the first type, "a", and one of aggregated distances along
+edges of type "b".
+
+See the description of \link{dodgr_distances} for details on the expected
+format of input graphs.
 }
 \note{
 The "edge_type" column in the graph can contain any kind of discrete or
@@ -133,12 +148,6 @@ Other distances:
 \code{\link{dodgr_distances}()},
 \code{\link{dodgr_dists}()},
 \code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
 \code{\link{dodgr_paths}()},
 \code{\link{dodgr_times}()}
 }

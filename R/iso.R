@@ -1,7 +1,26 @@
 #' Calculate isodistance contours from specified points.
 #'
+#' @description Calculates isodistances from input `data.frame` objects
+#' (`graph`), which must minimally contain three columns of `from`, `to`, and
+#' `d` or `dist`. If an additional column named `weight` or `wt` is present,
+#' shortest paths are calculated according to values specified in that column,
+#' while resultant isodistances are calculated from the `d` or `dist` column.
+#' That is, the paths tracing isodistances from any point will be calculated
+#' according to the minimal total sum of `weight` values (if present), while
+#' reported isodistances will be total sums of `dist` values.
+#'
+#' Graphs derived from Open Street Map street networks, via the
+#' \link{weight_streetnet} function, have columns labelled `d`, `d_weighted`,
+#' `time`, and `time_weighted`. For these inputs, isodistances are always
+#' routed using `d_weighted` (or `t_weighted` for times), while final
+#' isodistances are sums of values of `d` (or `t` for times)- that is, of
+#' un-weighted distances or times - along those paths.
+#'
 #' Function is fully vectorized to calculate accept vectors of central points
-#' and vectors defining multiple isodistances.
+#' and vectors defining multiple isodistances. Calculations use by default
+#' parallel computation with the maximal number of available cores or threads.
+#' This number can be reduced by specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
 #' @param graph `data.frame` or equivalent object representing the network
 #' graph. For `dodgr` street networks, this may be a network derived from either
@@ -29,12 +48,7 @@
 #' associated coordinates of the series of points from each `from` point at the
 #' specified isodistances.
 #'
-#' @note Isodists are calculated by default using parallel computation with the
-#' maximal number of available cores or threads. This number can be reduced by
-#' specifying a value via
-#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
-#'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -136,10 +150,28 @@ iso_calculate <- function (dat, dlim) {
 
 m_iso_calculate <- memoise::memoise (iso_calculate)
 
-#' Calculate isochrone contours from specified points.
+#' @title Calculate isochrone contours from specified points.
+#'
+#' @description Calculates isochrones from input `data.frame` objects
+#' (`graph`), which must minimally contain three columns of `from`, `to`, and
+#' `t` or `time`. If an additional column named `t_weight` or `t_wt` is
+#' present, fastest paths are calculated according to values specified in that
+#' column, while resultant isochrones are calculated from the `t` or `time`
+#' column. That is, the paths tracing isochrones from any point will be
+#' calculated according to the minimal total sum of `t_weight` values (if
+#' present), while reported isochrones will be total sums of `time` values.
+#'
+#' Graphs derived from Open Street Map street networks, via the
+#' \link{weight_streetnet} function, have columns labelled `d`, `d_weighted`,
+#' `time`, and `time_weighted`. For these inputs, isochrones are always routed
+#' using `t_weighted`, while final isochrones are sums of values of `t` - that
+#' is, of un-weighted distances or times - along those paths.
 #'
 #' Function is fully vectorized to calculate accept vectors of central points
-#' and vectors defining multiple isochrone thresholds.
+#' and vectors defining multiple isochrones. Calculations use by default
+#' parallel computation with the maximal number of available cores or threads.
+#' This number can be reduced by specifying a value via
+#' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
 #' @inherit dodgr_isodists
 #'
@@ -161,7 +193,7 @@ m_iso_calculate <- memoise::memoise (iso_calculate)
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' \dontrun{
@@ -200,12 +232,33 @@ dodgr_isochrones <- function (graph,
     return (res)
 }
 
-#' Calculate isodistance or isochrone contours from specified points.
+#' @title Calculate isodistance or isochrone contours from specified points.
 #'
-#' Returns lists of all network vertices contained within the contours. Function
-#' is fully vectorized to calculate accept vectors of central points and vectors
-#' defining multiple isochrone thresholds. Provide one or more `dlim` values for
-#' isodistances, or one or more `tlim` values for isochrones.
+#'
+#' @description Returns lists of all network vertices contained within
+#' isodistance or isochrone contours. Input objects must be `data.frame`
+#' objects (`graph`), which must minimally contain three columns of `from`,
+#' `to`, and `d` or `dist`. If an additional column named `weight` or `wt` is
+#' present, iso contours are evaluate via shortest paths calculated according
+#' to values specified in that column, while resultant values of iso contours
+#' are calculated from the `d` or `dist` column. That is, the paths tracing iso
+#' contours from any point will be calculated according to the minimal total
+#' sum of `weight` values (if present), while reported iso contours will be
+#' total sums of `dist` values.
+#'
+#' Graphs derived from Open Street Map street networks, via the
+#' \link{weight_streetnet} function, have columns labelled `d`, `d_weighted`,
+#' `time`, and `time_weighted`. For these inputs, iso contours are always
+#' routed using `d_weighted` (or `t_weighted` for times), while final iso
+#' contours reflect sums of values of `d` (or `t` for times) - that is, of
+#' un-weighted distances or times - along those paths.
+#'
+#' Function is fully vectorized to accept vectors of central points and vectors
+#' defining multiple isochrone or isodistance thresholds. Provide one or more
+#' `dlim` values for isodistances, or one or more `tlim` values for isochrones.
+#' Calculations use by default parallel computation with the maximal number of
+#' available cores or threads. This number can be reduced by specifying a value
+#' via `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
 #' @inheritParams dodgr_isodists
 #'
@@ -226,7 +279,7 @@ dodgr_isochrones <- function (graph,
 #' specifying a value via `RcppParallel::setThreadOptions (numThreads =
 #' <desired_number>)`.
 #'
-#' @family distances
+#' @family iso
 #' @export
 #' @examples
 #' \dontrun{

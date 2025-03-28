@@ -89,17 +89,6 @@ square matrix of distances between nodes
 \description{
 Alias for \link{dodgr_dists}
 }
-\details{
-\code{graph} must minimally contain three columns of \code{from},
-\code{to}, \code{dist}. If an additional column named \code{weight} or
-\code{wt} is present, shortest paths are calculated according to values
-specified in that column; otherwise according to \code{dist} values. Either
-way, final distances between \code{from} and \code{to} points are calculated
-by default according to values of \code{dist}. That is, paths between any pair of
-points will be calculated according to the minimal total sum of \code{weight}
-values (if present), while reported distances will be total sums of \code{dist}
-values.
-}
 \examples{
 # A simple graph
 graph <- data.frame (
@@ -165,12 +154,6 @@ Other distances:
 \code{\link{dodgr_dists}()},
 \code{\link{dodgr_dists_categorical}()},
 \code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
 \code{\link{dodgr_paths}()},
 \code{\link{dodgr_times}()}
 }

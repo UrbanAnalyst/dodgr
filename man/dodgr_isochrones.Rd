@@ -50,13 +50,25 @@ maximal number of available cores or threads. This number can be reduced by
 specifying a value via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \description{
+Calculates isochrones from input \code{data.frame} objects
+(\code{graph}), which must minimally contain three columns of \code{from}, \code{to}, and
+\code{t} or \code{time}. If an additional column named \code{t_weight} or \code{t_wt} is
+present, fastest paths are calculated according to values specified in that
+column, while resultant isochrones are calculated from the \code{t} or \code{time}
+column. That is, the paths tracing isochrones from any point will be
+calculated according to the minimal total sum of \code{t_weight} values (if
+present), while reported isochrones will be total sums of \code{time} values.
+
+Graphs derived from Open Street Map street networks, via the
+\link{weight_streetnet} function, have columns labelled \code{d}, \code{d_weighted},
+\code{time}, and \code{time_weighted}. For these inputs, isochrones are always routed
+using \code{t_weighted}, while final isochrones are sums of values of \code{t} - that
+is, of un-weighted distances or times - along those paths.
+
 Function is fully vectorized to calculate accept vectors of central points
-and vectors defining multiple isochrone thresholds.
-}
-\note{
-Isodists are calculated by default using parallel computation with the
-maximal number of available cores or threads. This number can be reduced by
-specifying a value via
+and vectors defining multiple isochrones. Calculations use by default
+parallel computation with the maximal number of available cores or threads.
+This number can be reduced by specifying a value via
 \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \examples{
@@ -73,17 +85,8 @@ x <- dodgr_isochrones (graph, from = from, tlim)
 }
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
+Other iso: 
 \code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
-\code{\link{dodgr_paths}()},
-\code{\link{dodgr_times}()}
+\code{\link{dodgr_isoverts}()}
 }
-\concept{distances}
+\concept{iso}

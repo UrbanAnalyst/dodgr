@@ -205,17 +205,8 @@ grep ("^flow", names (graph), value = TRUE)
 # each origin point.
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
+Other flows: 
 \code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
-\code{\link{dodgr_paths}()},
-\code{\link{dodgr_times}()}
+\code{\link{dodgr_flows_disperse}()}
 }
-\concept{distances}
+\concept{flows}

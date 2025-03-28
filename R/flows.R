@@ -57,7 +57,7 @@
 #' specifying a value via
 #' `RcppParallel::setThreadOptions (numThreads = <desired_number>)`.
 #'
-#' @family distances
+#' @family flows
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
@@ -293,7 +293,7 @@ dodgr_flows_aggregate <- function (graph,
 #' can be removed by setting `tol = 0`.
 #' @return Modified version of graph with additional `flow` column added.
 #'
-#' @family distances
+#' @family flows
 #' @export
 #' @examples
 #' # This is generally needed to explore different values of `k` on same graph:
@@ -499,7 +499,7 @@ dodgr_flows_disperse <- function (graph,
 #' anywhere in a network within machine tolerance. Such cases may result in sums
 #' of output flows being less than sums of input densities.
 #'
-#' @family distances
+#' @family flows
 #' @export
 #' @examples
 #' # This is generally needed to explore different values of `k` on same graph:

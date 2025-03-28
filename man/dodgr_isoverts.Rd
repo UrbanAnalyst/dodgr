@@ -35,10 +35,30 @@ maximal number of available cores or threads. This number can be reduced by
 specifying a value via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \description{
-Returns lists of all network vertices contained within the contours. Function
-is fully vectorized to calculate accept vectors of central points and vectors
-defining multiple isochrone thresholds. Provide one or more \code{dlim} values for
-isodistances, or one or more \code{tlim} values for isochrones.
+Returns lists of all network vertices contained within
+isodistance or isochrone contours. Input objects must be \code{data.frame}
+objects (\code{graph}), which must minimally contain three columns of \code{from},
+\code{to}, and \code{d} or \code{dist}. If an additional column named \code{weight} or \code{wt} is
+present, iso contours are evaluate via shortest paths calculated according
+to values specified in that column, while resultant values of iso contours
+are calculated from the \code{d} or \code{dist} column. That is, the paths tracing iso
+contours from any point will be calculated according to the minimal total
+sum of \code{weight} values (if present), while reported iso contours will be
+total sums of \code{dist} values.
+
+Graphs derived from Open Street Map street networks, via the
+\link{weight_streetnet} function, have columns labelled \code{d}, \code{d_weighted},
+\code{time}, and \code{time_weighted}. For these inputs, iso contours are always
+routed using \code{d_weighted} (or \code{t_weighted} for times), while final iso
+contours reflect sums of values of \code{d} (or \code{t} for times) - that is, of
+un-weighted distances or times - along those paths.
+
+Function is fully vectorized to accept vectors of central points and vectors
+defining multiple isochrone or isodistance thresholds. Provide one or more
+\code{dlim} values for isodistances, or one or more \code{tlim} values for isochrones.
+Calculations use by default parallel computation with the maximal number of
+available cores or threads. This number can be reduced by specifying a value
+via \verb{RcppParallel::setThreadOptions (numThreads = <desired_number>)}.
 }
 \examples{
 \dontrun{
@@ -54,17 +74,8 @@ x <- dodgr_isoverts (graph, from = from, tlim)
 }
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
+Other iso: 
 \code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_paths}()},
-\code{\link{dodgr_times}()}
+\code{\link{dodgr_isodists}()}
 }
-\concept{distances}
+\concept{iso}

@@ -1,4 +1,21 @@
-#' Cumulative distances along different edge categories
+#' @title Cumulative distances along different edge categories
+#'
+#' @description The main \link{dodgr_distances} function calculates distances
+#' between input sets of origin and destination points, and returns a single
+#' matrix of numeric distances. This function aggregates distances along
+#' categories of edges or segments, and returns an overall distance matrix
+#' (identical to the result of \link{dodgr_distances}), along with one
+#' additional matrix for each edge category.
+#'
+#' Edges types must be specified in a column of the input graph named
+#' "edge_type". If this has two types of values (for example, "a"
+#' and "b"), then the function will return two additional distance matrices,
+#' one of total lengths of distances between all pairs of points traversed
+#' along edges of the first type, "a", and one of aggregated distances along
+#' edges of type "b".
+#'
+#' See the description of \link{dodgr_distances} for details on the expected
+#' format of input graphs.
 #'
 #' @inheritParams dodgr_dists
 #' @param graph `data.frame` or equivalent object representing the network

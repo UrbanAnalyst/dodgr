@@ -87,18 +87,25 @@ calculations are, however, not able to be interrupted (for example, by
 square matrix of distances between nodes
 }
 \description{
-Calculate matrix of pair-wise distances between points.
-}
-\details{
-\code{graph} must minimally contain three columns of \code{from},
-\code{to}, \code{dist}. If an additional column named \code{weight} or
-\code{wt} is present, shortest paths are calculated according to values
-specified in that column; otherwise according to \code{dist} values. Either
-way, final distances between \code{from} and \code{to} points are calculated
-by default according to values of \code{dist}. That is, paths between any pair of
-points will be calculated according to the minimal total sum of \code{weight}
-values (if present), while reported distances will be total sums of \code{dist}
-values.
+Calculates distances from input \code{data.frame} objects (\code{graph}),
+which must minimally contain three columns of \code{from}, \code{to}, and \code{d} or
+\code{dist}. If an additional column named \code{weight} or \code{wt} is present, shortest
+paths are calculated according to values specified in that column, while
+distances returned are calculated from the \code{d} or \code{dist} column. That is,
+paths between any pair of points will be calculated according to the minimal
+total sum of \code{weight} values (if present), while reported distances will be
+total sums of \code{dist} values.
+
+Graphs derived from Open Street Map street networks, via the
+\link{weight_streetnet} function, have columns labelled \code{d}, \code{d_weighted},
+\code{time}, and \code{time_weighted}. For these inputs, paths between origin and
+destination points are always routed using \code{d_weighted} (or \code{t_weighted} for
+times), while final distances are sums of values of \code{d} (or \code{t} for times)-
+that is, of un-weighted distances or times - along those paths.
+
+The function is parallelized for efficient computation of distances between
+multiple origin and destination points, as described in the \code{from} parameter
+below.
 }
 \examples{
 # A simple graph
@@ -165,12 +172,6 @@ Other distances:
 \code{\link{dodgr_distances}()},
 \code{\link{dodgr_dists_categorical}()},
 \code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()},
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()},
-\code{\link{dodgr_isoverts}()},
 \code{\link{dodgr_paths}()},
 \code{\link{dodgr_times}()}
 }
