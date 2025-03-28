@@ -4,6 +4,7 @@
 
 - All graphs are now constructed with distances calculated using the "cheap" measure of `geodist::geodist()` is maximal graph distances are < 100km, otherwise with "haversine". Distances (and therefore times) in graphs may differ from values calculated with previous versions. See #284; thanks to @leoniedu
 - New function added, `dodgr_streetnet_geodesic()`, to force edge distances in `weight_streetnet()` to use geodesic distances (more accurate, but slower calculations). See #284; thanks to @leoniedu
+- Documentation for all main distance, time, flows, and iso functions updated and extended to much better explain what functions actually do.
 
 ## Minor changes
 
