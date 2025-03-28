@@ -161,9 +161,9 @@ nrow (graph_undir) # the latter is much smaller
 
 # ----- One dispersal coefficient for each origin point:
 # Remove `flow` column to avoid warning about over-writing values:
-raph$flow <- NULL
- <- runif (length (from))
-raph <- dodgr_flows_si (
+graph$flow <- NULL
+k <- runif (length (from))
+graph <- dodgr_flows_si (
     graph,
     from = from,
     to = to,
@@ -171,13 +171,13 @@ raph <- dodgr_flows_si (
     dens_to = dens_to,
     k = k
 )
-rep ("^flow", names (graph), value = TRUE)
+grep ("^flow", names (graph), value = TRUE)
 # single dispersal model; single "flow" column
 
 # ----- Multiple models, muliple dispersal coefficients:
- <- 1:5
-raph$flow <- NULL
-raph <- dodgr_flows_si (
+k <- 1:5
+graph$flow <- NULL
+graph <- dodgr_flows_si (
     graph,
     from = from,
     to = to,
@@ -185,14 +185,14 @@ raph <- dodgr_flows_si (
     dens_to = dens_to,
     k = k
 )
-rep ("^flow", names (graph), value = TRUE)
+grep ("^flow", names (graph), value = TRUE)
 # Rm all flow columns:
-raph [grep ("^flow", names (graph), value = TRUE)] <- NULL
+graph [grep ("^flow", names (graph), value = TRUE)] <- NULL
 
 # Multiple models with unique coefficient at each origin point:
- <- matrix (runif (length (from) * 5), ncol = 5)
-im (k)
-raph <- dodgr_flows_si (
+k <- matrix (runif (length (from) * 5), ncol = 5)
+dim (k)
+graph <- dodgr_flows_si (
     graph,
     from = from,
     to = to,
@@ -200,7 +200,7 @@ raph <- dodgr_flows_si (
     dens_to = dens_to,
     k = k
 )
-rep ("^flow", names (graph), value = TRUE)
+grep ("^flow", names (graph), value = TRUE)
 # 5 "flow" columns again, but this time different dispersal coefficients each
 # each origin point.
 }
