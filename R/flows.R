@@ -610,8 +610,9 @@ dodgr_flows_si <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        graph$flow [is.na (graph$flow)] <- 0
     }
+
+    flow_cols <- grep ("^flow", names (graph), value = TRUE)
     if (to_from_indices$compound) {
         flow_cols <- grep ("^flow", names (graph), value = TRUE)
         graph <- uncompound_junctions (
@@ -619,8 +620,8 @@ dodgr_flows_si <- function (graph,
             flow_cols,
             to_from_indices$compound_junction_map
         )
-        graph$flow [is.na (graph$flow)] <- 0
     }
+    graph [, flow_cols] [is.na (graph [, flow_cols])] <- 0
 
     return (graph)
 }
