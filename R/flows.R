@@ -1,9 +1,9 @@
-#' Aggregate flows throughout a network.
+#' @title Aggregate flows throughout a network.
 #'
-#' Aggregate flows throughout a network based on an input matrix of flows
-#' between all pairs of `from` and `to` points. Flows are calculated by default
-#' on contracted graphs, via the `contract = TRUE` parameter. (These are
-#' derived by reducing the input graph down to junction vertices only, by
+#' @description Aggregate flows throughout a network based on an input matrix
+#' of flows between all pairs of `from` and `to` points. Flows are calculated
+#' by default on contracted graphs, via the `contract = TRUE` parameter. (These
+#' are derived by reducing the input graph down to junction vertices only, by
 #' joining all intermediate edges between each junction.) If changes to the
 #' input graph do not prompt changes to resultant flows, and the default
 #' `contract = TRUE` is used, it may be that calculations are using previously
@@ -39,16 +39,6 @@
 #' Note).
 #' @inheritParams dodgr_dists
 #' @return Modified version of graph with additional `flow` column added.
-#'
-#' @note Spatial Interaction models are often fitted through trialling a range
-#' of values of 'k'. The specification above allows fitting multiple values of
-#' 'k' to be done with a single call, in a way that is far more efficient than
-#' making multiple calls. A matrix of 'k' values may be entered, with each
-#' column holding a different vector of values, one for each 'from' point. For a
-#' matrix of 'k' values having 'n' columns, the return object will be a modified
-#' version in the input 'graph', with an additional 'n' columns, named 'flow1',
-#' 'flow2', ... up to 'n'. These columns must be subsequently matched by the
-#' user back on to the corresponding columns of the matrix of 'k' values.
 #'
 #' @note The `norm_sums` parameter should be used whenever densities at origins
 #' and destinations are absolute values, and ensures that the sum of resultant
@@ -246,18 +236,46 @@ dodgr_flows_aggregate <- function (graph,
     return (graph)
 }
 
-#' Aggregate flows dispersed from each point in a network.
+#' @title Aggregate flows dispersed from each point in a network.
 #'
-#' Disperse flows throughout a network based on a input vectors of origin points
-#' and associated densities. Flows are calculated by default on contracted
-#' graphs, via the `contract = TRUE` parameter. (These are derived by reducing
-#' the input graph down to junction vertices only, by joining all intermediate
-#' edges between each junction.) If changes to the input graph do not prompt
-#' changes to resultant flows, and the default `contract = TRUE` is used, it
-#' may be that calculations are using previously cached versions of the
-#' contracted graph. If so, please use either \link{clear_dodgr_cache} to
-#' remove the cached version, or \link{dodgr_cache_off} prior to initial graph
-#' construction to switch the cache off completely.
+#' @description Disperse flows throughout a network based on a input vectors of
+#' origin points and associated densities. Dispersal is implemented as an
+#' exponential decay, controlled by a parameter, `k`, so that flows decay with
+#' `exp(-d / k)`, where `d` is distance. The algorithm allows for efficient
+#' fitting of multiple dispersal models for different coefficients to be fitted
+#' with a single call. Values of the dispersal coefficients, `k`, may take one
+#' of the following forms:
+#'
+#' \itemize{
+#' \item A single numeric value (> 0), with dispersal along all paths
+#' calculated with that single value. Return object (see below) will then have
+#' a single additional column named "flow".
+#' \item A vector of length equal to the number of `from` points, with
+#' dispersal from each point then calculated using the corresponding value of
+#' `k`. Return object has single additional "flow" column.
+#' \item A vector of any other length (that is, >  1 yet different to number of
+#' `from` points), in which case different dispersal models will be fitted for
+#' each of the `n` specified values, and the resultant return object will have
+#' an additional 'n' columns, named 'flow1', 'flow2', ... up to 'n'. These
+#' columns must be subsequently matched by the user back on to the
+#' corresponding 'k' values.
+#' \item A matrix with number of rows equal to the number of `from` points, and
+#' any number of columns. Each column will then specify a distinct dispersal
+#' model, with different values from each row applied to the corresponding
+#' `from` points. The return value will then be the same as the previous
+#' version, with an additional `n` columns, "flow1" to "flow<n>".
+#' }
+#'
+#'
+#' Flows are calculated by default on contracted graphs, via the `contract =
+#' TRUE` parameter. (These are derived by reducing the input graph down to
+#' junction vertices only, by joining all intermediate edges between each
+#' junction.) If changes to the input graph do not prompt changes to resultant
+#' flows, and the default `contract = TRUE` is used, it may be that
+#' calculations are using previously cached versions of the contracted graph.
+#' If so, please use either \link{clear_dodgr_cache} to remove the cached
+#' version, or \link{dodgr_cache_off} prior to initial graph construction to
+#' switch the cache off completely.
 #'
 #' @inheritParams dodgr_flows_aggregate
 #' @param graph `data.frame` or equivalent object representing the network
@@ -274,16 +292,6 @@ dodgr_flows_aggregate <- function (graph,
 #' finished. This parameter can generally be ignored; if in doubt, its effect
 #' can be removed by setting `tol = 0`.
 #' @return Modified version of graph with additional `flow` column added.
-#'
-#' @note Spatial Interaction models are often fitted through trialling a range
-#' of values of 'k'. The specification above allows fitting multiple values of
-#' 'k' to be done with a single call, in a way that is far more efficient than
-#' making multiple calls. A matrix of 'k' values may be entered, with each
-#' column holding a different vector of values, one for each 'from' point. For a
-#' matrix of 'k' values having 'n' columns, the return object will be a modified
-#' version in the input 'graph', with an additional 'n' columns, named 'flow1',
-#' 'flow2', ... up to 'n'. These columns must be subsequently matched by the
-#' user back on to the corresponding columns of the matrix of 'k' values.
 #'
 #' @family distances
 #' @export
@@ -368,6 +376,7 @@ dodgr_flows_disperse <- function (graph,
         tol,
         heap
     )
+
     if (nk == 1) {
         graph$flow <- f
     } else {
@@ -378,17 +387,17 @@ dodgr_flows_disperse <- function (graph,
 
     if (contract) { # map contracted flows back onto full graph
         graph <- uncontract_graph (graph, edge_map, graph_full)
-        graph$flow [is.na (graph$flow)] <- 0
     }
+
+    flow_cols <- grep ("^flow", names (graph), value = TRUE)
     if (to_from_indices$compound) {
-        flow_cols <- grep ("^flow", names (graph), value = TRUE)
         graph <- uncompound_junctions (
             graph,
             flow_cols,
             to_from_indices$compound_junction_map
         )
-        graph$flow [is.na (graph$flow)] <- 0
     }
+    graph [, flow_cols] [is.na (graph [, flow_cols])] <- 0
 
     return (graph)
 }

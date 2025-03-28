@@ -50,27 +50,42 @@ can be removed by setting \code{tol = 0}.}
 Modified version of graph with additional \code{flow} column added.
 }
 \description{
-Disperse flows throughout a network based on a input vectors of origin points
-and associated densities. Flows are calculated by default on contracted
-graphs, via the \code{contract = TRUE} parameter. (These are derived by reducing
-the input graph down to junction vertices only, by joining all intermediate
-edges between each junction.) If changes to the input graph do not prompt
-changes to resultant flows, and the default \code{contract = TRUE} is used, it
-may be that calculations are using previously cached versions of the
-contracted graph. If so, please use either \link{clear_dodgr_cache} to
-remove the cached version, or \link{dodgr_cache_off} prior to initial graph
-construction to switch the cache off completely.
+Disperse flows throughout a network based on a input vectors of
+origin points and associated densities. Dispersal is implemented as an
+exponential decay, controlled by a parameter, \code{k}, so that flows decay with
+\code{exp(-d / k)}, where \code{d} is distance. The algorithm allows for efficient
+fitting of multiple dispersal models for different coefficients to be fitted
+with a single call. Values of the dispersal coefficients, \code{k}, may take one
+of the following forms:
+
+\itemize{
+\item A single numeric value (> 0), with dispersal along all paths
+calculated with that single value. Return object (see below) will then have
+a single additional column named "flow".
+\item A vector of length equal to the number of \code{from} points, with
+dispersal from each point then calculated using the corresponding value of
+\code{k}. Return object has single additional "flow" column.
+\item A vector of any other length (that is, >  1 yet different to number of
+\code{from} points), in which case different dispersal models will be fitted for
+each of the \code{n} specified values, and the resultant return object will have
+an additional 'n' columns, named 'flow1', 'flow2', ... up to 'n'. These
+columns must be subsequently matched by the user back on to the
+corresponding 'k' values.
+\item A matrix with number of rows equal to the number of \code{from} points, and
+any number of columns. Each column will then specify a distinct dispersal
+model, with different values from each row applied to the corresponding
+\code{from} points. The return value will then be the same as the previous
+version, with an additional \code{n} columns, "flow1" to "flow\if{html}{\out{<n>}}".
 }
-\note{
-Spatial Interaction models are often fitted through trialling a range
-of values of 'k'. The specification above allows fitting multiple values of
-'k' to be done with a single call, in a way that is far more efficient than
-making multiple calls. A matrix of 'k' values may be entered, with each
-column holding a different vector of values, one for each 'from' point. For a
-matrix of 'k' values having 'n' columns, the return object will be a modified
-version in the input 'graph', with an additional 'n' columns, named 'flow1',
-'flow2', ... up to 'n'. These columns must be subsequently matched by the
-user back on to the corresponding columns of the matrix of 'k' values.
+
+Flows are calculated by default on contracted graphs, via the \code{contract = TRUE} parameter. (These are derived by reducing the input graph down to
+junction vertices only, by joining all intermediate edges between each
+junction.) If changes to the input graph do not prompt changes to resultant
+flows, and the default \code{contract = TRUE} is used, it may be that
+calculations are using previously cached versions of the contracted graph.
+If so, please use either \link{clear_dodgr_cache} to remove the cached
+version, or \link{dodgr_cache_off} prior to initial graph construction to
+switch the cache off completely.
 }
 \examples{
 graph <- weight_streetnet (hampi)
