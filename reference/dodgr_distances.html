@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.040</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,29 +137,11 @@ calculations are, however, not able to be interrupted (for example, by
     <p>square matrix of distances between nodes</p>
     </div>
     <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>graph</code> must minimally contain three columns of <code>from</code>,
-<code>to</code>, <code>dist</code>. If an additional column named <code>weight</code> or
-<code>wt</code> is present, shortest paths are calculated according to values
-specified in that column; otherwise according to <code>dist</code> values. Either
-way, final distances between <code>from</code> and <code>to</code> points are calculated
-by default according to values of <code>dist</code>. That is, paths between any pair of
-points will be calculated according to the minimal total sum of <code>weight</code>
-values (if present), while reported distances will be total sums of <code>dist</code>
-values.</p>
-    </div>
-    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other distances:
 <code><a href="dodgr_dists.html">dodgr_dists</a>()</code>,
 <code><a href="dodgr_dists_categorical.html">dodgr_dists_categorical</a>()</code>,
 <code><a href="dodgr_dists_nearest.html">dodgr_dists_nearest</a>()</code>,
-<code><a href="dodgr_flows_aggregate.html">dodgr_flows_aggregate</a>()</code>,
-<code><a href="dodgr_flows_disperse.html">dodgr_flows_disperse</a>()</code>,
-<code><a href="dodgr_flows_si.html">dodgr_flows_si</a>()</code>,
-<code><a href="dodgr_isochrones.html">dodgr_isochrones</a>()</code>,
-<code><a href="dodgr_isodists.html">dodgr_isodists</a>()</code>,
-<code><a href="dodgr_isoverts.html">dodgr_isoverts</a>()</code>,
 <code><a href="dodgr_paths.html">dodgr_paths</a>()</code>,
 <code><a href="dodgr_times.html">dodgr_times</a>()</code></p></div>
     </div>
