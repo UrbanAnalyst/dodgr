@@ -296,6 +296,9 @@ dodgr_flows_aggregate <- function (graph,
 #' @family distances
 #' @export
 #' @examples
+#' # This is generally needed to explore different values of `k` on same graph:
+#' dodgr_cache_off ()
+#'
 #' graph <- weight_streetnet (hampi)
 #' from <- sample (graph$from_id, size = 10)
 #' dens <- rep (1, length (from)) # Uniform densities
@@ -304,6 +307,30 @@ dodgr_flows_aggregate <- function (graph,
 #' # edges. These flows are directed, and can be aggregated to equivalent
 #' # undirected flows on an equivalent undirected graph with:
 #' graph_undir <- merge_directed_graph (graph)
+#'
+#' # Remove `flow` column to avoid warning about over-writing values:
+#' graph$flow <- NULL
+#' # One dispersal coefficient for each origin point:
+#' k <- runif (length (from))
+#' graph <- dodgr_flows_disperse (graph, from = from, dens = dens, k = k)
+#' grep ("^flow", names (graph), value = TRUE)
+#' # single dispersal model; single "flow" column
+#'
+#' # Multiple models, muliple dispersal coefficients:
+#' k <- 1:5
+#' graph$flow <- NULL
+#' graph <- dodgr_flows_disperse (graph, from = from, dens = dens, k = k)
+#' grep ("^flow", names (graph), value = TRUE)
+#' # Rm all flow columns:
+#' graph [grep ("^flow", names (graph), value = TRUE)] <- NULL
+#'
+#' # Multiple models with unique coefficient at each origin point:
+#' k <- matrix (runif (length (from) * 5), ncol = 5)
+#' dim (k)
+#' graph <- dodgr_flows_disperse (graph, from = from, dens = dens, k = k)
+#' grep ("^flow", names (graph), value = TRUE)
+#' # 5 "flow" columns again, but this time different dispersal coefficients each
+#' # each origin point.
 dodgr_flows_disperse <- function (graph,
                                   from,
                                   dens,
