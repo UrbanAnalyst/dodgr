@@ -20,7 +20,7 @@ test_that ("add_nodes_to_graph_by_edge single point per edge", {
   
   # Create a small set of points that will likely match to different edges
   set.seed (1)
-  npts <- 5
+  npts <- 50
   xy <- data.frame (
     x = min (verts$x) + runif (npts) * diff (range (verts$x)),
     y = min (verts$y) + runif (npts) * diff (range (verts$y))
@@ -48,9 +48,11 @@ test_that ("add_nodes_to_graph_by_edge single point per edge", {
   expect_equal (nrow (graph1), nrow (graph2))
   
   # Compare total distance in the graph
+  total_dist0 <- sum (graph$d)
   total_dist1 <- sum (graph1$d)
   total_dist2 <- sum (graph2$d)
   expect_equal (total_dist1, total_dist2, tolerance = 1e-6)
+  expect_equal (total_dist2, total_dist0, tolerance = 1e-6)
   
   # Compare structure
   expect_equal (ncol (graph1), ncol (graph2))
@@ -71,7 +73,9 @@ test_that ("add_nodes_to_graph_by_edge single point per edge", {
   expect_equal (sum(graph1$time_weighted), sum(graph2$time_weighted), tolerance = 1e-6)
   expect_equal (sum(graph1$d_weighted), sum(graph2$d_weighted), tolerance = 1e-6)
   
+  graph <- graph%>%filter(highway=="residential")
   
+  graph1 <- add_nodes_to_graph_by_edge (graph, xy_single, intersections_only = FALSE, dist_tol = 0)
   
   graph2 <- add_nodes_to_graph_by_edge (graph, xy_single, intersections_only = FALSE, dist_tol = 0, wt_profile = "foot", highway="residential")
   expect_equal (sum(graph1$d), sum(graph2$d), tolerance = 1e-6)
@@ -145,32 +149,44 @@ test_that ("add_nodes_to_graph_by_edge with mixed point distribution", {
   
   # Load a sample graph
   graph <- weight_streetnet (hampi, wt_profile = "foot")%>%
-    mutate(edge_id=as.character(edge_id))%>%
-    std_graph()
+    mutate(edge_id=as.character(edge_id))
   verts <- dodgr_vertices (graph)
   
   # Create a larger set of points with mixed distribution
   set.seed (3)
-  npts <- 3
+  npts <- 100
   xy <- data.frame (
     x = min (verts$x) + runif (npts) * diff (range (verts$x)),
     y = min (verts$y) + runif (npts) * diff (range (verts$y))
   )
   #xy <- rbind(xy,xy)
   # Process with both functions
-  graph1 <- add_nodes_to_graph (graph, xy, dist_tol = 0)
-  graph2 <- add_nodes_to_graph_by_edge (graph, xy, dist_tol = 0)
+  graph1 <- add_nodes_to_graph (graph, xy, dist_tol = 0, intersections_only = TRUE)
+  graph2 <- add_nodes_to_graph_by_edge (graph, xy, dist_tol = 0, intersections_only = TRUE)
   
   g1 <- graph1%>%
     anti_join(graph)%>%
     filter(grepl("_", edge_id))%>%
     tidyr::separate(edge_id, c("edge_id", "edge_id_seq"), sep="_")%>%
-    left_join(graph%>%select(edge_id, highway), by="edge_id")%>%
-    filter(highway.x!=highway.y)
+    group_by(edge_id)%>%
+    summarise(across(c("d", "d_weighted", "time", "time_weighted"), sum))%>%
+    left_join(graph, by=c("edge_id"))%>%
+    select(sort(names(.)))
   
-  g1 <- graph1%>%anti_join(graph)%>%std_graph()
-  g2 <- graph2%>%anti_join(graph)%>%std_graph()
-  g1%>%anti_join(g2, by=c("from_lat", "from_lon", "to_lat", "to_lon", "d", "d_weighted", "highway", "time", "time_weighted"))%>%left_join(g2, by=c("from_lat", "from_lon", "to_lat", "to_lon"))%>%select(sort(names(.)))%>%View()
+  g2 <- graph2%>%
+    anti_join(graph)%>%
+    filter(grepl("^[0-9]+_", edge_id))%>%
+    tidyr::separate(edge_id, c("edge_id", "edge_id_seq"), sep="_")%>%
+    group_by(edge_id)%>%
+    summarise(across(c("d", "d_weighted", "time", "time_weighted"), sum))%>%
+    left_join(graph, by=c("edge_id"))%>%
+    select(sort(names(.)))
+  
+  #g1 <- graph1%>%anti_join(graph)
+  #g2 <- graph2%>%anti_join(graph)
+  #g1%>%anti_join(g2, by=c("from_lat", "from_lon", "to_lat", "to_lon", "d", "d_weighted", "highway", "time", "time_weighted"))%>%left_join(g2, by=c("from_lat", "from_lon", "to_lat", "to_lon"))%>%select(sort(names(.)))%>%View()
+  
+  #g2%>%anti_join(g1, by=c("from_lat", "from_lon", "to_lat", "to_lon", "d", "d_weighted", "highway", "time", "time_weighted"))%>%left_join(g1, by=c("from_lat", "from_lon", "to_lat", "to_lon"))%>%select(sort(names(.)))%>%View()
   
   # Compare results
   

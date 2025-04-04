@@ -35,6 +35,8 @@ add_nodes_to_graph_by_edge <- function (graph,
                                         max_distance = Inf,
                                         replace_component = TRUE) {
     
+    measure <- get_geodist_measure (graph)
+    
     genhash <- function (len = 10) {
         paste0 (sample (c (0:9, letters, LETTERS), size = len), collapse = "")
     }
@@ -177,13 +179,13 @@ add_nodes_to_graph_by_edge <- function (graph,
                 new_edges$xto [1] <- new_edges$xfr [2] <- edge_pts$x [p]
                 new_edges$yto [1] <- new_edges$yfr [2] <- edge_pts$y [p]
                 
-                # Calculate distance using geodesic distance
+                # Calculate distance 
                 d_i <- geodist::geodist (
                     data.frame (
                         x = c (new_edges$xfr [1], new_edges$xto [1]),
                         y = c (new_edges$yfr [1], new_edges$yto [1])
                     ),
-                    measure = "geodesic"
+                    measure = measure
                 ) [1, 2]
                 
                 # Skip if distance smaller than dist_tol
@@ -272,12 +274,12 @@ add_nodes_to_graph_by_edge <- function (graph,
         
         # Calculate distances and update weights for each segment
         for (s in seq_len (n_segments)) {
-            # Calculate distance for this segment using geodesic distance
+            # Calculate distance for this segment
             segment_xy <- data.frame (
                 x = c (segments [[s]]$xfr, segments [[s]]$xto),
                 y = c (segments [[s]]$yfr, segments [[s]]$yto)
             )
-            segment_dist <- geodist::geodist (segment_xy, measure = "geodesic") [1, 2]
+            segment_dist <- geodist::geodist (segment_xy, measure = measure) [1, 2]
             
             # Update segment properties - preserve weight ratios exactly
             segments [[s]]$d <- segment_dist
