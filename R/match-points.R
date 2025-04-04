@@ -411,7 +411,7 @@ add_nodes_to_graph <- function (graph,
     edges_split <- do.call (rbind, edges_split)
 
     # Then match edges_split back on to original graph:
-    graph_to_add <- graph_to_add [edges_split$n, ]
+    graph_to_add <- graph_to_add [match (edges_split$n, index$n), ]
     gr_cols <- gr_cols [which (!is.na (gr_cols))]
     for (g in seq_along (gr_cols)) {
         graph_to_add [, gr_cols [g]] <- edges_split [[names (gr_cols) [g]]]
