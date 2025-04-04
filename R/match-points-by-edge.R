@@ -201,7 +201,7 @@ add_nodes_to_graph_by_edge <- function (graph,
                 # Apply custom weight profile if provided
                 if (!is.null (wt_profile) || !is.null (wt_profile_file)) {
                     # Get weight profile
-                    wp <- dodgr:::get_profile (wt_profile = wt_profile, file = wt_profile_file)
+                    wp <- get_profile (wt_profile = wt_profile, file = wt_profile_file)
                     way_wt <- wp$value [wp$way == highway]
                     
                     if (length (way_wt) == 0) {
@@ -213,9 +213,9 @@ add_nodes_to_graph_by_edge <- function (graph,
                     new_edges$d_weighted <- d_i / way_wt
                     new_edges$highway <- highway
                     # Apply additional weighting functions
-                    new_edges <- dodgr:::set_maxspeed (new_edges, wt_profile, wt_profile_file) |>
-                        dodgr:::weight_by_num_lanes (wt_profile) |>
-                        dodgr:::calc_edge_time (wt_profile)
+                    new_edges <- set_maxspeed (new_edges, wt_profile, wt_profile_file) |>
+                        weight_by_num_lanes (wt_profile) |>
+                        calc_edge_time (wt_profile)
                     
                 } else {
                     # Use original edge's weight ratios
@@ -320,7 +320,7 @@ add_nodes_to_graph_by_edge <- function (graph,
     # Update component IDs if requested
     if (replace_component) {
         result_graph$component <- NULL
-        result_graph <- dodgr::dodgr_components (result_graph)
+        result_graph <- dodgr_components (result_graph)
     }
     result_graph$tmp_graph_index <- NULL
     return (result_graph)
