@@ -2,7 +2,7 @@
 % Please edit documentation in R/iso.R
 \name{dodgr_isoverts}
 \alias{dodgr_isoverts}
-\title{Calculate isodistance or isochrone contours from specified points.}
+\title{Calculate isodistance or isochrone vertices from specified points.}
 \usage{
 dodgr_isoverts(graph, from = NULL, dlim = NULL, tlim = NULL, heap = "BHeap")
 }
