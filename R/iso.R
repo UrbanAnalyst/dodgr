@@ -1,4 +1,4 @@
-#' Calculate isodistance contours from specified points.
+#' @title Calculate isodistance contours from specified points.
 #'
 #' @description Calculates isodistances from input `data.frame` objects
 #' (`graph`), which must minimally contain three columns of `from`, `to`, and
@@ -232,8 +232,7 @@ dodgr_isochrones <- function (graph,
     return (res)
 }
 
-#' @title Calculate isodistance or isochrone contours from specified points.
-#'
+#' @title Calculate isodistance or isochrone vertices from specified points.
 #'
 #' @description Returns lists of all network vertices contained within
 #' isodistance or isochrone contours. Input objects must be `data.frame`
