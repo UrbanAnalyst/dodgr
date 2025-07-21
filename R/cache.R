@@ -132,6 +132,10 @@ cache_graph <- function (graph, edge_col) {
 #'
 #' @return Nothing; the function silently clears any cached objects
 #' @family cache
+#' @examples
+#' clear_dodgr_cache ()
+#' # Then call dodgr functions as usual:
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
 #' @export
 clear_dodgr_cache <- function () {
 
@@ -150,6 +154,10 @@ clear_dodgr_cache <- function () {
 #' not needed. Caching can be switched back on with \link{dodgr_cache_on}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
 #' @family cache
+#' @examples
+#' dodgr_cache_off ()
+#' # Then call dodgr functions as usual:
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
 #' @export
 dodgr_cache_off <- function () {
     Sys.setenv ("DODGR_CACHE" = "FALSE")
@@ -161,6 +169,10 @@ dodgr_cache_off <- function () {
 #' \link{dodgr_cache_off}.
 #' @return Nothing; the function invisibly returns `TRUE` if successful.
 #' @family cache
+#' @examples
+#' dodgr_cache_on ()
+#' # Then call dodgr functions as usual:
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
 #' @export
 dodgr_cache_on <- function () {
     Sys.setenv ("DODGR_CACHE" = "TRUE")

@@ -17,6 +17,21 @@ The summary statistics (invisibly)
 \description{
 Transform a result from \link{dodgr_dists_categorical} to summary statistics
 }
+\examples{
+# Prepare a graph for categorical routing by including an "edge_type" column
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+graph <- graph [graph$component == 1, ]
+graph$edge_type <- graph$highway
+# Define start and end points for categorical distances; using all vertices
+# here.
+length (unique (graph$edge_type)) # Number of categories
+v <- dodgr_vertices (graph)
+from <- to <- v$id [1:100]
+d <- dodgr_dists_categorical (graph, from, to)
+# Internal 'summary' method to summarise results:
+summary (d)
+
+}
 \seealso{
 Other misc: 
 \code{\link{compare_heaps}()},

@@ -275,6 +275,10 @@ attach_centrality_to_graph <- function (graph, centrality, edge_map, graph_full,
 #' reduced below the specified tolerance.
 #'
 #' @family centrality
+#' @examples
+#' # No threshold estimation possible on this small example graph:
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
+#' estimate_centrality_threshold (graph)
 #' @export
 estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
     # nocov start - can't be tested on any sample data
@@ -363,6 +367,9 @@ estimate_centrality_threshold <- function (graph, tolerance = 0.001) {
 #' reduced below the specified tolerance.
 #'
 #' @family centrality
+#' @examples
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
+#' estimate_centrality_time (graph)
 #' @export
 estimate_centrality_time <- function (graph,
                                       contract = TRUE,

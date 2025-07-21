@@ -19,6 +19,11 @@ versions are cleared using this function. See
 \url{https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
 for details of caching process.
 }
+\examples{
+clear_dodgr_cache ()
+# Then call dodgr functions as usual:
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+}
 \seealso{
 Other cache: 
 \code{\link{dodgr_cache_off}()},

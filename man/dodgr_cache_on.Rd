@@ -13,6 +13,11 @@ Nothing; the function invisibly returns \code{TRUE} if successful.
 This will only have an effect after caching has been turned off with
 \link{dodgr_cache_off}.
 }
+\examples{
+dodgr_cache_on ()
+# Then call dodgr functions as usual:
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+}
 \seealso{
 Other cache: 
 \code{\link{clear_dodgr_cache}()},

@@ -8,6 +8,10 @@
 #' @return TRUE if writing successful.
 #' @seealso \link{weight_streetnet}
 #' @family misc
+#' @examples
+#' f <- tempfile (fileext = ".json")
+#' write_dodgr_wt_profile (file = f)
+#' wt_profiles <- jsonlite::read_json (f, simplify = TRUE)
 #' @export
 write_dodgr_wt_profile <- function (file = NULL) {
 

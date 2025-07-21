@@ -71,6 +71,9 @@
 #' v <- dodgr_vertices (graph)
 #' from <- to <- v$id [1:100]
 #' d <- dodgr_dists_categorical (graph, from, to)
+#' # Internal 'summary' method to summarise results:
+#' summary (d)
+#'
 #' class (d)
 #' length (d)
 #' sapply (d, dim)
@@ -293,7 +296,23 @@ process_threshold_dmat <- function (d, from_index, vert_map, edge_type_table) {
 #' @param object A 'dodgr_dists_categorical' object
 #' @param ... Extra parameters currently not used
 #' @return The summary statistics (invisibly)
+#'
 #' @family misc
+#'
+#' @examples
+#' # Prepare a graph for categorical routing by including an "edge_type" column
+#' graph <- weight_streetnet (hampi, wt_profile = "foot")
+#' graph <- graph [graph$component == 1, ]
+#' graph$edge_type <- graph$highway
+#' # Define start and end points for categorical distances; using all vertices
+#' # here.
+#' length (unique (graph$edge_type)) # Number of categories
+#' v <- dodgr_vertices (graph)
+#' from <- to <- v$id [1:100]
+#' d <- dodgr_dists_categorical (graph, from, to)
+#' # Internal 'summary' method to summarise results:
+#' summary (d)
+#'
 #' @export
 summary.dodgr_dists_categorical <- function (object, ...) {
 

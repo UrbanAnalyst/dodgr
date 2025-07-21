@@ -322,6 +322,10 @@ dodgr_full_cycles <- function (graph,
 #' @param sflines An \pkg{sf} `LINESTRING` object representing a network.
 #' @return An `sf::sfc` collection of `POLYGON` objects.
 #' @family misc
+#' @examples
+#' \dontrun{
+#' p <- dodgr_sflines_to_poly (hampi)
+#' }
 #' @export
 dodgr_sflines_to_poly <- function (sflines,
                                    graph_max_size = 10000,

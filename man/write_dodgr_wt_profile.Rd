@@ -17,6 +17,11 @@ TRUE if writing successful.
 Write the \code{dodgr} street network weighting profiles to a local
 \code{.json}-formatted file for manual editing and subsequent re-reading.
 }
+\examples{
+f <- tempfile (fileext = ".json")
+write_dodgr_wt_profile (file = f)
+wt_profiles <- jsonlite::read_json (f, simplify = TRUE)
+}
 \seealso{
 \link{weight_streetnet}
 
