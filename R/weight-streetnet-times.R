@@ -117,11 +117,24 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
 
 set_oneway_bike_flags <- function (graph, bikeflags, wt_profile) {
 
-    index <- which (!graph$oneway %in% c ("no", "yes"))
-    if (length (index) > 0) {
-        graph$oneway [index] <- "no"
+    oneway_keys <- tolower (substring (names (table (graph$oneway)), 1, 1))
+    if (length (oneway_keys) > 2L) {
+        warning (
+            "'oneway' column has ambiguous values; ",
+            "should be TRUE/FALSE or 'yes'/'no' only",
+            call. = FALSE
+        )
+        oneway_keys <- oneway_keys [which (oneway_keys %in% c ("0", "1", "y", "n", "t", "f"))]
     }
-    graph$oneway <- ifelse (graph$oneway == "no", FALSE, TRUE)
+    if (all (oneway_keys %in% c ("0", "1"))) {
+        graph$oneway <- as.logical (graph$oneway)
+    } else if (all (oneway_keys %in% c ("y", "n"))) {
+        graph$oneway <- tolower (substring (graph$oneway, 1, 1))
+        graph$oneway <- ifelse (graph$oneway == "y", TRUE, FALSE)
+    } else if (all (oneway_keys %in% c ("t", "f"))) {
+        graph$oneway <- tolower (substring (graph$oneway, 1, 1))
+        graph$oneway <- ifelse (graph$oneway == "t", TRUE, FALSE)
+    }
 
     if (length (bikeflags) == 1) {
         # oneway:bicycle doesn't enquote properly, so:

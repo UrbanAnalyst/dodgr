@@ -5,8 +5,6 @@ if (!test_all) {
     RcppParallel::setThreadOptions (numThreads = 2)
 }
 
-source ("../sc-conversion-fns.R")
-
 test_that ("isodists", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
@@ -62,11 +60,9 @@ test_that ("turn penalty", {
     )
     expect_equal (nrow (net), nrow (net0))
     d <- dodgr_isodists (net, from = from, dlim)
-    # d includes compound vertices with "_start" suffix, and routes
-    # differently because of turning angles
-    expect_true (!identical (d0, d))
-    # expect_true (length (grep ("_start", d$from)) > 0)
-    # expect_false (length (grep ("_start", d0$from)) > 0)
+    expect_identical (d0, d)
+    expect_false (any (grepl ("_start", d$from)))
+    # expect_false (any (grepl ("_start", d0$from)))
 })
 
 test_that ("errors", {
