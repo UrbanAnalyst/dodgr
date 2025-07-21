@@ -15,6 +15,9 @@ of \code{net}}
 
 \item{linescale}{Maximal thickness of plotted lines}
 }
+\value{
+Nothing; called for side-effect of producing plot.
+}
 \description{
 Create a map of the output of \link{dodgr_flows_aggregate} or
 \link{dodgr_flows_disperse}

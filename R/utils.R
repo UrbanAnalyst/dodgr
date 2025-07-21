@@ -84,6 +84,12 @@ get_geodist_measure <- function (graph) {
 #' distance calculations to geodesic.
 #'
 #' @family extraction
+#' @examples
+#' net0 <- weight_streetnet (hampi) # Default "cheap" method
+#' dodgr_streetnet_geodesic ()
+#' net1 <- weight_streetnet (hampi)
+#' cor (net0$d, net1$d) # Strongly correlated, but not perfect
+#' max (abs (net0$d - net1$d)) # in metres
 #' @export
 dodgr_streetnet_geodesic <- function (unset = FALSE) {
 

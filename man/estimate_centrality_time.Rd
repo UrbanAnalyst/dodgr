@@ -57,6 +57,10 @@ ongoing information on screen of estimated values of 'dist_threshold' and
 associated errors. Thresholds are progressively increased until the error is
 reduced below the specified tolerance.
 }
+\examples{
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+estimate_centrality_time (graph)
+}
 \seealso{
 Other centrality: 
 \code{\link{dodgr_centrality}()},

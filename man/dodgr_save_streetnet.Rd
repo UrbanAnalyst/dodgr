@@ -14,6 +14,9 @@ network graph.}
 input \code{net}. The extension \code{.Rds} will be automatically appended, unless
 specified otherwise.}
 }
+\value{
+Nothing; function called for side-effect of saving network.
+}
 \description{
 The \link{weight_streetnet} function returns a single \code{data.frame} object,
 the processing of which also relies on a couple of cached lookup-tables to

@@ -119,6 +119,9 @@ length (unique (graph$edge_type)) # Number of categories
 v <- dodgr_vertices (graph)
 from <- to <- v$id [1:100]
 d <- dodgr_dists_categorical (graph, from, to)
+# Internal 'summary' method to summarise results:
+summary (d)
+
 class (d)
 length (d)
 sapply (d, dim)

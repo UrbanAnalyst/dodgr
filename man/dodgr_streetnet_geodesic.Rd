@@ -21,6 +21,13 @@ forces all calls to \link{weight_streetnet} from that point on to use
 geodesic distances. These are more computationally expensive to calculate,
 and weighting networks will likely take more time.
 }
+\examples{
+net0 <- weight_streetnet (hampi) # Default "cheap" method
+dodgr_streetnet_geodesic ()
+net1 <- weight_streetnet (hampi)
+cor (net0$d, net1$d) # Strongly correlated, but not perfect
+max (abs (net0$d - net1$d)) # in metres
+}
 \seealso{
 Other extraction: 
 \code{\link{dodgr_streetnet}()},

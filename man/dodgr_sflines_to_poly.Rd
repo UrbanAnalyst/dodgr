@@ -24,6 +24,11 @@ An \code{sf::sfc} collection of \code{POLYGON} objects.
 Convert \pkg{sf} \code{LINESTRING} objects to \code{POLYGON} objects representing all
 fundamental cycles within the \code{LINESTRING} objects.
 }
+\examples{
+\dontrun{
+p <- dodgr_sflines_to_poly (hampi)
+}
+}
 \seealso{
 Other misc: 
 \code{\link{compare_heaps}()},

@@ -17,6 +17,10 @@ a single chunk. Warning: Increasing this may lead to computer meltdown!}
 determines the relative overlap between chunks to ensure all cycles are
 captured. (This value should only need to be modified in special cases.)}
 }
+\value{
+List of cycle paths, in terms of vertex IDs in \code{graph} and, for
+spatial graphs, the corresponding coordinates.
+}
 \description{
 Calculate fundamental cycles on a FULL (that is, non-contracted) graph.
 }

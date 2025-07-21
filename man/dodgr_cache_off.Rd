@@ -13,6 +13,11 @@ Nothing; the function invisibly returns \code{TRUE} if successful.
 This function is useful is speed is paramount, and if graph contraction is
 not needed. Caching can be switched back on with \link{dodgr_cache_on}.
 }
+\examples{
+dodgr_cache_off ()
+# Then call dodgr functions as usual:
+graph <- weight_streetnet (hampi, wt_profile = "foot")
+}
 \seealso{
 Other cache: 
 \code{\link{clear_dodgr_cache}()},

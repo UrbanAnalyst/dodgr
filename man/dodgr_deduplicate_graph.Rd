@@ -19,6 +19,17 @@ Graph may have duplicated edges, particularly when extracted as
 edges, reducing weighted distances and times to the minimal values from all
 duplicates.
 }
+\examples{
+net0 <- weight_streetnet (hampi, wt_profile = "foot")
+nrow (net0)
+# Duplicate part of input data:
+h2 <- rbind (hampi, hampi [1, ])
+net1 <- weight_streetnet (h2, wt_profile = "foot")
+nrow (net1) # network then has more edges
+net2 <- dodgr_deduplicate_graph (net1)
+nrow (net2)
+stopifnot (identical (nrow (net0), nrow (net2)))
+}
 \seealso{
 Other conversion: 
 \code{\link{dodgr_to_igraph}()},
