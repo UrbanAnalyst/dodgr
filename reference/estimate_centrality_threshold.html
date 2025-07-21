@@ -13,7 +13,7 @@ values of 'dist_threshold' corresponding to specific degrees of accuracy."></hea
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.051</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.053</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,6 +84,17 @@ reduced below the specified tolerance.</p>
 <code><a href="estimate_centrality_time.html">estimate_centrality_time</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># No threshold estimation possible on this small example graph:</span></span></span>
+<span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">estimate_centrality_threshold</span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> dist_threshold approaches size of graph;</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Recommended value of 'dist_threshold' remains 'NULL',</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> with centrality calculated across entire graph</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

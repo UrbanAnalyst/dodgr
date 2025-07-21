@@ -15,7 +15,7 @@ and weighting networks will likely take more time.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.051</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.053</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,6 +76,17 @@ distance calculations to geodesic.</p>
 <code><a href="weight_streetnet.html">weight_streetnet</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">net0</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span><span class="op">)</span> <span class="co"># Default "cheap" method</span></span></span>
+<span class="r-in"><span><span class="fu">dodgr_streetnet_geodesic</span> <span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">net1</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span> <span class="op">(</span><span class="va">net0</span><span class="op">$</span><span class="va">d</span>, <span class="va">net1</span><span class="op">$</span><span class="va">d</span><span class="op">)</span> <span class="co"># Strongly correlated, but not perfect</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.9999972</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span> <span class="op">(</span><span class="va">net0</span><span class="op">$</span><span class="va">d</span> <span class="op">-</span> <span class="va">net1</span><span class="op">$</span><span class="va">d</span><span class="op">)</span><span class="op">)</span> <span class="co"># in metres</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.622769</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

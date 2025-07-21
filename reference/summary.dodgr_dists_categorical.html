@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.051</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2.053</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,6 +73,33 @@
 <code><a href="write_dodgr_wt_profile.html">write_dodgr_wt_profile</a>()</code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Prepare a graph for categorical routing by including an "edge_type" column</span></span></span>
+<span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">graph</span> <span class="op">[</span><span class="va">graph</span><span class="op">$</span><span class="va">component</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">graph</span><span class="op">$</span><span class="va">edge_type</span> <span class="op">&lt;-</span> <span class="va">graph</span><span class="op">$</span><span class="va">highway</span></span></span>
+<span class="r-in"><span><span class="co"># Define start and end points for categorical distances; using all vertices</span></span></span>
+<span class="r-in"><span><span class="co"># here.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">$</span><span class="va">edge_type</span><span class="op">)</span><span class="op">)</span> <span class="co"># Number of categories</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-in"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">from</span> <span class="op">&lt;-</span> <span class="va">to</span> <span class="op">&lt;-</span> <span class="va">v</span><span class="op">$</span><span class="va">id</span> <span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Internal 'summary' method to summarise results:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span> <span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Proportional distances along each kind of edge:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   path: 0.8941</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   primary: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   residential: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   secondary: 0.0159</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   service: 0.0572</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   steps: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   track: 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   unclassified: 0.0328</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
