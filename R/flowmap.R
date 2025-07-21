@@ -8,6 +8,7 @@
 #' @param bbox If given, scale the map to this bbox, otherwise use entire extend
 #' of `net`
 #' @param linescale Maximal thickness of plotted lines
+#' @return Nothing; called for side-effect of producing plot.
 #'
 #' @note `net` should be first passed through `merge_directed_graph`
 #' prior to plotting, otherwise lines for different directions will be overlaid.

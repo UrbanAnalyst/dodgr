@@ -212,6 +212,9 @@ subdivide_bb <- function (graph, bb_list, graph_max_size, expand) {
 #' Calculate fundamental cycles on a FULL (that is, non-contracted) graph.
 #'
 #' @inheritParams dodgr_fundamental_cycles
+#' @return List of cycle paths, in terms of vertex IDs in `graph` and, for
+#' spatial graphs, the corresponding coordinates.
+#'
 #' @note This function converts the `graph` to its contracted form, calculates
 #' the fundamental cycles on that version, and then expands these cycles back
 #' onto the original graph. This is far more computationally efficient than
