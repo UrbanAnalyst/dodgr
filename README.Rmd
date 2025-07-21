@@ -295,6 +295,7 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 
 
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -319,6 +320,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=karpfen">karpfen</a>
 </td>
 <td align="center">
+<a href="https://github.com/leoniedu">
+<img src="https://avatars.githubusercontent.com/u/54786?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/commits?author=leoniedu">leoniedu</a>
+</td>
+<td align="center">
 <a href="https://github.com/Robinlovelace">
 <img src="https://avatars.githubusercontent.com/u/1825120?v=4" width="100px;" alt=""/>
 </a><br>
@@ -336,21 +343,15 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=JimShady">JimShady</a>
 </td>
-<td align="center">
-<a href="https://github.com/DavisVaughan">
-<img src="https://avatars.githubusercontent.com/u/19150088?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/commits?author=DavisVaughan">DavisVaughan</a>
-</td>
 </tr>
 
 
 <tr>
 <td align="center">
-<a href="https://github.com/leoniedu">
-<img src="https://avatars.githubusercontent.com/u/54786?v=4" width="100px;" alt=""/>
+<a href="https://github.com/DavisVaughan">
+<img src="https://avatars.githubusercontent.com/u/19150088?v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/commits?author=leoniedu">leoniedu</a>
+<a href="https://github.com/UrbanAnalyst/dodgr/commits?author=DavisVaughan">DavisVaughan</a>
 </td>
 <td align="center">
 <a href="https://github.com/layik">
@@ -363,6 +364,12 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <img src="https://avatars.githubusercontent.com/u/52606734?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=olivroy">olivroy</a>
+</td>
+<td align="center">
+<a href="https://github.com/virgesmith">
+<img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
 
@@ -626,6 +633,18 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ajonas260492">jonas260492</a>
 </td>
+<td align="center">
+<a href="https://github.com/meptrsn">
+<img src="https://avatars.githubusercontent.com/u/22846094?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ameptrsn">meptrsn</a>
+</td>
+<td align="center">
+<a href="https://github.com/RegularnaMatrica">
+<img src="https://avatars.githubusercontent.com/u/65914613?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ARegularnaMatrica">RegularnaMatrica</a>
+</td>
 </tr>
 
 </table>
@@ -636,12 +655,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <table>
 
 <tr>
-<td align="center">
-<a href="https://github.com/virgesmith">
-<img src="https://avatars.githubusercontent.com/u/19323577?v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Avirgesmith">virgesmith</a>
-</td>
 <td align="center">
 <a href="https://github.com/richardellison">
 <img src="https://avatars.githubusercontent.com/u/10625733?u=8d7cd55a61f1a1b3f9973ddff5adbb45e0b193c6&v=4" width="100px;" alt=""/>
