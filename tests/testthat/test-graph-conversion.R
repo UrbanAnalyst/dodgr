@@ -5,6 +5,16 @@ test_that ("igraph", {
     graph_i <- dodgr_to_igraph (graph)
     expect_equal (nrow (graph), igraph::ecount (graph_i))
 
+    nms <- names (igraph::edge.attributes (graph_i))
+    expect_lt (length (nms), ncol (graph))
+    expect_true ("highway" %in% nms)
+
+    graph1 <- graph [, -match ("highway", names (graph))]
+    graph_i1 <- dodgr_to_igraph (graph1)
+    nms1 <- names (igraph::edge.attributes (graph_i1))
+    expect_lt (length (nms1), length (nms))
+    expect_false ("highway" %in% nms1)
+
     graph2 <- igraph_to_dodgr (graph_i)
     expect_true (!identical (graph, graph2))
     expect_equal (nrow (graph), nrow (graph2))
