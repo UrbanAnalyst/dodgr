@@ -164,6 +164,33 @@ test_that ("streetnet column names", {
     h$oneway [index] <- "yes"
     graph4 <- weight_streetnet (h, wt_profile = "bicycle")
     expect_identical (nrow (graph2), nrow (graph4))
+
+    # Different encodings for oneway columns
+    h <- hampi
+    h$oneway [1] <- "no"
+    h$oneway [2] <- "maybe"
+    expect_warning (
+        graph5 <- weight_streetnet (h, wt_profile = "bicycle"),
+        "'oneway' column has ambiguous values"
+    )
+    expect_equal (nrow (graph5), nrow (graph0))
+
+    h$oneway [2] <- NA_character_
+    h$oneway [h$oneway == "no"] <- "false"
+    h$oneway [h$oneway == "yes"] <- "true"
+    graph6 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_equal (nrow (graph5), nrow (graph6))
+
+    h$oneway [h$oneway == "false"] <- 0
+    h$oneway [h$oneway == "true"] <- 1
+    storage.mode (h$oneway) <- "numeric"
+    graph7 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_equal (nrow (graph5), nrow (graph7))
+
+    h$oneway <- as.logical (h$oneway)
+    h$oneway [2] <- h$oneway [3] <- TRUE
+    graph8 <- weight_streetnet (h, wt_profile = "bicycle")
+    expect_lt (nrow (graph8), nrow (graph7))
 })
 
 test_that ("wt_profile", {
