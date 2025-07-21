@@ -13,6 +13,7 @@
 - Add @leoniedu as package contributor (#282).
 - Fix updating of edge times in `insert_one_edge`; #278 thanks to @leoniedu
 - Fix `add_nodes_to_graph()` when graph has duplicated edges; #285 thanks to @leoniedu
+- `dodgr_to_igraph()` now retains "highway" column if present; #300 thanks to @RegularnaMatrica
 
 ---
 

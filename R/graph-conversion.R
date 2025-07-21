@@ -154,6 +154,12 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
         gr_cols <- dodgr_graph_cols (graph)
     }
 
+    # Add highway if present (#300):
+    i <- match ("highway", names (graph))
+    if (!is.na (i)) {
+        gr_cols <- c (gr_cols, c ("highway" = i))
+    }
+
     v <- dodgr_vertices (graph)
     graph <- graph [, do.call (c, gr_cols [!is.na (gr_cols)])]
     names (graph) <- names (gr_cols) [!is.na (gr_cols)]
