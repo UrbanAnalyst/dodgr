@@ -7,8 +7,6 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
 
 testthat::skip_if (!test_all)
 
-source ("../sc-conversion-fns.R")
-
 if (!test_all) {
     RcppParallel::setThreadOptions (numThreads = 2)
 }
@@ -25,17 +23,16 @@ test_that ("cache on", {
     expect_silent (graph_c <- dodgr_contract_graph (graph))
     expect_silent (v <- dodgr_vertices (graph_c))
 
-    n0 <- 100
+    n <- 100
     set.seed (1)
-    pts <- sample (v$id, size = n0)
-    pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
-    n <- length (pts)
+    pts_f <- sample (graph_c$.vx0, size = n)
+    pts_t <- sample (graph_c$.vx1, size = n)
     fmat <- array (1, dim = c (n, n))
 
     # aggregate flows from graph without turning angles:
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
-        from = pts,
-        to = pts,
+        from = pts_f,
+        to = pts_t,
         flows = fmat,
         contract = FALSE
     ))
@@ -50,16 +47,18 @@ test_that ("cache on", {
     # grapht has extra compound edges for turning angles:
     expect_equal (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
-    pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
-    n <- length (pts)
-    fmat <- array (1, dim = c (n, n))
+    index_f <- which (pts_f %in% graph_c$.vx0)
+    index_t <- which (pts_t %in% graph_c$.vx1)
+    pts_f <- pts_f [index_f]
+    pts_t <- pts_t [index_t]
+    fmat <- fmat [index_f, index_t]
     # These tests fail on some GitHub runners:
     if (test_all) {
         expect_true (nrow (graph_c) <= nrow (grapht_c))
         expect_warning (
             graphtf <- dodgr_flows_aggregate (grapht_c,
-                from = pts,
-                to = pts,
+                from = pts_f,
+                to = pts_t,
                 flows = fmat,
                 contract = FALSE
             ),
@@ -68,8 +67,8 @@ test_that ("cache on", {
     }
     expect_silent (
         graphtf <- dodgr_flows_aggregate (grapht,
-            from = pts,
-            to = pts,
+            from = pts_f,
+            to = pts_t,
             flows = fmat,
             contract = FALSE
         )
@@ -79,7 +78,7 @@ test_that ("cache on", {
     expect_warning (
         graphtf <- dodgr_flows_disperse (
             grapht_c,
-            from = pts,
+            from = pts_f,
             dens = rep (1, n)
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
@@ -87,7 +86,7 @@ test_that ("cache on", {
     expect_silent (
         graphtf <- dodgr_flows_disperse (
             grapht,
-            from = pts,
+            from = pts_f,
             dens = rep (1, n)
         )
     )
@@ -108,14 +107,14 @@ test_that ("cache off", {
 
     n <- 100
     set.seed (1)
-    pts <- sample (v$id, size = n)
-    pts <- pts [which (pts %in% graph_c$.vx0 & pts %in% graph_c$.vx1)]
+    pts_f <- sample (graph_c$.vx0, size = n)
+    pts_t <- sample (graph_c$.vx1, size = n)
     fmat <- array (1, dim = c (n, n))
 
     # aggregate flows from graph without turning angles:
     expect_silent (graphf <- dodgr_flows_aggregate (graph_c,
-        from = pts,
-        to = pts,
+        from = pts_f,
+        to = pts_t,
         flows = fmat,
         contract = FALSE
     ))
@@ -130,22 +129,24 @@ test_that ("cache off", {
     ))
     expect_silent (grapht_c <- dodgr_contract_graph (grapht))
     # De-duplication of graph contraction can remove points, so:
-    index <- which (pts %in% grapht_c$.vx0 & pts %in% grapht_c$.vx1)
-    pts <- pts [index]
-    fmat <- fmat [index, index]
+    index_f <- which (pts_f %in% graph_c$.vx0)
+    index_t <- which (pts_t %in% graph_c$.vx1)
+    pts_f <- pts_f [index_f]
+    pts_t <- pts_t [index_t]
+    fmat <- fmat [index_f, index_t]
     expect_warning (
         graphtf <- dodgr_flows_aggregate (
             grapht_c,
-            from = pts,
-            to = pts,
+            from = pts_f,
+            to = pts_t,
             flows = fmat,
             contract = FALSE
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
     expect_silent (graphtf <- dodgr_flows_aggregate (grapht,
-        from = pts,
-        to = pts,
+        from = pts_f,
+        to = pts_t,
         flows = fmat,
         contract = FALSE
     ))
@@ -154,13 +155,13 @@ test_that ("cache off", {
     expect_warning (
         graphtf <- dodgr_flows_disperse (
             grapht_c,
-            from = pts,
-            dens = rep (1, length (pts))
+            from = pts_f,
+            dens = rep (1, length (pts_f))
         ),
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
     expect_silent (
-        graphtf <- dodgr_flows_disperse (grapht, from = pts, dens = rep (1, length (pts)))
+        graphtf <- dodgr_flows_disperse (grapht, from = pts_f, dens = rep (1, length (pts_f)))
     )
 
     expect_silent (dodgr_cache_on ())

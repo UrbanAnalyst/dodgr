@@ -5,8 +5,6 @@ if (!test_all) {
     RcppParallel::setThreadOptions (numThreads = 2)
 }
 
-source ("../sc-conversion-fns.R")
-
 test_that ("isodists", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
