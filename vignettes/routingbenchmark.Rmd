@@ -1,0 +1,68 @@
+---
+title: "Routing Benchmarks"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Routing Benchmarks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dodgr)
+library(sf)
+library(tidyverse)
+library(cppRouting)
+```
+
+
+```{r}
+hampi
+class(hampi)
+plot(hampi)
+graph = weight_streetnet (hampi, wt_profile = "foot")
+head(graph)
+v = dodgr_vertices(graph)
+head(v)
+```
+
+```{r}
+graph_df = graph
+class(graph_df) = "data.frame"
+class(graph_df)
+
+roads = graph_df |>
+  filter(component == 1) |>
+  transmute(from = from_id, to = to_id, weight = d_weighted)
+coord = v |>
+  transmute(ID = id, X = x, Y = y)
+```
+
+
+```{r}
+graph  =  makegraph(roads, directed = T, coords = coord)
+graph$nbnode
+```
+
+```{r}
+# from_id = roads$ID[1]
+# to_id = roads$ID[2]
+# path_pair1 = get_path_pair(graph, from = from_id, to = to_id)
+origin  <-  sample(graph$dict$ref,  2)
+destination  <-  sample(graph$dict$ref,  2)
+
+ds = get_distance_pair(graph, origin, destination, algorithm = "NBA", constant = 110/0.06)
+paths = get_path_pair(graph, origin, destination)
+str(paths[[1]])
+names(graph)
+summary(paths[[1]] %in% graph$coords$ID)
+path1_matrix = graph$coords[match(paths[[1]], graph$coords$ID), ]
+path1_sf = sfheaders::sf_linestring(path1_matrix[, 2:3])
+plot(path1_sf)
+```
