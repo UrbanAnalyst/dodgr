@@ -79,7 +79,7 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
 #' restrictions (turn = "no"), and the only containing exclusive turn
 #' permissions ("only" = "left", for example).
 #' @noRd
-extract_turn_restictions <- function (x) {
+extract_turn_restrictions <- function (x) {
 
     rels <- x$relation_properties # x from restrictions query above!!
     restriction_rels <- rels [rels$key == "restriction", ]

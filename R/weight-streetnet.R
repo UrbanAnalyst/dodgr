@@ -754,7 +754,7 @@ weight_streetnet.sc <- function (x,
         attr (graph, "wt_profile_file") <- wt_profile_file
         attr (graph, "left_side") <- left_side
 
-        restrictions <- extract_turn_restictions (x)
+        restrictions <- extract_turn_restrictions (x)
         attr (graph, "turn_restrictions_no") <- restrictions$rw_no
         attr (graph, "turn_restrictions_only") <- restrictions$rw_only
     }
