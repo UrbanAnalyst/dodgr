@@ -79,7 +79,7 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
 #' restrictions (turn = "no"), and the only containing exclusive turn
 #' permissions ("only" = "left", for example).
 #' @noRd
-extract_turn_restictions <- function (x) {
+extract_turn_restrictions <- function (x) {
 
     rels <- x$relation_properties # x from restrictions query above!!
     restriction_rels <- rels [rels$key == "restriction", ]
@@ -107,10 +107,14 @@ extract_turn_restictions <- function (x) {
         r <- lapply (
             split (r, f = factor (r$relation_)),
             function (i) {
+                # Relations should have 1 node type, and 2 way types with roles
+                # "from" and "to":
+                node <- which (i$type == "node") [1L]
+                index <- match (c ("from", "to"), i$role) [1:2]
                 c (
                     i$relation_ [1],
-                    i$member [2],
-                    i$member [c (1, 3)]
+                    i$member [node],
+                    i$member [index]
                 )
             }
         )
