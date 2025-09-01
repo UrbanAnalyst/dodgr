@@ -75,7 +75,7 @@ corresponding 'k' values.
 any number of columns. Each column will then specify a distinct dispersal
 model, with different values from each row applied to the corresponding
 \code{from} points. The return value will then be the same as the previous
-version, with an additional \code{n} columns, "flow1" to "flow\if{html}{\out{<n>}}".
+version, with an additional \code{n} columns, "flow1" to "flown".
 }
 
 Flows are calculated by default on contracted graphs, via the \code{contract = TRUE} parameter. (These are derived by reducing the input graph down to
