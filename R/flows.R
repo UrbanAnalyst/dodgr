@@ -263,7 +263,7 @@ dodgr_flows_aggregate <- function (graph,
 #' any number of columns. Each column will then specify a distinct dispersal
 #' model, with different values from each row applied to the corresponding
 #' `from` points. The return value will then be the same as the previous
-#' version, with an additional `n` columns, "flow1" to "flow<n>".
+#' version, with an additional `n` columns, "flow1" to "flown".
 #' }
 #'
 #'
@@ -457,7 +457,7 @@ dodgr_flows_disperse <- function (graph,
 #' any number of columns. Each column will then specify a distinct interaction
 #' model, with different values from each row applied to the corresponding
 #' `from` points. The return value will then be the same as the previous
-#' version, with an additional `n` columns, "flow1" to "flow<n>".
+#' version, with an additional `n` columns, "flow1" to "flown".
 #' }
 #'
 #' Flows are calculated by default on contracted graphs, via the `contract =
