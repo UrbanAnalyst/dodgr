@@ -15,6 +15,7 @@
 - Fix `add_nodes_to_graph()` when graph has duplicated edges; #285 thanks to @leoniedu
 - `dodgr_to_igraph()` now retains "highway" column if present; #300 thanks to @RegularnaMatrica
 - Improve interpreting 'oneway' flags from #299
+- Fix bug in interpreting OSM turn restrictions (#365)
 
 ---
 
