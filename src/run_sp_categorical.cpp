@@ -418,9 +418,9 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
                 // iterate over rest of matrix for each edge_type
                 for (size_t i = 1; i <= num_edge_types; i++) {
                     if (i == edge_id)
-                        d [et + i * nverts] = d [v0] + edge->dist;
+                        d [et + i * nverts] = d [v0 + i * nverts] + edge->dist;
                     else // carry over without incrementing dist
-                        d [et + i * nverts] = d [v0];
+                        d [et + i * nverts] = d [v0 + i * nverts];
                 }
 
                 w [et] = wt;
