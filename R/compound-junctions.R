@@ -65,6 +65,12 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         )))
         names (resbind) <- names (graph)
         resbind [, which (names (graph) %in% names (res$graph))] <- res$graph
+        if ("object_" %in% names (graph)) {
+            # SC graphs:
+            index <- match (resbind$object_, graph$object_)
+            index_col <- which (!names (graph) %in% names (res$graph))
+            resbind [, index_col] <- graph [index, index_col]
+        }
         graph <- rbind (graph, resbind)
     }
     list (graph = graph, edge_map = edge_map)
