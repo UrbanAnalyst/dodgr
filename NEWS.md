@@ -1,5 +1,9 @@
 # v 0.4.3.00x (dev version)
 
+## Minor changes
+
+- Fix bug with categorical distances that neglected edges through compound junctions (#305)
+
 ---
 
 # v 0.4.3
