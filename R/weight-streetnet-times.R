@@ -462,7 +462,7 @@ sc_duplicate_edges <- function (x, wt_profile) {
         if ("junction" %in% names (x)) {
             x$oneway [x$junction == "roundabout"] <- TRUE # #175
         }
-        index <- which (!x$oneway)
+        index <- which (!x$oneway | is.na (x$oneway))
     }
 
     xnew <- x [index, ]

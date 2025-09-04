@@ -60,9 +60,9 @@ test_that ("turn penalty", {
     )
     expect_equal (nrow (net), nrow (net0))
     d <- dodgr_isodists (net, from = from, dlim)
-    expect_identical (d0, d)
+    expect_false (nrow (d) == nrow (d0))
     expect_false (any (grepl ("_start", d$from)))
-    # expect_false (any (grepl ("_start", d0$from)))
+    expect_false (any (grepl ("_start", d0$from)))
 })
 
 test_that ("errors", {
