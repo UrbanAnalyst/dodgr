@@ -150,6 +150,8 @@ remove_turn_restrictions <- function (graph, res) {
     rw_no <- attr (graph, "turn_restrictions_no")
     rw_only <- attr (graph, "turn_restrictions_only")
 
+    # rw_no <- dplyr::filter (rw_no, node == node_id)
+
     # indices of edges which have to be removed:
     index_in <- which (
         graph$object_ %in% rw_no$from & graph$.vx1 %in% rw_no$node
@@ -162,19 +164,22 @@ remove_turn_restrictions <- function (graph, res) {
     edges_to_remove <- unique (graph$edge_ [c (index_in, index_out)])
 
     # Then construct new compound edges:
-    index_out_after <- which (
-        graph$.vx0 %in% rw_no$node & !graph$.vx1 %in% graph$.vx1 [index_out]
+    index_out_other <- which (
+        graph$.vx0 %in% rw_no$node & !graph$edge_ %in% graph_out$edge_
     )
-    graph_out_after <- graph [index_out_after, ]
-    graph_in <- graph_in [which (graph_in$.vx1 %in% graph_out_after$.vx0), ]
+    graph_out_compound <- graph [index_out_other, ]
+    graph_in <- graph_in [which (graph_in$.vx1 %in% graph_out_compound$.vx0), ]
 
-    index <- match (graph_out_after$.vx0, graph_in$.vx1)
-    graph_out_after$.vx0 <- graph_in$.vx0 [index]
-    graph_out_after$object_ <- paste0 (graph_in$object_ [index], "_", graph_out_after$object_)
-    graph_out_after$d <- graph_in$d [index] + graph_out_after$d
-    graph_out_after$d_weighted <- graph_in$d_weighted [index] + graph_out_after$d_weighted
-    graph_out_after$time <- graph_in$time [index] + graph_out_after$time
-    graph_out_after$time_weighted <- graph_in$time_weighted [index] + graph_out_after$time_weighted
+    index <- match (graph_out_compound$.vx0, graph_in$.vx1)
+    graph_out_compound$.vx0 <- graph_in$.vx0 [index]
+    graph_out_compound$object_ <-
+        paste0 (graph_in$object_ [index], "_", graph_out_compound$object_)
+    graph_out_compound$d <- graph_in$d [index] + graph_out_compound$d
+    graph_out_compound$d_weighted <-
+        graph_in$d_weighted [index] + graph_out_compound$d_weighted
+    graph_out_compound$time <- graph_in$time [index] + graph_out_compound$time
+    graph_out_compound$time_weighted <-
+        graph_in$time_weighted [index] + graph_out_compound$time_weighted
 
     # Extend edge map:
     res$edge_map <- rbind (
@@ -182,14 +187,14 @@ remove_turn_restrictions <- function (graph, res) {
         data.frame (
             edge = paste0 ("j_", rcpp_gen_hash (length (index), 10)),
             e_in = graph_in$edge_ [index],
-            e_out = graph_out_after$edge_
+            e_out = graph_out_compound$edge_
         )
     )
 
     # Remove original edges from graph, and add new compound ones:
     res$graph <- rbind (
         res$graph [which (!res$graph$edge_ %in% edges_to_remove), ],
-        graph_out_after
+        graph_out_compound
     )
 
     return (res)
