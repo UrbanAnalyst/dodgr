@@ -178,6 +178,21 @@ test_that ("times", {
     expect_identical (t2, t0)
 })
 
+test_that ("times-pairwise", {
+    graph <- weight_streetnet (hampi)
+    n <- 50
+    set.seed (1)
+    from <- sample (graph$from_id, size = n)
+    to <- sample (graph$to_id, size = n)
+    expect_silent (d <- dodgr_times (graph, from = from, to = to))
+    expect_equal (dim (d), c (n, n))
+    expect_silent (d <- dodgr_times (graph,
+                                         from = from, to = to,
+                                         pairwise = TRUE
+    ))
+    expect_equal (dim (d), c (50, 1))
+})
+
 test_that ("all dists", {
     graph <- weight_streetnet (hampi)
     graph <- graph [graph$component == 2, ]

@@ -4,7 +4,14 @@
 \alias{dodgr_times}
 \title{Calculate matrix of pair-wise travel times between points.}
 \usage{
-dodgr_times(graph, from = NULL, to = NULL, shortest = FALSE, heap = "BHeap")
+dodgr_times(
+  graph,
+  from = NULL,
+  to = NULL,
+  shortest = FALSE,
+  pairwise = FALSE,
+  heap = "BHeap"
+)
 }
 \arguments{
 \item{graph}{\code{data.frame} or equivalent object representing the network
@@ -53,6 +60,9 @@ routes will only be approximate when derived from \pkg{sf}-format data
 generated with the \pkg{osmdata} function \code{osmdata_sf()}, and will be much
 more accurate when derived from \code{sc}-format data generated with
 \code{osmdata_sc()}. See \link{weight_streetnet} for details.}
+
+\item{pairwise}{If \code{TRUE}, calculate distances only between the ordered
+pairs of \code{from} and \code{to}.}
 
 \item{heap}{Type of heap to use in priority queue. Options include
 Fibonacci Heap (default; \code{FHeap}), Binary Heap (\code{BHeap}),
