@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2025-09-10</h4>
+            <h4 data-toc-skip class="date">2025-09-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/dists-categorical.Rmd" class="external-link"><code>vignettes/dists-categorical.Rmd</code></a></small>
       <div class="d-none name"><code>dists-categorical.Rmd</code></div>
@@ -170,8 +170,8 @@ faster queries, as illustrated in the following benchmark:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   expression   min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.484  0.486</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.266  0.266</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.500  0.503</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.265  0.265</span></span></code></pre>
 <p>The default value of <code>proportions_only = FALSE</code> should be
 used only if additional information from the distance matrices
 themselves is required or desired. Examples of such additional
@@ -262,9 +262,9 @@ the three modes:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">##   expression    min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.496  0.502 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.273  0.276 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.066<span style="text-decoration: underline;">1</span> 0.067<span style="text-decoration: underline;">5</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.491  0.493 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.273  0.273 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.065<span style="text-decoration: underline;">3</span> 0.066<span style="text-decoration: underline;">5</span></span></span></code></pre>
 <p>Finally, note that the efficiency of distance-threshold queries
 scales non-linearly with increases in <code>dlimit</code>, with queries
 quickly becoming less efficient for larger values of
