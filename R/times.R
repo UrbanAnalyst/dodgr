@@ -9,6 +9,7 @@ dodgr_times <- function (graph,
                          from = NULL,
                          to = NULL,
                          shortest = FALSE,
+                         pairwise = FALSE,
                          heap = "BHeap") {
 
     graph <- tbl_to_df (graph)
@@ -29,6 +30,6 @@ dodgr_times <- function (graph,
         }
         graph [[gr_cols$d_weighted]] <- graph [[gr_cols$time_weighted]]
     }
-
-    dodgr_dists (graph, from, to, heap = heap)
+    
+    dodgr_dists (graph = graph, from = from, to = to, heap = heap, pairwise= pairwise)
 }
