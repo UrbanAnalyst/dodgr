@@ -193,10 +193,16 @@ remove_turn_restrictions <- function (graph, res) {
         )
     }
 
-    # Remove original edges from graph, and add new compound ones:
+    # Replace original edges from graph with ones to junctions point only, and
+    # add new compound ones:
+    gr_cols <- dodgr_graph_cols (graph)
+    graph_to_juncts <- res$graph [which (res$graph$edge_ %in% edges_to_remove), ]
+    graph_to_juncts [[gr_cols$to]] <- paste0 (graph_to_juncts [[gr_cols$to]], "_end")
+
     res$graph <- rbind (
         res$graph [which (!res$graph$edge_ %in% edges_to_remove), ],
-        graph_out_compound
+        graph_out_compound,
+        graph_to_juncts
     )
 
     return (res)
