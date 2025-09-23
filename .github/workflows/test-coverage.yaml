@@ -35,6 +35,7 @@ jobs:
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package"),
             line_exclusions = list('src/heaps/bheap.cpp','src/heaps/bheap.h','src/heaps/fheap.h','src/heaps/fheap.cpp','src/heaps/heap23.h','src/heaps/heap23.cpp','src/heaps/heap23_2.h','src/heaps/heap.h','src/heaps/heap_lib.h','src/heaps/triheap.h','src/heaps/triheap.cpp','src/heaps/triheap_ext.h','src/heaps/triheap_ext.cpp','src/dgraph.cpp')
           )
+          print(cov)
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
@@ -42,8 +43,8 @@ jobs:
         with:
           # Fail if error if not on PR, or if on PR and token is given
           fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
-          file: ./cobertura.xml
-          plugin: noop
+          files: ./cobertura.xml
+          plugins: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
