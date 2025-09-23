@@ -2,6 +2,7 @@
 
 ## Minor changes
 
+- Fix a few minor bugs with compound junction construction (#305, #316)
 - Add `pairwise` parameter to `dodgr_times()`; thanks to @leoniedu (#314)
 - Fix bug with categorical distances that neglected edges through compound junctions (#305)
 - Fix bug in duplicating bi-directional edges in weighted sc-class graphs
