@@ -156,12 +156,18 @@ remove_turn_restrictions <- function (graph, res) {
     index_in <- which (
         graph$object_ %in% rw_no$from & graph$.vx1 %in% rw_no$node
     )
+    # indices of edges extending out of compound junctions:
     index_out <- which (
         graph$object_ %in% rw_no$to & graph$.vx0 %in% rw_no$node
     )
     graph_in <- graph [index_in, ]
     graph_out <- graph [index_out, ]
     edges_to_remove <- unique (graph$edge_ [c (index_in, index_out)])
+
+    # Note that "in" and "out" generally won't be balanced, becasuse
+    # restrictions may exist in an OSM dataset for which a terminal node may
+    # not actually exist due to geographical restrictions. This has important
+    # implications below.
 
     # Then construct new compound edges:
     index_out_other <- which (
@@ -171,6 +177,8 @@ remove_turn_restrictions <- function (graph, res) {
     graph_in <- graph_in [which (graph_in$.vx1 %in% graph_out_compound$.vx0), ]
 
     index <- match (graph_out_compound$.vx0, graph_in$.vx1)
+    # Because "in" and "out" aren't necessarily balanced, "index" may have NA
+    # values.
     if (length (index) > 0L) {
         graph_out_compound$.vx0 <- graph_in$.vx0 [index]
         graph_out_compound$object_ <-
@@ -181,6 +189,9 @@ remove_turn_restrictions <- function (graph, res) {
         graph_out_compound$time <- graph_in$time [index] + graph_out_compound$time
         graph_out_compound$time_weighted <-
             graph_in$time_weighted [index] + graph_out_compound$time_weighted
+
+        index <- which (!is.na (graph_out_compound$.vx0) & !is.na (graph_out_compound$.vx1))
+        graph_out_compound <- graph_out_compound [index, ]
 
         # Extend edge map:
         res$edge_map <- rbind (
