@@ -190,13 +190,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_get_component_vector
-Rcpp::List rcpp_get_component_vector(const Rcpp::DataFrame& graph);
-RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP) {
+Rcpp::List rcpp_get_component_vector(const Rcpp::DataFrame& graph, bool strong);
+RcppExport SEXP _dodgr_rcpp_get_component_vector(SEXP graphSEXP, SEXP strongSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type graph(graphSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph));
+    Rcpp::traits::input_parameter< bool >::type strong(strongSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_get_component_vector(graph, strong));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -441,7 +442,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_dodgr_rcpp_contract_graph", (DL_FUNC) &_dodgr_rcpp_contract_graph, 2},
     {"_dodgr_rcpp_merge_cols", (DL_FUNC) &_dodgr_rcpp_merge_cols, 1},
     {"_dodgr_rcpp_sample_graph", (DL_FUNC) &_dodgr_rcpp_sample_graph, 2},
-    {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 1},
+    {"_dodgr_rcpp_get_component_vector", (DL_FUNC) &_dodgr_rcpp_get_component_vector, 2},
     {"_dodgr_rcpp_unique_rownames", (DL_FUNC) &_dodgr_rcpp_unique_rownames, 3},
     {"_dodgr_rcpp_points_index_par", (DL_FUNC) &_dodgr_rcpp_points_index_par, 2},
     {"_dodgr_rcpp_points_to_edges_par", (DL_FUNC) &_dodgr_rcpp_points_to_edges_par, 2},
