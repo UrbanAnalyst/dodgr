@@ -120,7 +120,7 @@ bool graph::graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 //' identify_graph_components
 //'
 //' Identify initial graph components for each **vertex**
-//' Identification for edges is subsequently perrformed with 
+//' Identification for edges is subsequently performed with 
 //' \code{rcpp_get_component_vector}.
 //'
 //' @param v unordered_map <vertex_id_t, vertex_t>
@@ -177,6 +177,112 @@ size_t graph::identify_graph_components (vertex_map_t &v,
     return static_cast <size_t> (largest_id);
 }
 
+//' strong_connect
+//'
+//' Helper function for applying Tarjan's algroithm to identify
+//' strong components recursively
+//'
+//' @param vt id of vertex currently being evaluated
+//' @param v unordered_map <vertex_id_t, vertex_t>
+//' @param com component map from each vertex to component numbers
+//' @param index_map map from each vertex to index number
+//' @param lowlink_map map from each vertex to lowlink number
+//' @param on_stack set of all vertices currently on stack
+//' @param s stack used to execute algorithm
+//' @param index used to execute algoritm
+//' @param compnum the current component number
+//' @noRd
+void graph::strong_connect(vertex_id_t vt,
+    vertex_map_t &v,
+    std::unordered_map <vertex_id_t, size_t> &com,
+    std::unordered_map <vertex_id_t, size_t> &index_map,
+    std::unordered_map <vertex_id_t, size_t> &lowlink_map,
+    std::unordered_set <vertex_id_t> &on_stack,
+    std::stack <vertex_id_t> &s,
+    size_t &index,
+    size_t &compnum)
+{
+
+    Rcpp::checkUserInterrupt ();
+
+    index_map [vt] = index;
+    lowlink_map [vt] = index;
+    index++;
+    s.push (vt);
+    on_stack.insert (vt);
+
+    vertex_t vtx = v.find (vt)->second;
+    std::unordered_set<vertex_id_t> nbs = vtx.get_out_neighbours ();
+
+    for (auto nvtx : nbs)
+    {
+        if (index_map.find (nvtx) == index_map.end ())
+        {
+            strong_connect (nvtx, v, com, index_map, lowlink_map, on_stack, s, index, compnum);
+            lowlink_map [vt] = std::min (lowlink_map [vt], lowlink_map [nvtx]);
+        }
+        else if (on_stack.find (nvtx) != on_stack.end ())
+        {
+            lowlink_map [vt] = std::min (lowlink_map [vt], index_map [nvtx]);
+        }
+    }
+
+    if (lowlink_map [vt] == index_map [vt])
+    {
+        vertex_id_t w;
+        do
+        {
+            w = s.top ();
+            s.pop ();
+            on_stack.erase (w);
+            com [w] = compnum;
+        } while (w != vt);
+        compnum++;
+    }
+}
+
+//' identify_graph_strong_components
+//'
+//' Identify initial graph strong components for each **vertex**
+//' Identification for edges is subsequently performed with 
+//' \code{rcpp_get_component_vector}.
+//'
+//' @param v unordered_map <vertex_id_t, vertex_t>
+//' @param com component map from each vertex to component numbers
+//' @noRd
+size_t graph::identify_graph_strong_components (vertex_map_t &v,
+        std::unordered_map <vertex_id_t, size_t> &com)
+{
+    com.clear ();
+
+    size_t index = 0;
+    size_t compnum = 0;
+
+    std::unordered_map <vertex_id_t, size_t> index_map;
+    std::unordered_map <vertex_id_t, size_t> lowlink_map;
+    std::unordered_set <vertex_id_t> on_stack;
+    std::stack <vertex_id_t> s;
+
+    for (auto it : v)
+    {
+        vertex_id_t vt = it.first;
+        if (index_map.find (vt) == index_map.end ())
+            strong_connect (vt, v, com, index_map, lowlink_map, on_stack, s, index, compnum);
+    }
+
+    long int largest_id = 0;
+    if (compnum > 0)
+    {
+        std::vector <size_t> comp_sizes (compnum + 1, 0);
+        for (auto c: com)
+            comp_sizes [c.second]++;
+        auto maxi = std::max_element (comp_sizes.begin (), comp_sizes.end ());
+
+        largest_id = std::distance (comp_sizes.begin (), maxi);
+    }
+
+    return static_cast <size_t> (largest_id);
+}
 
 //' rcpp_get_component_vector
 //'
@@ -185,11 +291,14 @@ size_t graph::identify_graph_components (vertex_map_t &v,
 //' @param graph graph to be processed; stripped down and standardised to five
 //' columns
 //'
+//' @param strong A Boolean flag to indicate whether components should be strong,
+//' i.e. its vertices connected bidirectionally. Defaults to FALSE.
+//'
 //' @return Two vectors: one of edge IDs and one of corresponding component
 //' numbers
 //' @noRd
 // [[Rcpp::export]]
-Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
+Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph, bool strong = false)
 {
     vertex_map_t vertices;
     edge_map_t edge_map;
@@ -199,18 +308,21 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph)
     has_times = false; // rm unused variable warning
 
     std::unordered_map <vertex_id_t, size_t> components;
-    size_t largest_component =
-        graph::identify_graph_components (vertices, components);
+    size_t largest_component;
+
+    if (strong)
+        largest_component = graph::identify_graph_strong_components (vertices, components);
+    else
+        largest_component = graph::identify_graph_components (vertices, components);
+
     largest_component++; // suppress unused variable warning
 
     // Then map component numbers of vertices onto edges
     std::unordered_map <edge_id_t, size_t> comp_nums;
-    for (auto ve: vert2edge_map)
+    for (auto e : edge_map)
     {
-        vertex_id_t vi = ve.first;
-        std::unordered_set <edge_id_t> edges = ve.second;
-        for (edge_id_t e: edges)
-            comp_nums.emplace (e, components.find (vi)->second);
+        vertex_id_t vi = e.second.get_from_vertex ();
+        comp_nums.emplace (e.first, components.find(vi)->second);
     }
 
     Rcpp::StringVector edge_id (comp_nums.size ());
