@@ -213,7 +213,7 @@ rcpp_merge_cols <- function (graph) {
 #' in \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
-#' @return std::vector of 2 elements: [0] with value of largest connected
+#' @return std::vector of 2 elements: [0] with value of largest connected 
 #' component; [1] with random index to one edge that is part of that component.
 #' @noRd
 NULL
@@ -263,7 +263,35 @@ NULL
 #' identify_graph_components
 #'
 #' Identify initial graph components for each **vertex**
-#' Identification for edges is subsequently perrformed with
+#' Identification for edges is subsequently performed with 
+#' \code{rcpp_get_component_vector}.
+#'
+#' @param v unordered_map <vertex_id_t, vertex_t>
+#' @param com component map from each vertex to component numbers
+#' @noRd
+NULL
+
+#' strong_connect
+#'
+#' Helper function for applying Tarjan's algroithm to identify
+#' strong components recursively
+#'
+#' @param vt id of vertex currently being evaluated
+#' @param v unordered_map <vertex_id_t, vertex_t>
+#' @param com component map from each vertex to component numbers
+#' @param index_map map from each vertex to index number
+#' @param lowlink_map map from each vertex to lowlink number
+#' @param on_stack set of all vertices currently on stack
+#' @param s stack used to execute algorithm
+#' @param index used to execute algoritm
+#' @param compnum the current component number
+#' @noRd
+NULL
+
+#' identify_graph_strong_components
+#'
+#' Identify initial graph strong components for each **vertex**
+#' Identification for edges is subsequently performed with 
 #' \code{rcpp_get_component_vector}.
 #'
 #' @param v unordered_map <vertex_id_t, vertex_t>
@@ -278,11 +306,14 @@ NULL
 #' @param graph graph to be processed; stripped down and standardised to five
 #' columns
 #'
+#' @param strong A Boolean flag to indicate whether components should be strong,
+#' i.e. its vertices connected bidirectionally. Defaults to FALSE.
+#'
 #' @return Two vectors: one of edge IDs and one of corresponding component
 #' numbers
 #' @noRd
-rcpp_get_component_vector <- function (graph) {
-    .Call (`_dodgr_rcpp_get_component_vector`, graph)
+rcpp_get_component_vector <- function (graph, strong = FALSE) {
+    .Call (`_dodgr_rcpp_get_component_vector`, graph, strong)
 }
 
 #' rcpp_unique_rownames

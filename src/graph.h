@@ -8,6 +8,7 @@
 #include <string> // stoi
 #include <cmath> // round
 #include <math.h> // isnan
+#include <stack>
 
 const float INFINITE_FLOAT =  std::numeric_limits <float>::max ();
 const double INFINITE_DOUBLE =  std::numeric_limits <double>::max ();
@@ -146,9 +147,23 @@ bool graph_from_df (const Rcpp::DataFrame &gr, vertex_map_t &vm,
 size_t identify_graph_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, size_t> &com);
 
+size_t identify_graph_strong_components (vertex_map_t &v,
+        std::unordered_map <vertex_id_t, size_t> &com);
+
+void strong_connect (vertex_id_t vt,
+    vertex_map_t &v,
+    std::unordered_map <vertex_id_t, size_t> &com,
+    std::unordered_map <vertex_id_t, size_t> &index_map,
+    std::unordered_map <vertex_id_t, size_t> &lowlink_map,
+    std::unordered_set <vertex_id_t> &on_stack,
+    std::stack <vertex_id_t> &s,
+    size_t &index,
+    size_t &compnum);
+
+
 } // end namespace graph
 
-Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph);
+Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph, bool strong);
 
 Rcpp::DataFrame rcpp_unique_rownames (Rcpp::DataFrame xyfrom, Rcpp::DataFrame xyto,
         const int precision);
