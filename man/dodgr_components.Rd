@@ -4,10 +4,13 @@
 \alias{dodgr_components}
 \title{Identify connected components of graph.}
 \usage{
-dodgr_components(graph)
+dodgr_components(graph, strong = FALSE)
 }
 \arguments{
 \item{graph}{A \code{data.frame} of edges}
+
+\item{strong}{A Boolean flag to indicate whether components should be strong,
+i.e. its vertices connected bidirectionally. Defaults to FALSE.}
 }
 \value{
 Equivalent graph with additional \code{component} column,
