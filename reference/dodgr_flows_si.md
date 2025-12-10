@@ -1,0 +1,255 @@
+# Aggregate flows throughout a network using a spatial interaction model.
+
+Aggregate flows throughout a network using an exponential Spatial
+Interaction (SI) model between a specified set of origin and destination
+points, and associated vectors of densities. Spatial interactions are
+implemented using an exponential decay, controlled by a parameter, `k`,
+so that interactions decay with `exp(-d / k)`, where `d` is distance.
+The algorithm allows for efficient fitting of multiple interaction
+models for different coefficients to be fitted with a single call.
+Values of the interaction coefficients, `k`, may take one of the
+following forms:
+
+- A single numeric value (\> 0), with interactions along all paths
+  calculated with that single value. Return object (see below) will then
+  have a single additional column named "flow".
+
+- A vector of length equal to the number of `from` points, with
+  interactions from each point then calculated using the corresponding
+  value of `k`. Return object has single additional "flow" column.
+
+- A vector of any other length (that is, \> 1 yet different to number of
+  `from` points), in which case different interaction models will be
+  fitted for each of the `n` specified values, and the resultant return
+  object will have an additional 'n' columns, named 'flow1', 'flow2',
+  ... up to 'n'. These columns must be subsequently matched by the user
+  back on to the corresponding 'k' values.
+
+- A matrix with number of rows equal to the number of `from` points, and
+  any number of columns. Each column will then specify a distinct
+  interaction model, with different values from each row applied to the
+  corresponding `from` points. The return value will then be the same as
+  the previous version, with an additional `n` columns, "flow1" to
+  "flown".
+
+Flows are calculated by default on contracted graphs, via the
+`contract = TRUE` parameter. (These are derived by reducing the input
+graph down to junction vertices only, by joining all intermediate edges
+between each junction.) If changes to the input graph do not prompt
+changes to resultant flows, and the default `contract = TRUE` is used,
+it may be that calculations are using previously cached versions of the
+contracted graph. If so, please use either
+[clear_dodgr_cache](https://UrbanAnalyst.github.io/dodgr/reference/clear_dodgr_cache.md)
+to remove the cached version, or
+[dodgr_cache_off](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_cache_off.md)
+prior to initial graph construction to switch the cache off completely.
+
+## Usage
+
+``` r
+dodgr_flows_si(
+  graph,
+  from,
+  to,
+  k = 500,
+  dens_from = NULL,
+  dens_to = NULL,
+  contract = TRUE,
+  norm_sums = TRUE,
+  heap = "BHeap",
+  tol = 0.000000000001,
+  quiet = TRUE
+)
+```
+
+## Arguments
+
+- graph:
+
+  `data.frame` or equivalent object representing the network graph (see
+  Details)
+
+- from:
+
+  Vector or matrix of points **from** which route distances are to be
+  calculated, specified as one of the following:
+
+  - Single character vector precisely matching node numbers or names
+    given in `graph$from` or `graph$to`.
+
+  - Single vector of integer-ish values, in which case these will be
+    presumed to specify indices into
+    [dodgr_vertices](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.md),
+    and NOT to correspond to values in the 'from' or 'to' columns of the
+    graph. See the example below for a demonstration.
+
+  - Matrix or equivalent of longitude and latitude coordinates, in which
+    case these will be matched on to the nearest coordinates of 'from'
+    and 'to' points in the graph.
+
+- to:
+
+  Vector or matrix of points **to** which route distances are to be
+  calculated. If `to` is `NULL`, pairwise distances will be calculated
+  from all `from` points to all other nodes in `graph`. If both `from`
+  and `to` are `NULL`, pairwise distances are calculated between all
+  nodes in `graph`.
+
+- k:
+
+  Width of exponential spatial interaction function (exp (-d / k)), in
+  units of 'd', specified in one of 3 forms: (i) a single value; (ii) a
+  vector of independent values for each origin point (with same length
+  as 'from' points); or (iii) an equivalent matrix with each column
+  holding values for each 'from' point, so 'nrow(k)==length(from)'. See
+  Note.
+
+- dens_from:
+
+  Vector of densities at origin ('from') points
+
+- dens_to:
+
+  Vector of densities at destination ('to') points
+
+- contract:
+
+  If `TRUE` (default), calculate flows on contracted graph before
+  mapping them back on to the original full graph (recommended as this
+  will generally be much faster). `FALSE` should only be used if the
+  `graph` has already been contracted.
+
+- norm_sums:
+
+  Standardise sums from all origin points, so sum of flows throughout
+  entire network equals sum of densities from all origins (see Note).
+
+- heap:
+
+  Type of heap to use in priority queue. Options include Fibonacci Heap
+  (default; `FHeap`), Binary Heap (`BHeap`), Trinomial Heap (`TriHeap`),
+  Extended Trinomial Heap (`TriHeapExt`, and 2-3 Heap (`Heap23`).
+
+- tol:
+
+  Relative tolerance below which flows towards `to` vertices are not
+  considered. This will generally have no effect, but can provide speed
+  gains when flow matrices represent spatial interaction models, in
+  which case this parameter effectively reduces the radius from each
+  `from` point over which flows are aggregated. To remove any such
+  effect, set `tol = 0`.
+
+- quiet:
+
+  If `FALSE`, display progress messages on screen.
+
+## Value
+
+Modified version of graph with additional `flow` column added.
+
+## Note
+
+The `norm_sums` parameter should be used whenever densities at origins
+and destinations are absolute values, and ensures that the sum of
+resultant flow values throughout the entire network equals the sum of
+densities at all origins. For example, with `norm_sums = TRUE` (the
+default), a flow from a single origin with density one to a single
+destination along two edges will allocate flows of one half to each of
+those edges, such that the sum of flows across the network will equal
+one, or the sum of densities from all origins. The `norm_sums = TRUE`
+option is appropriate where densities are relative values, and ensures
+that each edge maintains relative proportions. In the above example,
+flows along each of two edges would equal one, for a network sum of two,
+or greater than the sum of densities.
+
+With `norm_sums = TRUE`, the sum of network flows (`sum(output$flow)`)
+should equal the sum of origin densities (`sum(dens_from)`). This may
+nevertheless not always be the case, because origin points may simply be
+too far from any destination (`to`) points for an exponential model to
+yield non-zero values anywhere in a network within machine tolerance.
+Such cases may result in sums of output flows being less than sums of
+input densities.
+
+## See also
+
+Other flows:
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md)
+
+## Examples
+
+``` r
+# This is generally needed to explore different values of `k` on same graph:
+dodgr_cache_off ()
+
+graph <- weight_streetnet (hampi)
+from <- sample (graph$from_id, size = 10)
+to <- sample (graph$from_id, size = 20)
+dens_from <- runif (length (from))
+dens_to <- runif (length (to))
+graph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to
+)
+# graph then has an additonal 'flows' column of aggregate flows along all
+# edges. These flows are directed, and can be aggregated to equivalent
+# undirected flows on an equivalent undirected graph with:
+graph_undir <- merge_directed_graph (graph)
+# This graph will only include those edges having non-zero flows, and so:
+nrow (graph)
+#> [1] 6813
+nrow (graph_undir) # the latter is much smaller
+#> [1] 1288
+
+# ----- One dispersal coefficient for each origin point:
+# Remove `flow` column to avoid warning about over-writing values:
+graph$flow <- NULL
+k <- runif (length (from))
+graph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+grep ("^flow", names (graph), value = TRUE)
+#> [1] "flow"
+# single dispersal model; single "flow" column
+
+# ----- Multiple models, muliple dispersal coefficients:
+k <- 1:5
+graph$flow <- NULL
+graph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+grep ("^flow", names (graph), value = TRUE)
+#> [1] "flow1" "flow2" "flow3" "flow4" "flow5"
+# Rm all flow columns:
+graph [grep ("^flow", names (graph), value = TRUE)] <- NULL
+
+# Multiple models with unique coefficient at each origin point:
+k <- matrix (runif (length (from) * 5), ncol = 5)
+dim (k)
+#> [1] 10  5
+graph <- dodgr_flows_si (
+    graph,
+    from = from,
+    to = to,
+    dens_from = dens_from,
+    dens_to = dens_to,
+    k = k
+)
+grep ("^flow", names (graph), value = TRUE)
+#> [1] "flow1" "flow2" "flow3" "flow4" "flow5"
+# 5 "flow" columns again, but this time different dispersal coefficients each
+# each origin point.
+```

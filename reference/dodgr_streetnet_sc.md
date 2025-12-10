@@ -1,0 +1,96 @@
+# Extract a street network in silicate-format for a given location.
+
+Use the `osmdata` package to extract the street network for a given
+location and return it in `SC`-format. For routing between a given set
+of points (passed as `pts`), the `bbox` argument may be omitted, in
+which case a bounding box will be constructed by expanding the range of
+`pts` by the relative amount of `expand`.
+
+## Usage
+
+``` r
+dodgr_streetnet_sc(bbox, pts = NULL, expand = 0.05, quiet = TRUE)
+```
+
+## Arguments
+
+- bbox:
+
+  Bounding box as vector or matrix of coordinates, or location name.
+  Passed to
+  [`osmdata::getbb`](https://docs.ropensci.org/osmdata/reference/getbb.html).
+
+- pts:
+
+  List of points presumably containing spatial coordinates
+
+- expand:
+
+  Relative factor by which street network should extend beyond limits
+  defined by pts (only if `bbox` not given).
+
+- quiet:
+
+  If `FALSE`, display progress messages
+
+## Value
+
+A Simple Features (`sf`) object with coordinates of all lines in the
+street network.
+
+## Note
+
+Calls to this function may return "General overpass server error" with a
+note that "Query timed out." The overpass served used to access the data
+has a sophisticated queueing system which prioritises requests that are
+likely to require little time. These timeout errors can thus generally
+*not* be circumvented by changing "timeout" options on the HTTP
+requests, and should rather be interpreted to indicate that a request is
+too large, and may need to be refined, or somehow broken up into smaller
+queries.
+
+## See also
+
+Other extraction:
+[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md),
+[`dodgr_streetnet_geodesic()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_geodesic.md),
+[`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md),
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+streetnet <- dodgr_streetnet ("hampi india", expand = 0)
+# convert to form needed for `dodgr` functions:
+graph <- weight_streetnet (streetnet)
+nrow (graph) # around 5,900 edges
+# Alternative ways of extracting street networks by using a small selection
+# of graph vertices to define bounding box:
+verts <- dodgr_vertices (graph)
+verts <- verts [sample (nrow (verts), size = 200), ]
+streetnet <- dodgr_streetnet (pts = verts, expand = 0)
+graph <- weight_streetnet (streetnet)
+nrow (graph)
+# This will generally have many more rows because most street networks
+# include streets that extend considerably beyond the specified bounding box.
+
+# bbox can also be a polygon:
+bb <- osmdata::getbb ("gent belgium") # rectangular bbox
+nrow (dodgr_streetnet (bbox = bb)) # around 30,000
+bb <- osmdata::getbb ("gent belgium", format_out = "polygon")
+nrow (dodgr_streetnet (bbox = bb)) # around 17,000
+# The latter has fewer rows because only edges within polygon are returned
+
+# Example with access restrictions
+bbox <- c (-122.2935, 47.62663, -122.28, 47.63289)
+x <- dodgr_streetnet_sc (bbox)
+net <- weight_streetnet (x, keep_cols = "access", turn_penalty = TRUE)
+# has many streets with "access" = "private"; these can be removed like this:
+net2 <- net [which (!net$access != "private"), ]
+# or modified in some other way such as strongly penalizing use of those
+# streets:
+index <- which (net$access == "private")
+net$time_weighted [index] <- net$time_weighted [index] * 100
+} # }
+```
