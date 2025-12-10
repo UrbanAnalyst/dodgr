@@ -105,17 +105,23 @@ convert_hw_types_to_bool <- function (graph, wt_profile) {
         wt_profile <- unique (wt_profile$name)
     }
 
+    graph <- convert_oneway_flags (graph)
+
     bikeflags <- grep ("oneway.*bicycle|bicycle.*oneway", names (graph))
     if ("oneway" %in% names (graph) ||
         (length (bikeflags) == 1 && wt_profile == "bicycle")) {
 
-        graph <- set_oneway_bike_flags (graph, bikeflags, wt_profile)
+        graph <- set_oneway_flags (graph, bikeflags, wt_profile)
     }
 
     return (graph)
 }
 
-set_oneway_bike_flags <- function (graph, bikeflags, wt_profile) {
+convert_oneway_flags <- function (graph) {
+
+    if (!"oneway" %in% names (graph)) {
+        return (graph)
+    }
 
     oneway_keys <- tolower (substring (names (table (graph$oneway)), 1, 1))
     if (length (oneway_keys) > 2L) {
@@ -135,6 +141,11 @@ set_oneway_bike_flags <- function (graph, bikeflags, wt_profile) {
         graph$oneway <- tolower (substring (graph$oneway, 1, 1))
         graph$oneway <- ifelse (graph$oneway == "t", TRUE, FALSE)
     }
+
+    return (graph)
+}
+
+set_oneway_flags <- function (graph, bikeflags, wt_profile) {
 
     if (length (bikeflags) == 1) {
         # oneway:bicycle doesn't enquote properly, so:
