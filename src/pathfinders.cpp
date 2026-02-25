@@ -107,7 +107,8 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
         const double target_x,
         const double target_y,
         const std::vector<double> &vx,
-        const std::vector<double> &vy)
+        const std::vector<double> &vy,
+        const bool is_spatial)
 {
     while (edge) {
         size_t et = edge->target;
@@ -119,9 +120,12 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 
-                const double dx = vx [et] - target_x;
-                const double dy = vy [et] - target_y;
-                const double heur = sqrt (dx * dx + dy * dy);
+                double heur = 0.0;
+                if (is_spatial) {
+                    const double dx = vx [et] - target_x;
+                    const double dy = vy [et] - target_y;
+                    heur = sqrt (dx * dx + dy * dy);
+                }
 
                 if (m_open_vec [et]) {
                     m_heap->decreaseKey(et, wt + heur);
@@ -268,7 +272,8 @@ void PF::PathFinder::AStar (std::vector<double>& d,
         const double target_x,
         const double target_y,
         const std::vector<double> &vx,
-        const std::vector<double> &vy)
+        const std::vector<double> &vy,
+        const bool is_spatial)
 {
     const DGraphEdge *edge;
 
@@ -277,9 +282,13 @@ void PF::PathFinder::AStar (std::vector<double>& d,
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
 
-    const double dx = vx [v0] - target_x;
-    const double dy = vy [v0] - target_y;
-    m_heap->insert (v0, sqrt (dx * dx + dy * dy));
+    double h0 = 0.0;
+    if (is_spatial) {
+        const double dx = vx [v0] - target_x;
+        const double dy = vy [v0] - target_y;
+        h0 = sqrt (dx * dx + dy * dy);
+    }
+    m_heap->insert (v0, h0);
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
@@ -295,7 +304,7 @@ void PF::PathFinder::AStar (std::vector<double>& d,
         m_open [v] = false;
 
         edge = vertices [v].outHead;
-        scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy);
+        scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy, is_spatial);
 
         if (is_target [v])
             n_reached++;
@@ -367,7 +376,8 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
         const double target_y,
         const std::vector<double> &vx,
         const std::vector<double> &vy,
-        const double h_max)
+        const double h_max,
+        const bool is_spatial)
 {
     while (edge) {
         size_t et = edge->source;
@@ -379,9 +389,12 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 
-                const double dx = vx [et] - target_x;
-                const double dy = vy [et] - target_y;
-                const double heur_et = h_max - sqrt (dx * dx + dy * dy);
+                double heur_et = 0.0;
+                if (is_spatial) {
+                    const double dx = vx [et] - target_x;
+                    const double dy = vy [et] - target_y;
+                    heur_et = h_max - sqrt (dx * dx + dy * dy);
+                }
                 const double priority = wt + heur_et;
 
                 if (m_open_vec [et]) {
@@ -409,7 +422,8 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
         const double target_x,
         const double target_y,
         const std::vector<double> &vx,
-        const std::vector<double> &vy)
+        const std::vector<double> &vy,
+        const bool is_spatial)
 {
     const size_t n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
@@ -423,13 +437,17 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     PF::PathFinder::init_arrays (d_rev, w_rev, prev_rev, m_open2, m_closed2, v1, n);
 
-    const double dx0 = vx [v0] - target_x;
-    const double dy0 = vy [v0] - target_y;
-    const double h0 = sqrt (dx0 * dx0 + dy0 * dy0);
+    double h0 = 0.0;
+    double h1 = 0.0;
+    if (is_spatial) {
+        const double dx0 = vx [v0] - target_x;
+        const double dy0 = vy [v0] - target_y;
+        h0 = sqrt (dx0 * dx0 + dy0 * dy0);
 
-    const double dx1 = vx [v1] - target_x;
-    const double dy1 = vy [v1] - target_y;
-    const double h1 = sqrt (dx1 * dx1 + dy1 * dy1);
+        const double dx1 = vx [v1] - target_x;
+        const double dy1 = vy [v1] - target_y;
+        h1 = sqrt (dx1 * dx1 + dy1 * dy1);
+    }
 
     const double h_max = h0;
 
@@ -458,7 +476,7 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             }
 
             const DGraphEdge *edge = vertices [v].outHead;
-            scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy);
+            scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy, is_spatial);
         } else {
             size_t v = m_heap_rev->deleteMin();
             m_closed2 [v] = true;
@@ -470,7 +488,7 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             }
 
             const DGraphEdge *edge = vertices [v].inHead;
-            scan_edges_heur_rev (edge, d_rev, w_rev, prev_rev, m_open2, m_closed2, v, target_x, target_y, vx, vy, h_max);
+            scan_edges_heur_rev (edge, d_rev, w_rev, prev_rev, m_open2, m_closed2, v, target_x, target_y, vx, vy, h_max, is_spatial);
         }
     }
 

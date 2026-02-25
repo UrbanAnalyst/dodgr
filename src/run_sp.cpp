@@ -106,7 +106,7 @@ struct OneDist : public RcppParallel::Worker
             if (is_spatial)
             {
                 pathfinder->AStar (d, w, prev, from_i, toi,
-                        vx[toi[0]], vy[toi[0]], vx, vy);
+                        vx[toi[0]], vy[toi[0]], vx, vy, is_spatial);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, toi);
             else
@@ -228,12 +228,12 @@ struct OneDistPaired : public RcppParallel::Worker
             const size_t from_i = static_cast <size_t> (dp_fromtoi [i]);
             const std::vector <size_t> to_i = {static_cast <size_t> (dp_fromtoi [nfrom + i])};
 
-            if (do_bidirectional && is_spatial) {
+            if (do_bidirectional) {
                 std::vector <double> w_rev (nverts);
                 std::vector <double> d_rev (nverts);
                 std::vector <long int> prev_rev (nverts);
                 pathfinder->AStar2 (d, w, prev, from_i, to_i[0], d_rev, w_rev, prev_rev,
-                        vx[to_i[0]], vy[to_i[0]], vx, vy);
+                        vx[to_i[0]], vy[to_i[0]], vx, vy, is_spatial);
             }
             else if (is_spatial)
             {
@@ -262,7 +262,7 @@ struct OneDistPaired : public RcppParallel::Worker
                 }
                 const std::vector <size_t> to_i2 = {to_i [0], static_cast <size_t> (min_h_index)};
                 pathfinder->AStar (d, w, prev, from_i, to_i2,
-                        vx[to_i2[0]], vy[to_i2[0]], vx, vy);
+                        vx[to_i2[0]], vy[to_i2[0]], vx, vy, is_spatial);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, to_i);
             else
@@ -835,7 +835,7 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
             pathfinder->AStar2 (d, w, prev,
                     static_cast <size_t> (fromi [i_R]),
                     target_idx, d_rev, w_rev, prev_rev,
-                    vx[target_idx], vy[target_idx], vx, vy);
+                    vx[target_idx], vy[target_idx], vx, vy, is_spatial);
         } else {
             pathfinder->Dijkstra (d, w, prev,
                     static_cast <size_t> (fromi [i_R]), toi);

@@ -89,7 +89,8 @@ class PathFinder {
                 const double target_x,
                 const double target_y,
                 const std::vector<double> &vx,
-                const std::vector<double> &vy);
+                const std::vector<double> &vy,
+                const bool is_spatial);
         // with A* heuristic for dists-categorical
         void scan_edge_types_heur (
                 const DGraphEdge *edge,
@@ -142,7 +143,8 @@ class PathFinder {
                 const double target_x,
                 const double target_y,
                 const std::vector<double> &vx,
-                const std::vector<double> &vy);
+                const std::vector<double> &vy,
+                const bool is_spatial);
         void AStar2 (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,
@@ -154,7 +156,8 @@ class PathFinder {
                 const double target_x,
                 const double target_y,
                 const std::vector<double> &vx,
-                const std::vector<double> &vy);
+                const std::vector<double> &vy,
+                const bool is_spatial);
         void scan_edges_heur_rev (
                 const DGraphEdge *edge,
                 std::vector<double>& d,
@@ -167,7 +170,8 @@ class PathFinder {
                 const double target_y,
                 const std::vector<double> &vx,
                 const std::vector<double> &vy,
-                const double h_max);
+                const double h_max,
+                const bool is_spatial);
         void AStarEdgeType (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,
