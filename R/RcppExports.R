@@ -360,8 +360,8 @@ rcpp_get_sp_dists_nearest <- function (graph, vert_map_in, fromi, toi_in, heap_t
 #' rcpp_get_sp_dists_paired_par
 #'
 #' @noRd
-rcpp_get_sp_dists_paired_par <- function (graph, vert_map_in, fromi, toi, heap_type, is_spatial) {
-    .Call (`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial)
+rcpp_get_sp_dists_paired_par <- function (graph, vert_map_in, fromi, toi, heap_type, is_spatial, do_bidirectional) {
+    .Call (`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial, do_bidirectional)
 }
 
 #' rcpp_get_iso
@@ -400,8 +400,8 @@ rcpp_get_paths <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call (`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
-rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional) {
+    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional)
 }
 
 #' rcpp_get_sp_dists_categorical

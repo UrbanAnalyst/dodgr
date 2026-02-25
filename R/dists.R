@@ -160,6 +160,8 @@ dodgr_dists <- function (graph,
                          parallel = TRUE,
                          quiet = TRUE) {
 
+    is_contracted <- methods::is (graph, "dodgr_contracted")
+
     graph <- tbl_to_df (graph)
 
     hps <- get_heap (heap, graph)
@@ -208,7 +210,8 @@ dodgr_dists <- function (graph,
         heap,
         is_spatial,
         parallel,
-        pairwise
+        pairwise,
+        is_contracted
     )
 
 
@@ -527,7 +530,8 @@ calculate_distmat <- function (graph,
                                heap,
                                is_spatial,
                                parallel = TRUE,
-                               pairwise = FALSE) {
+                               pairwise = FALSE,
+                               is_contracted = FALSE) {
 
     flip <- FALSE
     if (length (from_index$index) > length (to_index$index)) {
@@ -540,13 +544,15 @@ calculate_distmat <- function (graph,
 
     if (parallel) {
         if (pairwise) {
+            do_bidirectional <- !is_contracted && nrow (vert_map) > 1000
             d <- rcpp_get_sp_dists_paired_par (
                 graph,
                 vert_map,
                 from_index$index,
                 to_index$index,
                 heap,
-                is_spatial
+                is_spatial,
+                do_bidirectional = do_bidirectional
             )
         } else {
             d <- rcpp_get_sp_dists_par (
