@@ -73,6 +73,8 @@ dodgr_paths <- function (graph,
                          heap = "BHeap",
                          quiet = TRUE) {
 
+    is_contracted <- methods::is (graph, "dodgr_contracted")
+
     hps <- get_heap (heap, graph)
     heap <- hps$heap
     graph <- hps$graph
@@ -100,13 +102,17 @@ dodgr_paths <- function (graph,
         if (length (from_index$index) != length (to_index$index)) {
             stop ("pairwise paths require from and to to have same length")
         }
+
+        do_bidirectional <- !is_contracted &&
+            nrow (vert_map) > 1000
+
         paths <- rcpp_get_paths_pairwise (
             graph,
             vert_map,
             from_index$index,
             to_index$index,
             heap,
-            do_bidirectional = TRUE
+            do_bidirectional = do_bidirectional
         )
     } else {
         paths <- rcpp_get_paths (
