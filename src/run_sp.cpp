@@ -197,6 +197,7 @@ struct OneDistPaired : public RcppParallel::Worker
     const std::shared_ptr <DGraph> g;
     const std::string heap_type;
     bool is_spatial;
+    bool do_bidirectional;
 
     RcppParallel::RMatrix <double> dout;
 
@@ -210,10 +211,11 @@ struct OneDistPaired : public RcppParallel::Worker
             const std::shared_ptr <DGraph> g_in,
             const std::string & heap_type_in,
             const bool & is_spatial_in,
+            const bool & do_bidirectional_in,
             RcppParallel::RMatrix <double> dout_in) :
         dp_fromtoi (fromtoi), nverts (nverts_in), nfrom (nfrom_in),
         vx (vx_in), vy (vy_in),
-        g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in),
+        g (g_in), heap_type (heap_type_in), is_spatial (is_spatial_in), do_bidirectional(do_bidirectional_in),
         dout (dout_in)
     {
     }
@@ -225,7 +227,7 @@ struct OneDistPaired : public RcppParallel::Worker
         {
             std::shared_ptr<PF::PathFinder> pathfinder =
                 std::make_shared <PF::PathFinder> (nverts,
-                        *run_sp::getHeapImpl (heap_type), g);
+                        *run_sp::getHeapImpl (heap_type), g, do_bidirectional);
             std::vector <double> w (nverts);
             std::vector <double> d (nverts);
             std::vector <long int> prev (nverts);
@@ -235,7 +237,19 @@ struct OneDistPaired : public RcppParallel::Worker
             const size_t from_i = static_cast <size_t> (dp_fromtoi [i]);
             const std::vector <size_t> to_i = {static_cast <size_t> (dp_fromtoi [nfrom + i])};
 
-            if (is_spatial)
+            if (do_bidirectional && is_spatial) {
+                for (size_t j = 0; j < nverts; j++)
+                {
+                    const double dx = vx [j] - vx [to_i[0]],
+                        dy = vy [j] - vy [to_i[0]];
+                    heuristic [j] = sqrt (dx * dx + dy * dy);
+                }
+                std::vector <double> w_rev (nverts);
+                std::vector <double> d_rev (nverts);
+                std::vector <long int> prev_rev (nverts);
+                pathfinder->AStar2 (d, w, prev, heuristic, from_i, to_i[0], d_rev, w_rev, prev_rev);
+            }
+            else if (is_spatial)
             {
                 // need to set an additional target vertex that is somewhat
                 // beyond the single actual target vertex. Default here is max
@@ -504,7 +518,8 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
         Rcpp::IntegerVector fromi,
         Rcpp::IntegerVector toi,
         const std::string& heap_type,
-        const bool is_spatial)
+        const bool is_spatial,
+        const bool do_bidirectional)
 {
     if (fromi.size () != toi.size ())
         Rcpp::stop ("pairwise dists must have from.size == to.size");
@@ -548,7 +563,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 
     // Create parallel worker
     OneDistPaired one_dist_paired (RcppParallel::RVector <int> (fromto),
-            nverts, n_st, vx, vy, g, heap_type, is_spatial,
+            nverts, n_st, vx, vy, g, heap_type, is_spatial, do_bidirectional,
             RcppParallel::RMatrix <double> (dout));
 
     size_t chunk_size = run_sp::get_chunk_size (n_st);
@@ -777,7 +792,8 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
                            const Rcpp::DataFrame vert_map_in,
                            Rcpp::IntegerVector fromi,
                            Rcpp::IntegerVector toi_in,
-                           const std::string& heap_type)
+                           const std::string& heap_type,
+                           const bool do_bidirectional)
 {
     std::vector <size_t> toi =
         Rcpp::as <std::vector <size_t> > ( toi_in);
@@ -810,7 +826,7 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
         // These lines (re-)initialise the heap, so have to be called for each i
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
-                    *run_sp::getHeapImpl(heap_type), g);
+                    *run_sp::getHeapImpl(heap_type), g, do_bidirectional);
 
         pathfinder->init (g); // specify the graph
 
@@ -821,8 +837,18 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
         d [static_cast <size_t> (fromi [i_R])] =
             w [static_cast <size_t> (fromi [i_R])] = 0.0;
 
-        pathfinder->Dijkstra (d, w, prev,
-                static_cast <size_t> (fromi [i_R]), toi);
+        if (do_bidirectional) {
+            std::vector<double> w_rev (nverts);
+            std::vector<double> d_rev (nverts);
+            std::vector<long int> prev_rev (nverts);
+            std::vector<double> heuristic (nverts, 0.0);
+            pathfinder->AStar2 (d, w, prev, heuristic,
+                    static_cast <size_t> (fromi [i_R]),
+                    static_cast <size_t> (toi [i_R]), d_rev, w_rev, prev_rev);
+        } else {
+            pathfinder->Dijkstra (d, w, prev,
+                    static_cast <size_t> (fromi [i_R]), toi);
+        }
 
         Rcpp::List res1( 1L );
         std::vector <long int> onePath;

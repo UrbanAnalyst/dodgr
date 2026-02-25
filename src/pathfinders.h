@@ -53,7 +53,8 @@ class PathFinder {
     public:
         PathFinder (size_t n,
                 const HeapDesc& heapD,
-                std::shared_ptr<const DGraph> g);
+                std::shared_ptr<const DGraph> g,
+                bool twoheap = false);
         ~PathFinder();
         
         // Disable copy/assign as will crash
@@ -136,6 +137,25 @@ class PathFinder {
                 const std::vector<double>& heur,
                 const size_t v0,
                 const std::vector <size_t> &to_index);
+        void AStar2 (std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                const std::vector<double>& heur,
+                const size_t v0,
+                const size_t v1,
+                std::vector<double>& d_rev,
+                std::vector<double>& w_rev,
+                std::vector<long int>& prev_rev);
+        void scan_edges_heur_rev (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                bool *m_open_vec,
+                const bool *m_closed_vec,
+                const size_t &v0,
+                const std::vector<double> &heur,
+                const double h_max);
         void AStarEdgeType (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,
@@ -160,9 +180,13 @@ class PathFinder {
 
     private:
         Heap *m_heap;        // pointer: heap
+        Heap *m_heap_rev;
         // Convert to vector<bool>? (save memory, might be a performance hit though)
         bool *m_open;           // array: frontier set state of vertices
+        bool *m_open2;
         bool *m_closed;         // also for bi-dir
+        bool *m_closed2;
+        bool m_is_bidirectional;
 
         std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
 

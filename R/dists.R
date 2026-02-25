@@ -546,7 +546,8 @@ calculate_distmat <- function (graph,
                 from_index$index,
                 to_index$index,
                 heap,
-                is_spatial
+                is_spatial,
+                do_bidirectional = TRUE
             )
         } else {
             d <- rcpp_get_sp_dists_par (

@@ -105,7 +105,8 @@ dodgr_paths <- function (graph,
             vert_map,
             from_index$index,
             to_index$index,
-            heap
+            heap,
+            do_bidirectional = TRUE
         )
     } else {
         paths <- rcpp_get_paths (
