@@ -400,8 +400,8 @@ rcpp_get_paths <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call (`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
-rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type, do_bidirectional) {
-    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type, do_bidirectional)
+rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional) {
+    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional)
 }
 
 #' rcpp_get_sp_dists_categorical

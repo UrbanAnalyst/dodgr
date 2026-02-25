@@ -81,7 +81,8 @@ dodgr_paths <- function (graph,
 
     gr_cols <- dodgr_graph_cols (graph)
     # cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
-    vert_map <- make_vert_map (graph, gr_cols)
+    is_spatial <- is_graph_spatial (graph)
+    vert_map <- make_vert_map (graph, gr_cols, is_spatial)
 
     if (missing (from)) {
         from <- vert_map$vert
@@ -112,6 +113,7 @@ dodgr_paths <- function (graph,
             from_index$index,
             to_index$index,
             heap,
+            is_spatial,
             do_bidirectional = do_bidirectional
         )
     } else {

@@ -104,7 +104,10 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0,
-        const std::vector<double> &heur)    // heuristic for A*
+        const double target_x,
+        const double target_y,
+        const std::vector<double> &vx,
+        const std::vector<double> &vy)
 {
     while (edge) {
         size_t et = edge->target;
@@ -116,11 +119,15 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 
+                const double dx = vx [et] - target_x;
+                const double dy = vy [et] - target_y;
+                const double heur = sqrt (dx * dx + dy * dy);
+
                 if (m_open_vec [et]) {
-                    m_heap->decreaseKey(et, wt + heur [et]);
+                    m_heap->decreaseKey(et, wt + heur);
                 }
                 else {
-                    m_heap->insert (et, wt + heur [et]);
+                    m_heap->insert (et, wt + heur);
                     m_open_vec [et] = true;
                 }
             } else
@@ -256,9 +263,12 @@ void PF::PathFinder::DijkstraLimit (
 void PF::PathFinder::AStar (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<long int>& prev,
-        const std::vector<double>& heur,
         const size_t v0,
-        const std::vector <size_t> &to_index)
+        const std::vector <size_t> &to_index,
+        const double target_x,
+        const double target_y,
+        const std::vector<double> &vx,
+        const std::vector<double> &vy)
 {
     const DGraphEdge *edge;
 
@@ -266,7 +276,10 @@ void PF::PathFinder::AStar (std::vector<double>& d,
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
 
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
-    m_heap->insert (v0, heur [v0]);
+
+    const double dx = vx [v0] - target_x;
+    const double dy = vy [v0] - target_y;
+    m_heap->insert (v0, sqrt (dx * dx + dy * dy));
 
     size_t n_reached = 0;
     const size_t n_targets = to_index.size ();
@@ -282,7 +295,7 @@ void PF::PathFinder::AStar (std::vector<double>& d,
         m_open [v] = false;
 
         edge = vertices [v].outHead;
-        scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, heur);
+        scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy);
 
         if (is_target [v])
             n_reached++;
@@ -350,7 +363,10 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0,
-        const std::vector<double> &heur,
+        const double target_x,
+        const double target_y,
+        const std::vector<double> &vx,
+        const std::vector<double> &vy,
         const double h_max)
 {
     while (edge) {
@@ -363,8 +379,10 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
                 w [et] = wt;
                 prev [et] = static_cast <int> (v0);
 
-                double heur_et = h_max - heur[et];
-                double priority = wt + heur_et;
+                const double dx = vx [et] - target_x;
+                const double dy = vy [et] - target_y;
+                const double heur_et = h_max - sqrt (dx * dx + dy * dy);
+                const double priority = wt + heur_et;
 
                 if (m_open_vec [et]) {
                     m_heap_rev->decreaseKey(et, priority);
@@ -383,12 +401,15 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
 void PF::PathFinder::AStar2 (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<long int>& prev,
-        const std::vector<double>& heur,
         const size_t v0,
         const size_t v1,
         std::vector<double>& d_rev,
         std::vector<double>& w_rev,
-        std::vector<long int>& prev_rev)
+        std::vector<long int>& prev_rev,
+        const double target_x,
+        const double target_y,
+        const std::vector<double> &vx,
+        const std::vector<double> &vy)
 {
     const size_t n = m_graph->nVertices();
     const std::vector<DGraphVertex>& vertices = m_graph->vertices();
@@ -402,9 +423,18 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
     PF::PathFinder::init_arrays (d, w, prev, m_open, m_closed, v0, n);
     PF::PathFinder::init_arrays (d_rev, w_rev, prev_rev, m_open2, m_closed2, v1, n);
 
-    m_heap->insert (v0, heur [v0]);
-    double h_max = heur[v0];
-    m_heap_rev->insert (v1, h_max - heur [v1]);
+    const double dx0 = vx [v0] - target_x;
+    const double dy0 = vy [v0] - target_y;
+    const double h0 = sqrt (dx0 * dx0 + dy0 * dy0);
+
+    const double dx1 = vx [v1] - target_x;
+    const double dy1 = vy [v1] - target_y;
+    const double h1 = sqrt (dx1 * dx1 + dy1 * dy1);
+
+    const double h_max = h0;
+
+    m_heap->insert (v0, h0);
+    m_heap_rev->insert (v1, h_max - h1);
 
     size_t meeting_vertex = static_cast<size_t>(-1);
     double meeting_distance = INFINITE_DOUBLE;
@@ -413,7 +443,6 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
         double min_f = (m_heap->nItems() > 0 ? m_heap->getmin() : INFINITE_DOUBLE);
         double min_r = (m_heap_rev->nItems() > 0 ? m_heap_rev->getmin() : INFINITE_DOUBLE);
 
-        // Use early termination
         if (min_f + min_r >= meeting_distance + h_max) {
             break;
         }
@@ -429,7 +458,7 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             }
 
             const DGraphEdge *edge = vertices [v].outHead;
-            scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, heur);
+            scan_edges_heur (edge, d, w, prev, m_open, m_closed, v, target_x, target_y, vx, vy);
         } else {
             size_t v = m_heap_rev->deleteMin();
             m_closed2 [v] = true;
@@ -441,11 +470,10 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             }
 
             const DGraphEdge *edge = vertices [v].inHead;
-            scan_edges_heur_rev (edge, d_rev, w_rev, prev_rev, m_open2, m_closed2, v, heur, h_max);
+            scan_edges_heur_rev (edge, d_rev, w_rev, prev_rev, m_open2, m_closed2, v, target_x, target_y, vx, vy, h_max);
         }
     }
 
-    // Safety check: find the absolute best meeting point over all visited nodes
     double best_w = INFINITE_DOUBLE;
     size_t best_meet = static_cast<size_t>(-1);
     for (size_t i = 0; i < n; i++) {

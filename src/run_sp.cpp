@@ -45,7 +45,7 @@ std::shared_ptr <HeapDesc> run_sp::getHeapImpl(const std::string& heap_type)
 {
   if (heap_type == "FHeap")
     return std::make_shared <HeapD<FHeap> >();
-  else if (heap_type == "BHeap" || heap_type == "set") // heap not used for set 
+  else if (heap_type == "BHeap" || heap_type == "set") // heap not used for set
     return std::make_shared <HeapD<BHeap> >();
   else if (heap_type == "Heap23")
     return std::make_shared <HeapD<Heap23> >();
@@ -101,19 +101,12 @@ struct OneDist : public RcppParallel::Worker
             std::vector <double> d (nverts);
             std::vector <long int> prev (nverts);
 
-            std::vector <double> heuristic (nverts, 0.0);
-
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             if (is_spatial)
             {
-                for (size_t j = 0; j < nverts; j++)
-                {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                }
-                pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
+                pathfinder->AStar (d, w, prev, from_i, toi,
+                        vx[toi[0]], vy[toi[0]], vx, vy);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, toi);
             else
@@ -128,7 +121,7 @@ struct OneDist : public RcppParallel::Worker
             }
         }
     }
-                                   
+
 };
 
 struct OneDistNearest : public RcppParallel::Worker
@@ -184,7 +177,7 @@ struct OneDistNearest : public RcppParallel::Worker
             }
         }
     }
-                                   
+
 };
 
 struct OneDistPaired : public RcppParallel::Worker
@@ -232,30 +225,21 @@ struct OneDistPaired : public RcppParallel::Worker
             std::vector <double> d (nverts);
             std::vector <long int> prev (nverts);
 
-            std::vector <double> heuristic (nverts, 0.0);
-
             const size_t from_i = static_cast <size_t> (dp_fromtoi [i]);
             const std::vector <size_t> to_i = {static_cast <size_t> (dp_fromtoi [nfrom + i])};
 
             if (do_bidirectional && is_spatial) {
-                for (size_t j = 0; j < nverts; j++)
-                {
-                    const double dx = vx [j] - vx [to_i[0]],
-                        dy = vy [j] - vy [to_i[0]];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                }
                 std::vector <double> w_rev (nverts);
                 std::vector <double> d_rev (nverts);
                 std::vector <long int> prev_rev (nverts);
-                pathfinder->AStar2 (d, w, prev, heuristic, from_i, to_i[0], d_rev, w_rev, prev_rev);
+                pathfinder->AStar2 (d, w, prev, from_i, to_i[0], d_rev, w_rev, prev_rev,
+                        vx[to_i[0]], vy[to_i[0]], vx, vy);
             }
             else if (is_spatial)
             {
-                // need to set an additional target vertex that is somewhat
-                // beyond the single actual target vertex. Default here is max
-                // heuristic, but reduced in following loop.
                 long int max_h_index = -1;
                 double max_h_value = -1.0;
+                std::vector <double> heuristic (nverts, 0.0);
                 for (size_t j = 0; j < nverts; j++)
                 {
                     const double dx = vx [j] - vx [from_i],
@@ -269,9 +253,6 @@ struct OneDistPaired : public RcppParallel::Worker
                 const double htemp = heuristic [static_cast <size_t> (dp_fromtoi [nfrom + i])];
                 double min_h_value = max_h_value;
                 long int min_h_index = max_h_index;
-                // Arbitrary relative distance threshold
-                // TODO: Are there likely to be cases where this might need to
-                // be adjusted?
                 const double thr = 0.1;
                 for (size_t j = 0; j < nverts; j++) {
                     if ((heuristic [j] < (thr * htemp)) && (heuristic [j] > min_h_value)) {
@@ -280,7 +261,8 @@ struct OneDistPaired : public RcppParallel::Worker
                     }
                 }
                 const std::vector <size_t> to_i2 = {to_i [0], static_cast <size_t> (min_h_index)};
-                pathfinder->AStar (d, w, prev, heuristic, from_i, to_i2);
+                pathfinder->AStar (d, w, prev, from_i, to_i2,
+                        vx[to_i2[0]], vy[to_i2[0]], vx, vy);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, to_i);
             else
@@ -290,7 +272,7 @@ struct OneDistPaired : public RcppParallel::Worker
                 dout (i, 0) = d [to_i [0]];
         }
     }
-                                   
+
 };
 
 
@@ -340,7 +322,7 @@ struct OneIso : public RcppParallel::Worker
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
 
-            // Get the set of terminal vertices: those with w < dlimit_max but 
+            // Get the set of terminal vertices: those with w < dlimit_max but
             // with no previous (outward-going) nodes
             std::unordered_set <int> terminal_verts;
             for (size_t j = 0; j < nverts; j++)
@@ -367,7 +349,7 @@ struct OneIso : public RcppParallel::Worker
             }
         }
     }
-                                   
+
 };
 
 
@@ -461,7 +443,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_par (const Rcpp::DataFrame graph,
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
-    
+
     return (dout);
 }
 
@@ -505,7 +487,7 @@ Rcpp::NumericVector rcpp_get_sp_dists_nearest (const Rcpp::DataFrame graph,
 
     size_t chunk_size = run_sp::get_chunk_size (nfrom);
     RcppParallel::parallelFor (0, nfrom, one_dist, chunk_size);
-    
+
     return (dout);
 }
 
@@ -568,7 +550,7 @@ Rcpp::NumericMatrix rcpp_get_sp_dists_paired_par (const Rcpp::DataFrame graph,
 
     size_t chunk_size = run_sp::get_chunk_size (n_st);
     RcppParallel::parallelFor (0, n_st, one_dist_paired, chunk_size);
-    
+
     return (dout);
 }
 
@@ -613,7 +595,7 @@ Rcpp::NumericMatrix rcpp_get_iso (const Rcpp::DataFrame graph,
 
     RcppParallel::parallelFor (0, static_cast <size_t> (fromi.length ()),
             one_iso);
-    
+
     return (dout);
 }
 
@@ -744,7 +726,7 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         std::shared_ptr<PF::PathFinder> pathfinder =
             std::make_shared <PF::PathFinder> (nverts,
                 *run_sp::getHeapImpl(heap_type), g);
-        
+
         pathfinder->init (g); // specify the graph
 
         Rcpp::checkUserInterrupt ();
@@ -793,6 +775,7 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
                            Rcpp::IntegerVector fromi,
                            Rcpp::IntegerVector toi_in,
                            const std::string& heap_type,
+                           const bool is_spatial,
                            const bool do_bidirectional)
 {
     std::vector <size_t> toi =
@@ -811,6 +794,13 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
     size_t nverts = run_sp::make_vert_map (vert_map_in, vert_map_id,
             vert_map_n, vert_map);
 
+    std::vector <double> vx (nverts), vy (nverts);
+    if (is_spatial)
+    {
+        vx = Rcpp::as <std::vector <double> > (vert_map_in ["x"]);
+        vy = Rcpp::as <std::vector <double> > (vert_map_in ["y"]);
+    }
+
     std::shared_ptr<DGraph> g = std::make_shared<DGraph>(nverts);
     inst_graph (g, nedges, vert_map, from, to, dist, wt);
 
@@ -818,7 +808,7 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
     std::vector<double> w (nverts);
     std::vector<double> d (nverts);
     std::vector<long int> prev (nverts);
-  
+
     for (size_t i = 0; i < nfrom; i++)
     {
         const R_xlen_t i_R = static_cast <R_xlen_t> (i);
@@ -841,10 +831,11 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
             std::vector<double> w_rev (nverts);
             std::vector<double> d_rev (nverts);
             std::vector<long int> prev_rev (nverts);
-            std::vector<double> heuristic (nverts, 0.0);
-            pathfinder->AStar2 (d, w, prev, heuristic,
+            size_t target_idx = static_cast <size_t> (toi [i_R]);
+            pathfinder->AStar2 (d, w, prev,
                     static_cast <size_t> (fromi [i_R]),
-                    static_cast <size_t> (toi [i_R]), d_rev, w_rev, prev_rev);
+                    target_idx, d_rev, w_rev, prev_rev,
+                    vx[target_idx], vy[target_idx], vx, vy);
         } else {
             pathfinder->Dijkstra (d, w, prev,
                     static_cast <size_t> (fromi [i_R]), toi);
