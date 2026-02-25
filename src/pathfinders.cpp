@@ -117,10 +117,10 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
                 prev [et] = static_cast <int> (v0);
 
                 if (m_open_vec [et]) {
-                    m_heap->decreaseKey(et, wt + heur [et] - heur [v0]);
+                    m_heap->decreaseKey(et, wt + heur [et]);
                 }
                 else {
-                    m_heap->insert (et, wt + heur [et] - heur [v0]);
+                    m_heap->insert (et, wt + heur [et]);
                     m_open_vec [et] = true;
                 }
             } else
@@ -364,8 +364,7 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
                 prev [et] = static_cast <int> (v0);
 
                 double heur_et = h_max - heur[et];
-                double heur_v0 = h_max - heur[v0];
-                double priority = wt + heur_et - heur_v0;
+                double priority = wt + heur_et;
 
                 if (m_open_vec [et]) {
                     m_heap_rev->decreaseKey(et, priority);
