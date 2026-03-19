@@ -211,7 +211,7 @@ void dodgr_sf::append_nc_edges (const size_t nc_edge_count,
     for (size_t i = 0; i < static_cast <size_t> (edge_sequences_contr.size ()); i++)
         all_edge_names [i] = new_edge_name_vec [i];
     for (long int i = 0; i < edge_sequences_contr.size (); i++)
-        edge_sequences_all (i) = edge_sequences_contr [i];
+        edge_sequences_all (i) = edge_sequences_contr (i);
     for (size_t i = 0; i < static_cast <size_t> (edge_sequences_new.size ()); i++)
         all_edge_names [static_cast <size_t> (edge_sequences_contr.size ()) + i] =
             old_edge_names [i];
@@ -261,8 +261,8 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
     std::unordered_map <std::string, size_t> edge_num_map;
     for (long int i = 0; i < idf_r.size (); i++)
     {
-        std::string idft = static_cast <std::string> (idf_r [i]) + "-" +
-            static_cast <std::string> (idt_r [i]);
+        std::string idft = static_cast <std::string> (idf_r (i)) + "-" +
+            static_cast <std::string> (idt_r (i));
         edge_num_map.emplace (idft, i);
     }
 
@@ -270,17 +270,17 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
            ymin = INFINITE_DOUBLE, ymax = -INFINITE_DOUBLE;
     for (size_t i = 0; i < total_edges; i++)
     {
-        Rcpp::CharacterVector idvec = edge_sequences [static_cast <long int> (i)];
+        Rcpp::CharacterVector idvec = edge_sequences (static_cast <long int> (i));
         Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
         // Fill first edge
         std::string id0 = static_cast <std::string> (idvec [0]),
             id1 = static_cast <std::string> (idvec [1]);
         std::string id01 = id0 + "-" + id1;
         long int j = static_cast <long int> (edge_num_map.find (id01)->second);
-        x [0] = xf [j];
-        y [0] = yf [j];
-        x [1] = xt [j];
-        y [1] = yt [j];
+        x [0] = xf (j);
+        y [0] = yf (j);
+        x [1] = xt (j);
+        y [1] = yt (j);
         // Then just remaining "to" values
         idvec.erase (0);
         idvec.erase (0);
@@ -291,8 +291,8 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
             id1 = static_cast <std::string> (idvec [0]);
             id01 = id0 + "-" + id1;
             j = static_cast <long int> (edge_num_map.find (id01)->second);
-            x [count] = xt [j];
-            y [count] = yt [j];
+            x (count) = xt (j);
+            y (count) = yt (j);
             count++;
             idvec.erase (0);
         }
