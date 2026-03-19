@@ -158,7 +158,7 @@ graph_undir <- merge_directed_graph (graph)
 nrow (graph)
 #> [1] 6813
 nrow (graph_undir) # the latter is much smaller
-#> [1] 949
+#> [1] 996
 
 # The following code can be used to convert the resultant graph to an `sf`
 # object suitable for plotting

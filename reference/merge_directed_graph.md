@@ -69,5 +69,5 @@ graph_undir <- merge_directed_graph (graph)
 nrow (graph)
 #> [1] 6813
 nrow (graph_undir) # the latter is much smaller
-#> [1] 754
+#> [1] 922
 ```

@@ -51,7 +51,7 @@ nrow (graph) # 5,742
 #> [1] 6813
 graph <- dodgr_sample (graph, nverts = 200)
 nrow (graph) # generally around 400 edges
-#> [1] 397
+#> [1] 399
 nrow (dodgr_vertices (graph)) # 200
 #> [1] 200
 ```

@@ -202,7 +202,7 @@ graph_undir <- merge_directed_graph (graph)
 nrow (graph)
 #> [1] 6813
 nrow (graph_undir) # the latter is much smaller
-#> [1] 1288
+#> [1] 1302
 
 # ----- One dispersal coefficient for each origin point:
 # Remove `flow` column to avoid warning about over-writing values:
