@@ -137,8 +137,8 @@ bench::mark (full = dodgr_dists_categorical (graph, from, to),
     ## # A tibble: 2 × 3
     ##   expression   min median
     ##   <bch:expr> <dbl>  <dbl>
-    ## 1 full       0.450  0.454
-    ## 2 prop_only  0.259  0.262
+    ## 1 full       0.471  0.473
+    ## 2 prop_only  0.269  0.282
 
 The default value of `proportions_only = FALSE` should be used only if
 additional information from the distance matrices themselves is required
@@ -251,9 +251,9 @@ bench::mark (full = dodgr_dists_categorical (graph, from, to),
     ## # A tibble: 3 × 3
     ##   expression    min median
     ##   <bch:expr>  <dbl>  <dbl>
-    ## 1 full       0.455  0.477 
-    ## 2 prop_only  0.265  0.284 
-    ## 3 dlimit     0.0699 0.0801
+    ## 1 full       0.501  0.501 
+    ## 2 prop_only  0.270  0.281 
+    ## 3 dlimit     0.0707 0.0779
 
 Finally, note that the efficiency of distance-threshold queries scales
 non-linearly with increases in `dlimit`, with queries quickly becoming
