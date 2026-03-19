@@ -9,7 +9,7 @@ size_t dodgr_sf::make_edge_name_set (std::unordered_set <std::string> &new_edge_
     // Rcpp::CharacterVector requires long int index type
     for (long int i = 0; i < new_edges.size (); i++)
     {
-        new_edge_name_set.emplace (static_cast <std::string> (new_edges [i]));
+        new_edge_name_set.emplace (static_cast <std::string> (new_edges (i)));
     }
     return new_edge_name_set.size ();
 }
@@ -26,7 +26,7 @@ void dodgr_sf::make_edge_name_vec (const size_t n,
     size_t count = 0;
     for (long int i = 1; i < new_edges.size (); i++)
     {
-        std::string new_edge_i = static_cast <std::string> (new_edges [i]);
+        std::string new_edge_i = static_cast <std::string> (new_edges (i));
         if (new_edge_i != new_edge_name_vec [count])
             new_edge_name_vec [++count] = new_edge_i;
     }
@@ -44,7 +44,7 @@ size_t dodgr_sf::get_edgevec_sizes (const size_t nedges,
     size_t count = 1, edgenum = 0;
     for (long int i = 1; i < new_edges.size (); i++)
     {
-        if (new_edges [i] == new_edges [i - 1])
+        if (new_edges (i) == new_edges (i - 1))
             count++;
         else
         {
@@ -82,11 +82,11 @@ void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
     to_node.resize (edgevec_sizes [edgenum]);
     // old_edges is 1-indexed!
     long int the_edge = static_cast <long int> (atoi (old_edges [0])) - 1;
-    from_node [0] = static_cast <std::string> (idf_r [the_edge]);
-    to_node [0] = static_cast <std::string> (idt_r [the_edge]);
+    from_node [0] = static_cast <std::string> (idf_r (the_edge));
+    to_node [0] = static_cast <std::string> (idt_r (the_edge));
     for (long int i = 1; i < new_edges.size (); i++)
     {
-        if (new_edges [i] != new_edges [i - 1])
+        if (new_edges (i) != new_edges (i - 1))
         {
             full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
             full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
@@ -97,9 +97,9 @@ void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
             to_node.resize (edgevec_sizes [edgenum]);
             count = 0;
         }
-        the_edge = atoi (old_edges [i]) - 1; // it's 1-indexed!
-        from_node [count] = static_cast <std::string> (idf_r [the_edge]);
-        to_node [count++] = static_cast <std::string> (idt_r [the_edge]);
+        the_edge = atoi (old_edges (i)) - 1; // it's 1-indexed!
+        from_node [count] = static_cast <std::string> (idf_r (the_edge));
+        to_node [count++] = static_cast <std::string> (idt_r (the_edge));
     }
     full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
     full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
@@ -154,7 +154,7 @@ void dodgr_sf::order_vert_sequences (Rcpp::List &edge_sequences,
         }
         idmap_rev.clear ();
 
-        edge_sequences [static_cast <long int> (i)] = id;
+        edge_sequences (static_cast <long int> (i)) = id;
     }
 }
 
@@ -167,7 +167,7 @@ size_t dodgr_sf::count_non_contracted_edges (const Rcpp::CharacterVector &contr_
     for (long int i = 0; i < contr_edges.size (); i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
-                    (contr_edges [i])) == new_edge_name_set.end ())
+                    (contr_edges (i))) == new_edge_name_set.end ())
         {
             edge_count++;
         }
@@ -193,13 +193,13 @@ void dodgr_sf::append_nc_edges (const size_t nc_edge_count,
     for (long int i = 0; i < graph_contr.nrow (); i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
-                    (contr_edges [i])) == new_edge_name_set.end ())
+                    (contr_edges (i))) == new_edge_name_set.end ())
         {
-            old_edge_names [count] = contr_edges [i];
+            old_edge_names [count] = contr_edges (i);
             Rcpp::CharacterVector idvec (2);
-            idvec [0] = idf_r_c [i];
-            idvec [1] = idt_r_c [i];
-            edge_sequences_new [static_cast <long int> (count++)] = idvec;
+            idvec [0] = idf_r_c (i);
+            idvec [1] = idt_r_c (i);
+            edge_sequences_new (static_cast <long int> (count++)) = idvec;
         }
     }
     // Then just join the two edge_sequence Lists together, along with vectors
@@ -211,12 +211,12 @@ void dodgr_sf::append_nc_edges (const size_t nc_edge_count,
     for (size_t i = 0; i < static_cast <size_t> (edge_sequences_contr.size ()); i++)
         all_edge_names [i] = new_edge_name_vec [i];
     for (long int i = 0; i < edge_sequences_contr.size (); i++)
-        edge_sequences_all [i] = edge_sequences_contr [i];
+        edge_sequences_all (i) = edge_sequences_contr [i];
     for (size_t i = 0; i < static_cast <size_t> (edge_sequences_new.size ()); i++)
         all_edge_names [static_cast <size_t> (edge_sequences_contr.size ()) + i] =
             old_edge_names [i];
     for (long int i = 0; i < edge_sequences_new.size (); i++)
-        edge_sequences_all [edge_sequences_contr.size () + i] = edge_sequences_new [i];
+        edge_sequences_all (edge_sequences_contr.size () + i) = edge_sequences_new (i);
 }
 
 // from osmdata/src/get-bbox.cpp
