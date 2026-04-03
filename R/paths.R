@@ -185,3 +185,63 @@ get_path_indices <- function (graph, gr_cols, vert_map, to_from) {
 
     return (list (index = index, id = id))
 }
+
+expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
+  
+  # Ensure the path contains at least one transition
+  if(length(path_c) < 2)
+    stop("There are no transitions.")
+  
+  # Necessary columns
+  cols <- dodgr_graph_cols(graph)
+  cols <- unlist(cols[c("from", "to", "edge_id")])
+  
+  # Take only necessary columns for contracted graph
+  graph_c <- graph_c[, cols]
+  
+  if(is.integer(path_c)){
+    
+    # Interpret path_c as row indices 
+    transitions <- graph_c[path_c,]
+    
+  } else {
+    
+    # Construct transition pairs from vertex sequence
+    transitions <- stats::embed(path_c, 2)[, 2:1, drop = FALSE]
+    colnames(transitions) <- cols[1:2]
+    transitions <- as.data.frame(transitions)
+    transitions$order <- seq_len(nrow(transitions))
+    
+    # Retrieve edge information from contracted graph
+    transitions <- merge(transitions, graph_c, by = names(transitions))
+    
+    # Verify that all edges were retrieved
+    if(nrow(transitions) != length(path_c) - 1)
+      stop("Not all transitions were matched to the contracted graph.")
+    
+    # Restore original transition order
+    transitions <- transitions[order(transitions$order),]
+  }
+  
+  # Retrieve edge map if not provided
+  if(is.null(edge_map))
+    edge_map <- get_edge_map(graph)
+  
+  # Convert edge map to list:
+  # maps each contracted edge to a sequence of original edges
+  edge_map <- edge_map[edge_map$edge_new %in% transitions$edge_,]
+  edge_map <- split(edge_map$edge_old, edge_map$edge_new)
+  
+  # Add edges that map to themselves (no contraction)
+  missing_edges <- setdiff(transitions$edge_, names(edge_map))
+  edge_map[missing_edges] <- as.list(missing_edges)
+  
+  # Match expanded edge sequence to rows in original graph
+  edge_seq <- unlist(edge_map[transitions$edge_])
+  indices <- match(edge_seq, graph$edge_)
+  
+  # Return expanded path data.frame
+  graph[indices,]
+}
+
+
