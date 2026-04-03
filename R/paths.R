@@ -195,6 +195,7 @@ expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
   # Necessary columns
   cols <- dodgr_graph_cols(graph)
   cols <- unlist(cols[c("from", "to", "edge_id")])
+  cols <- names(graph)[cols]
   
   # Take only necessary columns for contracted graph
   graph_c <- graph_c[, cols]
@@ -213,7 +214,7 @@ expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
     transitions$order <- seq_len(nrow(transitions))
     
     # Retrieve edge information from contracted graph
-    transitions <- merge(transitions, graph_c, by = names(transitions))
+    transitions <- merge(transitions, graph_c, by = cols[1:2])
     
     # Verify that all edges were retrieved
     if(nrow(transitions) != length(path_c) - 1)
@@ -243,5 +244,3 @@ expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
   # Return expanded path data.frame
   graph[indices,]
 }
-
-
