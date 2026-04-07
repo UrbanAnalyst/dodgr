@@ -221,7 +221,7 @@ expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
       paste(path_c[-length(path_c)], path_c[-1]),
       paste(graph_c[[cols$from]], graph_c[[cols$to]])
     )
-    
+
     # Verify that all edges were mapped
     if(any(is.na(path_c)))
       stop("Not all transitions were matched to the contracted graph.")
