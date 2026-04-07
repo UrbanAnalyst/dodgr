@@ -186,42 +186,52 @@ get_path_indices <- function (graph, gr_cols, vert_map, to_from) {
     return (list (index = index, id = id))
 }
 
+sort_transitions <- function(graph){
+  
+  cols <- dodgr_graph_cols(graph)
+  
+  to_neighbors <- match(graph[[cols$to]], graph[[cols$from]])
+  pos <- which(!(graph[[cols$from]] %in% graph[[cols$to]]))
+  
+  perm <- integer(nrow(graph))
+  for(i in seq_along(perm)){
+    perm[[i]] <- pos
+    pos <- to_neighbors[[pos]]
+  }
+  
+  perm
+}
+
 expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
   
   # Ensure the path contains at least one transition
   if(length(path_c) < 2)
     stop("There are no transitions.")
   
-  # Necessary columns
+  # dodgr columns
   cols <- dodgr_graph_cols(graph)
-  cols <- unlist(cols[c("from", "to", "edge_id")])
   
-  # Take only necessary columns for contracted graph
-  graph_c <- graph_c[, cols]
-  
-  if(is.integer(path_c)){
+  if(is.character(path_c)){
     
-    # Interpret path_c as row indices 
-    transitions <- graph_c[path_c,]
+    # Reduce size of contracted graph
+    graph_c <- graph_c[graph_c[[cols$from]] %in% path_c | graph_c[[cols$to]] %in% path_c,]
     
-  } else {
+    # Match path transitions to contracted graph
+    path_c <- match(
+      paste(path_c[-length(path_c)], path_c[-1]),
+      paste(graph_c[[cols$from]], graph_c[[cols$to]])
+    )
     
-    # Construct transition pairs from vertex sequence
-    transitions <- stats::embed(path_c, 2)[, 2:1, drop = FALSE]
-    colnames(transitions) <- cols[1:2]
-    transitions <- as.data.frame(transitions)
-    transitions$order <- seq_len(nrow(transitions))
-    
-    # Retrieve edge information from contracted graph
-    transitions <- merge(transitions, graph_c, by = names(transitions))
-    
-    # Verify that all edges were retrieved
-    if(nrow(transitions) != length(path_c) - 1)
+    # Verify that all edges were mapped
+    if(any(is.na(path_c)))
       stop("Not all transitions were matched to the contracted graph.")
-    
-    # Restore original transition order
-    transitions <- transitions[order(transitions$order),]
   }
+  
+  if(!is.integer(path_c))
+    stop("Path must be provided as integer or character vector.")
+  
+  # Path edges
+  edges <- graph_c[[cols$edge_id]][path_c]
   
   # Retrieve edge map if not provided
   if(is.null(edge_map))
@@ -229,19 +239,18 @@ expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
   
   # Convert edge map to list:
   # maps each contracted edge to a sequence of original edges
-  edge_map <- edge_map[edge_map$edge_new %in% transitions$edge_,]
+  edge_map <- edge_map[edge_map$edge_new %in% edges,]
   edge_map <- split(edge_map$edge_old, edge_map$edge_new)
   
   # Add edges that map to themselves (no contraction)
-  missing_edges <- setdiff(transitions$edge_, names(edge_map))
+  missing_edges <- setdiff(edges, names(edge_map))
   edge_map[missing_edges] <- as.list(missing_edges)
   
   # Match expanded edge sequence to rows in original graph
-  edge_seq <- unlist(edge_map[transitions$edge_])
-  indices <- match(edge_seq, graph$edge_)
+  indices <- match(unlist(edge_map[edges]), graph$edge_)
   
   # Return expanded path data.frame
-  graph[indices,]
+  sort_transitions(graph[indices,])
 }
 
 
