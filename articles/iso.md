@@ -161,7 +161,7 @@ system.time ( # Initial call calculates distances to all points:
 ```
 
     ##    user  system elapsed 
-    ##   0.155   0.000   0.156
+    ##    0.17    0.00    0.17
 
 ``` r
 system.time ( # Subsequent call uses cached values:
