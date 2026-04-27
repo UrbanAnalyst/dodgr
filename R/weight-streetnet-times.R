@@ -167,7 +167,7 @@ set_oneway_flags <- function (graph, bikeflags, wt_profile) {
     return (graph)
 }
 
-weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
+weight_sc_edges <- function (graph, wt_profile, wt_profile_file, type_col) {
 
     # no visible binding notes:
     value <- d <- d_weighted <- NULL
@@ -175,7 +175,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
     wp <- get_profile (wt_profile, wt_profile_file)
     wp <- wp [, c ("way", "value")]
 
-    res <- dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
+    res <- dplyr::left_join (graph, wp, by = stats::setNames ("way", type_col)) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
         dplyr::filter (!is.na (d_weighted)) %>%
@@ -187,7 +187,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
             res <- res [-index, ]
         }
         # Plus remove any untagged "motorway" or "trunk" edges
-        index <- grep ("^(motorway|trunk)", res$highway)
+        index <- grep ("^(motorway|trunk)", res[[type_col]])
         if (length (index) > 0L) {
             res <- res [-index, ]
         }
@@ -197,12 +197,12 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
 }
 
 # Set maximum speed for each edge.
-set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
+set_maxspeed <- function (graph, wt_profile, wt_profile_file, type_col) {
 
     if (!"maxspeed" %in% names (graph)) {
         graph$maxspeed <- NA_real_
     } # nocov
-    if (!"highway" %in% names (graph)) {
+    if (!type_col %in% names (graph)) {
         return (graph)
     } # nocov
 
@@ -240,14 +240,14 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     if (wt_profile == "motorcar") {
 
         med_speeds <- vapply (
-            unique (graph$highway), function (h) {
-                stats::median (graph$maxspeed [graph$highway == h],
+            unique (graph [[type_col]]), function (h) {
+                stats::median (graph$maxspeed [graph [[type_col]] == h],
                     na.rm = TRUE
                 )
             },
             numeric (1L)
         )
-        wp_index <- match (graph$highway, names (med_speeds))
+        wp_index <- match (graph [[type_col]], names (med_speeds))
         index <- which (is.na (graph$maxspeed))
         graph$maxspeed [index] <- med_speeds [wp_index [index]]
 
@@ -256,7 +256,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     # Then fill any NA maxspeed values from weight profile
     wp <- get_profile (wt_profile, wt_profile_file)
 
-    wp_index <- match (graph$highway, wp$way)
+    wp_index <- match (graph [[type_col]], wp$way)
     graph_index <- which (!is.na (wp_index))
     wp_index <- wp_index [graph_index]
     maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
@@ -276,10 +276,10 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     }
 
     na_highways <- wp$way [which (is.na (wp$max_speed))]
-    graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
+    graph$maxspeed [graph [[type_col]] %in% na_highways] <- NA_real_
     # Also set weighted distance for all these to NA:
     # gr_cols <- dodgr_graph_cols (graph)
-    # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+    # graph [[gr_cols$d_weighted]] [graph [[type_col]] %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") ||
         !"surface" %in% names (graph)) {
