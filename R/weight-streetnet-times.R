@@ -199,7 +199,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file, type_col) {
 # Set maximum speed for each edge.
 set_maxspeed <- function (graph, wt_profile, wt_profile_file, type_col) {
 
-    if (!type_col %in% names (graph)) {
+    if (!"maxspeed" %in% names (graph)) {
         graph$maxspeed <- NA_real_
     } # nocov
     if (!type_col %in% names (graph)) {
