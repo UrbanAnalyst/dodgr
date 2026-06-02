@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Distances on Directed Graphs • dodgr</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Distances on Directed Graphs">
 <meta name="description" content="Distances on dual-weighted directed graphs using priority-queue shortest paths (Padgham (2019) &lt;doi:10.32866/6945&gt;). Weighted directed graphs have weights from A to B which may differ from those from B to A. Dual-weighted directed graphs have two sets of such weights. A canonical example is a street network to be used for routing in which routes are calculated by weighting distances according to the type of way and mode of transport, yet lengths of routes must be calculated from direct distances.">
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.022</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,7 +121,7 @@
 <col width="6%">
 <col width="9%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="right">geom_num</th>
 <th align="right">edge_id</th>
 <th align="left">from_id</th>
@@ -139,7 +139,7 @@
 <th align="right">time_weighted</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="left">339318500</td>
@@ -156,7 +156,7 @@
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="left">339318502</td>
@@ -173,7 +173,7 @@
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="left">339318502</td>
@@ -190,7 +190,7 @@
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">4</td>
 <td align="left">2398958028</td>
@@ -207,7 +207,7 @@
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">5</td>
 <td align="left">2398958028</td>
@@ -224,7 +224,7 @@
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">6</td>
 <td align="left">1427116077</td>
@@ -265,7 +265,7 @@
 <col width="6%">
 <col width="9%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="right">geom_num</th>
 <th align="right">edge_id</th>
 <th align="left">from_id</th>
@@ -283,7 +283,7 @@
 <th align="right">time_weighted</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="left">339318500</td>
@@ -300,7 +300,7 @@
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="left">339318502</td>
@@ -317,7 +317,7 @@
 <td align="right">93.600174</td>
 <td align="right">93.600174</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="left">339318502</td>
@@ -334,7 +334,7 @@
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">4</td>
 <td align="left">2398958028</td>
@@ -351,7 +351,7 @@
 <td align="right">6.401248</td>
 <td align="right">6.401248</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">5</td>
 <td align="left">2398958028</td>
@@ -368,7 +368,7 @@
 <td align="right">6.701570</td>
 <td align="right">6.701570</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">6</td>
 <td align="left">1427116077</td>
@@ -398,7 +398,7 @@
 <code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">v</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th align="left"></th>
 <th align="left">id</th>
 <th align="right">x</th>
@@ -407,7 +407,7 @@
 <th align="right">n</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="left">1</td>
 <td align="left">339318500</td>
 <td align="right">76.47491</td>
@@ -415,7 +415,7 @@
 <td align="right">1</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">2</td>
 <td align="left">339318502</td>
 <td align="right">76.47612</td>
@@ -423,7 +423,7 @@
 <td align="right">1</td>
 <td align="right">1</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">4</td>
 <td align="left">2398958028</td>
 <td align="right">76.47621</td>
@@ -431,7 +431,7 @@
 <td align="right">1</td>
 <td align="right">2</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">6</td>
 <td align="left">1427116077</td>
 <td align="right">76.47628</td>
@@ -439,7 +439,7 @@
 <td align="right">1</td>
 <td align="right">3</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="left">8</td>
 <td align="left">7799710916</td>
 <td align="right">76.47634</td>
@@ -447,7 +447,7 @@
 <td align="right">1</td>
 <td align="right">4</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="left">10</td>
 <td align="left">339318503</td>
 <td align="right">76.47641</td>
@@ -520,7 +520,7 @@
 <col width="8%">
 <col width="5%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th align="right">geom_num</th>
 <th align="right">edge_id</th>
 <th align="left">from_id</th>
@@ -539,7 +539,7 @@
 <th align="right">flow</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="left">339318500</td>
@@ -557,7 +557,7 @@
 <td align="right">93.600174</td>
 <td align="right">1.316455</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">2</td>
 <td align="left">339318502</td>
@@ -575,7 +575,7 @@
 <td align="right">93.600174</td>
 <td align="right">0.000000</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="left">339318502</td>
@@ -593,7 +593,7 @@
 <td align="right">6.401248</td>
 <td align="right">1.316455</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">4</td>
 <td align="left">2398958028</td>
@@ -611,7 +611,7 @@
 <td align="right">6.401248</td>
 <td align="right">0.000000</td>
 </tr>
-<tr class="odd">
+<tr>
 <td align="right">1</td>
 <td align="right">5</td>
 <td align="left">2398958028</td>
@@ -629,7 +629,7 @@
 <td align="right">6.701570</td>
 <td align="right">1.316455</td>
 </tr>
-<tr class="even">
+<tr>
 <td align="right">1</td>
 <td align="right">6</td>
 <td align="left">1427116077</td>

@@ -6,12 +6,14 @@ available threads can be determined with either of the following two
 functions:
 
 ``` r
+
 parallel::detectCores ()
 ```
 
     ## [1] 4
 
 ``` r
+
 RcppParallel::defaultNumThreads ()
 ```
 
@@ -25,5 +27,6 @@ prior to calling any `dodgr` functions. For example, single-threaded
 processing can be ensured by first making the following call:
 
 ``` r
+
 RcppParallel::setThreadOptions (numThreads = 1L)
 ```

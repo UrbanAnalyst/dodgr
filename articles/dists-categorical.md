@@ -40,6 +40,7 @@ the largest connected component only, to ensure all points are mutually
 reachable.
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 graph <- graph [graph$component == 1, ]
 graph$edge_type <- graph$highway
@@ -57,6 +58,7 @@ the function, and calculating pairwise distances between all points,
 then gives the following result:
 
 ``` r
+
 v <- dodgr_vertices (graph)
 from <- to <- v$id
 d <- dodgr_dists_categorical (graph, from, to)
@@ -66,12 +68,14 @@ class (d)
     ## [1] "list"                    "dodgr_dists_categorical"
 
 ``` r
+
 length (d)
 ```
 
     ## [1] 9
 
 ``` r
+
 sapply (d, dim)
 ```
 
@@ -88,6 +92,7 @@ enables a convenient `summary` method which converts data on aggregate
 distances along each category of edges into overall proportions:
 
 ``` r
+
 summary (d)
 ```
 
@@ -113,6 +118,7 @@ desired, then a `proportions_only` parameter can be used in the
 function to directly return those:
 
 ``` r
+
 dodgr_dists_categorical (graph, from, to,
                          proportions_only = TRUE)
 ```
@@ -128,6 +134,7 @@ matrices in memory. For most jobs, this should translate to faster
 queries, as illustrated in the following benchmark:
 
 ``` r
+
 bench::mark (full = dodgr_dists_categorical (graph, from, to),
              prop_only = dodgr_dists_categorical (graph, from, to,
                                                   proportions_only = TRUE),
@@ -137,8 +144,8 @@ bench::mark (full = dodgr_dists_categorical (graph, from, to),
     ## # A tibble: 2 × 3
     ##   expression   min median
     ##   <bch:expr> <dbl>  <dbl>
-    ## 1 full       0.458  0.463
-    ## 2 prop_only  0.273  0.274
+    ## 1 full       0.469  0.470
+    ## 2 prop_only  0.269  0.272
 
 The default value of `proportions_only = FALSE` should be used only if
 additional information from the distance matrices themselves is required
@@ -172,6 +179,7 @@ each edge type, plus an initial column of overall distances. The
 following code illustrates:
 
 ``` r
+
 dlimit <- 2000 # in metres
 d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
 dim (d)
@@ -180,6 +188,7 @@ dim (d)
     ## [1] 2270    9
 
 ``` r
+
 head (d)
 ```
 
@@ -208,6 +217,7 @@ graph or network. Summary statistics can also readily be extracted, for
 example,
 
 ``` r
+
 hist (d$path / d$distance,
       xlab = "Relative proportions of trips along paths", main = "")
 ```
@@ -220,6 +230,7 @@ motorised vehicular access in the otherwise car-free area of Hampi,
 India – are distinctly different:
 
 ``` r
+
 hist (d$service / d$distance,
       xlab = "Relative proportions of trips along service ways", main = "")
 ```
@@ -241,6 +252,7 @@ case of proportional distances. The following code benchmarks the three
 modes:
 
 ``` r
+
 bench::mark (full = dodgr_dists_categorical (graph, from, to),
              prop_only = dodgr_dists_categorical (graph, from, to,
                                                   proportions_only = TRUE),
@@ -251,9 +263,9 @@ bench::mark (full = dodgr_dists_categorical (graph, from, to),
     ## # A tibble: 3 × 3
     ##   expression    min median
     ##   <bch:expr>  <dbl>  <dbl>
-    ## 1 full       0.473  0.474 
-    ## 2 prop_only  0.266  0.268 
-    ## 3 dlimit     0.0710 0.0772
+    ## 1 full       0.471  0.475 
+    ## 2 prop_only  0.270  0.271 
+    ## 3 dlimit     0.0695 0.0726
 
 Finally, note that the efficiency of distance-threshold queries scales
 non-linearly with increases in `dlimit`, with queries quickly becoming

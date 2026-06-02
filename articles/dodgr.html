@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>dodgr • dodgr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="dodgr">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.022</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@
                         <h4 data-toc-skip class="author">Mark
 Padgham</h4>
             
-            <h4 data-toc-skip class="date">2026-04-08</h4>
+            <h4 data-toc-skip class="date">2026-06-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UrbanAnalyst/dodgr/blob/main/vignettes/dodgr.Rmd" class="external-link"><code>vignettes/dodgr.Rmd</code></a></small>
       <div class="d-none name"><code>dodgr.Rmd</code></div>
@@ -607,15 +607,15 @@ graph vertices.</p>
 <div class="section level3">
 <h3 id="shortest-path-calculations-priority-queues">4.2 Shortest Path Calculations: Priority Queues<a class="anchor" aria-label="anchor" href="#shortest-path-calculations-priority-queues"></a>
 </h3>
-<p><code>dodgr</code> uses an internal library <span class="citation">Shane Saunders (2004)</span> for the calculation of
-shortest paths using a variety of priority queues <span class="citation">(see Miller 1960 for an overview)</span>. In the
-context of shortest paths, priority queues determine the order in which
-a graph is traversed <span class="citation">(Tarjan 1983)</span>, and
-the choice of priority queue can have a considerable effect on
-computational efficiency for different kinds of graphs <span class="citation">(Johnson 1977)</span>. In contrast to
-<code>dodgr</code>, most other <strong>R</strong> packages for shortest
-path calculations do not use priority queues, and so may often be less
-efficient. Shortest path distances can be calculated in
+<p><code>dodgr</code> uses an internal library <span class="citation">Saunders (2004)</span> for the calculation of shortest
+paths using a variety of priority queues <span class="citation">(see
+Miller 1960 for an overview)</span>. In the context of shortest paths,
+priority queues determine the order in which a graph is traversed <span class="citation">(Tarjan 1983)</span>, and the choice of priority queue
+can have a considerable effect on computational efficiency for different
+kinds of graphs <span class="citation">(Johnson 1977)</span>. In
+contrast to <code>dodgr</code>, most other <strong>R</strong> packages
+for shortest path calculations do not use priority queues, and so may
+often be less efficient. Shortest path distances can be calculated in
 <code>dodgr</code> with priority queues that use the following
 heaps:</p>
 <ol style="list-style-type: decimal">
@@ -637,22 +637,20 @@ a default of 1,000, or the entire graph if it contains fewer than 1,000
 vertices).</p>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare_heaps.html">compare_heaps</a></span> <span class="op">(</span><span class="va">graph</span>, nverts <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required namespace: bench</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required namespace: igraph</span></span></code></pre>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 11 × 6</span></span></span>
 <span><span class="co">##    expression                 min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.55ms   1.63ms      613.    45.3KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   1.59ms   1.67ms      596.    45.3KB     13.4</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 1.61ms   1.67ms      594.    45.3KB     10.5</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.44ms   1.49ms      665.    48.4KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  1.61ms   1.67ms      596.    45.3KB     12.8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted        1.39ms   1.45ms      686.    20.1KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.39ms   1.46ms      681.    20.1KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted      1.41ms   1.46ms      678.    20.1KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.15ms    1.2ms      823.    20.1KB     14.9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       1.41ms   1.47ms      676.    20.1KB     12.7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                758.49µs 812.39µs     <span style="text-decoration: underline;">1</span>214.   492.8KB     17.3</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> BHeap                   1.57ms   1.63ms      612.    45.3KB     12.7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> FHeap                   1.58ms   1.66ms      602.    45.3KB     10.5</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> TriHeap                 1.61ms   1.67ms      595.    45.3KB     12.8</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> TriHeapExt              1.44ms   1.49ms      666.    48.4KB     12.7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> Heap23                  1.61ms   1.68ms      592.    45.3KB     12.8</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> BHeap_contracted         1.4ms   1.47ms      680.    20.1KB     12.7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> FHeap_contracted        1.39ms   1.47ms      679.    20.1KB     12.7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> TriHeap_contracted       1.4ms   1.46ms      683.    20.1KB     15.0</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> TriHeapExt_contracted   1.15ms    1.2ms      824.    20.1KB     14.9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> Heap23_contracted       1.41ms   1.47ms      677.    20.1KB     12.7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span> igraph                815.87µs  863.5µs     <span style="text-decoration: underline;">1</span>146.   502.2KB     17.3</span></span></code></pre>
 <p>The key column of that <code>data.frame</code> is
 <code>relative</code>, which quantifies the relative performance of each
 test in relation to the best which is given a score of 1.
@@ -674,7 +672,7 @@ improves performance with respect to <a href="https://igraph.org" class="externa
 <p>For those wishing to do explicit comparisons themselves, the
 following code generates the <a href="https://igraph.org" class="external-link"><code>igraph</code></a> equivalent of <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html"><code>dodgr_distances()</code></a>,
 although of course for single-weighted graphs only:</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
 <span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">v</span><span class="op">$</span><span class="va">id</span>, <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="va">igr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_to_igraph.html">dodgr_to_igraph</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
@@ -706,21 +704,21 @@ networks generally being less redundant than less dense extra-urban or
 rural networks. The contracted version of a graph can be obtained with
 the function <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html"><code>dodgr_contract_graph()</code></a>,
 illustrated here with the York example from above.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></code></pre></div>
 <p>The function <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html"><code>dodgr_contract_graph()</code></a>
 returns the contracted version of the original graph, containing the
 same number of columns, but with each row representing an edge between
 two junction vertices (or between the submitted <code>verts</code>,
 which may or may not be junctions). Relative sizes are</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 6813</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 748</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 0.1097901</span></span></code></pre>
 <p>equivalent to the removal of around 90% of all edges. The difference
 in routing efficiency can then be seen with the following code</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">from</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">$</span><span class="va">from_id</span>, size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">to</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">$</span><span class="va">to_id</span>, size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span> <span class="op">(</span></span>
@@ -731,8 +729,8 @@ in routing efficiency can then be seen with the following code</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
 <span><span class="co">##   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:tm&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;bch:byt&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full        13.96ms  14.33ms      68.9    1.24MB     2.09</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted   2.63ms   2.75ms     359.   280.59KB     8.46</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full         13.2ms  13.64ms      72.9    1.24MB     4.29</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> contracted    2.6ms   2.69ms     368.   280.59KB     8.42</span></span></code></pre>
 <p>And contracting the graph has a similar effect of speeding up
 pairwise routing between these 100 points. All routing algorithms scale
 non-linearly with size, and relative improvements in efficiency will be
@@ -747,16 +745,16 @@ within the contracted graph. This list of vertices must directly match
 the vertex ID values in the graph.</p>
 <p>The following code illustrates how to retain specific vertices within
 contracted graphs:</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 748</span></span></code></pre>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">verts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="fu"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">id</span>, size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">verts</span><span class="op">)</span> <span class="co"># a character vector</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "3697937615" "3921522990" "1204772877" "339318467"  "2398957584"</span></span>
 <span><span class="co">## [6] "7799710967"</span></span></code></pre>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_contract_graph.html">dodgr_contract_graph</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">verts</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span> <span class="op">(</span><span class="va">grc</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 948</span></span></code></pre>
@@ -774,12 +772,12 @@ graph contraction.</p>
 <p>Shortest paths can also be extracted with the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html"><code>dodgr_paths()</code></a>
 function. For given vectors of <code>from</code> and <code>to</code>
 points, this returns a nested list so that if,</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_paths.html">dodgr_paths</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, to <span class="op">=</span> <span class="va">to</span><span class="op">)</span></span></code></pre></div>
 <p>then <code>dp [[i]] [[j]]</code> will contain the path from
 <code>from [i]</code> to <code>to [j]</code>. The paths are represented
 as sequences of vertex names. Consider the following example,</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   geom_num edge_id    from_id from_lon from_lat      to_id   to_lon   to_lat</span></span>
@@ -800,7 +798,7 @@ as sequences of vertex names. Consider the following example,</p>
 the names of the vertices. To extract shortest paths between some of
 these, first take some small samples of <code>from</code> and
 <code>to</code> points, and submit them to <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html"><code>dodgr_paths()</code></a>:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">from</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">$</span><span class="va">from_id</span>, size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">to</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">$</span><span class="va">to_id</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">dp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_paths.html">dodgr_paths</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, to <span class="op">=</span> <span class="va">to</span><span class="op">)</span></span>
@@ -808,7 +806,7 @@ these, first take some small samples of <code>from</code> and
 <pre><code><span><span class="co">## [1] 10</span></span></code></pre>
 <p>The result (<code>dp</code>) is a list of 10 items, each of which
 contains 5 vectors. An example is,</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dp</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">##   [1] "1376768968" "7799711098" "1376768608" "7799711097" "7799711095"</span></span>
 <span><span class="co">##   [6] "7799711096" "1376769106" "7799711094" "1376768734" "7799711093"</span></span>
@@ -870,7 +868,7 @@ contains 5 vectors. An example is,</p>
 <p>For spatial graphs, the coordinates of these paths can be obtained by
 extracting the vertices with <code><a href="../reference/dodgr_vertices.html">dodgr_vertices()</a></code> and matching
 the vertex IDs:</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">verts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_vertices.html">dodgr_vertices</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">)</span></span>
 <span><span class="va">path1</span> <span class="op">&lt;-</span> <span class="va">verts</span> <span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span> <span class="op">(</span><span class="va">dp</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">verts</span><span class="op">$</span><span class="va">id</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span> <span class="op">(</span><span class="va">path1</span><span class="op">)</span></span></code></pre></div>
@@ -887,7 +885,7 @@ vertices than those calculated on full graphs.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="bibliography">Bibliography<a class="anchor" aria-label="anchor" href="#bibliography"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Csardi2006" class="csl-entry">
 Csardi, Gabor, and Tamas Nepusz. 2006. <span>“The Igraph Software
 Package for Complex Network Research.”</span> <em>InterJournal</em>
@@ -896,11 +894,13 @@ Complex Systems: 1695. <a href="https://igraph.org" class="external-link">https:
 <div id="ref-Fredman1987" class="csl-entry">
 Fredman, Michael L., and Robert Endre Tarjan. 1987. <span>“Fibonacci
 Heaps and Their Uses in Improved Network Optimization
-Algorithms.”</span> <em>J. ACM</em> 34 (3): 596–615. <a href="https://doi.org/10.1145/28869.28874" class="external-link">https://doi.org/10.1145/28869.28874</a>.
+Algorithms.”</span> <em>J. ACM</em> (New York, NY, USA) 34 (3): 596–615.
+<a href="https://doi.org/10.1145/28869.28874" class="external-link">https://doi.org/10.1145/28869.28874</a>.
 </div>
 <div id="ref-Johnson1977" class="csl-entry">
 Johnson, Donald B. 1977. <span>“Efficient Algorithms for Shortest Paths
-in Sparse Networks.”</span> <em>J. ACM</em> 24 (1): 1–13. <a href="https://doi.org/10.1145/321992.321993" class="external-link">https://doi.org/10.1145/321992.321993</a>.
+in Sparse Networks.”</span> <em>J. ACM</em> (New York, NY, USA) 24 (1):
+1–13. <a href="https://doi.org/10.1145/321992.321993" class="external-link">https://doi.org/10.1145/321992.321993</a>.
 </div>
 <div id="ref-Miller1960" class="csl-entry">
 Miller, Rupert G. 1960. <span>“Priority Queues.”</span> <em>The Annals
@@ -921,14 +921,14 @@ Takaoka, Tadao. 1999. <span>“Theory of 2-3 Heaps.”</span> In
 <em>Computing and Combinatorics: 5th Annual International Conference,
 COCOON’99 Tokyo, Japan, July 26–28, 1999 Proceedings</em>, edited by
 Takano Asano, Hideki Imai, D. T. Lee, Shin-ichi Nakano, and Takeshi
-Tokuyama, 41–50. Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/3-540-48686-0_4" class="external-link">https://doi.org/10.1007/3-540-48686-0_4</a>.
+Tokuyama. Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/3-540-48686-0_4" class="external-link">https://doi.org/10.1007/3-540-48686-0_4</a>.
 </div>
 <div id="ref-Takaoka2000" class="csl-entry">
-———. 2000. <span>“Theory of Trinomial Heaps.”</span> In <em>Computing
-and Combinatorics: 6th Annual International Conference, COCOON 2000
-Sydney, Australia, July 26–28, 2000 Proceedings</em>, edited by Ding-Zhu
-Du, Peter Eades, Vladimir Estivill-Castro, Xuemin Lin, and Arun Sharma,
-362–72. Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/3-540-44968-X_36" class="external-link">https://doi.org/10.1007/3-540-44968-X_36</a>.
+Takaoka, Tadao. 2000. <span>“Theory of Trinomial Heaps.”</span> In
+<em>Computing and Combinatorics: 6th Annual International Conference,
+COCOON 2000 Sydney, Australia, July 26–28, 2000 Proceedings</em>, edited
+by Ding-Zhu Du, Peter Eades, Vladimir Estivill-Castro, Xuemin Lin, and
+Arun Sharma. Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/3-540-44968-X_36" class="external-link">https://doi.org/10.1007/3-540-44968-X_36</a>.
 </div>
 <div id="ref-Tarjan1983" class="csl-entry">
 Tarjan, R. 1983. <em>Data Structures and Network Algorithms</em>.

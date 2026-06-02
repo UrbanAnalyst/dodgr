@@ -21,6 +21,7 @@ following two ways, both of which improve code readability: (1) All
 curly braces are vertically aligned:
 
 ``` r
+
 this <- function ()
 {
     x <- 1
@@ -30,6 +31,7 @@ this <- function ()
 and **not**
 
 ``` r
+
 this <- function(){
     x <- 1
 }
@@ -40,12 +42,14 @@ permeates `dodgr` code. Words of text are separated by whitespace, and
 so code words should be too:
 
 ``` r
+
 this <- function1 (function2 (x))
 ```
 
 and **not**
 
 ``` r
+
 this <- function1(function2(x))
 ```
 

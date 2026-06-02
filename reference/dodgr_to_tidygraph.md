@@ -32,5 +32,4 @@ Other conversion:
 ``` r
 graph <- weight_streetnet (hampi)
 grapht <- dodgr_to_tidygraph (graph)
-#> Loading required namespace: tidygraph
 ```

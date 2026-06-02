@@ -19,6 +19,7 @@ you do not wish `dodgr`to use all available threads, please reduce the
 number manually by first specifying a value via
 
 ``` r
+
 RcppParallel::setThreadOptions (numThreads = 1L) # or desired number
 ```
 
@@ -66,6 +67,7 @@ more detail.
 You can install latest stable version of `dodgr` from CRAN with:
 
 ``` r
+
 install.packages ("dodgr") # current CRAN version
 ```
 
@@ -73,6 +75,7 @@ Alternatively, current development versions can be installed using any
 of the following options:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_git ("https://git.sr.ht/~mpadge/dodgr")
 remotes::install_git ("https://codeberg.org/UrbanAnalyst/dodgr")
@@ -84,6 +87,7 @@ remotes::install_github ("UrbanAnalyst/dodgr")
 Then load with
 
 ``` r
+
 library (dodgr)
 packageVersion ("dodgr")
 #> [1] '0.4.2'
@@ -116,6 +120,7 @@ equivalent `dodgr` representations with the
 function:
 
 ``` r
+
 class (hampi)
 #> [1] "sf"         "data.frame"
 dim (hampi)
@@ -134,17 +139,18 @@ the `sf` representation had around 29 edges or segments in each
 `LINESTRING` object. The `dodgr` network then looks like this:
 
 ``` r
+
 head (graph)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted |
+|---:|---:|:---|---:|---:|:---|---:|---:|---:|---:|:---|:---|---:|---:|---:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 |
 
 The `geom_num` column maps directly onto the sequence of `LINESTRING`
 objects within the `sf`-formatted data. The `highway` column is taken
@@ -160,17 +166,18 @@ for pedestrians, and so weighted distances are slightly greater than
 actual distances. Compare this with:
 
 ``` r
+
 head (graph [graph$highway == "path", ])
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted |
+|---:|---:|:---|---:|---:|:---|---:|---:|---:|---:|:---|:---|---:|---:|---:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 |
 
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
@@ -200,6 +207,7 @@ of a graph. The vertices can in turn be extracted with the
 function:
 
 ``` r
+
 v <- dodgr_vertices (graph)
 head (v)
 ```
@@ -223,6 +231,7 @@ above `graph`, and as the `id` column in the vertices. Random vertices
 may be generated in this case through selecting `id` values:
 
 ``` r
+
 from <- sample (v$id, size = 20)
 to <- sample (v$id, size = 50)
 d <- dodgr_dists (graph = graph, from = from, to = to)
@@ -234,6 +243,7 @@ Alternatively, the points may be specified as matrices of geographic
 coordinates:
 
 ``` r
+
 from_x <- min (graph$from_lon) + runif (20) * diff (range (graph$from_lon))
 from_y <- min (graph$from_lat) + runif (20) * diff (range (graph$from_lat))
 to_x <- min (graph$from_lon) + runif (50) * diff (range (graph$from_lon))
@@ -247,6 +257,7 @@ disconnected components of the graph. This can be controlled either by
 reducing the graph to it’s largest connected component only:
 
 ``` r
+
 graph <- graph [graph$component == 1, ]
 nrow (graph)
 ```
@@ -256,6 +267,7 @@ or by explicitly using the
 function with the option `connected = TRUE`:
 
 ``` r
+
 from <- match_points_to_verts (v, cbind (from_x, from_y), connected = TRUE)
 to <- match_points_to_verts (v, cbind (to_x, to_y), connected = TRUE)
 ```
@@ -264,6 +276,7 @@ This function returns an index into the result of `dodgr_vertices`, and
 so points to use for routing must then be extracted as follows:
 
 ``` r
+
 from <- v$id [from] # or from <- v [from, c ("x", "y")]
 to <- v$id [to]
 d <- dodgr_dists (graph = graph, from = from, to = to)
@@ -281,6 +294,7 @@ densities between the input set of origin (`from`) and destination
 matrix”:
 
 ``` r
+
 flows <- array (runif (length (from) * length (to)), dim = c (length (from), length (to)))
 length (from)
 #> [1] 20
@@ -295,23 +309,25 @@ The result is simply the input `graph` with an additional column
 quantifying the aggregate flows along each edge:
 
 ``` r
+
 head (f)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |     flow |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|---------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 1.316455 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 0.000000 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 1.316455 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 0.000000 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 1.316455 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 0.000000 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted | flow |
+|---:|---:|:---|---:|---:|:---|---:|---:|---:|---:|:---|:---|---:|---:|---:|---:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 | 1.316455 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path | 28565950 | 1 | 93.600174 | 93.600174 | 0.000000 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 | 1.316455 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.890622 | 8.890622 | path | 28565950 | 1 | 6.401248 | 6.401248 | 0.000000 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 | 1.316455 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.307736 | 9.307736 | path | 28565950 | 1 | 6.701570 | 6.701570 | 0.000000 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
 graph is dispersive:
 
 ``` r
+
 f <- dodgr_flows_disperse (graph = graph, from = from, dens = runif (length (from)))
 ```
 

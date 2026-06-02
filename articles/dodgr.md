@@ -33,6 +33,7 @@ The primary function of `dodgr` is `dodgr_dists`, which calculates
 pair-wise shortest distances between all vertices of a graph.
 
 ``` r
+
 dodgr_dists (graph)
 ```
 
@@ -43,6 +44,7 @@ dodgr_dists (graph)
     ## D 1 2 2 0
 
 ``` r
+
 dodgr_dists (graph, from = c ("A", "C"), to = c ("B", "C", "D"))
 ```
 
@@ -97,10 +99,10 @@ graph and associated shortest distances are,
     ## D 1 2 1 0
 
 Note that even though the shortest “distance” from A to D is actually
-A$\rightarrow$B$\rightarrow$D with a distance of only 2, that path has a
-weighted distance of 1 + 3 = 4. The shortest *weighted* path is
-A$\rightarrow$B$\rightarrow$C$\rightarrow$D, with a distance both
-weighted and unweighted of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
+A$`\to`$B$`\to`$D with a distance of only 2, that path has a weighted
+distance of 1 + 3 = 4. The shortest *weighted* path is
+A$`\to`$B$`\to`$C$`\to`$D, with a distance both weighted and unweighted
+of 1 + 1 + 1 = 3. Thus `d(A,D) = 3` and not 2.
 
 ## 2 Introduction to `dodgr`
 
@@ -118,6 +120,7 @@ some random coordinates, in this case within the bounding box defining
 the city of York in the U.K.
 
 ``` r
+
 bb <- osmdata::getbb ("york uk")
 npts <- 1000
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
@@ -141,6 +144,7 @@ box, weight it for pedestrian travel, and use the weighted network to
 calculate the pairwise distances between all of the `xy`points.
 
 ``` r
+
 net <- dodgr_streetnet (bb)
 net <- weight_streetnet (net, wt_profile = "foot")
 system.time (
@@ -152,6 +156,7 @@ system.time (
     ##  38.828   0.036   5.424
 
 ``` r
+
 dim (d); range (d, na.rm = TRUE)
 ```
 
@@ -177,24 +182,28 @@ dataset
 This data set may be re-created with the following single line:
 
 ``` r
+
 hampi <- dodgr_streetnet ("hampi india")
 ```
 
 Or with the equivalent version bundled with the package:
 
 ``` r
+
 class (hampi)
 ```
 
     ## [1] "sf"         "data.frame"
 
 ``` r
+
 class (hampi$geometry)
 ```
 
     ## [1] "sfc_LINESTRING" "sfc"
 
 ``` r
+
 dim (hampi)
 ```
 
@@ -208,6 +217,7 @@ used to visualise this street network (with the help of `magrittr` pipe
 operator, `%>%`):
 
 ``` r
+
 library (osmplotr)
 library (magrittr)
 map <- osm_basemap (hampi, bg = "gray95") %>%
@@ -222,6 +232,7 @@ The `sf` class data representing the street network of Hampi can then be
 converted into a flat `data.frame` object by
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 dim (graph)
 ```
@@ -229,6 +240,7 @@ dim (graph)
     ## [1] 6813   15
 
 ``` r
+
 head (graph)
 ```
 
@@ -253,6 +265,7 @@ around 30 individual segments. The individual points or vertices from
 those segments can be extracted with,
 
 ``` r
+
 vt <- dodgr_vertices (graph)
 head(vt)
 ```
@@ -266,6 +279,7 @@ head(vt)
     ## 10  339318503 76.47641 15.34190         1 5
 
 ``` r
+
 dim (vt)
 ```
 
@@ -277,6 +291,7 @@ between those points. The number of edges per vertex in the entire
 network is thus,
 
 ``` r
+
 nrow (graph) / nrow (vt)
 ```
 
@@ -298,6 +313,7 @@ also includes a `$component` column enumerating all of the distinct
 inter-connected components of the graph.
 
 ``` r
+
 table (graph$component)
 ```
 
@@ -312,6 +328,7 @@ There are clearly only three distinct components, but this number may be
 much larger for larger graphs, and may be obtained from,
 
 ``` r
+
 length (unique (graph$component))
 ```
 
@@ -324,6 +341,7 @@ a minimal (non-spatial) structure of four columns, and then
 (re-)calculate a fifth column of `$component`s:
 
 ``` r
+
 cols <- c ("edge_id", "from_id", "to_id", "d")
 graph_min <- graph [, which (names (graph) %in% cols)]
 graph_min <- dodgr_components (graph_min)
@@ -344,6 +362,7 @@ calculations consider only connected vertices through simply removing
 all minor components:
 
 ``` r
+
 graph_connected <- graph [graph$component == 1, ]
 ```
 
@@ -374,6 +393,7 @@ aspects relevant for distances are the profiles themselves, which assign
 preferential weights to each distinct type of highway.
 
 ``` r
+
 wp <- weighting_profiles$weighting_profiles
 names (wp)
 ```
@@ -381,12 +401,14 @@ names (wp)
     ## [1] "name"      "way"       "value"     "max_speed"
 
 ``` r
+
 class (wp)
 ```
 
     ## [1] "data.frame"
 
 ``` r
+
 unique (wp$name)
 ```
 
@@ -394,6 +416,7 @@ unique (wp$name)
     ##  [6] "motorcycle" "motorcar"   "goods"      "hgv"        "psv"
 
 ``` r
+
 wp [wp$name == "foot", ]
 ```
 
@@ -427,6 +450,7 @@ types of highways within the Hampi graph obtained above can be tabulated
 with:
 
 ``` r
+
 table (graph$highway)
 ```
 
@@ -451,6 +475,7 @@ these data are provided as a Simple Features
 decidedly different structure to `osmdata data.frame` objects:
 
 ``` r
+
 names (hampi) # many fields manually removed to reduce size of this object
 ```
 
@@ -460,6 +485,7 @@ names (hampi) # many fields manually removed to reduce size of this object
     ## [13] "tunnel"        "width"         "geometry"
 
 ``` r
+
 names (os_roads_bristol)
 ```
 
@@ -472,6 +498,7 @@ The latter may be converted to a `dodgr` network by first specifying a
 weighting profile, here based on the `formOfWay` column:
 
 ``` r
+
 colnm <- "formOfWay"
 table (os_roads_bristol [[colnm]])
 ```
@@ -483,6 +510,7 @@ table (os_roads_bristol [[colnm]])
     ##                          1                          8
 
 ``` r
+
 wts <- data.frame (name = "custom",
                    way = unique (os_roads_bristol [[colnm]]),
                    value = c (0.1, 0.2, 0.8, 1))
@@ -505,6 +533,7 @@ function described below, but is also useful for general statistical
 analyses of large graphs which may otherwise take too long to compute.
 
 ``` r
+
 graph_sub <- dodgr_sample (graph, nverts = 100)
 nrow (graph_sub)
 ```
@@ -515,6 +544,7 @@ The random sample has around twice as many edges as vertices, in
 accordance with the statistics calculated above.
 
 ``` r
+
 nrow (dodgr_vertices (graph_sub))
 ```
 
@@ -553,6 +583,7 @@ function, enabling random points to be generated with the following
 lines:
 
 ``` r
+
 vt <- dodgr_vertices (graph)
 n <- 100 # number of points to generate
 xy <- data.frame (x = min (vt$x) + runif (n) * diff (range (vt$x)),
@@ -565,6 +596,7 @@ as points **from** which to route will generate a distance matrix from
 each of these 100 points to every other point in the graph:
 
 ``` r
+
 d <- dodgr_dists (graph, from = xy)
 dim (d); range (d, na.rm = TRUE)
 ```
@@ -577,6 +609,7 @@ If the `to` argument is also specified, the matrix returned will have
 rows matching `from` and columns matching `to`
 
 ``` r
+
 d <- dodgr_dists (graph, from = xy, to = xy [1:10, ])
 dim (d)
 ```
@@ -595,6 +628,7 @@ always be reduced to the single largest component with the following
 single line:
 
 ``` r
+
 graph_connected <- graph [graph$component == 1, ]
 ```
 
@@ -621,6 +655,7 @@ illustrated in the following code which calculates distances between 100
 random points:
 
 ``` r
+
 bb <- osmdata::getbb ("york uk")
 npts <- 100
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
@@ -635,6 +670,7 @@ routed_points <- function (expand = 0, pts) {
 ```
 
 ``` r
+
 vapply (c (0, 0.05, 0.1, 0.2), function (i) routed_points (i, pts = xy),
         numeric (1))
 ```
@@ -653,6 +689,7 @@ vertex names were contained in the columns, `from_id` and `to_id`. The
 minimum that a `dodgr` graph requires is,
 
 ``` r
+
 head (graph [, names (graph) %in% c ("from_id", "to_id", "d")])
 ```
 
@@ -671,6 +708,7 @@ and `to_id` columns of the graph. This is illustrated in the following
 code:
 
 ``` r
+
 graph_min <- graph [, names (graph) %in% c ("from_id", "to_id", "d")]
 fr <- sample (graph_min$from_id, size = 10) # 10 random points
 to <- sample (graph_min$to_id, size = 20)
@@ -685,16 +723,16 @@ vertices.
 
 ### 4.2 Shortest Path Calculations: Priority Queues
 
-`dodgr` uses an internal library Shane Saunders (2004) for the
-calculation of shortest paths using a variety of priority queues (see
-Miller 1960 for an overview). In the context of shortest paths, priority
-queues determine the order in which a graph is traversed (Tarjan 1983),
-and the choice of priority queue can have a considerable effect on
-computational efficiency for different kinds of graphs (Johnson 1977).
-In contrast to `dodgr`, most other **R** packages for shortest path
-calculations do not use priority queues, and so may often be less
-efficient. Shortest path distances can be calculated in `dodgr` with
-priority queues that use the following heaps:
+`dodgr` uses an internal library Saunders (2004) for the calculation of
+shortest paths using a variety of priority queues (see Miller 1960 for
+an overview). In the context of shortest paths, priority queues
+determine the order in which a graph is traversed (Tarjan 1983), and the
+choice of priority queue can have a considerable effect on computational
+efficiency for different kinds of graphs (Johnson 1977). In contrast to
+`dodgr`, most other **R** packages for shortest path calculations do not
+use priority queues, and so may often be less efficient. Shortest path
+distances can be calculated in `dodgr` with priority queues that use the
+following heaps:
 
 1.  Binary heaps;
 2.  Fibonacci heaps (Fredman and Tarjan 1987);
@@ -714,27 +752,24 @@ of the graph containing a defined number of vertices (with a default of
 1,000, or the entire graph if it contains fewer than 1,000 vertices).
 
 ``` r
+
 compare_heaps (graph, nverts = 100)
 ```
-
-    ## Loading required namespace: bench
-
-    ## Loading required namespace: igraph
 
     ## # A tibble: 11 × 6
     ##    expression                 min   median `itr/sec` mem_alloc `gc/sec`
     ##    <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ##  1 BHeap                   1.55ms   1.63ms      613.    45.3KB     12.7
-    ##  2 FHeap                   1.59ms   1.67ms      596.    45.3KB     13.4
-    ##  3 TriHeap                 1.61ms   1.67ms      594.    45.3KB     10.5
-    ##  4 TriHeapExt              1.44ms   1.49ms      665.    48.4KB     12.7
-    ##  5 Heap23                  1.61ms   1.67ms      596.    45.3KB     12.8
-    ##  6 BHeap_contracted        1.39ms   1.45ms      686.    20.1KB     12.7
-    ##  7 FHeap_contracted        1.39ms   1.46ms      681.    20.1KB     12.7
-    ##  8 TriHeap_contracted      1.41ms   1.46ms      678.    20.1KB     12.7
-    ##  9 TriHeapExt_contracted   1.15ms    1.2ms      823.    20.1KB     14.9
-    ## 10 Heap23_contracted       1.41ms   1.47ms      676.    20.1KB     12.7
-    ## 11 igraph                758.49µs 812.39µs     1214.   492.8KB     17.3
+    ##  1 BHeap                   1.57ms   1.63ms      612.    45.3KB     12.7
+    ##  2 FHeap                   1.58ms   1.66ms      602.    45.3KB     10.5
+    ##  3 TriHeap                 1.61ms   1.67ms      595.    45.3KB     12.8
+    ##  4 TriHeapExt              1.44ms   1.49ms      666.    48.4KB     12.7
+    ##  5 Heap23                  1.61ms   1.68ms      592.    45.3KB     12.8
+    ##  6 BHeap_contracted         1.4ms   1.47ms      680.    20.1KB     12.7
+    ##  7 FHeap_contracted        1.39ms   1.47ms      679.    20.1KB     12.7
+    ##  8 TriHeap_contracted       1.4ms   1.46ms      683.    20.1KB     15.0
+    ##  9 TriHeapExt_contracted   1.15ms    1.2ms      824.    20.1KB     14.9
+    ## 10 Heap23_contracted       1.41ms   1.47ms      677.    20.1KB     12.7
+    ## 11 igraph                815.87µs  863.5µs     1146.   502.2KB     17.3
 
 The key column of that `data.frame` is `relative`, which quantifies the
 relative performance of each test in relation to the best which is given
@@ -763,6 +798,7 @@ code generates the [`igraph`](https://igraph.org) equivalent of
 although of course for single-weighted graphs only:
 
 ``` r
+
 v <- dodgr_vertices (graph)
 pts <- sample (v$id, 1000)
 igr <- dodgr_to_igraph (graph)
@@ -783,9 +819,9 @@ to or from that precise point) and may simply be removed, with
 directional edges inserted directly between vertices 1 and 3. This
 yields the equivalent contracted graph of Fig. 3(B), in which, for
 example, the distance (or weight) between 1 and 3 is the sum of previous
-distances (or weights) between 1 $\rightarrow$ 2 and 2 $\rightarrow$ 3.
-Note that if one of the two edges between, say, 3 and 2 were removed,
-vertex 2 would no longer be redundant (Fig. 3(C)).
+distances (or weights) between 1 $`\to`$ 2 and 2 $`\to`$ 3. Note that if
+one of the two edges between, say, 3 and 2 were removed, vertex 2 would
+no longer be redundant (Fig. 3(C)).
 
 Different kinds of graphs have different degrees of redundancy, and even
 street networks differ, through for example dense inner-urban networks
@@ -796,6 +832,7 @@ function
 illustrated here with the York example from above.
 
 ``` r
+
 grc <- dodgr_contract_graph (graph)
 ```
 
@@ -807,6 +844,7 @@ two junction vertices (or between the submitted `verts`, which may or
 may not be junctions). Relative sizes are
 
 ``` r
+
 nrow (graph); nrow (grc); nrow (grc) / nrow (graph)
 ```
 
@@ -820,6 +858,7 @@ equivalent to the removal of around 90% of all edges. The difference in
 routing efficiency can then be seen with the following code
 
 ``` r
+
 from <- sample (grc$from_id, size = 100)
 to <- sample (grc$to_id, size = 100)
 bench::mark (
@@ -832,8 +871,8 @@ bench::mark (
     ## # A tibble: 2 × 6
     ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
     ##   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ## 1 full        13.96ms  14.33ms      68.9    1.24MB     2.09
-    ## 2 contracted   2.63ms   2.75ms     359.   280.59KB     8.46
+    ## 1 full         13.2ms  13.64ms      72.9    1.24MB     4.29
+    ## 2 contracted    2.6ms   2.69ms     368.   280.59KB     8.42
 
 And contracting the graph has a similar effect of speeding up pairwise
 routing between these 100 points. All routing algorithms scale
@@ -853,6 +892,7 @@ The following code illustrates how to retain specific vertices within
 contracted graphs:
 
 ``` r
+
 grc <- dodgr_contract_graph (graph)
 nrow (grc)
 ```
@@ -860,6 +900,7 @@ nrow (grc)
     ## [1] 748
 
 ``` r
+
 verts <- sample (dodgr_vertices (graph)$id, size = 100)
 head (verts) # a character vector
 ```
@@ -868,6 +909,7 @@ head (verts) # a character vector
     ## [6] "7799710967"
 
 ``` r
+
 grc <- dodgr_contract_graph (graph, verts)
 nrow (grc)
 ```
@@ -889,6 +931,7 @@ function. For given vectors of `from` and `to` points, this returns a
 nested list so that if,
 
 ``` r
+
 dp <- dodgr_paths (graph, from = from, to = to)
 ```
 
@@ -897,6 +940,7 @@ The paths are represented as sequences of vertex names. Consider the
 following example,
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 head (graph)
 ```
@@ -922,6 +966,7 @@ samples of `from` and `to` points, and submit them to
 [`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html):
 
 ``` r
+
 from <- sample (graph$from_id, size = 10)
 to <- sample (graph$to_id, size = 5)
 dp <- dodgr_paths (graph, from = from, to = to)
@@ -934,6 +979,7 @@ The result (`dp`) is a list of 10 items, each of which contains 5
 vectors. An example is,
 
 ``` r
+
 dp [[1]] [[1]]
 ```
 
@@ -1001,6 +1047,7 @@ extracting the vertices with
 and matching the vertex IDs:
 
 ``` r
+
 verts <- dodgr_vertices (graph)
 path1 <- verts [match (dp [[1]] [[1]], verts$id), ]
 head (path1)
@@ -1024,11 +1071,11 @@ Complex Network Research.” *InterJournal* Complex Systems: 1695.
 <https://igraph.org>.
 
 Fredman, Michael L., and Robert Endre Tarjan. 1987. “Fibonacci Heaps and
-Their Uses in Improved Network Optimization Algorithms.” *J. ACM* 34
-(3): 596–615. <https://doi.org/10.1145/28869.28874>.
+Their Uses in Improved Network Optimization Algorithms.” *J. ACM* (New
+York, NY, USA) 34 (3): 596–615. <https://doi.org/10.1145/28869.28874>.
 
 Johnson, Donald B. 1977. “Efficient Algorithms for Shortest Paths in
-Sparse Networks.” *J. ACM* 24 (1): 1–13.
+Sparse Networks.” *J. ACM* (New York, NY, USA) 24 (1): 1–13.
 <https://doi.org/10.1145/321992.321993>.
 
 Miller, Rupert G. 1960. “Priority Queues.” *The Annals of Mathematical
@@ -1046,14 +1093,14 @@ for Nearly Acyclic Graphs.” *Theoretical Computer Science* 293 (3):
 Takaoka, Tadao. 1999. “Theory of 2-3 Heaps.” In *Computing and
 Combinatorics: 5th Annual International Conference, COCOON’99 Tokyo,
 Japan, July 26–28, 1999 Proceedings*, edited by Takano Asano, Hideki
-Imai, D. T. Lee, Shin-ichi Nakano, and Takeshi Tokuyama, 41–50. Springer
-Berlin Heidelberg. <https://doi.org/10.1007/3-540-48686-0_4>.
+Imai, D. T. Lee, Shin-ichi Nakano, and Takeshi Tokuyama. Springer Berlin
+Heidelberg. <https://doi.org/10.1007/3-540-48686-0_4>.
 
-———. 2000. “Theory of Trinomial Heaps.” In *Computing and Combinatorics:
-6th Annual International Conference, COCOON 2000 Sydney, Australia, July
-26–28, 2000 Proceedings*, edited by Ding-Zhu Du, Peter Eades, Vladimir
-Estivill-Castro, Xuemin Lin, and Arun Sharma, 362–72. Springer Berlin
-Heidelberg. <https://doi.org/10.1007/3-540-44968-X_36>.
+Takaoka, Tadao. 2000. “Theory of Trinomial Heaps.” In *Computing and
+Combinatorics: 6th Annual International Conference, COCOON 2000 Sydney,
+Australia, July 26–28, 2000 Proceedings*, edited by Ding-Zhu Du, Peter
+Eades, Vladimir Estivill-Castro, Xuemin Lin, and Arun Sharma. Springer
+Berlin Heidelberg. <https://doi.org/10.1007/3-540-44968-X_36>.
 
 Tarjan, R. 1983. *Data Structures and Network Algorithms*. Society for
 Industrial; Applied Mathematics.

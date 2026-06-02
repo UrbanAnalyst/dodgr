@@ -55,6 +55,7 @@ function calculates contours of equal distance from one or more points
 of origin.
 
 ``` r
+
 graph <- weight_streetnet (hampi)
 from <- sample (graph$from_id, size = 100)
 dlim <- c (2, 5, 10, 20) * 100
@@ -65,6 +66,7 @@ dim (d)
     ## [1] 2573    5
 
 ``` r
+
 knitr::kable (head (d))
 ```
 
@@ -84,6 +86,7 @@ origin (`from`) point, at the specified distances of 200, 500, 1000,
 longer distances:
 
 ``` r
+
 table (d$dlim)
 ```
 
@@ -97,6 +100,7 @@ base graphics functions. This is easier to see by using just a single
 point of origin:
 
 ``` r
+
 set.seed (1)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (2, 5, 10, 20) * 100
@@ -128,6 +132,7 @@ for no concavity. Changing this value can generate concave contours like
 in the following results:
 
 ``` r
+
 set.seed (1)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (2, 5, 10, 20) * 100
@@ -152,6 +157,7 @@ different values of the `concavity` parameter can be trialled without
 needing to re-calculate the underlying values:
 
 ``` r
+
 set.seed (2)
 from <- sample (graph$from_id, size = 1)
 dlim <- c (2, 5, 10, 20) * 100
@@ -161,16 +167,17 @@ system.time ( # Initial call calculates distances to all points:
 ```
 
     ##    user  system elapsed 
-    ##    0.17    0.00    0.17
+    ##   0.164   0.000   0.164
 
 ``` r
+
 system.time ( # Subsequent call uses cached values:
     d <- dodgr_isodists (graph, from = from, dlim, concavity = 0.75)
 )
 ```
 
     ##    user  system elapsed 
-    ##    0.02    0.00    0.02
+    ##   0.021   0.001   0.020
 
 The `concavity` parameter has a default value of 0 for strictly convex
 polygons. Values closer to 1 generate more concave polygons. The
@@ -178,6 +185,7 @@ following code demonstrates the effect of increasing values of this
 parameter.
 
 ``` r
+
 set.seed (5)
 from <- sample (graph$from_id, size = 1)
 dlim <- 2000
@@ -260,6 +268,7 @@ and
 functions:
 
 ``` r
+
 dat <- dodgr_streetnet_sc ("hampi india")
 graph <- weight_streetnet (dat, wt_profile = "foot")
 set.seed (1)
@@ -271,6 +280,7 @@ nrow (dodgr_isodists (graph, from = from, dlim))
     ## [1] 34
 
 ``` r
+
 nrow (dodgr_isoverts (graph, from = from, dlim))
 ```
 

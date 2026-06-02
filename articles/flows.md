@@ -27,6 +27,7 @@ are defined by a simple `nf`-by-`nt` matrix of values, as in the
 following code:
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 set.seed (1)
 from <- sample (graph$from_id, size = 10)
@@ -42,6 +43,7 @@ which simply appends an additional column of `flows` to the submitted
 `graph`:
 
 ``` r
+
 graph_f <- dodgr_flows_aggregate (graph, from = from, to = to, flows = flows)
 head (graph_f)
 ```
@@ -65,6 +67,7 @@ Most flows are zero because they have only been calculated between very
 few points in the graph.
 
 ``` r
+
 summary (graph_f$flow)
 ```
 
@@ -84,6 +87,7 @@ origin (`from`) points. This is illustrated in the following code, using
 the same graph as the previous example.
 
 ``` r
+
 dens <- rep (1, length (from)) # uniform densities
 graph_f <- dodgr_flows_disperse (graph, from = from, dens = dens)
 summary (graph_f$flow)
@@ -108,6 +112,7 @@ with the
 function:
 
 ``` r
+
 graph_undir <- merge_directed_graph (graph_f)
 ```
 
@@ -116,12 +121,14 @@ Resultant graphs produced by
 only include those edges having non-zero flows, and so:
 
 ``` r
+
 nrow (graph_f)
 ```
 
     ## [1] 6813
 
 ``` r
+
 nrow (graph_undir) # the latter is much smaller
 ```
 
@@ -131,6 +138,7 @@ The resultant graph can readily be merged with the original graph to
 regain the original data on vertex coordinates through
 
 ``` r
+
 graph <- graph [graph_undir$edge_id, ]
 graph$flow <- graph_undir$flow
 ```
@@ -140,6 +148,7 @@ This graph may then be used to visualise flows with the
 function:
 
 ``` r
+
 graph_f <- graph_f [graph_f$flow > 0, ]
 dodgr_flowmap (graph_f, linescale = 5)
 ```
@@ -157,6 +166,7 @@ call demonstrated above, but without the `flows` matrix specifying
 strengths of flows between each pair of points.
 
 ``` r
+
 graph_f <- dodgr_flows_si (graph, from = from, to = to)
 graph_undir <- merge_directed_graph (graph_f)
 graph <- graph [graph_undir$edge_id, ]
@@ -177,6 +187,7 @@ attenuation can be controlled, the easiest of which is via a single
 numeric value. Reducing the attenuation gives the following result:
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 graph_f <- dodgr_flows_si (graph, from = from, to = to, k = 1e6)
 graph_undir <- merge_directed_graph (graph_f)

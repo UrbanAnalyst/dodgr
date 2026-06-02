@@ -116,40 +116,39 @@ Figure 1 depicts a right-angled crossing, with straight arrows showing a
 single directed edge into the crossing (solid black line), and three
 directed edges going out (solid grey lines). Turning across oncoming
 traffic generally takes time (the precise values for which are detailed
-in the following section), and so turning left
-($\left. A\rightarrow B \right.$ in Fig. 1) is always different to
-turning right ($\left. A\rightarrow C \right.$). To reflect these
-differences, graphs are weighted to account for turning penalties by
-adding three “compound” edges directly connecting $A$ with the end
-points of $B$, $C$, and $D$, including the additional time penalties for
-turning across oncoming traffic. (The latter are naturally dependent on
-which side of the road traffic travels, and so
+in the following section), and so turning left ($`A\rightarrow B`$ in
+Fig. 1) is always different to turning right ($`A\rightarrow C`$). To
+reflect these differences, graphs are weighted to account for turning
+penalties by adding three “compound” edges directly connecting $`A`$
+with the end points of $`B`$, $`C`$, and $`D`$, including the additional
+time penalties for turning across oncoming traffic. (The latter are
+naturally dependent on which side of the road traffic travels, and so
 [`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 includes an additional `left_side` parameter to specify whether traffic
 travels on the left side of the street.)
 
 The compound edges do not, however, simply replace the previous edges,
 because routing may still need to begin or end at the junction node,
-$O$. The edge $\left. A\rightarrow O \right.$ is thus retained so that
-$O$ may be used as a destination for routing, but $O$ in this case no
-longer connects with the outgoing edges. Because $O$ may also be used as
-a starting node for routing, then the edges
-$\left. O\rightarrow B \right.$, $\left. O\rightarrow C \right.$, and
-$\left. O\rightarrow D \right.$ must also be retained. Because `dodgr`
-works by uniquely labelling all nodes and edges, the entire situation
-depicted in Fig. 1 is achieved by replacing $O$ with two new nodes
-labelled $O\_ start$ and $O\_ end$, with the end result of replacing the
-former four directed edges with the following seven edges:
+$`O`$. The edge $`A\rightarrow O`$ is thus retained so that $`O`$ may be
+used as a destination for routing, but $`O`$ in this case no longer
+connects with the outgoing edges. Because $`O`$ may also be used as a
+starting node for routing, then the edges $`O\rightarrow B`$,
+$`O\rightarrow C`$, and $`O\rightarrow D`$ must also be retained.
+Because `dodgr` works by uniquely labelling all nodes and edges, the
+entire situation depicted in Fig. 1 is achieved by replacing $`O`$ with
+two new nodes labelled $`O\_start`$ and $`O\_end`$, with the end result
+of replacing the former four directed edges with the following seven
+edges:
 
-1.  $\left. A\rightarrow O\_ end \right.$ (original black edge, where
-    $O\_ end$ no longer connects to any other node);
-2.  $\left. O\_ start\rightarrow B \right.$ (original grey edges, where
-    no nodes connect to $O\_ start$);
-3.  $\left. O\_ start\rightarrow C \right.$ (…);
-4.  $\left. O\_ start\rightarrow D \right.$ (…);
-5.  $\left. A\rightarrow B \right.$ (new compound edge);
-6.  $\left. A\rightarrow C \right.$ (…);
-7.  $\left. A\rightarrow D \right.$ (…);
+1.  $`A\rightarrow O\_end`$ (original black edge, where $`O\_end`$ no
+    longer connects to any other node);
+2.  $`O\_start\rightarrow B`$ (original grey edges, where no nodes
+    connect to $`O\_start`$);
+3.  $`O\_start\rightarrow C`$ (…);
+4.  $`O\_start\rightarrow D`$ (…);
+5.  $`A\rightarrow B`$ (new compound edge);
+6.  $`A\rightarrow C`$ (…);
+7.  $`A\rightarrow D`$ (…);
 
 Weighting for time-based routing thus not only introduces new “compound”
 edges, but also requires re-labelling junction vertices, through
@@ -160,6 +159,7 @@ from a standard weighted graph (that is, one generated with
 illustrated in the following example:
 
 ``` r
+
 dat_sc <- dodgr_streetnet_sc ("ogbomosho nigeria")
 graph <- weight_streetnet (dat_sc, wt_profile = "bicycle")
 graph_t <- weight_streetnet (dat_sc, wt_profile = "bicycle", turn_penalty = TRUE)
@@ -182,6 +182,7 @@ names), and so may not be used for routing. Instead, routing points
 should be taken from the contracted version of the original graph.
 
 ``` r
+
 graphc <- dodgr_contract_graph (graph) # not graph_t!
 v <- dodgr_vertices (graphc)
 n <- 100 # number of desired vertices
@@ -196,6 +197,7 @@ nodes appended with `_start` for the `from`vertices and `_end` for the
 the graph prior to routing.
 
 ``` r
+
 graph_tc <- dodgr_contract_graph (graph_t)
 nrow (graph_tc)
 nrow (graph_t)
@@ -228,6 +230,7 @@ which contain the following data, for brevity showing only the “bicycle”
 mode:
 
 ``` r
+
 lapply (dodgr::weighting_profiles, function (i) i [i$name == "bicycle", ])
 ```
 
@@ -310,6 +313,7 @@ distances (in metres), but as calculated along fastest paths. An
 example:
 
 ``` r
+
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 n <- 100 # number of sample routing vertices
 set.seed (1)
@@ -330,6 +334,7 @@ lines (0:100, 0:100, col = "red", lty = 2)
 The average distance between the two (in metres) is:
 
 ``` r
+
 mean (abs (d_time - d_dist), na.rm = TRUE)
 ```
 
@@ -340,6 +345,7 @@ than distances along fastest paths, but also that some fastest paths are
 actually shorter than shortest paths:
 
 ``` r
+
 index <- which (!is.na (d_time) & !is.na (d_dist))
 length (which (d_time [index] < d_dist [index])) / length (index)
 ```
@@ -369,6 +375,7 @@ be calculated (in seconds) with the
 function:
 
 ``` r
+
 t_dist <- dodgr_times (graph, from = from, to = to, shortest = TRUE) # default
 t_time <- dodgr_times (graph, from = from, to = to, shortest = FALSE) # fastest paths
 plot (t_dist / 3600, t_time / 3600,
@@ -382,6 +389,7 @@ lines (0:100, 0:100, col = "red", lty = 2)
 ![](times_files/figure-html/shortest-vs-fastest-times-1.png)
 
 ``` r
+
 mean (abs (t_time - t_dist), na.rm = TRUE)
 ```
 
@@ -391,6 +399,7 @@ As above, times along fastest paths are generally less than times along
 shortest paths, although there are again a few exceptions:
 
 ``` r
+
 index <- which (!is.na (t_time) & !is.na (t_dist))
 length (which (t_dist [index] < t_time [index])) / length (index)
 ```
@@ -419,6 +428,7 @@ can be implemented simply through replacing the weighted distance column
 (`d_weighted`) with the weighted time column (`time_weighted`):
 
 ``` r
+
 graph$d_weighted <- graph$time_weighted
 ```
 
