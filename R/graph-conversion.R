@@ -30,7 +30,7 @@ dodgr_to_sf <- function (graph) {
     graph <- tbl_to_df (graph)
     attr (graph, "hash") <- get_hash (graph, contracted = FALSE, force = TRUE)
 
-    requireNamespace ("sf")
+    requireNamespace ("sf", quietly = TRUE)
     res <- dodgr_to_sfc (graph)
     sf::st_sf (res$dat, geometry = res$geometry, crs = 4326)
 }
@@ -140,7 +140,7 @@ dodgr_to_sfc <- function (graph) {
 #' graphi <- dodgr_to_igraph (graph)
 dodgr_to_igraph <- function (graph, weight_column = "d") {
 
-    requireNamespace ("igraph")
+    requireNamespace ("igraph", quietly = TRUE)
     graph <- tbl_to_df (graph)
     if (!weight_column %in% names (graph)) {
         stop ("graph contains no column named '", weight_column, "'")
@@ -191,7 +191,7 @@ dodgr_to_igraph <- function (graph, weight_column = "d") {
 #' identical (graph2, graph) # FALSE
 igraph_to_dodgr <- function (graph) {
 
-    requireNamespace ("igraph")
+    requireNamespace ("igraph", quietly = TRUE)
     ei <- igraph::edge_attr (graph)
     vi <- igraph::vertex_attr (graph)
     index <- grep ("^lon|^lat|lon$|lat$|^x|^y|x$|y$", names (ei))
@@ -257,8 +257,8 @@ convert_col <- function (x, n = 3) {
 #' grapht <- dodgr_to_tidygraph (graph)
 dodgr_to_tidygraph <- function (graph) {
 
-    requireNamespace ("igraph")
-    requireNamespace ("tidygraph")
+    requireNamespace ("igraph", quietly = TRUE)
+    requireNamespace ("tidygraph", quietly = TRUE)
 
     dodgr_to_igraph (graph) %>%
         tidygraph::as_tbl_graph ()

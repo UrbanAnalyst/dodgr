@@ -8,7 +8,7 @@ if (!test_all) {
 test_that ("isodists", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
-    requireNamespace ("dplyr")
+    requireNamespace ("dplyr", quietly = TRUE)
     net <- weight_streetnet (hsc,
         wt_profile = "bicycle"
     )

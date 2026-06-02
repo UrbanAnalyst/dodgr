@@ -691,7 +691,7 @@ weight_streetnet.sc <- function (x,
                                  keep_cols = NULL,
                                  left_side = FALSE) {
 
-    requireNamespace ("dplyr")
+    requireNamespace ("dplyr", quietly = TRUE)
     check_sc (x)
 
     x$vertex <- x$vertex [which (!duplicated (x$vertex)), ]

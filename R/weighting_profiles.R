@@ -15,7 +15,7 @@
 #' @export
 write_dodgr_wt_profile <- function (file = NULL) {
 
-    requireNamespace ("jsonlite")
+    requireNamespace ("jsonlite", quietly = TRUE)
 
     if (is.null (file)) {
         stop ("file name must be given")
