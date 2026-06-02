@@ -14,7 +14,7 @@ skip_if (!test_all)
 test_that ("SC", {
     expect_silent (hsc <- sf_to_sc (hampi))
     # This all exists just to test the next line:
-    requireNamespace ("dplyr")
+    requireNamespace ("dplyr", quietly = TRUE)
     expect_silent (net_sc <- weight_streetnet (hsc))
     expect_is (net_sc, "data.frame")
     expect_true (nrow (net_sc) > 0)

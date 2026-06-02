@@ -13,7 +13,7 @@ if (!test_all) {
 
 test_that ("cache on", {
     expect_silent (hsc <- sf_to_sc (hampi))
-    requireNamespace ("dplyr")
+    requireNamespace ("dplyr", quietly = TRUE)
     expect_silent (graph <- weight_streetnet (hsc))
     expect_message (
         graph <- dodgr_components (graph),
