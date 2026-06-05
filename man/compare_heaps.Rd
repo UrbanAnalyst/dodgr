@@ -32,16 +32,16 @@ compare_heaps (graph, nverts = 1000, replications = 1)
 }
 }
 \seealso{
-Other misc: 
-\code{\link{dodgr_flowmap}()},
-\code{\link{dodgr_full_cycles}()},
-\code{\link{dodgr_fundamental_cycles}()},
-\code{\link{dodgr_insert_vertex}()},
-\code{\link{dodgr_sample}()},
-\code{\link{dodgr_sflines_to_poly}()},
-\code{\link{dodgr_vertices}()},
-\code{\link{merge_directed_graph}()},
-\code{\link{summary.dodgr_dists_categorical}()},
-\code{\link{write_dodgr_wt_profile}()}
+Other misc:
+\code{\link[=dodgr_flowmap]{dodgr_flowmap()}},
+\code{\link[=dodgr_full_cycles]{dodgr_full_cycles()}},
+\code{\link[=dodgr_fundamental_cycles]{dodgr_fundamental_cycles()}},
+\code{\link[=dodgr_insert_vertex]{dodgr_insert_vertex()}},
+\code{\link[=dodgr_sample]{dodgr_sample()}},
+\code{\link[=dodgr_sflines_to_poly]{dodgr_sflines_to_poly()}},
+\code{\link[=dodgr_vertices]{dodgr_vertices()}},
+\code{\link[=merge_directed_graph]{merge_directed_graph()}},
+\code{\link[=summary.dodgr_dists_categorical]{summary.dodgr_dists_categorical()}},
+\code{\link[=write_dodgr_wt_profile]{write_dodgr_wt_profile()}}
 }
 \concept{misc}

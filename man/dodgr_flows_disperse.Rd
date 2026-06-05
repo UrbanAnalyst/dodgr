@@ -125,8 +125,8 @@ grep ("^flow", names (graph), value = TRUE)
 # each origin point.
 }
 \seealso{
-Other flows: 
-\code{\link{dodgr_flows_aggregate}()},
-\code{\link{dodgr_flows_si}()}
+Other flows:
+\code{\link[=dodgr_flows_aggregate]{dodgr_flows_aggregate()}},
+\code{\link[=dodgr_flows_si]{dodgr_flows_si()}}
 }
 \concept{flows}

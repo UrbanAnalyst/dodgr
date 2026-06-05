@@ -147,11 +147,11 @@ d <- dodgr_dists_categorical (graph, from, dlimit = dlimit)
 dim (d) # length(from), length(unique(edge_type)) + 1
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_paths}()},
-\code{\link{dodgr_times}()}
+Other distances:
+\code{\link[=dodgr_distances]{dodgr_distances()}},
+\code{\link[=dodgr_dists]{dodgr_dists()}},
+\code{\link[=dodgr_dists_nearest]{dodgr_dists_nearest()}},
+\code{\link[=dodgr_paths]{dodgr_paths()}},
+\code{\link[=dodgr_times]{dodgr_times()}}
 }
 \concept{distances}
