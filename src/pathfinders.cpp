@@ -38,6 +38,8 @@ void PF::PathFinder::init_arrays (
         const size_t v,
         const size_t n)
 {
+    m_heap->clear ();  // safe no-op for non-BHeap types; enables PathFinder reuse
+
     std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
     std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
     std::fill (prev.begin (), prev.end (), INFINITE_INT);

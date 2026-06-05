@@ -52,6 +52,7 @@ class BHeap : public Heap {
         void insert(size_t item, double key);
         void decreaseKey(size_t item, double newKey);
         size_t nItems() const { return itemCount; }
+        void clear() { itemCount = 0; }
 
         long int nComps() const { return compCount; }
         void dump() const;
@@ -64,10 +65,13 @@ class BHeap : public Heap {
     private:
         BHeapNode *a;
         size_t *aPos;
-        size_t itemCount;    
-        long int compCount;    
+        size_t itemCount;
+        size_t m_capacity;  // current size of a[]
+        size_t m_maxn;      // n from constructor
+        long int compCount;
 
         void siftUp(size_t p, size_t q);
+        void grow();
 };
 
 class BHeapInt : public HeapInt {
