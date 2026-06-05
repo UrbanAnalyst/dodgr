@@ -327,30 +327,6 @@ Other extraction:
 [`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
 [`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md)
 
-Other extraction:
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md),
-[`dodgr_streetnet_geodesic()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_geodesic.md),
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
-[`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md)
-
-Other extraction:
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md),
-[`dodgr_streetnet_geodesic()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_geodesic.md),
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
-[`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md)
-
-Other extraction:
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md),
-[`dodgr_streetnet_geodesic()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_geodesic.md),
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
-[`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md)
-
-Other extraction:
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md),
-[`dodgr_streetnet_geodesic()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_geodesic.md),
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
-[`weight_railway()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_railway.md)
-
 ## Examples
 
 ``` r

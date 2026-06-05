@@ -61,6 +61,8 @@ Useful links:
 
 Authors:
 
+- Mark Padgham <mark.padgham@email.com>
+
 - Andreas Petutschnig
 
 - David Cooley
