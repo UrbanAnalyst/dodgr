@@ -68,6 +68,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Mark Padgham \email{mark.padgham@email.com}
   \item Andreas Petutschnig
   \item David Cooley
 }

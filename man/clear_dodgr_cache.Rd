@@ -25,10 +25,10 @@ clear_dodgr_cache ()
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 }
 \seealso{
-Other cache: 
-\code{\link{dodgr_cache_off}()},
-\code{\link{dodgr_cache_on}()},
-\code{\link{dodgr_load_streetnet}()},
-\code{\link{dodgr_save_streetnet}()}
+Other cache:
+\code{\link[=dodgr_cache_off]{dodgr_cache_off()}},
+\code{\link[=dodgr_cache_on]{dodgr_cache_on()}},
+\code{\link[=dodgr_load_streetnet]{dodgr_load_streetnet()}},
+\code{\link[=dodgr_save_streetnet]{dodgr_save_streetnet()}}
 }
 \concept{cache}

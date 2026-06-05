@@ -44,10 +44,10 @@ pts <- verts$id [pts]
 pts # names of those vertices
 }
 \seealso{
-Other match: 
-\code{\link{add_nodes_to_graph}()},
-\code{\link{match_points_to_graph}()},
-\code{\link{match_points_to_verts}()},
-\code{\link{match_pts_to_graph}()}
+Other match:
+\code{\link[=add_nodes_to_graph]{add_nodes_to_graph()}},
+\code{\link[=match_points_to_graph]{match_points_to_graph()}},
+\code{\link[=match_points_to_verts]{match_points_to_verts()}},
+\code{\link[=match_pts_to_graph]{match_pts_to_graph()}}
 }
 \concept{match}

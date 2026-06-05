@@ -79,8 +79,8 @@ dlim <- c (1, 2, 5, 10, 20) * 100
 d <- dodgr_isodists (graph, from = from, dlim)
 }
 \seealso{
-Other iso: 
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isoverts}()}
+Other iso:
+\code{\link[=dodgr_isochrones]{dodgr_isochrones()}},
+\code{\link[=dodgr_isoverts]{dodgr_isoverts()}}
 }
 \concept{iso}

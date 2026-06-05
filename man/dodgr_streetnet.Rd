@@ -73,10 +73,10 @@ net$time_weighted [index] <- net$time_weighted [index] * 100
 }
 }
 \seealso{
-Other extraction: 
-\code{\link{dodgr_streetnet_geodesic}()},
-\code{\link{dodgr_streetnet_sc}()},
-\code{\link{weight_railway}()},
-\code{\link{weight_streetnet}()}
+Other extraction:
+\code{\link[=dodgr_streetnet_geodesic]{dodgr_streetnet_geodesic()}},
+\code{\link[=dodgr_streetnet_sc]{dodgr_streetnet_sc()}},
+\code{\link[=weight_railway]{weight_railway()}},
+\code{\link[=weight_streetnet]{weight_streetnet()}}
 }
 \concept{extraction}

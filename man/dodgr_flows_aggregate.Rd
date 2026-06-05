@@ -185,8 +185,8 @@ plot (gsf ["flow"])
 }
 }
 \seealso{
-Other flows: 
-\code{\link{dodgr_flows_disperse}()},
-\code{\link{dodgr_flows_si}()}
+Other flows:
+\code{\link[=dodgr_flows_disperse]{dodgr_flows_disperse()}},
+\code{\link[=dodgr_flows_si]{dodgr_flows_si()}}
 }
 \concept{flows}

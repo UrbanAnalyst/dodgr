@@ -22,7 +22,7 @@ obeyed or not.
 \url{https://www.routino.org/xml/routino-profiles.xml}
 }
 \seealso{
-Other data: 
+Other data:
 \code{\link{hampi}},
 \code{\link{os_roads_bristol}}
 }

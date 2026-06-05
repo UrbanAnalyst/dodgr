@@ -42,10 +42,10 @@ clear_dodgr_cache () # rm cached objects from tempdir
 net <- dodgr_load_streetnet (f)
 }
 \seealso{
-Other cache: 
-\code{\link{clear_dodgr_cache}()},
-\code{\link{dodgr_cache_off}()},
-\code{\link{dodgr_cache_on}()},
-\code{\link{dodgr_load_streetnet}()}
+Other cache:
+\code{\link[=clear_dodgr_cache]{clear_dodgr_cache()}},
+\code{\link[=dodgr_cache_off]{dodgr_cache_off()}},
+\code{\link[=dodgr_cache_on]{dodgr_cache_on()}},
+\code{\link[=dodgr_load_streetnet]{dodgr_load_streetnet()}}
 }
 \concept{cache}

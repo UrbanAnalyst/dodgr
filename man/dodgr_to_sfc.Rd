@@ -42,11 +42,11 @@ dim (xy$dat) # same number of rows as there are geometries
 # sf::st_sf (xy$dat, geometry = xy$geometry, crs = 4326)
 }
 \seealso{
-Other conversion: 
-\code{\link{dodgr_deduplicate_graph}()},
-\code{\link{dodgr_to_igraph}()},
-\code{\link{dodgr_to_sf}()},
-\code{\link{dodgr_to_tidygraph}()},
-\code{\link{igraph_to_dodgr}()}
+Other conversion:
+\code{\link[=dodgr_deduplicate_graph]{dodgr_deduplicate_graph()}},
+\code{\link[=dodgr_to_igraph]{dodgr_to_igraph()}},
+\code{\link[=dodgr_to_sf]{dodgr_to_sf()}},
+\code{\link[=dodgr_to_tidygraph]{dodgr_to_tidygraph()}},
+\code{\link[=igraph_to_dodgr]{igraph_to_dodgr()}}
 }
 \concept{conversion}

@@ -62,8 +62,8 @@ graph <- weight_streetnet (hampi, wt_profile = "foot")
 estimate_centrality_time (graph)
 }
 \seealso{
-Other centrality: 
-\code{\link{dodgr_centrality}()},
-\code{\link{estimate_centrality_threshold}()}
+Other centrality:
+\code{\link[=dodgr_centrality]{dodgr_centrality()}},
+\code{\link[=estimate_centrality_threshold]{estimate_centrality_threshold()}}
 }
 \concept{centrality}
