@@ -23,15 +23,15 @@ write_dodgr_wt_profile <- function (file = NULL) {
 
     file <- paste0 (tools::file_path_sans_ext (file), ".json")
     con <- file (file, open = "wt")
+    on.exit (close (con))
 
     sc <- summary (con)
-    if (!sc [["can write"]] == "yes") {
+    if (sc [["can write"]] != "yes") {
         stop ("Unable to write to connection ", sc$description)
     } # nocov
 
     wpj <- jsonlite::toJSON (dodgr::weighting_profiles, pretty = TRUE)
     writeLines (wpj, con)
-    close (con)
 }
 
 read_dodgr_wt_profile <- function (file = NULL) {

@@ -152,7 +152,7 @@ dodgr_flows_aggregate <- function (graph,
         contract <- FALSE
     }
 
-    if (any (is.na (flows))) {
+    if (anyNA (flows)) {
         flows [is.na (flows)] <- 0
     }
     hps <- get_heap (heap, graph)
@@ -348,7 +348,7 @@ dodgr_flows_disperse <- function (graph,
     k <- res$k
     nk <- res$nk
 
-    if (any (is.na (dens))) {
+    if (anyNA (dens)) {
         dens [is.na (dens)] <- 0
     }
 
@@ -408,7 +408,7 @@ dodgr_flows_disperse <- function (graph,
         graph$flow <- f
     } else {
         flowmat <- data.frame (matrix (f, ncol = nk))
-        names (flowmat) <- paste0 ("flow", seq (nk))
+        names (flowmat) <- paste0 ("flow", seq_len (nk))
         graph <- cbind (graph, flowmat)
     }
 
@@ -655,7 +655,7 @@ dodgr_flows_si <- function (graph,
         graph$flow <- f
     } else {
         flowmat <- data.frame (matrix (f, ncol = nk))
-        names (flowmat) <- paste0 ("flow", seq (nk))
+        names (flowmat) <- paste0 ("flow", seq_len (nk))
         graph <- cbind (graph, flowmat)
     }
 
@@ -741,7 +741,7 @@ get_random_prefix <- function (prefix = "flow",
                                n = 5) {
 
     charvec <- c (letters, LETTERS, 0:9)
-    rand_prefix <- paste0 (sample (charvec, n, replace = TRUE), collapse = "")
+    rand_prefix <- paste (sample (charvec, n, replace = TRUE), collapse = "")
     fs::path (fs::path_temp (), paste0 (prefix, "_", rand_prefix))
 }
 

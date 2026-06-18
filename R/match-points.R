@@ -198,7 +198,7 @@ match_points_to_graph <- function (graph, xy, connected = FALSE, distances = FAL
 signed_intersection_dists <- function (graph, xy, res) {
 
     n <- nrow (xy)
-    index <- seq (n)
+    index <- seq_len (n)
 
     # rcpp_points_index is 0-indexed, so ...
     graph_index <- as.integer (res [index]) + 1L
@@ -302,7 +302,7 @@ add_nodes_to_graph <- function (graph,
     names (index) <- c ("n", "index")
 
     genhash <- function (len = 10) {
-        paste0 (sample (c (0:9, letters, LETTERS), size = len), collapse = "")
+        paste (sample (c (0:9, letters, LETTERS), size = len), collapse = "")
     }
 
     edges_to_split <- graph_std [index$index, ]

@@ -195,10 +195,8 @@ process_bbox <- function (bbox,
             nms <- colnames (pts)
         }
 
-        colx <- which (grepl ("x", nms, ignore.case = TRUE) |
-            grepl ("lon", nms, ignore.case = TRUE))
-        coly <- which (grepl ("y", nms, ignore.case = TRUE) |
-            grepl ("lat", nms, ignore.case = TRUE))
+        colx <- grep ("x|lon", nms, ignore.case = TRUE)
+        coly <- grep ("y|lat", nms, ignore.case = TRUE)
 
         if (!(length (colx) == 1 || length (coly) == 1)) {
             stop ("Can not unambiguously determine coordinates in graph")

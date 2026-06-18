@@ -101,9 +101,7 @@ dodgr_to_sfc <- function (graph) {
     # geometry has full WKT representation of CRS via osmdata, but still
     # triggers "old-style crs" message from `sf`. This uses `sf` to replace the
     # crs with identical values which don't trigger that message.
-    out <- suppressMessages (
-        sf::st_crs (geometry) <- 4326
-    )
+    suppressMessages (sf::st_crs (geometry) <- 4326)
 
     # Then match data of `graph` potentially including way_id, back on to the
     # geometries:
@@ -202,14 +200,13 @@ igraph_to_dodgr <- function (graph) {
     if (length (index) > 0) {
         vi [index] <- NULL
     }
-    vi <- data.frame (do.call (cbind, vi), stringsAsFactors = FALSE)
+    vi <- data.frame (do.call (cbind, vi))
 
     res <- data.frame (
         cbind (
             igraph::as_edgelist (graph),
             do.call (cbind, ei)
-        ),
-        stringsAsFactors = FALSE
+        )
     )
     names (res) [1:2] <- c ("from_id", "to_id")
 
