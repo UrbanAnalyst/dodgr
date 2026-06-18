@@ -167,7 +167,7 @@ system.time ( # Initial call calculates distances to all points:
 ```
 
     ##    user  system elapsed 
-    ##   0.156   0.000   0.156
+    ##   0.159   0.000   0.159
 
 ``` r
 

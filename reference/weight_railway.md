@@ -10,7 +10,7 @@ weight_railway(
   x,
   type_col = "railway",
   id_col = "osm_id",
-  keep_cols = c("maxspeed"),
+  keep_cols = "maxspeed",
   excluded = c("abandoned", "disused", "proposed", "razed")
 )
 ```

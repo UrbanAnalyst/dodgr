@@ -5,14 +5,14 @@ for example by modifying edge weights or distances. Graphs are cached based
 on the vector of edge IDs, so manual changes to any other attributes will not
 necessarily be translated into changes in dodgr output unless the cached
 versions are cleared using this function. See
-https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs
+https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs # nolint
 for details of caching process."><meta property="og:description" content="This function should generally not be needed, except if graph
 structure has been directly modified other than through dodgr functions;
 for example by modifying edge weights or distances. Graphs are cached based
 on the vector of edge IDs, so manual changes to any other attributes will not
 necessarily be translated into changes in dodgr output unless the cached
 versions are cleared using this function. See
-https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs
+https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs # nolint
 for details of caching process."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -21,7 +21,7 @@ for details of caching process."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.024</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.028</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,7 @@ for example by modifying edge weights or distances. Graphs are cached based
 on the vector of edge IDs, so manual changes to any other attributes will not
 necessarily be translated into changes in <code>dodgr</code> output unless the cached
 versions are cleared using this function. See
-<a href="https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs" class="external-link">https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs</a>
+<a href="https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs" class="external-link">https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs</a> # nolint
 for details of caching process.</p>
     </div>
 
@@ -78,6 +78,7 @@ for details of caching process.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">clear_dodgr_cache</span> <span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE TRUE TRUE TRUE TRUE TRUE</span>
 <span class="r-in"><span><span class="co"># Then call dodgr functions as usual:</span></span></span>
 <span class="r-in"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span></span>
 </code></pre></div>

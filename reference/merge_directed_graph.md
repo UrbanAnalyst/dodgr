@@ -13,7 +13,7 @@ edge of a graph.
 ## Usage
 
 ``` r
-merge_directed_graph(graph, col_names = c("flow"))
+merge_directed_graph(graph, col_names = "flow")
 ```
 
 ## Arguments

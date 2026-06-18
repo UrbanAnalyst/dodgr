@@ -8,7 +8,7 @@ other attributes will not necessarily be translated into changes in
 `dodgr` output unless the cached versions are cleared using this
 function. See
 <https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs>
-for details of caching process.
+\# nolint for details of caching process.
 
 ## Usage
 
@@ -32,6 +32,7 @@ Other cache:
 
 ``` r
 clear_dodgr_cache ()
+#> [1] TRUE TRUE TRUE TRUE TRUE TRUE
 # Then call dodgr functions as usual:
 graph <- weight_streetnet (hampi, wt_profile = "foot")
 ```
