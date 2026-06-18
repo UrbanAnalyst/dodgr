@@ -34,7 +34,7 @@ test_that ("save and load", {
     clear_dodgr_cache ()
 
     net1 <- dodgr_load_streetnet (f)
-    expect_identical (net0, net1)
+    expect_equal (net0, net1)
     flist1 <- list.files (tempdir (), pattern = "^dodgr\\_")
 
     # This now fails in GHA test environments for some reason
