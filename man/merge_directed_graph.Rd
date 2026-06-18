@@ -4,7 +4,7 @@
 \alias{merge_directed_graph}
 \title{Merge directed edges into equivalent undirected edges.}
 \usage{
-merge_directed_graph(graph, col_names = c("flow"))
+merge_directed_graph(graph, col_names = "flow")
 }
 \arguments{
 \item{graph}{A undirected graph in which directed edges of the input graph
