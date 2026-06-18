@@ -411,10 +411,7 @@ estimate_centrality_time <- function (graph,
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
     st <- system.time (
-        x <- rcpp_centrality (
-            graph2, vert_map, heap,
-            dist_threshold, edges, 100
-        )
+        rcpp_centrality (graph2, vert_map, heap, dist_threshold, edges, 100)
     ) [3]
 
     # convert to estimated time for full graph

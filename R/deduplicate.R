@@ -42,8 +42,8 @@ dodgr_deduplicate_graph <- function (graph) {
     if (has_times) {
 
         n <- as.integer (nrow (res) / 2)
-        res_t <- res [seq (n) + n, ]
-        res <- res [seq (n), ]
+        res_t <- res [seq_len (n) + n, ]
+        res <- res [seq_len (n), ]
         ft <- paste0 (res$from, "-", res$to)
         ft_t <- paste0 (res_t$from, "-", res_t$to)
         index_t <- match (ft, ft_t)
@@ -83,7 +83,7 @@ duplicated_edge_check <- function (graph, proceed = FALSE) {
 
     fr_to <- paste0 (fr, "-", to)
 
-    has_duplicates <- any (duplicated (fr_to))
+    has_duplicates <- anyDuplicated (fr_to) > 0L
 
     if (has_duplicates) {
 

@@ -22,8 +22,8 @@ test_that ("save and load", {
     x <- readRDS (f)
     expect_is (x, "list")
 
-    expect_identical (
-        names (x),
+    expect_named (
+        x,
         c (
             "graph", "verts", "graph_c",
             "verts_c", "edge_map", "junctions"

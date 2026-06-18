@@ -48,8 +48,7 @@ join_junctions_to_graph <- function (graph, wt_profile, wt_profile_file,
         edge_map <- data.frame (
             "edge" = res$graph$edge_,
             "e_in" = res$graph$old_edge_in,
-            "e_out" = res$graph$old_edge_out,
-            stringsAsFactors = FALSE
+            "e_out" = res$graph$old_edge_out
         )
         res$graph$old_edge_in <- res$graph$old_edge_out <- NULL
 

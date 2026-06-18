@@ -8,7 +8,7 @@ has_elevation <- function (x) {
 
 check_sc <- function (x) {
 
-    if (!"osmdata_sc" %in% class (x)) {
+    if (!inherits (x, "osmdata_sc")) {
         stop (
             "weight_streetnet currently only works for 'sc'-class objects ",
             "extracted with osmdata::osmdata_sc."
@@ -130,16 +130,16 @@ convert_oneway_flags <- function (graph) {
             "should be TRUE/FALSE or 'yes'/'no' only",
             call. = FALSE
         )
-        oneway_keys <- oneway_keys [which (oneway_keys %in% c ("0", "1", "y", "n", "t", "f"))]
+        oneway_keys <- oneway_keys [oneway_keys %in% c ("0", "1", "y", "n", "t", "f")]
     }
     if (all (oneway_keys %in% c ("0", "1"))) {
         graph$oneway <- as.logical (graph$oneway)
     } else if (all (oneway_keys %in% c ("y", "n"))) {
         graph$oneway <- tolower (substring (graph$oneway, 1, 1))
-        graph$oneway <- ifelse (graph$oneway == "y", TRUE, FALSE)
+        graph$oneway <- graph$oneway == "y"
     } else if (all (oneway_keys %in% c ("t", "f"))) {
         graph$oneway <- tolower (substring (graph$oneway, 1, 1))
-        graph$oneway <- ifelse (graph$oneway == "t", TRUE, FALSE)
+        graph$oneway <- graph$oneway == "t"
     }
 
     return (graph)
@@ -156,7 +156,7 @@ set_oneway_flags <- function (graph, bikeflags, wt_profile) {
             graph$oneway_bicycle [index] <- "no"
         }
         graph$oneway_bicycle <-
-            ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
+            graph$oneway_bicycle != "no"
 
         if (wt_profile == "bicycle") {
             graph$oneway <- graph$oneway_bicycle
@@ -207,7 +207,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     } # nocov
 
     maxspeed <- rep (NA_real_, nrow (graph))
-    index <- grep ("mph", graph$maxspeed)
+    index <- grep ("mph", graph$maxspeed, fixed = TRUE)
     maxspeed [index] <- as.numeric (gsub (
         "[^[:digit:]. ]", "",
         graph$maxspeed [index]
@@ -221,8 +221,8 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     maxspeed_char <- gsub ("[[:punct:]].*$", "", maxspeed_char)
     # some (mostly Austria and Germany) have "maxspeed:walk" for living streets.
     # This has no numeric value, but is replaced here with 10km/h
-    maxspeed_char <- gsub ("walk", "10", maxspeed_char)
-    maxspeed_char <- gsub ("none", NA, maxspeed_char)
+    maxspeed_char <- gsub ("walk", "10", maxspeed_char, fixed = TRUE)
+    maxspeed_char <- gsub ("none", NA, maxspeed_char, fixed = TRUE)
     index2 <- which (!(is.na (maxspeed_char) |
         maxspeed_char == "" |
         maxspeed_char == "NA"))
@@ -327,7 +327,7 @@ weight_by_num_lanes <- function (graph, wt_profile) {
 
     lns <- c (4, 5, 6, 7, 8)
     wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
-    for (i in seq (lns)) {
+    for (i in seq_along (lns)) {
         index <- which (graph$lanes == lns [i])
         if (i == length (lns)) {
             index <- which (graph$lanes >= lns [i])
@@ -508,7 +508,6 @@ swap_cols <- function (x, cola, colb) {
     x [[colb]] <- temp
     return (x)
 }
-
 
 
 # traffic lights for pedestrians

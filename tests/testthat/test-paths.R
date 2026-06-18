@@ -14,15 +14,15 @@ test_that ("paths", {
         "Calculating shortest paths ..."
     )
     expect_is (dp, "list")
-    expect_equal (length (dp), 100)
-    expect_equal (unique (sapply (dp, length)), length (to))
+    expect_length (dp, 100)
+    expect_identical (unique (vapply (dp, length, integer (1L))), length (to))
     expect_is (dp [[1]] [[1]], "character")
-    lens <- unlist (lapply (dp, function (i) lapply (i, length)))
+    lens <- unlist (lapply (dp, lengths))
     dp <- dodgr_paths (graph, from = from, to = to, vertices = FALSE)
     expect_is (dp, "list")
-    expect_equal (length (dp), 100)
-    expect_equal (unique (sapply (dp, length)), length (to))
-    lens2 <- unlist (lapply (dp, function (i) lapply (i, length)))
+    expect_length (dp, 100)
+    expect_identical (unique (vapply (dp, length, integer (1L))), length (to))
+    lens2 <- unlist (lapply (dp, lengths))
     # edge lists should all have one less item than vertex lists
     lens2 <- lens2 [which (lens > 0)]
     lens <- lens [which (lens > 0)]
@@ -39,7 +39,7 @@ test_that ("pairwise paths", {
     n <- length (indx)
     dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
     expect_is (dp, "list")
-    expect_equal (length (dp), n)
+    expect_length (dp, n)
     expect_true (all (lapply (dp, length) == 1))
 
     expect_error (

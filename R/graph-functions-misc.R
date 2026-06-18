@@ -113,7 +113,7 @@ find_w_col <- function (graph) {
 
     w_col <- match (c ("w", "wt"), names (graph))
     if (all (is.na (w_col)) || length (w_col) != 1) {
-        w_col <- grep ("weight", names (graph))
+        w_col <- grep ("weight", names (graph), fixed = TRUE)
     }
     if (length (w_col) != 1) {
         w_col <- which (tolower (substring (names (graph), 1, 2)) == "dw" |
@@ -144,10 +144,8 @@ find_xy_col_simple <- function (dfr) {
 
     ix <- iy <- NULL
     if (!is.null (nms)) {
-        ix <- which (grepl ("x", nms, ignore.case = TRUE) |
-            grepl ("lon", nms, ignore.case = TRUE))
-        iy <- which (grepl ("y", nms, ignore.case = TRUE) |
-            grepl ("lat", nms, ignore.case = TRUE))
+        ix <- grep ("x|lon", nms, ignore.case = TRUE)
+        iy <- grep ("y|lat", nms, ignore.case = TRUE)
     }
 
     if (length (ix) == 0 || length (iy) == 0) {
