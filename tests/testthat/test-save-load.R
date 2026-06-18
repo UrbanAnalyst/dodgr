@@ -22,8 +22,8 @@ test_that ("save and load", {
     x <- readRDS (f)
     expect_is (x, "list")
 
-    expect_identical (
-        names (x),
+    expect_named (
+        x,
         c (
             "graph", "verts", "graph_c",
             "verts_c", "edge_map", "junctions"
@@ -34,7 +34,7 @@ test_that ("save and load", {
     clear_dodgr_cache ()
 
     net1 <- dodgr_load_streetnet (f)
-    expect_equal (net0, net1)
+    expect_identical (net0, net1)
     flist1 <- list.files (tempdir (), pattern = "^dodgr\\_")
 
     # This now fails in GHA test environments for some reason

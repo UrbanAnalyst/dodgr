@@ -17,15 +17,15 @@ test_that ("SC", {
     requireNamespace ("dplyr", quietly = TRUE)
     expect_silent (net_sc <- weight_streetnet (hsc))
     expect_is (net_sc, "data.frame")
-    expect_true (nrow (net_sc) > 0)
+    expect_gt (nrow (net_sc), 0)
 
     net_sf <- weight_streetnet (hampi)
-    expect_true (nrow (net_sf) > nrow (net_sc)) # sf has duplicated edges
+    expect_gt (nrow (net_sf), nrow (net_sc)) # sf has duplicated edges
     v_sc <- dodgr_vertices (net_sc)
     v_sf <- dodgr_vertices (net_sf)
-    expect_true (nrow (v_sf) > nrow (v_sc))
+    expect_gt (nrow (v_sf), nrow (v_sc))
 
-    class (hsc) <- class (hsc) [!class (hsc) %in% "osmdata_sc"]
+    class (hsc) <- setdiff (class (hsc), "osmdata_sc")
     expect_error (
         net_sc <- weight_streetnet (hsc),
         paste0 (
@@ -38,7 +38,7 @@ test_that ("SC", {
     expect_silent (net_sc2 <- weight_streetnet (hsc,
         wt_profile = "horse"
     ))
-    expect_true (!identical (net_sc$d_weighted, net_sc2$d_weighted))
+    expect_false (identical (net_sc$d_weighted, net_sc2$d_weighted))
 
     net_sc2 <- dodgr_components (net_sc2)
     expect_silent (v0 <- dodgr_vertices (net_sc2))
@@ -104,7 +104,7 @@ test_that ("traffic light nodes", {
 
     expect_identical (net_sc0$d, net_sc1$d)
     expect_identical (net_sc0$d_weighted, net_sc1$d_weighted)
-    expect_true (!identical (net_sc0$time, net_sc1$time))
+    expect_false (identical (net_sc0$time, net_sc1$time))
     expect_identical (net_sc0$time_weighted, net_sc1$time_weighted)
 
     expect_silent (net_sc1 <- weight_streetnet (hsc, wt_profile = 1))
@@ -118,13 +118,13 @@ test_that ("elevation", {
     hsc$vertex$z_ <- runif (nrow (hsc$vertex)) * 10
     # expect_silent (net_sc2 <- weight_streetnet (hsc))
     net_sc2 <- weight_streetnet (hsc)
-    expect_true (ncol (net_sc2) == (ncol (net_sc) + 1))
+    expect_identical (ncol (net_sc2), ncol (net_sc) + 1L)
 
     expect_silent (net_sc3 <- weight_streetnet (hsc,
         wt_profile = "foot"
     ))
-    expect_true (ncol (net_sc3) == (ncol (net_sc2)))
-    expect_true (mean (net_sc3$time) > mean (net_sc2$time))
+    expect_identical (ncol (net_sc3), ncol (net_sc2))
+    expect_gt (mean (net_sc3$time), mean (net_sc2$time))
 })
 
 test_that ("contract with turn angles", {
@@ -156,9 +156,9 @@ test_that ("contract with turn angles", {
         turn_penalty = TRUE, left_side = TRUE
     )
 
-    expect_equal (nrow (grapht), nrow (graph))
+    expect_identical (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
-    expect_true (nrow (graph_c) <= nrow (grapht_c))
+    expect_lte (nrow (graph_c), nrow (grapht_c))
     expect_warning (
         graphtf <- dodgr_flows_aggregate (
             grapht_c,
@@ -184,8 +184,8 @@ test_that ("contract with turn angles", {
 
     # compound junction edges are then removed, as are vertex
     # suffixes:
-    expect_true (length (grep ("_start", graphtf$.vx0)) == 0)
-    expect_true (length (grep ("_end", graphtf$.vx1)) == 0)
+    expect_false (any (grepl ("_start", graphtf$.vx0, fixed = TRUE)))
+    expect_false (any (grepl ("_end", graphtf$.vx1, fixed = TRUE)))
 
     expect_silent (graphtf <- merge_directed_graph (graphtf))
     # this test does not consistently pass:
@@ -222,7 +222,7 @@ test_that ("dodgr_times", {
     r2 <- cor (as.numeric (d), as.numeric (t1),
         use = "pairwise.complete.obs"
     )
-    expect_true (r2 < 1)
+    expect_lt (r2, 1)
     # with no turn angles, the should be just scaled versions
 
     # calculate times with turning angles, such that resultant network
@@ -230,7 +230,7 @@ test_that ("dodgr_times", {
     expect_silent (net_sc2 <- weight_streetnet (hsc,
         turn_penalty = TRUE
     ))
-    expect_equal (nrow (net_sc2), nrow (net_sc))
+    expect_identical (nrow (net_sc2), nrow (net_sc))
     from <- remap_verts_with_turn_penalty (net_sc2, from, from = TRUE)
     to <- remap_verts_with_turn_penalty (net_sc2, to, from = FALSE)
     t2 <- dodgr_times (net_sc2, from = from, to = to)
@@ -238,7 +238,7 @@ test_that ("dodgr_times", {
         use = "pairwise.complete.obs"
     )
     # expect_true (r2 < 1)
-    expect_true (r2 > 0.95)
+    expect_gt (r2, 0.95)
     # These times should be longer, but may also actually be shorter, so not
     # tested:
     # expect_true (mean (t2 - t1, na.rm = TRUE) > 0)
@@ -264,5 +264,5 @@ test_that ("dodgr_times", {
     r2 <- cor (as.vector (t1), as.vector (t2),
         use = "pairwise.complete.obs"
     )^2
-    expect_true (r2 > 0.5)
+    expect_gt (r2, 0.5)
 })

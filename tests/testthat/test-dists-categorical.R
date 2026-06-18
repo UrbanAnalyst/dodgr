@@ -107,7 +107,7 @@ test_that ("categorical dists summary", {
 
     expect_message (ds <- summary (d))
     expect_is (ds, "numeric")
-    expect_equal (length (ds), length (unique (graph$edge_type)))
+    expect_length (ds, length (unique (graph$edge_type)))
     expect_true (all (ds < 1.0))
 })
 
@@ -136,7 +136,7 @@ test_that ("proportions only", {
         proportions_only = TRUE
     ))
     # These will only be approximately equal:
-    expect_true (mean (abs (d1 - d2)) > 0)
+    expect_gt (mean (abs (d1 - d2)), 0)
 })
 
 test_that ("categorical threshold", {
@@ -152,8 +152,8 @@ test_that ("categorical threshold", {
     expect_silent (d <- dodgr_dists_categorical (graph, from, dlimit = 2000))
 
     expect_is (d, "data.frame")
-    expect_equal (nrow (d), length (from))
-    expect_equal (ncol (d), length (unique (graph$edge_type)) + 1L)
+    expect_identical (nrow (d), length (from))
+    expect_identical (ncol (d), length (unique (graph$edge_type)) + 1L)
 
     # d [, 1] is distance; all other cols are edge-type-specific
     for (i in 2:ncol (d)) {
@@ -178,8 +178,8 @@ test_that ("categorical pairwise", {
     )
 
     expect_is (d, "matrix")
-    expect_equal (nrow (d), length (from))
-    expect_equal (ncol (d), length (unique (graph$edge_type)) + 1L)
+    expect_identical (nrow (d), length (from))
+    expect_identical (ncol (d), length (unique (graph$edge_type)) + 1L)
 
     # d [, 1] is distance; all other cols are edge-type-specific
     for (i in 2:ncol (d)) {
