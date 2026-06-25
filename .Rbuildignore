@@ -19,6 +19,7 @@
 ^codemeta\.json$
 ^cran-comments.md$
 ^doc$
+^inst/LICENSE$
 ^inst/WORDLIST$
 ^makefile$
 ^tests/valgrind-script.R$
