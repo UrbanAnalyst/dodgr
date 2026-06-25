@@ -108,8 +108,8 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
 # These all have either "_start" or "_end" appended to vertex names
 # v is result of `dodgr_vertices` functions.
 get_junction_vertices <- function (v) {
-    grep ("_start|_end", v$id, value = TRUE) |>
-        gsub (pattern = "_start|_end", replacement = "")
+    v_jnctn <- grep ("_start|_end", v$id, value = TRUE)
+    gsub (v_jnctn, pattern = "_start|_end", replacement = "")
 }
 
 dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
