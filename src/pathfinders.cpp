@@ -91,7 +91,7 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0,
-        const std::vector<double> &heur)    // heuristic for A*
+        const PF::AStarHeuristic &heur)    // heuristic for A*
 {
     while (edge) {
         size_t et = edge->target;
@@ -243,7 +243,7 @@ void PF::PathFinder::DijkstraLimit (
 void PF::PathFinder::AStar (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<long int>& prev,
-        const std::vector<double>& heur,
+        const PF::AStarHeuristic& heur,
         const size_t v0,
         const std::vector <size_t> &to_index)
 {
