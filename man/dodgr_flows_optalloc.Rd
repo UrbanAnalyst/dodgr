@@ -141,7 +141,7 @@ graph <- dodgr_flows_optalloc (
 # graph then has an additional 'flow' column, exactly as for
 # 'dodgr_flows_aggregate'
 
-\dontrun{
+\dontshow{if (requireNamespace ("lpSolve")) withAutoprint(\{ # examplesIf}
 # The exact optimum can be obtained instead with the 'lpSolve' package:
 graph <- dodgr_flows_optalloc (
     graph,
@@ -151,7 +151,7 @@ graph <- dodgr_flows_optalloc (
     target_capacities = target_capacities,
     control = list (algorithm = "lp")
 )
-}
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 Other flows:

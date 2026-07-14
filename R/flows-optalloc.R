@@ -82,7 +82,7 @@
 #' # graph then has an additional 'flow' column, exactly as for
 #' # 'dodgr_flows_aggregate'
 #'
-#' \dontrun{
+#' @examplesIf requireNamespace ("lpSolve")
 #' # The exact optimum can be obtained instead with the 'lpSolve' package:
 #' graph <- dodgr_flows_optalloc (
 #'     graph,
@@ -92,7 +92,6 @@
 #'     target_capacities = target_capacities,
 #'     control = list (algorithm = "lp")
 #' )
-#' }
 dodgr_flows_optalloc <- function (graph,
                                   from,
                                   to,
