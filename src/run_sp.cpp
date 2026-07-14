@@ -100,7 +100,6 @@ struct OneDist : public RcppParallel::Worker
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <long int> prev (nverts);
-        std::vector <double> heuristic (nverts, 0.0);
 
         for (std::size_t i = begin; i < end; i++)
         {
@@ -108,12 +107,10 @@ struct OneDist : public RcppParallel::Worker
 
             if (is_spatial)
             {
-                for (size_t j = 0; j < nverts; j++)
-                {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                }
+                // Heuristic values are computed lazily, only for vertices
+                // actually visited by AStar, rather than pre-computed for
+                // every vertex in the graph.
+                const PF::AStarHeuristic heuristic (vx, vy, from_i);
                 pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
             } else if (heap_type.find ("set") == std::string::npos)
                 pathfinder->Dijkstra (d, w, prev, from_i, toi);
@@ -228,7 +225,6 @@ struct OneDistPaired : public RcppParallel::Worker
         std::vector <double> w (nverts);
         std::vector <double> d (nverts);
         std::vector <long int> prev (nverts);
-        std::vector <double> heuristic (nverts, 0.0);
 
         for (std::size_t i = begin; i < end; i++)
         {
@@ -237,18 +233,21 @@ struct OneDistPaired : public RcppParallel::Worker
 
             if (is_spatial)
             {
+                const PF::AStarHeuristic heuristic (vx, vy, from_i);
+
                 // need to set an additional target vertex that is somewhat
                 // beyond the single actual target vertex. Default here is max
-                // heuristic, but reduced in following loop.
+                // heuristic, but reduced in following loop. This selection
+                // needs the heuristic value of every vertex, so gains
+                // nothing from lazy evaluation, unlike the AStar search
+                // itself below.
                 long int max_h_index = -1;
                 double max_h_value = -1.0;
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                    if (heuristic [j] > max_h_value) {
-                        max_h_value = heuristic [j];
+                    const double h = heuristic [j];
+                    if (h > max_h_value) {
+                        max_h_value = h;
                         max_h_index = static_cast <long int> (j);
                     }
                 }
@@ -260,8 +259,9 @@ struct OneDistPaired : public RcppParallel::Worker
                 // be adjusted?
                 const double thr = 0.1;
                 for (size_t j = 0; j < nverts; j++) {
-                    if ((heuristic [j] < (thr * htemp)) && (heuristic [j] > min_h_value)) {
-                        min_h_value = heuristic [j];
+                    const double h = heuristic [j];
+                    if ((h < (thr * htemp)) && (h > min_h_value)) {
+                        min_h_value = h;
                         min_h_index = static_cast <long int> (j);
                     }
                 }
