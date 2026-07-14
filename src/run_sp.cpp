@@ -108,11 +108,19 @@ struct OneDist : public RcppParallel::Worker
 
             if (is_spatial)
             {
+                // Hoist the from_i lookups and use raw pointers so the
+                // compiler can auto-vectorise this hot loop instead of
+                // re-reading vx/vy[from_i] and going through
+                // vector::operator[] on every iteration.
+                const double x0 = vx [from_i], y0 = vy [from_i];
+                const double * const vx_p = vx.data ();
+                const double * const vy_p = vy.data ();
+                double * const h_p = heuristic.data ();
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
+                    const double dx = vx_p [j] - x0,
+                        dy = vy_p [j] - y0;
+                    h_p [j] = sqrt (dx * dx + dy * dy);
                 }
                 pathfinder->AStar (d, w, prev, heuristic, from_i, toi);
             } else if (heap_type.find ("set") == std::string::npos)
