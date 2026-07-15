@@ -127,6 +127,7 @@ grep ("^flow", names (graph), value = TRUE)
 \seealso{
 Other flows:
 \code{\link[=dodgr_flows_aggregate]{dodgr_flows_aggregate()}},
+\code{\link[=dodgr_flows_optalloc]{dodgr_flows_optalloc()}},
 \code{\link[=dodgr_flows_si]{dodgr_flows_si()}}
 }
 \concept{flows}

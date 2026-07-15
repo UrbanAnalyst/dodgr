@@ -1,5 +1,13 @@
 # v 0.4.3.00x (dev version)
 
+## Major changes
+
+- New function `dodgr_flows_optalloc()`, to allocate flows from source points
+  to capacity-limited target points via an optimal transportation algorithm
+  (either entropic-regularized Sinkhorn scaling, or an exact transportation
+  linear program via the newly Suggested `lpSolve` package), and aggregate the
+  result on to the network. From #349; thanks to @adivea for the idea.
+
 ## Minor changes
 
 - Fix a few minor bugs with compound junction construction (#305, #316)

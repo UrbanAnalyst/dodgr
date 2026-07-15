@@ -11,13 +11,13 @@
   "codeRepository": "https://github.com/UrbanAnalyst/dodgr",
   "issueTracker": "https://github.com/UrbanAnalyst/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.4.3.033",
+  "version": "0.4.3.038",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.6.0 (2026-04-24)",
+  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -175,6 +175,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "lpSolve",
+      "name": "lpSolve",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=lpSolve"
     },
     {
       "@type": "SoftwareApplication",
@@ -362,7 +374,7 @@
     },
     "SystemRequirements": "GNU make"
   },
-  "fileSize": "36572.292KB",
+  "fileSize": "36594.088KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
