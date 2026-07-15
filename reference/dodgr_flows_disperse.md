@@ -112,6 +112,7 @@ Modified version of graph with additional `flow` column added.
 
 Other flows:
 [`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
+[`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md),
 [`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.md)
 
 ## Examples

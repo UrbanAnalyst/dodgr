@@ -174,7 +174,8 @@ input densities.
 
 Other flows:
 [`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
-[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md)
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md),
+[`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md)
 
 ## Examples
 
@@ -202,7 +203,7 @@ graph_undir <- merge_directed_graph (graph)
 nrow (graph)
 #> [1] 6813
 nrow (graph_undir) # the latter is much smaller
-#> [1] 1302
+#> [1] 1330
 
 # ----- One dispersal coefficient for each origin point:
 # Remove `flow` column to avoid warning about over-writing values:

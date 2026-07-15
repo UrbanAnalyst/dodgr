@@ -22,6 +22,8 @@
   : Aggregate flows throughout a network.
 - [`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md)
   : Aggregate flows dispersed from each point in a network.
+- [`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md)
+  : Optimal allocation of flows from sources to capacity-limited targets
 - [`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.md)
   : Aggregate flows throughout a network using a spatial interaction
   model.
