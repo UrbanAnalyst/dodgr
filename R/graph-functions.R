@@ -208,14 +208,14 @@ dodgr_vertices <- function (graph) {
     hash <- attr (graph, hash)
     # make sure rows of graph have not been changed
     gr_cols <- dodgr_graph_cols (graph)
-    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
     if (!identical (hashe, hash)) {
         hash <- NULL
     }
     if (!is.null (hash)) {
         hashe_ref <- attr (graph, "hashe")
         hashe_ref <- ifelse (is.null (hashe_ref), "", hashe_ref)
-        hashe <- digest::digest (graph [[gr_cols$edge_id]])
+        hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
         if (hashe != hashe_ref) {
             hash <- hashe
         }

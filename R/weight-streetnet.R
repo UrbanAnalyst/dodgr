@@ -408,7 +408,7 @@ weight_streetnet.sf <- function (x,
     hash <- get_hash (graph, contracted = FALSE, force = TRUE)
     attr (graph, "hash") <- hash
     if (is_dodgr_cache_on ()) {
-        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+        attr (graph, "px") <- cache_graph (graph, gr_cols)
     }
 
     return (graph)
@@ -772,7 +772,7 @@ weight_streetnet.sc <- function (x,
         get_hash (graph, contracted = FALSE, force = TRUE)
 
     if (is_dodgr_cache_on ()) {
-        attr (graph, "px") <- cache_graph (graph, gr_cols$edge_id)
+        attr (graph, "px") <- cache_graph (graph, gr_cols)
     }
 
     return (graph)

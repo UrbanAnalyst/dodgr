@@ -63,10 +63,12 @@ importFrom(graphics,plot)
 importFrom(magrittr,"%>%")
 importFrom(memoise,memoise)
 importFrom(methods,is)
-importFrom(osmdata,add_osm_feature)
-importFrom(osmdata,getbb)
-importFrom(osmdata,opq)
-importFrom(osmdata,osm_poly2line)
-importFrom(osmdata,osmdata_sf)
-importFrom(osmdata,trim_osmdata)
+importFrom(osmdata,
+  add_osm_feature,
+  getbb,
+  opq,
+  osm_poly2line,
+  osmdata_sf,
+  trim_osmdata
+)
 useDynLib(dodgr, .registration = TRUE)

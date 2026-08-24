@@ -100,7 +100,7 @@ dodgr_fundamental_cycles <- function (graph,
         # each element of res is a list, so flatten these:
         res <- flatten_list (res)
         # These hash each and remove any duplicated ones:
-        dig <- unlist (lapply (res, digest::digest))
+        dig <- unlist (lapply (res, secretbase::siphash13))
         res <- res [which (!duplicated (dig))]
     }
 

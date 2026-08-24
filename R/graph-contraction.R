@@ -76,7 +76,9 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
 
         gr_cols <- dodgr_graph_cols (graph_contracted$graph)
-        hashe <- digest::digest (graph_contracted$graph [[gr_cols$edge_id]])
+        hashe <- secretbase::siphash13 (
+            hash_cols (graph_contracted$graph, gr_cols)
+        )
         attr (graph_contracted$graph, "hash") <- hash
         attr (graph_contracted$graph, "hashc") <- hashc
         attr (graph_contracted$graph, "hashe") <- hashe
@@ -308,7 +310,7 @@ dodgr_uncontract_graph <- function (graph) {
 
     gr_cols <- dodgr_graph_cols (graph)
     hashe_ref <- attr (graph, "hashe")
-    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
 
     hash <- attr (graph, "hash")
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
