@@ -10,6 +10,8 @@
 
 ## Minor changes
 
+- Replace `digest` dependency with `secretbase` for all internal graph hashing/caching
+- Graph hashes used for caching now also incorporate `d`, `d_weighted`, `time`, and `time_weighted` columns
 - Fix a few minor bugs with compound junction construction (#305, #316)
 - Add `pairwise` parameter to `dodgr_times()`; thanks to @leoniedu (#314)
 - Fix bug with categorical distances that neglected edges through compound junctions (#305)
