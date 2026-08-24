@@ -11,11 +11,14 @@ Nothing; the function silently clears any cached objects
 }
 \description{
 This function should generally \emph{not} be needed, except if graph
-structure has been directly modified other than through \code{dodgr} functions;
-for example by modifying edge weights or distances. Graphs are cached based
-on the vector of edge IDs, so manual changes to any other attributes will not
-necessarily be translated into changes in \code{dodgr} output unless the cached
-versions are cleared using this function. See
+structure has been directly modified other than through \code{dodgr} functions.
+Graphs are cached based on a hash of the \code{edge_id}, \code{d}, \code{d_weighted},
+\code{time}, and \code{time_weighted} columns, so manual changes to any of those will
+be detected automatically. Manual changes to any \other column or
+attribute (for example, \code{from}/\code{to} vertex identifiers) will not be
+reflected in the hash, and so will not necessarily be translated into
+changes in \code{dodgr} output unless the cached versions are cleared using this
+function. See
 \url{https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs} # nolint
 for details of caching process.
 }
