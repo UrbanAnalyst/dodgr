@@ -2,11 +2,13 @@
 
 This function should generally *not* be needed, except if graph
 structure has been directly modified other than through `dodgr`
-functions; for example by modifying edge weights or distances. Graphs
-are cached based on the vector of edge IDs, so manual changes to any
-other attributes will not necessarily be translated into changes in
-`dodgr` output unless the cached versions are cleared using this
-function. See
+functions. Graphs are cached based on a hash of the `edge_id`, `d`,
+`d_weighted`, `time`, and `time_weighted` columns, so manual changes to
+any of those will be detected automatically. Manual changes to any other
+column or attribute (for example, `from`/`to` vertex identifiers) will
+not be reflected in the hash, and so will not necessarily be translated
+into changes in `dodgr` output unless the cached versions are cleared
+using this function. See
 <https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs>
 \# nolint for details of caching process.
 
