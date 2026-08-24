@@ -148,7 +148,7 @@ cache_graph <- function (graph, gr_cols) {
 #' structure has been directly modified other than through `dodgr` functions.
 #' Graphs are cached based on a hash of the `edge_id`, `d`, `d_weighted`,
 #' `time`, and `time_weighted` columns, so manual changes to any of those will
-#' be detected automatically. Manual changes to any \other column or
+#' be detected automatically. Manual changes to any other column or
 #' attribute (for example, `from`/`to` vertex identifiers) will not be
 #' reflected in the hash, and so will not necessarily be translated into
 #' changes in `dodgr` output unless the cached versions are cleared using this
