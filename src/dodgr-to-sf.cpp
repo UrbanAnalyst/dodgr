@@ -44,7 +44,8 @@ size_t dodgr_sf::get_edgevec_sizes (const size_t nedges,
     size_t count = 1, edgenum = 0;
     for (long int i = 1; i < new_edges.size (); i++)
     {
-        if (new_edges (i) == new_edges (i - 1))
+        if (static_cast <std::string> (new_edges (i)) ==
+                static_cast <std::string> (new_edges (i - 1)))
             count++;
         else
         {
@@ -86,7 +87,8 @@ void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
     to_node [0] = static_cast <std::string> (idt_r (the_edge));
     for (long int i = 1; i < new_edges.size (); i++)
     {
-        if (new_edges (i) != new_edges (i - 1))
+        if (static_cast <std::string> (new_edges (i)) !=
+                static_cast <std::string> (new_edges (i - 1)))
         {
             full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
             full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
