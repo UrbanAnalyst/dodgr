@@ -759,17 +759,17 @@ compare_heaps (graph, nverts = 100)
     ## # A tibble: 11 × 6
     ##    expression                 min   median `itr/sec` mem_alloc `gc/sec`
     ##    <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ##  1 BHeap                   1.49ms   1.53ms      650.    45.3KB     12.7
-    ##  2 FHeap                    1.5ms   1.55ms      641.    45.3KB     13.5
-    ##  3 TriHeap                 1.51ms   1.56ms      637.    45.3KB     10.5
-    ##  4 TriHeapExt               1.3ms   1.34ms      741.    48.4KB     15.0
-    ##  5 Heap23                   1.5ms   1.56ms      638.    45.3KB     10.6
-    ##  6 BHeap_contracted        1.28ms   1.33ms      747.    20.1KB     14.9
-    ##  7 FHeap_contracted        1.28ms   1.33ms      745.    20.1KB     12.7
-    ##  8 TriHeap_contracted      1.29ms   1.35ms      738.    20.1KB     15.0
-    ##  9 TriHeapExt_contracted 972.33µs   1.02ms      970.    20.1KB     17.2
-    ## 10 Heap23_contracted       1.28ms   1.35ms      734.    20.1KB     14.9
-    ## 11 igraph                719.53µs 763.28µs     1293.   502.2KB     17.4
+    ##  1 BHeap                   1.54ms   1.61ms      620.    45.3KB     12.7
+    ##  2 FHeap                   1.57ms   1.64ms      606.    45.3KB     11.1
+    ##  3 TriHeap                 1.57ms   1.64ms      595.    45.3KB     12.7
+    ##  4 TriHeapExt               1.4ms   1.45ms      685.    48.4KB     12.7
+    ##  5 Heap23                  1.58ms   1.66ms      601.    45.3KB     10.6
+    ##  6 BHeap_contracted        1.36ms   1.41ms      703.    20.1KB     12.7
+    ##  7 FHeap_contracted        1.38ms   1.44ms      694.    20.1KB     12.7
+    ##  8 TriHeap_contracted      1.38ms   1.45ms      685.    20.1KB     12.8
+    ##  9 TriHeapExt_contracted   1.11ms   1.15ms      859.    20.1KB     17.1
+    ## 10 Heap23_contracted       1.37ms   1.44ms      694.    20.1KB     12.6
+    ## 11 igraph                822.48µs 872.94µs     1135.   502.2KB     14.9
 
 The key column of that `data.frame` is `relative`, which quantifies the
 relative performance of each test in relation to the best which is given
@@ -871,8 +871,8 @@ bench::mark (
     ## # A tibble: 2 × 6
     ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
     ##   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ## 1 full        13.38ms  13.84ms      71.8    1.23MB     2.05
-    ## 2 contracted   2.55ms   2.63ms     378.   277.97KB     6.23
+    ## 1 full        13.66ms  14.02ms      71.1    1.23MB     2.03
+    ## 2 contracted   2.59ms   2.71ms     366.   277.97KB     6.32
 
 And contracting the graph has a similar effect of speeding up pairwise
 routing between these 100 points. All routing algorithms scale
