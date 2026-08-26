@@ -7,10 +7,10 @@
   (either entropic-regularized Sinkhorn scaling, or an exact transportation
   linear program via the newly Suggested `lpSolve` package), and aggregate the
   result on to the network. From #349; thanks to @adivea for the idea.
+- Replace `digest` dependency with `secretbase` for all internal graph hashing/caching
 
 ## Minor changes
 
-- Replace `digest` dependency with `secretbase` for all internal graph hashing/caching
 - Graph hashes used for caching now also incorporate `d`, `d_weighted`, `time`, and `time_weighted` columns
 - Fix a few minor bugs with compound junction construction (#305, #316)
 - Add `pairwise` parameter to `dodgr_times()`; thanks to @leoniedu (#314)
@@ -18,6 +18,7 @@
 - Fix bug in duplicating bi-directional edges in weighted sc-class graphs
 - Finally add 'quietly = TRUE' to all `requireNamespace` calls.
 - Bundled GPL-3 license text in `inst/`, as required by bestpractices.dev
+- Fix bug in `dodgr_times()` with custom routing profiles (#354; thanks to @Mencken1991)
 
 ---
 
