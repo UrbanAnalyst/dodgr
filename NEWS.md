@@ -20,6 +20,7 @@
 - Bundled GPL-3 license text in `inst/`, as required by bestpractices.dev
 - Fix bug in `dodgr_times()` with custom routing profiles (#354; thanks to @Mencken1991)
 - Fix CRAN error with comparison on Rcpp::CharacterVector objects (#357)
+- Add `type_col` parameter to `weight_streetnet.sc` method (#341; thanks to @RegularnaMatrica)
 
 ---
 

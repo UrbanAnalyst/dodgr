@@ -167,7 +167,7 @@ set_oneway_flags <- function (graph, bikeflags, wt_profile) {
     return (graph)
 }
 
-weight_sc_edges <- function (graph, wt_profile, wt_profile_file, type_col) {
+weight_sc_edges <- function (graph, wt_profile, wt_profile_file, type_col = "highway") {
 
     # no visible binding notes:
     value <- d <- d_weighted <- NULL

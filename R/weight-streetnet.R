@@ -394,7 +394,7 @@ weight_streetnet.sf <- function (x,
 
     graph <- add_extra_sf_columns (graph, x)
     if (!is.null (wt_profile_name)) {
-        graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file) %>%
+        graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file, type_col) %>%
             weight_by_num_lanes (wt_profile_name) %>%
             calc_edge_time (wt_profile_name)
     }
