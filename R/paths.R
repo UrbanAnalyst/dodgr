@@ -185,3 +185,72 @@ get_path_indices <- function (graph, gr_cols, vert_map, to_from) {
 
     return (list (index = index, id = id))
 }
+
+sort_transitions <- function(graph){
+  
+  cols <- dodgr_graph_cols(graph)
+  
+  to_neighbors <- match(graph[[cols$to]], graph[[cols$from]])
+  pos <- which(!(graph[[cols$from]] %in% graph[[cols$to]]))
+  
+  perm <- integer(nrow(graph))
+  for(i in seq_along(perm)){
+    perm[[i]] <- pos
+    pos <- to_neighbors[[pos]]
+  }
+  
+  perm
+}
+
+expand_contracted_graph <- function(path_c, graph, graph_c, edge_map = NULL){
+  
+  # Ensure the path contains at least one transition
+  if(length(path_c) < 2)
+    stop("There are no transitions.")
+  
+  # dodgr columns
+  cols <- dodgr_graph_cols(graph)
+  
+  if(is.character(path_c)){
+    
+    # Reduce size of contracted graph
+    graph_c <- graph_c[graph_c[[cols$from]] %in% path_c | graph_c[[cols$to]] %in% path_c,]
+    
+    # Match path transitions to contracted graph
+    path_c <- match(
+      paste(path_c[-length(path_c)], path_c[-1]),
+      paste(graph_c[[cols$from]], graph_c[[cols$to]])
+    )
+
+    # Verify that all edges were mapped
+    if(any(is.na(path_c)))
+      stop("Not all transitions were matched to the contracted graph.")
+  }
+  
+  if(!is.integer(path_c))
+    stop("Path must be provided as integer or character vector.")
+  
+  # Path edges
+  edges <- graph_c[[cols$edge_id]][path_c]
+  
+  # Retrieve edge map if not provided
+  if(is.null(edge_map))
+    edge_map <- get_edge_map(graph)
+  
+  # Convert edge map to list:
+  # maps each contracted edge to a sequence of original edges
+  edge_map <- edge_map[edge_map$edge_new %in% edges,]
+  edge_map <- split(edge_map$edge_old, edge_map$edge_new)
+  
+  # Add edges that map to themselves (no contraction)
+  missing_edges <- setdiff(edges, names(edge_map))
+  edge_map[missing_edges] <- as.list(missing_edges)
+  
+  # Match expanded edge sequence to rows in original graph
+  indices <- match(unlist(edge_map[edges]), graph$edge_)
+  
+  # Return expanded path data.frame
+  sort_transitions(graph[indices,])
+}
+
+
