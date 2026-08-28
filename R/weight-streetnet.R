@@ -394,7 +394,7 @@ weight_streetnet.sf <- function (x,
 
     graph <- add_extra_sf_columns (graph, x)
     if (!is.null (wt_profile_name)) {
-        graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file) %>%
+        graph <- set_maxspeed (graph, wt_profile_name, wt_profile_file, "highway") %>%
             weight_by_num_lanes (wt_profile_name) %>%
             calc_edge_time (wt_profile_name)
     }
@@ -709,7 +709,7 @@ weight_streetnet.sc <- function (x,
             "cycleway:right"
         )))
     }
-    keep_cols <- unique (c (way_types_to_keep, keep_cols))
+    keep_cols <- unique (c (way_types_to_keep, keep_cols, type_col))
 
     graph <- extract_sc_edges_xy (x) %>% # vert, edge IDs + coordinates
         sc_edge_dist () %>% # append dist
@@ -721,11 +721,13 @@ weight_streetnet.sc <- function (x,
         ) %>% # hw key-val pairs
         weight_sc_edges (
             wt_profile,
-            wt_profile_file
+            wt_profile_file,
+            type_col
         ) %>% # add d_weighted col
         set_maxspeed (
             wt_profile,
-            wt_profile_file
+            wt_profile_file,
+            type_col
         ) %>% # modify d_weighted
         weight_by_num_lanes (wt_profile) %>%
         calc_edge_time (wt_profile) %>% # add time
