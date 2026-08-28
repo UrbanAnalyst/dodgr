@@ -65,12 +65,86 @@ test_that ("sort_transitions", {
     expect_identical (graph$to [perm], c ("b", "c", "d", "e"))
 })
 
-test_that ("dodgr_paths_expand", {
+test_that ("dodgr_paths_expand on synthetic graph", {
+
+    # A simple A-to-G chain of 6 original edges, contracted down to 2
+    # compound edges ('a101' = A-B-C-D, 'a103' = E-F-G) plus one
+    # pass-through edge ('4' = D-E) which was not aggregated at all, and so
+    # retains its original edge_id. `edge_map` intentionally lists the
+    # sub-edges of 'a101' out of order, to confirm that `dodgr_paths_expand`
+    # (via `sort_transitions`) correctly re-orders them.
+    graph <- data.frame (
+        edge_id = 1:6,
+        from = c ("A", "B", "C", "D", "E", "F"),
+        to = c ("B", "C", "D", "E", "F", "G"),
+        d = 1:6,
+        d_weighted = 1:6
+    )
+    graph_c <- data.frame (
+        edge_id = c ("a101", "4", "a103"),
+        from = c ("A", "D", "E"),
+        to = c ("D", "E", "G"),
+        d = c (6, 4, 11),
+        d_weighted = c (6, 4, 11)
+    )
+    edge_map <- data.frame (
+        edge_new = c ("a101", "a101", "a101", "a103", "a103"),
+        edge_old = c (2, 3, 1, 6, 5)
+    )
+
+    path_c_chr <- c ("A", "D", "E", "G")
+    path <- dodgr_paths_expand (path_c_chr, graph, graph_c, edge_map = edge_map)
+
+    expect_s3_class (path, "data.frame")
+    expect_identical (names (path), names (graph))
+    expect_identical (path$edge_id, 1:6)
+    expect_identical (path$from, c ("A", "B", "C", "D", "E", "F"))
+    expect_identical (path$to, c ("B", "C", "D", "E", "F", "G"))
+
+    # equivalent integer-index path over 'graph_c' gives identical result
+    path_c_int <- match (
+        paste (path_c_chr [-length (path_c_chr)], path_c_chr [-1]),
+        paste (graph_c$from, graph_c$to)
+    )
+    path_int <- dodgr_paths_expand (path_c_int, graph, graph_c, edge_map = edge_map)
+    expect_identical (path, path_int)
+
+    expect_error (
+        dodgr_paths_expand (path_c_chr [1], graph, graph_c, edge_map = edge_map),
+        "There are no transitions."
+    )
+    expect_error (
+        dodgr_paths_expand (
+            c ("not_a_vertex", "another_one"),
+            graph,
+            graph_c,
+            edge_map = edge_map
+        ),
+        "Not all transitions were matched to the contracted graph."
+    )
+    expect_error (
+        dodgr_paths_expand (c (1.5, 2.5), graph, graph_c, edge_map = edge_map),
+        "Path must be provided as integer or character vector."
+    )
+})
+
+test_that ("dodgr_paths_expand on real network", {
     graph <- weight_streetnet (hampi)
     graph_c <- dodgr_contract_graph (graph)
     verts <- dodgr_vertices (graph_c)
-    from <- verts$id [1]
-    to <- verts$id [50]
+
+    # Pick two vertices guaranteed to lie within the same (largest)
+    # connected component, at opposite geographic extremes, so the path
+    # between them is both traceable and non-trivial. (Selecting vertices by
+    # raw position in `verts$id` is not reliable here, because the character
+    # sort order of `id` values is locale-dependent, and `hampi` is not a
+    # single connected component, so an arbitrary pair may fall in different
+    # components with no path between them.)
+    comp_sizes <- table (verts$component)
+    largest_comp <- names (comp_sizes) [which.max (comp_sizes)]
+    verts <- verts [verts$component == as.integer (largest_comp), ]
+    from <- verts$id [which.min (verts$x)]
+    to <- verts$id [which.max (verts$x)]
 
     path_c_chr <- dodgr_paths (graph_c, from = from, to = to) [[1]] [[1]]
     expect_true (length (path_c_chr) > 2)
@@ -85,17 +159,6 @@ test_that ("dodgr_paths_expand", {
     expect_identical (path$from_id [1], path_c_chr [1])
     expect_identical (path$to_id [nrow (path)], path_c_chr [length (path_c_chr)])
 
-    # equivalent integer-index path over 'graph_c' gives identical result
-    path_c_int <- match (
-        paste (
-            path_c_chr [-length (path_c_chr)],
-            path_c_chr [-1]
-        ),
-        paste (graph_c$from_id, graph_c$to_id)
-    )
-    path_int <- dodgr_paths_expand (path_c_int, graph, graph_c)
-    expect_identical (path$edge_id, path_int$edge_id)
-
     # explicitly-supplied edge map gives identical result to internal lookup
     edge_map <- get_edge_map (graph)
     path_em <- dodgr_paths_expand (
@@ -104,18 +167,5 @@ test_that ("dodgr_paths_expand", {
         graph_c,
         edge_map = edge_map
     )
-    expect_identical (path$edge_id, path_em$edge_id)
-
-    expect_error (
-        dodgr_paths_expand (path_c_chr [1], graph, graph_c),
-        "There are no transitions."
-    )
-    expect_error (
-        dodgr_paths_expand (c ("not_a_vertex", "another_one"), graph, graph_c),
-        "Not all transitions were matched to the contracted graph."
-    )
-    expect_error (
-        dodgr_paths_expand (c (1.5, 2.5), graph, graph_c),
-        "Path must be provided as integer or character vector."
-    )
+    expect_identical (path, path_em)
 })
