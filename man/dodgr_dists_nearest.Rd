@@ -164,6 +164,7 @@ Other distances:
 \code{\link[=dodgr_dists]{dodgr_dists()}},
 \code{\link[=dodgr_dists_categorical]{dodgr_dists_categorical()}},
 \code{\link[=dodgr_paths]{dodgr_paths()}},
+\code{\link[=dodgr_paths_expand]{dodgr_paths_expand()}},
 \code{\link[=dodgr_times]{dodgr_times()}}
 }
 \concept{distances}
