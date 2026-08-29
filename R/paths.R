@@ -193,6 +193,13 @@ sort_transitions <- function (graph) {
     to_neighbors <- match (graph [[cols$to]], graph [[cols$from]])
     pos <- which (!(graph [[cols$from]] %in% graph [[cols$to]]))
 
+    if (length (pos) != 1L) {
+        stop (
+            "graph does not represent a single, contiguous chain of edges.",
+            call. = FALSE
+        )
+    }
+
     perm <- integer (nrow (graph))
     for (i in seq_along (perm)) {
         perm [[i]] <- pos
