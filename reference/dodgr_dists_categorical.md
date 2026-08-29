@@ -140,6 +140,7 @@ Other distances:
 [`dodgr_dists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.md),
 [`dodgr_dists_nearest()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_nearest.md),
 [`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md),
+[`dodgr_paths_expand()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths_expand.md),
 [`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
 
 ## Examples

@@ -62,7 +62,13 @@ List of list of paths tracing all connections between nodes such that if
 `x <- dodgr_paths (graph, from, to)`, then the path between `from[i]`
 and `to[j]` is `x [[i]] [[j]]`. Each individual path is then a vector of
 integers indexing into the rows of `graph` if `vertices = FALSE`, or
-into the rows of `dodgr_vertices (graph)` if `vertices = TRUE`.
+into the rows of `dodgr_vertices (graph)` if `vertices = TRUE`. The
+returned list also has a `vertices` attribute recording the value of the
+`vertices` argument used to generate it, so that other functions (such
+as
+[dodgr_paths_expand](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths_expand.md))
+can subsequently interpret individual paths correctly without that
+argument having to be separately re-specified.
 
 ## Note
 
@@ -96,6 +102,7 @@ Other distances:
 [`dodgr_dists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.md),
 [`dodgr_dists_categorical()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.md),
 [`dodgr_dists_nearest()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_nearest.md),
+[`dodgr_paths_expand()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths_expand.md),
 [`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
 
 ## Examples

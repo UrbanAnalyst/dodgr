@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.048</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.055</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,7 +97,11 @@ Fibonacci Heap (default; <code>FHeap</code>), Binary Heap (<code>BHeap</code>),
 if <code>x &lt;- dodgr_paths (graph, from, to)</code>, then the path between
 <code>from[i]</code> and <code>to[j]</code> is <code>x [[i]] [[j]]</code>. Each individual path is then a
 vector of integers indexing into the rows of <code>graph</code> if <code>vertices = FALSE</code>,
-or into the rows of <code>dodgr_vertices (graph)</code> if <code>vertices = TRUE</code>.</p>
+or into the rows of <code>dodgr_vertices (graph)</code> if <code>vertices = TRUE</code>. The
+returned list also has a <code>vertices</code> attribute recording the value of the
+<code>vertices</code> argument used to generate it, so that other functions (such as
+<a href="dodgr_paths_expand.html">dodgr_paths_expand</a>) can subsequently interpret individual paths
+correctly without that argument having to be separately re-specified.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -131,6 +135,7 @@ in <code>graph</code>.</p>
 <code><a href="dodgr_dists.html">dodgr_dists()</a></code>,
 <code><a href="dodgr_dists_categorical.html">dodgr_dists_categorical()</a></code>,
 <code><a href="dodgr_dists_nearest.html">dodgr_dists_nearest()</a></code>,
+<code><a href="dodgr_paths_expand.html">dodgr_paths_expand()</a></code>,
 <code><a href="dodgr_times.html">dodgr_times()</a></code></p></div>
     </div>
 

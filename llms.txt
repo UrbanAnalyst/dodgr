@@ -372,6 +372,8 @@ specification. Contributions of any kind are welcome!
   points to nearest one of series of 'to' points.
 - [`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md)
   : Calculate lists of pair-wise shortest paths between points.
+- [`dodgr_paths_expand()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths_expand.md)
+  : Expand contracted paths back on to full, uncontracted graphs.
 - [`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
   : Calculate matrix of pair-wise travel times between points.
 

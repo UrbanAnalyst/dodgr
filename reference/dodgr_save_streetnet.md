@@ -59,7 +59,7 @@ net <- weight_streetnet (hampi)
 f <- file.path (tempdir (), "streetnet.Rds")
 dodgr_save_streetnet (net, f)
 clear_dodgr_cache () # rm cached objects from tempdir
-#> [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+#> [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 # at some later time, or in a new R session:
 net <- dodgr_load_streetnet (f)
 ```
