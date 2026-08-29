@@ -17,11 +17,13 @@ test_that ("paths", {
     expect_length (dp, 100)
     expect_identical (unique (vapply (dp, length, integer (1L))), length (to))
     expect_is (dp [[1]] [[1]], "character")
+    expect_true (attr (dp, "vertices"))
     lens <- unlist (lapply (dp, lengths))
     dp <- dodgr_paths (graph, from = from, to = to, vertices = FALSE)
     expect_is (dp, "list")
     expect_length (dp, 100)
     expect_identical (unique (vapply (dp, length, integer (1L))), length (to))
+    expect_false (attr (dp, "vertices"))
     lens2 <- unlist (lapply (dp, lengths))
     # edge lists should all have one less item than vertex lists
     lens2 <- lens2 [which (lens > 0)]
@@ -41,6 +43,7 @@ test_that ("pairwise paths", {
     expect_is (dp, "list")
     expect_length (dp, n)
     expect_true (all (lapply (dp, length) == 1))
+    expect_true (attr (dp, "vertices"))
 
     expect_error (
         dp <- dodgr_paths (graph,
@@ -101,13 +104,14 @@ test_that ("dodgr_one_path_expand on synthetic graph", {
         edge_map = edge_map
     )
 
-    expect_s3_class (path, "data.frame")
-    expect_identical (names (path), names (graph))
-    expect_identical (path$edge_id, 1:6)
-    expect_identical (path$from, c ("A", "B", "C", "D", "E", "F"))
-    expect_identical (path$to, c ("B", "C", "D", "E", "F", "G"))
+    # character input returns the full, structurally-identical character
+    # vector of expanded vertex IDs
+    expect_type (path, "character")
+    expect_identical (path, c ("A", "B", "C", "D", "E", "F", "G"))
 
-    # equivalent integer-index path over 'graph_c' gives identical result
+    # equivalent integer-index path over 'graph_c' returns the full,
+    # structurally-identical integer vector of row indices into 'graph',
+    # tracing the same underlying sequence of edges as the character version
     path_c_int <- match (
         paste (path_c_chr [-length (path_c_chr)], path_c_chr [-1]),
         paste (graph_c$from, graph_c$to)
@@ -118,7 +122,25 @@ test_that ("dodgr_one_path_expand on synthetic graph", {
         graph_c,
         edge_map = edge_map
     )
-    expect_identical (path, path_int)
+    expect_type (path_int, "integer")
+    expect_identical (path_int, 1:6)
+    expect_identical (
+        c (graph$from [path_int], graph$to [path_int] [length (path_int)]),
+        path
+    )
+
+    # a single (contracted) edge is a valid path requiring no transitions,
+    # and expands to the pass-through edge's own (single) original edge
+    path_single <- dodgr_one_path_expand (
+        2L, # row index of pass-through edge '4', from D to E
+        graph,
+        graph_c,
+        edge_map = edge_map
+    )
+    expect_type (path_single, "integer")
+    expect_identical (path_single, 4L)
+    expect_identical (graph$from [path_single], "D")
+    expect_identical (graph$to [path_single], "E")
 
     expect_error (
         dodgr_one_path_expand (
@@ -172,35 +194,72 @@ test_that ("dodgr_paths_expand on synthetic graph", {
     )
 
     path_c_chr <- c ("A", "D", "E", "G")
-    path_expected <- dodgr_one_path_expand (
+    chr_expected <- dodgr_one_path_expand (
         path_c_chr,
         graph,
         graph_c,
         edge_map = edge_map
     )
 
-    # A nested list mimicking the structure returned by `dodgr_paths`, with
-    # two origins and two destinations: a valid multi-transition path, a
-    # `NULL` (unreachable) entry, a trivial single-vertex (no transitions)
-    # entry, and a second valid path identical to the first.
-    paths <- list (
+    # A nested list mimicking the (`vertices = TRUE`) structure returned by
+    # `dodgr_paths`, with two origins and two destinations: a valid
+    # multi-transition path, a `NULL` (unreachable) entry, a trivial
+    # single-vertex (no transitions) entry, and a second valid path
+    # identical to the first.
+    paths_chr <- list (
         list (path_c_chr, NULL),
         list (path_c_chr [1], path_c_chr)
     )
+    attr (paths_chr, "vertices") <- TRUE
 
-    result <- dodgr_paths_expand (paths, graph, graph_c, edge_map = edge_map)
-
-    expect_type (result, "list")
-    expect_length (result, length (paths))
-    expect_identical (
-        vapply (result, length, integer (1L)),
-        vapply (paths, length, integer (1L))
+    result_chr <- dodgr_paths_expand (
+        paths_chr,
+        graph,
+        graph_c,
+        edge_map = edge_map
     )
 
-    expect_identical (result [[1]] [[1]], path_expected)
-    expect_null (result [[1]] [[2]])
-    expect_null (result [[2]] [[1]])
-    expect_identical (result [[2]] [[2]], path_expected)
+    expect_type (result_chr, "list")
+    expect_identical (attr (result_chr, "vertices"), TRUE)
+    expect_length (result_chr, length (paths_chr))
+    expect_identical (
+        vapply (result_chr, length, integer (1L)),
+        vapply (paths_chr, length, integer (1L))
+    )
+
+    expect_type (result_chr [[1]] [[1]], "character")
+    expect_identical (result_chr [[1]] [[1]], chr_expected)
+    expect_null (result_chr [[1]] [[2]])
+    expect_null (result_chr [[2]] [[1]])
+    expect_identical (result_chr [[2]] [[2]], chr_expected)
+
+    # The same fixture, but as a (`vertices = FALSE`) nested list of integer
+    # row indices into `graph_c`, mixed with a `NULL` (unreachable) entry.
+    path_c_int <- match (
+        paste (path_c_chr [-length (path_c_chr)], path_c_chr [-1]),
+        paste (graph_c$from, graph_c$to)
+    )
+    int_expected <- dodgr_one_path_expand (
+        path_c_int,
+        graph,
+        graph_c,
+        edge_map = edge_map
+    )
+
+    paths_int <- list (list (path_c_int, NULL))
+    attr (paths_int, "vertices") <- FALSE
+
+    result_int <- dodgr_paths_expand (
+        paths_int,
+        graph,
+        graph_c,
+        edge_map = edge_map
+    )
+
+    expect_identical (attr (result_int, "vertices"), FALSE)
+    expect_type (result_int [[1]] [[1]], "integer")
+    expect_identical (result_int [[1]] [[1]], int_expected)
+    expect_null (result_int [[1]] [[2]])
 })
 
 test_that ("dodgr_one_path_expand on real network", {
@@ -256,17 +315,20 @@ test_that ("dodgr_one_path_expand on real network", {
     }
 
     expect_true (length (path_c_chr) > 2)
-    expect_s3_class (path, "data.frame")
-    expect_identical (names (path), names (graph))
 
-    # expanded path must be contiguous, and trace the same start and end
-    # points as the contracted path from which it was expanded
-    expect_identical (path$to_id [-nrow (path)], path$from_id [-1])
-    expect_identical (path$from_id [1], path_c_chr [1])
-    expect_identical (
-        path$to_id [nrow (path)],
-        path_c_chr [length (path_c_chr)]
-    )
+    # character input returns a structurally-identical character vector of
+    # expanded vertex IDs, tracing the same start and end points as the
+    # contracted path from which it was expanded
+    expect_type (path, "character")
+    expect_identical (path [1], path_c_chr [1])
+    expect_identical (path [length (path)], path_c_chr [length (path_c_chr)])
+
+    # every consecutive pair of vertices in the expanded path must
+    # correspond to an actual edge of the full, uncontracted graph
+    cols <- dodgr_graph_cols (graph)
+    graph_ft <- paste (graph [[cols$from]], graph [[cols$to]])
+    path_ft <- paste (path [-length (path)], path [-1])
+    expect_true (all (path_ft %in% graph_ft))
 
     # explicitly-supplied edge map gives identical result to internal lookup
     edge_map <- get_edge_map (graph)
@@ -277,6 +339,23 @@ test_that ("dodgr_one_path_expand on real network", {
         edge_map = edge_map
     )
     expect_identical (path, path_em)
+
+    # equivalent integer (`vertices = FALSE`-style) path over `graph_c`
+    # returns a structurally-identical integer vector of row indices into
+    # `graph`, tracing the same underlying sequence of edges
+    path_c_int <- match (
+        paste (path_c_chr [-length (path_c_chr)], path_c_chr [-1]),
+        paste (graph_c [[cols$from]], graph_c [[cols$to]])
+    )
+    path_int <- dodgr_one_path_expand (path_c_int, graph, graph_c)
+    expect_type (path_int, "integer")
+    expect_identical (
+        c (
+            graph [[cols$from]] [path_int],
+            graph [[cols$to]] [path_int] [length (path_int)]
+        ),
+        path
+    )
 })
 
 test_that ("dodgr_paths_expand on real network", {
@@ -285,23 +364,24 @@ test_that ("dodgr_paths_expand on real network", {
     verts <- dodgr_vertices (graph_c)
 
     # Same robust candidate search as the 'dodgr_one_path_expand' test above,
-    # used here to find an (origin, destination) pair known to expand
-    # cleanly, so the wrapper can be exercised via `dodgr_paths`' own nested
-    # list output.
+    # used here to find (origin, destination) pairs known to expand cleanly,
+    # so the wrapper can be exercised via `dodgr_paths`' own nested list
+    # output, for both `vertices = TRUE` and `vertices = FALSE`, and for
+    # both the default (cross-product) and `pairwise = TRUE` forms.
     comp_sizes <- table (verts$component)
     largest_comp <- names (comp_sizes) [which.max (comp_sizes)]
     verts <- verts [verts$component == as.integer (largest_comp), ]
     verts <- verts [order (verts$x), ]
 
     n <- nrow (verts)
-    n_candidates <- min (5L, n)
+    n_candidates <- min (10L, n)
     candidates <- Map (
         c,
         seq_len (n_candidates),
         rev (seq_len (n)) [seq_len (n_candidates)]
     )
 
-    from <- to <- NULL
+    good <- list ()
     for (candidate in candidates) {
         from_i <- verts$id [candidate [1]]
         to_i <- verts$id [candidate [2]]
@@ -319,25 +399,73 @@ test_that ("dodgr_paths_expand on real network", {
             "error"
         )
         if (ok) {
-            from <- from_i
-            to <- to_i
+            good [[length (good) + 1L]] <- c (from_i, to_i)
+        }
+        if (length (good) >= 2L) {
             break
         }
     }
-    expect_false (is.null (from))
+    expect_true (length (good) >= 1L)
 
+    from <- vapply (good, `[`, character (1L), 1L)
+    to <- vapply (good, `[`, character (1L), 2L)
+    cols <- dodgr_graph_cols (graph)
+
+    # -- vertices = TRUE: expanded paths are structurally-identical
+    # character vectors of vertex IDs --
     paths_c <- dodgr_paths (graph_c, from = from, to = to)
     paths <- dodgr_paths_expand (paths_c, graph, graph_c)
 
     expect_type (paths, "list")
-    expect_length (paths, 1)
-    expect_length (paths [[1]], 1)
+    expect_identical (attr (paths, "vertices"), attr (paths_c, "vertices"))
+    expect_true (attr (paths, "vertices"))
+    expect_length (paths, length (from))
+    expect_length (paths [[1]], length (to))
 
     path <- paths [[1]] [[1]]
-    path_expected <- dodgr_one_path_expand (paths_c [[1]] [[1]], graph, graph_c)
-    expect_identical (path, path_expected)
+    path_c_chr <- paths_c [[1]] [[1]]
+    expect_type (path, "character")
+    expect_identical (
+        path,
+        dodgr_one_path_expand (path_c_chr, graph, graph_c)
+    )
+    expect_identical (path [1], path_c_chr [1])
+    expect_identical (path [length (path)], path_c_chr [length (path_c_chr)])
 
-    expect_s3_class (path, "data.frame")
-    expect_identical (names (path), names (graph))
-    expect_identical (path$to_id [-nrow (path)], path$from_id [-1])
+    # -- vertices = FALSE: expanded paths are structurally-identical integer
+    # vectors of row indices into `graph`, tracing the same vertex sequence
+    # as the `vertices = TRUE` version above --
+    paths_c_e <- dodgr_paths (graph_c, from = from, to = to, vertices = FALSE)
+    paths_e <- dodgr_paths_expand (paths_c_e, graph, graph_c)
+
+    expect_identical (attr (paths_e, "vertices"), attr (paths_c_e, "vertices"))
+    expect_false (attr (paths_e, "vertices"))
+
+    path_e <- paths_e [[1]] [[1]]
+    expect_type (path_e, "integer")
+    path_e_verts <- c (
+        graph [[cols$from]] [path_e],
+        graph [[cols$to]] [path_e] [length (path_e)]
+    )
+    expect_identical (path_e_verts, path)
+
+    # -- pairwise = TRUE: wrapper correctly handles the pairwise nested
+    # structure (a list of single-element lists), giving identical results
+    # to the corresponding cross-product entries above --
+    paths_c_pw <- dodgr_paths (
+        graph_c,
+        from = from,
+        to = to,
+        pairwise = TRUE
+    )
+    paths_pw <- dodgr_paths_expand (paths_c_pw, graph, graph_c)
+
+    expect_type (paths_pw, "list")
+    expect_true (attr (paths_pw, "vertices"))
+    expect_length (paths_pw, length (from))
+    expect_true (all (vapply (paths_pw, length, integer (1L)) == 1L))
+    expect_identical (paths_pw [[1]] [[1]], path)
+    if (length (from) > 1L) {
+        expect_identical (paths_pw [[2]] [[1]], paths [[2]] [[2]])
+    }
 })

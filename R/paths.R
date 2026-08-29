@@ -21,7 +21,11 @@
 #' if `x <- dodgr_paths (graph, from, to)`, then the path between
 #' `from[i]` and `to[j]` is `x [[i]] [[j]]`. Each individual path is then a
 #' vector of integers indexing into the rows of `graph` if `vertices = FALSE`,
-#' or into the rows of `dodgr_vertices (graph)` if `vertices = TRUE`.
+#' or into the rows of `dodgr_vertices (graph)` if `vertices = TRUE`. The
+#' returned list also has a `vertices` attribute recording the value of the
+#' `vertices` argument used to generate it, so that other functions (such as
+#' \link{dodgr_paths_expand}) can subsequently interpret individual paths
+#' correctly without that argument having to be separately re-specified.
 #'
 #' @note `graph` must minimally contain four columns of `from`,
 #' `to`, `dist`. If an additional column named `weight` or
@@ -169,6 +173,8 @@ dodgr_paths <- function (graph,
         }) # nolint
     }
 
+    attr (paths, "vertices") <- vertices
+
     return (paths)
 }
 
@@ -222,8 +228,12 @@ sort_transitions <- function (graph) {
 #' between the i-th origin and j-th destination points. Each individual path
 #' may be given either as a character vector of vertex IDs (as returned by
 #' \link{dodgr_paths} with `vertices = TRUE`), or as an integer vector of row
-#' indices into `graph_c`. Individual paths which are `NULL` or which trace
-#' only a single vertex (with no transitions) are ignored.
+#' indices into `graph_c` (as returned with `vertices = FALSE`). `paths`
+#' should generally carry the `vertices` attribute attached by
+#' \link{dodgr_paths}, used here to determine the type of the return value
+#' (see 'Value' below); if that attribute is absent, the type of the first
+#' non-`NULL` path is used instead. Individual paths which are `NULL` or
+#' which trace no transitions are ignored.
 #' @param graph The full, uncontracted graph from which `graph_c` was
 #' generated with \link{dodgr_contract_graph}.
 #' @param graph_c The contracted graph on which `paths` was calculated.
@@ -233,11 +243,16 @@ sort_transitions <- function (graph) {
 #' extracted directly from the dodgr cache.
 #'
 #' @return A nested list of the same structure as `paths`, in which
-#' `result [[i]] [[j]]` is a `data.frame` of the rows of `graph`
-#' corresponding to the full, uncontracted sequence of edges traced by
-#' `paths [[i]] [[j]]`, ordered from start to end of that path. Entries for
-#' which the corresponding input path is `NULL` or has no transitions are
-#' returned as `NULL`.
+#' `result [[i]] [[j]]` is the expansion of `paths [[i]] [[j]]` on to the
+#' full, uncontracted sequence of edges of `graph`, ordered from start to end
+#' of that path. Each expanded path is returned in a form structurally
+#' identical to the corresponding input: a character vector of vertex IDs
+#' from `graph` if `paths [[i]] [[j]]` was itself a character vector (that
+#' is, if `paths` was generated with `vertices = TRUE`), or an integer vector
+#' of row indices into `graph` if `paths [[i]] [[j]]` was an integer vector
+#' (`vertices = FALSE`). Entries for which the corresponding input path is
+#' `NULL` or has no transitions are returned as `NULL`. The result also
+#' carries the same `vertices` attribute as `paths`.
 #' @family distances
 #' @export
 #' @examples
@@ -250,35 +265,55 @@ sort_transitions <- function (graph) {
 #' paths <- dodgr_paths_expand (paths_c, graph, graph_c)
 dodgr_paths_expand <- function (paths, graph, graph_c, edge_map = NULL) {
 
+    vertices <- attr (paths, "vertices")
+
     if (is.null (edge_map)) {
         edge_map <- get_edge_map (graph)
     }
 
-    lapply (paths, function (paths_i) {
+    result <- lapply (paths, function (paths_i) {
         lapply (paths_i, function (path_c) {
-            if (is.null (path_c) || length (path_c) < 2) {
+
+            vertices_i <- vertices
+            if (is.null (vertices_i)) {
+                vertices_i <- is.character (path_c)
+            }
+            min_len <- if (vertices_i) 2L else 1L
+
+            if (is.null (path_c) || length (path_c) < min_len) {
                 return (NULL)
             }
             dodgr_one_path_expand (path_c, graph, graph_c, edge_map = edge_map)
         })
     })
+
+    attr (result, "vertices") <- vertices
+
+    result
 }
 
 # Expand a single contracted path back on to the full, uncontracted graph.
 # `path_c` is a single path along a contracted graph, as one element of the
 # nested list produced by \link{dodgr_paths}, given either as a character
 # vector of vertex IDs, or an integer vector of row indices into `graph_c`.
+# The return value is structurally identical to `path_c`: a character vector
+# of the full, uncontracted sequence of vertex IDs from `graph` if `path_c`
+# was character, or an integer vector of row indices into `graph` if
+# `path_c` was integer.
 dodgr_one_path_expand <- function (path_c, graph, graph_c, edge_map = NULL) {
 
+    vertices <- is.character (path_c)
+
     # Ensure the path contains at least one transition
-    if (length (path_c) < 2) {
+    min_len <- if (vertices) 2L else 1L
+    if (length (path_c) < min_len) {
         stop ("There are no transitions.")
     }
 
     # dodgr columns
     cols <- dodgr_graph_cols (graph)
 
-    if (is.character (path_c)) {
+    if (vertices) {
 
         # Reduce size of contracted graph
         keep <- graph_c [[cols$from]] %in% path_c |
@@ -318,10 +353,19 @@ dodgr_one_path_expand <- function (path_c, graph, graph_c, edge_map = NULL) {
     missing_edges <- setdiff (edges, names (edge_map))
     edge_map [missing_edges] <- as.list (missing_edges)
 
-    # Match expanded edge sequence to rows in original graph
+    # Match expanded edge sequence to rows in original graph, ordered from
+    # start to end of the path
     indices <- match (unlist (edge_map [edges]), graph [[cols$edge_id]])
+    indices <- indices [sort_transitions (graph [indices, ])]
 
-    # Return expanded path data.frame, ordered from start to end of the path
-    graph_expanded <- graph [indices, ]
-    graph_expanded [sort_transitions (graph_expanded), ]
+    # Return the expanded path, in the same form as the input `path_c`
+    if (vertices) {
+        graph_expanded <- graph [indices, ]
+        c (
+            graph_expanded [[cols$from]],
+            graph_expanded [[cols$to]] [nrow (graph_expanded)]
+        )
+    } else {
+        indices
+    }
 }

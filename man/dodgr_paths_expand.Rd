@@ -13,8 +13,12 @@ with \link{dodgr_contract_graph}, so that \code{paths [[i]] [[j]]} is the path
 between the i-th origin and j-th destination points. Each individual path
 may be given either as a character vector of vertex IDs (as returned by
 \link{dodgr_paths} with \code{vertices = TRUE}), or as an integer vector of row
-indices into \code{graph_c}. Individual paths which are \code{NULL} or which trace
-only a single vertex (with no transitions) are ignored.}
+indices into \code{graph_c} (as returned with \code{vertices = FALSE}). \code{paths}
+should generally carry the \code{vertices} attribute attached by
+\link{dodgr_paths}, used here to determine the type of the return value
+(see 'Value' below); if that attribute is absent, the type of the first
+non-\code{NULL} path is used instead. Individual paths which are \code{NULL} or
+which trace no transitions are ignored.}
 
 \item{graph}{The full, uncontracted graph from which \code{graph_c} was
 generated with \link{dodgr_contract_graph}.}
@@ -28,11 +32,16 @@ extracted directly from the dodgr cache.}
 }
 \value{
 A nested list of the same structure as \code{paths}, in which
-\code{result [[i]] [[j]]} is a \code{data.frame} of the rows of \code{graph}
-corresponding to the full, uncontracted sequence of edges traced by
-\code{paths [[i]] [[j]]}, ordered from start to end of that path. Entries for
-which the corresponding input path is \code{NULL} or has no transitions are
-returned as \code{NULL}.
+\code{result [[i]] [[j]]} is the expansion of \code{paths [[i]] [[j]]} on to the
+full, uncontracted sequence of edges of \code{graph}, ordered from start to end
+of that path. Each expanded path is returned in a form structurally
+identical to the corresponding input: a character vector of vertex IDs
+from \code{graph} if \code{paths [[i]] [[j]]} was itself a character vector (that
+is, if \code{paths} was generated with \code{vertices = TRUE}), or an integer vector
+of row indices into \code{graph} if \code{paths [[i]] [[j]]} was an integer vector
+(\code{vertices = FALSE}). Entries for which the corresponding input path is
+\code{NULL} or has no transitions are returned as \code{NULL}. The result also
+carries the same \code{vertices} attribute as \code{paths}.
 }
 \description{
 Paths calculated with \link{dodgr_paths} on graphs contracted with

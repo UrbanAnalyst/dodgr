@@ -44,7 +44,11 @@ List of list of paths tracing all connections between nodes such that
 if \code{x <- dodgr_paths (graph, from, to)}, then the path between
 \code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}. Each individual path is then a
 vector of integers indexing into the rows of \code{graph} if \code{vertices = FALSE},
-or into the rows of \code{dodgr_vertices (graph)} if \code{vertices = TRUE}.
+or into the rows of \code{dodgr_vertices (graph)} if \code{vertices = TRUE}. The
+returned list also has a \code{vertices} attribute recording the value of the
+\code{vertices} argument used to generate it, so that other functions (such as
+\link{dodgr_paths_expand}) can subsequently interpret individual paths
+correctly without that argument having to be separately re-specified.
 }
 \description{
 Calculate lists of pair-wise shortest paths between points.
