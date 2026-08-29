@@ -7,6 +7,7 @@
   (either entropic-regularized Sinkhorn scaling, or an exact transportation
   linear program via the newly Suggested `lpSolve` package), and aggregate the
   result on to the network. From #349; thanks to @adivea for the idea.
+- New function, `dodgr_paths_expand()` to expand contracted back to full paths (#334; thanks to @RegularnaMatrica)
 - Replace `digest` dependency with `secretbase` for all internal graph hashing/caching
 
 ## Minor changes
