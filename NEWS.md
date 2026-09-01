@@ -22,6 +22,7 @@
 - Fix bug in `dodgr_times()` with custom routing profiles (#354; thanks to @Mencken1991)
 - Fix CRAN error with comparison on Rcpp::CharacterVector objects (#357)
 - Add `type_col` parameter to `weight_streetnet.sc` method (#341; thanks to @RegularnaMatrica)
+- Automatically use bidirectional A* search for pairwise `dodgr_dists()` and `dodgr_paths()` queries on large, uncontracted graphs, roughly halving the search space explored per query
 
 ---
 
