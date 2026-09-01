@@ -307,14 +307,18 @@ dodgr_vertices_internal <- function (graph) {
 #' column to `data.frame`.
 #'
 #' @param graph A `data.frame` of edges
-#' @return Equivalent graph with additional `component` column,
-#' sequentially numbered from 1 = largest component.
+#' @param strong Defaults to `FALSE',  which may identify components which can
+#' only be accessed from a single direction, and therefore not actually used in
+#' routing calculations. If `TRUE`, all edges in each identified component are
+#' fully connected in both directions.
+#' @return Equivalent graph with additional `component` column, sequentially
+#' numbered from 1 = largest component.
 #' @family modification
 #' @export
 #' @examples
 #' graph <- weight_streetnet (hampi)
 #' graph <- dodgr_components (graph)
-dodgr_components <- function (graph) {
+dodgr_components <- function (graph, strong = FALSE) {
 
     graph <- tbl_to_df (graph)
 
@@ -326,15 +330,15 @@ dodgr_components <- function (graph) {
         if (is.na (gr_cols$edge_id)) {
             graph2$edge_id <- seq_len (nrow (graph2))
         }
-        cns <- rcpp_get_component_vector (graph2)
+        cns <- rcpp_get_component_vector (graph2, strong)
 
         indx <- match (graph2$edge_id, cns$edge_id)
         component <- cns$edge_component [indx]
-        # Then re-number in order to decreasing component size:
-        graph$component <- match (
-            component,
-            order (table (component), decreasing = TRUE)
-        )
+
+        # Number components by decreasing size:
+        freqs <- table (component)
+        sorted_components <- names (freqs) [order (freqs, decreasing = TRUE)]
+        graph$component <- match (as.character (component), sorted_components)
     }
 
     return (graph)

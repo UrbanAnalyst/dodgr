@@ -53,7 +53,7 @@ test_that ("insert_vertex", {
 })
 
 test_that ("components", {
-    graph <- weight_streetnet (hampi)
+    graph <- weight_streetnet (hampi, wt_profile = "foot")
     comp <- graph$component
     graph$component <- NULL
     expect_silent (graph <- dodgr_components (graph))
@@ -86,6 +86,11 @@ test_that ("components", {
     graph$component <- NULL
     expect_silent (graph4 <- dodgr_components (graph))
     expect_identical (graph4$component, graph2$component)
+
+    # Strong components here are identical to default ones:
+    graph$component <- NULL
+    expect_silent (graph5 <- dodgr_components (graph, strong = TRUE))
+    expect_identical (graph5$component, graph2$component)
 })
 
 test_that ("contract graph", {

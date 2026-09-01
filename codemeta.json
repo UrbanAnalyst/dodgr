@@ -11,7 +11,7 @@
   "codeRepository": "https://github.com/UrbanAnalyst/dodgr",
   "issueTracker": "https://github.com/UrbanAnalyst/dodgr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.4.3.055",
+  "version": "0.4.3.058",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -69,6 +69,13 @@
       "givenName": "Eduardo",
       "familyName": "Leoni",
       "@id": "https://orcid.org/0000-0003-0955-5232"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Harry",
+      "familyName": "Roberts",
+      "email": "ts22hr@leeds.ac.uk",
+      "@id": "https://orcid.org/0009-0005-5443-0684"
     }
   ],
   "copyrightHolder": [
