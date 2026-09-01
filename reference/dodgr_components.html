@@ -9,7 +9,7 @@ column to data.frame."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.055</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.058</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ column to <code>data.frame</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dodgr_components</span><span class="op">(</span><span class="va">graph</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dodgr_components</span><span class="op">(</span><span class="va">graph</span>, strong <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -51,11 +51,16 @@ column to <code>data.frame</code>.</p>
 <dl><dt id="arg-graph">graph<a class="anchor" aria-label="anchor" href="#arg-graph"></a></dt>
 <dd><p>A <code>data.frame</code> of edges</p></dd>
 
+
+<dt id="arg-strong">strong<a class="anchor" aria-label="anchor" href="#arg-strong"></a></dt>
+<dd><p>Defaults to <code>FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If </code>TRUE`, all edges in each identified component are
+fully connected in both directions.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Equivalent graph with additional <code>component</code> column,
-sequentially numbered from 1 = largest component.</p>
+    <p>Equivalent graph with additional <code>component</code> column, sequentially
+numbered from 1 = largest component.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

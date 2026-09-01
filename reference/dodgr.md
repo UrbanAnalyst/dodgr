@@ -86,3 +86,6 @@ Other contributors:
 
 - Stanislaw Adaszewski (author of include concaveman-cpp code)
   \[copyright holder\]
+
+- Harry Roberts <ts22hr@leeds.ac.uk>
+  ([ORCID](https://orcid.org/0009-0005-5443-0684)) \[contributor\]

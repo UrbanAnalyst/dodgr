@@ -6,7 +6,7 @@ column to `data.frame`.
 ## Usage
 
 ``` r
-dodgr_components(graph)
+dodgr_components(graph, strong = FALSE)
 ```
 
 ## Arguments
@@ -14,6 +14,13 @@ dodgr_components(graph)
 - graph:
 
   A `data.frame` of edges
+
+- strong:
+
+  Defaults to
+  `FALSE', which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If `TRUE\`,
+  all edges in each identified component are fully connected in both
+  directions.
 
 ## Value
 

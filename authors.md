@@ -26,6 +26,9 @@
 - **Stanislaw Adaszewski**. Copyright holder.  
   author of include concaveman-cpp code
 
+- **Harry Roberts**. Contributor.
+  [](https://orcid.org/0009-0005-5443-0684)
+
 ## Citation
 
 Source:
