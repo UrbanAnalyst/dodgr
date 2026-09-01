@@ -23,7 +23,7 @@ knitr::opts_chunk$set (
 ```
 
 [![R build
-status](https://github.com/UrbanAnalyst/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check)
+status](https://github.com/UrbanAnalyst/dodgr/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/UrbanAnalyst/dodgr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/dodgr)
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
