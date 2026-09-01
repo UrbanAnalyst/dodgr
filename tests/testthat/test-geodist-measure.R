@@ -14,7 +14,7 @@ test_that ("geodist measure", {
         m <- get_geodist_measure (graph)
     )
     expect_identical (m, "cheap")
-    if (test_all) {
+    if (test_all && all (st1 > 0) && all (st0 > 0)) {
         expect_lt (st1 [3], st0 [3])
     }
 

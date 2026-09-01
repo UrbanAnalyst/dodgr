@@ -88,6 +88,39 @@ test_that ("dists-pairwise", {
     expect_identical (dim (d), c (50L, 1L))
 })
 
+test_that ("dists-pairwise contracted spatial non-bidirectional", {
+    # Contracted graphs always have `do_bidirectional = FALSE` (see
+    # `R/dists.R`), regardless of size, so pairwise dists on a contracted,
+    # spatial graph exercise the single-directional `AStar` branch of
+    # `OneDistPaired` in `src/run_sp.cpp`, rather than `AStar2`.
+    graph <- weight_streetnet (hampi)
+    graphc <- dodgr_contract_graph (graph)
+    expect_true (methods::is (graphc, "dodgr_contracted"))
+    expect_true (dodgr:::is_graph_spatial (graphc))
+
+    verts <- dodgr_vertices (graphc)
+    n <- 20L
+    set.seed (1)
+    from <- sample (verts$id, size = n)
+    to <- sample (verts$id, size = n)
+
+    expect_silent (
+        d_pairwise <- dodgr_dists (
+            graphc,
+            from = from, to = to,
+            pairwise = TRUE
+        )
+    )
+    expect_identical (dim (d_pairwise), c (n, 1L))
+
+    # Ground truth from the cross-product form, which does not go through
+    # the `OneDistPaired` worker at all:
+    expect_silent (d_full <- dodgr_dists (graphc, from = from, to = to))
+    d_diag <- vapply (seq_len (n), function (i) d_full [i, i], numeric (1))
+
+    expect_equal (as.numeric (d_pairwise), d_diag, tolerance = 1e-6)
+})
+
 test_that ("times", {
     graph <- weight_streetnet (hampi)
     nf <- 100

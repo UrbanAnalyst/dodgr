@@ -54,7 +54,7 @@ struct AStarHeuristic
 struct DijkstraEdge
 {
     DijkstraEdge (double wt, size_t i): _wt (wt), _i (i) {}
-    
+
     double _wt;
     size_t _i;
 
@@ -71,7 +71,7 @@ struct by_wt
         else
             return lhs._wt < rhs._wt;
     }
-}; 
+};
 
 typedef std::set <DijkstraEdge, by_wt> EdgeSet;
 
@@ -80,9 +80,10 @@ class PathFinder {
     public:
         PathFinder (size_t n,
                 const HeapDesc& heapD,
-                std::shared_ptr<const DGraph> g);
+                std::shared_ptr<const DGraph> g,
+                bool twoheap = false);
         ~PathFinder();
-        
+
         // Disable copy/assign as will crash
         PathFinder(const PathFinder&) = delete;
         PathFinder& operator=(const PathFinder&) = delete;
@@ -112,7 +113,11 @@ class PathFinder {
                 bool *m_open_vec,
                 const bool *m_closed_vec,
                 const size_t &v0,
-                const AStarHeuristic &heur);
+                const double target_x,
+                const double target_y,
+                const std::vector<double> &vx,
+                const std::vector<double> &vy,
+                const bool is_spatial);
         // with A* heuristic for dists-categorical
         void scan_edge_types_heur (
                 const DGraphEdge *edge,
@@ -160,9 +165,40 @@ class PathFinder {
         void AStar (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,
-                const AStarHeuristic& heur,
                 const size_t v0,
-                const std::vector <size_t> &to_index);
+                const std::vector <size_t> &to_index,
+                const double target_x,
+                const double target_y,
+                const std::vector<double> &vx,
+                const std::vector<double> &vy,
+                const bool is_spatial);
+        void AStar2 (std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                const size_t v0,
+                const size_t v1,
+                std::vector<double>& d_rev,
+                std::vector<double>& w_rev,
+                std::vector<long int>& prev_rev,
+                const double target_x,
+                const double target_y,
+                const std::vector<double> &vx,
+                const std::vector<double> &vy,
+                const bool is_spatial);
+        void scan_edges_heur_rev (
+                const DGraphEdge *edge,
+                std::vector<double>& d,
+                std::vector<double>& w,
+                std::vector<long int>& prev,
+                bool *m_open_vec,
+                const bool *m_closed_vec,
+                const size_t &v0,
+                const double target_x,
+                const double target_y,
+                const std::vector<double> &vx,
+                const std::vector<double> &vy,
+                const double h_max,
+                const bool is_spatial);
         void AStarEdgeType (std::vector<double>& d,
                 std::vector<double>& w,
                 std::vector<long int>& prev,
@@ -187,11 +223,15 @@ class PathFinder {
 
     private:
         Heap *m_heap;        // pointer: heap
+        Heap *m_heap_rev;
         // Convert to vector<bool>? (save memory, might be a performance hit though)
         bool *m_open;           // array: frontier set state of vertices
+        bool *m_open2;
         bool *m_closed;         // also for bi-dir
+        bool *m_closed2;
+        bool m_is_bidirectional;
 
-        std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph    
+        std::shared_ptr<const DGraph> m_graph;    // pointer: directed graph
 
         EdgeSet edge_set;
 };

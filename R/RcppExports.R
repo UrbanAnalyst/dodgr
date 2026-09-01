@@ -213,7 +213,7 @@ rcpp_merge_cols <- function (graph) {
 #' in \code{sample_one_vertex}
 #'
 #' @param edge_map edge_map
-#' @return std::vector of 2 elements: [0] with value of largest connected 
+#' @return std::vector of 2 elements: [0] with value of largest connected
 #' component; [1] with random index to one edge that is part of that component.
 #' @noRd
 NULL
@@ -263,7 +263,7 @@ NULL
 #' identify_graph_components
 #'
 #' Identify initial graph components for each **vertex**
-#' Identification for edges is subsequently performed with 
+#' Identification for edges is subsequently performed with
 #' \code{rcpp_get_component_vector}.
 #'
 #' @param v unordered_map <vertex_id_t, vertex_t>
@@ -291,7 +291,7 @@ NULL
 #' identify_graph_strong_components
 #'
 #' Identify initial graph strong components for each **vertex**
-#' Identification for edges is subsequently performed with 
+#' Identification for edges is subsequently performed with
 #' \code{rcpp_get_component_vector}.
 #'
 #' @param v unordered_map <vertex_id_t, vertex_t>
@@ -391,8 +391,8 @@ rcpp_get_sp_dists_nearest <- function (graph, vert_map_in, fromi, toi_in, heap_t
 #' rcpp_get_sp_dists_paired_par
 #'
 #' @noRd
-rcpp_get_sp_dists_paired_par <- function (graph, vert_map_in, fromi, toi, heap_type, is_spatial) {
-    .Call (`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial)
+rcpp_get_sp_dists_paired_par <- function (graph, vert_map_in, fromi, toi, heap_type, is_spatial, do_bidirectional) {
+    .Call (`_dodgr_rcpp_get_sp_dists_paired_par`, graph, vert_map_in, fromi, toi, heap_type, is_spatial, do_bidirectional)
 }
 
 #' rcpp_get_iso
@@ -431,8 +431,8 @@ rcpp_get_paths <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
     .Call (`_dodgr_rcpp_get_paths`, graph, vert_map_in, fromi, toi_in, heap_type)
 }
 
-rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type) {
-    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type)
+rcpp_get_paths_pairwise <- function (graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional) {
+    .Call (`_dodgr_rcpp_get_paths_pairwise`, graph, vert_map_in, fromi, toi_in, heap_type, is_spatial, do_bidirectional)
 }
 
 #' rcpp_get_sp_dists_categorical
