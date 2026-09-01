@@ -46,8 +46,8 @@ dim (graph0)
 dim (graph3)
 }
 \seealso{
-Other modification: 
-\code{\link{dodgr_components}()},
-\code{\link{dodgr_contract_graph}()}
+Other modification:
+\code{\link[=dodgr_components]{dodgr_components()}},
+\code{\link[=dodgr_contract_graph]{dodgr_contract_graph()}}
 }
 \concept{modification}

@@ -33,7 +33,7 @@
 #' # This graph will only include those edges having non-zero flows, and so:
 #' nrow (graph)
 #' nrow (graph_undir) # the latter is much smaller
-merge_directed_graph <- function (graph, col_names = c ("flow")) {
+merge_directed_graph <- function (graph, col_names = "flow") {
 
     # auto-detect either flow or centrality as col_names:
     if (length (col_names) == 1) {
@@ -43,11 +43,11 @@ merge_directed_graph <- function (graph, col_names = c ("flow")) {
         }
     }
     if (!all (col_names %in% names (graph))) {
-        stop (paste0 (
+        stop (
             "col_names [",
             paste (col_names, collapse = ", "),
             "] do not match columns in graph"
-        ))
+        )
     }
 
     gr_cols <- dodgr_graph_cols (graph)
@@ -59,7 +59,7 @@ merge_directed_graph <- function (graph, col_names = c ("flow")) {
     res <- do.call (cbind, res)
     index <- which (rowSums (res) > 0)
     graph <- graph [index, , drop = FALSE] # nolint
-    for (i in seq (col_names)) {
+    for (i in seq_along (col_names)) {
         graph [[col_names [i]]] <- res [index, i]
     } # nolint
     class (graph) <- c (class (graph), "dodgr_merged")

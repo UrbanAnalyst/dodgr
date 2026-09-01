@@ -22,8 +22,8 @@ from either \pkg{sf} or \pkg{silicate} ("sc") data, generated with
 The \code{from} and \code{to} columns of \code{graph} may be either single
 columns of numeric or character values specifying the numbers or names of
 graph vertices, or combinations to two columns specifying geographical
-(longitude and latitude,) coordinates. In the latter case, almost any sensible
-combination of names will be accepted (for example, \verb{fromx, fromy},
+(longitude and latitude,) coordinates. In the latter case, almost any
+sensible combination of names will be accepted (for example, \verb{fromx, fromy},
 \verb{from_x, from_y}, or \verb{fr_lat, fr_lon}.)
 
 Note that longitude and latitude values are always interpreted in 'dodgr' to
@@ -153,11 +153,12 @@ d <- dodgr_dists (graph, from = xy, to = xy)
 }
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_paths}()}
+Other distances:
+\code{\link[=dodgr_distances]{dodgr_distances()}},
+\code{\link[=dodgr_dists]{dodgr_dists()}},
+\code{\link[=dodgr_dists_categorical]{dodgr_dists_categorical()}},
+\code{\link[=dodgr_dists_nearest]{dodgr_dists_nearest()}},
+\code{\link[=dodgr_paths]{dodgr_paths()}},
+\code{\link[=dodgr_paths_expand]{dodgr_paths_expand()}}
 }
 \concept{distances}

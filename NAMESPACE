@@ -22,6 +22,7 @@ export(dodgr_dists_nearest)
 export(dodgr_flowmap)
 export(dodgr_flows_aggregate)
 export(dodgr_flows_disperse)
+export(dodgr_flows_optalloc)
 export(dodgr_flows_si)
 export(dodgr_full_cycles)
 export(dodgr_fundamental_cycles)
@@ -31,6 +32,7 @@ export(dodgr_isodists)
 export(dodgr_isoverts)
 export(dodgr_load_streetnet)
 export(dodgr_paths)
+export(dodgr_paths_expand)
 export(dodgr_sample)
 export(dodgr_save_streetnet)
 export(dodgr_sflines_to_poly)
@@ -62,10 +64,12 @@ importFrom(graphics,plot)
 importFrom(magrittr,"%>%")
 importFrom(memoise,memoise)
 importFrom(methods,is)
-importFrom(osmdata,add_osm_feature)
-importFrom(osmdata,getbb)
-importFrom(osmdata,opq)
-importFrom(osmdata,osm_poly2line)
-importFrom(osmdata,osmdata_sf)
-importFrom(osmdata,trim_osmdata)
+importFrom(osmdata,
+  add_osm_feature,
+  getbb,
+  opq,
+  osm_poly2line,
+  osmdata_sf,
+  trim_osmdata
+)
 useDynLib(dodgr, .registration = TRUE)

@@ -55,10 +55,10 @@ dodgr_graph_cols <- function (graph) {
                 is.numeric (graph [[i]])
             }, logical (1))
             if (!(all (fr_is_num) && all (to_is_num))) {
-                stop (paste0 (
+                stop (
                     "graph appears to have non-numeric ",
                     "longitudes and latitudes"
-                ))
+                )
             }
 
             xfr <- spcols$fr_col [1]
@@ -72,7 +72,7 @@ dodgr_graph_cols <- function (graph) {
         }
     }
 
-    time_col <- grep ("time", nms)
+    time_col <- grep ("time", nms, fixed = TRUE)
     if (length (time_col) != 1) {
         time_col <- grep ("time$", nms)
         if (length (time_col) != 1) {
@@ -168,13 +168,12 @@ convert_to_char <- function (x) {
 tbl_to_df <- function (graph) {
 
     if (methods::is (graph, "tbl")) {
-        classes <- class (graph) [!grepl ("tbl", class (graph))]
+        classes <- class (graph) [!grepl ("tbl", class (graph), fixed = TRUE)]
         graph <- as.data.frame (graph)
         class (graph) <- classes
     }
     return (graph)
 }
-
 
 
 #' Extract vertices of graph, including spatial coordinates if included.
@@ -209,14 +208,14 @@ dodgr_vertices <- function (graph) {
     hash <- attr (graph, hash)
     # make sure rows of graph have not been changed
     gr_cols <- dodgr_graph_cols (graph)
-    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
     if (!identical (hashe, hash)) {
         hash <- NULL
     }
     if (!is.null (hash)) {
         hashe_ref <- attr (graph, "hashe")
         hashe_ref <- ifelse (is.null (hashe_ref), "", hashe_ref)
-        hashe <- digest::digest (graph [[gr_cols$edge_id]])
+        hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
         if (hashe != hashe_ref) {
             hash <- hashe
         }
@@ -276,8 +275,7 @@ dodgr_vertices_internal <- function (graph) {
             y = c (
                 graph [[gr_cols$yfr]],
                 graph [[gr_cols$yto]]
-            ),
-            stringsAsFactors = FALSE
+            )
         )
         if (!is.na (gr_cols$component)) {
             verts$component <- graph [[gr_cols$component]]
@@ -287,8 +285,7 @@ dodgr_vertices_internal <- function (graph) {
             id = c (
                 graph [[gr_cols$from]],
                 graph [[gr_cols$to]]
-            ),
-            stringsAsFactors = FALSE
+            )
         )
         if (!is.na (gr_cols$component)) {
             verts$component <- graph [[gr_cols$component]]
@@ -436,7 +433,7 @@ dodgr_insert_vertex <- function (graph, v1, v2, x = NULL, y = NULL) {
 
     charvec <- c (letters, LETTERS, 0:9)
     randid <- function (charvec, len = 10) {
-        paste0 (sample (charvec, len, replace = TRUE), collapse = "")
+        paste (sample (charvec, len, replace = TRUE), collapse = "")
     }
 
     if (length (index12) == 1) {

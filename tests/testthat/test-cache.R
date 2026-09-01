@@ -13,7 +13,7 @@ if (!test_all) {
 
 test_that ("cache on", {
     expect_silent (hsc <- sf_to_sc (hampi))
-    requireNamespace ("dplyr")
+    requireNamespace ("dplyr", quietly = TRUE)
     expect_silent (graph <- weight_streetnet (hsc))
     expect_message (
         graph <- dodgr_components (graph),
@@ -45,7 +45,7 @@ test_that ("cache on", {
         turn_penalty = TRUE, left_side = TRUE
     )
     # grapht has extra compound edges for turning angles:
-    expect_equal (nrow (grapht), nrow (graph))
+    expect_identical (nrow (grapht), nrow (graph))
     grapht_c <- dodgr_contract_graph (grapht)
     index_f <- which (pts_f %in% graph_c$.vx0)
     index_t <- which (pts_t %in% graph_c$.vx1)
@@ -54,7 +54,7 @@ test_that ("cache on", {
     fmat <- fmat [index_f, index_t]
     # These tests fail on some GitHub runners:
     if (test_all) {
-        expect_true (nrow (graph_c) <= nrow (grapht_c))
+        expect_lte (nrow (graph_c), nrow (grapht_c))
         expect_warning (
             graphtf <- dodgr_flows_aggregate (grapht_c,
                 from = pts_f,
@@ -161,7 +161,11 @@ test_that ("cache off", {
         "graphs with turn penalties should be submitted in full, not contracted form"
     )
     expect_silent (
-        graphtf <- dodgr_flows_disperse (grapht, from = pts_f, dens = rep (1, length (pts_f)))
+        graphtf <- dodgr_flows_disperse (
+            grapht,
+            from = pts_f,
+            dens = rep (1, length (pts_f))
+        )
     )
 
     expect_silent (dodgr_cache_on ())

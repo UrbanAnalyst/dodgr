@@ -141,8 +141,8 @@ plot (graph_sf ["centrality"])
 
 }
 \seealso{
-Other centrality: 
-\code{\link{estimate_centrality_threshold}()},
-\code{\link{estimate_centrality_time}()}
+Other centrality:
+\code{\link[=estimate_centrality_threshold]{estimate_centrality_threshold()}},
+\code{\link[=estimate_centrality_time]{estimate_centrality_time()}}
 }
 \concept{centrality}

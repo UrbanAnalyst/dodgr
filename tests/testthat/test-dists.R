@@ -7,14 +7,14 @@ if (!test_all) {
 
 test_that ("dists", {
     graph <- weight_streetnet (hampi)
-    nf <- 100
-    nt <- 50
+    nf <- 100L
+    nt <- 50L
     set.seed (1)
     from <- sample (graph$from_id, size = nf)
     to <- sample (graph$to_id, size = nt)
     expect_silent (d <- dodgr_distances (graph, from = from, to = to))
-    expect_equal (nrow (d), nf)
-    expect_equal (ncol (d), nt)
+    expect_identical (nrow (d), nf)
+    expect_identical (ncol (d), nt)
     expect_true (all (d [!is.na (d)] >= 0))
     expect_message (
         d2 <- dodgr_dists (graph, from = from, to = to, quiet = FALSE),
@@ -37,8 +37,8 @@ test_that ("dists", {
     from <- data.frame (x = fromx, y = fromy, id = paste0 ("f", 1:nf))
     to <- data.frame (x = tox, y = toy, id = paste0 ("t", 1:nt))
     d <- dodgr_dists (graph, from = from, to = to)
-    expect_equal (nrow (d), nf)
-    expect_equal (ncol (d), nt)
+    expect_identical (nrow (d), nf)
+    expect_identical (ncol (d), nt)
     expect_true (all (d [!is.na (d)] >= 0))
 
     # from as vector
@@ -75,17 +75,17 @@ test_that ("dists", {
 
 test_that ("dists-pairwise", {
     graph <- weight_streetnet (hampi)
-    n <- 50
+    n <- 50L
     set.seed (1)
     from <- sample (graph$from_id, size = n)
     to <- sample (graph$to_id, size = n)
     expect_silent (d <- dodgr_distances (graph, from = from, to = to))
-    expect_equal (dim (d), c (n, n))
+    expect_identical (dim (d), c (n, n))
     expect_silent (d <- dodgr_distances (graph,
         from = from, to = to,
         pairwise = TRUE
     ))
-    expect_equal (dim (d), c (50, 1))
+    expect_identical (dim (d), c (50L, 1L))
 })
 
 test_that ("times", {
@@ -112,12 +112,12 @@ test_that ("times", {
         shortest = FALSE
     )) # default
 
-    expect_true (!identical (d0, d1))
-    expect_true (!identical (d0, t0))
-    expect_true (!identical (d0, t1))
-    expect_true (!identical (d1, t0))
-    expect_true (!identical (d1, t1))
-    expect_true (!identical (t0, t1))
+    expect_false (identical (d0, d1))
+    expect_false (identical (d0, t0))
+    expect_false (identical (d0, t1))
+    expect_false (identical (d1, t0))
+    expect_false (identical (d1, t1))
+    expect_false (identical (t0, t1))
 
     # times are just dists using different columns:
     grapht <- graph
@@ -180,17 +180,17 @@ test_that ("times", {
 
 test_that ("times-pairwise", {
     graph <- weight_streetnet (hampi)
-    n <- 50
+    n <- 50L
     set.seed (1)
     from <- sample (graph$from_id, size = n)
     to <- sample (graph$to_id, size = n)
     expect_silent (d <- dodgr_times (graph, from = from, to = to))
-    expect_equal (dim (d), c (n, n))
+    expect_identical (dim (d), c (n, n))
     expect_silent (d <- dodgr_times (graph,
-                                         from = from, to = to,
-                                         pairwise = TRUE
+        from = from, to = to,
+        pairwise = TRUE
     ))
-    expect_equal (dim (d), c (50, 1))
+    expect_identical (dim (d), c (50L, 1L))
 })
 
 test_that ("all dists", {
@@ -198,8 +198,8 @@ test_that ("all dists", {
     graph <- graph [graph$component == 2, ]
     expect_silent (d <- dodgr_dists (graph))
     v <- dodgr_vertices (graph)
-    expect_equal (nrow (d), ncol (d))
-    expect_equal (nrow (d), nrow (v))
+    expect_identical (nrow (d), ncol (d))
+    expect_identical (nrow (d), nrow (v))
 })
 
 test_that ("to-from-as-integerish", {
@@ -225,13 +225,13 @@ test_that ("to-from-as-integerish", {
     expect_silent (d3 <- dodgr_dists (graph, from = 1L, to = 2L))
     v <- dodgr_vertices (graph)
     expect_false (identical (v$id, as.numeric (seq_along (unique (graph$from)))))
-    expect_true (rownames (d2) == "1")
-    expect_true (rownames (d3) == "1")
+    expect_identical (rownames (d2), "1")
+    expect_identical (rownames (d3), "1")
     expect_false (colnames (d2) == "2")
     expect_false (colnames (d3) == "2")
     real_id <- v$id [2] # = 3
-    expect_true (colnames (d2) == as.character (real_id))
-    expect_true (colnames (d3) == as.character (real_id))
+    expect_identical (colnames (d2), as.character (real_id))
+    expect_identical (colnames (d3), as.character (real_id))
 
     graph <- data.frame (
         from = as.character (c (1, 3, 2, 2, 3, 3, 4, 4)),
@@ -239,8 +239,8 @@ test_that ("to-from-as-integerish", {
         d = c (1, 2, 1, 3, 2, 1, 2, 1)
     )
     d4 <- dodgr_dists (graph, from = "1", to = "2")
-    expect_equal (rownames (d4), "1")
-    expect_equal (colnames (d4), "2")
+    expect_identical (rownames (d4), "1")
+    expect_identical (colnames (d4), "2")
 
 })
 

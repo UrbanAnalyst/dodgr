@@ -44,8 +44,8 @@ test_that ("local wt_profile", {
         wt_profile = "foot",
         wt_profile_file = f
     )
-    expect_true (mean (n2$time) < mean (n0$time))
-    expect_true (mean (n2$time_weighted) < mean (n0$time_weighted))
+    expect_lt (mean (n2$time), mean (n0$time))
+    expect_lt (mean (n2$time_weighted), mean (n0$time_weighted))
     expect_identical (n2$d, n0$d)
     expect_identical (n2$d_weighted, n0$d_weighted)
 
@@ -64,9 +64,9 @@ test_that ("weight_profile structure", {
 
     graph0 <- weight_streetnet (hampi, wt_profile = "foot")
     graph1 <- weight_streetnet (hampi, wt_profile = 1)
-    expect_equal (nrow (graph0), nrow (graph1))
+    expect_identical (nrow (graph0), nrow (graph1))
     expect_identical (graph0$d, graph1$d)
-    expect_true (!identical (graph0$d_weighted, graph1$d_weighted))
+    expect_false (identical (graph0$d_weighted, graph1$d_weighted))
 
     wp <- dodgr::weighting_profiles$weighting_profiles
     wpf <- wp [wp$name == "foot", ]
@@ -75,7 +75,7 @@ test_that ("weight_profile structure", {
 
     wpf$value [wpf$way == "path"] <- 0.9
     graph4 <- weight_streetnet (hampi, wt_profile = wpf)
-    expect_true (!identical (graph0$d_weighted, graph4$d_weighted))
+    expect_false (identical (graph0$d_weighted, graph4$d_weighted))
 
     names (wpf) [3] <- "Value"
     expect_error (
@@ -90,7 +90,7 @@ test_that ("weight_profile structure", {
         }
     }
     hampi2 <- hampi
-    names (hampi2) [grep ("highway", names (hampi2))] <- "waytype"
+    names (hampi2) [grep ("highway", names (hampi2), fixed = TRUE)] <- "waytype"
     expect_error (
         net <- weight_streetnet (hampi2),
         "Please specify type_col to be used for weighting streetnet"
@@ -106,7 +106,7 @@ test_that ("weight_profile structure", {
     attr (g1, "px") <- NULL
 
     expect_identical (g0, g1)
-    names (hampi2) [grep ("osm_id", names (hampi2))] <- "key"
+    names (hampi2) [grep ("osm_id", names (hampi2), fixed = TRUE)] <- "key"
     expect_message (
         net <- weight_streetnet (hampi2, type_col = "waytype"),
         "x appears to have no ID column"
@@ -117,7 +117,7 @@ test_that ("weight_profile structure", {
         }
     }
 
-    names (hampi2) [grep ("key", names (hampi2))] <- "id"
+    names (hampi2) [grep ("key", names (hampi2), fixed = TRUE)] <- "id"
     expect_message (
         net <- weight_streetnet (hampi2, type_col = "waytype"),
         "Using column id as ID column for edges"
@@ -128,7 +128,7 @@ test_that ("weight_profile structure", {
         }
     }
 
-    names (hampi2) [grep ("width", names (hampi2))] <- "w"
+    names (hampi2) [grep ("width", names (hampi2), fixed = TRUE)] <- "w"
     expect_message (
         g1 <- weight_streetnet (hampi2, type_col = "waytype"),
         "Using column id as ID column for edges"

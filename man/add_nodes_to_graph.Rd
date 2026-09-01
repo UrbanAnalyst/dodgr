@@ -58,10 +58,10 @@ graph <- add_nodes_to_graph (graph, xy)
 dim (graph) # more edges than original
 }
 \seealso{
-Other match: 
-\code{\link{match_points_to_graph}()},
-\code{\link{match_points_to_verts}()},
-\code{\link{match_pts_to_graph}()},
-\code{\link{match_pts_to_verts}()}
+Other match:
+\code{\link[=match_points_to_graph]{match_points_to_graph()}},
+\code{\link[=match_points_to_verts]{match_points_to_verts()}},
+\code{\link[=match_pts_to_graph]{match_pts_to_graph()}},
+\code{\link[=match_pts_to_verts]{match_pts_to_verts()}}
 }
 \concept{match}

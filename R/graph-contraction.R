@@ -76,7 +76,9 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
         graph_contracted <- dodgr_contract_graph_internal (graph, v, verts)
 
         gr_cols <- dodgr_graph_cols (graph_contracted$graph)
-        hashe <- digest::digest (graph_contracted$graph [[gr_cols$edge_id]])
+        hashe <- secretbase::siphash13 (
+            hash_cols (graph_contracted$graph, gr_cols)
+        )
         attr (graph_contracted$graph, "hash") <- hash
         attr (graph_contracted$graph, "hashc") <- hashc
         attr (graph_contracted$graph, "hashe") <- hashe
@@ -108,7 +110,8 @@ dodgr_contract_graph <- function (graph, verts = NULL, nocache = FALSE) {
 # These all have either "_start" or "_end" appended to vertex names
 # v is result of `dodgr_vertices` functions.
 get_junction_vertices <- function (v) {
-    gsub ("_start|_end", "", v$id [grep ("_start|_end", v$id)])
+    v_jnctn <- grep ("_start|_end", v$id, value = TRUE)
+    gsub (v_jnctn, pattern = "_start|_end", replacement = "")
 }
 
 dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
@@ -183,11 +186,11 @@ dodgr_contract_graph_internal <- function (graph, v, verts = NULL) {
     }
 
     if (any (grepl ("comp", names (graph), ignore.case = TRUE))) {
-        ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
+        ci <- grep ("comp", names (graph_refill), ignore.case = TRUE)
         cnm <- names (graph_refill) [ci]
         graph_refill [[cnm]] <- NULL
         graph_refill <- dodgr_components (graph_refill)
-        ci <- which (grepl ("comp", names (graph_refill), ignore.case = TRUE))
+        ci <- grep ("comp", names (graph_refill), ignore.case = TRUE)
         names (graph_refill) [ci] <- cnm
     }
 
@@ -307,16 +310,17 @@ dodgr_uncontract_graph <- function (graph) {
 
     gr_cols <- dodgr_graph_cols (graph)
     hashe_ref <- attr (graph, "hashe")
-    hashe <- digest::digest (graph [[gr_cols$edge_id]])
+    hashe <- secretbase::siphash13 (hash_cols (graph, gr_cols))
 
     hash <- attr (graph, "hash")
     fname <- fs::path (fs::path_temp (), paste0 ("dodgr_graph_", hash, ".Rds"))
     if (!fs::file_exists (fname)) {
-        stop (paste0 (
-            "Graph must have been contracted in ", # nocov
-            "current R session; and have retained ", # nocov
-            "the same row structure"
-        ))
+        stop (
+            "Graph must have been contracted in ",
+            "current R session; and have retained ",
+            "the same row structure",
+            call. = FALSE
+        )
     } # nocov
 
     # used below if rows have been removed

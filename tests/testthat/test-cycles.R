@@ -15,7 +15,7 @@ test_that ("dodgr_fundamental_cycles", {
     )
     expect_silent (x <- dodgr_fundamental_cycles (graph))
     expect_is (x, "list")
-    expect_true (length (x) > 1)
+    expect_gt (length (x), 1)
 })
 
 test_that ("cycles_with_max_graph_size", {
@@ -37,7 +37,7 @@ test_that ("cycles_with_max_graph_size", {
         )
     )
     # full_cycles creates the contracted graph, which is < 1000!
-    expect_true (length (x) > 1)
+    expect_gt (length (x), 1)
 })
 
 test_that ("sflines_to_poly", {
@@ -55,19 +55,19 @@ test_that ("sflines_to_poly", {
     expect_silent (p <- dodgr_sflines_to_poly (hampi))
     expect_is (hampi$geometry, "sfc_LINESTRING")
     expect_is (p, "sfc_POLYGON")
-    expect_true (length (p) > 50)
+    expect_gt (length (p), 50)
 
     net <- weight_streetnet (hampi, wt_profile = 1)
 
     net1 <- net [net$component == 1, ]
-    net1$edge_id <- seq (nrow (net1))
+    net1$edge_id <- seq_len (nrow (net1))
     p1 <- dodgr_full_cycles (net1)
 
     net2 <- net [net$component == 2, ]
-    net2$edge_id <- seq (nrow (net2))
+    net2$edge_id <- seq_len (nrow (net2))
     p2 <- dodgr_full_cycles (net2)
 
     # `dodgr_sflines_to_poly` analyses components seperately, so p1 +
     # p2 should give same result:
-    expect_equal (length (p1) + length (p2), length (p))
+    expect_identical (length (p1) + length (p2), length (p))
 })

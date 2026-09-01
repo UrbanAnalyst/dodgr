@@ -328,9 +328,10 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
+
 <!-- markdownlint-disable -->
 
 All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropensci/allcontributors) following the [allcontributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
@@ -520,7 +521,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/sigmafelix">
-<img src="https://avatars.githubusercontent.com/u/25448786?u=92f45291c06443ff01cba29555f309ff3ceccee7&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/25448786?u=f5e4be3902b115098dde473081a4a969a3151cdb&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Asigmafelix">sigmafelix</a>
 </td>
@@ -587,10 +588,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang">xiaofanliang</a>
 </td>
 <td align="center">
-<a href="https://github.com/grobins">
-<img src="https://avatars.githubusercontent.com/u/4343493?u=48c1092702254899739e853db95cb1f704f99971&v=4" width="100px;" alt=""/>
+<a href="https://github.com/riprobins">
+<img src="https://avatars.githubusercontent.com/u/4343493?u=f9800430ffa672e4fc09172887e0159097e0d7c3&v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Agrobins">grobins</a>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ariprobins">riprobins</a>
 </td>
 <td align="center">
 <a href="https://github.com/jucardwell">
@@ -678,6 +679,40 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ARegularnaMatrica">RegularnaMatrica</a>
 </td>
+<td align="center">
+<a href="https://github.com/harrysroberts">
+<img src="https://avatars.githubusercontent.com/u/147940721?u=ce75d3ca13041e1b1895288a6d8481ef8e44e79d&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aharrysroberts">harrysroberts</a>
+</td>
+<td align="center">
+<a href="https://github.com/MarkPaulin">
+<img src="https://avatars.githubusercontent.com/u/50742923?u=5932479fe7f080d4eb13f3b6688f6890b915c0cc&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AMarkPaulin">MarkPaulin</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/adivea">
+<img src="https://avatars.githubusercontent.com/u/7598517?u=cc2f9a8e092ef2d8a4c44bf5f268508c95f13876&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aadivea">adivea</a>
+</td>
+<td align="center">
+<a href="https://github.com/al-obrien">
+<img src="https://avatars.githubusercontent.com/u/37438544?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aal-obrien">al-obrien</a>
+</td>
+<td align="center">
+<a href="https://github.com/Mencken1991">
+<img src="https://avatars.githubusercontent.com/u/102495260?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AMencken1991">Mencken1991</a>
+</td>
 </tr>
 
 </table>
@@ -701,16 +736,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Acoatless">coatless</a>
 </td>
 <td align="center">
-<a href="https://github.com/znmeb">
-<img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb">znmeb</a>
-</td>
-<td align="center">
 <a href="https://github.com/yihui">
 <img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
+</td>
+<td align="center">
+<a href="https://github.com/znmeb">
+<img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb">znmeb</a>
 </td>
 <td align="center">
 <a href="https://github.com/MartinLHazelton">
@@ -723,5 +758,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </table>
 
 <!-- markdownlint-enable -->
+
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->

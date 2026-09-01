@@ -72,17 +72,11 @@ struct OneCategoricalDist : public RcppParallel::Worker
             std::vector <double> d (nverts * (num_edge_types + 1));
             std::vector <long int> prev (nverts);
 
-            std::vector <double> heuristic (nverts, 0.0);
-
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
-            // only implemented for spatial graphs
-            for (size_t j = 0; j < nverts; j++)
-            {
-                const double dx = vx [j] - vx [from_i],
-                    dy = vy [j] - vy [from_i];
-                heuristic [j] = sqrt (dx * dx + dy * dy);
-            }
+            // only implemented for spatial graphs; heuristic values are
+            // computed lazily, only for vertices actually visited by AStar.
+            const PF::AStarHeuristic heuristic (vx, vy, from_i);
             pathfinder->AStarEdgeType (d, w, prev, heuristic, from_i, toi);
 
             for (size_t j = 0; j < toi.size (); j++)
@@ -97,7 +91,7 @@ struct OneCategoricalDist : public RcppParallel::Worker
             }
         }
     }
-                                   
+
 };
 
 struct OnePairedCategoricalDist : public RcppParallel::Worker
@@ -146,18 +140,12 @@ struct OnePairedCategoricalDist : public RcppParallel::Worker
             std::vector <double> d (nverts * (num_edge_types + 1));
             std::vector <long int> prev (nverts);
 
-            std::vector <double> heuristic (nverts, 0.0);
-
             const size_t from_i = static_cast <size_t> (dp_fromi [i]);
             const std::vector <size_t> to_i = { toi [i] };
 
-            // only implemented for spatial graphs
-            for (size_t j = 0; j < nverts; j++)
-            {
-                const double dx = vx [j] - vx [from_i],
-                    dy = vy [j] - vy [from_i];
-                heuristic [j] = sqrt (dx * dx + dy * dy);
-            }
+            // only implemented for spatial graphs; heuristic values are
+            // computed lazily, only for vertices actually visited by AStar.
+            const PF::AStarHeuristic heuristic (vx, vy, from_i);
             pathfinder->AStarEdgeType (d, w, prev, heuristic, from_i, to_i);
 
             for (size_t k = 0; k <= num_edge_types; k++)
@@ -218,17 +206,11 @@ struct OneCategory : public RcppParallel::Worker
             std::vector <double> d (nverts * (num_edge_types + 1));
             std::vector <long int> prev (nverts);
 
-            std::vector <double> heuristic (nverts, 0.0);
-
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
-            // only implemented for spatial graphs
-            for (size_t j = 0; j < nverts; j++)
-            {
-                const double dx = vx [j] - vx [from_i],
-                    dy = vy [j] - vy [from_i];
-                heuristic [j] = sqrt (dx * dx + dy * dy);
-            }
+            // only implemented for spatial graphs; heuristic values are
+            // computed lazily, only for vertices actually visited by AStar.
+            const PF::AStarHeuristic heuristic (vx, vy, from_i);
             pathfinder->AStarEdgeType (d, w, prev, heuristic, from_i, toi);
 
             for (size_t j = 0; j < toi.size (); j++)
@@ -350,7 +332,7 @@ size_t categorical::get_num_edge_types (const std::vector <size_t> &edge_type)
 void PF::PathFinder::AStarEdgeType (std::vector<double>& d,
         std::vector<double>& w,
         std::vector<long int>& prev,
-        const std::vector<double>& heur,
+        const PF::AStarHeuristic& heur,
         const size_t v0,
         const std::vector <size_t> &to_index)
 {
@@ -400,7 +382,7 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
         bool *m_open_vec,
         const bool *m_closed_vec,
         const size_t &v0,
-        const std::vector<double> &heur)    // heuristic for A*
+        const PF::AStarHeuristic &heur)    // heuristic for A*
 {
     const size_t nverts = w.size ();
     const size_t num_edge_types = d.size () / nverts - 1L;

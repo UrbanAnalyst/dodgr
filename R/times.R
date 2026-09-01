@@ -30,6 +30,6 @@ dodgr_times <- function (graph,
         }
         graph [[gr_cols$d_weighted]] <- graph [[gr_cols$time_weighted]]
     }
-    
-    dodgr_dists (graph = graph, from = from, to = to, heap = heap, pairwise= pairwise)
+
+    dodgr_dists (graph = graph, from = from, to = to, shortest = shortest, heap = heap, pairwise = pairwise)
 }

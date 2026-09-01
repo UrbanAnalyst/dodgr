@@ -202,7 +202,14 @@ dodgr_dists_categorical <- function (graph,
 
             n <- length (to)
 
-            if (!proportions_only) {
+            if (proportions_only) {
+
+                res <- colSums (d)
+                res [2:length (res)] <- res [2:length (res)] / res [1]
+                res <- res [-1]
+                names (res) <- names (edge_type_table)
+
+            } else {
 
                 res <- process_categorical_dmat (
                     d,
@@ -211,13 +218,6 @@ dodgr_dists_categorical <- function (graph,
                     vert_map,
                     edge_type_table
                 )
-
-            } else {
-
-                res <- apply (d, 2, sum)
-                res [2:length (res)] <- res [2:length (res)] / res [1]
-                res <- res [-1]
-                names (res) <- names (edge_type_table)
             }
         }
     } else {
@@ -262,7 +262,7 @@ process_categorical_dmat <- function (d, from_index, to_index, vert_map,
 
     d0 <- list ("distances" = d0)
     d <- lapply (seq_along (edge_type_table), function (i) {
-        index <- i * n + seq (n)
+        index <- i * n + seq_len (n)
         res <- d [, index]
         rownames (res) <- rnames
         colnames (res) <- cnames
