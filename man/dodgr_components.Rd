@@ -9,12 +9,12 @@ dodgr_components(graph, strong = FALSE)
 \arguments{
 \item{graph}{A \code{data.frame} of edges}
 
-\item{strong}{A Boolean flag to indicate whether components should be strong,
-i.e. its vertices connected bidirectionally. Defaults to FALSE.}
+\item{strong}{Defaults to \verb{FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If }TRUE`, all edges in each identified component are
+fully connected in both directions.}
 }
 \value{
-Equivalent graph with additional \code{component} column,
-sequentially numbered from 1 = largest component.
+Equivalent graph with additional \code{component} column, sequentially
+numbered from 1 = largest component.
 }
 \description{
 Identify connected components of graph and add corresponding \code{component}
