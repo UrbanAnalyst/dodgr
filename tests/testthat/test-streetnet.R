@@ -8,13 +8,13 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") ||
 test_that ("streetnet bbox", {
 
     set.seed (1)
-    n <- 12
+    n <- 12L
     bbox <- cbind (runif (n), 2 * runif (n))
     bb <- process_bbox (bbox, NULL, 0)
     expect_is (bb, "list")
     expect_length (bb, 2)
-    expect_equal (nrow (bb$bbox), 2)
-    expect_equal (nrow (bb$bbox_poly), n)
+    expect_identical (nrow (bb$bbox), 2L)
+    expect_identical (nrow (bb$bbox_poly), n)
 
     bbox2 <- apply (bbox, 2, range)
     bb2 <- process_bbox (bbox2, NULL, 0)
@@ -23,7 +23,7 @@ test_that ("streetnet bbox", {
     rownames (bbox2) <- c ("min", "max")
     colnames (bbox2) <- c ("x", "y")
     expect_silent (bb3 <- process_bbox (bbox2, NULL, 0))
-    expect_true (!identical (bb2, bb3))
+    expect_false (identical (bb2, bb3))
 
     colnames (bbox) <- c ("x", "y")
     bb4 <- process_bbox (bbox, expand = 0)
@@ -35,7 +35,7 @@ test_that ("streetnet bbox", {
     expect_identical (bb$bbox, bb5$bbox)
 
     expect_silent (bb2 <- process_bbox (list (bbox), NULL, 0))
-    expect_true (!identical (bb, bb2))
+    expect_false (identical (bb, bb2))
 
     bbox <- list (matrix (letters [ceiling (runif (n) * 26)],
         ncol = 2
@@ -62,7 +62,7 @@ test_that ("streetnet bbox", {
 test_that ("streetnet pts", {
 
     set.seed (1)
-    n <- 12
+    n <- 12L
     pts <- cbind (runif (n), 2 * runif (n))
     expect_error (
         bb <- process_bbox (pts = pts, expand = 0),
@@ -76,7 +76,7 @@ test_that ("streetnet pts", {
     expect_silent (bb <- process_bbox (pts = pts, expand = 0))
     # This gives wrong result:
     expect_silent (bb2 <- process_bbox (bbox = pts, expand = 0))
-    expect_true (!identical (bb$bbox, bb2$bbox))
+    expect_false (identical (bb$bbox, bb2$bbox))
 })
 
 
@@ -143,12 +143,12 @@ test_that ("streetnet column names", {
     index <- index [sample (length (index) / 2)]
     h$oneway [index] <- "yes"
     graph1 <- weight_streetnet (h, wt_profile = "bicycle")
-    expect_true (nrow (graph1) < nrow (graph0))
+    expect_lt (nrow (graph1), nrow (graph0))
 
     h ["oneway.bicycle"] <- h$oneway
     h [["oneway.bicycle"]] [index] <- "yes"
     graph2 <- weight_streetnet (h, wt_profile = "bicycle")
-    expect_true (nrow (graph2) == nrow (graph1))
+    expect_identical (nrow (graph2), nrow (graph1))
 
     h ["oneway.bicycle"] <- NULL
     h ["oneway:bicycle"] <- h$oneway
@@ -173,19 +173,19 @@ test_that ("streetnet column names", {
         graph5 <- weight_streetnet (h, wt_profile = "bicycle"),
         "'oneway' column has ambiguous values"
     )
-    expect_equal (nrow (graph5), nrow (graph0))
+    expect_identical (nrow (graph5), nrow (graph0))
 
     h$oneway [2] <- NA_character_
     h$oneway [h$oneway == "no"] <- "false"
     h$oneway [h$oneway == "yes"] <- "true"
     graph6 <- weight_streetnet (h, wt_profile = "bicycle")
-    expect_equal (nrow (graph5), nrow (graph6))
+    expect_identical (nrow (graph5), nrow (graph6))
 
     h$oneway [h$oneway == "false"] <- 0
     h$oneway [h$oneway == "true"] <- 1
     storage.mode (h$oneway) <- "numeric"
     graph7 <- weight_streetnet (h, wt_profile = "bicycle")
-    expect_equal (nrow (graph5), nrow (graph7))
+    expect_identical (nrow (graph5), nrow (graph7))
 
     h$oneway <- as.logical (h$oneway)
     h$oneway [2] <- h$oneway [3] <- TRUE
@@ -260,7 +260,7 @@ test_that ("streetnet times", {
     h <- hampi
     names (h$geometry) <- NULL
     graph4 <- weight_streetnet (h)
-    expect_identical (graph$edge_id, seq (nrow (graph)))
+    expect_identical (graph$edge_id, seq_len (nrow (graph)))
 
     h$oneway_bicycle <- h$oneway
     graph5 <- weight_streetnet (h)
@@ -309,7 +309,7 @@ test_that ("geodesic distances", {
 
     options ("dodgr_dist_measure" = NULL)
     graph <- weight_streetnet (hampi)
-    expect_equal (get_geodist_measure (graph), "cheap")
+    expect_identical (get_geodist_measure (graph), "cheap")
 
     msg <- paste0 (
         "Only graphs created from this point on with ",
@@ -319,16 +319,16 @@ test_that ("geodesic distances", {
     # graphs don't exist in test environments:
     # expect_message (dodgr_streetnet_geodesic (), msg)
     dodgr_streetnet_geodesic ()
-    expect_equal (get_geodist_measure (graph), "geodesic")
+    expect_identical (get_geodist_measure (graph), "geodesic")
     op <- getOption ("dodgr_dist_measure")
     expect_length (op, 1L)
     expect_named (op, "all")
-    expect_equal (op, c (all = "geodesic"))
+    expect_identical (op, c (all = "geodesic"))
 
     graph_gd <- weight_streetnet (hampi)
     dist_diff <- graph$d - graph_gd$d
     # SD of difference in distances should be > 10cm:
-    expect_true (sd (dist_diff) > 0.1)
+    expect_gt (sd (dist_diff), 0.1)
 
     msg <- paste0 (
         "Only graphs created from this point on with ",

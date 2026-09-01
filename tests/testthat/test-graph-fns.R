@@ -10,11 +10,11 @@ test_that ("sample graph", {
 
     graph <- weight_streetnet (hampi)
     set.seed (1)
-    nverts <- 100
+    nverts <- 100L
     graph_s <- dodgr_sample (graph, nverts = nverts)
-    expect_true (nrow (graph_s) < nrow (graph))
+    expect_lt (nrow (graph_s), nrow (graph))
     v <- dodgr_vertices (graph_s)
-    expect_true (nrow (v) == nverts)
+    expect_identical (nrow (v), nverts)
 
     # that sample is only of largest component, so the subsequent code removing
     # component should generate longer distances
@@ -23,9 +23,9 @@ test_that ("sample graph", {
     graph$component <- NULL
     set.seed (1)
     graph_s2 <- dodgr_sample (graph, nverts = nverts)
-    expect_true (nrow (graph_s2) < nrow (graph))
+    expect_lt (nrow (graph_s2), nrow (graph))
     v <- dodgr_vertices (graph_s2)
-    expect_true (nrow (v) == nverts)
+    expect_identical (nrow (v), nverts)
 
     d2 <- mean (geodist::geodist (v))
     # expect_true (d2 > d) # that's not reliably true, but almost always
@@ -34,8 +34,8 @@ test_that ("sample graph", {
     graph$edge_id <- NULL
     expect_silent (graphs <- dodgr_sample (graph, nverts = nverts))
     expect_is (graphs$edge_id, "integer")
-    expect_true (min (graphs$edge_id) >= 1)
-    expect_true (max (graphs$edge_id) <= nrow (graph))
+    expect_gte (min (graphs$edge_id), 1L)
+    expect_lte (max (graphs$edge_id), nrow (graph))
 })
 
 test_that ("insert_vertex", {
@@ -45,7 +45,7 @@ test_that ("insert_vertex", {
     v2 <- graph$to_id [e1]
     expect_silent (graph2 <- dodgr_insert_vertex (graph, v1 = v1, v2 = v2))
     # graph should have two more rows added:
-    expect_equal (nrow (graph2) - 2, nrow (graph))
+    expect_identical (nrow (graph2) - 2L, nrow (graph))
     # graphs should have the same total distance
     expect_equal (sum (graph$d), sum (graph2$d))
     # graphs should have the same total time
@@ -91,13 +91,13 @@ test_that ("components", {
 test_that ("contract graph", {
     graph <- weight_streetnet (hampi)
     expect_silent (graph_c <- dodgr_contract_graph (graph))
-    expect_true (nrow (graph_c) < nrow (graph))
+    expect_lt (nrow (graph_c), nrow (graph))
 
     vc <- dodgr_vertices (graph_c)
     v <- dodgr_vertices (graph)
     verts <- sample (v$id [which (!v$id %in% vc$id)], size = 10)
     expect_silent (graph_c2 <- dodgr_contract_graph (graph, verts = verts))
-    expect_true (nrow (graph_c2) > nrow (graph_c))
+    expect_gt (nrow (graph_c2), nrow (graph_c))
 
     verts <- as.matrix (verts, ncol = 1)
     expect_error (
@@ -123,24 +123,24 @@ test_that ("uncontract graph", {
 
     # dodgr_contract_graph in that case just calls the cached version. This
     # checks re-contraction:
-    graph$edge_id <- seq (nrow (graph))
+    graph$edge_id <- seq_len (nrow (graph))
     graph_c <- dodgr_contract_graph (graph)
     graph2 <- dodgr_uncontract_graph (graph_c)
     expect_identical (dim (graph), dim (graph2))
     expect_identical (graph$edge_id, graph2$edge_id)
 
-    graph_c$edge_id <- seq (nrow (graph_c))
+    graph_c$edge_id <- seq_len (nrow (graph_c))
     graph2 <- dodgr_uncontract_graph (graph_c)
     # with no edge ids, graph uncontraction is not possible:
-    expect_equal (nrow (graph2), 0L)
+    expect_identical (nrow (graph2), 0L)
 })
 
 test_that ("compare heaps", {
     graph <- weight_streetnet (hampi)
     ch <- compare_heaps (graph, nverts = 100)
-    expect_equal (nrow (ch), 11L)
+    expect_identical (nrow (ch), 11L)
     # Test that all dodgr calculations are faster than igraph:
-    igr <- which (grepl ("igraph", ch$expression))
+    igr <- grep ("igraph", ch$expression, fixed = TRUE)
     # expect_true (ch$elapsed [igr] == max (ch$elapsed))
     # This actually fails on some machines (R oldrel on Windows) because elapsed
     # times are sometimes all very small *and equal*, so is turned off:
@@ -151,12 +151,12 @@ test_that ("dodgr2sf", {
     hw <- weight_streetnet (hampi)
     y <- dodgr_to_sfc (hw)
     # y should have more linestrings than the original sf object:
-    expect_true (length (y) > length (hw$geometry))
+    expect_gt (length (y), length (hw$geometry))
 })
 
 test_that ("different geometry columns", {
     h2 <- hampi
-    gcol <- grep ("geometry", names (h2))
+    gcol <- grep ("geometry", names (h2), fixed = TRUE)
     names (h2) [gcol] <- "g"
     attr (h2, "sf_column") <- "g" # not necessary here but should always be done
     expect_silent (net <- weight_streetnet (h2))
@@ -183,16 +183,16 @@ test_that ("no geom rownames", {
     hw0 <- weight_streetnet (hampi)
     g0 <- hampi$geometry
     attr (g0, "names") <- NULL # remove way IDs
-    for (i in seq (g0)) {
+    for (i in seq_along (g0)) {
         rownames (g0 [[i]]) <- NULL
     } # remove all node IDs
     h2 <- hampi
     h2$geometry <- g0
     hw1 <- weight_streetnet (h2)
-    expect_true (!identical (hw0, hw1))
-    expect_equal (ncol (hw0), ncol (hw1))
-    expect_true (!identical (hw0$from_id, hw1$from_id))
-    expect_true (!identical (hw0$to_id, hw1$to_id))
+    expect_false (identical (hw0, hw1))
+    expect_identical (ncol (hw0), ncol (hw1))
+    expect_false (identical (hw0$from_id, hw1$from_id))
+    expect_false (identical (hw0$to_id, hw1$to_id))
 
     indx0 <- which (!names (hw0) %in% c (
         "from_id", "to_id", "way_id",
@@ -210,9 +210,9 @@ test_that ("no geom rownames", {
 
 test_that ("keep cols", {
     hw0 <- weight_streetnet (hampi)
-    expect_equal (ncol (hw0), 16)
+    expect_identical (ncol (hw0), 16L)
     hw1 <- weight_streetnet (hampi, keep_cols = "foot")
-    expect_equal (ncol (hw1), 17)
+    expect_identical (ncol (hw1), 17L)
     expect_true ("foot" %in% names (hw1))
     expect_false ("foot" %in% names (hw0))
 
@@ -292,17 +292,17 @@ test_that ("get_id_cols", {
     n <- 10
     pts <- cbind (runif (n), runif (n))
     expect_null (ids <- get_id_cols (pts))
-    rownames (pts) <- seq (n)
+    rownames (pts) <- seq_len (n)
     expect_is (get_id_cols (pts), "character")
     expect_length (get_id_cols (pts), n)
 
     pts <- runif (n)
     expect_null (get_id_cols (pts))
-    names (pts) <- seq (n)
+    names (pts) <- seq_len (n)
     expect_is (get_id_cols (pts), "character")
     expect_length (get_id_cols (pts), n)
 
-    pts <- cbind (runif (n), runif (n), seq (n))
+    pts <- cbind (runif (n), runif (n), seq_len (n))
     expect_null (get_id_cols (pts))
     colnames (pts) <- c ("a", "b", "id")
     expect_is (get_id_cols (pts), "numeric")
@@ -328,13 +328,13 @@ test_that ("get_pts_index", {
         get_pts_index (graph, gr_cols, vert_map, pts),
         "Unable to determine geographical coordinates in from/to"
     )
-    rownames (pts) <- seq (n)
+    rownames (pts) <- seq_len (n)
     expect_error (
         get_pts_index (graph, gr_cols, vert_map, pts),
         "Unable to determine geographical coordinates in from/to"
     )
 
-    pts <- cbind (runif (n), runif (n), seq (n))
+    pts <- cbind (runif (n), runif (n), seq_len (n))
     colnames (pts) <- c ("a", "b", "id")
     expect_error (
         get_pts_index (graph, gr_cols, vert_map, pts),

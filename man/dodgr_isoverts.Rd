@@ -74,8 +74,8 @@ x <- dodgr_isoverts (graph, from = from, tlim)
 }
 }
 \seealso{
-Other iso: 
-\code{\link{dodgr_isochrones}()},
-\code{\link{dodgr_isodists}()}
+Other iso:
+\code{\link[=dodgr_isochrones]{dodgr_isochrones()}},
+\code{\link[=dodgr_isodists]{dodgr_isodists()}}
 }
 \concept{iso}

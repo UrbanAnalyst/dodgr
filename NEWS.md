@@ -1,13 +1,27 @@
 # v 0.4.3.00x (dev version)
 
+## Major changes
+
+- New function `dodgr_flows_optalloc()`, to allocate flows from source points
+  to capacity-limited target points via an optimal transportation algorithm
+  (either entropic-regularized Sinkhorn scaling, or an exact transportation
+  linear program via the newly Suggested `lpSolve` package), and aggregate the
+  result on to the network. From #349; thanks to @adivea for the idea.
+- New function, `dodgr_paths_expand()` to expand contracted back to full paths (#334; thanks to @RegularnaMatrica)
+- Replace `digest` dependency with `secretbase` for all internal graph hashing/caching
+
 ## Minor changes
 
+- Graph hashes used for caching now also incorporate `d`, `d_weighted`, `time`, and `time_weighted` columns
 - Fix a few minor bugs with compound junction construction (#305, #316)
 - Add `pairwise` parameter to `dodgr_times()`; thanks to @leoniedu (#314)
 - Fix bug with categorical distances that neglected edges through compound junctions (#305)
 - Fix bug in duplicating bi-directional edges in weighted sc-class graphs
-- Added support for strong components in `dodgr_components()` (#322)
-- Added Harry Roberts as a contributor
+- Finally add 'quietly = TRUE' to all `requireNamespace` calls.
+- Bundled GPL-3 license text in `inst/`, as required by bestpractices.dev
+- Fix bug in `dodgr_times()` with custom routing profiles (#354; thanks to @Mencken1991)
+- Fix CRAN error with comparison on Rcpp::CharacterVector objects (#357)
+- Add `type_col` parameter to `weight_streetnet.sc` method (#341; thanks to @RegularnaMatrica)
 
 ---
 

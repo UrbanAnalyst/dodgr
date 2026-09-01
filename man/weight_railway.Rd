@@ -8,7 +8,7 @@ weight_railway(
   x,
   type_col = "railway",
   id_col = "osm_id",
-  keep_cols = c("maxspeed"),
+  keep_cols = "maxspeed",
   excluded = c("abandoned", "disused", "proposed", "razed")
 )
 }
@@ -54,10 +54,10 @@ graph <- weight_railway (dat$osm_lines)
 }
 }
 \seealso{
-Other extraction: 
-\code{\link{dodgr_streetnet}()},
-\code{\link{dodgr_streetnet_geodesic}()},
-\code{\link{dodgr_streetnet_sc}()},
-\code{\link{weight_streetnet}()}
+Other extraction:
+\code{\link[=dodgr_streetnet]{dodgr_streetnet()}},
+\code{\link[=dodgr_streetnet_geodesic]{dodgr_streetnet_geodesic()}},
+\code{\link[=dodgr_streetnet_sc]{dodgr_streetnet_sc()}},
+\code{\link[=weight_streetnet]{weight_streetnet()}}
 }
 \concept{extraction}

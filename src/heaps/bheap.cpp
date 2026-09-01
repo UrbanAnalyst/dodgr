@@ -3,6 +3,7 @@
  *  Mark Padgham, adapted from code by Shane Saunders
  */
 #include "bheap.h"
+#include <algorithm> // std::copy, std::min
 
 /* This implementation stores the binary heap in a 1 dimensional array. */
 
@@ -14,18 +15,13 @@
  */
 BHeap::BHeap(size_t n)
 {
-    //    int i;
-
-    /* For the purpose of indexing the binary heap, we require n+1 elements in
-     * a[] since the indexing method does not use a[0].
-     */
-    a = new BHeapNode[n+1];
+    m_maxn = n;
+    /* a[] is 1-indexed so needs itemCount+1 slots. Start small so the active
+     * portion stays in cache; grow() doubles capacity as needed up to n+1.
+     * aPos[] must remain full-size for O(1) decreaseKey position lookup. */
+    m_capacity = (n < 1022) ? n + 2 : 1024;
+    a = new BHeapNode[m_capacity];
     aPos = new size_t[n];
-    //    for(i = 0; i <= n; i++) {
-    //        a[i].item = 0;
-    //        a[i].key = 0;
-    //    }
-    //    for(i = 0; i < n; i++) aPos[i] = 0;
     itemCount = 0;
     compCount = 0;
 }
@@ -36,6 +32,19 @@ BHeap::~BHeap()
 {
     delete [] a;
     delete [] aPos;
+}
+
+/* --- grow() ---
+ * Doubles the capacity of a[] up to the theoretical maximum (m_maxn + 2).
+ */
+void BHeap::grow()
+{
+    size_t new_cap = std::min(m_capacity * 2, m_maxn + 2);
+    BHeapNode *new_a = new BHeapNode[new_cap];
+    std::copy(a, a + m_capacity, new_a);
+    delete [] a;
+    a = new_a;
+    m_capacity = new_cap;
 }
 
 /* --- min() ---
@@ -66,6 +75,9 @@ void BHeap::insert(size_t item, double key)
 
     /* $i$ initially indexes the new entry at the bottom of the heap */
     i = ++itemCount;
+    if (i >= m_capacity) {
+        grow();
+    }
 
     /* stop if the insertion point reaches the top of the heap */
     while(i >= 2) {

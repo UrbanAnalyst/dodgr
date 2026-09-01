@@ -23,9 +23,9 @@ test_that ("flows aggregate", {
         ),
         "Aggregating flows ..."
     )
-    expect_equal (ncol (graph2) - ncol (graph), 1)
+    expect_identical (ncol (graph2) - ncol (graph), 1L)
     if (test_all) { # fails on CRAN
-        expect_true (mean (graph2$flow) > 0)
+        expect_gt (mean (graph2$flow), 0)
     }
 
     flows [1, 2] <- NA
@@ -58,7 +58,7 @@ test_that ("flows aggregate", {
         flows = flowsv,
         contract = FALSE
     )
-    expect_equal (graph5$flow, graph4$flow)
+    expect_identical (graph5$flow, graph4$flow)
 })
 
 test_that ("pairwise aggregation", {
@@ -82,8 +82,8 @@ test_that ("pairwise aggregation", {
     )
     index0 <- which (graph0$flow > 0)
     index1 <- which (graph1$flow > 0)
-    expect_true (length (index0) > length (index1))
-    expect_true (mean (graph0$flow [index0]) > mean (graph1$flow [index1]))
+    expect_gt (length (index0), length (index1))
+    expect_gt (mean (graph0$flow [index0]), mean (graph1$flow [index1]))
 })
 
 test_that ("flow points", {
@@ -102,7 +102,7 @@ test_that ("flow points", {
         to = to, flows = flows
     ))
     expect_true ("flow" %in% names (graph2))
-    expect_true (ncol (graph2) == (ncol (graph) + 1))
+    expect_identical (ncol (graph2), ncol (graph) + 1L)
 
     npts_half <- floor (npts / 2)
     flows <- flows [seq_len (npts_half), seq_len (npts_half)]
@@ -132,9 +132,9 @@ test_that ("flows disperse", {
         ),
         "Aggregating flows ..."
     )
-    expect_equal (ncol (graph2) - ncol (graph), 1)
+    expect_identical (ncol (graph2) - ncol (graph), 1L)
     if (test_all) { # fails on CRAN
-        expect_true (mean (graph2$flow) > 0)
+        expect_gt (mean (graph2$flow), 0)
     }
 
     expect_silent (
@@ -158,7 +158,7 @@ test_that ("flows disperse", {
     )
     # expect_equal (graph3a$flow, graph3b$flow)
     flow_diff <- abs (graph3a$flow - graph3b$flow)
-    expect_true (max (flow_diff) < 1e-4)
+    expect_lt (max (flow_diff), 1e-4)
 
     k <- c (500, 1000)
     expect_silent (
@@ -171,7 +171,7 @@ test_that ("flows disperse", {
         )
     )
     expect_true (all (c ("flow1", "flow2") %in% names (graph3b)))
-    expect_equal (graph3a$flow, graph3b$flow1)
+    expect_identical (graph3a$flow, graph3b$flow1)
 
     expect_silent (
         graph4 <- dodgr_flows_disperse (
@@ -191,7 +191,7 @@ test_that ("flows disperse", {
     graph5 <- dodgr_flows_disperse (graph, from = from, dens = dens)
     # graph4 values are on contracted graph, so flows should generally be less
     # than those on full graph, but may be every so maginally greater
-    expect_true (max (graph5$flow - graph2$flow) < 0.1)
+    expect_lt (max (graph5$flow - graph2$flow), 0.1)
 })
 
 test_that ("flows_si", {
@@ -235,10 +235,10 @@ test_that ("flows_si", {
         dens_to = dens_to
     )
     expect_identical (dim (netf), dim (netf_si))
-    expect_identical (names (netf), names (netf_si))
+    expect_named (netf, names (netf_si))
     r2 <- cor (netf$flow, netf_si$flow)^2
     if (test_all) {
-        expect_true (r2 > 0.5)
+        expect_gt (r2, 0.5)
     } # sometimes < 0.9
 })
 

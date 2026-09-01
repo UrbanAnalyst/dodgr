@@ -13,18 +13,33 @@ get_hash <- function (graph, verts = NULL, contracted = FALSE, force = FALSE) {
         hash <- attr (graph, ifelse (contracted, "hashc", "hash"))
     }
 
-    if (!contracted) {
+    if (contracted) {
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
-            hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph)))
+            hash <- secretbase::siphash13 (list (
+                hash_cols (graph, gr_cols), names (graph), verts
+            ))
         }
     } else {
         if (is.null (hash)) {
             gr_cols <- dodgr_graph_cols (graph)
-            hash <- digest::digest (list (graph [[gr_cols$edge_id]], names (graph), verts))
+            hash <- secretbase::siphash13 (list (
+                hash_cols (graph, gr_cols), names (graph)
+            ))
         }
     }
     return (hash)
+}
+
+# Columns beyond `edge_id` whose values affect `dodgr` output, and which must
+# therefore also contribute to graph hashes, so that direct edits to weights
+# or distances (without also changing `edge_id`) invalidate caches rather
+# than silently serving stale results. See `?clear_dodgr_cache`.
+hash_cols <- function (graph, gr_cols) {
+    nms <- c ("edge_id", "d", "d_weighted", "time", "time_weighted")
+    idx <- do.call (c, gr_cols [nms])
+    idx <- idx [!is.na (idx)]
+    graph [, idx, drop = FALSE]
 }
 
 get_edge_map <- function (graph) {
@@ -52,15 +67,16 @@ get_edge_map <- function (graph) {
 #' `dodgr_contract_graph`.
 #'
 #' A copy of the original (full) graph is also copied to a file named with the
-#' hash of the edge map. This is needed for graph uncontraction, so that just the
-#' contracted graph and edge map can be submitted, the original graph re-loaded,
+#' hash of the edge map. This is needed for graph uncontraction, so that just
+#' the contracted graph and edge map can be submitted, the original graph
+#' re-loaded,
 #' and the uncontracted version returned.
 #' @noRd
-cache_graph <- function (graph, edge_col) {
+cache_graph <- function (graph, gr_cols) {
 
     td <- fs::path_temp ()
 
-    f <- function (graph, edge_col, td) {
+    f <- function (graph, gr_cols, td) {
 
         # the following line does not generate a coverage symbol because it is
         # cached, so # nocov:
@@ -76,11 +92,18 @@ cache_graph <- function (graph, edge_col) {
         fname <- fs::path (td, paste0 ("dodgr_graph_", hash, ".Rds"))
         saveRDS (graph, fname)
 
-        # The hash for the contracted graph is generated from the edge IDs of
-        # the full graph plus default NULL vertices. Internal functions can not
-        # be called here, so code copied directly from `get_hash`:
-        # hashc <- get_hash (graph, verts = NULL, contracted = TRUE, force = TRUE)
-        hashc <- digest::digest (list (graph [[edge_col]], names (graph), NULL))
+        # The hash for the contracted graph is generated from the edge IDs
+        # and weight/distance columns of the full graph plus default NULL
+        # vertices. Internal functions can not be called here, so code
+        # copied directly from `get_hash` and `hash_cols`:
+        # hashc <-
+        #     get_hash (graph, verts = NULL, contracted = TRUE, force = TRUE)
+        hash_nms <- c ("edge_id", "d", "d_weighted", "time", "time_weighted")
+        hash_idx <- do.call (c, gr_cols [hash_nms])
+        hash_idx <- hash_idx [!is.na (hash_idx)]
+        hashc <- secretbase::siphash13 (list (
+            graph [, hash_idx, drop = FALSE], names (graph), NULL
+        ))
 
         graphc <- dodgr::dodgr_contract_graph (graph)
         fname_c <- fs::path (td, paste0 ("dodgr_graphc_", hashc, ".Rds"))
@@ -113,7 +136,7 @@ cache_graph <- function (graph, edge_col) {
     }
 
     sink (file = fs::path (fs::path_temp (), "Rout.txt"))
-    res <- callr::r_bg (f, list (graph, edge_col, td))
+    res <- callr::r_bg (f, list (graph, gr_cols, td))
     sink ()
 
     return (res) # R6 processx object
@@ -122,12 +145,15 @@ cache_graph <- function (graph, edge_col) {
 #' Remove cached versions of `dodgr` graphs.
 #'
 #' This function should generally \emph{not} be needed, except if graph
-#' structure has been directly modified other than through `dodgr` functions;
-#' for example by modifying edge weights or distances. Graphs are cached based
-#' on the vector of edge IDs, so manual changes to any other attributes will not
-#' necessarily be translated into changes in `dodgr` output unless the cached
-#' versions are cleared using this function. See
-#' \url{https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs}
+#' structure has been directly modified other than through `dodgr` functions.
+#' Graphs are cached based on a hash of the `edge_id`, `d`, `d_weighted`,
+#' `time`, and `time_weighted` columns, so manual changes to any of those will
+#' be detected automatically. Manual changes to any other column or
+#' attribute (for example, `from`/`to` vertex identifiers) will not be
+#' reflected in the hash, and so will not necessarily be translated into
+#' changes in `dodgr` output unless the cached versions are cleared using this
+#' function. See
+#' \url{https://github.com/UrbanAnalyst/dodgr/wiki/Caching-of-streetnets-and-contracted-graphs} # nolint
 #' for details of caching process.
 #'
 #' @return Nothing; the function silently clears any cached objects
@@ -142,7 +168,7 @@ clear_dodgr_cache <- function () {
     lf <- list.files (fs::path_temp (), full.names = TRUE, pattern = "^dodgr_")
     if (length (lf) > 0) {
         tryCatch (
-            chk <- file.remove (lf),
+            file.remove (lf),
             error = function (e) NULL
         )
     }
@@ -177,7 +203,6 @@ dodgr_cache_off <- function () {
 dodgr_cache_on <- function () {
     Sys.setenv ("DODGR_CACHE" = "TRUE")
 }
-
 
 
 is_dodgr_cache_on <- function () {

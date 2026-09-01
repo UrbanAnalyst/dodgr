@@ -12,7 +12,7 @@ vg_check <- function () {
     lost <- NULL
     types <- c ("definitely lost", "indirectly lost", "possibly lost")
     for (ty in types) {
-        lost_type <- which (grepl (ty, vg))
+        lost_type <- grep (ty, vg)
         n <- regmatches (
             vg [lost_type],
             gregexpr ("[[:digit:]]+", vg [lost_type])

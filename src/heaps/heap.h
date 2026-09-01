@@ -37,6 +37,8 @@ class Heap {
         virtual void dump() const = 0;
         // MP: implement getmin fn in BHeap only
         virtual double getmin() = 0;
+        // Reset heap to empty state for PathFinder reuse (BHeap only; no-op for others)
+        virtual void clear() {}
 };
 
 // This is easier than templating, and is only used for a single implementation

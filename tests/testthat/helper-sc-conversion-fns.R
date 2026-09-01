@@ -1,5 +1,5 @@
 genhash <- function (len = 10) {
-    paste0 (sample (c (letters, LETTERS, 0:9), size = len), collapse = "")
+    paste (sample (c (letters, LETTERS, 0:9), size = len), collapse = "")
 }
 
 sf_to_sc <- function (x) {
@@ -8,8 +8,7 @@ sf_to_sc <- function (x) {
     pts <- data.frame (
         "x_" = pts [, 1],
         "y_" = pts [, 2],
-        "vertex_" = rownames (pts),
-        stringsAsFactors = FALSE
+        "vertex_" = rownames (pts)
     )
     pts <- pts [which (!duplicated (pts)), ]
 
@@ -19,26 +18,24 @@ sf_to_sc <- function (x) {
             rownames (i) [2:nrow (i)]
         )
     })
-    for (e in seq (edge)) {
+    for (e in seq_along (edge)) {
         edge [[e]] <- cbind (edge [[e]], names (x$geometry) [e])
     }
-    edge <- data.frame (do.call (rbind, edge), stringsAsFactors = FALSE)
+    edge <- data.frame (do.call (rbind, edge))
     edge$edge_ <- vapply (
-        seq (nrow (edge)), function (i) genhash (10),
+        seq_len (nrow (edge)), function (i) genhash (10),
         character (1)
     )
 
     object_link_edge <- data.frame (
         edge_ = edge$edge_,
         object_ = edge$X3,
-        native_ = TRUE,
-        stringsAsFactors = FALSE
+        native_ = TRUE
     )
     edge <- data.frame (
         ".vx0" = edge$X1,
         ".vx1" = edge$X2,
-        "edge_" = edge$edge_,
-        stringsAsFactors = FALSE
+        "edge_" = edge$edge_
     )
 
     x_no_g <- x
@@ -53,17 +50,14 @@ sf_to_sc <- function (x) {
         res <- cbind (osm_id, i)
         res [which (!is.na (res [, 2])), , drop = FALSE]
     })
-    for (i in seq (x_no_g)) {
+    for (i in seq_along (x_no_g)) {
         x_no_g [[i]] <- cbind (x_no_g [[i]], names (x_no_g) [i])
     }
-    x_no_g <- data.frame (do.call (rbind, x_no_g),
-        stringsAsFactors = FALSE
-    )
+    x_no_g <- data.frame (do.call (rbind, x_no_g))
     object <- data.frame (
         "object_" = x_no_g$osm_id,
         key = x_no_g$V3,
-        value = x_no_g$i,
-        stringsAsFactors = FALSE
+        value = x_no_g$i
     )
     object <- object [order (object$object_), ]
 

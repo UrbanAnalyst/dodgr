@@ -10,7 +10,7 @@ test_that ("deduplicate", {
     # Duplicate some edges:
     set.seed (1L)
     index <- sample (nrow (graph), size = 10)
-    graph <- graph [c (seq (nrow (graph)), index), ]
+    graph <- graph [c (seq_len (nrow (graph)), index), ]
     n1 <- nrow (graph)
 
     # expect_message (
@@ -19,5 +19,5 @@ test_that ("deduplicate", {
     # )
 
     graph_dedup <- dodgr_deduplicate_graph (graph)
-    expect_equal (nrow (graph_dedup), n0)
+    expect_identical (nrow (graph_dedup), n0)
 })

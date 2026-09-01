@@ -37,7 +37,7 @@
 weight_railway <- function (x,
                             type_col = "railway",
                             id_col = "osm_id",
-                            keep_cols = c ("maxspeed"),
+                            keep_cols = "maxspeed",
                             excluded = c (
                                 "abandoned",
                                 "disused",
@@ -81,8 +81,7 @@ weight_railway <- function (x,
     wt_profile <- data.frame (
         name = "custom",
         way = unique (x$highway),
-        value = 1,
-        stringsAsFactors = FALSE
+        value = 1
     )
 
     dat <- rcpp_sf_as_network (x, pr = wt_profile)
@@ -94,8 +93,7 @@ weight_railway <- function (x,
         from_lat = dat$numeric_values [, 3],
         to_id = as.character (dat$character_values [, 2]),
         to_lon = dat$numeric_values [, 4],
-        to_lat = dat$numeric_values [, 5],
-        stringsAsFactors = FALSE
+        to_lat = dat$numeric_values [, 5]
     )
 
     # Get geodist measure, noting that graph has no hash at this stage, so full

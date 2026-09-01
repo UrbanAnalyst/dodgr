@@ -147,7 +147,6 @@ dodgr_dists_nearest <- function (graph,
     return (data.frame (
         from = to_from_indices$from$id,
         to = nearest_ids,
-        d = d,
-        stringsAsFactors = FALSE
+        d = d
     ))
 }

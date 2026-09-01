@@ -44,7 +44,11 @@ List of list of paths tracing all connections between nodes such that
 if \code{x <- dodgr_paths (graph, from, to)}, then the path between
 \code{from[i]} and \code{to[j]} is \code{x [[i]] [[j]]}. Each individual path is then a
 vector of integers indexing into the rows of \code{graph} if \code{vertices = FALSE},
-or into the rows of \code{dodgr_vertices (graph)} if \code{vertices = TRUE}.
+or into the rows of \code{dodgr_vertices (graph)} if \code{vertices = TRUE}. The
+returned list also has a \code{vertices} attribute recording the value of the
+\code{vertices} argument used to generate it, so that other functions (such as
+\link{dodgr_paths_expand}) can subsequently interpret individual paths
+correctly without that argument having to be separately re-specified.
 }
 \description{
 Calculate lists of pair-wise shortest paths between points.
@@ -92,11 +96,12 @@ dp <- dodgr_paths (graph, from = from, to = to, pairwise = TRUE)
 # pairwise from and to point.
 }
 \seealso{
-Other distances: 
-\code{\link{dodgr_distances}()},
-\code{\link{dodgr_dists}()},
-\code{\link{dodgr_dists_categorical}()},
-\code{\link{dodgr_dists_nearest}()},
-\code{\link{dodgr_times}()}
+Other distances:
+\code{\link[=dodgr_distances]{dodgr_distances()}},
+\code{\link[=dodgr_dists]{dodgr_dists()}},
+\code{\link[=dodgr_dists_categorical]{dodgr_dists_categorical()}},
+\code{\link[=dodgr_dists_nearest]{dodgr_dists_nearest()}},
+\code{\link[=dodgr_paths_expand]{dodgr_paths_expand()}},
+\code{\link[=dodgr_times]{dodgr_times()}}
 }
 \concept{distances}

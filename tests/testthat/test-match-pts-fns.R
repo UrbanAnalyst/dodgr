@@ -46,7 +46,7 @@ test_that ("points to verts", {
 
     pts <- data.frame (x = x, y = y)
     expect_silent (index4 <- match_pts_to_verts (v, pts, connected = TRUE))
-    expect_true (!identical (index1, index4))
+    expect_false (identical (index1, index4))
 
     class (pts) <- c (class (pts), "tbl")
     expect_silent (index5 <- match_pts_to_verts (v, pts, connected = TRUE))
@@ -102,7 +102,7 @@ test_that ("points to graph", {
 
     pts <- data.frame (x = x, y = y)
     expect_silent (index4 <- match_pts_to_graph (net, pts, connected = TRUE))
-    expect_true (!identical (index1, index4))
+    expect_false (identical (index1, index4))
 
     class (pts) <- c (class (pts), "tbl")
     expect_silent (index5 <- match_pts_to_graph (net, pts, connected = TRUE))
@@ -130,14 +130,14 @@ test_that ("add nodes to graph", {
     graph1 <- add_nodes_to_graph (graph0, xy)
 
     expect_identical (colnames (graph0), colnames (graph1))
-    expect_true ((nrow (graph1) - nrow (graph0)) > npts)
+    expect_gt (nrow (graph1) - nrow (graph0), npts)
     # actually equals 2 * npts when all edges are bi-directional.
 
     # Should be able to insert multiple repeated nodes in graphs with
     # duplicated edges (see #285):
     graph2 <- rbind (graph0, graph0)
     graph3 <- add_nodes_to_graph (graph2, xy)
-    expect_true (nrow (graph3) - nrow (graph2) > npts)
+    expect_gt (nrow (graph3) - nrow (graph2), npts)
 })
 
 test_that ("match with distances", {
@@ -155,9 +155,9 @@ test_that ("match with distances", {
         res <- match_pts_to_graph (graph0, xy, distances = TRUE)
     )
     expect_s3_class (res, "data.frame")
-    expect_equal (ncol (res), 4L)
-    expect_identical (names (res), c ("index", "d_signed", "x", "y"))
-    expect_true (length (which (res$d_signed < 0)) > 0L)
-    expect_true (length (which (res$d_signed > 0)) > 0L)
-    expect_true (length (which (res$d_signed == 0)) == 0L)
+    expect_identical (ncol (res), 4L)
+    expect_named (res, c ("index", "d_signed", "x", "y"))
+    expect_true (any (res$d_signed < 0))
+    expect_true (any (res$d_signed > 0))
+    expect_false (any (res$d_signed == 0))
 })

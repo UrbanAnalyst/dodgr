@@ -16,8 +16,8 @@ test_that ("igraph", {
     expect_false ("highway" %in% nms1)
 
     graph2 <- igraph_to_dodgr (graph_i)
-    expect_true (!identical (graph, graph2))
-    expect_equal (nrow (graph), nrow (graph2))
+    expect_false (identical (graph, graph2))
+    expect_identical (nrow (graph), nrow (graph2))
 
     expect_error (
         graph_i <- dodgr_to_igraph (graph,
@@ -40,7 +40,7 @@ test_that ("sf", {
     graph <- weight_streetnet (hampi)
     gsfc <- dodgr_to_sfc (graph)
     expect_is (gsfc, "list")
-    expect_equal (length (gsfc), 2)
+    expect_length (gsfc, 2)
 
     gsf1 <- dodgr_to_sf (graph)
     gsf2 <- sf::st_sf (gsfc$dat, geometry = gsfc$geometry, crs = 4326)
