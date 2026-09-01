@@ -255,7 +255,18 @@ struct OneDistPaired : public RcppParallel::Worker
             {
                 long int max_h_index = -1;
                 double max_h_value = -1.0;
-                std::vector <double> heuristic (nverts, 0.0);
+                // This selection needs the heuristic value of every vertex,
+                // so gains nothing from lazy evaluation, unlike the AStar
+                // search itself below.
+                std::vector <double> heuristic (nverts);
+                const double x0 = vx [from_i];
+                const double y0 = vy [from_i];
+                for (size_t j = 0; j < nverts; j++)
+                {
+                    const double dx = vx [j] - x0;
+                    const double dy = vy [j] - y0;
+                    heuristic [j] = sqrt (dx * dx + dy * dy);
+                }
                 for (size_t j = 0; j < nverts; j++)
                 {
                     const double h = heuristic [j];
