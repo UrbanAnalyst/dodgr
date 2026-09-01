@@ -12,14 +12,17 @@ init: ## Initialize pkgdown site
 pkgdown: ## Build entire pkgdown site
 	echo "pkgdown::build_site()" | R --no-save -q
 
+pkgdowncheck: ## Check 'pkgdown' site structure
+	echo "pkgdown::check_pkgdown()" | R --no-save -q
+
 vignette: ## Build pkgdown article
 	echo "pkgdown::build_article('$(VIGNETTE)',quiet=FALSE)" | R --no-save -q
 
-knith: $(LFILE).Rmd ## Render README as HTML
-	echo "rmarkdown::render('$(LFILE).Rmd',output_file='$(LFILE).html')" | R --no-save -q
+knith: $(RFILE).Rmd ## Render README as HTML
+	echo "rmarkdown::render('$(RFILE).Rmd',output_file='$(RFILE).html')" | R --no-save -q
 
-knitr: $(LFILE).Rmd ## Render README as markdown
-	echo "rmarkdown::render('$(LFILE).Rmd',output_file='$(LFILE).md')" | R --no-save -q
+knitr: $(RFILE).Rmd ## Render README as markdown
+	echo "rmarkdown::render('$(RFILE).Rmd',output_file='$(RFILE).md')" | R --no-save -q
 
 open: ## Open main HTML vignette in browser
 	xdg-open docs/articles/$(VIGNETTE).html &
@@ -35,6 +38,9 @@ test: ## Run test suite
 
 pkgcheck: ## Run `pkgcheck` and print results to screen.
 	Rscript -e 'library(pkgcheck); checks <- pkgcheck(); print(checks); summary (checks)'
+
+urls: ## Apply 'urlchecker::url_update()' to update all URLs
+	Rscript -e 'urlchecker::url_update()'
 
 data: ## Run 'data-raw/release-data-script' to (re-)generate release data
 	date; time Rscript "data-raw/release-data-script.R"

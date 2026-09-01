@@ -29,10 +29,10 @@ cor (net0$d, net1$d) # Strongly correlated, but not perfect
 max (abs (net0$d - net1$d)) # in metres
 }
 \seealso{
-Other extraction: 
-\code{\link{dodgr_streetnet}()},
-\code{\link{dodgr_streetnet_sc}()},
-\code{\link{weight_railway}()},
-\code{\link{weight_streetnet}()}
+Other extraction:
+\code{\link[=dodgr_streetnet]{dodgr_streetnet()}},
+\code{\link[=dodgr_streetnet_sc]{dodgr_streetnet_sc()}},
+\code{\link[=weight_railway]{weight_railway()}},
+\code{\link[=weight_streetnet]{weight_streetnet()}}
 }
 \concept{extraction}

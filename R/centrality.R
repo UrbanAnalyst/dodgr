@@ -207,7 +207,7 @@ dodgr_centrality <- function (graph,
 
     if (is_dodgr_cache_on () && edges) {
         # re-cache graph with centrality measure:
-        attr (res, "px") <- cache_graph (res, gr_cols$edge_id)
+        attr (res, "px") <- cache_graph (res, gr_cols)
     }
 
     return (res)
@@ -411,10 +411,7 @@ estimate_centrality_time <- function (graph,
     # final '0' is for sampling calculation to estimate speed - non-zero values
     # used only in 'estimate_centrality_time'
     st <- system.time (
-        x <- rcpp_centrality (
-            graph2, vert_map, heap,
-            dist_threshold, edges, 100
-        )
+        rcpp_centrality (graph2, vert_map, heap, dist_threshold, edges, 100)
     ) [3]
 
     # convert to estimated time for full graph

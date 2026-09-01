@@ -89,7 +89,7 @@ dodgr_fundamental_cycles <- function (graph,
         )
         pb <- utils::txtProgressBar (style = 3)
         res <- list ()
-        for (i in seq (bb_indices)) {
+        for (i in seq_along (bb_indices)) {
             graphi <- graphc [bb_indices [[i]], ]
             verti <- dodgr_vertices (graphi)
             res [[i]] <- rcpp_fundamental_cycles (graphi, verts = verti)
@@ -100,7 +100,7 @@ dodgr_fundamental_cycles <- function (graph,
         # each element of res is a list, so flatten these:
         res <- flatten_list (res)
         # These hash each and remove any duplicated ones:
-        dig <- unlist (lapply (res, digest::digest))
+        dig <- unlist (lapply (res, secretbase::siphash13))
         res <- res [which (!duplicated (dig))]
     }
 
@@ -116,8 +116,7 @@ dodgr_fundamental_cycles <- function (graph,
             data.frame (
                 id = i,
                 x = vertices$x [index],
-                y = vertices$y [index],
-                stringsAsFactors = FALSE
+                y = vertices$y [index]
             )
         })
     }
@@ -149,7 +148,7 @@ get_bb_list <- function (bb, ndivs, expand = 0.05) {
     # divide one column of bb: either lons or lats
     divide_bb_vec <- function (bb, ndivs, colnum = 2, expand) {
         bb <- c (bb [1, colnum], vapply (
-            seq (ndivs), function (i) {
+            seq_len (ndivs), function (i) {
                 bb [1, colnum] + i / ndivs *
                     diff (bb [, colnum])
             },
@@ -163,8 +162,8 @@ get_bb_list <- function (bb, ndivs, expand = 0.05) {
     bb_lons <- divide_bb_vec (bb, ndivs, colnum = 1, expand = expand)
     bb_lats <- divide_bb_vec (bb, ndivs, colnum = 2, expand = expand)
     bb_list <- list ()
-    for (i in seq (ndivs)) {
-        for (j in seq (ndivs)) {
+    for (i in seq_len (ndivs)) {
+        for (j in seq_len (ndivs)) {
             bb_list [[length (bb_list) + 1]] <-
                 cbind (bb_lons [i, ], bb_lats [j, ])
         }
@@ -175,7 +174,7 @@ get_bb_list <- function (bb, ndivs, expand = 0.05) {
 # get indices into graph of edges lying within each bit of a bb_list
 get_bb_indices <- function (graph, bb_list) {
     res <- list ()
-    for (i in seq (bb_list)) {
+    for (i in seq_along (bb_list)) {
         res [[i]] <- which (graph$from_lon > bb_list [[i]] [1, 1] &
             graph$from_lon < bb_list [[i]] [2, 1] &
             graph$from_lat > bb_list [[i]] [1, 2] &
@@ -304,15 +303,13 @@ dodgr_full_cycles <- function (graph,
             data.frame (
                 id = i,
                 x = vertices$x [index],
-                y = vertices$y [index],
-                stringsAsFactors = FALSE
+                y = vertices$y [index]
             )
         })
     }
 
     return (res)
 }
-
 
 
 #' Convert \pkg{sf} `LINESTRING` objects to `POLYGON` objects representing all
@@ -349,9 +346,9 @@ dodgr_sflines_to_poly <- function (sflines,
     comps <- table (graph$component)
     comps <- as.numeric (names (comps) [which (comps > 100)])
     x <- list ()
-    for (i in seq (comps)) {
+    for (i in seq_along (comps)) {
         graphi <- graph [graph$component == comps [i], ]
-        graphi$edge_id <- seq (nrow (graphi))
+        graphi$edge_id <- seq_len (nrow (graphi))
         attr (graphi, "hash") <- NULL
         x [[i]] <- dodgr_full_cycles (graphi,
             graph_max_size = graph_max_size,

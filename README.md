@@ -1,7 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![R build
-status](https://github.com/UrbanAnalyst/dodgr/workflows/R-CMD-check/badge.svg)](https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check)
+status](https://github.com/UrbanAnalyst/dodgr/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/UrbanAnalyst/dodgr/actions?query=workflow%3AR-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/UrbanAnalyst/dodgr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/UrbanAnalyst/dodgr)
 [![Project Status:
 Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -94,7 +94,7 @@ Then load with
 ``` r
 library (dodgr)
 packageVersion ("dodgr")
-#> [1] '0.4.2'
+#> [1] '0.4.3.50'
 ```
 
 ## Important Note
@@ -144,14 +144,14 @@ like this:
 head (graph)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted |
+|----:|----:|:-----|----:|----:|:-----|----:|----:|-----:|-----:|:----|:----|----:|----:|------:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 |
 
 The `geom_num` column maps directly onto the sequence of `LINESTRING`
 objects within the `sf`-formatted data. The `highway` column is taken
@@ -170,14 +170,14 @@ actual distances. Compare this with:
 head (graph [graph$highway == "path", ])
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted |
+|----:|----:|:-----|----:|----:|:-----|----:|----:|-----:|-----:|:----|:----|----:|----:|------:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 |
 
 A `"path"` offers ideal walking conditions, and so weighted distances
 are equal to actual distances.
@@ -302,14 +302,14 @@ quantifying the aggregate flows along each edge:
 head (f)
 ```
 
-| geom_num | edge_id | from_id    | from_lon | from_lat | to_id      |   to_lon |   to_lat |          d | d_weighted | highway | way_id   | component |      time | time_weighted |     flow |
-|---------:|--------:|:-----------|---------:|---------:|:-----------|---------:|---------:|-----------:|-----------:|:--------|:---------|----------:|----------:|--------------:|---------:|
-|        1 |       1 | 339318500  | 76.47491 | 15.34167 | 339318502  | 76.47612 | 15.34173 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 1.316455 |
-|        1 |       2 | 339318502  | 76.47612 | 15.34173 | 339318500  | 76.47491 | 15.34167 | 130.000241 | 130.000241 | path    | 28565950 |         1 | 93.600174 |     93.600174 | 0.000000 |
-|        1 |       3 | 339318502  | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 1.316455 |
-|        1 |       4 | 2398958028 | 76.47621 | 15.34174 | 339318502  | 76.47612 | 15.34173 |   8.890622 |   8.890622 | path    | 28565950 |         1 |  6.401248 |      6.401248 | 0.000000 |
-|        1 |       5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 1.316455 |
-|        1 |       6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 |   9.307736 |   9.307736 | path    | 28565950 |         1 |  6.701570 |      6.701570 | 0.000000 |
+| geom_num | edge_id | from_id | from_lon | from_lat | to_id | to_lon | to_lat | d | d_weighted | highway | way_id | component | time | time_weighted | flow |
+|----:|---:|:----|----:|----:|:----|----:|----:|----:|----:|:---|:----|----:|----:|-----:|----:|
+| 1 | 1 | 339318500 | 76.47491 | 15.34167 | 339318502 | 76.47612 | 15.34173 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 | 0.7674378 |
+| 1 | 2 | 339318502 | 76.47612 | 15.34173 | 339318500 | 76.47491 | 15.34167 | 129.761207 | 129.761207 | path | 28565950 | 1 | 93.428069 | 93.428069 | 2.4285210 |
+| 1 | 3 | 339318502 | 76.47612 | 15.34173 | 2398958028 | 76.47621 | 15.34174 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 | 0.7674378 |
+| 1 | 4 | 2398958028 | 76.47621 | 15.34174 | 339318502 | 76.47612 | 15.34173 | 8.874244 | 8.874244 | path | 28565950 | 1 | 6.389455 | 6.389455 | 2.4285210 |
+| 1 | 5 | 2398958028 | 76.47621 | 15.34174 | 1427116077 | 76.47628 | 15.34179 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 | 0.7674378 |
+| 1 | 6 | 1427116077 | 76.47628 | 15.34179 | 2398958028 | 76.47621 | 15.34174 | 9.311222 | 9.311222 | path | 28565950 | 1 | 6.704080 | 6.704080 | 2.4285210 |
 
 An additional flow aggregation function can be applied in cases where
 only densities at origin points are known, and movement throughout a
@@ -328,17 +328,18 @@ routing](https://UrbanAnalyst.github.io/dodgr/articles/times.html)
 
 ## Contributors
 
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 
-All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropensci/allcontributors) following the [allcontributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+All contributions to this project are gratefully acknowledged using the
+[`allcontributors` package](https://github.com/ropensci/allcontributors)
+following the [allcontributors](https://allcontributors.org)
+specification. Contributions of any kind are welcome!
 
 ### Code
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/mpadge">
@@ -377,8 +378,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=JimShady">JimShady</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/DavisVaughan">
@@ -405,14 +404,11 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/commits?author=virgesmith">virgesmith</a>
 </td>
 </tr>
-
 </table>
-
 
 ### Issue Authors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/chrjangit">
@@ -451,8 +447,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Afzenoni">fzenoni</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/mdsumner">
@@ -491,8 +485,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Adouglascm">douglascm</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/darinchristensen">
@@ -520,7 +512,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </td>
 <td align="center">
 <a href="https://github.com/sigmafelix">
-<img src="https://avatars.githubusercontent.com/u/25448786?u=92f45291c06443ff01cba29555f309ff3ceccee7&v=4" width="100px;" alt=""/>
+<img src="https://avatars.githubusercontent.com/u/25448786?u=f5e4be3902b115098dde473081a4a969a3151cdb&v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Asigmafelix">sigmafelix</a>
 </td>
@@ -531,8 +523,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Apolettif">polettif</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/edzer">
@@ -571,8 +561,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AUrban-JonathanCohen">Urban-JonathanCohen</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/sriramab">
@@ -587,10 +575,10 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axiaofanliang">xiaofanliang</a>
 </td>
 <td align="center">
-<a href="https://github.com/grobins">
-<img src="https://avatars.githubusercontent.com/u/4343493?u=48c1092702254899739e853db95cb1f704f99971&v=4" width="100px;" alt=""/>
+<a href="https://github.com/riprobins">
+<img src="https://avatars.githubusercontent.com/u/4343493?u=f9800430ffa672e4fc09172887e0159097e0d7c3&v=4" width="100px;" alt=""/>
 </a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Agrobins">grobins</a>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Ariprobins">riprobins</a>
 </td>
 <td align="center">
 <a href="https://github.com/jucardwell">
@@ -611,8 +599,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Axtimbeau">xtimbeau</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/pasipasi123">
@@ -651,8 +637,6 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AjuanfonsecaLS1">juanfonsecaLS1</a>
 </td>
 </tr>
-
-
 <tr>
 <td align="center">
 <a href="https://github.com/luukvdmeer">
@@ -678,15 +662,44 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3ARegularnaMatrica">RegularnaMatrica</a>
 </td>
+<td align="center">
+<a href="https://github.com/harrysroberts">
+<img src="https://avatars.githubusercontent.com/u/147940721?u=ce75d3ca13041e1b1895288a6d8481ef8e44e79d&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aharrysroberts">harrysroberts</a>
+</td>
+<td align="center">
+<a href="https://github.com/MarkPaulin">
+<img src="https://avatars.githubusercontent.com/u/50742923?u=5932479fe7f080d4eb13f3b6688f6890b915c0cc&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AMarkPaulin">MarkPaulin</a>
+</td>
 </tr>
-
+<tr>
+<td align="center">
+<a href="https://github.com/adivea">
+<img src="https://avatars.githubusercontent.com/u/7598517?u=cc2f9a8e092ef2d8a4c44bf5f268508c95f13876&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aadivea">adivea</a>
+</td>
+<td align="center">
+<a href="https://github.com/al-obrien">
+<img src="https://avatars.githubusercontent.com/u/37438544?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3Aal-obrien">al-obrien</a>
+</td>
+<td align="center">
+<a href="https://github.com/Mencken1991">
+<img src="https://avatars.githubusercontent.com/u/102495260?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+author%3AMencken1991">Mencken1991</a>
+</td>
+</tr>
 </table>
-
 
 ### Issue Contributors
 
 <table>
-
 <tr>
 <td align="center">
 <a href="https://github.com/richardellison">
@@ -701,16 +714,16 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Acoatless">coatless</a>
 </td>
 <td align="center">
-<a href="https://github.com/znmeb">
-<img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
-</a><br>
-<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb">znmeb</a>
-</td>
-<td align="center">
 <a href="https://github.com/yihui">
 <img src="https://avatars.githubusercontent.com/u/163582?v=4" width="100px;" alt=""/>
 </a><br>
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Ayihui">yihui</a>
+</td>
+<td align="center">
+<a href="https://github.com/znmeb">
+<img src="https://avatars.githubusercontent.com/u/4938?u=e9e8d4bececded56a36606575ae85ab55ab7633c&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3Aznmeb">znmeb</a>
 </td>
 <td align="center">
 <a href="https://github.com/MartinLHazelton">
@@ -719,9 +732,7 @@ All contributions to this project are gratefully acknowledged using the [`allcon
 <a href="https://github.com/UrbanAnalyst/dodgr/issues?q=is%3Aissue+commenter%3AMartinLHazelton">MartinLHazelton</a>
 </td>
 </tr>
-
 </table>
-
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->

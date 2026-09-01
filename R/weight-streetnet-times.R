@@ -8,7 +8,7 @@ has_elevation <- function (x) {
 
 check_sc <- function (x) {
 
-    if (!"osmdata_sc" %in% class (x)) {
+    if (!inherits (x, "osmdata_sc")) {
         stop (
             "weight_streetnet currently only works for 'sc'-class objects ",
             "extracted with osmdata::osmdata_sc."
@@ -130,16 +130,16 @@ convert_oneway_flags <- function (graph) {
             "should be TRUE/FALSE or 'yes'/'no' only",
             call. = FALSE
         )
-        oneway_keys <- oneway_keys [which (oneway_keys %in% c ("0", "1", "y", "n", "t", "f"))]
+        oneway_keys <- oneway_keys [oneway_keys %in% c ("0", "1", "y", "n", "t", "f")]
     }
     if (all (oneway_keys %in% c ("0", "1"))) {
         graph$oneway <- as.logical (graph$oneway)
     } else if (all (oneway_keys %in% c ("y", "n"))) {
         graph$oneway <- tolower (substring (graph$oneway, 1, 1))
-        graph$oneway <- ifelse (graph$oneway == "y", TRUE, FALSE)
+        graph$oneway <- graph$oneway == "y"
     } else if (all (oneway_keys %in% c ("t", "f"))) {
         graph$oneway <- tolower (substring (graph$oneway, 1, 1))
-        graph$oneway <- ifelse (graph$oneway == "t", TRUE, FALSE)
+        graph$oneway <- graph$oneway == "t"
     }
 
     return (graph)
@@ -156,7 +156,7 @@ set_oneway_flags <- function (graph, bikeflags, wt_profile) {
             graph$oneway_bicycle [index] <- "no"
         }
         graph$oneway_bicycle <-
-            ifelse (graph$oneway_bicycle == "no", FALSE, TRUE)
+            graph$oneway_bicycle != "no"
 
         if (wt_profile == "bicycle") {
             graph$oneway <- graph$oneway_bicycle
@@ -167,7 +167,7 @@ set_oneway_flags <- function (graph, bikeflags, wt_profile) {
     return (graph)
 }
 
-weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
+weight_sc_edges <- function (graph, wt_profile, wt_profile_file, type_col = "highway") {
 
     # no visible binding notes:
     value <- d <- d_weighted <- NULL
@@ -175,7 +175,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
     wp <- get_profile (wt_profile, wt_profile_file)
     wp <- wp [, c ("way", "value")]
 
-    res <- dplyr::left_join (graph, wp, by = c ("highway" = "way")) %>%
+    res <- dplyr::left_join (graph, wp, by = stats::setNames ("way", type_col)) %>%
         dplyr::filter (!is.na (value)) %>%
         dplyr::mutate (d_weighted = ifelse (value == 0, NA, d / value)) %>%
         dplyr::filter (!is.na (d_weighted)) %>%
@@ -187,7 +187,7 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
             res <- res [-index, ]
         }
         # Plus remove any untagged "motorway" or "trunk" edges
-        index <- grep ("^(motorway|trunk)", res$highway)
+        index <- grep ("^(motorway|trunk)", res [[type_col]])
         if (length (index) > 0L) {
             res <- res [-index, ]
         }
@@ -197,17 +197,17 @@ weight_sc_edges <- function (graph, wt_profile, wt_profile_file) {
 }
 
 # Set maximum speed for each edge.
-set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
+set_maxspeed <- function (graph, wt_profile, wt_profile_file, type_col) {
 
     if (!"maxspeed" %in% names (graph)) {
         graph$maxspeed <- NA_real_
     } # nocov
-    if (!"highway" %in% names (graph)) {
+    if (!type_col %in% names (graph)) {
         return (graph)
     } # nocov
 
     maxspeed <- rep (NA_real_, nrow (graph))
-    index <- grep ("mph", graph$maxspeed)
+    index <- grep ("mph", graph$maxspeed, fixed = TRUE)
     maxspeed [index] <- as.numeric (gsub (
         "[^[:digit:]. ]", "",
         graph$maxspeed [index]
@@ -221,8 +221,8 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     maxspeed_char <- gsub ("[[:punct:]].*$", "", maxspeed_char)
     # some (mostly Austria and Germany) have "maxspeed:walk" for living streets.
     # This has no numeric value, but is replaced here with 10km/h
-    maxspeed_char <- gsub ("walk", "10", maxspeed_char)
-    maxspeed_char <- gsub ("none", NA, maxspeed_char)
+    maxspeed_char <- gsub ("walk", "10", maxspeed_char, fixed = TRUE)
+    maxspeed_char <- gsub ("none", NA, maxspeed_char, fixed = TRUE)
     index2 <- which (!(is.na (maxspeed_char) |
         maxspeed_char == "" |
         maxspeed_char == "NA"))
@@ -240,14 +240,14 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     if (wt_profile == "motorcar") {
 
         med_speeds <- vapply (
-            unique (graph$highway), function (h) {
-                stats::median (graph$maxspeed [graph$highway == h],
+            unique (graph [[type_col]]), function (h) {
+                stats::median (graph$maxspeed [graph [[type_col]] == h],
                     na.rm = TRUE
                 )
             },
             numeric (1L)
         )
-        wp_index <- match (graph$highway, names (med_speeds))
+        wp_index <- match (graph [[type_col]], names (med_speeds))
         index <- which (is.na (graph$maxspeed))
         graph$maxspeed [index] <- med_speeds [wp_index [index]]
 
@@ -256,7 +256,7 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     # Then fill any NA maxspeed values from weight profile
     wp <- get_profile (wt_profile, wt_profile_file)
 
-    wp_index <- match (graph$highway, wp$way)
+    wp_index <- match (graph [[type_col]], wp$way)
     graph_index <- which (!is.na (wp_index))
     wp_index <- wp_index [graph_index]
     maxspeed <- cbind (graph$maxspeed, rep (NA, nrow (graph)))
@@ -276,10 +276,10 @@ set_maxspeed <- function (graph, wt_profile, wt_profile_file) {
     }
 
     na_highways <- wp$way [which (is.na (wp$max_speed))]
-    graph$maxspeed [graph$highway %in% na_highways] <- NA_real_
+    graph$maxspeed [graph [[type_col]] %in% na_highways] <- NA_real_
     # Also set weighted distance for all these to NA:
     # gr_cols <- dodgr_graph_cols (graph)
-    # graph [[gr_cols$d_weighted]] [graph$highway %in% na_highways] <- NA_real_
+    # graph [[gr_cols$d_weighted]] [graph [[type_col]] %in% na_highways] <- NA_real_
 
     if (wt_profile %in% c ("horse", "wheelchair") ||
         !"surface" %in% names (graph)) {
@@ -327,7 +327,7 @@ weight_by_num_lanes <- function (graph, wt_profile) {
 
     lns <- c (4, 5, 6, 7, 8)
     wts <- c (0.05, 0.05, 0.1, 0.1, 0.2)
-    for (i in seq (lns)) {
+    for (i in seq_along (lns)) {
         index <- which (graph$lanes == lns [i])
         if (i == length (lns)) {
             index <- which (graph$lanes >= lns [i])
@@ -508,7 +508,6 @@ swap_cols <- function (x, cola, colb) {
     x [[colb]] <- temp
     return (x)
 }
-
 
 
 # traffic lights for pedestrians

@@ -20,11 +20,11 @@ graph <- weight_streetnet (hampi)
 grapht <- dodgr_to_tidygraph (graph)
 }
 \seealso{
-Other conversion: 
-\code{\link{dodgr_deduplicate_graph}()},
-\code{\link{dodgr_to_igraph}()},
-\code{\link{dodgr_to_sf}()},
-\code{\link{dodgr_to_sfc}()},
-\code{\link{igraph_to_dodgr}()}
+Other conversion:
+\code{\link[=dodgr_deduplicate_graph]{dodgr_deduplicate_graph()}},
+\code{\link[=dodgr_to_igraph]{dodgr_to_igraph()}},
+\code{\link[=dodgr_to_sf]{dodgr_to_sf()}},
+\code{\link[=dodgr_to_sfc]{dodgr_to_sfc()}},
+\code{\link[=igraph_to_dodgr]{igraph_to_dodgr()}}
 }
 \concept{conversion}

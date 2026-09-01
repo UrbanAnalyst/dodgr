@@ -92,6 +92,15 @@ struct OneDist : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        // Allocate once per chunk; PathFinder::init_arrays resets state each call.
+        // Reuse requires BHeap (clear() is a no-op for other heap types).
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <long int> prev (nverts);
+
         for (std::size_t i = begin; i < end; i++)
         {
             std::shared_ptr<PF::PathFinder> pathfinder =
@@ -154,15 +163,15 @@ struct OneDistNearest : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <long int> prev (nverts);
+
         for (std::size_t i = begin; i < end; i++)
         {
-            std::shared_ptr<PF::PathFinder> pathfinder =
-                std::make_shared <PF::PathFinder> (nverts,
-                        *run_sp::getHeapImpl (heap_type), g);
-            std::vector <double> w (nverts);
-            std::vector <double> d (nverts);
-            std::vector <long int> prev (nverts);
-
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             pathfinder->DijkstraNearest (d, w, prev, from_i, toi);
@@ -216,6 +225,13 @@ struct OneDistPaired : public RcppParallel::Worker
     // Parallel function operator
     void operator() (std::size_t begin, std::size_t end)
     {
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <long int> prev (nverts);
+
         for (std::size_t i = begin; i < end; i++)
         {
             std::shared_ptr<PF::PathFinder> pathfinder =
@@ -242,11 +258,9 @@ struct OneDistPaired : public RcppParallel::Worker
                 std::vector <double> heuristic (nverts, 0.0);
                 for (size_t j = 0; j < nverts; j++)
                 {
-                    const double dx = vx [j] - vx [from_i],
-                        dy = vy [j] - vy [from_i];
-                    heuristic [j] = sqrt (dx * dx + dy * dy);
-                    if (heuristic [j] > max_h_value) {
-                        max_h_value = heuristic [j];
+                    const double h = heuristic [j];
+                    if (h > max_h_value) {
+                        max_h_value = h;
                         max_h_index = static_cast <long int> (j);
                     }
                 }
@@ -255,8 +269,9 @@ struct OneDistPaired : public RcppParallel::Worker
                 long int min_h_index = max_h_index;
                 const double thr = 0.1;
                 for (size_t j = 0; j < nverts; j++) {
-                    if ((heuristic [j] < (thr * htemp)) && (heuristic [j] > min_h_value)) {
-                        min_h_value = heuristic [j];
+                    const double h = heuristic [j];
+                    if ((h < (thr * htemp)) && (h > min_h_value)) {
+                        min_h_value = h;
                         min_h_index = static_cast <long int> (j);
                     }
                 }
@@ -305,19 +320,15 @@ struct OneIso : public RcppParallel::Worker
     {
         const double dlimit_max = *std::max_element (dlimit.begin (), dlimit.end ());
 
+        std::shared_ptr<PF::PathFinder> pathfinder =
+            std::make_shared <PF::PathFinder> (nverts,
+                    *run_sp::getHeapImpl (heap_type), g);
+        std::vector <double> w (nverts);
+        std::vector <double> d (nverts);
+        std::vector <long int> prev (nverts);
+
         for (std::size_t i = begin; i < end; i++)
         {
-            std::shared_ptr<PF::PathFinder> pathfinder =
-                std::make_shared <PF::PathFinder> (nverts,
-                        *run_sp::getHeapImpl (heap_type), g);
-            std::vector <double> w (nverts);
-            std::vector <double> d (nverts);
-            std::vector <long int> prev (nverts);
-
-            std::fill (w.begin (), w.end (), INFINITE_DOUBLE);
-            std::fill (d.begin (), d.end (), INFINITE_DOUBLE);
-            std::fill (prev.begin (), prev.end (), INFINITE_INT);
-
             size_t from_i = static_cast <size_t> (dp_fromi [i]);
 
             pathfinder->DijkstraLimit (d, w, prev, from_i, dlimit_max);
@@ -640,20 +651,14 @@ Rcpp::NumericMatrix rcpp_get_sp_dists (const Rcpp::DataFrame graph,
             static_cast <int> (nto), na_vec.begin ());
 
 
+    std::shared_ptr <PF::PathFinder> pathfinder =
+        std::make_shared <PF::PathFinder> (
+            nverts, *run_sp::getHeapImpl(heap_type), g);
+
     for (size_t i = 0; i < nfrom; i++)
     {
-        // These lines (re-)initialise the heap, so have to be called for each v
-        std::shared_ptr <PF::PathFinder> pathfinder =
-            std::make_shared <PF::PathFinder> (
-                nverts, *run_sp::getHeapImpl(heap_type), g);
-
-        pathfinder->init (g); // specify the graph
-
         Rcpp::checkUserInterrupt ();
-        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
-        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
         size_t fromi_i = static_cast <size_t> (fromi [static_cast <R_xlen_t> (i)]);
-        d [fromi_i] = w [fromi_i] = 0.0;
 
         pathfinder->Dijkstra (d, w, prev, fromi_i, toi);
         for (size_t j = 0; j < nto; j++)
@@ -718,6 +723,10 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
     std::vector<double> d (nverts);
     std::vector<long int> prev (nverts);
 
+    std::shared_ptr<PF::PathFinder> pathfinder =
+        std::make_shared <PF::PathFinder> (nverts,
+            *run_sp::getHeapImpl(heap_type), g);
+
     for (size_t i = 0; i < nfrom; i++)
     {
         const R_xlen_t i_R = static_cast <R_xlen_t> (i);
@@ -730,11 +739,6 @@ Rcpp::List rcpp_get_paths (const Rcpp::DataFrame graph,
         pathfinder->init (g); // specify the graph
 
         Rcpp::checkUserInterrupt ();
-        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
-        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
-        std::fill (prev.begin(), prev.end(), INFINITE_INT);
-        d [static_cast <size_t> (fromi [i_R])] =
-            w [static_cast <size_t> (fromi [i_R])] = 0.0;
 
         pathfinder->Dijkstra (d, w, prev,
                 static_cast <size_t> (fromi [i_R]), toi);
@@ -821,11 +825,6 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
         pathfinder->init (g); // specify the graph
 
         Rcpp::checkUserInterrupt ();
-        std::fill (w.begin(), w.end(), INFINITE_DOUBLE);
-        std::fill (d.begin(), d.end(), INFINITE_DOUBLE);
-        std::fill (prev.begin(), prev.end(), INFINITE_INT);
-        d [static_cast <size_t> (fromi [i_R])] =
-            w [static_cast <size_t> (fromi [i_R])] = 0.0;
 
         if (do_bidirectional) {
             std::vector<double> w_rev (nverts);

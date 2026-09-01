@@ -68,6 +68,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Mark Padgham \email{mark.padgham@email.com}
   \item Andreas Petutschnig
   \item David Cooley
 }
@@ -81,6 +82,7 @@ Other contributors:
   \item Eduardo Leoni (\href{https://orcid.org/0000-0003-0955-5232}{ORCID}) [contributor]
   \item Shane Saunders (Original author of included code for priority heaps) [copyright holder]
   \item Stanislaw Adaszewski (author of include concaveman-cpp code) [copyright holder]
+  \item Harry Roberts \email{ts22hr@leeds.ac.uk} (\href{https://orcid.org/0009-0005-5443-0684}{ORCID}) [contributor]
 }
 
 }

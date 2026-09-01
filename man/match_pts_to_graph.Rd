@@ -64,10 +64,10 @@ edges <- match_pts_to_graph (graph, xy)
 graph [edges, ] # The edges of the graph closest to `xy`
 }
 \seealso{
-Other match: 
-\code{\link{add_nodes_to_graph}()},
-\code{\link{match_points_to_graph}()},
-\code{\link{match_points_to_verts}()},
-\code{\link{match_pts_to_verts}()}
+Other match:
+\code{\link[=add_nodes_to_graph]{add_nodes_to_graph()}},
+\code{\link[=match_points_to_graph]{match_points_to_graph()}},
+\code{\link[=match_points_to_verts]{match_points_to_verts()}},
+\code{\link[=match_pts_to_verts]{match_pts_to_verts()}}
 }
 \concept{match}

@@ -51,10 +51,10 @@ find_spatial_cols <- function (graph) {
     to_col <- find_to_col (graph)
 
     if (length (fr_col) < 2 || length (to_col) < 2) {
-        stop (paste0 (
+        stop (
             "Graph appears to be spatial yet unable to ",
             "extract coordinates."
-        ))
+        )
     }
 
     if (length (fr_col) == 3) {
@@ -100,8 +100,7 @@ find_spatial_cols <- function (graph) {
         to_col = to_col,
         xy_id = data.frame (
             xy_fr_id = xy_fr_id,
-            xy_to_id = xy_to_id,
-            stringsAsFactors = FALSE
+            xy_to_id = xy_to_id
         )
     )
 }

@@ -1,6 +1,6 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.4.3.021
+Version: 0.4.3.060
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
     person("Andreas", "Petutschnig", role = "aut"),
@@ -8,12 +8,16 @@ Authors@R: c(
     person("Robin", "Lovelace", role = "ctb"),
     person("Andrew", "Smith", role = "ctb"),
     person("Malcolm", "Morgan", role = "ctb"),
-    person("Andrea", "Gilardi", role="ctb", comment = c(ORCID = "0000-0002-9424-7439")),
-    person("Eduardo", "Leoni", role="ctb", comment = c(ORCID = "0000-0003-0955-5232")),
+    person("Andrea", "Gilardi", role = "ctb",
+           comment = c(ORCID = "0000-0002-9424-7439")),
+    person("Eduardo", "Leoni", role = "ctb",
+           comment = c(ORCID = "0000-0003-0955-5232")),
     person("Shane", "Saunders", role = "cph",
            comment = "Original author of included code for priority heaps"),
     person("Stanislaw", "Adaszewski", role = "cph",
-           comment = "author of include concaveman-cpp code") 
+           comment = "author of include concaveman-cpp code"),
+    person("Harry", "Roberts", , "ts22hr@leeds.ac.uk", role = "ctb",
+           comment = c(ORCID = "0009-0005-5443-0684"))
   )
 Description: Distances on dual-weighted directed graphs using
     priority-queue shortest paths (Padgham (2019) <doi:10.32866/6945>).
@@ -31,7 +35,6 @@ Depends:
     R (>= 3.5.0)
 Imports:
     callr,
-    digest,
     fs,
     geodist (>= 0.1.0),
     magrittr,
@@ -39,7 +42,8 @@ Imports:
     methods,
     osmdata,
     Rcpp (>= 0.12.6),
-    RcppParallel
+    RcppParallel,
+    secretbase
 Suggests:
     bench,
     dplyr,
@@ -48,6 +52,7 @@ Suggests:
     igraphdata,
     jsonlite,
     knitr,
+    lpSolve,
     markdown,
     rmarkdown,
     sf,
@@ -63,5 +68,5 @@ Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 SystemRequirements: GNU make
+Config/roxygen2/version: 8.1.0

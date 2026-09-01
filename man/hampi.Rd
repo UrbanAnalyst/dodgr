@@ -25,7 +25,7 @@ hampi <- hampi [, which (names (hampi) \%in\% cols)]
 net <- weight_streetnet (hampi, wt_profile = "foot")
 }
 \seealso{
-Other data: 
+Other data:
 \code{\link{os_roads_bristol}},
 \code{\link{weighting_profiles}}
 }

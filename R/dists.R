@@ -28,8 +28,8 @@
 #' The `from` and `to` columns of `graph` may be either single
 #' columns of numeric or character values specifying the numbers or names of
 #' graph vertices, or combinations to two columns specifying geographical
-#' (longitude and latitude,) coordinates. In the latter case, almost any sensible
-#' combination of names will be accepted (for example, `fromx, fromy`,
+#' (longitude and latitude,) coordinates. In the latter case, almost any
+#' sensible combination of names will be accepted (for example, `fromx, fromy`,
 #' `from_x, from_y`, or `fr_lat, fr_lon`.)
 #'
 #' Note that longitude and latitude values are always interpreted in 'dodgr' to
@@ -271,7 +271,7 @@ get_index_id_cols <- function (graph,
             is.data.frame (pts)) {
             index <- get_pts_index (graph, gr_cols, vert_map, pts)
             if ((is.matrix (pts) || is.data.frame (pts)) &&
-                !any (duplicated (index))) {
+                !anyDuplicated (index)) {
                 rownames (pts) <- vert_map$vert [index]
             }
         } else {
@@ -281,7 +281,7 @@ get_index_id_cols <- function (graph,
             )
         }
 
-        if (length (pts == 2) && is.numeric (pts) &&
+        if (is.numeric (pts) && !is.null (names (pts)) &&
             ((any (grepl ("x", names (pts), ignore.case = TRUE)) &&
                 any (grepl ("y", names (pts), ignore.case = TRUE))) ||
                 (any (grepl ("lon", names (pts), ignore.case = TRUE) &&
@@ -307,7 +307,7 @@ get_id_cols <- function (pts) {
 
     ids <- NULL
     if (any (grepl ("id", colnames (pts), ignore.case = TRUE))) {
-        nmc <- which (grepl ("id", colnames (pts)))
+        nmc <- grep ("id", colnames (pts), fixed = TRUE)
         if (methods::is (pts, "data.frame")) {
             ids <- pts [[nmc]]
         } else if (is.matrix (pts)) {
@@ -331,22 +331,20 @@ make_vert_map <- function (graph,
     # gr_cols are (edge_id, from, to, d, w, component, xfr, yfr, xto, yto)
     verts <- c (paste0 (graph [[gr_cols$from]]), paste0 (graph [[gr_cols$to]]))
     indx <- which (!duplicated (verts))
-    if (!xy) {
-        # Note id has to be 0-indexed:
-        res <- data.frame (
-            vert = paste0 (verts [indx]),
-            id = seq (indx) - 1,
-            stringsAsFactors = FALSE
-        )
-    } else {
+    if (xy) {
         verts_x <- c (graph [[gr_cols$xfr]], graph [[gr_cols$xto]])
         verts_y <- c (graph [[gr_cols$yfr]], graph [[gr_cols$yto]])
         res <- data.frame (
             vert = paste0 (verts [indx]),
-            id = seq (indx) - 1,
+            id = seq_along (indx) - 1,
             x = verts_x [indx],
-            y = verts_y [indx],
-            stringsAsFactors = FALSE
+            y = verts_y [indx]
+        )
+    } else {
+        # Note id has to be 0-indexed:
+        res <- data.frame (
+            vert = paste0 (verts [indx]),
+            id = seq_along (indx) - 1
         )
     }
     return (res)
@@ -370,15 +368,15 @@ get_pts_index <- function (graph,
                            pts) {
 
     if (!(is.matrix (pts) || is.data.frame (pts))) {
-        if (!is.numeric (pts)) {
-            pts <- matrix (pts, ncol = 1)
-        } else {
+        if (is.numeric (pts)) {
             nms <- names (pts)
             if (is.null (nms) && length (pts) > 1L) {
                 nms <- c ("x", "y")
             }
             pts <- matrix (pts, nrow = 1) # vector of (x,y) vals
             colnames (pts) <- nms
+        } else {
+            pts <- matrix (pts, ncol = 1)
         }
     }
 
@@ -402,17 +400,17 @@ get_pts_index_vec <- function (pts, vert_map) {
 
         indx <- match (pts, vert_map$vert)
 
-        if (any (is.na (indx))) {
-            stop (paste0 (
+        if (anyNA (indx)) {
+            stop (
                 "from/to are not numeric yet can not be",
                 " matched onto graph vertices"
-            ))
+            )
         }
         pts <- indx
     }
 
     if (any (pts < 1 | pts > nrow (vert_map))) {
-        stop (paste0 ("points exceed numbers of vertices"))
+        stop ("points exceed numbers of vertices")
     }
 
     return (pts)
@@ -425,24 +423,22 @@ get_pts_index_rect <- function (pts, graph, gr_cols) {
         nms <- colnames (pts)
     }
 
-    ix <- which (grepl ("x", nms, ignore.case = TRUE) |
-        grepl ("lon", nms, ignore.case = TRUE))
-    iy <- which (grepl ("y", nms, ignore.case = TRUE) |
-        grepl ("lat", nms, ignore.case = TRUE))
+    ix <- grep ("x|lon", nms, ignore.case = TRUE)
+    iy <- grep ("y|lat", nms, ignore.case = TRUE)
 
     if (length (ix) != 1 || length (iy) != 1) {
-        stop (paste0 (
+        stop (
             "Unable to determine geographical ",
             "coordinates in from/to"
-        ))
+        )
     }
 
     index <- match (c ("xfr", "yfr", "xto", "yto"), names (gr_cols))
-    if (any (is.na (gr_cols [index]))) {
-        stop (paste0 (
+    if (anyNA (gr_cols [index])) {
+        stop (
             "Cannot determine geographical coordinates ",
             "against which to match pts"
-        ))
+        )
     }
 
     if (is.data.frame (pts)) {
@@ -478,10 +474,8 @@ graph_from_pts <- function (from,
 
     if (!quiet) {
         message (
-            paste0 (
-                "No graph submitted to dodgr_dists; ",
-                "downloading street network ... "
-            ),
+            "No graph submitted to dodgr_dists; ",
+            "downloading street network ... ",
             appendLF = FALSE
         )
     }
