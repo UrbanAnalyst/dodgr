@@ -456,7 +456,6 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
     m_heap->insert (v0, h0);
     m_heap_rev->insert (v1, h_max - h1);
 
-    size_t meeting_vertex = static_cast<size_t>(-1);
     double meeting_distance = INFINITE_DOUBLE;
 
     while (m_heap->nItems() > 0 || m_heap_rev->nItems() > 0) {
@@ -473,7 +472,6 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             m_open [v] = false;
 
             if (w_rev[v] < INFINITE_DOUBLE && w[v] + w_rev[v] < meeting_distance) {
-                meeting_vertex = v;
                 meeting_distance = w[v] + w_rev[v];
             }
 
@@ -485,7 +483,6 @@ void PF::PathFinder::AStar2 (std::vector<double>& d,
             m_open2 [v] = false;
 
             if (w[v] < INFINITE_DOUBLE && w[v] + w_rev[v] < meeting_distance) {
-                meeting_vertex = v;
                 meeting_distance = w[v] + w_rev[v];
             }
 
