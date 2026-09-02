@@ -1,5 +1,5 @@
 RFILE = README
-VIGNETTE = iso
+VIGNETTE = flows
 
 all: help
 
