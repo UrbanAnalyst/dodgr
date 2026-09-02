@@ -1,6 +1,6 @@
-# CRAN notes for dodgr_0.4.2 submission
+# CRAN notes for dodgr_0.5.0 submission
 
-This submission fixes the test failures seen on current CRAN version.
+This submission fixes the compilation failure seen with current CRAN version on one machine.
 
 Beyond that, this submission generates the following NOTES on some systems:
 
@@ -10,6 +10,6 @@ Beyond that, this submission generates the following NOTES on some systems:
 
 Other than these, this submission generates no additional notes, and no warnings on:
 
-* Ubuntu 24.04: R-release, R-devel
+* Ubuntu: R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 - clang UBSAN on R-devel
