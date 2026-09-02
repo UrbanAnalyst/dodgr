@@ -203,34 +203,44 @@ dodgr_flowmap (graph_f, linescale = 5)
 
 A final flow aggregation function,
 [`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md),
-solves the transportation problem of allocating flows from a set of
-source (`from`) points with associated densities to a set of
-capacity-limited target (`to`) points, such that total flow from each
-source is fully allocated, no target receives more than its capacity,
-and total allocation cost (source-to-target network distance) is
-minimised. As with the previous functions, the result is aggregated on
-to the network with
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
-so this returns a graph with the usual additional `flow` column.
+produces optimal flow densities to a set of capacity-limited target
+(`to`) points. Optimal allocation is necessary any time that targets are
+limited by maximal capacities. Flows from all origin (`from`) points
+will then be optimally allocated to nearest destination (`to`) points
+such that no destinations receives flow beyond its capacity. As with all
+other flow functions, this function returns a graph with an additional
+`flow` column.
 
-Because targets may collectively have more capacity than sources have
-density, `sum(source_densities) <= sum(target_capacities)` must hold.
-The following code illustrates a typical call, again using the same
-`hampi` network as above:
+One additional condition for this function is that the sum of source
+densities must not be more than the sum of target capacities. The
+following code illustrates usage with the same `hampi` network as above:
 
 ``` r
 
+graph <- weight_streetnet (hampi, wt_profile = "foot")
 graphc <- dodgr_contract_graph (graph)
 set.seed (1)
 from <- sample (graphc$from_id, size = 10)
 to <- sample (graphc$to_id, size = 5)
 to <- to [!to %in% from]
+```
+
+Then generate some random source and target densities, including a line
+to ensure that total source densities do not exceed total target
+densities.
+
+``` r
+
 source_densities <- runif (length (from))
 target_capacities <- runif (length (to))
-# scale target_capacities to ensure sum(source_densities) <=
-# sum(target_capacities):
 target_capacities <- target_capacities *
     1.5 * sum (source_densities) / sum (target_capacities)
+```
+
+The function then calculates the optimal allocation of flows:
+
+``` r
+
 graph_f <- dodgr_flows_optalloc (
     graph,
     from = from,
@@ -238,41 +248,11 @@ graph_f <- dodgr_flows_optalloc (
     source_densities = source_densities,
     target_capacities = target_capacities
 )
-```
-
-    ## Warning in check_for_flow_col(graph): graph already has a 'flow' column; this
-    ## will be overwritten
-
-``` r
-
 summary (graph_f$flow)
 ```
 
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-    ## 0.000000 0.001037 0.009226 0.019220 0.028526 0.158689
-
-The `control` parameter determines how the underlying optimal allocation
-is calculated, and must be a named list with an `algorithm` entry of
-either `"sinkhorn"` (the default) or `"lp"`. The `"sinkhorn"` algorithm
-solves an entropic-regularised approximation to the optimal allocation
-via iterative matrix scaling, and is generally much faster for large
-numbers of source/target points, at the cost of only approximating the
-true optimum. The `"lp"` algorithm instead solves the exact
-transportation linear program via the lpSolve package, which must be
-installed separately as it is only a “Suggested”, not “Imported”,
-dependency:
-
-``` r
-
-graph_f <- dodgr_flows_optalloc (
-    graph,
-    from = from,
-    to = to,
-    source_densities = source_densities,
-    target_capacities = target_capacities,
-    control = list (algorithm = "lp")
-)
-```
+    ## 0.000000 0.000000 0.000000 0.002406 0.000000 0.060900
 
 As with the other flow functions described above, the resultant directed
 flows can be merged into a single undirected set of flows with
@@ -288,3 +268,20 @@ graph$flow <- graph_undir$flow
 graph_f <- graph_f [graph_f$flow > 0, ]
 dodgr_flowmap (graph_f, linescale = 5)
 ```
+
+### Optimization algorithms
+
+The reference for the
+[`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md)
+function describes how to select and control the optimization algorithm
+with an additional `control` parameter. The default algorithm is
+“sinkhorn”, which solves an entropic-regularised approximation to the
+optimal allocation via iterative matrix scaling, and is generally much
+faster for large numbers of source/target points, at the cost of only
+approximating the true optimum.
+
+The alternative `"lp"` algorithm instead solves the exact transportation
+linear program via [the lpSolve
+package](https://cran.r-project.org/package=lpSolve). (This package must
+be installed separately as it is only a “Suggested”, not “Imported”,
+dependency.)
