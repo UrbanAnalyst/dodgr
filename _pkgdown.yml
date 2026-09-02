@@ -55,3 +55,4 @@ navbar:
   right:
   - icon: fa-github fa-lg
     href: https://github.com/UrbanAnalyst/dodgr
+    aria-label: GitHub
