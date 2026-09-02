@@ -7,9 +7,9 @@ through street networks, specifically for Open Street Map (OSM) networks
 extracted with the [`osmdata`
 package](https://github.com/ropensci/osmdata), or via the `dodgr`
 functions
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html)
+[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md)
 and
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.html).
+[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md).
 Both of these functions use the [`osmdata`
 package](https://github.com/ropensci/osmdata) package to extract
 networks from Open Street Map, with the former returning data in [Simple
@@ -23,7 +23,7 @@ This vignette describes different approaches to weighting street
 networks for routing based on either distances (shortest paths) or times
 (fastest paths). We start by briefly describing the [Silicate
 (`sc`)](https://github.com/hypertidy/silicate) format data returned by
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.html),
+[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
 including the ability to incorporate elevation data, before describing
 how to use these data for different kinds of routing.
 
@@ -39,7 +39,7 @@ and objects. The vertices are points, the edges are binary relationships
 or connections between them, and the objects are high-order
 relationships or assemblages of edges. The new
 [`osmdata`](https://github.com/ropensci/osmdata) function,
-[`osmdata_sc()`](https://docs.ropensci.org/osmdata/reference/osmdata_sc.html)
+[`osmdata::osmdata_sc()`](https://docs.ropensci.org/osmdata/reference/osmdata_sc.html)
 extracts OSM data in [Silicate
 (`sc`)](https://github.com/hypertidy/silicate) format, and returns seven
 tables plus an additional table of meta-data. The `dodgr` functions may
@@ -63,12 +63,12 @@ important for modelling pedestrian and bicycle transport. The may be
 readily incorporated with [Silicate
 (`sc`)](https://github.com/hypertidy/silicate) format data with the new
 [`osmdata`](https://github.com/ropensci/osmdata) function,
-[`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html).
+[`osmdata::osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html).
 This function requires a locally-stored GeoTIFF-formatted elevation data
 file to be downloaded from the [Consortium for Spatial
 Information](https://csidotinfo.wordpress.com/data/srtm-90m-digital-elevation-database-v4-1/),
 or any other source. These data may then be appended by calling
-[`osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html),
+[`osmdata::osm_elevation()`](https://docs.ropensci.org/osmdata/reference/osm_elevation.html),
 and specifying the name of this file. While time-based routing is
 possible with [`sf`](https://cran.r-project.org/package=sf) format data,
 it is currently not possible to incorporate elevation data with such
@@ -81,12 +81,12 @@ in flat, tabular form in which each row represents a network edge.
 Spatial data derived from OSM, either explicitly with the [`osmdata`
 package](https://github.com/ropensci/osmdata), or through the `dodgr`
 helper functions,
-[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html)
+[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md)
 for [`sf`](https://cran.r-project.org/package=sf) or
-[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.html)
+[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md)
 for [`sc`](https://github.com/hypertidy/silicate) format data, may be
 directly submitted to the `dodgr` function,
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html).
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md).
 The two most important parameters in this function are:
 
 1.  `wt_profile`, a character string generally specifying a mode of
@@ -105,10 +105,9 @@ for which it enables estimation of temporal delays associated with
 turning across oncoming traffic, and implements restrictions on turns
 for specific modes of transport as specified in Open Street Map. (Turn
 penalty restrictions are given in the final column of the “penalties”
-table of [the `weighting_profiles`
-data](https://UrbanAnalyst.github.io/dodgr/reference/weighting_profiles.html).)
-Calculation of turn penalties is achieved through fundamentally
-modifying the resultant graph as depicted in Fig. 1.
+table of the `weighting_profiles` data.) Calculation of turn penalties
+is achieved through fundamentally modifying the resultant graph as
+depicted in Fig. 1.
 
 ![](times-fig1.png)
 
@@ -173,13 +172,13 @@ The time-weighted graph has additional compound edges used to reflect
 the penalty for turning across traffic. Let’s now presume we want to
 calculate distances between some number of randomly-selected street
 junctions. The junctions may readily be extracted through the
-[`dodgr_contract_graph()`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html),
-which reduces the graph to junction vertices only. The junction vertices
-of `graph_t` are re-labelled as described above to separate incoming
-from outgoing edges (through appending `_start` and `_end` to vertex
-names), and so may not be used for routing. Instead, routing points
-should be taken from the contracted version of the original graph.
+[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.md)
+function, which reduces the graph to junction vertices only. The
+junction vertices of `graph_t` are re-labelled as described above to
+separate incoming from outgoing edges (through appending `_start` and
+`_end` to vertex names), and so may not be used for routing. Instead,
+routing points should be taken from the contracted version of the
+original graph.
 
 ``` r
 
@@ -209,17 +208,17 @@ Contracting this graph has reduced its size by almost 80%, translating
 to considerably faster routing queries. The resultant graph, along with
 the `from` and `to` routing points, may be passed to any of the `dodgr`
 routing functions, such as
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html),
-[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html),
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
+[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md),
 or even
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
 as well as the all-new function detailed in the following section,
-[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html).
+[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md).
 
 ### 3.1 Weighting profiles and the `write_dodgr_wt_profile` function
 
 As demonstrated above, usage of the
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 function will generally be as simple as specifying the mode of transport
 for which the network is to be weighted. It may nevertheless be
 desirable to explicitly determine individual aspects of a weighting
@@ -293,16 +292,16 @@ seconds for both traffic lights and turn penalties.
 
 Values in this table may be edited by first creating a local,
 `json`-formatted version with the function,
-[`write_dodgr_wt_profile()`](https://UrbanAnalyst.github.io/dodgr/reference/write_dodgr_wt_profile.html),
+[`write_dodgr_wt_profile()`](https://UrbanAnalyst.github.io/dodgr/reference/write_dodgr_wt_profile.md),
 editing the values as desired, and then specifying the location of the
 `json` file containing the modified data with the additional argument to
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 of `wt_profile_file`.
 
 ## 4. Time-based routing and the `dodgr_times()` function
 
 By default,
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 and all other standard routing functions (`paths`, `flows_`) are
 *distance-based*, meaning routing is along paths with the shortest
 *distances*. In contrast, time-based routing calculates paths with the
@@ -371,7 +370,7 @@ values.
 Such discrepancies are important in understanding differences in routes
 *times* calculated along shortest versus fastest paths. These times can
 be calculated (in seconds) with the
-[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html)
+[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
 function:
 
 ``` r
@@ -407,22 +406,22 @@ length (which (t_dist [index] < t_time [index])) / length (index)
     ## [1] 0.0063593
 
 These results demonstrate how the combination of the
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 and
-[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html)
+[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
 functions enable calculation of both distances and times along both
 shortest and fastest paths.
 
 ### 4.1 Time-based paths and flow aggregation
 
 The
-[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.html)
+[`dodgr_times()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_times.md)
 works by simply swapping the columns of a graph, so that distance
 becomes time, and weighted distance becomes weighted time. The other
 `dodgr` routing functions
-([`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html),
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
-[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html))
+([`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md))
 do not have explicit time-based equivalents. Instead, time-based routing
 can be implemented simply through replacing the weighted distance column
 (`d_weighted`) with the weighted time column (`time_weighted`):

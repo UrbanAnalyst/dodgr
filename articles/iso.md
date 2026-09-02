@@ -3,11 +3,11 @@
 The `dodgr`package includes three functions for calculating iso-contours
 from one or more points of origin:
 
-- [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+- [`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
   for contours of equal distance;
-- [`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+- [`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)
   for contours of equal time; and
-- [`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+- [`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
   to return full set of vertices within defined isodistance or isochrone
   contours.
 
@@ -15,29 +15,29 @@ Each of these functions is fully vectorised to accept both multiple
 origin points and multiple contours. Each returns a single `data.frame`
 object, with a column specifying either the distance or time limit (as
 `dlim` for
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html),
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md),
 or `tlim` for
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)).
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)).
 The functions are also internally parallelised for efficient
 calculation.
 
 ## Input formats
 
 The
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 function accepts arbitrary input, either as a generic `dodgr`
 `data.frame` (with a “distance” column), or as street networks derived
 from applying the
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 function to either [`sf`](https://r-spatial.github.io/sf) or
 [`st`](https://hypertidy.github.io/silicate) objects. Time-based
 calculations in `dodgr` are only possible when applied to street
 networks dervied from [`st`](https://hypertidy.github.io/silicate)
 objects, because equivalent `sf`-based objects can only provide crude
 estimates of journey times. The time-specific functions
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)
 and
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
 thus only accept `dodgr` street networks derived from `sc` data. The
 following table summarises the requirements of these functions:
 
@@ -50,7 +50,7 @@ following table summarises the requirements of these functions:
 ## dodgr_isodists
 
 The
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 function calculates contours of equal distance from one or more points
 of origin.
 
@@ -123,9 +123,9 @@ for (i in seq (dlim) [-1]) {
 ### The `concavity` parameter
 
 The default contours are convex hulls. The
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 and
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)
 functions include an additional `concavity` parameter to return generate
 concave isodistance or isochrone polygons, defaulting to a value of 0
 for no concavity. Changing this value can generate concave contours like
@@ -167,7 +167,7 @@ system.time ( # Initial call calculates distances to all points:
 ```
 
     ##    user  system elapsed 
-    ##   0.159   0.000   0.159
+    ##   0.159   0.000   0.158
 
 ``` r
 
@@ -177,7 +177,7 @@ system.time ( # Subsequent call uses cached values:
 ```
 
     ##    user  system elapsed 
-    ##   0.021   0.000   0.021
+    ##   0.022   0.000   0.021
 
 The `concavity` parameter has a default value of 0 for strictly convex
 polygons. Values closer to 1 generate more concave polygons. The
@@ -214,9 +214,9 @@ points (v_from [, c ("x", "y")], pch = 19, col = "red", cex = 2)
 ## dodgr_isochrones
 
 The
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)
 works just like
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 except that it can only be applied to street networks generated from
 [`silicate` (SC) format](https://hypertidy.github.io/silicate) data. The
 results differ only from equivalent distance results in having a column
@@ -227,9 +227,9 @@ above.
 ## dodgr_isoverts
 
 Both the
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 and
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html)
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md)
 functions work by estimating distances or times from specified origin
 points to all points out to the maximum specified values of `dlim` or
 `tlim`. A second stage then generates convex or concave hulls around
@@ -237,7 +237,7 @@ these points, with the result containing an ordered sequence of points
 tracing the contours around these hulls.
 
 The
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
 function generates the full underlying set of points without applying
 any hull-tracing routines. This resultant points may be used, for
 example, to apply some custom hull-tracing routine, or to perform
@@ -246,14 +246,14 @@ of `dlim` or `tlim`. The object returned from this function is identical
 to those demonstrated above, with a column named “dlim” if the `dlim`
 parameter is specified, or “tlim” if the `tlim` parameter is specified.
 The `data.frame` returned from
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
 will always contain more data, and have more rows, than equivalent
 results from
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 or
-[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html).
+[`dodgr_isochrones()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.md).
 The rows of the `data.frame` returned from
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
 are ordered by increasing `dlim` or `tlim` values, but rows for any
 given value of those parameters are in arbitrary order. Each
 successively higher value of either `dlim` or `tlim` includes all points
@@ -262,9 +262,9 @@ denoted by all lower values. For example, all values contained within
 all rows with any values of `dlim < 200`.
 
 The following code demonstrates typical sizes of results from the
-[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html)
+[`dodgr_isodists()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.md)
 and
-[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html)
+[`dodgr_isoverts()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.md)
 functions:
 
 ``` r

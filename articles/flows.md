@@ -4,10 +4,10 @@ The `dodgr`package includes three functions for allocating and
 aggregating flows throughout network, based on defined properties of a
 set of origin and destination points. The three primary functions for
 flows are
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
-[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md),
 and
-[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html),
+[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.md),
 each of which is now described in detail.
 
 ## 1 Flow Aggregation
@@ -18,7 +18,7 @@ Flows commonly arise in origin-destination matrices used in transport
 studies, but may be any kind of generic flows on graphs. A flow matrix
 specifies the flow between each pair of origin and destination points,
 and the
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md)
 function aggregates all of these flows throughout a network and assigns
 a resultant aggregate flow to each edge.
 
@@ -38,7 +38,7 @@ flows <- matrix (10 * runif (length (from) * length (to)),
 ```
 
 This `flows` matrix is then submitted to
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
 which simply appends an additional column of `flows` to the submitted
 `graph`:
 
@@ -77,11 +77,11 @@ summary (graph_f$flow)
 ## 2 Flow Dispersal
 
 The second function,
-[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.html),
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md),
 uses only a vector a origin (`from`) points, and aggregates flows as
 they disperse throughout the network according to a simple exponential
 model. In place of the matrix of flows required by
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html),
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
 dispersal requires an equivalent vector of densities dispersing from all
 origin (`from`) points. This is illustrated in the following code, using
 the same graph as the previous example.
@@ -99,9 +99,9 @@ summary (graph_f$flow)
 ## 3 Merging directed flows
 
 Note that flows from both
-[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md)
 and
-[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.html)
+[`dodgr_flows_disperse()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_disperse.md)
 are *directed*, so the flow from ‘A’ to ‘B’ will not necessarily equal
 the flow from ‘B’ to ‘A’. It is often desirable to aggregate flows in an
 undirected manner, for example for visualisations where plotting pairs
@@ -117,7 +117,7 @@ graph_undir <- merge_directed_graph (graph_f)
 ```
 
 Resultant graphs produced by
-[`merge_directed_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.html)
+[`merge_directed_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.md)
 only include those edges having non-zero flows, and so:
 
 ``` r
@@ -144,7 +144,7 @@ graph$flow <- graph_undir$flow
 ```
 
 This graph may then be used to visualise flows with the
-[`dodgr_flowmap()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.html)
+[`dodgr_flowmap()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.md)
 function:
 
 ``` r
@@ -158,7 +158,7 @@ dodgr_flowmap (graph_f, linescale = 5)
 ## 4. Flows from spatial interaction models
 
 An additional function,
-[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.html)
+[`dodgr_flows_si()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_si.md)
 enables flows to be aggregated according to exponential spatial
 interaction models. The function is called just as the
 [`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md)
@@ -198,3 +198,93 @@ dodgr_flowmap (graph_f, linescale = 5)
 ```
 
 ![](hampi-flowmap3.png)
+
+## 5 Flows under optimal allocation
+
+A final flow aggregation function,
+[`dodgr_flows_optalloc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_optalloc.md),
+solves the transportation problem of allocating flows from a set of
+source (`from`) points with associated densities to a set of
+capacity-limited target (`to`) points, such that total flow from each
+source is fully allocated, no target receives more than its capacity,
+and total allocation cost (source-to-target network distance) is
+minimised. As with the previous functions, the result is aggregated on
+to the network with
+[`dodgr_flows_aggregate()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flows_aggregate.md),
+so this returns a graph with the usual additional `flow` column.
+
+Because targets may collectively have more capacity than sources have
+density, `sum(source_densities) <= sum(target_capacities)` must hold.
+The following code illustrates a typical call, again using the same
+`hampi` network as above:
+
+``` r
+
+graphc <- dodgr_contract_graph (graph)
+set.seed (1)
+from <- sample (graphc$from_id, size = 10)
+to <- sample (graphc$to_id, size = 5)
+to <- to [!to %in% from]
+source_densities <- runif (length (from))
+target_capacities <- runif (length (to))
+# scale target_capacities to ensure sum(source_densities) <=
+# sum(target_capacities):
+target_capacities <- target_capacities *
+    1.5 * sum (source_densities) / sum (target_capacities)
+graph_f <- dodgr_flows_optalloc (
+    graph,
+    from = from,
+    to = to,
+    source_densities = source_densities,
+    target_capacities = target_capacities
+)
+```
+
+    ## Warning in check_for_flow_col(graph): graph already has a 'flow' column; this
+    ## will be overwritten
+
+``` r
+
+summary (graph_f$flow)
+```
+
+    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+    ## 0.000000 0.001037 0.009226 0.019220 0.028526 0.158689
+
+The `control` parameter determines how the underlying optimal allocation
+is calculated, and must be a named list with an `algorithm` entry of
+either `"sinkhorn"` (the default) or `"lp"`. The `"sinkhorn"` algorithm
+solves an entropic-regularised approximation to the optimal allocation
+via iterative matrix scaling, and is generally much faster for large
+numbers of source/target points, at the cost of only approximating the
+true optimum. The `"lp"` algorithm instead solves the exact
+transportation linear program via the lpSolve package, which must be
+installed separately as it is only a “Suggested”, not “Imported”,
+dependency:
+
+``` r
+
+graph_f <- dodgr_flows_optalloc (
+    graph,
+    from = from,
+    to = to,
+    source_densities = source_densities,
+    target_capacities = target_capacities,
+    control = list (algorithm = "lp")
+)
+```
+
+As with the other flow functions described above, the resultant directed
+flows can be merged into a single undirected set of flows with
+[`merge_directed_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/merge_directed_graph.md),
+and visualised with
+[`dodgr_flowmap()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_flowmap.md):
+
+``` r
+
+graph_undir <- merge_directed_graph (graph_f)
+graph <- graph [graph_undir$edge_id, ]
+graph$flow <- graph_undir$flow
+graph_f <- graph_f [graph_f$flow > 0, ]
+dodgr_flowmap (graph_f, linescale = 5)
+```

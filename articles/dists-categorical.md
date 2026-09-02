@@ -1,25 +1,25 @@
 # Aggregating distances along categories of edges
 
-The [`dodgr_dists_categorical`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
-enables multiple distances to be aggregated along distinct categories of
-edges with a single query. This is particularly useful to examine
-information on proportions of total distances routed along different
-edge categories. The following three sub-sections describe the three
-main uses and interfaces of the [`dodgr_dists_categorical`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html).
-Each of these requires an input `graph` to have an additional column
-named `"edge_type"`, which labels discrete categories of edges. These
-can be any kind of discrete labels at all, from integer values to
+The
+[`dodgr_dists_categorical()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.md)
+function enables multiple distances to be aggregated along distinct
+categories of edges with a single query. This is particularly useful to
+examine information on proportions of total distances routed along
+different edge categories. The following three sub-sections describe the
+three main uses and interfaces of the
+[`dodgr_dists_categorical()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.md)
+function. Each of these requires an input `graph` to have an additional
+column named `"edge_type"`, which labels discrete categories of edges.
+These can be any kind of discrete labels at all, from integer values to
 character labels or factors. The labels are retained in the result, as
 demonstrated below.
 
 ## 1 Full Distance Information for Edge Categories
 
-The “default” interface of the [`dodgr_dists_categorical`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
-requires the same three mandatory parameters as
-[`dodgr_distances`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html),
+The “default” interface of the
+[`dodgr_dists_categorical()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.md)
+function requires the same three mandatory parameters as
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
 of
 
 1.  A weighted `graph` on which the distances are to be calculated;
@@ -28,15 +28,14 @@ of
 3.  A corresponding vector of `to` points.
 
 As for
-[`dodgr_distances`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html),
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
 the `from` and `to` arguments can be either vertex identifiers
 (generally as `from_id` and `to_id` columns of the input `graph`), or
 two-column coordinates for spatial graphs. The following code
-illustrates the procedure, using the internal data set,
-[`hampi`](https://UrbanAnalyst.github.io/dodgr/reference/hampi.html),
-from the settlement of Hampi in the middle of a national park in the
-Deccan Plains of India. The following code also reduces the network to
-the largest connected component only, to ensure all points are mutually
+illustrates the procedure, using the internal data set, `hampi`, from
+the settlement of Hampi in the middle of a national park in the Deccan
+Plains of India. The following code also reduces the network to the
+largest connected component only, to ensure all points are mutually
 reachable.
 
 ``` r
@@ -120,7 +119,8 @@ function to directly return those:
 ``` r
 
 dodgr_dists_categorical (graph, from, to,
-                         proportions_only = TRUE)
+    proportions_only = TRUE
+)
 ```
 
     ##         path      primary  residential    secondary      service        steps 
@@ -135,17 +135,20 @@ queries, as illustrated in the following benchmark:
 
 ``` r
 
-bench::mark (full = dodgr_dists_categorical (graph, from, to),
-             prop_only = dodgr_dists_categorical (graph, from, to,
-                                                  proportions_only = TRUE),
-             check = FALSE, time_unit = "s") [, 1:3]
+bench::mark (
+    full = dodgr_dists_categorical (graph, from, to),
+    prop_only = dodgr_dists_categorical (graph, from, to,
+        proportions_only = TRUE
+    ),
+    check = FALSE, time_unit = "s"
+) [, 1:3]
 ```
 
     ## # A tibble: 2 × 3
     ##   expression   min median
     ##   <bch:expr> <dbl>  <dbl>
-    ## 1 full       0.475  0.476
-    ## 2 prop_only  0.274  0.277
+    ## 1 full       0.467  0.468
+    ## 2 prop_only  0.275  0.275
 
 The default value of `proportions_only = FALSE` should be used only if
 additional information from the distance matrices themselves is required
@@ -155,23 +158,24 @@ further examined below.
 
 ## 3. Proportional Distances within a Threshold Distance
 
-The third and final use of the [`dodgr_dists_categorical`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html)
-is through the `dlimit` parameter, used to specify a distance threshold
-below which categorical distances are to be aggregated. This is useful
-to examine relative proportions of different edges types necessary in
-travelling in any and all directions away from each point or vertex of a
-graph.
+The third and final use of the
+[`dodgr_dists_categorical()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.md)
+function is through the `dlimit` parameter, used to specify a distance
+threshold below which categorical distances are to be aggregated. This
+is useful to examine relative proportions of different edges types
+necessary in travelling in any and all directions away from each point
+or vertex of a graph.
 
 When a `dlimit` parameter is specified, the `to` parameter is ignored,
 and distances are aggregated along all possible routes away from each
 `from` point, out to the specified `dlimit`. The value of `dlimit` must
 be specified relative to the edge distance values contained in the input
-graph. For spatial graphs obtained with [`dodgr_streetnet()` or
-`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html),
-for example, as well as the internal [`hampi`
-data](https://UrbanAnalyst.github.io/dodgr/reference/hampi.html), these
-distances are in metres, and so `dlimit` must be specified in metres.
+graph. For spatial graphs obtained with
+[`dodgr_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.md)
+or
+[`dodgr_streetnet_sc()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet_sc.md),
+for example, as well as the internal `hampi` data, these distances are
+in metres, and so `dlimit` must be specified in metres.
 
 The result is then a single matrix in which each row represents one of
 the `from` points, and there is one column of aggregate distances for
@@ -210,16 +214,16 @@ head (d)
 The row names of the resultant `data.frame` are the vertex identifiers
 specified in the `from` parameter. Such results can easily be combined
 with spatial information on the vertices obtained from the
-[`dodgr_vertices()`
-function](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html)
-to generate spatial maps of relative proportions around each point in a
-graph or network. Summary statistics can also readily be extracted, for
-example,
+[`dodgr_vertices()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.md)
+function to generate spatial maps of relative proportions around each
+point in a graph or network. Summary statistics can also readily be
+extracted, for example,
 
 ``` r
 
 hist (d$path / d$distance,
-      xlab = "Relative proportions of trips along paths", main = "")
+    xlab = "Relative proportions of trips along paths", main = ""
+)
 ```
 
 ![](dists-categorical_files/figure-html/hist-path-1.png)
@@ -232,7 +236,8 @@ India – are distinctly different:
 ``` r
 
 hist (d$service / d$distance,
-      xlab = "Relative proportions of trips along service ways", main = "")
+    xlab = "Relative proportions of trips along service ways", main = ""
+)
 ```
 
 ![](dists-categorical_files/figure-html/hist-track-1.png)
@@ -253,19 +258,22 @@ modes:
 
 ``` r
 
-bench::mark (full = dodgr_dists_categorical (graph, from, to),
-             prop_only = dodgr_dists_categorical (graph, from, to,
-                                                  proportions_only = TRUE),
-             dlimit = dodgr_dists_categorical (graph, from, dlimit = 2000),
-             check = FALSE, time_unit = "s") [, 1:3]
+bench::mark (
+    full = dodgr_dists_categorical (graph, from, to),
+    prop_only = dodgr_dists_categorical (graph, from, to,
+        proportions_only = TRUE
+    ),
+    dlimit = dodgr_dists_categorical (graph, from, dlimit = 2000),
+    check = FALSE, time_unit = "s"
+) [, 1:3]
 ```
 
     ## # A tibble: 3 × 3
     ##   expression    min median
     ##   <bch:expr>  <dbl>  <dbl>
-    ## 1 full       0.476  0.478 
-    ## 2 prop_only  0.279  0.281 
-    ## 3 dlimit     0.0658 0.0670
+    ## 1 full       0.474  0.474 
+    ## 2 prop_only  0.275  0.276 
+    ## 3 dlimit     0.0645 0.0712
 
 Finally, note that the efficiency of distance-threshold queries scales
 non-linearly with increases in `dlimit`, with queries quickly becoming

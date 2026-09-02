@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.065</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.066</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,37 +64,33 @@ Padgham</h4>
 calculating iso-contours from one or more points of origin:</p>
 <ul>
 <li>
-<a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-for contours of equal distance;</li>
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> for contours of equal distance;</li>
 <li>
-<a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>
-for contours of equal time; and</li>
+<code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code> for contours of equal time; and</li>
 <li>
-<a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
-to return full set of vertices within defined isodistance or isochrone
-contours.</li>
+<code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code> to return full set of vertices within
+defined isodistance or isochrone contours.</li>
 </ul>
 <p>Each of these functions is fully vectorised to accept both multiple
 origin points and multiple contours. Each returns a single
 <code>data.frame</code> object, with a column specifying either the
-distance or time limit (as <code>dlim</code> for <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>,
-or <code>tlim</code> for <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>).
-The functions are also internally parallelised for efficient
-calculation.</p>
+distance or time limit (as <code>dlim</code> for
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code>, or <code>tlim</code> for
+<code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code>). The functions are also internally
+parallelised for efficient calculation.</p>
 <div class="section level2">
 <h2 id="input-formats">Input formats<a class="anchor" aria-label="anchor" href="#input-formats"></a>
 </h2>
-<p>The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-function accepts arbitrary input, either as a generic <code>dodgr</code>
-<code>data.frame</code> (with a “distance” column), or as street
-networks derived from applying the <a href="https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html"><code>weight_streetnet()</code></a>
-function to either <a href="https://r-spatial.github.io/sf" class="external-link"><code>sf</code></a> or <a href="https://hypertidy.github.io/silicate" class="external-link"><code>st</code></a> objects.
+<p>The <code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> function accepts arbitrary input,
+either as a generic <code>dodgr</code> <code>data.frame</code> (with a
+“distance” column), or as street networks derived from applying the
+<code><a href="../reference/weight_streetnet.html">weight_streetnet()</a></code> function to either <a href="https://r-spatial.github.io/sf" class="external-link"><code>sf</code></a> or <a href="https://hypertidy.github.io/silicate" class="external-link"><code>st</code></a> objects.
 Time-based calculations in <code>dodgr</code> are only possible when
 applied to street networks dervied from <a href="https://hypertidy.github.io/silicate" class="external-link"><code>st</code></a> objects,
 because equivalent <code>sf</code>-based objects can only provide crude
-estimates of journey times. The time-specific functions <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>
-and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
-thus only accept <code>dodgr</code> street networks derived from
+estimates of journey times. The time-specific functions
+<code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code> and <code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code> thus
+only accept <code>dodgr</code> street networks derived from
 <code>sc</code> data. The following table summarises the requirements of
 these functions:</p>
 <table class="table">
@@ -121,9 +117,8 @@ these functions:</p>
 <div class="section level2">
 <h2 id="dodgr_isodists">dodgr_isodists<a class="anchor" aria-label="anchor" href="#dodgr_isodists"></a>
 </h2>
-<p>The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-function calculates contours of equal distance from one or more points
-of origin.</p>
+<p>The <code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> function calculates contours of
+equal distance from one or more points of origin.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span><span class="op">)</span></span>
 <span><span class="va">from</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span> <span class="op">(</span><span class="va">graph</span><span class="op">$</span><span class="va">from_id</span>, size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
@@ -220,8 +215,8 @@ single point of origin:</p>
 <div class="section level3">
 <h3 id="the-concavity-parameter">The <code>concavity</code> parameter<a class="anchor" aria-label="anchor" href="#the-concavity-parameter"></a>
 </h3>
-<p>The default contours are convex hulls. The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>
+<p>The default contours are convex hulls. The
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> and <code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code>
 functions include an additional <code>concavity</code> parameter to
 return generate concave isodistance or isochrone polygons, defaulting to
 a value of 0 for no concavity. Changing this value can generate concave
@@ -255,13 +250,13 @@ values:</p>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.159   0.000   0.159</span></span></code></pre>
+<span><span class="co">##   0.159   0.000   0.158</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span> <span class="op">(</span> <span class="co"># Subsequent call uses cached values:</span></span>
 <span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_isodists.html">dodgr_isodists</a></span> <span class="op">(</span><span class="va">graph</span>, from <span class="op">=</span> <span class="va">from</span>, <span class="va">dlim</span>, concavity <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.021   0.000   0.021</span></span></code></pre>
+<span><span class="co">##   0.022   0.000   0.021</span></span></code></pre>
 <p>The <code>concavity</code> parameter has a default value of 0 for
 strictly convex polygons. Values closer to 1 generate more concave
 polygons. The following code demonstrates the effect of increasing
@@ -294,9 +289,9 @@ values of this parameter.</p>
 <div class="section level2">
 <h2 id="dodgr_isochrones">dodgr_isochrones<a class="anchor" aria-label="anchor" href="#dodgr_isochrones"></a>
 </h2>
-<p>The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>
-works just like <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-except that it can only be applied to street networks generated from <a href="https://hypertidy.github.io/silicate" class="external-link"><code>silicate</code> (SC)
+<p>The <code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code> works just like
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> except that it can only be applied to
+street networks generated from <a href="https://hypertidy.github.io/silicate" class="external-link"><code>silicate</code> (SC)
 format</a> data. The results differ only from equivalent distance
 results in having a column named “tlim” (for “time”) instead of “dlim”
 (for “distance”). The <code>concavity</code> parameter functions in
@@ -305,37 +300,36 @@ exactly the same way as described above.</p>
 <div class="section level2">
 <h2 id="dodgr_isoverts">dodgr_isoverts<a class="anchor" aria-label="anchor" href="#dodgr_isoverts"></a>
 </h2>
-<p>Both the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>
-functions work by estimating distances or times from specified origin
-points to all points out to the maximum specified values of
-<code>dlim</code> or <code>tlim</code>. A second stage then generates
-convex or concave hulls around these points, with the result containing
-an ordered sequence of points tracing the contours around these
-hulls.</p>
-<p>The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
-function generates the full underlying set of points without applying
-any hull-tracing routines. This resultant points may be used, for
-example, to apply some custom hull-tracing routine, or to perform
-statistical analyses on the full points enclosed within specified values
-of <code>dlim</code> or <code>tlim</code>. The object returned from this
-function is identical to those demonstrated above, with a column named
-“dlim” if the <code>dlim</code> parameter is specified, or “tlim” if the
+<p>Both the <code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> and
+<code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code> functions work by estimating distances
+or times from specified origin points to all points out to the maximum
+specified values of <code>dlim</code> or <code>tlim</code>. A second
+stage then generates convex or concave hulls around these points, with
+the result containing an ordered sequence of points tracing the contours
+around these hulls.</p>
+<p>The <code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code> function generates the full
+underlying set of points without applying any hull-tracing routines.
+This resultant points may be used, for example, to apply some custom
+hull-tracing routine, or to perform statistical analyses on the full
+points enclosed within specified values of <code>dlim</code> or
+<code>tlim</code>. The object returned from this function is identical
+to those demonstrated above, with a column named “dlim” if the
+<code>dlim</code> parameter is specified, or “tlim” if the
 <code>tlim</code> parameter is specified. The <code>data.frame</code>
-returned from <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
-will always contain more data, and have more rows, than equivalent
-results from <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-or <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isochrones.html"><code>dodgr_isochrones()</code></a>.
-The rows of the <code>data.frame</code> returned from <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
-are ordered by increasing <code>dlim</code> or <code>tlim</code> values,
-but rows for any given value of those parameters are in arbitrary order.
-Each successively higher value of either <code>dlim</code> or
-<code>tlim</code> includes all points denoted by all lower values. For
-example, all values contained within <code>dlim = 200</code> are all
-those with that specified value of <code>dlim</code> <em>plus</em> all
-rows with any values of <code>dlim &lt; 200</code>.</p>
-<p>The following code demonstrates typical sizes of results from the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isodists.html"><code>dodgr_isodists()</code></a>
-and <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_isoverts.html"><code>dodgr_isoverts()</code></a>
+returned from <code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code> will always contain more
+data, and have more rows, than equivalent results from
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> or <code><a href="../reference/dodgr_isochrones.html">dodgr_isochrones()</a></code>. The
+rows of the <code>data.frame</code> returned from
+<code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code> are ordered by increasing
+<code>dlim</code> or <code>tlim</code> values, but rows for any given
+value of those parameters are in arbitrary order. Each successively
+higher value of either <code>dlim</code> or <code>tlim</code> includes
+all points denoted by all lower values. For example, all values
+contained within <code>dlim = 200</code> are all those with that
+specified value of <code>dlim</code> <em>plus</em> all rows with any
+values of <code>dlim &lt; 200</code>.</p>
+<p>The following code demonstrates typical sizes of results from the
+<code><a href="../reference/dodgr_isodists.html">dodgr_isodists()</a></code> and <code><a href="../reference/dodgr_isoverts.html">dodgr_isoverts()</a></code>
 functions:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dodgr_streetnet_sc.html">dodgr_streetnet_sc</a></span> <span class="op">(</span><span class="st">"hampi india"</span><span class="op">)</span></span>

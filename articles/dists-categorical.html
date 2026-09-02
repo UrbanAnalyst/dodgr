@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dodgr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.065</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.066</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,23 +60,23 @@ Padgham</h4>
 
     
     
-<p>The <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html"><code>dodgr_dists_categorical</code>
-function</a> enables multiple distances to be aggregated along distinct
-categories of edges with a single query. This is particularly useful to
-examine information on proportions of total distances routed along
-different edge categories. The following three sub-sections describe the
-three main uses and interfaces of the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html"><code>dodgr_dists_categorical</code>
-function</a>. Each of these requires an input <code>graph</code> to have
-an additional column named <code>"edge_type"</code>, which labels
-discrete categories of edges. These can be any kind of discrete labels
-at all, from integer values to character labels or factors. The labels
-are retained in the result, as demonstrated below.</p>
+<p>The <code><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical()</a></code> function enables multiple
+distances to be aggregated along distinct categories of edges with a
+single query. This is particularly useful to examine information on
+proportions of total distances routed along different edge categories.
+The following three sub-sections describe the three main uses and
+interfaces of the <code><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical()</a></code> function. Each
+of these requires an input <code>graph</code> to have an additional
+column named <code>"edge_type"</code>, which labels discrete categories
+of edges. These can be any kind of discrete labels at all, from integer
+values to character labels or factors. The labels are retained in the
+result, as demonstrated below.</p>
 <div class="section level2">
 <h2 id="full-distance-information-for-edge-categories">1 Full Distance Information for Edge Categories<a class="anchor" aria-label="anchor" href="#full-distance-information-for-edge-categories"></a>
 </h2>
-<p>The “default” interface of the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html"><code>dodgr_dists_categorical</code>
-function</a> requires the same three mandatory parameters as <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html"><code>dodgr_distances</code></a>,
-of</p>
+<p>The “default” interface of the <code><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical()</a></code>
+function requires the same three mandatory parameters as
+<code><a href="../reference/dodgr_distances.html">dodgr_distances()</a></code>, of</p>
 <ol style="list-style-type: decimal">
 <li>A weighted <code>graph</code> on which the distances are to be
 calculated;</li>
@@ -84,16 +84,15 @@ calculated;</li>
 calculated; and</li>
 <li>A corresponding vector of <code>to</code> points.</li>
 </ol>
-<p>As for <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists.html"><code>dodgr_distances</code></a>,
-the <code>from</code> and <code>to</code> arguments can be either vertex
-identifiers (generally as <code>from_id</code> and <code>to_id</code>
-columns of the input <code>graph</code>), or two-column coordinates for
-spatial graphs. The following code illustrates the procedure, using the
-internal data set, <a href="https://UrbanAnalyst.github.io/dodgr/reference/hampi.html"><code>hampi</code></a>,
-from the settlement of Hampi in the middle of a national park in the
-Deccan Plains of India. The following code also reduces the network to
-the largest connected component only, to ensure all points are mutually
-reachable.</p>
+<p>As for <code><a href="../reference/dodgr_distances.html">dodgr_distances()</a></code>, the <code>from</code> and
+<code>to</code> arguments can be either vertex identifiers (generally as
+<code>from_id</code> and <code>to_id</code> columns of the input
+<code>graph</code>), or two-column coordinates for spatial graphs. The
+following code illustrates the procedure, using the internal data set,
+<code>hampi</code>, from the settlement of Hampi in the middle of a
+national park in the Deccan Plains of India. The following code also
+reduces the network to the largest connected component only, to ensure
+all points are mutually reachable.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/weight_streetnet.html">weight_streetnet</a></span> <span class="op">(</span><span class="va">hampi</span>, wt_profile <span class="op">=</span> <span class="st">"foot"</span><span class="op">)</span></span>
 <span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">graph</span> <span class="op">[</span><span class="va">graph</span><span class="op">$</span><span class="va">component</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span></span>
@@ -153,7 +152,8 @@ used in the <code><a href="../reference/dodgr_dists_categorical.html">dodgr_dist
 return those:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
-<span>                         proportions_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>    proportions_only <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         path      primary  residential    secondary      service        steps </span></span>
 <span><span class="co">## 0.5132876816 0.0160100421 0.0004094553 0.1561029152 0.0606822224 0.0018216492 </span></span>
 <span><span class="co">##        track unclassified </span></span>
@@ -163,15 +163,18 @@ a different way in the underlying C++ code that avoids storing the full
 list of matrices in memory. For most jobs, this should translate to
 faster queries, as illustrated in the following benchmark:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span> <span class="op">(</span>full <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span><span class="op">)</span>,</span>
-<span>             prop_only <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
-<span>                                                  proportions_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>             check <span class="op">=</span> <span class="cn">FALSE</span>, time_unit <span class="op">=</span> <span class="st">"s"</span><span class="op">)</span> <span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span> <span class="op">(</span></span>
+<span>    full <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span><span class="op">)</span>,</span>
+<span>    prop_only <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
+<span>        proportions_only <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    check <span class="op">=</span> <span class="cn">FALSE</span>, time_unit <span class="op">=</span> <span class="st">"s"</span></span>
+<span><span class="op">)</span> <span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   expression   min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.475  0.476</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.274  0.277</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.467  0.468</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.275  0.275</span></span></code></pre>
 <p>The default value of <code>proportions_only = FALSE</code> should be
 used only if additional information from the distance matrices
 themselves is required or desired. Examples of such additional
@@ -181,9 +184,9 @@ various distance metrics, as further examined below.</p>
 <div class="section level2">
 <h2 id="proportional-distances-within-a-threshold-distance">3. Proportional Distances within a Threshold Distance<a class="anchor" aria-label="anchor" href="#proportional-distances-within-a-threshold-distance"></a>
 </h2>
-<p>The third and final use of the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_dists_categorical.html"><code>dodgr_dists_categorical</code>
-function</a> is through the <code>dlimit</code> parameter, used to
-specify a distance threshold below which categorical distances are to be
+<p>The third and final use of the <code><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical()</a></code>
+function is through the <code>dlimit</code> parameter, used to specify a
+distance threshold below which categorical distances are to be
 aggregated. This is useful to examine relative proportions of different
 edges types necessary in travelling in any and all directions away from
 each point or vertex of a graph.</p>
@@ -192,11 +195,10 @@ each point or vertex of a graph.</p>
 all possible routes away from each <code>from</code> point, out to the
 specified <code>dlimit</code>. The value of <code>dlimit</code> must be
 specified relative to the edge distance values contained in the input
-graph. For spatial graphs obtained with <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_streetnet.html"><code>dodgr_streetnet()</code>
-or <code>dodgr_streetnet_sc()</code></a>, for example, as well as the
-internal <a href="https://UrbanAnalyst.github.io/dodgr/reference/hampi.html"><code>hampi</code>
-data</a>, these distances are in metres, and so <code>dlimit</code> must
-be specified in metres.</p>
+graph. For spatial graphs obtained with <code><a href="../reference/dodgr_streetnet.html">dodgr_streetnet()</a></code>
+or <code><a href="../reference/dodgr_streetnet_sc.html">dodgr_streetnet_sc()</a></code>, for example, as well as the
+internal <code>hampi</code> data, these distances are in metres, and so
+<code>dlimit</code> must be specified in metres.</p>
 <p>The result is then a single matrix in which each row represents one
 of the <code>from</code> points, and there is one column of aggregate
 distances for each edge type, plus an initial column of overall
@@ -225,13 +227,13 @@ distances. The following code illustrates:</p>
 <p>The row names of the resultant <code>data.frame</code> are the vertex
 identifiers specified in the <code>from</code> parameter. Such results
 can easily be combined with spatial information on the vertices obtained
-from the <a href="https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html"><code>dodgr_vertices()</code>
-function</a> to generate spatial maps of relative proportions around
-each point in a graph or network. Summary statistics can also readily be
-extracted, for example,</p>
+from the <code><a href="../reference/dodgr_vertices.html">dodgr_vertices()</a></code> function to generate spatial maps
+of relative proportions around each point in a graph or network. Summary
+statistics can also readily be extracted, for example,</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span> <span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">path</span> <span class="op">/</span> <span class="va">d</span><span class="op">$</span><span class="va">distance</span>,</span>
-<span>      xlab <span class="op">=</span> <span class="st">"Relative proportions of trips along paths"</span>, main <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span>    xlab <span class="op">=</span> <span class="st">"Relative proportions of trips along paths"</span>, main <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="dists-categorical_files/figure-html/hist-path-1.png" class="r-plt" alt="" width="700"></p>
 <p>Trips along paths are roughly evenly distributed between 0 and 1. In
 contrast, proportions of trips along service ways – used to facilitate
@@ -239,7 +241,8 @@ motorised vehicular access in the otherwise car-free area of Hampi,
 India – are distinctly different:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span> <span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">service</span> <span class="op">/</span> <span class="va">d</span><span class="op">$</span><span class="va">distance</span>,</span>
-<span>      xlab <span class="op">=</span> <span class="st">"Relative proportions of trips along service ways"</span>, main <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span>    xlab <span class="op">=</span> <span class="st">"Relative proportions of trips along service ways"</span>, main <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="dists-categorical_files/figure-html/hist-track-1.png" class="r-plt" alt="" width="700"></p>
 <p>These distributions provide more detailed and nuanced insights than
 those provided by the overall <code>summary</code> functions above,
@@ -254,17 +257,20 @@ in the underlying C++ code that are even more efficient that the
 previous case of proportional distances. The following code benchmarks
 the three modes:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span> <span class="op">(</span>full <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span><span class="op">)</span>,</span>
-<span>             prop_only <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
-<span>                                                  proportions_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>             dlimit <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, dlimit <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span>,</span>
-<span>             check <span class="op">=</span> <span class="cn">FALSE</span>, time_unit <span class="op">=</span> <span class="st">"s"</span><span class="op">)</span> <span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="https://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span> <span class="op">(</span></span>
+<span>    full <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span><span class="op">)</span>,</span>
+<span>    prop_only <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, <span class="va">to</span>,</span>
+<span>        proportions_only <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    dlimit <span class="op">=</span> <span class="fu"><a href="../reference/dodgr_dists_categorical.html">dodgr_dists_categorical</a></span> <span class="op">(</span><span class="va">graph</span>, <span class="va">from</span>, dlimit <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span>,</span>
+<span>    check <span class="op">=</span> <span class="cn">FALSE</span>, time_unit <span class="op">=</span> <span class="st">"s"</span></span>
+<span><span class="op">)</span> <span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">##   expression    min median</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;bch:expr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.476  0.478 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.279  0.281 </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.065<span style="text-decoration: underline;">8</span> 0.067<span style="text-decoration: underline;">0</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> full       0.474  0.474 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> prop_only  0.275  0.276 </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> dlimit     0.064<span style="text-decoration: underline;">5</span> 0.071<span style="text-decoration: underline;">2</span></span></span></code></pre>
 <p>Finally, note that the efficiency of distance-threshold queries
 scales non-linearly with increases in <code>dlimit</code>, with queries
 quickly becoming less efficient for larger values of

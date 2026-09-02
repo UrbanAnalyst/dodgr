@@ -124,7 +124,8 @@ the city of York in the U.K.
 bb <- osmdata::getbb ("york uk")
 npts <- 1000
 xy <- apply (bb, 1, function (i) min (i) + runif (npts) * diff (i))
-bb; head (xy)
+bb
+head (xy)
 ```
 
     ##         min        max
@@ -148,8 +149,8 @@ calculate the pairwise distances between all of the `xy`points.
 net <- dodgr_streetnet (bb)
 net <- weight_streetnet (net, wt_profile = "foot")
 system.time (
-            d <- dodgr_dists (net, from = xy, to = xy)
-            )
+    d <- dodgr_dists (net, from = xy, to = xy)
+)
 ```
 
     ##    user  system elapsed 
@@ -157,7 +158,8 @@ system.time (
 
 ``` r
 
-dim (d); range (d, na.rm = TRUE)
+dim (d)
+range (d, na.rm = TRUE)
 ```
 
     ## [1] 1000 1000
@@ -167,7 +169,7 @@ dim (d); range (d, na.rm = TRUE)
 The result is a matrix of 1000-by-1000 distances of up to 57km long,
 measured along routes weighted for optimal pedestrian travel. In this
 case, the single call to
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 automatically downloaded the entire street network of York and
 calculated one million shortest-path distances, all in under 30 seconds.
 
@@ -177,9 +179,8 @@ Although the above code is short and fast, most users will probably want
 more control over their graphs and routing possibilities. To illustrate,
 the remainder of this vignette analyses the much smaller street network
 of Hampi, Karnataka, India, included in the `dodgr` package as the
-dataset
-[`hampi`](https://UrbanAnalyst.github.io/dodgr/reference/hampi.html).
-This data set may be re-created with the following single line:
+dataset `hampi`. This data set may be re-created with the following
+single line:
 
 ``` r
 
@@ -267,7 +268,7 @@ those segments can be extracted with,
 ``` r
 
 vt <- dodgr_vertices (graph)
-head(vt)
+head (vt)
 ```
 
     ##            id        x        y component n
@@ -300,7 +301,7 @@ nrow (graph) / nrow (vt)
 A simple straight line has two edges between all intermediate nodes, and
 this thus indicates that the network in it’s entirety is quite simple.
 The `data.frame` resulting from
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 is what `dodgr` uses to calculate shortest path routes, as will be
 described below, following a brief description of weighting street
 networks.
@@ -308,7 +309,7 @@ networks.
 ### 3.1 Graph Components
 
 The foregoing `graph` object returned from
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 also includes a `$component` column enumerating all of the distinct
 inter-connected components of the graph.
 
@@ -335,7 +336,7 @@ length (unique (graph$component))
     ## [1] 3
 
 Component numbers can be determined for any types of graph with the
-[`dodgr_components()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_components.html)
+[`dodgr_components()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_components.md)
 function. For example, the following lines reduce the previous graph to
 a minimal (non-spatial) structure of four columns, and then
 (re-)calculate a fifth column of `$component`s:
@@ -374,13 +375,13 @@ Dual-weights for street networks are generally obtained by multiplying
 the distance of each segment by a weighting factor reflecting the type
 of highway. As demonstrated above, this can be done easily within
 `dodgr` with the
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 function, which applies the named weighting profiles included with the
 `dodgr` package to OpenStreetMap networks extracted with the
 [`osmdata`](https://cran.r-project.org/package=osmdata) package.
 
 This function uses the internal data
-[`dodgr::weighting_profiles`](https://UrbanAnalyst.github.io/dodgr/reference/weighting_profiles.html),
+[`dodgr::weighting_profiles`](https://UrbanAnalyst.github.io/dodgr/reference/weighting_profiles.md),
 which is a list of three items:
 
 1.  `weighting_profiles`;
@@ -467,10 +468,9 @@ prohibited. Accordingly, numbers of `"footway"`, `"path"`, and
 traffic (`"primary", "residential", "tertiary"`)
 
 It is also possible to use other types of (non-OpenStreetMap) street
-networks, an example of which is the
-[`os_roads_bristol`](https://UrbanAnalyst.github.io/dodgr/reference/os_roads_bristol.html)
-data provided with the package. “OS” is the U.K. Ordnance Survey, and
-these data are provided as a Simple Features
+networks, an example of which is the `os_roads_bristol` data provided
+with the package. “OS” is the U.K. Ordnance Survey, and these data are
+provided as a Simple Features
 ([`sf`](https://cran.r-project.org/package=sf)) `data.frame` with a
 decidedly different structure to `osmdata data.frame` objects:
 
@@ -511,24 +511,27 @@ table (os_roads_bristol [[colnm]])
 
 ``` r
 
-wts <- data.frame (name = "custom",
-                   way = unique (os_roads_bristol [[colnm]]),
-                   value = c (0.1, 0.2, 0.8, 1))
-net <- weight_streetnet (os_roads_bristol, wt_profile = wts,
-                         type_col = colnm, id_col = "identifier")
+wts <- data.frame (
+    name = "custom",
+    way = unique (os_roads_bristol [[colnm]]),
+    value = c (0.1, 0.2, 0.8, 1)
+)
+net <- weight_streetnet (os_roads_bristol,
+    wt_profile = wts,
+    type_col = colnm, id_col = "identifier"
+)
 ```
 
 The resultant `net` object contains the street network of
-[`os_roads_bristol`](https://UrbanAnalyst.github.io/dodgr/reference/os_roads_bristol.html)
-weighted by the specified profile, and in a format suitable for
-submission to any `dodgr` routine.
+`os_roads_bristol` weighted by the specified profile, and in a format
+suitable for submission to any `dodgr` routine.
 
 ### 3.3 Random Sub-Graphs
 
 The `dodgr` packages includes a function to select a random connected
 portion of graph including a specified number of vertices. This function
 is used in the
-[`compare_heaps()`](https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.html)
+[`compare_heaps()`](https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.md)
 function described below, but is also useful for general statistical
 analyses of large graphs which may otherwise take too long to compute.
 
@@ -554,13 +557,13 @@ nrow (dodgr_vertices (graph_sub))
 
 As demonstrated at the outset, an entire network can simply be submitted
 to
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html),
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
 in which case a square matrix will be returned containing pair-wise
 distances between all vertices. Doing that for the `graph` of York will
 return a square matrix of around 90,000-times-90,000 (or 8 billion)
 distances. It might be possible to do that on some computers, but is
 possibly neither recommended nor desirable. The
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 function accepts additional arguments of `from` and `to` defining points
 from and to which distances are to be calculated. If only `from` is
 provided, a square matrix is returned of pair-wise distances between all
@@ -572,13 +575,13 @@ For spatial graphs—that is, those containing columns of latitudes and
 longitudes (or “x” and “y”)—routing points can be represented by a
 simple matrix of arbitrary latitudes and longitudes (or, again, “x” and
 “y”).
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 will map these points to the closest network points, and return
 corresponding shortest-path distances. This may be illustrated by
 generating random points within the bounding box of the above map of
 Hampi. As demonstrated above, the coordinates of all vertices may be
 extracted with the
-[`dodgr_vertices()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.html)
+[`dodgr_vertices()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_vertices.md)
 function, enabling random points to be generated with the following
 lines:
 
@@ -586,22 +589,29 @@ lines:
 
 vt <- dodgr_vertices (graph)
 n <- 100 # number of points to generate
-xy <- data.frame (x = min (vt$x) + runif (n) * diff (range (vt$x)),
-                  y = min (vt$y) + runif (n) * diff (range (vt$y)))
+xy <- data.frame (
+    x = min (vt$x) + runif (n) * diff (range (vt$x)),
+    y = min (vt$y) + runif (n) * diff (range (vt$y))
+)
 ```
 
 Submitting these to
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 as points **from** which to route will generate a distance matrix from
 each of these 100 points to every other point in the graph:
 
 ``` r
 
 d <- dodgr_dists (graph, from = xy)
-dim (d); range (d, na.rm = TRUE)
+dim (d)
 ```
 
     ## [1]  100 3337
+
+``` r
+
+range (d, na.rm = TRUE)
+```
 
     ## [1]     0.00 14915.93
 
@@ -620,7 +630,7 @@ Some of the resultant distances in the above cases are `NA` because the
 points were sampled from the entire bounding box, and the street network
 near the boundaries may be cut off from the rest. As demonstrated above,
 the
-[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.html)
+[`weight_streetnet()`](https://UrbanAnalyst.github.io/dodgr/reference/weight_streetnet.md)
 function returns a `component` vector, and such disconnected edges will
 have `graph$component > 1`, because `graph$component == 1` always
 denotes the largest connected component. This means that the graph can
@@ -633,7 +643,7 @@ graph_connected <- graph [graph$component == 1, ]
 ```
 
 A distance matrix obtained from running
-[`dodgr_distances`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 on `graph_connected` should generally contain no `NA` values, although
 some points may still be effectively unreachable due to one-way
 connections (or streets). Thus, routing on the largest connected
@@ -646,7 +656,7 @@ the full `graph`. This may make the spatial mapping of routing points
 less accurate than results obtained by repeating extraction of the
 street network using an expanded bounding box. For automatic extraction
 of street networks with
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html),
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
 the extent by which the bounding box exceeds the range of routing points
 (`from` and `to` arguments) is determined by an extra parameter
 `expand`, quantifying the relative extent to which the bounding box
@@ -671,8 +681,10 @@ routed_points <- function (expand = 0, pts) {
 
 ``` r
 
-vapply (c (0, 0.05, 0.1, 0.2), function (i) routed_points (i, pts = xy),
-        numeric (1))
+vapply (
+    c (0, 0.05, 0.1, 0.2), function (i) routed_points (i, pts = xy),
+    numeric (1)
+)
 ```
 
     ## [1] 0.04007477 0.02326452 0.02131992 0.00000000
@@ -743,7 +755,7 @@ Differences in how these heaps operate are often largely extraneous to
 direct application of routing algorithms, even though heap choice may
 strongly affect performance. To avoid users needing to know anything
 about algorithmic details, `dodgr` provides a function
-[`compare_heaps()`](https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.html)
+[`compare_heaps()`](https://UrbanAnalyst.github.io/dodgr/reference/compare_heaps.md)
 to which a particular graph may be submitted in order to determine the
 optimal kind of heap.
 
@@ -759,17 +771,17 @@ compare_heaps (graph, nverts = 100)
     ## # A tibble: 11 × 6
     ##    expression                 min   median `itr/sec` mem_alloc `gc/sec`
     ##    <bch:expr>            <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ##  1 BHeap                   1.55ms    1.6ms      618.    45.3KB     12.7
-    ##  2 FHeap                   1.57ms   1.63ms      610.    45.3KB     13.4
-    ##  3 TriHeap                 1.58ms   1.65ms      587.    45.3KB     10.5
-    ##  4 TriHeapExt              1.39ms   1.43ms      695.    48.4KB     12.6
-    ##  5 Heap23                  1.55ms   1.61ms      619.    45.3KB     12.7
-    ##  6 BHeap_contracted        1.33ms   1.38ms      718.    20.1KB     12.6
-    ##  7 FHeap_contracted        1.35ms   1.41ms      705.    20.1KB     14.9
-    ##  8 TriHeap_contracted      1.35ms   1.41ms      705.    20.1KB     12.6
-    ##  9 TriHeapExt_contracted   1.11ms   1.14ms      872.    20.1KB     17.0
-    ## 10 Heap23_contracted       1.36ms   1.41ms      706.    20.1KB     12.6
-    ## 11 igraph                814.66µs 861.02µs     1145.   502.2KB     17.1
+    ##  1 BHeap                   1.55ms   1.61ms      621.    45.3KB     12.7
+    ##  2 FHeap                   1.57ms   1.64ms      608.    45.3KB     13.3
+    ##  3 TriHeap                 1.59ms   1.64ms      607.    45.3KB     10.5
+    ##  4 TriHeapExt               1.4ms   1.45ms      687.    48.4KB     14.8
+    ##  5 Heap23                  1.57ms   1.64ms      603.    45.3KB     10.5
+    ##  6 BHeap_contracted        1.35ms   1.41ms      708.    20.1KB     12.6
+    ##  7 FHeap_contracted        1.37ms   1.42ms      699.    20.1KB     14.8
+    ##  8 TriHeap_contracted      1.37ms   1.43ms      697.    20.1KB     12.6
+    ##  9 TriHeapExt_contracted   1.11ms   1.15ms      860.    20.1KB     17.0
+    ## 10 Heap23_contracted       1.31ms   1.43ms      699.    20.1KB     12.6
+    ## 11 igraph                821.84µs 865.86µs     1146.   502.2KB     17.1
 
 The key column of that `data.frame` is `relative`, which quantifies the
 relative performance of each test in relation to the best which is given
@@ -794,7 +806,7 @@ so greatly improves performance with respect to
 
 For those wishing to do explicit comparisons themselves, the following
 code generates the [`igraph`](https://igraph.org) equivalent of
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html),
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md),
 although of course for single-weighted graphs only:
 
 ``` r
@@ -828,7 +840,7 @@ street networks differ, through for example dense inner-urban networks
 generally being less redundant than less dense extra-urban or rural
 networks. The contracted version of a graph can be obtained with the
 function
-[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html),
+[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.md),
 illustrated here with the York example from above.
 
 ``` r
@@ -837,7 +849,7 @@ grc <- dodgr_contract_graph (graph)
 ```
 
 The function
-[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html)
+[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.md)
 returns the contracted version of the original graph, containing the
 same number of columns, but with each row representing an edge between
 two junction vertices (or between the submitted `verts`, which may or
@@ -845,12 +857,22 @@ may not be junctions). Relative sizes are
 
 ``` r
 
-nrow (graph); nrow (grc); nrow (grc) / nrow (graph)
+nrow (graph)
 ```
 
     ## [1] 6813
 
+``` r
+
+nrow (grc)
+```
+
     ## [1] 748
+
+``` r
+
+nrow (grc) / nrow (graph)
+```
 
     ## [1] 0.1097901
 
@@ -865,14 +887,14 @@ bench::mark (
     full = dodgr_dists (graph, from = from, to = to),
     contracted = dodgr_dists (grc, from = from, to = to),
     check = FALSE # numeric rounding errors can lead to differences
-    )
+)
 ```
 
     ## # A tibble: 2 × 6
     ##   expression      min   median `itr/sec` mem_alloc `gc/sec`
     ##   <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    ## 1 full         13.2ms  13.46ms      73.8    1.23MB     2.05
-    ## 2 contracted   2.61ms   2.67ms     373.   277.97KB     8.43
+    ## 1 full        13.35ms  13.69ms      72.7    1.23MB     2.08
+    ## 2 contracted   2.61ms   2.69ms     368.   277.97KB     6.24
 
 And contracting the graph has a similar effect of speeding up pairwise
 routing between these 100 points. All routing algorithms scale
@@ -883,7 +905,7 @@ even greater for larger graphs.
 
 Routing is often desired between defined points, and these points may
 inadvertently be removed in graph contraction. The
-[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.html)
+[`dodgr_contract_graph()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_contract_graph.md)
 function accepts an additional argument specifying vertices to keep
 within the contracted graph. This list of vertices must directly match
 the vertex ID values in the graph.
@@ -918,7 +940,7 @@ nrow (grc)
 
 Retaining the nominated vertices yields a graph with considerably more
 edges than the fully contracted graph excluding these vertices. The
-[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.html)
+[`dodgr_distances()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_distances.md)
 function can be applied to the latter graph to obtain accurate distances
 precisely routed between these points, yet using the speed advantages of
 graph contraction.
@@ -926,7 +948,7 @@ graph contraction.
 ## 6 Shortest Paths
 
 Shortest paths can also be extracted with the
-[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html)
+[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md)
 function. For given vectors of `from` and `to` points, this returns a
 nested list so that if,
 
@@ -963,7 +985,7 @@ head (graph)
 The columns of `from_id` and `to_id` contain the names of the vertices.
 To extract shortest paths between some of these, first take some small
 samples of `from` and `to` points, and submit them to
-[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.html):
+[`dodgr_paths()`](https://UrbanAnalyst.github.io/dodgr/reference/dodgr_paths.md):
 
 ``` r
 
