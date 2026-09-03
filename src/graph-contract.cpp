@@ -273,7 +273,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
     std::unordered_set <vertex_id_t> verts_to_keep;
     if (vertlist_in.isNotNull ())
     {
-        Rcpp::StringVector vertlist (vertlist_in);
+        Rcpp::StringVector vertlist (vertlist_in.get ());
         for (R_xlen_t i = 0; i < vertlist.length (); i ++)
             verts_to_keep.emplace (std::string (vertlist [i]));
     }
@@ -407,7 +407,7 @@ Rcpp::List rcpp_contract_graph (const Rcpp::DataFrame &graph,
 //' return a corresponding undirected graph useful for visualisation.
 //'
 //' @param graph The result of a call to \code{dodgr_flows_aggregate/disperse}
-//' or similar function resuling in columns of directed values.
+//' or similar function resulting in columns of directed values.
 //' @return A single vector of aggregate values with non-zero values only for
 //' those edges to be retained in the directed graph.
 //'

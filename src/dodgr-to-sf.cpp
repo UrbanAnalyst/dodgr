@@ -8,8 +8,8 @@ size_t dodgr_sf::make_edge_name_set (std::unordered_set <std::string> &new_edge_
         const Rcpp::CharacterVector &new_edges)
 {
     new_edge_name_set.clear ();
-    // Rcpp::CharacterVector requires long int index type
-    for (long int i = 0; i < new_edges.size (); i++)
+    const size_t n = static_cast <size_t> (new_edges.size ());
+    for (size_t i = 0; i < n; i++)
     {
         new_edge_name_set.emplace (static_cast <std::string> (new_edges (i)));
     }
@@ -26,7 +26,8 @@ void dodgr_sf::make_edge_name_vec (const size_t n,
     new_edge_name_vec.resize (n);
     new_edge_name_vec [0] = static_cast <std::string> (new_edges [0]);
     size_t count = 0;
-    for (long int i = 1; i < new_edges.size (); i++)
+    const size_t nedges = static_cast <size_t> (new_edges.size ());
+    for (size_t i = 1; i < nedges; i++)
     {
         std::string new_edge_i = static_cast <std::string> (new_edges (i));
         if (new_edge_i != new_edge_name_vec [count])
@@ -44,7 +45,8 @@ size_t dodgr_sf::get_edgevec_sizes (const size_t nedges,
     edgevec_sizes.clear ();
     edgevec_sizes.resize (nedges);
     size_t count = 1, edgenum = 0;
-    for (long int i = 1; i < new_edges.size (); i++)
+    const size_t n_new_edges = static_cast <size_t> (new_edges.size ());
+    for (size_t i = 1; i < n_new_edges; i++)
     {
         if (static_cast <std::string> (new_edges (i)) ==
                 static_cast <std::string> (new_edges (i - 1)))
@@ -85,9 +87,10 @@ void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
     to_node.resize (edgevec_sizes [edgenum]);
     // old_edges is 1-indexed!
     long int the_edge = static_cast <long int> (atoi (old_edges [0])) - 1;
-    from_node [0] = static_cast <std::string> (idf_r (the_edge));
-    to_node [0] = static_cast <std::string> (idt_r (the_edge));
-    for (long int i = 1; i < new_edges.size (); i++)
+    from_node [0] = static_cast <std::string> (idf_r (static_cast <size_t> (the_edge)));
+    to_node [0] = static_cast <std::string> (idt_r (static_cast <size_t> (the_edge)));
+    const size_t n_new_edges = static_cast <size_t> (new_edges.size ());
+    for (size_t i = 1; i < n_new_edges; i++)
     {
         if (static_cast <std::string> (new_edges (i)) !=
                 static_cast <std::string> (new_edges (i - 1)))
@@ -102,8 +105,8 @@ void dodgr_sf::get_edge_to_vert_maps (const std::vector <size_t> &edgevec_sizes,
             count = 0;
         }
         the_edge = atoi (old_edges (i)) - 1; // it's 1-indexed!
-        from_node [count] = static_cast <std::string> (idf_r (the_edge));
-        to_node [count++] = static_cast <std::string> (idt_r (the_edge));
+        from_node [count] = static_cast <std::string> (idf_r (static_cast <size_t> (the_edge)));
+        to_node [count++] = static_cast <std::string> (idt_r (static_cast <size_t> (the_edge)));
     }
     full_from_edge_map.emplace (new_edge_names [edgenum], from_node);
     full_to_edge_map.emplace (new_edge_names [edgenum], to_node);
@@ -158,7 +161,7 @@ void dodgr_sf::order_vert_sequences (Rcpp::List &edge_sequences,
         }
         idmap_rev.clear ();
 
-        edge_sequences (static_cast <long int> (i)) = id;
+        edge_sequences (i) = id;
     }
 }
 
@@ -168,7 +171,8 @@ size_t dodgr_sf::count_non_contracted_edges (const Rcpp::CharacterVector &contr_
         std::unordered_set <std::string> &new_edge_name_set)
 {
     size_t edge_count = 0;
-    for (long int i = 0; i < contr_edges.size (); i++)
+    const size_t n = static_cast <size_t> (contr_edges.size ());
+    for (size_t i = 0; i < n; i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
                     (contr_edges (i))) == new_edge_name_set.end ())
@@ -194,7 +198,8 @@ void dodgr_sf::append_nc_edges (const size_t nc_edge_count,
     Rcpp::CharacterVector idf_r_c = graph_contr ["from_id"],
             idt_r_c = graph_contr ["to_id"],
             contr_edges = graph_contr ["edge_id"];
-    for (long int i = 0; i < graph_contr.nrow (); i++)
+    const size_t n_contr = static_cast <size_t> (graph_contr.nrow ());
+    for (size_t i = 0; i < n_contr; i++)
     {
         if (new_edge_name_set.find (static_cast <std::string>
                     (contr_edges (i))) == new_edge_name_set.end ())
@@ -203,24 +208,23 @@ void dodgr_sf::append_nc_edges (const size_t nc_edge_count,
             Rcpp::CharacterVector idvec (2);
             idvec [0] = idf_r_c (i);
             idvec [1] = idt_r_c (i);
-            edge_sequences_new (static_cast <long int> (count++)) = idvec;
+            edge_sequences_new (count++) = idvec;
         }
     }
     // Then just join the two edge_sequence Lists together, along with vectors
     // of edge names
-    const size_t total_edges = static_cast <size_t> (edge_sequences_contr.size ()) +
-        nc_edge_count;
+    const size_t n_edge_seq_contr = static_cast <size_t> (edge_sequences_contr.size ());
+    const size_t total_edges = n_edge_seq_contr + nc_edge_count;
     all_edge_names.resize (total_edges);
-    // These two have different indexing types:
-    for (size_t i = 0; i < static_cast <size_t> (edge_sequences_contr.size ()); i++)
+    for (size_t i = 0; i < n_edge_seq_contr; i++)
         all_edge_names [i] = new_edge_name_vec [i];
-    for (long int i = 0; i < edge_sequences_contr.size (); i++)
+    for (size_t i = 0; i < n_edge_seq_contr; i++)
         edge_sequences_all (i) = edge_sequences_contr (i);
-    for (size_t i = 0; i < static_cast <size_t> (edge_sequences_new.size ()); i++)
-        all_edge_names [static_cast <size_t> (edge_sequences_contr.size ()) + i] =
-            old_edge_names [i];
-    for (long int i = 0; i < edge_sequences_new.size (); i++)
-        edge_sequences_all (edge_sequences_contr.size () + i) = edge_sequences_new (i);
+    const size_t n_edge_seq_new = static_cast <size_t> (edge_sequences_new.size ());
+    for (size_t i = 0; i < n_edge_seq_new; i++)
+        all_edge_names [n_edge_seq_contr + i] = old_edge_names [i];
+    for (size_t i = 0; i < n_edge_seq_new; i++)
+        edge_sequences_all (n_edge_seq_contr + i) = edge_sequences_new (i);
 }
 
 // from osmdata/src/get-bbox.cpp
@@ -263,7 +267,8 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
             yt = graph_full ["to_lat"];
 
     std::unordered_map <std::string, size_t> edge_num_map;
-    for (long int i = 0; i < idf_r.size (); i++)
+    const size_t n_idf = static_cast <size_t> (idf_r.size ());
+    for (size_t i = 0; i < n_idf; i++)
     {
         std::string idft = static_cast <std::string> (idf_r (i)) + "-" +
             static_cast <std::string> (idt_r (i));
@@ -274,13 +279,13 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
            ymin = INFINITE_DOUBLE, ymax = -INFINITE_DOUBLE;
     for (size_t i = 0; i < total_edges; i++)
     {
-        Rcpp::CharacterVector idvec = edge_sequences (static_cast <long int> (i));
+        Rcpp::CharacterVector idvec = edge_sequences (i);
         Rcpp::NumericVector x (idvec.size ()), y (idvec.size ());
         // Fill first edge
         std::string id0 = static_cast <std::string> (idvec [0]),
             id1 = static_cast <std::string> (idvec [1]);
         std::string id01 = id0 + "-" + id1;
-        long int j = static_cast <long int> (edge_num_map.find (id01)->second);
+        size_t j = edge_num_map.find (id01)->second;
         x [0] = xf (j);
         y [0] = yf (j);
         x [1] = xt (j);
@@ -288,13 +293,13 @@ void dodgr_sf::xy_to_sf (const Rcpp::DataFrame &graph_full,
         // Then just remaining "to" values
         idvec.erase (0);
         idvec.erase (0);
-        long int count = 2;
+        size_t count = 2;
         while (idvec.size () > 0)
         {
             id0 = id1;
             id1 = static_cast <std::string> (idvec [0]);
             id01 = id0 + "-" + id1;
-            j = static_cast <long int> (edge_num_map.find (id01)->second);
+            j = edge_num_map.find (id01)->second;
             x (count) = xt (j);
             y (count) = yt (j);
             count++;

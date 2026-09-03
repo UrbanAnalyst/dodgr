@@ -321,7 +321,7 @@ struct OneAggregatePaired : public RcppParallel::Worker
                         target = prev [stt];
                         // Only allocate that flow from origin vertex v to all
                         // previous vertices up until the target vi
-                        if (target < 0L || target == from_i)
+                        if (target < 0L || target == static_cast <long int> (from_i))
                         {
                             break;
                         }
