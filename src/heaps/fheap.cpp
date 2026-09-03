@@ -117,7 +117,7 @@ size_t FHeap::deleteMin()
     while(v) {
         v = v >> 1;
         r++;
-    };
+    }
     r--;
 
     /* Now determine which root node is the minimum. */
@@ -351,7 +351,7 @@ void FHeap::meld(FHeapNode *treeList)
             else {
 
                 trees[r] = newRoot;
-                treeSum += (1 << r);;
+                treeSum += (1 << r);
 
                 /* NOTE:  Because newRoot is now a root we ensure it is
                  *        marked.
@@ -381,6 +381,8 @@ void FHeap::meld(FHeapNode *treeList)
  */
 void FHeap::dumpNodes(FHeapNode *node, size_t level)
 {
+    (void) node;
+    (void) level;
 #if FHEAP_DUMP
     FHeapNode *childNode, *partner;
     size_t childCount;

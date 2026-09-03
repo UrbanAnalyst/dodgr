@@ -175,7 +175,7 @@ size_t TriHeapExt::deleteMin()
     while(v) {
         v = v >> 1;
         d++;
-    };
+    }
     d--;
 
     /* Now locate the root node with the smallest key, scanning from the

@@ -154,7 +154,7 @@ size_t TriHeap::deleteMin()
     while(v) {
         v = v >> 1;
         d++;
-    };
+    }
     d--;
 
     /* Now locate the root node with the smallest key, scanning from the
@@ -1092,6 +1092,8 @@ void TriHeap::replaceChild(TriHeapNode *oldNode, TriHeapNode *newNode)
 //TriHeapNode **Active;
 void TriHeap::dumpNodes(TriHeapNode *node, size_t level)
 {
+    (void) node;
+    (void) level;
 #if SHOW_trih
     TriHeapNode *childNode, *partnerNode;
     size_t childCount;

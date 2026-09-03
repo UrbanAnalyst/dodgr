@@ -138,7 +138,7 @@ size_t Heap23::deleteMin()
     while(v) {
         v = v >> 1;
         r++;
-    };
+    }
     r--;
 
     /* Now locate the root node with the smallest key, scanning from the
@@ -707,6 +707,8 @@ void Heap23::replaceNode(Heap23Node *oldNode, Heap23Node *newNode)
  */
 void Heap23::dumpNodes(Heap23Node *node, size_t level)
 {
+    (void) node;
+    (void) level;
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
     Heap23Node *childNode, *partner;
     size_t childCount;
