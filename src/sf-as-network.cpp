@@ -1,5 +1,8 @@
 #include "sf-as-network.h"
 
+#include <algorithm> // std::fill
+#include <unordered_map>
+
 //' rcpp_sf_as_network
 //'
 //' Return OSM data from Simple Features format input

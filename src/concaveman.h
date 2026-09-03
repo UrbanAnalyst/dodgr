@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <algorithm> // std::min, std::max
 #include <memory>
 #include <stdexcept>
 #include <list>
@@ -19,6 +20,8 @@
 #include <limits>
 #include <set>
 #include <queue>
+#include <tuple>
+#include <utility> // std::move
 #include <assert.h>
 
 #include "Rcpp.h"

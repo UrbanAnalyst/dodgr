@@ -1,5 +1,7 @@
 #include "fund-cycles.h"
 
+#include <unordered_map>
+
 //' @noRd
 // [[Rcpp::export]]
 Rcpp::List rcpp_fundamental_cycles (Rcpp::DataFrame graph,

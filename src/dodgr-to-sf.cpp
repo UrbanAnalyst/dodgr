@@ -1,5 +1,7 @@
 #include "dodgr-to-sf.h"
 
+#include <algorithm> // std::min, std::max
+
 //' Make unordered_set of all new edge names
 //' @noRd
 size_t dodgr_sf::make_edge_name_set (std::unordered_set <std::string> &new_edge_name_set,

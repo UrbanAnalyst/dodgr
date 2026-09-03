@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
+#include <utility> // std::pair
 
 #include <Rcpp.h>
 // [[Rcpp::plugins(cpp11)]]

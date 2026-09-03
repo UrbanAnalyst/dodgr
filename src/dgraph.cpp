@@ -4,6 +4,7 @@
  */
 #include "dgraph.h"
 
+#include <iostream>
 #include <Rcpp.h>
 //#include <cstdio>
 

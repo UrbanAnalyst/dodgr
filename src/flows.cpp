@@ -5,6 +5,8 @@
 #include "dgraph.h"
 #include "heaps/heap_lib.h"
 
+#include <unordered_map>
+
 template <typename T>
 void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
         const std::map <std::string, size_t>& vert_map,

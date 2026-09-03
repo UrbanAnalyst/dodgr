@@ -1,5 +1,6 @@
 #include <string>
 #include <cmath>
+#include <limits>
 
 #include <Rcpp.h>
 // [[Rcpp::depends(RcppParallel)]]

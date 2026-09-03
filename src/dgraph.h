@@ -1,6 +1,7 @@
 #ifndef DGRAPH_H
 #define DGRAPH_H
 
+#include <cstddef> // std::size_t
 #include <vector>
 #include <limits>
 
