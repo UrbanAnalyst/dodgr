@@ -40,24 +40,24 @@ class BHeapNodeInt {
 class BHeap : public Heap {
     public:
         BHeap(size_t n);
-        ~BHeap();
+        ~BHeap() override;
 
         void deleteItem(size_t item);
-        size_t deleteMin() {
+        size_t deleteMin() override {
             size_t v;
             v = min();
             deleteItem(v);
             return v;
         }
-        void insert(size_t item, double key);
-        void decreaseKey(size_t item, double newKey);
-        size_t nItems() const { return itemCount; }
-        void clear() { itemCount = 0; }
+        void insert(size_t item, double key) override;
+        void decreaseKey(size_t item, double newKey) override;
+        size_t nItems() const override { return itemCount; }
+        void clear() override { itemCount = 0; }
 
-        long int nComps() const { return compCount; }
-        void dump() const;
+        long int nComps() const override { return compCount; }
+        void dump() const override;
 
-        double getmin();
+        double getmin() override;
 
         /* extra functions */
         size_t min();
@@ -77,23 +77,23 @@ class BHeap : public Heap {
 class BHeapInt : public HeapInt {
     public:
         BHeapInt(size_t n);
-        ~BHeapInt();
+        ~BHeapInt() override;
 
         void deleteItem(size_t item);
-        size_t deleteMin() {
+        size_t deleteMin() override {
             size_t v;
             v = min();
             deleteItem(v);
             return v;
         }
-        void insert(size_t item, int key);
-        void decreaseKey(size_t item, int newKey);
-        size_t nItems() const { return itemCount; }
+        void insert(size_t item, int key) override;
+        void decreaseKey(size_t item, int newKey) override;
+        size_t nItems() const override { return itemCount; }
 
-        long int nComps() const { return compCount; }
+        long int nComps() const override { return compCount; }
         void dump() const;
 
-        int getmin();
+        int getmin() override;
 
         /* extra functions */
         size_t min();

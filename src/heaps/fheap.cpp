@@ -23,10 +23,10 @@ FHeap::FHeap(size_t n)
     maxNodes = n;
 
     trees = new FHeapNode *[maxTrees];
-    for(size_t i = 0; i < maxTrees; i++) trees[i] = std::nullptr_t ();
+    for(size_t i = 0; i < maxTrees; i++) trees[i] = nullptr;
 
     nodes = new FHeapNode *[n];
-    for(size_t i = 0; i < n; i++) nodes[i] =  std::nullptr_t ();
+    for(size_t i = 0; i < n; i++) nodes[i] =  nullptr;
 
     itemCount = 0;
 
@@ -75,7 +75,7 @@ void FHeap::insert(size_t item, double k)
 
     /* create an initialise the new node */
     newNode = new FHeapNode;
-    newNode->child = std::nullptr_t ();
+    newNode->child = nullptr;
     newNode->left = newNode->right = newNode;
     newNode->rank = 0;
     newNode->item = item;
@@ -117,7 +117,7 @@ size_t FHeap::deleteMin()
     while(v) {
         v = v >> 1;
         r++;
-    };
+    }
     r--;
 
     /* Now determine which root node is the minimum. */
@@ -137,7 +137,7 @@ size_t FHeap::deleteMin()
 
     /* We remove the minimum node from the heap but keep a pointer to it. */
     r = minNode->rank;
-    trees[r] = std::nullptr_t ();
+    trees[r] = nullptr;
     treeSum -= (1 << r);
 
     child = minNode->child;
@@ -145,7 +145,7 @@ size_t FHeap::deleteMin()
 
     /* Record the vertex no of the old minimum node before deleting it. */
     item = minNode->item;
-    nodes[item] = std::nullptr_t ();
+    nodes[item] = nullptr;
     delete minNode;
     itemCount--;
 
@@ -206,7 +206,7 @@ void FHeap::decreaseKey(size_t item, double newValue)
             if(parent->child == cutNode) parent->child = r;
         }
         else {
-            parent->child = std::nullptr_t ();
+            parent->child = nullptr;
         }
 
         /* Update the cutNode and parent pointers to the parent. */
@@ -234,7 +234,7 @@ void FHeap::decreaseKey(size_t item, double newValue)
      */
     if(!parent) {
         prevRank = cutNode->rank + 1;
-        trees[prevRank] = std::nullptr_t ();
+        trees[prevRank] = nullptr;
         treeSum -= (1 << prevRank);
     }
     else {
@@ -245,7 +245,7 @@ void FHeap::decreaseKey(size_t item, double newValue)
             if(parent->child == cutNode) parent->child = r;
         }
         else {
-            parent->child = std::nullptr_t ();
+            parent->child = nullptr;
         }
 
         parent->marked = 1;
@@ -291,7 +291,7 @@ void FHeap::meld(FHeapNode *treeList)
          */
         next = nodePtr->right;
         nodePtr->right = nodePtr->left = nodePtr;
-        nodePtr->parent = std::nullptr_t ();
+        nodePtr->parent = nullptr;
 
         /* We merge the current node, nodePtr, by inserting it into the
          * root level of the heap.
@@ -313,7 +313,7 @@ void FHeap::meld(FHeapNode *treeList)
                 /* temp will be linked to newRoot and relocated so we no
                  * longer will have a tree of degree r.
                  */
-                trees[r] = std::nullptr_t ();
+                trees[r] = nullptr;
                 treeSum -= (1 << r);
 
                 /* Swap temp and newRoot if necessary so that newRoot always
@@ -351,7 +351,7 @@ void FHeap::meld(FHeapNode *treeList)
             else {
 
                 trees[r] = newRoot;
-                treeSum += (1 << r);;
+                treeSum += (1 << r);
 
                 /* NOTE:  Because newRoot is now a root we ensure it is
                  *        marked.
@@ -381,6 +381,8 @@ void FHeap::meld(FHeapNode *treeList)
  */
 void FHeap::dumpNodes(FHeapNode *node, size_t level)
 {
+    (void) node;
+    (void) level;
 #if FHEAP_DUMP
     FHeapNode *childNode, *partner;
     size_t childCount;

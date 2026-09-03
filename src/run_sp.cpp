@@ -181,7 +181,7 @@ struct OneDistNearest : public RcppParallel::Worker
                 if (w [toi [j]] < INFINITE_DOUBLE)
                 {
                     dout [i] = d [toi [j]];
-                    dout [i + nfrom] = toi [j];
+                    dout [i + nfrom] = static_cast <double> (toi [j]);
                 }
             }
         }
@@ -841,7 +841,7 @@ Rcpp::List rcpp_get_paths_pairwise (const Rcpp::DataFrame graph,
             std::vector<double> w_rev (nverts);
             std::vector<double> d_rev (nverts);
             std::vector<long int> prev_rev (nverts);
-            size_t target_idx = static_cast <size_t> (toi [i_R]);
+            size_t target_idx = toi [static_cast <size_t> (i_R)];
             pathfinder->AStar2 (d, w, prev,
                     static_cast <size_t> (fromi [i_R]),
                     target_idx, d_rev, w_rev, prev_rev,

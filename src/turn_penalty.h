@@ -3,6 +3,9 @@
 #include "sc-as-network.h"
 
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility> // std::pair
 
 #include <Rcpp.h>
 

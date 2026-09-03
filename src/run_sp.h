@@ -5,6 +5,8 @@
 #include <algorithm> // std::fill, std::reverse
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
+#include <utility> // std::pair
 
 #include <Rcpp.h>
 // [[Rcpp::plugins(cpp11)]]

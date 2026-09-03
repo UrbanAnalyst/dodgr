@@ -1,5 +1,7 @@
 #include "graph.h"
 
+#include <iostream>
+
 
 //' sample_one_edge_no_comps
 //'

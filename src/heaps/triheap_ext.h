@@ -120,18 +120,18 @@ class ActiveItem {
 class TriHeapExt : public Heap {
     public:
         TriHeapExt(size_t n);
-        ~TriHeapExt();
+        ~TriHeapExt() override;
 
-        void insert(size_t item, double k);
-        size_t deleteMin();
-        void decreaseKey(size_t item, double newValue);
-        size_t nItems() const { return itemCount; }
+        void insert(size_t item, double k) override;
+        size_t deleteMin() override;
+        void decreaseKey(size_t item, double newValue) override;
+        size_t nItems() const override { return itemCount; }
 
-        long int nComps() const { return compCount; }    
+        long int nComps() const override { return compCount; }
 
-        void dump() const;
+        void dump() const override;
 
-        double getmin() {
+        double getmin() override {
             return 0.0; // MP: dummy value not implemented yet
         }
 

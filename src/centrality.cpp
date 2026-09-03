@@ -3,8 +3,11 @@
 #include "heaps/heap.h"
 
 #include <algorithm> // std::fill
+#include <cfloat> // DBL_MIN
+#include <deque>
 #include <fstream> // file output for parallel jobs
 #include <unordered_set>
+#include <utility> // std::pair
 
 /*************************************************************************
  * Direct implementation of

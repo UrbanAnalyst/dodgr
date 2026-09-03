@@ -1,5 +1,8 @@
 #include <string>
 #include <cmath>
+#include <limits>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <Rcpp.h>
 

@@ -5,6 +5,8 @@
 #include "dgraph.h"
 #include "heaps/heap_lib.h"
 
+#include <unordered_map>
+
 template <typename T>
 void inst_graph (std::shared_ptr<DGraph> g, size_t nedges,
         const std::map <std::string, size_t>& vert_map,
@@ -319,7 +321,7 @@ struct OneAggregatePaired : public RcppParallel::Worker
                         target = prev [stt];
                         // Only allocate that flow from origin vertex v to all
                         // previous vertices up until the target vi
-                        if (target < 0L || target == from_i)
+                        if (target < 0L || target == static_cast <long int> (from_i))
                         {
                             break;
                         }

@@ -38,10 +38,10 @@ Heap23::Heap23(size_t n)
      * Initialise all array entries to zero, that is, NULL pointers.
      */
     trees = new Heap23Node *[maxTrees];
-    for(size_t i = 0; i < maxTrees; i++) trees[i] = std::nullptr_t ();
+    for(size_t i = 0; i < maxTrees; i++) trees[i] = nullptr;
 
     nodes = new Heap23Node *[n];
-    for(size_t i = 0; i < n; i++) nodes[i] = std::nullptr_t ();
+    for(size_t i = 0; i < n; i++) nodes[i] = nullptr;
 
     /* We begin with no nodes in the heap. */
     itemCount = 0;
@@ -93,8 +93,8 @@ void Heap23::insert(size_t item, double k)
      * NULL by meld().
      */
     newNode = new Heap23Node;
-    newNode->child = std::nullptr_t ();
-    newNode->left = newNode->right = std::nullptr_t ();
+    newNode->child = nullptr;
+    newNode->left = newNode->right = nullptr;
     newNode->dim = 0;
     newNode->item = item;
     newNode->key = k;
@@ -138,7 +138,7 @@ size_t Heap23::deleteMin()
     while(v) {
         v = v >> 1;
         r++;
-    };
+    }
     r--;
 
     /* Now locate the root node with the smallest key, scanning from the
@@ -160,7 +160,7 @@ size_t Heap23::deleteMin()
 
     /* We remove the minimum node from the heap but keep a pointer to it. */
     r = minNode->dim;
-    trees[r] = std::nullptr_t ();
+    trees[r] = nullptr;
     treeSum -= (1 << r);
     itemCount--;
 
@@ -172,7 +172,7 @@ size_t Heap23::deleteMin()
     child = minNode->child;
     if(child) {
         next = child->right;
-        next->left = child->right = std::nullptr_t ();
+        next->left = child->right = nullptr;
         meld(next);
     }
 
@@ -180,7 +180,7 @@ size_t Heap23::deleteMin()
     item = minNode->item;
 
     /* Delete the old minimum node. */
-    nodes[item] = std::nullptr_t ();
+    nodes[item] = nullptr;
     delete minNode;
 
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
@@ -221,7 +221,7 @@ void Heap23::decreaseKey(size_t item, double newValue)
 
     /* Now remove the node and its tree and reinsert it. */
     removeNode(cutNode);
-    cutNode->right = cutNode->left = std::nullptr_t ();
+    cutNode->right = cutNode->left = nullptr;
     meld(cutNode);
 
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
@@ -253,7 +253,7 @@ void Heap23::meld(Heap23Node *treeList)
     /* addTree points to the current tree to be merged. */
     addTree = treeList;
 
-    carryTree = std::nullptr_t ();
+    carryTree = nullptr;
 
     do {
         /* addTree() gets merged into the heap, and also carryTree if one
@@ -268,15 +268,15 @@ void Heap23::meld(Heap23Node *treeList)
          * Note that if addTree is NULL and the loop has not exited, then
          * there is only a carryTree to be merged, so treat it like addTree.
          */
-        next = std::nullptr_t ();
+        next = nullptr;
         if(addTree) {
             next = addTree->right;
             addTree->right = addTree->left = addTree;
-            addTree->parent = std::nullptr_t ();
+            addTree->parent = nullptr;
         }
         else {
             addTree = carryTree;
-            carryTree = std::nullptr_t ();
+            carryTree = nullptr;
         }
 
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
@@ -378,14 +378,14 @@ void Heap23::removeNode(Heap23Node *rNode)
         if (p->dim == d) {
             c = p->child;
             if(c && c->dim == d) {
-                ax = c;  ap = std::nullptr_t ();
+                ax = c;  ap = nullptr;
             }
             else {
-                ap = p;  ax = std::nullptr_t ();
+                ap = p;  ax = nullptr;
             }
         }
         else {
-            ax = ap = std::nullptr_t ();
+            ax = ap = nullptr;
         }
 
         /* Check for nodes on a similar trunk below in the work space. */
@@ -397,14 +397,14 @@ void Heap23::removeNode(Heap23Node *rNode)
 
             c = p->child;
             if(c && c->dim == d) {
-                bx = c;  bp = std::nullptr_t ();
+                bx = c;  bp = nullptr;
             }
             else {
-                bp = p;  bx = std::nullptr_t ();
+                bp = p;  bx = nullptr;
             }
         }
         else {
-            bx = bp = std::nullptr_t ();
+            bx = bp = nullptr;
         }
 
 
@@ -463,12 +463,12 @@ void Heap23::removeNode(Heap23Node *rNode)
              */
 
             /* Note that parent is a root node and has dimension d + 1. */
-            trees[d+1] = std::nullptr_t ();
+            trees[d+1] = nullptr;
             treeSum -= (1 << (d+1));
 
             parent->dim = d;
             trimExtraNode(rNode);
-            parent->left = parent->right = std::nullptr_t ();
+            parent->left = parent->right = nullptr;
 
             meld(parent);
         }
@@ -513,10 +513,10 @@ size_t Heap23::merge(Heap23Node **a, Heap23Node **b)
      */
     nextTree = tree->child;
     if(nextTree && nextTree->dim != other->dim)
-        nextTree = std::nullptr_t ();
+        nextTree = nullptr;
     nextOther = other->child;
     if(nextOther && nextOther->dim != other->dim)
-        nextOther = std::nullptr_t ();
+        nextOther = nullptr;
 
     /* The merging depends on the existence of nodes and the values of keys. */
     if(!nextTree) {
@@ -528,12 +528,12 @@ size_t Heap23::merge(Heap23Node **a, Heap23Node **b)
         addChild(tree, other);
         if(nextOther) {
             tree->dim++;
-            *a = std::nullptr_t ();
+            *a = nullptr;
             *b = tree;
         }
         else {
             *a = tree;
-            *b = std::nullptr_t ();
+            *b = nullptr;
         }
     }
     else if(!nextOther) {
@@ -551,7 +551,7 @@ size_t Heap23::merge(Heap23Node **a, Heap23Node **b)
         }
         c++;
         tree->dim++;
-        *a = std::nullptr_t ();
+        *a = nullptr;
         *b = tree;
     }
     else {
@@ -563,7 +563,7 @@ size_t Heap23::merge(Heap23Node **a, Heap23Node **b)
 
         replaceNode(nextTree, other);
         nextTree->left = nextTree->right = nextTree;
-        nextTree->parent = std::nullptr_t ();
+        nextTree->parent = nullptr;
         tree->dim++;
         *a = nextTree;  *b = tree;
     }
@@ -584,7 +584,7 @@ void Heap23::trimExtraNode(Heap23Node *x)
          * children.
          */
 
-        x->parent->child = std::nullptr_t ();
+        x->parent->child = nullptr;
     }
     else {
         /* Otherwise, sibling pointers of other child nodes must be updated. */
@@ -707,6 +707,8 @@ void Heap23::replaceNode(Heap23Node *oldNode, Heap23Node *newNode)
  */
 void Heap23::dumpNodes(Heap23Node *node, size_t level)
 {
+    (void) node;
+    (void) level;
 #if defined(TTHEAP_DUMP) && TTHEAP_DUMP > 0
     Heap23Node *childNode, *partner;
     size_t childCount;

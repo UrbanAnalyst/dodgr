@@ -61,17 +61,17 @@ class FHeapNode {
 class FHeap: public Heap {
     public:
         FHeap(size_t n);
-        ~FHeap();
+        ~FHeap() override;
 
-        size_t deleteMin();
-        void insert(size_t item, double k);
-        void decreaseKey(size_t item, double newValue);
-        size_t nItems() const { return itemCount; }
+        size_t deleteMin() override;
+        void insert(size_t item, double k) override;
+        void decreaseKey(size_t item, double newValue) override;
+        size_t nItems() const override { return itemCount; }
 
-        long int nComps() const { return compCount; }
-        void dump() const;
+        long int nComps() const override { return compCount; }
+        void dump() const override;
 
-        double getmin() {
+        double getmin() override {
             return 0.0; // MP: dummy value not implemented yet
         }
 
