@@ -1,6 +1,6 @@
 # CRAN notes for dodgr_0.5.0 submission
 
-This submission fixes the compilation failure seen with current CRAN version on one machine.
+This submission fixes the compilation failure seen with current CRAN version on one machine, along with clang++23 errors on previous submission attempt.
 
 Beyond that, this submission generates the following NOTES on some systems:
 
