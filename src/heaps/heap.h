@@ -5,6 +5,7 @@
  *  Mark Padgham, adapted from code by Shane Saunders
  */
 
+#include <cstddef> // size_t
 #include <stdexcept> // runtime_error
 
 
