@@ -1,5 +1,9 @@
 # v0.5.0.00x (dev version)
 
+## Minor changes
+
+- Fix `igraph_to_dodgr` identification of dist col (#332; thanks to @MarkPaulin)
+
 ---
 
 # v0.5.0

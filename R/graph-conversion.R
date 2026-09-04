@@ -220,6 +220,16 @@ igraph_to_dodgr <- function (graph) {
         res [, i] <- convert_col (res, i)
     }
 
+    # igraph auto-renames main col to "weight"
+    chk <- tryCatch (
+        find_d_col (res),
+        error = function (e) NULL
+    )
+    if (is.null (chk)) {
+        wt_col <- match ("weight", names (res))
+        names (res) [wt_col] <- "d"
+    }
+
     res <- cbind ("edge_id" = seq_len (nrow (res)), res)
 
     return (res)
