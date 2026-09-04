@@ -147,8 +147,8 @@ bench::mark (
     ## # A tibble: 2 × 3
     ##   expression   min median
     ##   <bch:expr> <dbl>  <dbl>
-    ## 1 full       0.466  0.469
-    ## 2 prop_only  0.261  0.263
+    ## 1 full       0.471  0.472
+    ## 2 prop_only  0.279  0.281
 
 The default value of `proportions_only = FALSE` should be used only if
 additional information from the distance matrices themselves is required
@@ -271,9 +271,9 @@ bench::mark (
     ## # A tibble: 3 × 3
     ##   expression    min median
     ##   <bch:expr>  <dbl>  <dbl>
-    ## 1 full       0.473  0.475 
-    ## 2 prop_only  0.264  0.267 
-    ## 3 dlimit     0.0673 0.0721
+    ## 1 full       0.476  0.481 
+    ## 2 prop_only  0.279  0.280 
+    ## 3 dlimit     0.0687 0.0700
 
 Finally, note that the efficiency of distance-threshold queries scales
 non-linearly with increases in `dlimit`, with queries quickly becoming

@@ -32,7 +32,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/UrbanAnalyst/dodgr/blob/v0.5.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/UrbanAnalyst/dodgr/blob/main/inst/CITATION)
 
 Mark Padgham (2019) dodgr: An R package for network flow aggregation
 Transport Findings, 2(14). URL https://doi.org/10.32866/6945
