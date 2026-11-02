@@ -1,8 +1,9 @@
 Package: dodgr
 Title: Distances on Directed Graphs
-Version: 0.5.0.002
+Version: 0.5.0.003
 Authors@R: c(
-    person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre")),
+    person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2172-5265")),
     person("Andreas", "Petutschnig", role = "aut"),
     person("David", "Cooley", role = "aut"),
     person("Robin", "Lovelace", role = "ctb"),
