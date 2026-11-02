@@ -1,0 +1,24 @@
+name: push-to-elsewhere
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: push-to-elsewhere
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: UrbanAnalyst/actions/push-to-elsewhere@main
+        with:
+          branch: main
+          mirrors: |
+            codeberg=https://${{ secrets.UNAME }}:${{ secrets.CODEBERG }}@codeberg.org/UrbanAnalyst/dodgr.git
+            codefloe=https://${{ secrets.UNAME }}:${{ secrets.CODEFLOE }}@codefloe.com/UrbanAnalyst/dodgr.git
