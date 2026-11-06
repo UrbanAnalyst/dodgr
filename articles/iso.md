@@ -167,7 +167,7 @@ system.time ( # Initial call calculates distances to all points:
 ```
 
     ##    user  system elapsed 
-    ##   0.162   0.000   0.162
+    ##   0.103   0.001   0.105
 
 ``` r
 
@@ -177,7 +177,7 @@ system.time ( # Subsequent call uses cached values:
 ```
 
     ##    user  system elapsed 
-    ##    0.02    0.00    0.02
+    ##   0.013   0.000   0.013
 
 The `concavity` parameter has a default value of 0 for strictly convex
 polygons. Values closer to 1 generate more concave polygons. The
