@@ -124,9 +124,9 @@ dodgr_dists_categorical (graph, from, to,
 ```
 
     ##         path      primary  residential    secondary      service        steps 
-    ## 0.5132876816 0.0160100421 0.0004094553 0.1561029152 0.0606822224 0.0018216492 
+    ##  0.513286352  0.016010053  0.000409440  0.156104020  0.060682320  0.001821477 
     ##        track unclassified 
-    ## 0.1017594638 0.1499265705
+    ##  0.101759536  0.149926802
 
 Queries with `proportions_only = TRUE` are constructed in a different
 way in the underlying C++ code that avoids storing the full list of
@@ -147,8 +147,8 @@ bench::mark (
     ## # A tibble: 2 × 3
     ##   expression   min median
     ##   <bch:expr> <dbl>  <dbl>
-    ## 1 full       0.687  0.687
-    ## 2 prop_only  0.143  0.150
+    ## 1 full       0.744  0.744
+    ## 2 prop_only  0.185  0.185
 
 The default value of `proportions_only = FALSE` should be used only if
 additional information from the distance matrices themselves is required
@@ -271,9 +271,9 @@ bench::mark (
     ## # A tibble: 3 × 3
     ##   expression    min median
     ##   <bch:expr>  <dbl>  <dbl>
-    ## 1 full       0.726  0.726 
-    ## 2 prop_only  0.141  0.143 
-    ## 3 dlimit     0.0373 0.0420
+    ## 1 full       0.815  0.815 
+    ## 2 prop_only  0.183  0.184 
+    ## 3 dlimit     0.0515 0.0521
 
 Finally, note that the efficiency of distance-threshold queries scales
 non-linearly with increases in `dlimit`, with queries quickly becoming

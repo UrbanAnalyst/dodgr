@@ -337,7 +337,7 @@ The average distance between the two (in metres) is:
 mean (abs (d_time - d_dist), na.rm = TRUE)
 ```
 
-    ## [1] 25.72338
+    ## [1] 25.66708
 
 The plot reveals that shortest distances are indeed somewhat shorter
 than distances along fastest paths, but also that some fastest paths are
@@ -349,7 +349,7 @@ index <- which (!is.na (d_time) & !is.na (d_dist))
 length (which (d_time [index] < d_dist [index])) / length (index)
 ```
 
-    ## [1] 0.0257905
+    ## [1] 0.02561385
 
 While `dodgr` and indeed all routing engines attempt to maximally
 reconcile differences between fastest and shortest routes, there
@@ -392,7 +392,7 @@ lines (0:100, 0:100, col = "red", lty = 2)
 mean (abs (t_time - t_dist), na.rm = TRUE)
 ```
 
-    ## [1] 75.50527
+    ## [1] 75.44636
 
 As above, times along fastest paths are generally less than times along
 shortest paths, although there are again a few exceptions:
