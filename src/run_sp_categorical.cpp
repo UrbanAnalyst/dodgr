@@ -415,8 +415,7 @@ void PF::PathFinder::scan_edge_types_heur (const DGraphEdge *edge,
                     m_heap->insert (et, wt + heur [et] - heur [v0]);
                     m_open_vec [et] = true;
                 }
-            } else
-                m_closed [et] = true;
+            }
         }
         edge = edge->nextOut;
     }
@@ -509,8 +508,7 @@ void PF::PathFinder::scan_edge_types (const DGraphEdge *edge,
                     m_heap->insert (et, wt);
                     m_open_vec [et] = true;
                 }
-            } else
-                m_closed [et] = true;
+            }
         }
         edge = edge->nextOut;
     }

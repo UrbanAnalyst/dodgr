@@ -92,8 +92,7 @@ void PF::PathFinder::scan_edges (const DGraphEdge *edge,
                     m_heap->insert (et, wt);
                     m_open_vec [et] = true;
                 }
-            } else
-                m_closed [et] = true;
+            }
         }
         edge = edge->nextOut;
     }
@@ -136,8 +135,7 @@ void PF::PathFinder::scan_edges_heur (const DGraphEdge *edge,
                     m_heap->insert (et, wt + heur);
                     m_open_vec [et] = true;
                 }
-            } else
-                m_closed [et] = true;
+            }
         }
         edge = edge->nextOut;
     }
@@ -406,8 +404,7 @@ void PF::PathFinder::scan_edges_heur_rev (const DGraphEdge *edge,
                     m_heap_rev->insert (et, priority);
                     m_open_vec [et] = true;
                 }
-            } else
-                m_closed2 [et] = true;
+            }
         }
         edge = edge->nextIn;
     }
