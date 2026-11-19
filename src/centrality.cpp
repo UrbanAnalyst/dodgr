@@ -232,7 +232,7 @@ void PF::PathFinder::Centrality_vertex (
         // duplicate edges. The set is used to ensure centrality values are only
         // aggregated once along any set of duplicated edges. The effect of not
         // doing this is documented at
-        // https://github.com/ATFutures/dodgr/issues/186.
+        // https://github.com/UrbanAnalyst/dodgr/issues/186.
         //
         // Nevertheless, the other commits flagged in that issue add a function
         // to the internal 'inst_graph' function at the top of this file ensures
