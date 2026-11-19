@@ -99,6 +99,17 @@ remap_tf_index_for_tp <- function (index, vert_map, from = TRUE) {
     na_index <- which (!is.na (vert_index_comp))
     vert_index [na_index] <- vert_index_comp [na_index]
 
+    if (anyNA (vert_index)) {
+        stop (
+            "No ", if (from) "outgoing" else "incoming",
+            " edges for vertices: ",
+            paste (index$id [is.na (vert_index)], collapse = ", "),
+            "; they can not be used as '", if (from) "from" else "to",
+            "' in graphs with turn penalties",
+            call. = FALSE
+        )
+    }
+
     index$index <- vert_index - 1L # zero-based
     index$id [na_index] <- vert_index_id [na_index]
 
