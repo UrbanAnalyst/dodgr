@@ -4,6 +4,7 @@
 
 - Fix `igraph_to_dodgr` identification of dist col (#332; thanks to @MarkPaulin)
 - Fix Dijkstra that closed vertices before taking from heap (#375; thanks @SebKrantz)
+- Fix segfault in `dodgr_dists()` and `dodgr_times()` for graphs with turn penalties when a junction vertex has no incoming or outgoing edges.
 
 ---
 
