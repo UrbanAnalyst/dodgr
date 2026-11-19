@@ -1,5 +1,8 @@
 #include "graph.h"
 
+#include <limits>
+#include <algorithm>
+
 void graph::add_to_v2e_map (vert2edge_map_t &vert2edge_map, const vertex_id_t vid,
         const edge_id_t eid)
 {
@@ -179,10 +182,13 @@ size_t graph::identify_graph_components (vertex_map_t &v,
 
 //' strong_connect
 //'
-//' Helper function for applying Tarjan's algroithm to identify
-//' strong components recursively
+//' Helper function for applying Tarjan's algorithm to identify strong
+//' components, starting from one root vertex. The depth-first search uses an
+//' explicit stack of (vertex, position in out-neighbours) frames rather than
+//' recursion, so that long paths in large networks can not overflow the C
+//' stack.
 //'
-//' @param vt id of vertex currently being evaluated
+//' @param root id of vertex from which to start the search
 //' @param v unordered_map <vertex_id_t, vertex_t>
 //' @param com component map from each vertex to component numbers
 //' @param index_map map from each vertex to index number
@@ -192,7 +198,7 @@ size_t graph::identify_graph_components (vertex_map_t &v,
 //' @param index used to execute algoritm
 //' @param compnum the current component number
 //' @noRd
-void graph::strong_connect(vertex_id_t vt,
+void graph::strong_connect(vertex_id_t root,
     vertex_map_t &v,
     std::unordered_map <vertex_id_t, size_t> &com,
     std::unordered_map <vertex_id_t, size_t> &index_map,
@@ -202,42 +208,66 @@ void graph::strong_connect(vertex_id_t vt,
     size_t &index,
     size_t &compnum)
 {
+    typedef std::unordered_set <vertex_id_t>::const_iterator nb_iter_t;
+    struct frame_t {
+        vertex_id_t vt;
+        nb_iter_t it, end;
+    };
+    std::vector <frame_t> call_stack;
 
-    Rcpp::checkUserInterrupt ();
+    auto visit = [&] (const vertex_id_t vt) {
+        index_map [vt] = index;
+        lowlink_map [vt] = index;
+        index++;
+        s.push (vt);
+        on_stack.insert (vt);
+        const std::unordered_set <vertex_id_t> &nbs =
+            v.find (vt)->second.out_neighbours ();
+        call_stack.push_back ({vt, nbs.begin (), nbs.end ()});
+    };
 
-    index_map [vt] = index;
-    lowlink_map [vt] = index;
-    index++;
-    s.push (vt);
-    on_stack.insert (vt);
+    visit (root);
+    size_t n_iter = 0;
 
-    vertex_t vtx = v.find (vt)->second;
-    std::unordered_set<vertex_id_t> nbs = vtx.get_out_neighbours ();
-
-    for (auto nvtx : nbs)
+    while (!call_stack.empty ())
     {
-        if (index_map.find (nvtx) == index_map.end ())
-        {
-            strong_connect (nvtx, v, com, index_map, lowlink_map, on_stack, s, index, compnum);
-            lowlink_map [vt] = std::min (lowlink_map [vt], lowlink_map [nvtx]);
-        }
-        else if (on_stack.find (nvtx) != on_stack.end ())
-        {
-            lowlink_map [vt] = std::min (lowlink_map [vt], index_map [nvtx]);
-        }
-    }
+        if (++n_iter % 100000 == 0)
+            Rcpp::checkUserInterrupt ();
 
-    if (lowlink_map [vt] == index_map [vt])
-    {
-        vertex_id_t w;
-        do
+        frame_t &f = call_stack.back ();
+        if (f.it != f.end)
         {
-            w = s.top ();
-            s.pop ();
-            on_stack.erase (w);
-            com [w] = compnum;
-        } while (w != vt);
-        compnum++;
+            const vertex_id_t nvtx = *f.it;
+            ++f.it;
+            if (index_map.find (nvtx) == index_map.end ())
+                visit (nvtx); // invalidates f
+            else if (on_stack.find (nvtx) != on_stack.end ())
+            {
+                size_t &ll = lowlink_map [f.vt];
+                ll = std::min (ll, index_map [nvtx]);
+            }
+            continue;
+        }
+
+        const vertex_id_t vt = f.vt;
+        if (lowlink_map [vt] == index_map [vt])
+        {
+            vertex_id_t w;
+            do
+            {
+                w = s.top ();
+                s.pop ();
+                on_stack.erase (w);
+                com [w] = compnum;
+            } while (w != vt);
+            compnum++;
+        }
+        call_stack.pop_back ();
+        if (!call_stack.empty ())
+        {
+            size_t &ll = lowlink_map [call_stack.back ().vt];
+            ll = std::min (ll, lowlink_map [vt]);
+        }
     }
 }
 
@@ -317,12 +347,52 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph, bool strong 
 
     largest_component++; // suppress unused variable warning
 
-    // Then map component numbers of vertices onto edges
+    // Strong components are re-numbered in order of decreasing numbers of
+    // vertices (then edges), so that component 0 is the largest.
+    if (strong)
+    {
+        std::unordered_map <size_t, size_t> nverts, nedges;
+        for (auto c: components)
+            nverts [c.second]++;
+        for (auto e : edge_map)
+        {
+            const size_t cf = components.find (e.second.get_from_vertex ())->second,
+                  ct = components.find (e.second.get_to_vertex ())->second;
+            if (cf == ct)
+                nedges [cf]++;
+        }
+        std::vector <size_t> ids;
+        for (auto n: nverts)
+            ids.push_back (n.first);
+        std::sort (ids.begin (), ids.end (), [&] (size_t a, size_t b) {
+                if (nverts [a] != nverts [b])
+                    return nverts [a] > nverts [b];
+                if (nedges [a] != nedges [b])
+                    return nedges [a] > nedges [b];
+                return a < b;
+            });
+        std::unordered_map <size_t, size_t> rank;
+        for (size_t r = 0; r < ids.size (); r++)
+            rank [ids [r]] = r;
+        for (auto &c: components)
+            c.second = rank [c.second];
+    }
+
+    // Then map component numbers of vertices onto edges. Edges between
+    // different strong components belong to neither, and are given NA.
+    const size_t no_comp = std::numeric_limits <size_t>::max ();
     std::unordered_map <edge_id_t, size_t> comp_nums;
     for (auto e : edge_map)
     {
         vertex_id_t vi = e.second.get_from_vertex ();
-        comp_nums.emplace (e.first, components.find(vi)->second);
+        size_t ci = components.find (vi)->second;
+        if (strong)
+        {
+            vertex_id_t vj = e.second.get_to_vertex ();
+            if (components.find (vj)->second != ci)
+                ci = no_comp;
+        }
+        comp_nums.emplace (e.first, ci);
     }
 
     Rcpp::StringVector edge_id (comp_nums.size ());
@@ -331,7 +401,8 @@ Rcpp::List rcpp_get_component_vector (const Rcpp::DataFrame &graph, bool strong 
     for (auto cn: comp_nums)
     {
         edge_id (i) = cn.first;
-        comp_num (i) = static_cast <int> (cn.second) + 1L; // 1-indexed for R
+        comp_num (i) = cn.second == no_comp ? NA_INTEGER :
+            static_cast <int> (cn.second) + 1L; // 1-indexed for R
         i++;
     }
 
