@@ -50,6 +50,11 @@ struct vertex_t
             return in;
         }
 
+        const std::unordered_set <vertex_id_t> & out_neighbours () const
+        {
+            return out;
+        }
+
         std::unordered_set <vertex_id_t> get_out_neighbours ()
         {
             return out;
@@ -152,7 +157,7 @@ size_t identify_graph_components (vertex_map_t &v,
 size_t identify_graph_strong_components (vertex_map_t &v,
         std::unordered_map <vertex_id_t, size_t> &com);
 
-void strong_connect (vertex_id_t vt,
+void strong_connect (vertex_id_t root,
     vertex_map_t &v,
     std::unordered_map <vertex_id_t, size_t> &com,
     std::unordered_map <vertex_id_t, size_t> &index_map,

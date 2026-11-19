@@ -9,12 +9,12 @@ dodgr_components(graph, strong = FALSE)
 \arguments{
 \item{graph}{A \code{data.frame} of edges}
 
-\item{strong}{Defaults to \verb{FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If }TRUE`, all edges in each identified component are
-fully connected in both directions.}
+\item{strong}{Defaults to \verb{FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If }TRUE\verb{, all edges in each identified component are fully connected in both directions. Edges which connect different strong components belong to neither, and are given a component value of }NA`.}
 }
 \value{
 Equivalent graph with additional \code{component} column, sequentially
-numbered from 1 = largest component.
+numbered from 1 = largest component (by number of edges for the default,
+or by number of vertices for \code{strong = TRUE}).
 }
 \description{
 Identify connected components of graph and add corresponding \code{component}

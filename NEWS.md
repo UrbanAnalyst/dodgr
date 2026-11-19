@@ -5,6 +5,10 @@
 - Fix `igraph_to_dodgr` identification of dist col (#332; thanks to @MarkPaulin)
 - Fix Dijkstra that closed vertices before taking from heap (#375; thanks @SebKrantz)
 - Fix segfault in `dodgr_dists()` and `dodgr_times()` for graphs with turn penalties when a junction vertex has no incoming or outgoing edges.
+- Fix `dodgr_components(strong = TRUE)`:
+  - Tarjan's algorithm is now iterative rather than recursive, so no longer overflows the C stack on large (city-sized) networks.
+  - Edges connecting different strong components no longer take the component of their source vertex, and are now given a `component` value of `NA`, so that `component == 1` contains only edges within the main strong component.
+  - Strong components are now numbered by decreasing number of vertices, so that `component == 1` is always the largest.
 
 ---
 

@@ -310,9 +310,11 @@ dodgr_vertices_internal <- function (graph) {
 #' @param strong Defaults to `FALSE',  which may identify components which can
 #' only be accessed from a single direction, and therefore not actually used in
 #' routing calculations. If `TRUE`, all edges in each identified component are
-#' fully connected in both directions.
+#' fully connected in both directions. Edges which connect different strong
+#' components belong to neither, and are given a component value of `NA`.
 #' @return Equivalent graph with additional `component` column, sequentially
-#' numbered from 1 = largest component.
+#' numbered from 1 = largest component (by number of edges for the default,
+#' or by number of vertices for `strong = TRUE`).
 #' @family modification
 #' @export
 #' @examples
@@ -335,10 +337,16 @@ dodgr_components <- function (graph, strong = FALSE) {
         indx <- match (graph2$edge_id, cns$edge_id)
         component <- cns$edge_component [indx]
 
-        # Number components by decreasing size:
-        freqs <- table (component)
-        sorted_components <- names (freqs) [order (freqs, decreasing = TRUE)]
-        graph$component <- match (as.character (component), sorted_components)
+        if (strong) {
+            # Already numbered by decreasing numbers of vertices; edges between
+            # different components are NA
+            graph$component <- component
+        } else {
+            # Number components by decreasing size:
+            freqs <- table (component)
+            sorted_components <- names (freqs) [order (freqs, decreasing = TRUE)]
+            graph$component <- match (as.character (component), sorted_components)
+        }
     }
 
     return (graph)
