@@ -53,14 +53,14 @@ column to <code>data.frame</code>.</p>
 
 
 <dt id="arg-strong">strong<a class="anchor" aria-label="anchor" href="#arg-strong"></a></dt>
-<dd><p>Defaults to <code>FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If </code>TRUE`, all edges in each identified component are
-fully connected in both directions.</p></dd>
+<dd><p>Defaults to <code>FALSE',  which may identify components which can only be accessed from a single direction, and therefore not actually used in routing calculations. If </code>TRUE<code>, all edges in each identified component are fully connected in both directions. Edges which connect different strong components belong to neither, and are given a component value of </code>NA`.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Equivalent graph with additional <code>component</code> column, sequentially
-numbered from 1 = largest component.</p>
+numbered from 1 = largest component (by number of edges for the default,
+or by number of vertices for <code>strong = TRUE</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
