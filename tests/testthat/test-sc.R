@@ -125,6 +125,15 @@ test_that ("elevation", {
     ))
     expect_identical (ncol (net_sc3), ncol (net_sc2))
     expect_gt (mean (net_sc3$time), mean (net_sc2$time))
+
+    # Elevation must affect weighted times as well as times, so that routes
+    # are chosen with regard to slope:
+    hsc0 <- hsc
+    hsc0$vertex$z_ <- NULL
+    net_foot0 <- weight_streetnet (hsc0, wt_profile = "foot")
+    expect_false (identical (net_sc3$time, net_foot0$time))
+    expect_false (identical (net_sc3$time_weighted, net_foot0$time_weighted))
+    expect_identical (net_sc3$d_weighted, net_foot0$d_weighted)
 })
 
 test_that ("contract with turn angles", {
